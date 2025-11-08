@@ -69,24 +69,25 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
     
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
-        # ---------------------------------------------------------
-        # Example implementation:
-        # response = lib.request(
-        #     url=f"{self.settings.server_url}/tracking",
-        #     data=lib.to_json(request.serialize()),
-        #     trace=self.trace_as("json"),
-        #     method="POST",
-        #     headers={
-        #         "Content-Type": "application/json",
-        #         "Authorization": f"Bearer {self.settings.api_key}"
-        #     },
-        # )
+        def _get_tracking(tracking_number: str):
+            return tracking_number, lib.request(
+                url=f"{self.settings.server_url}/shipments/{tracking_number}/tracking",
+                trace=self.trace_as("json"),
+                method="GET",
+                headers={
+                    "Authorization": f"Basic {self.settings.authorization}",
+                },
+            )
 
-        # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        response = lib.to_json({})
+        # Use concurrent requests for multiple tracking numbers
+        responses = lib.run_concurently(_get_tracking, request.serialize())
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            responses,
+            lambda res: [
+                (num, lib.to_dict(track)) for num, track in res if any(track.strip())
+            ],
+        )
     
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
