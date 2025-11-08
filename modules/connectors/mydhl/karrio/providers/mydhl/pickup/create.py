@@ -5,6 +5,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.mydhl.error as error
 import karrio.providers.mydhl.utils as provider_utils
+import karrio.schemas.mydhl.pickup_create_response as pickup_res
 
 
 def parse_pickup_response(
@@ -12,7 +13,7 @@ def parse_pickup_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
     """
-    Parse pickup response from carrier API
+    Parse pickup response from MyDHL API
 
     _response: The carrier response to deserialize
     settings: The carrier connection settings
@@ -22,46 +23,40 @@ def parse_pickup_response(
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    # Extract pickup details
-    pickup = _extract_details(response, settings)
+    pickup_response = lib.to_object(pickup_res.PickupCreateResponseType, response)
+    pickup = _extract_details(pickup_response, settings)
 
     return pickup, messages
 
 
 def _extract_details(
-    response: dict,
+    pickup: pickup_res.PickupCreateResponseType,
     settings: provider_utils.Settings,
 ) -> models.PickupDetails:
     """
-    Extract pickup details from carrier response data
+    Extract pickup details from MyDHL pickup response
 
-    data: The carrier-specific pickup response data
+    pickup: The MyDHL PickupCreateResponseType object
     settings: The carrier connection settings
 
     Returns a PickupDetails object with the pickup information
     """
-    
-    # Example implementation for JSON response:
-    # Extract pickup details from the JSON response
-    # confirmation_number = response.get("confirmationNumber")
-    # pickup_date = response.get("pickupDate")
-    # ready_time = response.get("readyTime")
-    # closing_time = response.get("closingTime")
-
-    # For development, return sample data
-    confirmation_number = "PICKUP123"
-    pickup_date = lib.today_str()
-    ready_time = "09:00"
-    closing_time = "17:00"
-    
+    # Extract first confirmation number using functional pattern
+    confirmation_number = next(
+        (num for num in (pickup.dispatchConfirmationNumbers or []) if num),
+        ""
+    )
 
     return models.PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         confirmation_number=confirmation_number,
-        pickup_date=lib.fdate(pickup_date),
-        ready_time=ready_time,
-        closing_time=closing_time,
+        pickup_date=lib.fdate(pickup.nextPickupDate) if pickup.nextPickupDate else None,
+        ready_time=pickup.readyByTime if pickup.readyByTime else None,
+        meta=dict(
+            confirmation_numbers=pickup.dispatchConfirmationNumbers or [],
+            warnings=pickup.warnings or [],
+        ),
     )
 
 
