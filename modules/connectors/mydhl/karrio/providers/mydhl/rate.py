@@ -1,17 +1,5 @@
 """Karrio MyDHL rate API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract data from the response to populate the RateDetails
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., RateRequestType),
-# while XML schema types don't have this suffix (e.g., RateRequest).
-
-import karrio.schemas.mydhl.rate_request as mydhl_req
-import karrio.schemas.mydhl.rate_response as mydhl_res
-
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -19,6 +7,8 @@ import karrio.core.models as models
 import karrio.providers.mydhl.error as error
 import karrio.providers.mydhl.utils as provider_utils
 import karrio.providers.mydhl.units as provider_units
+import karrio.schemas.mydhl.rate_request as mydhl_req
+import karrio.schemas.mydhl.rate_response as mydhl_res
 
 
 def parse_rate_response(
@@ -29,51 +19,87 @@ def parse_rate_response(
 
     messages = error.parse_error_response(response, settings)
 
-    # Extract rate objects from the response - adjust based on carrier API structure
-    
-    # For JSON APIs, find the path to rate objects
-    rate_objects = response.get("rates", []) if hasattr(response, 'get') else []
-    rates = [_extract_details(rate, settings) for rate in rate_objects]
-    
+    # Convert response to typed object
+    rate_response = lib.to_object(mydhl_res.RateResponseType, response)
+
+    # Extract products from the response
+    products = rate_response.products or []
+    rates = [
+        _extract_details(product, settings)
+        for product in products
+        if product.totalPrice and len(product.totalPrice) > 0
+    ]
 
     return rates, messages
 
 
 def _extract_details(
-    data: dict,
+    product: mydhl_res.ProductType,
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     """
-    Extract rate details from carrier response data
+    Extract rate details from MyDHL product data
 
-    data: The carrier-specific rate data structure
+    product: The MyDHL ProductType object from the rate response
     settings: The carrier connection settings
 
     Returns a RateDetails object with extracted rate information
     """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    rate = lib.to_object(mydhl_res.RateResponseType, data)
+    # Get the primary price (usually BILLC - billing currency)
+    total_price = next(
+        (price for price in (product.totalPrice or []) if price.price),
+        None
+    )
 
-    # Now access data through the object attributes
-    service = rate.serviceCode if hasattr(rate, 'serviceCode') else ""
-    service_name = rate.serviceName if hasattr(rate, 'serviceName') else ""
-    total = float(rate.totalCharge) if hasattr(rate, 'totalCharge') and rate.totalCharge else 0.0
-    currency = rate.currency if hasattr(rate, 'currency') else "USD"
-    transit_days = int(rate.transitDays) if hasattr(rate, 'transitDays') and rate.transitDays else 0
-    
+    # Extract pricing information
+    currency = total_price.priceCurrency if total_price else "USD"
+    total_charge = float(total_price.price) if total_price and total_price.price else 0.0
+
+    # Extract service information
+    service = lib.to_services(product.productCode, provider_units.ShippingService).first
+
+    # Calculate transit days from delivery date
+    transit_days = None
+    if product.deliveryCapabilities and product.deliveryCapabilities.estimatedDeliveryDateAndTime:
+        try:
+            delivery_date = lib.to_date(
+                product.deliveryCapabilities.estimatedDeliveryDateAndTime,
+                "%Y-%m-%dT%H:%M:%S"
+            )
+            if delivery_date:
+                # Calculate days from now
+                from datetime import datetime
+                transit_days = (delivery_date.date() - datetime.now().date()).days
+        except:
+            pass
+
+    # Extract extra charges from price breakdown
+    extra_charges = []
+    if product.totalPriceBreakdown:
+        for breakdown in product.totalPriceBreakdown:
+            if breakdown.priceBreakdown:
+                for charge in breakdown.priceBreakdown:
+                    if charge.typeCode and charge.price:
+                        extra_charges.append(
+                            models.ChargeDetails(
+                                name=charge.typeCode,
+                                amount=lib.to_decimal(charge.price),
+                                currency=breakdown.priceCurrency or currency,
+                            )
+                        )
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=service,
-        total_charge=lib.to_money(total, currency),
+        service=service.name_or_key if service else product.productCode,
+        total_charge=lib.to_money(total_charge),
         currency=currency,
         transit_days=transit_days,
+        extra_charges=extra_charges if extra_charges else None,
         meta=dict(
-            service_name=service_name,
-            # Add any other useful metadata from the carrier response
+            service_name=product.productName or "",
+            network_type_code=product.networkTypeCode,
+            local_product_code=product.localProductCode,
         ),
     )
 
@@ -83,7 +109,7 @@ def rate_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     """
-    Create a rate request for the carrier API
+    Create a rate request for the MyDHL API
 
     payload: The standardized RateRequest from karrio
     settings: The carrier connection settings
@@ -101,55 +127,69 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Create the carrier-specific request object
-    
-    # For JSON API request
+    # Determine international shipment status
+    is_international = shipper.country_code != recipient.country_code
+    is_dutiable = is_international and not all([p.is_document for p in payload.parcels])
+
+    # Determine unit of measurement (metric vs imperial)
+    unit_of_measurement = (
+        provider_units.MeasurementUnit.imperial.value
+        if packages.weight_unit == units.WeightUnit.LB
+        else provider_units.MeasurementUnit.metric.value
+    )
+
+    # Get planned shipping date and time
+    import datetime
+    planned_date = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SGMT%z")
+
+    # Create the MyDHL rate request
     request = mydhl_req.RateRequestType(
-        # Map shipper details
-        shipper={
-            "addressLine1": shipper.address_line1,
-            "city": shipper.city,
-            "postalCode": shipper.postal_code,
-            "countryCode": shipper.country_code,
-            "stateCode": shipper.state_code,
-            "personName": shipper.person_name,
-            "companyName": shipper.company_name,
-            "phoneNumber": shipper.phone_number,
-            "email": shipper.email,
-        },
-        # Map recipient details
-        recipient={
-            "addressLine1": recipient.address_line1,
-            "city": recipient.city,
-            "postalCode": recipient.postal_code,
-            "countryCode": recipient.country_code,
-            "stateCode": recipient.state_code,
-            "personName": recipient.person_name,
-            "companyName": recipient.company_name,
-            "phoneNumber": recipient.phone_number,
-            "email": recipient.email,
-        },
-        # Map package details
+        customerDetails=mydhl_req.CustomerDetailsType(
+            shipperDetails=mydhl_req.ErDetailsType(
+                postalCode=shipper.postal_code or "",
+                cityName=shipper.city or "",
+                countryCode=shipper.country_code,
+            ),
+            receiverDetails=mydhl_req.ErDetailsType(
+                postalCode=recipient.postal_code or "",
+                cityName=recipient.city or "",
+                countryCode=recipient.country_code,
+            ),
+        ),
+        accounts=(
+            [
+                mydhl_req.AccountType(
+                    typeCode="shipper",
+                    number=int(settings.account_number) if settings.account_number and settings.account_number.isdigit() else None,
+                )
+            ]
+            if settings.account_number
+            else None
+        ),
+        productCode=services.first.value if services.first else None,
+        plannedShippingDateAndTime=planned_date,
+        unitOfMeasurement=unit_of_measurement,
+        isCustomsDeclarable=is_dutiable,
         packages=[
-            {
-                "weight": package.weight.value,
-                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
-                "length": package.length.value if package.length else None,
-                "width": package.width.value if package.width else None,
-                "height": package.height.value if package.height else None,
-                "dimensionUnit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
-                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
-            }
+            mydhl_req.PackageType(
+                typeCode=(
+                    provider_units.PackagingType[package.packaging_type or "your_packaging"].value
+                    if package.packaging_type
+                    else None
+                ),
+                weight=package.weight.value,
+                dimensions=(
+                    mydhl_req.DimensionsType(
+                        length=int(package.length.value) if package.length else None,
+                        width=int(package.width.value) if package.width else None,
+                        height=int(package.height.value) if package.height else None,
+                    )
+                    if any([package.length, package.width, package.height])
+                    else None
+                ),
+            )
             for package in packages
         ],
-        # Add service code
-        serviceCode=service,
-        # Add account information
-        customerNumber=settings.customer_number,
-        # Add label details
-        labelFormat=payload.label_type or "PDF",
-        # Add any other required fields for the carrier API
     )
-    
 
     return lib.Serializable(request, lib.to_dict)
