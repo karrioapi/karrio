@@ -77,62 +77,45 @@ class Proxy(proxy.Proxy):
         )
     
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
-        # ---------------------------------------------------------
-        # Example implementation:
-        # response = lib.request(
-        #     url=f"{self.settings.server_url}/pickups",
-        #     data=lib.to_json(request.serialize()),
-        #     trace=self.trace_as("json"),
-        #     method="POST",
-        #     headers={
-        #         "Content-Type": "application/json",
-        #         "Authorization": f"Bearer {self.settings.api_key}"
-        #     },
-        # )
-
-        # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        response = lib.to_json({})
+        response = lib.request(
+            url=f"{self.settings.server_url}/pickups",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
 
         return lib.Deserializable(response, lib.to_dict)
     
     def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
-        # ---------------------------------------------------------
-        # Example implementation:
-        # response = lib.request(
-        #     url=f"{self.settings.server_url}/pickups/modify",
-        #     data=lib.to_json(request.serialize()),
-        #     trace=self.trace_as("json"),
-        #     method="POST",
-        #     headers={
-        #         "Content-Type": "application/json",
-        #         "Authorization": f"Bearer {self.settings.api_key}"
-        #     },
-        # )
-
-        # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
-        response = lib.to_json({})
+        response = lib.request(
+            url=f"{self.settings.server_url}/pickups",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="PATCH",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
 
         return lib.Deserializable(response, lib.to_dict)
     
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
-        # ---------------------------------------------------------
-        # Example implementation:
-        # response = lib.request(
-        #     url=f"{self.settings.server_url}/pickups/cancel",
-        #     data=lib.to_json(request.serialize()),
-        #     trace=self.trace_as("json"),
-        #     method="POST",
-        #     headers={
-        #         "Content-Type": "application/json",
-        #         "Authorization": f"Bearer {self.settings.api_key}"
-        #     },
-        # )
+        pickup_data = request.serialize()
+        confirmation_number = pickup_data if isinstance(pickup_data, str) else pickup_data.get("confirmationNumber", "")
 
-        # During development, use stub response from schema examples
-        response = lib.to_json({})
+        response = lib.request(
+            url=f"{self.settings.server_url}/pickups/{confirmation_number}",
+            trace=self.trace_as("json"),
+            method="DELETE",
+            headers={
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
 
         return lib.Deserializable(response, lib.to_dict)
     
