@@ -28,7 +28,7 @@ const CustomDrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed z-50 grid grid-rows-[1fr,auto] lg:grid-rows-[auto,1fr] border-t bg-background w-full left-0 right-0 top-0 lg:top-[9vh] bottom-0",
+        "fixed z-50 grid grid-rows-[1fr,auto] lg:grid-rows-[auto,1fr] border-t bg-background w-full left-0 right-0 top-0 lg:top-[9vh] bottom-0 rounded-t-[10px]",
         // Force dark mode for this drawer only (scoped) and crisp rendering
         "dark antialiased [text-rendering:optimizeLegibility] [backface-visibility:hidden]",
         className

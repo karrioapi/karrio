@@ -67,7 +67,6 @@ function APIMetadataProvider({
     // Auto-refresh to reflect admin config changes without manual reload
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    refetchInterval: 5000,
     staleTime: 0,
     enabled: isEnabled,
     requireAuth: false,
