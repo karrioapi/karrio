@@ -78,7 +78,7 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
             "KEY_PREFIX": REDIS_PREFIX,
         }
     }
-    print(f"Redis cache connection initialized at: {REDIS_CONNECTION_URL}")
+    print(f"Redis cache connection initialized")
 elif SKIP_DEFAULT_CACHE:
     print(
         "Skipping default Redis cache configuration (worker mode - only HUEY Redis needed)"
