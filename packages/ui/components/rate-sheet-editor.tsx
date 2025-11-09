@@ -257,6 +257,8 @@ export const RateSheetEditor = ({
           if (service.max_height !== null && service.max_height !== undefined) cleanService.max_height = service.max_height;
           if (service.max_length !== null && service.max_length !== undefined) cleanService.max_length = service.max_length;
           if (service.dimension_unit) cleanService.dimension_unit = service.dimension_unit;
+          if (service.domicile !== undefined) cleanService.domicile = service.domicile;
+          if (service.international !== undefined) cleanService.international = service.international;
 
           // Clean zones - zones are required for CreateServiceLevelInput
           cleanService.zones = (service.zones && Array.isArray(service.zones) && service.zones.length > 0)

@@ -28,7 +28,7 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
   return (
     <div className="p-4">
       {(log?.records || []).length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-neutral-400">
           <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
           <p>No tracing records available</p>
         </div>
@@ -45,19 +45,19 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
             const requestId = (request?.record || response?.record)?.request_id || key;
 
             return (
-              <Card key={key} className="border border-gray-200">
+              <Card key={key} className="border border-neutral-800 bg-neutral-950">
                 <CardHeader className="p-4">
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      <Server className="h-4 w-4 text-gray-500" />
+                      <Server className="h-4 w-4 text-neutral-500" />
                       <span className="font-medium">
                         {(request || response)?.meta?.carrier_name}
                       </span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-neutral-700 text-neutral-300">
                         {(request || response)?.meta?.carrier_id}
                       </Badge>
                     </div>
-                    <div className="text-xs text-gray-600 space-y-1">
+                    <div className="text-xs text-neutral-400 space-y-1">
                       <div>URL: {(request?.record || response?.record)?.url}</div>
                       <div>Request ID: {requestId}</div>
                       {request?.timestamp && (
@@ -77,23 +77,23 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
                   {request && requestData && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">Request</span>
+                        <span className="text-sm font-medium text-neutral-300">Request</span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => copyToClipboard(requestData || "")}
-                          className="h-7 px-2"
+                          className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
                       </div>
-                      <div className="border rounded-md overflow-hidden">
+                      <div className="border border-neutral-800 rounded-md overflow-hidden">
                         <CodeMirror
                           value={requestData || ""}
                           extensions={[
                             request.record?.format === "xml" ? xml() : json()
                           ]}
-                          theme="light"
+                          theme="dark"
                           className="text-xs"
                           readOnly
                           basicSetup={{
@@ -115,23 +115,23 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
                   {response && responseData && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-700">{response.key}</span>
+                        <span className="text-sm font-medium text-neutral-300">{response.key}</span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => copyToClipboard(responseData || "")}
-                          className="h-7 px-2"
+                          className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
                       </div>
-                      <div className="border rounded-md overflow-hidden">
+                      <div className="border border-neutral-800 rounded-md overflow-hidden">
                         <CodeMirror
                           value={responseData || ""}
                           extensions={[
                             response.record?.format === "xml" ? xml() : json()
                           ]}
-                          theme="light"
+                          theme="dark"
                           className="text-xs"
                           readOnly
                           basicSetup={{
@@ -179,20 +179,20 @@ const LogDetailViewer = ({ log }: { log: any }) => {
   }, [log]);
 
   const getStatusColor = (statusCode: number | null) => {
-    if (!statusCode) return "bg-gray-100 text-gray-800";
-    if (statusCode >= 200 && statusCode < 300) return "bg-green-100 text-green-800";
-    if (statusCode >= 400) return "bg-red-100 text-red-800";
-    return "bg-yellow-100 text-yellow-800";
+    if (!statusCode) return "bg-slate-900/30 text-slate-200";
+    if (statusCode >= 200 && statusCode < 300) return "bg-green-900/40 text-green-300";
+    if (statusCode >= 400) return "bg-red-900/40 text-red-300";
+    return "bg-yellow-900/40 text-yellow-300";
   };
 
   const getMethodColor = (method: string | null) => {
     switch (method?.toUpperCase()) {
-      case 'GET': return "bg-blue-100 text-blue-800";
-      case 'POST': return "bg-green-100 text-green-800";
-      case 'PUT': return "bg-yellow-100 text-yellow-800";
-      case 'DELETE': return "bg-red-100 text-red-800";
-      case 'PATCH': return "bg-purple-100 text-purple-800";
-      default: return "bg-gray-100 text-gray-800";
+      case 'GET': return "bg-blue-900/40 text-blue-300";
+      case 'POST': return "bg-green-900/40 text-green-300";
+      case 'PUT': return "bg-yellow-900/40 text-yellow-300";
+      case 'DELETE': return "bg-red-900/40 text-red-300";
+      case 'PATCH': return "bg-purple-900/40 text-purple-300";
+      default: return "bg-slate-900/40 text-slate-300";
     }
   };
 
@@ -264,21 +264,21 @@ const LogDetailViewer = ({ log }: { log: any }) => {
       <div className="border-b px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Badge className={getMethodColor(log.method)}>
+            <Badge className={`${getMethodColor(log.method)} border-none hover:bg-black`}>
               {log.method}
             </Badge>
-            <Badge className={getStatusColor(log.status_code)}>
+            <Badge className={`${getStatusColor(log.status_code)} border-none hover:bg-black`}>
               {getStatusIcon(log.status_code)} {log.status_code}
             </Badge>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-400">
             {formatDateTimeLong(log.requested_at)}
           </div>
         </div>
-        <div className="text-sm font-medium truncate">
+        <div className="text-sm font-medium truncate text-white">
           {log.method} {log.path}
         </div>
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs text-gray-400 mt-1">
           ID: {log.id} • {log.response_ms}ms • {log.remote_addr}
         </div>
       </div>
@@ -290,8 +290,8 @@ const LogDetailViewer = ({ log }: { log: any }) => {
             <button
               onClick={() => setActiveTab("response")}
               className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${activeTab === "response"
-                ? "border-blue-500 text-blue-600 bg-blue-50/50"
-                : "border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300"
+                ? "bg-primary border-primary text-primary-foreground"
+                : "bg-transparent border-neutral-800 text-neutral-300 hover:bg-neutral-800/40 hover:text-white"
                 }`}
             >
               Response
@@ -300,8 +300,8 @@ const LogDetailViewer = ({ log }: { log: any }) => {
           <button
             onClick={() => setActiveTab("request")}
             className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${activeTab === "request"
-              ? "border-blue-500 text-blue-600 bg-blue-50/50"
-              : "border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300"
+              ? "bg-primary border-primary text-primary-foreground"
+              : "bg-transparent border-neutral-800 text-neutral-300 hover:bg-neutral-800/40 hover:text-white"
               }`}
           >
             Request
@@ -310,8 +310,8 @@ const LogDetailViewer = ({ log }: { log: any }) => {
             <button
               onClick={() => setActiveTab("timeline")}
               className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${activeTab === "timeline"
-                ? "border-blue-500 text-blue-600 bg-blue-50/50"
-                : "border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300"
+                ? "bg-primary border-primary text-primary-foreground"
+                : "bg-transparent border-neutral-800 text-neutral-300 hover:bg-neutral-800/40 hover:text-white"
                 }`}
             >
               <Clock className="h-3 w-3 mr-1 inline" />
@@ -327,12 +327,12 @@ const LogDetailViewer = ({ log }: { log: any }) => {
           <div className="p-4">
             <div className="mb-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Response Body</span>
+                <span className="text-sm font-medium text-gray-300">Response Body</span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => copyToClipboard(response || "")}
-                  className="h-7 px-2"
+                  className="h-7 px-2 text-white"
                 >
                   <Copy className="h-3 w-3" />
                 </Button>
@@ -341,7 +341,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                 <CodeMirror
                   value={response || ""}
                   extensions={[json()]}
-                  theme="light"
+                  theme="dark"
                   className="text-xs"
                   readOnly
                   basicSetup={{
@@ -366,12 +366,12 @@ const LogDetailViewer = ({ log }: { log: any }) => {
             {notEmptyJSON(queryParams) && queryParams !== data && (
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Query Parameters</span>
+                  <span className="text-sm font-medium text-gray-300">Query Parameters</span>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => copyToClipboard(queryParams || "")}
-                    className="h-7 px-2"
+                    className="h-7 px-2 text-white"
                   >
                     <Copy className="h-3 w-3" />
                   </Button>
@@ -380,7 +380,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                   <CodeMirror
                     value={queryParams || ""}
                     extensions={[json()]}
-                    theme="light"
+                    theme="dark"
                     className="text-xs"
                     readOnly
                     basicSetup={{
@@ -402,12 +402,12 @@ const LogDetailViewer = ({ log }: { log: any }) => {
             {notEmptyJSON(data) && (
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Request {log?.method} Body</span>
+                  <span className="text-sm font-medium text-gray-300">Request {log?.method} Body</span>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => copyToClipboard(data || "")}
-                    className="h-7 px-2"
+                    className="h-7 px-2 text-white"
                   >
                     <Copy className="h-3 w-3" />
                   </Button>
@@ -416,7 +416,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                   <CodeMirror
                     value={data || ""}
                     extensions={[json()]}
-                    theme="light"
+                    theme="dark"
                     className="text-xs"
                     readOnly
                     basicSetup={{
@@ -455,35 +455,35 @@ const LogListItem = ({
   onSelect: (log: any) => void;
 }) => {
   const getStatusColor = (statusCode: number | null) => {
-    if (!statusCode) return "bg-gray-100 text-gray-800";
-    if (statusCode >= 200 && statusCode < 300) return "bg-green-100 text-green-800";
-    if (statusCode >= 400) return "bg-red-100 text-red-800";
-    return "bg-yellow-100 text-yellow-800";
+    if (!statusCode) return "bg-gray-900/40 text-gray-300";
+    if (statusCode >= 200 && statusCode < 300) return "bg-green-900/40 text-green-300";
+    if (statusCode >= 400) return "bg-red-900/40 text-red-300";
+    return "bg-yellow-900/40 text-yellow-300";
   };
 
   const getMethodColor = (method: string | null) => {
     switch (method?.toUpperCase()) {
-      case "GET": return "bg-blue-100 text-blue-800";
-      case "POST": return "bg-green-100 text-green-800";
-      case "PUT": return "bg-yellow-100 text-yellow-800";
-      case "DELETE": return "bg-red-100 text-red-800";
-      case "PATCH": return "bg-purple-100 text-purple-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "GET": return "bg-blue-900/40 text-blue-300";
+      case "POST": return "bg-green-900/40 text-green-300";
+      case "PUT": return "bg-yellow-900/40 text-yellow-300";
+      case "DELETE": return "bg-red-900/40 text-red-300";
+      case "PATCH": return "bg-purple-900/40 text-purple-300";
+      default: return "bg-gray-900/40 text-gray-300";
     }
   };
 
   const getStatusIcon = (statusCode: number | null) => {
-    if (!statusCode) return <AlertCircle className="h-4 w-4" />;
-    if (statusCode >= 200 && statusCode < 300) return <CheckCircle className="h-4 w-4" />;
-    if (statusCode >= 400) return <AlertCircle className="h-4 w-4" />;
-    return <Activity className="h-4 w-4" />;
+    if (!statusCode) return <AlertCircle className="h-4 w-4 text-primary" />;
+    if (statusCode >= 200 && statusCode < 300) return <CheckCircle className="h-4 w-4 text-primary" />;
+    if (statusCode >= 400) return <AlertCircle className="h-4 w-4 text-primary" />;
+    return <Activity className="h-4 w-4 text-primary" />;
   };
 
   return (
     <div
       className={cn(
-        "p-4 border-b border-gray-200 cursor-pointer transition-all duration-150 hover:bg-gray-50",
-        isSelected ? "bg-gray-50 border-l-4 border-l-gray-400" : "border-l-4 border-l-transparent"
+        "p-4 border-b border-neutral-800 cursor-pointer transition-all duration-150 hover:bg-primary/10",
+        isSelected ? "bg-primary/20 border-l-4 border-l-primary/60" : "border-l-4 border-l-transparent"
       )}
       onClick={() => onSelect(log)}
     >
@@ -492,26 +492,26 @@ const LogListItem = ({
           {getStatusIcon(log.status_code)}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <Badge className={`${getMethodColor(log.method)} border-none text-xs`}>
+              <Badge className={`${getMethodColor(log.method)} border-none text-xs hover:bg-black`}>
                 {log.method}
               </Badge>
-              <Badge className={`${getStatusColor(log.status_code)} border-none text-xs`}>
+              <Badge className={`${getStatusColor(log.status_code)} border-none text-xs hover:bg-black`}>
                 {log.status_code}
               </Badge>
               {log.response_ms && (
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-neutral-400">
                   {log.response_ms}ms
                 </span>
               )}
             </div>
-            <div className="text-sm text-slate-900 truncate font-mono">
+            <div className="text-sm text-neutral-200 truncate font-mono">
               {log.path}
             </div>
-            <div className="text-xs text-slate-500 truncate">
+            <div className="text-xs text-neutral-400 truncate">
               ID: {log.id} • {log.host || "Unknown"}
             </div>
           </div>
-          <div className="text-xs text-slate-500 flex-shrink-0">
+          <div className="text-xs text-neutral-400 flex-shrink-0">
             {formatDateTimeLong(log.requested_at)}
           </div>
         </div>
@@ -570,9 +570,9 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
         variant="outline"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="h-8"
+        className="h-8 text-white border-neutral-800 hover:bg-neutral-800/40"
       >
-        <Filter className="h-4 w-4 mr-2" />
+        <Filter className="h-4 w-4 mr-2 text-white" />
         Filters
         {hasActiveFilters() && (
           <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
@@ -584,15 +584,15 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 w-80 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+          <div className="absolute right-0 top-full mt-1 w-80 bg-popover border border-border rounded-md shadow-lg z-20 text-foreground">
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-sm">Filter Logs</h3>
+                <h3 className="font-medium text-sm text-foreground">Filter Logs</h3>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="h-6 w-6 p-0"
+                  className="h-6 w-6 p-0 text-foreground hover:bg-primary/10"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -601,67 +601,68 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
               <div className="space-y-4">
                 {/* Search */}
                 <div>
-                  <Label htmlFor="search" className="text-sm font-medium">Search</Label>
+                  <Label htmlFor="search" className="text-sm font-medium text-muted-foreground">Search</Label>
                   <Input
                     id="search"
                     placeholder="Search logs..."
                     value={tempFilters.query || ""}
                     onChange={(e) => handleTempFilterChange('query', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 bg-input text-foreground border-border placeholder:text-muted-foreground"
                   />
                 </div>
 
                 {/* Status Code */}
                 <div>
-                  <Label htmlFor="status" className="text-sm font-medium">Status Code</Label>
+                  <Label htmlFor="status" className="text-sm font-medium text-muted-foreground">Status Code</Label>
                   <Select
                     value={tempFilters.status_code?.toString() || "all"}
                     onValueChange={(value) => handleTempFilterChange('status_code', value === 'all' ? undefined : parseInt(value))}
                   >
-                    <SelectTrigger className="w-full mt-1">
+                    <SelectTrigger className="w-full mt-1 text-foreground">
                       <SelectValue placeholder="All status codes" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All status codes</SelectItem>
-                      <SelectItem value="200">200 - OK</SelectItem>
-                      <SelectItem value="201">201 - Created</SelectItem>
-                      <SelectItem value="400">400 - Bad Request</SelectItem>
-                      <SelectItem value="401">401 - Unauthorized</SelectItem>
-                      <SelectItem value="404">404 - Not Found</SelectItem>
-                      <SelectItem value="500">500 - Server Error</SelectItem>
+                    <SelectContent className="devtools-theme dark bg-popover text-foreground border-border">
+                      <SelectItem value="all" className="text-foreground focus:bg-primary/20 focus:text-foreground">All status codes</SelectItem>
+                      <SelectItem value="200" className="text-foreground focus:bg-primary/20 focus:text-foreground">200 - OK</SelectItem>
+                      <SelectItem value="201" className="text-foreground focus:bg-primary/20 focus:text-foreground">201 - Created</SelectItem>
+                      <SelectItem value="400" className="text-foreground focus:bg-primary/20 focus:text-foreground">400 - Bad Request</SelectItem>
+                      <SelectItem value="401" className="text-foreground focus:bg-primary/20 focus:text-foreground">401 - Unauthorized</SelectItem>
+                      <SelectItem value="404" className="text-foreground focus:bg-primary/20 focus:text-foreground">404 - Not Found</SelectItem>
+                      <SelectItem value="500" className="text-foreground focus:bg-primary/20 focus:text-foreground">500 - Server Error</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Method */}
                 <div>
-                  <Label htmlFor="method" className="text-sm font-medium">HTTP Method</Label>
+                  <Label htmlFor="method" className="text-sm font-medium text-muted-foreground">HTTP Method</Label>
                   <Select
                     value={tempFilters.method || "all"}
                     onValueChange={(value) => handleTempFilterChange('method', value === 'all' ? undefined : value)}
                   >
-                    <SelectTrigger className="w-full mt-1">
+                    <SelectTrigger className="w-full mt-1 text-foreground">
                       <SelectValue placeholder="All methods" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All methods</SelectItem>
-                      <SelectItem value="GET">GET</SelectItem>
-                      <SelectItem value="POST">POST</SelectItem>
-                      <SelectItem value="PUT">PUT</SelectItem>
-                      <SelectItem value="DELETE">DELETE</SelectItem>
-                      <SelectItem value="PATCH">PATCH</SelectItem>
+                    <SelectContent className="devtools-theme dark bg-popover text-foreground border-border">
+                      <SelectItem value="all" className="text-foreground focus:bg-primary/20 focus:text-foreground">All methods</SelectItem>
+                      <SelectItem value="GET" className="text-foreground focus:bg-primary/20 focus:text-foreground">GET</SelectItem>
+                      <SelectItem value="POST" className="text-foreground focus:bg-primary/20 focus:text-foreground">POST</SelectItem>
+                      <SelectItem value="PUT" className="text-foreground focus:bg-primary/20 focus:text-foreground">PUT</SelectItem>
+                      <SelectItem value="DELETE" className="text-foreground focus:bg-primary/20 focus:text-foreground">DELETE</SelectItem>
+                      <SelectItem value="PATCH" className="text-foreground focus:bg-primary/20 focus:text-foreground">PATCH</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
               </div>
 
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleClear}
                   disabled={!hasActiveFilters() && Object.keys(tempFilters).length === 0}
+                  className="text-foreground border-border hover:bg-primary/10"
                 >
                   Clear All
                 </Button>
@@ -670,6 +671,7 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsOpen(false)}
+                    className="text-foreground hover:bg-primary/10"
                   >
                     Cancel
                   </Button>
@@ -677,6 +679,7 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
                     size="sm"
                     onClick={handleApply}
                     disabled={query.isLoading}
+                    className="text-foreground border-border hover:bg-primary/10"
                   >
                     {query.isLoading ? 'Applying...' : 'Apply'}
                   </Button>
@@ -721,13 +724,13 @@ export function LogsView() {
   };
 
   return (
-    <div className="h-full flex overflow-hidden">
+    <div className="h-full flex overflow-hidden bg-background">
       {/* Left Panel - Logs List */}
-      <div className="w-1/2 border-r flex flex-col lg:flex hidden h-full">
+      <div className="w-1/2 border-r border-border flex flex-col lg:flex hidden h-full">
         {/* Header */}
-        <div className="border-b px-4 py-3 flex-shrink-0">
+        <div className="border-b border-border px-4 py-3 flex-shrink-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold">API Logs</h2>
+            <h2 className="text-lg font-semibold text-foreground">API Logs</h2>
             <div className="flex items-center gap-2">
               {/* Use the custom LogsFilterDropdown component */}
               <LogsFilterDropdown context={logsContext} />
@@ -736,6 +739,7 @@ export function LogsView() {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={query.isFetching}
+                className="text-foreground border-border hover:bg-primary/10"
               >
                 <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
               </Button>
@@ -766,16 +770,16 @@ export function LogsView() {
         <div className="flex-1 overflow-y-auto">
           {query.isFetching && (
             <div className="flex items-center justify-center py-8">
-              <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+              <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           )}
 
           {!query.isFetching && logs.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p>No logs found</p>
               {hasActiveFilters() && (
-                <p className="text-xs mt-1">Try adjusting your filters</p>
+                <p className="text-xs mt-1 text-muted-foreground">Try adjusting your filters</p>
               )}
             </div>
           )}
@@ -796,8 +800,8 @@ export function LogsView() {
 
         {/* Pagination */}
         {logs.length > 0 && (
-          <div className="border-t px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
-            <span className="text-gray-600">
+          <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
+            <span className="text-muted-foreground">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + logs.length}
               {query.data?.logs?.page_info.has_next_page && " of many"}
             </span>
@@ -807,7 +811,7 @@ export function LogsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                 disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
               >
                 Previous
               </Button>
@@ -816,7 +820,7 @@ export function LogsView() {
                 size="sm"
                 onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                 disabled={!query.data?.logs?.page_info.has_next_page}
-                className="h-7 px-2 text-xs"
+                className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
               >
                 Next
               </Button>
@@ -834,15 +838,15 @@ export function LogsView() {
       <div className="lg:hidden w-full">
         {selectedLog ? (
           <div className="h-full flex flex-col">
-            <div className="border-b px-4 py-2 flex items-center gap-2">
+            <div className="border-b border-border px-4 py-2 flex items-center gap-2 text-primary">
               <Button
                 variant="ghost"
-                size="sm"
+                size="default"
                 onClick={() => setSelectedLog(null)}
               >
                 ← Back
               </Button>
-              <span className="text-sm font-medium">Log Details</span>
+              <span className="text-sm font-medium text-foreground">Log Details</span>
             </div>
             <div className="flex-1">
               <LogDetailViewer log={selectedLog} />
@@ -851,9 +855,9 @@ export function LogsView() {
         ) : (
           <div className="h-full flex flex-col">
             {/* Mobile Header */}
-            <div className="border-b px-4 py-3">
+            <div className="border-b border-border px-4 py-3">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">API Logs</h2>
+                <h2 className="text-lg font-semibold text-foreground">API Logs</h2>
                 <div className="flex items-center gap-2">
                   {/* Use the custom LogsFilterDropdown component for mobile */}
                   <LogsFilterDropdown context={logsContext} />
@@ -897,11 +901,11 @@ export function LogsView() {
               )}
 
               {!query.isFetching && logs.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <p>No logs found</p>
                   {hasActiveFilters() && (
-                    <p className="text-xs mt-1">Try adjusting your filters</p>
+                    <p className="text-xs mt-1 text-muted-foreground">Try adjusting your filters</p>
                   )}
                 </div>
               )}
@@ -922,8 +926,8 @@ export function LogsView() {
 
             {/* Mobile Pagination */}
             {logs.length > 0 && (
-              <div className="border-t px-4 py-2 flex items-center justify-between text-sm">
-                <span className="text-gray-600">
+              <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + logs.length}
                   {query.data?.logs?.page_info.has_next_page && " of many"}
                 </span>
@@ -933,7 +937,7 @@ export function LogsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: Math.max(0, ((filter.offset as number) || 0) - 20) })}
                     disabled={(filter.offset as number) === 0 || filter.offset === undefined}
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
                   >
                     Previous
                   </Button>
@@ -942,7 +946,7 @@ export function LogsView() {
                     size="sm"
                     onClick={() => updateFilter({ offset: ((filter.offset as number) || 0) + 20 })}
                     disabled={!query.data?.logs?.page_info.has_next_page}
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
                   >
                     Next
                   </Button>

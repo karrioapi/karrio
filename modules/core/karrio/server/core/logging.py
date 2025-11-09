@@ -150,6 +150,9 @@ def setup_django_loguru(
     if intercept_django:
         intercept_standard_logging()
 
+    # Configure third-party library loggers
+    configure_third_party_loggers(debug_mode)
+
     _logger.info(f"Loguru configured for Django (level: {log_level})")
 
 
@@ -200,6 +203,30 @@ def intercept_standard_logging():
         logging.getLogger(name).propagate = True
 
     _logger.info("Standard logging interception enabled")
+
+
+def configure_third_party_loggers(debug_mode: bool = False):
+    """
+    Configure logging levels for third-party libraries to reduce noise.
+
+    In production, we suppress verbose warnings from libraries that don't provide
+    useful context. In development, we keep them at WARNING level for debugging.
+    """
+    import logging
+
+    # Configure jstruct logger
+    # Note: jstruct logs "unknown arguments" warnings which are handled more verbosely
+    # by our own code in karrio.core.utils.dict.DICTPARSE.to_object
+    jstruct_logger = logging.getLogger("jstruct.utils")
+
+    if debug_mode:
+        # In debug mode, let our enhanced logging handle unknown arguments
+        # Suppress jstruct's basic warnings to avoid duplicates
+        jstruct_logger.setLevel(logging.ERROR)
+    else:
+        # In production, completely silence jstruct warnings
+        # (they're typically not actionable in production)
+        jstruct_logger.setLevel(logging.ERROR)
 
 
 def get_request_context_logger(request):

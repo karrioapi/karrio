@@ -40,7 +40,7 @@ export function OrganizationManagement() {
       await mutation.sendOrganizationInvites.mutateAsync({
         org_id: organization?.id as string,
         emails,
-        redirect_url: `${window.location.origin}/accept-invitation`,
+        redirect_url: `${window.location.origin}/accept-invite`,
         roles: [],
       });
       notify({
@@ -112,7 +112,7 @@ export function OrganizationManagement() {
     try {
       await mutation.resendOrganizationInvite.mutateAsync({
         invitation_id: invitationId,
-        redirect_url: `${window.location.origin}/accept-invitation`,
+        redirect_url: `${window.location.origin}/accept-invite`,
       });
       notify({
         type: NotificationType.success,

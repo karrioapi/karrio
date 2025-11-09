@@ -77,13 +77,49 @@ export const ShipmentMenu = ({
   };
 
   const cancelShipment = (shipment: ShipmentType) => async () => {
-    await mutation.voidLabel.mutateAsync(shipment);
+    try {
+      await mutation.voidLabel.mutateAsync(shipment);
+
+      toast({
+        title: "Shipment cancelled successfully",
+        description: `Shipment ${shipment.tracking_number || shipment.id} has been cancelled.`,
+      });
+    } catch (error: any) {
+      const errorMessage = error?.message || "Failed to cancel shipment";
+
+      toast({
+        variant: "destructive",
+        title: "Failed to cancel shipment",
+        description: errorMessage,
+      });
+
+      // Re-throw to prevent dialog from closing
+      throw error;
+    }
   };
 
   const changeStatus =
     ({ id }: ShipmentType, status: ManualShipmentStatusEnum) =>
       async () => {
-        await mutation.changeStatus.mutateAsync({ id, status });
+        try {
+          await mutation.changeStatus.mutateAsync({ id, status });
+
+          toast({
+            title: "Status updated successfully",
+            description: `Shipment has been marked as ${formatRef(status.toString())}.`,
+          });
+        } catch (error: any) {
+          const errorMessage = error?.message || "Failed to update status";
+
+          toast({
+            variant: "destructive",
+            title: "Failed to update status",
+            description: errorMessage,
+          });
+
+          // Re-throw to prevent dialog from closing
+          throw error;
+        }
       };
 
   const duplicateShipment = async (_: React.MouseEvent) => {

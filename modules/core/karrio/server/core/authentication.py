@@ -154,13 +154,17 @@ class OAuth2Authentication(BaseOAuth2Authentication):
             if user is None:
                 # For client credentials flow, the user might be None from the base class
                 # but our custom validator should have set it on the request
-                if hasattr(request, 'user') and request.user and not request.user.is_anonymous:
+                if (
+                    hasattr(request, "user")
+                    and request.user
+                    and not request.user.is_anonymous
+                ):
                     user = request.user
-                elif hasattr(request, 'oauth_user'):
+                elif hasattr(request, "oauth_user"):
                     user = request.oauth_user
                 # If we still don't have a user, try to get it from the OAuth application
-                elif hasattr(token, 'application') and token.application:
-                    user = getattr(token.application, 'user', None)
+                elif hasattr(token, "application") and token.application:
+                    user = getattr(token.application, "user", None)
 
             # Set request context
             request.user = user or request.user
@@ -169,13 +173,17 @@ class OAuth2Authentication(BaseOAuth2Authentication):
 
             # Enhanced organization context for OAuth apps
             default_org = None
-            if hasattr(token, 'application') and hasattr(token.application, 'oauth_app'):
+            if hasattr(token, "application") and hasattr(
+                token.application, "oauth_app"
+            ):
                 # If this is an OAuth app token, use the app owner's organization
                 oauth_app = token.application.oauth_app
-                if hasattr(oauth_app, 'created_by') and oauth_app.created_by:
+                if hasattr(oauth_app, "created_by") and oauth_app.created_by:
                     app_owner = oauth_app.created_by
-                    if hasattr(app_owner, 'organizations'):
-                        default_org = app_owner.organizations.filter(is_active=True).first()
+                    if hasattr(app_owner, "organizations"):
+                        default_org = app_owner.organizations.filter(
+                            is_active=True
+                        ).first()
 
             request.org = SimpleLazyObject(
                 functools.partial(
@@ -198,7 +206,11 @@ class AccessMixin(mixins.AccessMixin):
     """Verify that the current user is authenticated."""
 
     def dispatch(self, request, *args, **kwargs):
-        if not hasattr(request, 'user') or request.user is None or not request.user.is_authenticated:
+        if (
+            not hasattr(request, "user")
+            or request.user is None
+            or not request.user.is_authenticated
+        ):
             authenticate_user(request)
 
         request.user = SimpleLazyObject(
@@ -239,7 +251,11 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
 def authenticate_user(request):
     def authenticate(request, authenticator):
         # Check if user exists and is not authenticated
-        if not hasattr(request, 'user') or request.user is None or not getattr(request.user, 'is_authenticated', False):
+        if (
+            not hasattr(request, "user")
+            or request.user is None
+            or not getattr(request.user, "is_authenticated", False)
+        ):
             logger.debug(f"Trying authenticator: {authenticator}")
             try:
                 auth_instance = pydoc.locate(authenticator)()
@@ -249,11 +265,12 @@ def authenticate_user(request):
                     user, token = auth
                     request.user = user
                     request.token = token
-                    logger.info(f"Authentication successful with: {authenticator}")
             except AttributeError as e:
                 # Skip SessionAuthentication if it fails with _request attribute error
                 if "'WSGIRequest' object has no attribute '_request'" in str(e):
-                    logger.debug(f"Skipping {authenticator} - incompatible with middleware context")
+                    logger.debug(
+                        f"Skipping {authenticator} - incompatible with middleware context"
+                    )
                 else:
                     raise
             except exceptions.AuthenticationFailed:
@@ -281,7 +298,7 @@ def get_request_org(request, user, org_id: str = None, default_org=None):
 
             if default_org is not None:
                 org = default_org
-            elif user and hasattr(user, 'id') and user.id:
+            elif user and hasattr(user, "id") and user.id:
                 orgs = Organization.objects.filter(users__id=user.id)
                 org = (
                     orgs.filter(id=org_id).first()

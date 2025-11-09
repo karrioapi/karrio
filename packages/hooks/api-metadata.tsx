@@ -4,7 +4,7 @@ import { Metadata, References } from "@karrio/types";
 import { useAuthenticatedQuery } from "./karrio";
 import { useSyncedSession } from "./session";
 import { onError, url$ } from "@karrio/lib";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import axios from "axios";
 
 type APIMeta = {
@@ -64,8 +64,10 @@ function APIMetadataProvider({
           throw err;
         });
     },
-    refetchOnWindowFocus: false,
-    staleTime: 300000,
+    // Auto-refresh to reflect admin config changes without manual reload
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    staleTime: 0,
     enabled: isEnabled,
     requireAuth: false,
     onError: (err) => {
@@ -73,10 +75,39 @@ function APIMetadataProvider({
     },
   });
 
+  // Merge live feature flags from references into metadata so UI reflects changes without full
+  // page reload. Only override known flag keys to keep metadata shape stable.
+  const mergedMetadata = useMemo(() => {
+    const base = (metadata || {}) as any;
+    const src = (references || {}) as any;
+    const flagKeys = [
+      "AUDIT_LOGGING",
+      "ALLOW_SIGNUP",
+      "ALLOW_ADMIN_APPROVED_SIGNUP",
+      "ALLOW_MULTI_ACCOUNT",
+      "ADMIN_DASHBOARD",
+      "MULTI_ORGANIZATIONS",
+      "ORDERS_MANAGEMENT",
+      "APPS_MANAGEMENT",
+      "DOCUMENTS_MANAGEMENT",
+      "DATA_IMPORT_EXPORT",
+      "PERSIST_SDK_TRACING",
+      "WORKFLOW_MANAGEMENT",
+      "SHIPPING_RULES",
+      "ADVANCED_ANALYTICS",
+    ];
+    const overlay: Record<string, any> = {};
+    flagKeys.forEach((k) => {
+      if (typeof src?.[k] !== "undefined") overlay[k] = src[k];
+    });
+    return { ...(base || {}), ...overlay } as Metadata;
+  }, [references, metadata]);
+
   return (
     <APIMetadata.Provider
       value={{
         ...context,
+        metadata: mergedMetadata,
         references: (references || metadata || {}) as References,
       }}
     >

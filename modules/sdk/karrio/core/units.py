@@ -438,6 +438,10 @@ class Girth:
 
     @property
     def value(self):
+        # Handle None dimensions gracefully
+        if not all([self._side1, self._side2, self._side3]):
+            return None
+
         sides = [self._side1.CM, self._side2.CM, self._side3.CM]
         if not any(sides):
             return None
@@ -724,15 +728,21 @@ class Package:
 
     @property
     def width(self) -> Dimension:
-        return self._compute_dimension(self.preset.width or self.parcel.width)
+        return self._compute_dimension(
+            getattr(self.preset, "width", None) or getattr(self.parcel, "width", None)
+        )
 
     @property
     def height(self) -> Dimension:
-        return self._compute_dimension(self.preset.height or self.parcel.height)
+        return self._compute_dimension(
+            getattr(self.preset, "height", None) or getattr(self.parcel, "height", None)
+        )
 
     @property
     def length(self) -> Dimension:
-        return self._compute_dimension(self.preset.length or self.parcel.length)
+        return self._compute_dimension(
+            getattr(self.preset, "length", None) or getattr(self.parcel, "length", None)
+        )
 
     @property
     def girth(self) -> Girth:

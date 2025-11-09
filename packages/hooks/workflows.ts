@@ -400,7 +400,7 @@ export function useWorkflowForm({ id, templateSlug }: { id?: string; templateSlu
             }
           });
       } catch (error: any) {
-        notifier.notify({ type: NotificationType.error, message: error });
+        notifier.notify({ type: NotificationType.error, message: error.data || error });
       }
     }
   };
@@ -518,7 +518,7 @@ export function useWorkflowForm({ id, templateSlug }: { id?: string; templateSlu
         });
       }
     } catch (error: any) {
-      notifier.notify({ type: NotificationType.error, message: error });
+      notifier.notify({ type: NotificationType.error, message: error.data || error });
       loader.setLoading(false);
     }
   };
@@ -535,7 +535,7 @@ export function useWorkflowForm({ id, templateSlug }: { id?: string; templateSlu
       });
       setInterval(4000);
     } catch (error: any) {
-      notifier.notify({ type: NotificationType.error, message: error });
+      notifier.notify({ type: NotificationType.error, message: error.data || error });
       loader.setLoading(false);
     }
   };
@@ -550,10 +550,16 @@ export function useWorkflowForm({ id, templateSlug }: { id?: string; templateSlu
       const templateData = {
         name: selectedTemplate.name,
         description: selectedTemplate.description,
-        trigger: selectedTemplate.trigger,
+        // Remove slug from trigger as it's not accepted by the API mutation
+        trigger: selectedTemplate.trigger ? {
+          ...selectedTemplate.trigger,
+          slug: undefined,
+        } : undefined,
+        // Remove id and slug from actions as they're not accepted by the API mutation
         actions: selectedTemplate.actions?.map((action: any, index: number) => ({
           ...action,
-          id: undefined, // Remove id for new actions
+          id: undefined,
+          slug: undefined,
         })) || [],
         action_nodes: selectedTemplate.actions?.map((_: any, index: number) => ({
           order: index + 1,

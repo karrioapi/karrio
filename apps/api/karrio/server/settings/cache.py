@@ -1,4 +1,5 @@
 # type: ignore
+import sys
 from decouple import config
 from karrio.server.settings.base import *
 from karrio.server.settings.apm import HEALTH_CHECK_APPS
@@ -6,6 +7,16 @@ from karrio.server.core.logging import logger
 
 
 CACHE_TTL = 60 * 15
+
+# Check if worker is running in detached mode (separate from API server)
+DETACHED_WORKER = config("DETACHED_WORKER", default=False, cast=bool)
+
+# Detect if running as a worker process (via run_huey command)
+IS_WORKER_PROCESS = any("run_huey" in arg for arg in sys.argv)
+
+# Skip default Redis cache configuration if in worker mode
+# Workers only need HUEY Redis, not the default Django cache
+SKIP_DEFAULT_CACHE = DETACHED_WORKER or IS_WORKER_PROCESS
 
 # Redis configuration - REDIS_URL takes precedence and supersedes granular env vars
 REDIS_URL = config("REDIS_URL", default=None)
@@ -31,7 +42,7 @@ if REDIS_URL is not None:
 
     # Build connection URL with database 1 for cache
     REDIS_AUTH = f"{REDIS_USERNAME}:{REDIS_PASSWORD}@" if REDIS_PASSWORD else ""
-    REDIS_CONNECTION_URL = f'{REDIS_SCHEME}://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT}/1'
+    REDIS_CONNECTION_URL = f"{REDIS_SCHEME}://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT}/1"
 
 else:
     # Fall back to individual parameters
@@ -43,10 +54,12 @@ else:
     if REDIS_HOST is not None:
         REDIS_AUTH = f"{REDIS_USERNAME}:{REDIS_PASSWORD}@" if REDIS_PASSWORD else ""
         REDIS_SCHEME = "rediss" if REDIS_SSL else "redis"
-        REDIS_CONNECTION_URL = f'{REDIS_SCHEME}://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT or "6379"}/1'
+        REDIS_CONNECTION_URL = (
+            f'{REDIS_SCHEME}://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT or "6379"}/1'
+        )
 
-# Configure Django cache if Redis is available
-if REDIS_HOST is not None:
+# Configure Django cache if Redis is available and not in worker mode
+if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
     HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
     INSTALLED_APPS += ["health_check.contrib.redis"]
 
@@ -56,9 +69,17 @@ if REDIS_HOST is not None:
             "LOCATION": REDIS_CONNECTION_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                **({"CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": None}} if REDIS_SSL else {}),
+                **(
+                    {"CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": None}}
+                    if REDIS_SSL
+                    else {}
+                ),
             },
             "KEY_PREFIX": REDIS_PREFIX,
         }
     }
-    logger.info("Redis connection initialized", redis_url=REDIS_CONNECTION_URL)
+    print(f"Redis cache connection initialized")
+elif SKIP_DEFAULT_CACHE:
+    print(
+        "Skipping default Redis cache configuration (worker mode - only HUEY Redis needed)"
+    )

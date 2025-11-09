@@ -72,7 +72,8 @@ def contextual_metadata(request: Request):
         "GRAPHQL": f"{host}/graphql",
         "OPENAPI": f"{host}/openapi",
         **{
-            flag: getattr(conf.settings, flag, None)
+            # Prefer dynamic values from Constance so changes apply without restart
+            flag: getattr(config, flag, getattr(conf.settings, flag, None))
             for flag, _ in conf.settings.FEATURE_FLAGS
         },
     }

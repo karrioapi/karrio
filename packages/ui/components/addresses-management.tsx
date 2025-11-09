@@ -35,35 +35,54 @@ import {
   formatAddressShort,
   getURLSearchParams,
   isNoneOrEmpty,
+  isEqual,
 } from "@karrio/lib";
 import {
   useAddressTemplateMutation,
   useAddressTemplates,
 } from "@karrio/hooks/address";
-import { AddressType, NotificationType } from "@karrio/types";
+import { AddressType } from "@karrio/types";
 import { useSearchParams } from "next/navigation";
-import { useNotifier } from "@karrio/ui/core/components/notifier";
+import { useToast } from "@karrio/ui/hooks/use-toast";
+
+// Helper function to normalize address for comparison (exclude metadata)
+const normalizeAddressForComparison = (address: any) => {
+  if (!address) return {};
+  const { id, validate_location, ...addressData } = address;
+  return addressData;
+};
+
+// Helper function to check if two addresses are identical
+const areAddressesIdentical = (addr1: any, addr2: any) => {
+  return isEqual(
+    normalizeAddressForComparison(addr1),
+    normalizeAddressForComparison(addr2)
+  );
+};
 
 interface AddressEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   addressTemplate?: any;
   onSave: () => void;
+  existingTemplates?: any[];
 }
 
 function AddressEditDialog({
   open,
   onOpenChange,
   addressTemplate,
-  onSave
+  onSave,
+  existingTemplates = []
 }: AddressEditDialogProps) {
-  const notifier = useNotifier();
+  const { toast } = useToast();
   const { createAddressTemplate, updateAddressTemplate } = useAddressTemplateMutation();
   const [formData, setFormData] = React.useState({
     label: "",
     is_default: false,
     address: {},
   });
+  const [labelError, setLabelError] = React.useState<string>("");
   const addressFormRef = React.useRef<AddressFormRef>(null);
 
   React.useEffect(() => {
@@ -80,13 +99,65 @@ function AddressEditDialog({
         address: {},
       });
     }
+    setLabelError("");
   }, [addressTemplate, open]);
+
+  // Real-time label validation
+  React.useEffect(() => {
+    const trimmedLabel = formData.label.trim();
+
+    // Don't show error for empty label (handled by required field)
+    if (!trimmedLabel) {
+      setLabelError("");
+      return;
+    }
+
+    // Filter out current template when editing
+    const templatesToCheck = existingTemplates.filter(
+      template => !addressTemplate || template.id !== addressTemplate.id
+    );
+
+    // Check for duplicate label (case-insensitive)
+    const duplicateLabel = templatesToCheck.find(
+      template => template.label?.trim().toLowerCase() === trimmedLabel.toLowerCase()
+    );
+
+    if (duplicateLabel) {
+      setLabelError("A template with this label already exists");
+    } else {
+      setLabelError("");
+    }
+  }, [formData.label, existingTemplates, addressTemplate]);
 
   const handleAddressChange = (address: Partial<AddressType>) => {
     setFormData(prev => ({ ...prev, address }));
   };
 
   const handleSubmit = async (address: Partial<AddressType>) => {
+    // Check if there's a label error (already validated in real-time)
+    if (labelError) {
+      return;
+    }
+
+    // Filter out current template when editing (to allow updating without false positives)
+    const templatesToCheck = existingTemplates.filter(
+      template => !addressTemplate || template.id !== addressTemplate.id
+    );
+
+    // Validation: Check for identical address content
+    const duplicateAddress = templatesToCheck.find(
+      template => areAddressesIdentical(template.address, address)
+    );
+
+    if (duplicateAddress) {
+      toast({
+        variant: "destructive",
+        title: "Duplicate Address",
+        description: "An identical address already exists. Please use a different address or edit the existing template.",
+      });
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -95,15 +166,15 @@ function AddressEditDialog({
 
       if (addressTemplate) {
         await updateAddressTemplate.mutateAsync({ ...payload, id: addressTemplate.id });
-        notifier.notify({
-          type: NotificationType.success,
-          message: "Address template updated successfully!",
+        toast({
+          title: "Success",
+          description: "Address template updated successfully!",
         });
       } else {
         await createAddressTemplate.mutateAsync(payload);
-        notifier.notify({
-          type: NotificationType.success,
-          message: "Address template created successfully!",
+        toast({
+          title: "Success",
+          description: "Address template created successfully!",
         });
       }
 
@@ -111,9 +182,12 @@ function AddressEditDialog({
       onOpenChange(false);
     } catch (error: any) {
       const detailed = error?.data || error?.response?.data || error;
-      notifier.notify({
-        type: NotificationType.error,
-        message: detailed || { message: error?.message || "Failed to save address template" },
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: typeof detailed === 'string'
+          ? detailed
+          : (detailed?.message || error?.message || "Failed to save address template"),
       });
     }
   };
@@ -149,8 +223,11 @@ function AddressEditDialog({
                 value={formData.label}
                 onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
                 required
-                className="h-8"
+                className={`h-8 ${labelError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
               />
+              {labelError && (
+                <p className="text-xs text-red-500 mt-1">{labelError}</p>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
@@ -178,7 +255,7 @@ function AddressEditDialog({
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim()}>
+          <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim() || !!labelError}>
             {addressTemplate ? "Update Template" : "Create Template"}
           </Button>
         </DialogFooter>
@@ -389,6 +466,7 @@ export function AddressesManagement() {
         onOpenChange={setEditDialogOpen}
         addressTemplate={selectedAddress}
         onSave={handleSave}
+        existingTemplates={addresses.map(({ node }: any) => node)}
       />
 
       <ConfirmationDialog

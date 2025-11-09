@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# Get the root directory
+ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+
+echo "Generating all TypeScript types..."
+echo "================================="
+echo ""
+
+# 1. Generate OpenAPI types
+echo "1/4 Generating OpenAPI types..."
+if [ -f "${ROOT_DIR}/bin/generate-openapi-types" ]; then
+    bash "${ROOT_DIR}/bin/generate-openapi-types" && \
+        echo "✓ OpenAPI types generated successfully" || \
+        echo "✗ Failed to generate OpenAPI types"
+else
+    echo "✗ generate-openapi-types script not found"
+fi
+echo ""
+
+# 2. Generate GraphQL types
+echo "2/4 Generating GraphQL types..."
+if [ -f "${ROOT_DIR}/bin/generate-graphql-types" ]; then
+    bash "${ROOT_DIR}/bin/generate-graphql-types" && \
+        echo "✓ GraphQL types generated successfully" || \
+        echo "✗ Failed to generate GraphQL types"
+else
+    echo "✗ generate-graphql-types script not found"
+fi
+echo ""
+
+# 3. Generate Admin GraphQL types
+echo "3/4 Generating Admin GraphQL types..."
+if [ -f "${ROOT_DIR}/bin/generate-graphql-admin-types" ]; then
+    bash "${ROOT_DIR}/bin/generate-graphql-admin-types" && \
+        echo "✓ Admin GraphQL types generated successfully" || \
+        echo "✗ Failed to generate Admin GraphQL types"
+else
+    echo "✗ generate-graphql-admin-types script not found"
+fi
+echo ""
+
+# 4. Generate EE GraphQL types
+echo "4/4 Generating EE GraphQL types..."
+if [ -f "${ROOT_DIR}/bin/generate-graphql-ee-types" ]; then
+    bash "${ROOT_DIR}/bin/generate-graphql-ee-types" && \
+        echo "✓ EE GraphQL types generated successfully" || \
+        echo "✗ Failed to generate EE GraphQL types"
+else
+    echo "✗ generate-graphql-ee-types script not found"
+fi
+echo ""
+
+echo "✓ All TypeScript types generated successfully!"
+echo ""
+echo "Generated types locations:"
+echo "  - OpenAPI types:       packages/types/rest/"
+echo "  - GraphQL types:       packages/types/graphql/types.ts"
+echo "  - Admin GraphQL types: packages/types/graphql/admin/types.ts"
+echo "  - EE GraphQL types:    packages/types/graphql/ee/types.ts"

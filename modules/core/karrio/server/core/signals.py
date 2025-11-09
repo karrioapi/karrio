@@ -17,7 +17,7 @@ def register_signals():
 
 def initialize_settings(sender=None, **kwargs):
     # Only run once
-    if not getattr(initialize_settings, 'has_run', False):
+    if not getattr(initialize_settings, "has_run", False):
         try:
             update_settings(config)
             initialize_settings.has_run = True
@@ -27,7 +27,6 @@ def initialize_settings(sender=None, **kwargs):
 
 @receiver(config_updated)
 def constance_updated(sender, key, old_value, new_value, **kwargs):
-    logger.info("Config updated", config_key=key, old_value=old_value, new_value=new_value)
     update_settings(sender)
 
 

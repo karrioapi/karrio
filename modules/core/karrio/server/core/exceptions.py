@@ -1,5 +1,4 @@
 import typing
-import traceback
 from rest_framework.response import Response
 from rest_framework import status, exceptions
 from rest_framework.views import exception_handler
@@ -45,7 +44,11 @@ class APIExceptions(APIException):
 
 
 def custom_exception_handler(exc, context):
-    logger.error("Exception in request", exception=str(exc), exception_type=type(exc).__name__)
+    from django.conf import settings
+
+    # Extract request details and log exception
+    request_details = _get_request_details(context)
+    _log_exception(exc, request_details, debug=getattr(settings, "DEBUG", False))
 
     response = exception_handler(exc, context)
     detail = getattr(exc, "detail", None)
@@ -196,3 +199,57 @@ def get_code(exc):
         )
 
     return getattr(exc, "default_code", None)
+
+
+def _get_request_details(context: dict) -> dict:
+    """Extract request details from context for logging."""
+    request = context.get("view", None) and context.get("view").request
+
+    if not request:
+        return {}
+
+    return {
+        "method": getattr(request, "method", None),
+        "path": getattr(request, "path", None),
+        "user": str(getattr(request, "user", None)),
+        "user_id": getattr(getattr(request, "user", None), "id", None),
+        "query_params": dict(getattr(request, "GET", {})),
+        "content_type": getattr(request, "content_type", None),
+    }
+
+
+def _log_exception(exc: Exception, request_details: dict, debug: bool = False):
+    """Log exception with appropriate detail level based on environment."""
+    exc_type = type(exc).__name__
+    exc_message = str(exc)
+
+    # Build context dict - convert dicts to strings to avoid format string issues
+    context = {
+        "exception_type": exc_type,
+        "exception_message": exc_message,
+    }
+
+    # Add request details, flattening nested structures
+    for key, value in request_details.items():
+        if isinstance(value, (dict, list)):
+            # Convert to string to avoid KeyError when loguru formats the message
+            context[key] = str(value)
+        else:
+            context[key] = value
+
+    if debug:
+        # In development, log with full traceback for better debugging
+        # Use positional args to avoid format string issues with curly braces in exception messages
+        logger.opt(exception=exc).error(
+            "Exception in request: {} - {}",
+            exc_type,
+            exc_message,
+            **context,
+        )
+    else:
+        # In production, log without full traceback but with context
+        logger.error(
+            "Exception in request: {}",
+            exc_type,
+            **context,
+        )

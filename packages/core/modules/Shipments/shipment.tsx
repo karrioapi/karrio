@@ -302,7 +302,7 @@ export const ShipmentComponent = ({
                       </div>
                     </div>
                     <div>
-                      <div className="text-xs mb-1 font-bold">Last updated</div>
+                      <div className="text-xs mb-1 font-bold">Last update</div>
                       <div className="text-sm">{formatDateTime(shipment.updated_at)}</div>
                     </div>
                   </div>

@@ -23,9 +23,8 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             method="POST",
             headers={
                 "content-type": "application/json",
-                "dhl-api-key": self.settings.dhl_api_key,
                 "Accept-Language": self.settings.language,
-                "Authorization": f"Basic {self.settings.authorization}",
+                "Authorization": f"Bearer {self.settings.access_token}",
             },
         )
 
@@ -39,21 +38,14 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             method="DELETE",
             headers={
                 "content-type": "application/json",
-                "DHL-API-Key": self.settings.dhl_api_key,
                 "Accept-Language": self.settings.language,
-                "Authorization": f"Basic {self.settings.authorization}",
+                "Authorization": f"Bearer {self.settings.access_token}",
             },
         )
 
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-
-        if not all([self.settings.tracking_consumer_key]):
-            raise Exception(
-                "The tracking_consumer_key is required for Track API requests."
-            )
-
         responses: typing.List[dict] = lib.run_asynchronously(
             lambda request: lib.request(
                 url=f"{self.settings.tracking_server_url}/track/shipments?{urllib.parse.urlencode(request)}",
@@ -61,7 +53,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 method="GET",
                 headers={
                     "Accept": "application/json",
-                    "DHL-API-Key": self.settings.tracking_consumer_key,
+                    "DHL-API-Key": self.settings.client_secret,
                 },
             ),
             request.serialize(),

@@ -16,11 +16,9 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # required carrier specific properties
     username: str
     password: str
-    dhl_api_key: str
+    client_id: str
+    client_secret: str
     customer_number: str = None
-
-    tracking_consumer_key: str = None
-    tracking_consumer_secret: str = None
 
     # generic properties
     id: str = None

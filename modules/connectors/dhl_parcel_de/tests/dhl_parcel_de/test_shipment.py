@@ -281,7 +281,7 @@ IntlShipmentRequest = {
                 "exportType": "COMMERCIAL_GOODS",
                 "items": [
                     {
-                        "countryOfOrigin": "FR",
+                        "countryOfOrigin": "FRA",
                         "hsCode": "123456",
                         "itemDescription": "Red T-Shirt",
                         "itemValue": {"currency": "EUR", "value": 10},
@@ -289,7 +289,7 @@ IntlShipmentRequest = {
                         "packagedQuantity": 1,
                     }
                 ],
-                "officeOfOrigin": "DE",
+                "officeOfOrigin": "DEU",
                 "postalCharges": {"currency": "EUR", "value": 1},
                 "shippingConditions": "DDP",
             },

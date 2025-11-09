@@ -53,6 +53,48 @@ elif [[ "$*" == *gen:ts:cli* ]]; then
         --additional-properties=modelPropertyNaming=snake_case \
         --additional-properties=useSingleRequestParameter=true
     cd -
+elif [[ "$*" == *gen:all* ]]; then
+    cd "${ROOT:?}"
+    echo "Generating all Karrio schemas..."
+    echo ""
+    mkdir -p schemas
+
+    # Generate GraphQL schema
+    echo "1/6 Generating GraphQL schema..."
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT:?}/schemas/graphql.json"
+    echo ""
+
+    # Generate Admin GraphQL schema
+    echo "2/6 Generating Admin GraphQL schema..."
+    download_graphql_schema "http://localhost:5002/admin/graphql/" "${ROOT:?}/schemas/graphql-admin.json"
+    echo ""
+
+    # Generate EE GraphQL schema
+    echo "3/6 Generating EE GraphQL schema..."
+    download_graphql_schema "http://localhost:5002/graphql/" "${ROOT:?}/schemas/graphql-ee.json"
+    echo ""
+
+    # Generate Platform GraphQL schema
+    echo "4/6 Generating Platform GraphQL schema..."
+    download_graphql_schema "http://localhost:5002/admin/graphql/" "${ROOT:?}/ee/platform/schemas/graphql-platform.json"
+    echo ""
+
+    # Generate OpenAPI schema
+    echo "5/6 Generating OpenAPI schema..."
+    curl -s http://localhost:5002/shipping-openapi -o "${ROOT:?}/schemas/openapi.yml" && \
+        echo "✓ OpenAPI schema saved to schemas/openapi.yml" || \
+        echo "✗ Failed to download OpenAPI schema"
+    echo ""
+
+    # Generate carrier integrations reference
+    echo "6/6 Generating carrier integrations reference..."
+    curl -s http://localhost:5002/v1/carriers -o "${ROOT:?}/apps/web/public/carrier-integrations.json" && \
+        echo "✓ Carrier integrations saved to apps/web/public/carrier-integrations.json" || \
+        echo "✗ Failed to download carrier integrations"
+    echo ""
+
+    echo "✓ All schemas generated successfully!"
+    cd -
 elif [[ "$*" == *build:js* ]]; then
     cd "${ROOT:?}/packages/karriojs"
 
@@ -66,14 +108,27 @@ elif [[ "$*" == *build:js* ]]; then
     cd -
     karrio collectstatic --noinput >/dev/null 2>&1
 else
-    echo "Help: You can pass any of the following commands to the server"
-    echo "-----"
-    echo "gen:ee        - Generate GraphQL enterprise edition schema from localhost:5004/graphql/"
-    echo "gen:graph     - Generate standard GraphQL schema from localhost:5004/graphql/"
-    echo "gen:admin     - Generate Admin GraphQL schema from localhost:5004/admin/graphql/"
-    echo "gen:platform  - Generate Platform GraphQL schema from localhost:5004/admin/graphql/"
-    echo "gen:openapi   - Generate OpenAPI schema from localhost:5004/shipping-openapi"
-    echo "gen:ref       - Generate carrier integrations reference file from localhost:5004/v1/carriers"
-    echo "gen:ts:cli    - Generate TypeScript fetch client from OpenAPI schema using docker"
-    echo "build:js      - Build Browser JavaScript client (runs gen:ts:cli, installs dependencies, builds with gulp)"
+    echo "Karrio Schema Generator"
+    echo "======================"
+    echo ""
+    echo "Usage: ./bin/server <command>"
+    echo ""
+    echo "Available commands:"
+    echo "  gen:ee        - Generate GraphQL enterprise edition schema from localhost:5002/graphql/"
+    echo "  gen:graph     - Generate standard GraphQL schema from localhost:5002/graphql/"
+    echo "  gen:admin     - Generate Admin GraphQL schema from localhost:5002/admin/graphql/"
+    echo "  gen:platform  - Generate Platform GraphQL schema from localhost:5002/admin/graphql/"
+    echo "  gen:openapi   - Generate OpenAPI schema from localhost:5002/shipping-openapi"
+    echo "  gen:ref       - Generate carrier integrations reference file from localhost:5002/v1/carriers"
+    echo "  gen:all       - Generate all schemas (graphql, admin, ee, platform, openapi, carrier integrations)"
+    echo "  gen:ts:cli    - Generate TypeScript fetch client from OpenAPI schema using docker"
+    echo "  build:js      - Build Browser JavaScript client (runs gen:ts:cli, installs dependencies, builds with gulp)"
+    echo ""
+    echo "Examples:"
+    echo "  ./bin/server gen:openapi"
+    echo "  ./bin/server gen:all"
+    echo ""
+    echo "Output directories: schemas/, apps/web/public/"
+    echo ""
+    echo "Note: Make sure your development server is running on localhost:5002 before generating schemas."
 fi

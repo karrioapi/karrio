@@ -161,22 +161,17 @@ class PresetSerializer(serializers.Serializer):
             preset_name = data["package_preset"]
 
             # Find the preset across all carriers
-            preset = next(
-                (
-                    presets[preset_name]
-                    for carrier_id, presets in package_presets.items()
-                    if preset_name in presets
-                ),
-                None,
-            )
-
-            if preset is None:
-                logger.warning(
-                    "Package preset not found",
-                    preset_name=preset_name,
-                    available_carriers=list(package_presets.keys()),
+            preset = lib.identity(
+                next(
+                    (
+                        presets[preset_name]
+                        for carrier_id, presets in package_presets.items()
+                        if preset_name in presets
+                    ),
+                    None,
                 )
-                preset = {}
+                or {}
+            )
 
             data.update(
                 {
@@ -184,7 +179,8 @@ class PresetSerializer(serializers.Serializer):
                     "width": data.get("width") or preset.get("width"),
                     "length": data.get("length") or preset.get("length"),
                     "height": data.get("height") or preset.get("height"),
-                    "dimension_unit": data.get("dimension_unit") or preset.get("dimension_unit"),
+                    "dimension_unit": data.get("dimension_unit")
+                    or preset.get("dimension_unit"),
                 }
             )
 
