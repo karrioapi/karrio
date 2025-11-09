@@ -1,0 +1,633 @@
+{
+	"info": {
+		"_postman_id": "e0e7aded-e793-47d6-9093-c11ebdbeaf25",
+		"name": "Tracking API Sandbox Customer Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14075658"
+	},
+	"item": [
+		{
+			"name": "Tracking-d-get-signature 00340434161094015902",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode}}\" request=\"d-get-signature\"/>",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode}}\" request=\"d-get-signature\"/>"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-signature 00340434161094022115",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode2}}\" request=\"d-get-signature\"/>",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode2}}\" request=\"d-get-signature\"/>"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-signature 00340434161094027318",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode3}}\" request=\"d-get-signature\"/>",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode3}}\" request=\"d-get-signature\"/>"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-signature 00340434161094032954",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "dhl-api-key",
+						"value": "{{dhl-api-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode4}}\" request=\"d-get-signature\"/>",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode4}}\" request=\"d-get-signature\"/>"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-signature 00340434161094038253",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode5}}\" request=\"d-get-signature\"/>",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode5}}\" request=\"d-get-signature\"/>"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-signature 00340434161094042557",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode6}}\" request=\"d-get-signature\"/>",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"de\" password=\"{{pass}}\" piece-code=\"{{pieceCode6}}\" request=\"d-get-signature\"/>"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-piece-detail 00340434161094015902",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode}}\" request=\"d-get-piece-detail\" />",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode}}\" request=\"d-get-piece-detail\" />"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-piece-detail 00340434161094022115",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{dhl-api-key}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "WEISSDASPWNICHT",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "dhl-api-key",
+						"value": "{{dhl-api-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode2}}\" request=\"d-get-piece-detail\" />",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode2}}\" request=\"d-get-piece-detail\" />"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-piece-detail 00340434161094027318",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments-sandbox?xml=<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode3}}\" request=\"d-get-piece-detail\" />",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments-sandbox"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode3}}\" request=\"d-get-piece-detail\" />"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-piece-detail 00340434161094032954",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode4}}\" request=\"d-get-piece-detail\" />",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode4}}\" request=\"d-get-piece-detail\" />"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-piece-detail 00340434161094038253",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode5}}\" request=\"d-get-piece-detail\" />",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode5}}\" request=\"d-get-piece-detail\" />"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tracking-d-get-piece-detail 00340434161094042557",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments?xml=<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode6}}\" request=\"d-get-piece-detail\" />",
+					"protocol": "https",
+					"host": [
+						"api-sandbox",
+						"dhl",
+						"com"
+					],
+					"path": [
+						"parcel",
+						"de",
+						"tracking",
+						"v0",
+						"shipments"
+					],
+					"query": [
+						{
+							"key": "xml",
+							"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><data appname=\"{{user}}\" language-code=\"en\" password=\"{{pass}}\" piece-code=\"{{pieceCode6}}\" request=\"d-get-piece-detail\" />"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{dhl-api-secret}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{dhl-api-key}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user",
+			"value": "zt12345",
+			"type": "string"
+		},
+		{
+			"key": "pass",
+			"value": "geheim",
+			"type": "string"
+		},
+		{
+			"key": "dhl-api-key",
+			"value": "{YOUR-API-KEY}",
+			"type": "string"
+		},
+		{
+			"key": "dhl-api-secret",
+			"value": "{YOUR-API-SECRET}",
+			"type": "string"
+		},
+		{
+			"key": "zip",
+			"value": "53113",
+			"type": "string"
+		},
+		{
+			"key": "pieceCode",
+			"value": "00340434161094015902",
+			"type": "string"
+		},
+		{
+			"key": "pieceCode2",
+			"value": "00340434161094022115",
+			"type": "string"
+		},
+		{
+			"key": "pieceCode3",
+			"value": "00340434161094027318",
+			"type": "string"
+		},
+		{
+			"key": "pieceCode4",
+			"value": "00340434161094032954",
+			"type": "string"
+		},
+		{
+			"key": "pieceCode5",
+			"value": "00340434161094038253",
+			"type": "string"
+		},
+		{
+			"key": "pieceCode6",
+			"value": "00340434161094042557",
+			"type": "string"
+		}
+	]
+}

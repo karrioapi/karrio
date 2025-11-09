@@ -13,3 +13,6 @@ generate_schema "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.
 generate_schema "${SCHEMAS}/shipping_request.json" "${LIB_MODULES}/shipping_request.py"
 generate_schema "${SCHEMAS}/shipping_response.json" "${LIB_MODULES}/shipping_response.py"
 generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_request.py" "${SCHEMAS}/tracking_request.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_response.py" "${SCHEMAS}/tracking_response.xsd"

@@ -724,18 +724,33 @@ class Package:
 
     @property
     def width(self) -> Dimension:
-        return self._compute_dimension(self.preset.width or self.parcel.width)
+        return self._compute_dimension(
+            getattr(self.preset, "width", None) or getattr(self.parcel, "width", None)
+        )
 
     @property
     def height(self) -> Dimension:
-        return self._compute_dimension(self.preset.height or self.parcel.height)
+        return self._compute_dimension(
+            getattr(self.preset, "height", None) or getattr(self.parcel, "height", None)
+        )
 
     @property
     def length(self) -> Dimension:
-        return self._compute_dimension(self.preset.length or self.parcel.length)
+        return self._compute_dimension(
+            getattr(self.preset, "length", None) or getattr(self.parcel, "length", None)
+        )
 
     @property
     def girth(self) -> Girth:
+        if not all(
+            [
+                getattr(self.preset, "width", None),
+                getattr(self.preset, "length", None),
+                getattr(self.preset, "height", None),
+            ]
+        ):
+            return None
+
         return Girth(self.width, self.length, self.height)
 
     @property

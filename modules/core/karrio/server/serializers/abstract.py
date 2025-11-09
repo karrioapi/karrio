@@ -195,7 +195,14 @@ def owned_model_serializer(serializer: typing.Type[Serializer]):
                 instance = super().create(payload, context=self.__context)
                 link_org(instance, self.__context)  # Link to organization if supported
             except Exception as e:
-                logger.exception("Failed to create model instance", model=self.Meta.model.__name__, error=str(e))
+                # Log simple error without traceback (exception handler will log full details)
+                meta = getattr(self.__class__, "Meta", None)
+                model_name = getattr(getattr(meta, "model", None), "__name__", "Unknown")
+                logger.error(
+                    "Failed to create {} instance using {}",
+                    model_name,
+                    self.__class__.__name__,
+                )
                 raise e
 
             return instance

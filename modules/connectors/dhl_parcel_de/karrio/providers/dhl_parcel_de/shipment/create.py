@@ -83,9 +83,7 @@ def shipment_request(
         option_type=provider_units.CustomsOption,
     )
     doc_format, print_format = provider_units.LabelType.map(
-        settings.connection_config.label_type.state or
-        payload.label_type or
-        "PDF"
+        settings.connection_config.label_type.state or payload.label_type or "PDF"
     ).value
 
     request = dhl_parcel_de.ShippingRequestType(
@@ -219,13 +217,17 @@ def shipment_request(
                             )
                             else None
                         ),
-                        officeOfOrigin=shipper.country_code,
+                        officeOfOrigin=units.CountryCode.map(
+                            shipper.country_code
+                        ).value_or_key,
                         shipperCustomsRef=customs.options.shipper_customs_ref.state,
                         consigneeCustomsRef=customs.options.consignee_customs_ref.state,
                         items=[
                             dhl_parcel_de.ItemType(
                                 itemDescription=item.description,
-                                countryOfOrigin=item.origin_country,
+                                countryOfOrigin=units.CountryCode.map(
+                                    item.origin_country
+                                ).value_or_key,
                                 hsCode=item.hs_code,
                                 packagedQuantity=item.quantity,
                                 itemValue=(
