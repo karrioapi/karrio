@@ -4,6 +4,7 @@ import {
   useOrganizations,
 } from "@karrio/hooks/organization";
 import { useCreateOrganizationDialog } from "@karrio/ui/components/create-organization-dialog";
+import { useAcceptInvitationDialog } from "@karrio/ui/components/accept-invitation-dialog";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useAPIToken } from "@karrio/hooks/api-token";
@@ -23,6 +24,7 @@ export const OrganizationDropdown = (): JSX.Element => {
   const {
     metadata: { ALLOW_MULTI_ACCOUNT },
   } = useAPIMetadata();
+  const { acceptInvitation } = useAcceptInvitationDialog();
   const { createOrganization } = useCreateOrganizationDialog();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [selected, setSelected] = useState<OrganizationType>();
@@ -68,7 +70,15 @@ export const OrganizationDropdown = (): JSX.Element => {
   useEffect(() => {
     setSelected(organization);
   }, [organization]);
-  // Note: Invite acceptance is now handled inline on /accept-invite
+  useEffect(() => {
+    if (!initialized && !isNoneOrEmpty(searchParams.get("accept_invitation"))) {
+      acceptInvitation();
+      setInitialized(true);
+    }
+    if (searchParams && isNoneOrEmpty(searchParams.get("accept_invitation"))) {
+      setInitialized(true);
+    }
+  }, [initialized, searchParams, acceptInvitation]);
 
   return (
     <>

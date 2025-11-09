@@ -73,11 +73,28 @@ export function useUserMutation() {
     { onSuccess: invalidateCache, onError },
   );
   const closeAccount = useMutation(
-    () =>
-      karrio.graphql.request<update_user>(gqlstr(UPDATE_USER), {
-        data: { is_active: false },
-      }),
-    { onSuccess: invalidateCache, onError },
+    async () => {
+      // Bypass org header by using a direct axios POST (Authorization only)
+      const host = getHost?.();
+      const graphqlUrl = (metadata as any)?.GRAPHQL || url$`${host}/graphql`;
+      const session: any = await getSession();
+      const headers: Record<string, string> = { "content-type": "application/json" };
+      if (session?.accessToken) headers["authorization"] = `Bearer ${session.accessToken}`;
+      if (session?.testMode) headers["x-test-mode"] = "true";
+
+      const body = {
+        query: `mutation update_user($data: UpdateUserInput!) { update_user(input: $data) { user { email } errors { field messages } } }`,
+        variables: { data: { is_active: false } },
+      };
+
+      const resp = await axios.post(graphqlUrl, body, { headers });
+      const result = resp.data?.data?.update_user;
+      if (!result || (result?.errors && result.errors.length)) {
+        throw resp.data?.errors || result?.errors || [{ message: "Unknown error" }];
+      }
+      return { update_user: result } as any;
+    },
+    { onError },
   );
   const registerUser = useMutation(
     (data: RegisterUserMutationInput) =>
