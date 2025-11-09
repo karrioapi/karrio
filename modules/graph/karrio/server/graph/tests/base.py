@@ -1,15 +1,13 @@
 import json
-import logging
 import dataclasses
 from django.urls import reverse
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 
+from karrio.server.core.logging import logger
 from karrio.server.user.models import Token
 import karrio.server.providers.models as providers
-
-logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
@@ -21,7 +19,8 @@ class Result:
 class GraphTestCase(BaseAPITestCase):
     def setUp(self) -> None:
         self.maxDiff = None
-        logging.basicConfig(level=logging.DEBUG)
+        # Loguru is already configured globally in settings
+
         # Setup user and API Token.
         self.user = get_user_model().objects.create_superuser(
             "admin@example.com", "test"
@@ -85,7 +84,11 @@ class GraphTestCase(BaseAPITestCase):
         )
 
     def query(
-        self, query: str, operation_name: str = None, variables: dict = None, org_id: str = None
+        self,
+        query: str,
+        operation_name: str = None,
+        variables: dict = None,
+        org_id: str = None,
     ) -> Result:
         url = reverse("karrio.server.graph:graphql")
         data = dict(
@@ -94,9 +97,9 @@ class GraphTestCase(BaseAPITestCase):
             operation_name=operation_name,
         )
 
-        response = self.client.post(url, data, **(
-            { "x-org-id": org_id } if org_id else {}
-        ))
+        response = self.client.post(
+            url, data, **({"x-org-id": org_id} if org_id else {})
+        )
 
         return Result(
             status_code=response.status_code,
@@ -115,10 +118,16 @@ class GraphTestCase(BaseAPITestCase):
 
     def assertResponseNoErrors(self, result: Result):
         if (
-            result.status_code != status.HTTP_200_OK
+            result.status_code not in [status.HTTP_200_OK, status.HTTP_201_CREATED]
             or result.data.get("errors") is not None
         ):
-            print(result.data)
+            logger.error("GraphQL response has errors",
+                        status_code=result.status_code,
+                        response_data=result.data)
 
-        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        if result.status_code != status.HTTP_201_CREATED:
+            self.assertEqual(result.status_code, status.HTTP_200_OK)
+        else:
+            self.assertEqual(result.status_code, status.HTTP_201_CREATED)
+
         assert result.data.get("errors") is None

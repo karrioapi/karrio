@@ -112,17 +112,12 @@ Plugin Metadata:
 import os
 import sys
 import inspect
-import logging
 import importlib
 import traceback
 import pkgutil
 from typing import List, Optional, Dict, Any, Tuple
 import importlib.metadata as importlib_metadata
-
-# Configure logger with a higher default level to reduce noise
-logger = logging.getLogger(__name__)
-if not logger.level:
-    logger.setLevel(logging.INFO)
+from karrio.core.utils.logger import logger
 
 # Default plugin directories to scan
 DEFAULT_PLUGINS = [
@@ -150,7 +145,7 @@ except ImportError:
         sys.modules["karrio.plugins"] = karrio.plugins
         logger.debug("Created karrio.plugins module")
     except (ImportError, AttributeError) as e:
-        logger.error(f"Failed to create karrio.plugins module: {e}")
+        logger.error("Failed to create karrio.plugins module", error=str(e))
 
 
 def get_custom_plugin_dirs() -> List[str]:
@@ -334,7 +329,11 @@ def discover_plugin_modules(
                     except Exception as e:
                         # Track failed module imports
                         logger.error(
-                            f"Error importing {module_type}.{submodule_name} from {plugin_name}: {str(e)}"
+                            "Failed to import plugin module",
+                            plugin_name=plugin_name,
+                            module_type=module_type,
+                            submodule_name=submodule_name,
+                            error=str(e)
                         )
                         key = f"{plugin_name}.{module_type}.{submodule_name}"
                         FAILED_PLUGIN_MODULES[key] = {
@@ -489,9 +488,9 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
                 module.__path__ = []
                 setattr(karrio, namespace, module)
                 sys.modules[module_name] = module
-                logger.debug(f"Created {module_name} module")
+                logger.debug("Created namespace module", module_name=module_name)
             except (ImportError, AttributeError) as e:
-                logger.error(f"Failed to create {module_name} module: {e}")
+                logger.error("Failed to create namespace module", module_name=module_name, error=str(e))
 
     for plugin_path in plugins:
         # Skip if we've already processed this plugin path
@@ -511,9 +510,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
 
         # Skip if karrio directory doesn't exist
         if not os.path.isdir(karrio_dir):
-            logger.error(
-                f"Invalid plugin structure: missing karrio directory in {plugin_path}"
-            )
+            logger.error("Invalid plugin structure: missing karrio directory", plugin_path=plugin_path)
             continue
 
         # Look for plugins, mappers, providers, schemas, and validators directories
@@ -538,7 +535,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
                         extended_path.append(module_dir)
                     target_module.__path__ = extended_path
             except ImportError as e:
-                logger.error(f"Could not import {target_module_name}: {e}")
+                logger.error("Could not import target module", target_module_name=target_module_name, error=str(e))
                 continue
 
         # Mark plugin as loaded
@@ -558,7 +555,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
                 karrio.references.import_extensions()
                 logger.info("Refreshed karrio.references providers")
         except (ImportError, AttributeError) as e:
-            logger.error(f"Could not refresh karrio.references: {e}")
+            logger.error("Could not refresh karrio.references", error=str(e))
 
     return loaded_plugins
 
@@ -618,7 +615,7 @@ def discover_entrypoint_plugins() -> Dict[str, Dict[str, Any]]:
 
             except Exception as e:
                 # Track failed entrypoint loads
-                logger.error(f"Error loading entrypoint plugin {plugin_name}: {str(e)}")
+                logger.error("Failed to load entrypoint plugin", plugin_name=plugin_name, error=str(e))
                 key = f"entrypoint.{plugin_name}"
                 FAILED_PLUGIN_MODULES[key] = {
                     "plugin": plugin_name,
@@ -628,6 +625,6 @@ def discover_entrypoint_plugins() -> Dict[str, Dict[str, Any]]:
                 }
 
     except Exception as e:
-        logger.error(f"Error discovering entrypoint plugins: {str(e)}")
+        logger.error("Error discovering entrypoint plugins", error=str(e))
 
     return entrypoint_plugins

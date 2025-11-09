@@ -34,8 +34,7 @@ class TestLandmarkGlobalShipment(unittest.TestCase):
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/Ship.php"
+                mock.call_args[1]["url"], f"{gateway.settings.server_url}/Ship.php"
             )
 
     def test_parse_shipment_response(self):
@@ -60,8 +59,7 @@ class TestLandmarkGlobalShipment(unittest.TestCase):
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/Cancel.php"
+                mock.call_args[1]["url"], f"{gateway.settings.server_url}/Cancel.php"
             )
 
     def test_parse_shipment_cancel_response(self):
@@ -391,6 +389,7 @@ SHIPMENT_RESPONSE_XML = """<?xml version="1.0"?>
 	<Result>
 		<Success>true</Success>
 		<ResultMessage>Shipment TEST-ORDER-001 successfully created and processed</ResultMessage>
+		<ShippingCarrier>Canada Post</ShippingCarrier>
 		<Packages>
 			<Package>
 				<LabelImages>
@@ -455,13 +454,15 @@ PARSED_SHIPMENT_RESPONSE = [
         "label_type": "PDF",
         "meta": {
             "barcode_datas": ["xxx492104000000412001"],
-            "package_ids": ["xxx1"],
+            "last_mile_carrier": "Canada Post",
+            "last_mile_tracking_number": "58949576860",
+            "last_mile_tracking_numbers": ["58949576860"],
             "package_references": ["PKG-001"],
-            "shipment_identifiers": ["LTN_test35364527N1"],
-            "tracking_numbers": ["58949576860"],
+            "shipment_identifiers": ["xxx1"],
+            "tracking_numbers": ["LTN_test35364527N1"],
         },
-        "shipment_identifier": "LTN_test35364527N1",
-        "tracking_number": "58949576860",
+        "shipment_identifier": "xxx1",
+        "tracking_number": "LTN_test35364527N1",
     },
     [],
 ]

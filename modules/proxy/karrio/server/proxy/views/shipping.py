@@ -1,4 +1,3 @@
-import logging
 from django.urls import path
 from rest_framework import status
 from rest_framework.request import Request
@@ -9,6 +8,7 @@ import karrio.server.openapi as openapi
 import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 import karrio.server.providers.models as providers
+from karrio.server.core.logging import logger
 from karrio.server.core.views.api import APIView
 from karrio.server.proxy.router import router
 from karrio.server.core.gateway import Shipments
@@ -25,7 +25,6 @@ from karrio.server.core.serializers import (
 )
 
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-logger = logging.getLogger(__name__)
 
 
 class Address(BaseAddress):

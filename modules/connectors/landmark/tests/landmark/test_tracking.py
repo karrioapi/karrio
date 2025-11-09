@@ -87,6 +87,17 @@ class TestLandmarkGlobalTracking(unittest.TestCase):
                 lib.to_dict(parsed_response), PARSED_DELIVERY_FAILED_RESPONSE
             )
 
+    def test_parse_midnight_time_sorting_response(self):
+        """Test that events with midnight times (12:35 AM, 01:35 AM) are sorted correctly"""
+        with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
+            mock.return_value = MIDNIGHT_TIME_SORTING_RESPONSE_XML
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(
+                lib.to_dict(parsed_response), PARSED_MIDNIGHT_TIME_SORTING_RESPONSE
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -330,8 +341,10 @@ PARSED_DELIVERY_FAILED_RESPONSE = [
                 },
                 {
                     "code": "275",
+                    "date": "2025-10-01",
                     "description": "Item in transit with carrier",
                     "location": "Rotterdam, NL",
+                    "time": "02:00 PM",
                 },
                 {
                     "code": "225",
@@ -596,6 +609,7 @@ DELIVERY_FAILED_TRACKING_RESPONSE_XML = """
           </Event>
           <Event>
             <Status>Item in transit with carrier</Status>
+            <DateTime>10/01/2025 02:00 PM</DateTime>
             <Location>Rotterdam, NL</Location>
             <EventCode>275</EventCode>
           </Event>
@@ -617,3 +631,248 @@ DELIVERY_FAILED_TRACKING_RESPONSE_XML = """
   </Result>
 </TrackResponse>
 """
+
+MIDNIGHT_TIME_SORTING_RESPONSE_XML = """<?xml version="1.0"?>
+<TrackResponse>
+    <Result>
+        <Success>true</Success>
+        <ShipmentDetails>
+            <EndDeliveryCarrier>BPost International</EndDeliveryCarrier>
+        </ShipmentDetails>
+        <Packages>
+            <Package>
+                <TrackingNumber>LE223553042BE</TrackingNumber>
+                <LandmarkTrackingNumber>LTN408798880N1</LandmarkTrackingNumber>
+                <PackageReference>ZS034809548GB</PackageReference>
+                <Events>
+                    <Event>
+                        <Status>Shipment Data Uploaded</Status>
+                        <DateTime>2025-10-27 05:48:01</DateTime>
+                        <Location>North Shields</Location>
+                        <EventCode>50</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Package scanned at carrier facility</Status>
+                        <DateTime>2025-10-28 08:41:59</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>225</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Processed</Status>
+                        <DateTime>2025-10-28 08:42:00</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>75</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Grouped when pallet scanned to crossing (INTAKE DDP #17)</Status>
+                        <DateTime>2025-10-29 09:34:00</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>225</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Crossing border and in transit to carrier hub</Status>
+                        <DateTime>2025-10-29 10:15:43</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>150</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Outgoing scan at facility</Status>
+                        <DateTime>2025-10-29 11:10:19</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>225</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Incoming scan at facility</Status>
+                        <DateTime>2025-10-30 06:13:13</DateTime>
+                        <Location>Machelen</Location>
+                        <EventCode>225</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Outgoing scan at facility</Status>
+                        <DateTime>2025-10-30 08:52:51</DateTime>
+                        <Location>Machelen</Location>
+                        <EventCode>225</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Received at international processing center</Status>
+                        <DateTime>2025-10-30 10:34:22</DateTime>
+                        <Location></Location>
+                        <EventCode>155</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Departure to country of destination</Status>
+                        <DateTime>2025-10-30 13:33:00</DateTime>
+                        <Location></Location>
+                        <EventCode>200</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Customs cleared</Status>
+                        <DateTime>2025-10-30 13:54:02</DateTime>
+                        <Location>Machelen</Location>
+                        <EventCode>125</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Arrival from abroad</Status>
+                        <DateTime>2025-10-31 08:24:00</DateTime>
+                        <Location></Location>
+                        <EventCode>275</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Departure to distribution network</Status>
+                        <DateTime>2025-11-02 13:35:00</DateTime>
+                        <Location></Location>
+                        <EventCode>275</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Arrival distribution office</Status>
+                        <DateTime>2025-11-03 00:35:00</DateTime>
+                        <Location></Location>
+                        <EventCode>275</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Your shipment has arrived at the postal operator of the country of
+                            destination and will be delivered in the coming days.</Status>
+                        <DateTime>2025-11-03 01:35:00</DateTime>
+                        <Location></Location>
+                        <EventCode>275</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Item delivered</Status>
+                        <DateTime>2025-11-03 07:14:00</DateTime>
+                        <Location>Endingen Am Kaiserstuhl</Location>
+                        <EventCode>500</EventCode>
+                    </Event>
+                </Events>
+            </Package>
+        </Packages>
+    </Result>
+</TrackResponse>
+"""
+
+PARSED_MIDNIGHT_TIME_SORTING_RESPONSE = [
+    [
+        {
+            "carrier_id": "landmark",
+            "carrier_name": "landmark",
+            "delivered": True,
+            "events": [
+                {
+                    "code": "500",
+                    "date": "2025-11-03",
+                    "description": "Item delivered",
+                    "location": "Endingen Am Kaiserstuhl",
+                    "time": "07:14 AM",
+                },
+                {
+                    "code": "275",
+                    "date": "2025-11-03",
+                    "description": "Your shipment has arrived at the postal operator of the country of\n                            destination and will be delivered in the coming days.",
+                    "time": "01:35 AM",
+                },
+                {
+                    "code": "275",
+                    "date": "2025-11-03",
+                    "description": "Arrival distribution office",
+                    "time": "12:35 AM",
+                },
+                {
+                    "code": "275",
+                    "date": "2025-11-02",
+                    "description": "Departure to distribution network",
+                    "time": "01:35 PM",
+                },
+                {
+                    "code": "275",
+                    "date": "2025-10-31",
+                    "description": "Arrival from abroad",
+                    "time": "08:24 AM",
+                },
+                {
+                    "code": "125",
+                    "date": "2025-10-30",
+                    "description": "Customs cleared",
+                    "location": "Machelen",
+                    "time": "01:54 PM",
+                },
+                {
+                    "code": "200",
+                    "date": "2025-10-30",
+                    "description": "Departure to country of destination",
+                    "time": "01:33 PM",
+                },
+                {
+                    "code": "155",
+                    "date": "2025-10-30",
+                    "description": "Received at international processing center",
+                    "time": "10:34 AM",
+                },
+                {
+                    "code": "225",
+                    "date": "2025-10-30",
+                    "description": "Outgoing scan at facility",
+                    "location": "Machelen",
+                    "time": "08:52 AM",
+                },
+                {
+                    "code": "225",
+                    "date": "2025-10-30",
+                    "description": "Incoming scan at facility",
+                    "location": "Machelen",
+                    "time": "06:13 AM",
+                },
+                {
+                    "code": "225",
+                    "date": "2025-10-29",
+                    "description": "Outgoing scan at facility",
+                    "location": "Feltham, SRY",
+                    "time": "11:10 AM",
+                },
+                {
+                    "code": "150",
+                    "date": "2025-10-29",
+                    "description": "Crossing border and in transit to carrier hub",
+                    "location": "Feltham, SRY",
+                    "time": "10:15 AM",
+                },
+                {
+                    "code": "225",
+                    "date": "2025-10-29",
+                    "description": "Grouped when pallet scanned to crossing (INTAKE DDP #17)",
+                    "location": "Feltham, SRY",
+                    "time": "09:34 AM",
+                },
+                {
+                    "code": "75",
+                    "date": "2025-10-28",
+                    "description": "Processed",
+                    "location": "Feltham, SRY",
+                    "time": "08:42 AM",
+                },
+                {
+                    "code": "225",
+                    "date": "2025-10-28",
+                    "description": "Package scanned at carrier facility",
+                    "location": "Feltham, SRY",
+                    "time": "08:41 AM",
+                },
+                {
+                    "code": "50",
+                    "date": "2025-10-27",
+                    "description": "Shipment Data Uploaded",
+                    "location": "North Shields",
+                    "time": "05:48 AM",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN408798880N1"
+            },
+            "meta": {
+                "last_mile_carrier": "BPost International",
+                "last_mile_tracking_number": "LE223553042BE",
+            },
+            "status": "delivered",
+            "tracking_number": "LTN408798880N1",
+        }
+    ],
+    [],
+]

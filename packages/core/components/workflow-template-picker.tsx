@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@karrio/ui/components/ui/dialog";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { Separator } from "@karrio/ui/components/ui/separator";
@@ -81,14 +80,16 @@ export function WorkflowTemplatePicker({ onSelectTemplate, children }: WorkflowT
         </DialogHeader>
 
         {/* Search Bar */}
-        <div className="relative p-3 sm:p-4 pb-8">
-          <Search className="absolute left-6 sm:left-7 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search templates..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-9 sm:h-8 text-sm"
-          />
+        <div className="p-3 sm:p-4 pb-8">
+          <div className="flex h-9 sm:h-8 w-full items-center rounded-md border border-input bg-transparent shadow-sm">
+            <Search className="ml-3 h-4 w-4 text-gray-400 flex-shrink-0" />
+            <input
+              placeholder="Search templates..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent border-0 px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0"
+            />
+          </div>
         </div>
 
         {/* Templates Grid */}

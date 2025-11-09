@@ -129,6 +129,34 @@ class Order(OwnedEntity):
 """Models orders linking (for reverse OneToMany relations)"""
 
 
+@register_model
+class OrderCounter(models.Model):
+    """Atomic counter for generating sequential order IDs per organization"""
+
+    class Meta:
+        db_table = "order_counter"
+        unique_together = [("org_id", "test_mode")]
+        indexes = [
+            models.Index(fields=["org_id", "test_mode"], name="order_counter_org_idx"),
+        ]
+
+    id = models.CharField(
+        max_length=50,
+        primary_key=True,
+        default=partial(uuid, prefix="octx_"),
+        editable=False,
+    )
+    org_id = models.CharField(max_length=50, db_index=True)
+    test_mode = models.BooleanField(default=False)
+    counter = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        mode = "test" if self.test_mode else "prod"
+        return f"OrderCounter({self.org_id}, {mode}, {self.counter})"
+
+
 class OrderLineItemLink(models.Model):
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, related_name="line_item_links"

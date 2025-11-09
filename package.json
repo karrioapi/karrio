@@ -6,7 +6,8 @@
     "dev:oss": "turbo run dev:oss",
     "dev:platform": "turbo run dev:platform",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "install:clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && npm install"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^6.0.1",

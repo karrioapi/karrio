@@ -1,19 +1,18 @@
-import logging
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
+from karrio.server.core.logging import logger
 
 from karrio.server.user.models import Token
 import karrio.server.iam.permissions as iam
 import karrio.server.providers.models as providers
 
-logger = logging.getLogger(__name__)
 iam.setup_groups()
 
 
 class APITestCase(BaseAPITestCase):
     def setUp(self) -> None:
         self.maxDiff = None
-        logging.basicConfig(level=logging.DEBUG)
+        # Loguru is already configured globally in settings
 
         # Setup user and API Token.
         self.user = get_user_model().objects.create_superuser(
@@ -92,7 +91,9 @@ class APITestCase(BaseAPITestCase):
         is_ok = f"{response.status_code}".startswith("2")
 
         if is_ok is False or response.data.get("errors") is not None:
-            print(response.data)
+            logger.error("Response has errors",
+                        status_code=response.status_code,
+                        response_data=response.data)
 
         self.assertTrue(is_ok)
         assert response.data.get("errors") is None

@@ -38,6 +38,7 @@ export function useConfigMutation() {
 
   const invalidateCache = () => {
     // Invalidate all related queries to ensure data refresh
+    // invalidateQueries will automatically trigger refetch for active queries
     queryClient.invalidateQueries({ queryKey: ['admin_configs'] });
     queryClient.invalidateQueries({ queryKey: ['admin_system_usage'] });
     // Also invalidate metadata-derived references so UI reflects feature toggles immediately

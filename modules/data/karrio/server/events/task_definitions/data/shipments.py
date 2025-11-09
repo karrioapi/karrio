@@ -1,5 +1,4 @@
-import logging
-
+from karrio.server.core.logging import logger
 import karrio.server.core.utils as utils
 import karrio.server.manager.models as models
 import karrio.server.serializers as serializers
@@ -9,12 +8,10 @@ from karrio.server.manager.serializers import (
     buy_shipment_label,
 )
 
-logger = logging.getLogger(__name__)
-
 
 @utils.error_wrapper
 def process_shipments(shipment_ids=[]):
-    logger.info("> starting batch shipments processing")
+    logger.info("Starting batch shipments processing", shipment_count=len(shipment_ids))
 
     shipments = models.Shipment.objects.filter(id__in=shipment_ids, status="draft")
 
@@ -22,9 +19,9 @@ def process_shipments(shipment_ids=[]):
         for shipment in shipments:
             process_shipment(shipment)
     else:
-        logger.info("no shipment found")
+        logger.info("No shipments found for processing", shipment_ids=shipment_ids)
 
-    logger.info("> ending batch shipments processing")
+    logger.info("Batch shipments processing complete", shipment_count=len(shipment_ids))
 
 
 @utils.error_wrapper

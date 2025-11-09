@@ -1,6 +1,5 @@
 import io
 import base64
-import logging
 import re
 from django.http import JsonResponse
 from django.urls import path, re_path
@@ -15,9 +14,8 @@ import karrio.server.openapi as openapi
 import karrio.server.samples as samples
 import karrio.server.core.views.api as api
 import karrio.server.providers.models as models
+from karrio.server.core.logging import logger
 from karrio.server.core import datatypes, dataunits, serializers
-
-logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 

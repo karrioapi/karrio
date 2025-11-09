@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio"
-version = "2025.5rc28"
+version = "2025.5rc32"
 description = "Multi-carrier shipping API integration with python"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -29,6 +29,7 @@ dependencies = [
     "python-barcode",
     "PyPDF2",
     "toml",
+    "loguru",
 ]
 
 [project.urls]

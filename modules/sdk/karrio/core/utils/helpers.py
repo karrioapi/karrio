@@ -6,16 +6,16 @@ import string
 import base64
 import PyPDF2
 import asyncio
-import logging
+import datetime
 import urllib.parse
 import PIL.Image
 import PIL.ImageFile
+from functools import reduce
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request, ProxyHandler, build_opener, install_opener
 from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
-logger = logging.getLogger(__name__)
+from karrio.core.utils.logger import logger
 ssl._create_default_https_context = ssl._create_unverified_context  # type: ignore
 PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
@@ -196,9 +196,9 @@ def process_request(
         opener = build_opener(proxy_handler)
         opener.addheaders = [("Proxy-Authorization", f"Basic {auth_encoded}")]
         install_opener(opener)
-        logger.info(f"Proxy set to: {proxy_url} with credentials")
+        logger.info("Proxy configured", proxy_url=proxy_url)
 
-    logger.info(f"Request URL:: {_request.full_url}")
+    logger.info("HTTP request prepared", url=_request.full_url)
 
     return _request
 
@@ -231,7 +231,7 @@ def process_error(
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
-    logger.error(error, exc_info=False)
+    logger.error("HTTP request failed", request_id=request_id, error_code=error.code, error_msg=str(error))
 
     if on_error is not None:
         _error = on_error(error)
@@ -241,7 +241,7 @@ def process_error(
     if trace:
         trace({"request_id": request_id, "error": _error}, "error")
 
-    logger.debug(f"Error content:: {error}")
+    logger.debug("HTTP error details", request_id=request_id, error=str(error))
 
     return _error
 
@@ -262,7 +262,7 @@ def request(
     """
 
     _request_id = str(uuid.uuid4())
-    logger.debug(f"sending request ({_request_id})...")
+    logger.debug("Sending HTTP request", request_id=_request_id)
 
     try:
         _request = process_request(_request_id, trace, proxy, **kwargs)
@@ -380,10 +380,9 @@ def sort_events_chronologically(events: List[Any]) -> List[Any]:
     """
     Sort tracking events chronologically with the most recent event first.
 
-    This function determines if events are in chronological order (oldest to newest)
-    or reverse chronological order (newest to oldest) by examining events with dates.
-    If events are oldest-first, the entire list is reversed to maintain relative order
-    of events without dates.
+    This function parses date and time from events and sorts them by their
+    combined datetime value. Events with valid dates are sorted first (most recent
+    to oldest), followed by events without dates in their original order.
 
     Args:
         events: List of tracking events to sort
@@ -391,50 +390,68 @@ def sort_events_chronologically(events: List[Any]) -> List[Any]:
     Returns:
         Sorted list with most recent event first
     """
-    import datetime
-
+    # Early return for trivial cases
     if not events or len(events) < 2:
         return events
 
-    # Find events with dates and parse them to datetime objects
-    dated_events = []
-    for idx, event in enumerate(events):
-        if hasattr(event, "date") and event.date:
-            parsed_date = None
+    def try_parse_with_format(value: str, fmt: str) -> Optional[Any]:
+        """Safely attempt to parse a value with a format"""
+        return failsafe(lambda: datetime.datetime.strptime(value, fmt))
 
-            # Try parsing just the date first
-            date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%-m/%d/%Y"]
-            for fmt in date_formats:
-                try:
-                    parsed_date = datetime.datetime.strptime(event.date, fmt)
-                    break
-                except ValueError:
-                    continue
+    def parse_date(event) -> Optional[datetime.datetime]:
+        """Parse date from event using multiple format attempts"""
+        date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%-m/%d/%Y"]
+        return (
+            reduce(
+                lambda acc, fmt: acc or try_parse_with_format(event.date, fmt),
+                date_formats,
+                None,
+            )
+            if hasattr(event, "date") and event.date
+            else None
+        )
 
-            # If we have time, try to add it to the parsed date
-            if parsed_date and hasattr(event, "time") and event.time:
-                time_formats = ["%I:%M %p", "%H:%M:%S", "%H:%M"]
-                for fmt in time_formats:
-                    try:
-                        time_obj = datetime.datetime.strptime(event.time, fmt).time()
-                        parsed_date = datetime.datetime.combine(
-                            parsed_date.date(), time_obj
-                        )
-                        break
-                    except ValueError:
-                        continue
+    def parse_time(event) -> Optional[datetime.time]:
+        """Parse time from event using multiple format attempts"""
+        time_formats = ["%I:%M %p", "%H:%M:%S", "%H:%M"]
+        parsed = (
+            reduce(
+                lambda acc, fmt: acc or try_parse_with_format(event.time, fmt),
+                time_formats,
+                None,
+            )
+            if hasattr(event, "time") and event.time
+            else None
+        )
+        return parsed.time() if parsed else None
 
-            if parsed_date:
-                dated_events.append((idx, parsed_date))
+    def parse_event_datetime(event) -> Optional[datetime.datetime]:
+        """Parse complete datetime from event date and time"""
+        parsed_date = parse_date(event)
+        parsed_time = parse_time(event) if parsed_date else None
+        return (
+            datetime.datetime.combine(parsed_date.date(), parsed_time)
+            if parsed_date and parsed_time
+            else parsed_date
+        )
 
-    # If we have at least 2 dated events, check if reversal is needed
-    if len(dated_events) >= 2:
-        first_dated = dated_events[0][1]
-        last_dated = dated_events[-1][1]
+    # Create mapping of event index to parsed datetime
+    indexed_events = list(enumerate(events))
+    datetime_map = dict(
+        filter(
+            lambda x: x[1] is not None,
+            [(idx, parse_event_datetime(event)) for idx, event in indexed_events],
+        )
+    )
 
-        # If first event is older than last, reverse the entire list
-        if first_dated < last_dated:
-            return list(reversed(events))
+    # Sort events: dated events first (by datetime desc), undated last (by original index)
+    def create_sort_key(item: tuple) -> tuple:
+        idx, _ = item
+        return (
+            (0, datetime_map.get(idx, datetime.datetime.min))
+            if idx in datetime_map
+            else (1, idx)
+        )
 
-    # Otherwise, return as-is (already in correct order or not enough data to determine)
-    return events
+    sorted_indexed = sorted(indexed_events, key=create_sort_key, reverse=True)
+    return [event for _, event in sorted_indexed]

@@ -1,7 +1,6 @@
 import io
 import sys
 import base64
-import logging
 from django.urls import re_path
 from django.utils import timezone
 from django.http import JsonResponse
@@ -13,8 +12,7 @@ import karrio.lib as lib
 import karrio.server.openapi as openapi
 import karrio.server.documents.models as models
 import karrio.server.documents.generator as generator
-
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 
 
 class TemplateDocsPrinter(VirtualDownloadView):
@@ -40,7 +38,7 @@ class TemplateDocsPrinter(VirtualDownloadView):
             response["X-Frame-Options"] = "ALLOWALL"
             return response
         except Exception as e:
-            logger.exception(e)
+            logger.exception("Template document generation failed", template_id=pk, template_slug=slug, error=str(e))
             _, __, exc_traceback = sys.exc_info()
             trace = exc_traceback
             while True:

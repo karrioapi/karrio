@@ -900,6 +900,13 @@ class Shipment(core.OwnedEntity):
             kwargs=dict(pk=self.pk, doc="invoice", format="pdf"),
         )
 
+    @property
+    def documents(self) -> typing.Dict[str, str]:
+        return dict(
+            label=self.label,
+            invoice=self.invoice,
+        )
+
 
 @core.register_model
 class DocumentUploadRecord(core.OwnedEntity):

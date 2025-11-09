@@ -1,3 +1,61 @@
+# Karrio 2025.5rc31
+
+## Changes
+
+### Feat
+
+- feat: improve logging with loguru
+- feat: add support for REDIS_URL and REDIS_SSL env var for simpler ways to configure Redis for deployment
+
+### Fix
+
+- fix: regression in package preset override
+
+### Docs
+
+- docs: update docs with missing env var and Redis set up instructions
+
+
+# Karrio 2025.5rc31
+
+## Changes
+
+### Fix
+
+- hotfix: HUEY powered worker django settings
+
+# Karrio 2025.5rc30
+
+## Changes
+
+### Fix
+
+- patch: karrio server core module to fix invalid worker settings
+
+# Karrio 2025.5rc29
+
+## Changes
+
+### Feat
+
+- feat: add exhaustive list of landmark maxipack services
+
+### Fix
+
+- fix: HUEY initialization race condition causing duplicated instances with Redis connection failure
+- fix: inconsistent tracking number and last mile tracking number extraction in shipment response
+- fix: landmark tracking event sorting
+
+### Chores
+
+- chore: fix package-lock and platform build
+- chore: cleanup the app theme and authentication setup
+- chore: update APIs to match feedback + improve CI CD setup
+
+### Docs
+
+- docs: update README docs url
+
 # Karrio 2025.5rc28
 
 ## Changes
