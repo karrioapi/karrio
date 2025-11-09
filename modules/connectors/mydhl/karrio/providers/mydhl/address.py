@@ -28,13 +28,48 @@ def parse_address_validation_response(
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    validation_details = models.AddressValidationDetails(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        success=True,
-    )
+    validation_response = lib.to_object(mydhl_res.AddressValidationResponseType, response)
+    validation_details = _extract_details(validation_response, settings)
 
     return validation_details, messages
+
+
+def _extract_details(
+    validation: mydhl_res.AddressValidationResponseType,
+    settings: provider_utils.Settings,
+) -> models.AddressValidationDetails:
+    """
+    Extract address validation details from MyDHL response
+
+    validation: The MyDHL AddressValidationResponseType object
+    settings: The carrier connection settings
+
+    Returns an AddressValidationDetails object
+    """
+    # Get first validated address using functional pattern
+    validated_address = next(
+        (addr for addr in (validation.address or []) if addr),
+        None
+    )
+
+    # Determine success based on presence of validated address
+    success = validated_address is not None
+
+    return models.AddressValidationDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        success=success,
+        complete_address=lib.to_address(
+            postal_code=str(validated_address.postalCode) if validated_address and validated_address.postalCode else None,
+            city=validated_address.cityName if validated_address else None,
+            country_code=validated_address.countryCode if validated_address else None,
+            state_code=validated_address.countyName if validated_address else None,
+        ) if validated_address else None,
+        meta=dict(
+            warnings=validation.warnings or [],
+            service_area=lib.to_dict(validated_address.serviceArea) if validated_address and validated_address.serviceArea else None,
+        ),
+    )
 
 
 def address_validation_request(
