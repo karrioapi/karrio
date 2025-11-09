@@ -120,22 +120,16 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
     
     def validate_address(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
-        # ---------------------------------------------------------
-        # Example implementation:
-        # response = lib.request(
-        #     url=f"{self.settings.server_url}/address/validate",
-        #     data=lib.to_json(request.serialize()),
-        #     trace=self.trace_as("json"),
-        #     method="POST",
-        #     headers={
-        #         "Content-Type": "application/json",
-        #         "Authorization": f"Bearer {self.settings.api_key}"
-        #     },
-        # )
-
-        # During development, use stub response from schema examples
-        response = lib.to_json({})
+        response = lib.request(
+            url=f"{self.settings.server_url}/address/validate",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
 
         return lib.Deserializable(response, lib.to_dict)
     
