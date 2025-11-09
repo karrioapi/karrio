@@ -1,6 +1,5 @@
 import yaml  # type: ignore
 import pydoc
-import logging
 import functools
 from django.db.utils import ProgrammingError
 from django.conf import settings
@@ -23,8 +22,8 @@ from oauth2_provider.contrib.rest_framework import (
     OAuth2Authentication as BaseOAuth2Authentication,
 )
 from django_otp.middleware import OTPMiddleware
+from karrio.server.core.logging import logger
 
-logger = logging.getLogger(__name__)
 UserModel = get_user_model()
 AUTHENTICATION_CLASSES = getattr(settings, "AUTHENTICATION_CLASSES", [])
 
@@ -241,18 +240,34 @@ def authenticate_user(request):
     def authenticate(request, authenticator):
         # Check if user exists and is not authenticated
         if not hasattr(request, 'user') or request.user is None or not getattr(request.user, 'is_authenticated', False):
-            auth = pydoc.locate(authenticator)().authenticate(request)
+            logger.debug(f"Trying authenticator: {authenticator}")
+            try:
+                auth_instance = pydoc.locate(authenticator)()
+                auth = auth_instance.authenticate(request)
 
-            if auth is not None:
-                user, token = auth
-                request.user = user
-                request.token = token
+                if auth is not None:
+                    user, token = auth
+                    request.user = user
+                    request.token = token
+                    logger.info(f"Authentication successful with: {authenticator}")
+            except AttributeError as e:
+                # Skip SessionAuthentication if it fails with _request attribute error
+                if "'WSGIRequest' object has no attribute '_request'" in str(e):
+                    logger.debug(f"Skipping {authenticator} - incompatible with middleware context")
+                else:
+                    raise
+            except exceptions.AuthenticationFailed:
+                # Silently skip authentication failures - let the next authenticator try
+                logger.debug(f"Authentication failed with {authenticator}, trying next")
+                pass
 
         return request
 
     try:
+        logger.debug(f"Auth classes to try: {AUTHENTICATION_CLASSES}")
         return functools.reduce(authenticate, AUTHENTICATION_CLASSES, request)
-    except Exception:
+    except Exception as e:
+        logger.debug(f"Authentication error: {e}")
         return request
 
 

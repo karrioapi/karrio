@@ -1,4 +1,3 @@
-import logging
 import django.forms as forms
 import django.contrib.auth.forms as auth
 import django.core.exceptions as exceptions
@@ -7,8 +6,7 @@ import django_email_verification.confirm as confirm
 
 import karrio.server.conf as conf
 import karrio.server.user.forms as user_forms
-
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 
 
 class UserRegistrationForm(user_forms.SignUpForm):
@@ -53,7 +51,7 @@ class ResetPasswordRequestForm(auth.PasswordResetForm):
                 }
             )
         except Exception as e:
-            logger.error(f"An error occurred while sending the email: {e}")
+            logger.error("Password reset email failed", error=str(e))
             raise exceptions.ValidationError(
                 "An error occurred while sending the email"
             )

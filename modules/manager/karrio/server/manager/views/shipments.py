@@ -1,6 +1,5 @@
 import io
 import base64
-import logging
 
 from rest_framework import status
 from rest_framework.request import Request
@@ -15,6 +14,7 @@ import karrio.lib as lib
 import karrio.server.openapi as openapi
 import karrio.server.core.filters as filters
 import karrio.server.manager.models as models
+from karrio.server.core.logging import logger
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
@@ -36,7 +36,6 @@ from karrio.server.manager.serializers import (
 )
 
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-logger = logging.getLogger(__name__)
 Shipments = PaginatedResult("ShipmentList", Shipment)
 
 

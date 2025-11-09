@@ -15,6 +15,10 @@ Name | Type | Description | Notes
 **value_amount** | **number** | The monetary value of the commodity | [optional] [default to undefined]
 **value_currency** | **string** | The currency of the commodity value amount | [optional] [default to undefined]
 **origin_country** | **string** | The origin or manufacture country | [optional] [default to undefined]
+**product_url** | **string** | The product url | [optional] [default to undefined]
+**image_url** | **string** | The image url | [optional] [default to undefined]
+**product_id** | **string** | The product id | [optional] [default to undefined]
+**variant_id** | **string** | The variant id | [optional] [default to undefined]
 **parent_id** | **string** | The id of the related order line item. | [optional] [default to undefined]
 **metadata** | **{ [key: string]: any; }** | &lt;details&gt;         &lt;summary&gt;Commodity user references metadata.&lt;/summary&gt;          {             \&quot;part_number\&quot;: \&quot;5218487281\&quot;,             \&quot;reference1\&quot;: \&quot;# ref 1\&quot;,             \&quot;reference2\&quot;: \&quot;# ref 2\&quot;,             \&quot;reference3\&quot;: \&quot;# ref 3\&quot;,             ...         }         &lt;/details&gt;          | [optional] [default to undefined]
 
@@ -34,6 +38,10 @@ const instance: CommodityData = {
     value_amount,
     value_currency,
     origin_country,
+    product_url,
+    image_url,
+    product_id,
+    variant_id,
     parent_id,
     metadata,
 };

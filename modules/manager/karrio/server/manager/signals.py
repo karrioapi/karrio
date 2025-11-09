@@ -1,11 +1,9 @@
-import logging
 from django.db.models import signals
 
 from karrio.server.core import utils
+from karrio.server.core.logging import logger
 import karrio.server.manager.models as models
 import karrio.server.manager.serializers as serializers
-
-logger = logging.getLogger(__name__)
 RATE_RELATED_CHANGES = [
     # address related changes
     "address_line1",
@@ -31,7 +29,7 @@ def register_signals():
     signals.post_save.connect(parcel_updated, sender=models.Parcel)
     signals.post_delete.connect(parcel_deleted, sender=models.Parcel)
 
-    logger.info("karrio.manager signals registered...")
+    logger.info("Karrio manager signals registered")
 
 
 @utils.disable_for_loaddata

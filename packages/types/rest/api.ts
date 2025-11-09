@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2025.5rc27`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2025.5rc32`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2025.5rc27
+ * The version of the OpenAPI document: 2025.5rc32
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -23,143 +23,91 @@ import type { RequestArgs } from './base';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
-/**
- * 
- * @export
- * @interface APIError
- */
 export interface APIError {
     /**
      * The error or warning message
-     * @type {string}
-     * @memberof APIError
      */
     'message'?: string;
     /**
      * The message code
-     * @type {string}
-     * @memberof APIError
      */
     'code'?: string;
     /**
      * any additional details
-     * @type {{ [key: string]: any; }}
-     * @memberof APIError
      */
     'details'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface Address
- */
 export interface Address {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Address
      */
     'id'?: string;
     /**
      * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof Address
      */
     'postal_code'?: string | null;
     /**
      * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof Address
      */
     'city'?: string | null;
     /**
      * The party frederal tax id
-     * @type {string}
-     * @memberof Address
      */
     'federal_tax_id'?: string | null;
     /**
      * The party state id
-     * @type {string}
-     * @memberof Address
      */
     'state_tax_id'?: string | null;
     /**
      * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof Address
      */
     'person_name'?: string | null;
     /**
      * The company name if the party is a company
-     * @type {string}
-     * @memberof Address
      */
     'company_name'?: string | null;
     /**
      * The address country code
-     * @type {string}
-     * @memberof Address
      */
     'country_code': AddressCountryCodeEnum;
     /**
      * The party email
-     * @type {string}
-     * @memberof Address
      */
     'email'?: string | null;
     /**
      * The party phone number.
-     * @type {string}
-     * @memberof Address
      */
     'phone_number'?: string | null;
     /**
      * The address state code
-     * @type {string}
-     * @memberof Address
      */
     'state_code'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof Address
      */
     'residential'?: boolean | null;
     /**
      * The address street number
-     * @type {string}
-     * @memberof Address
      */
     'street_number'?: string | null;
     /**
      * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof Address
      */
     'address_line1'?: string | null;
     /**
      * The address line with suite number
-     * @type {string}
-     * @memberof Address
      */
     'address_line2'?: string | null;
     /**
      * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof Address
      */
     'validate_location'?: boolean | null;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Address
      */
     'object_type'?: string;
     /**
      * Specify address validation result
-     * @type {AddressValidation}
-     * @memberof Address
      */
     'validation'?: AddressValidation | null;
 }
@@ -409,100 +357,65 @@ export const AddressCountryCodeEnum = {
 
 export type AddressCountryCodeEnum = typeof AddressCountryCodeEnum[keyof typeof AddressCountryCodeEnum];
 
-/**
- * 
- * @export
- * @interface AddressData
- */
 export interface AddressData {
     /**
      * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof AddressData
      */
     'postal_code'?: string | null;
     /**
      * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof AddressData
      */
     'city'?: string | null;
     /**
      * The party frederal tax id
-     * @type {string}
-     * @memberof AddressData
      */
     'federal_tax_id'?: string | null;
     /**
      * The party state id
-     * @type {string}
-     * @memberof AddressData
      */
     'state_tax_id'?: string | null;
     /**
      * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof AddressData
      */
     'person_name'?: string | null;
     /**
      * The company name if the party is a company
-     * @type {string}
-     * @memberof AddressData
      */
     'company_name'?: string | null;
     /**
      * The address country code
-     * @type {string}
-     * @memberof AddressData
      */
     'country_code': AddressDataCountryCodeEnum;
     /**
      * The party email
-     * @type {string}
-     * @memberof AddressData
      */
     'email'?: string | null;
     /**
      * The party phone number.
-     * @type {string}
-     * @memberof AddressData
      */
     'phone_number'?: string | null;
     /**
      * The address state code
-     * @type {string}
-     * @memberof AddressData
      */
     'state_code'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof AddressData
      */
     'residential'?: boolean | null;
     /**
      * The address street number
-     * @type {string}
-     * @memberof AddressData
      */
     'street_number'?: string | null;
     /**
      * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof AddressData
      */
     'address_line1'?: string | null;
     /**
      * The address line with suite number
-     * @type {string}
-     * @memberof AddressData
      */
     'address_line2'?: string | null;
     /**
      * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof AddressData
      */
     'validate_location'?: boolean | null;
 }
@@ -752,189 +665,54 @@ export const AddressDataCountryCodeEnum = {
 
 export type AddressDataCountryCodeEnum = typeof AddressDataCountryCodeEnum[keyof typeof AddressDataCountryCodeEnum];
 
-/**
- * 
- * @export
- * @interface AddressList
- */
 export interface AddressList {
-    /**
-     * 
-     * @type {number}
-     * @memberof AddressList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof AddressList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof AddressList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Address>}
-     * @memberof AddressList
-     */
     'results': Array<Address>;
 }
-/**
- * 
- * @export
- * @interface AddressValidation
- */
 export interface AddressValidation {
     /**
      * True if the address is valid
-     * @type {boolean}
-     * @memberof AddressValidation
      */
     'success': boolean;
     /**
      * validation service details
-     * @type {{ [key: string]: any; }}
-     * @memberof AddressValidation
      */
     'meta'?: { [key: string]: any; } | null;
 }
-/**
- * 
- * @export
- * @interface Aramex
- */
 export interface Aramex {
-    /**
-     * 
-     * @type {string}
-     * @memberof Aramex
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Aramex
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Aramex
-     */
     'account_pin': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Aramex
-     */
     'account_entity': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Aramex
-     */
     'account_number': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Aramex
-     */
     'account_country_code': string;
 }
-/**
- * 
- * @export
- * @interface AsendiaUs
- */
 export interface AsendiaUs {
-    /**
-     * 
-     * @type {string}
-     * @memberof AsendiaUs
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AsendiaUs
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AsendiaUs
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AsendiaUs
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AsendiaUs
-     */
-    'account_country_code'?: string;
+    'account_number'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Australiapost
- */
 export interface Australiapost {
-    /**
-     * 
-     * @type {string}
-     * @memberof Australiapost
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Australiapost
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Australiapost
-     */
     'account_number': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Australiapost
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface BatchObject
- */
 export interface BatchObject {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof BatchObject
      */
     'id'?: string;
     /**
      * The batch operation resource status
-     * @type {string}
-     * @memberof BatchObject
      */
     'status': BatchObjectStatusEnum;
     /**
      * Resource processing errors
-     * @type {{ [key: string]: any; }}
-     * @memberof BatchObject
      */
     'errors'?: { [key: string]: any; } | null;
 }
@@ -949,53 +727,16 @@ export const BatchObjectStatusEnum = {
 
 export type BatchObjectStatusEnum = typeof BatchObjectStatusEnum[keyof typeof BatchObjectStatusEnum];
 
-/**
- * 
- * @export
- * @interface BatchOperation
- */
 export interface BatchOperation {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof BatchOperation
      */
     'id'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchOperation
-     */
     'status': BatchOperationStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchOperation
-     */
     'resource_type': BatchOperationResourceTypeEnum;
-    /**
-     * 
-     * @type {Array<BatchObject>}
-     * @memberof BatchOperation
-     */
     'resources': Array<BatchObject>;
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchOperation
-     */
     'created_at': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchOperation
-     */
     'updated_at': string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof BatchOperation
-     */
     'test_mode': boolean;
 }
 
@@ -1017,168 +758,50 @@ export const BatchOperationResourceTypeEnum = {
 
 export type BatchOperationResourceTypeEnum = typeof BatchOperationResourceTypeEnum[keyof typeof BatchOperationResourceTypeEnum];
 
-/**
- * 
- * @export
- * @interface BatchOperations
- */
 export interface BatchOperations {
-    /**
-     * 
-     * @type {number}
-     * @memberof BatchOperations
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchOperations
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchOperations
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<BatchOperation>}
-     * @memberof BatchOperations
-     */
     'results': Array<BatchOperation>;
 }
-/**
- * 
- * @export
- * @interface BatchOrderData
- */
 export interface BatchOrderData {
     /**
      * The list of orders to process.
-     * @type {Array<OrderData>}
-     * @memberof BatchOrderData
      */
     'orders': Array<OrderData>;
 }
-/**
- * 
- * @export
- * @interface BatchShipmentData
- */
 export interface BatchShipmentData {
     /**
      * The list of shipments to process.
-     * @type {Array<ShipmentDataReference>}
-     * @memberof BatchShipmentData
      */
     'shipments': Array<ShipmentDataReference>;
 }
-/**
- * 
- * @export
- * @interface BatchTrackerData
- */
 export interface BatchTrackerData {
     /**
      * The list of tracking info to process.
-     * @type {Array<TrackingData>}
-     * @memberof BatchTrackerData
      */
     'trackers': Array<TrackingData>;
 }
-/**
- * 
- * @export
- * @interface Boxknight
- */
 export interface Boxknight {
-    /**
-     * 
-     * @type {string}
-     * @memberof Boxknight
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Boxknight
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Boxknight
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Bpost
- */
 export interface Bpost {
-    /**
-     * 
-     * @type {string}
-     * @memberof Bpost
-     */
     'account_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Bpost
-     */
     'passphrase': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Bpost
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Canadapost
- */
 export interface Canadapost {
-    /**
-     * 
-     * @type {string}
-     * @memberof Canadapost
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Canadapost
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Canadapost
-     */
-    'customer_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Canadapost
-     */
-    'contract_id'?: string;
+    'customer_number'?: string | null;
+    'contract_id'?: string | null;
     /**
      * Indicates a language string
-     * @type {string}
-     * @memberof Canadapost
      */
     'language'?: CanadapostLanguageEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Canadapost
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const CanadapostLanguageEnum = {
@@ -1188,36 +811,14 @@ export const CanadapostLanguageEnum = {
 
 export type CanadapostLanguageEnum = typeof CanadapostLanguageEnum[keyof typeof CanadapostLanguageEnum];
 
-/**
- * 
- * @export
- * @interface Canpar
- */
 export interface Canpar {
-    /**
-     * 
-     * @type {string}
-     * @memberof Canpar
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Canpar
-     */
     'password': string;
     /**
      * Indicates a language string
-     * @type {string}
-     * @memberof Canpar
      */
     'language'?: CanparLanguageEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Canpar
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const CanparLanguageEnum = {
@@ -1227,82 +828,53 @@ export const CanparLanguageEnum = {
 
 export type CanparLanguageEnum = typeof CanparLanguageEnum[keyof typeof CanparLanguageEnum];
 
-/**
- * 
- * @export
- * @interface CarrierConnection
- */
 export interface CarrierConnection {
     /**
      * A unique carrier connection identifier
-     * @type {string}
-     * @memberof CarrierConnection
      */
     'id': string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof CarrierConnection
      */
     'object_type'?: string;
     /**
      * A carrier connection type.
-     * @type {string}
-     * @memberof CarrierConnection
      */
     'carrier_name': CarrierConnectionCarrierNameEnum;
     /**
      * The carrier connection type verbose name.
-     * @type {string}
-     * @memberof CarrierConnection
      */
     'display_name'?: string;
     /**
      * A carrier connection friendly name.
-     * @type {string}
-     * @memberof CarrierConnection
      */
     'carrier_id': string;
     /**
      * Carrier connection credentials.
-     * @type {ConnectionCredentialsField}
-     * @memberof CarrierConnection
      */
     'credentials'?: ConnectionCredentialsField;
     /**
      * The carrier enabled capabilities.
-     * @type {Array<string>}
-     * @memberof CarrierConnection
      */
     'capabilities'?: Array<string> | null;
     /**
      * Carrier connection custom config.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierConnection
      */
     'config'?: { [key: string]: any; };
     /**
      * User metadata for the carrier.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierConnection
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The carrier connection is provided by the system admin.
-     * @type {boolean}
-     * @memberof CarrierConnection
      */
     'is_system': boolean;
     /**
      * The active flag indicates whether the carrier account is active or not.
-     * @type {boolean}
-     * @memberof CarrierConnection
      */
     'active': boolean;
     /**
      * The test flag indicates whether to use a carrier configured for test.
-     * @type {boolean}
-     * @memberof CarrierConnection
      */
     'test_mode': boolean;
 }
@@ -1332,6 +904,7 @@ export const CarrierConnectionCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -1354,52 +927,33 @@ export const CarrierConnectionCarrierNameEnum = {
 
 export type CarrierConnectionCarrierNameEnum = typeof CarrierConnectionCarrierNameEnum[keyof typeof CarrierConnectionCarrierNameEnum];
 
-/**
- * 
- * @export
- * @interface CarrierConnectionData
- */
 export interface CarrierConnectionData {
     /**
      * A carrier connection type.
-     * @type {string}
-     * @memberof CarrierConnectionData
      */
     'carrier_name': CarrierConnectionDataCarrierNameEnum;
     /**
      * A carrier connection friendly name.
-     * @type {string}
-     * @memberof CarrierConnectionData
      */
     'carrier_id': string;
     /**
      * Carrier connection credentials.
-     * @type {ConnectionCredentialsField}
-     * @memberof CarrierConnectionData
      */
     'credentials': ConnectionCredentialsField;
     /**
      * The carrier enabled capabilities.
-     * @type {Array<string>}
-     * @memberof CarrierConnectionData
      */
     'capabilities'?: Array<string> | null;
     /**
      * Carrier connection custom config.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierConnectionData
      */
     'config'?: { [key: string]: any; };
     /**
      * User metadata for the carrier.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierConnectionData
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The active flag indicates whether the carrier account is active or not.
-     * @type {boolean}
-     * @memberof CarrierConnectionData
      */
     'active'?: boolean;
 }
@@ -1429,6 +983,7 @@ export const CarrierConnectionDataCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -1451,89 +1006,43 @@ export const CarrierConnectionDataCarrierNameEnum = {
 
 export type CarrierConnectionDataCarrierNameEnum = typeof CarrierConnectionDataCarrierNameEnum[keyof typeof CarrierConnectionDataCarrierNameEnum];
 
-/**
- * 
- * @export
- * @interface CarrierConnectionList
- */
 export interface CarrierConnectionList {
-    /**
-     * 
-     * @type {number}
-     * @memberof CarrierConnectionList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CarrierConnectionList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CarrierConnectionList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<CarrierConnection>}
-     * @memberof CarrierConnectionList
-     */
     'results': Array<CarrierConnection>;
 }
-/**
- * 
- * @export
- * @interface CarrierDetails
- */
 export interface CarrierDetails {
     /**
      * Indicates a carrier (type)
-     * @type {string}
-     * @memberof CarrierDetails
      */
     'carrier_name': CarrierDetailsCarrierNameEnum;
     /**
      * The carrier verbose name.
-     * @type {string}
-     * @memberof CarrierDetails
      */
     'display_name': string;
     /**
      * The carrier integration status.
-     * @type {string}
-     * @memberof CarrierDetails
      */
     'integration_status': CarrierDetailsIntegrationStatusEnum;
     /**
      * The carrier supported and enabled capabilities.
-     * @type {Array<string>}
-     * @memberof CarrierDetails
      */
     'capabilities'?: Array<string>;
     /**
      * The carrier connection fields.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierDetails
      */
     'connection_fields'?: { [key: string]: any; };
     /**
      * The carrier connection config.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierDetails
      */
     'config_fields'?: { [key: string]: any; };
     /**
      * The carrier shipping services.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierDetails
      */
     'shipping_services'?: { [key: string]: any; };
     /**
      * The carrier shipping options.
-     * @type {{ [key: string]: any; }}
-     * @memberof CarrierDetails
      */
     'shipping_options'?: { [key: string]: any; };
 }
@@ -1563,6 +1072,7 @@ export const CarrierDetailsCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -1592,73 +1102,33 @@ export const CarrierDetailsIntegrationStatusEnum = {
 
 export type CarrierDetailsIntegrationStatusEnum = typeof CarrierDetailsIntegrationStatusEnum[keyof typeof CarrierDetailsIntegrationStatusEnum];
 
-/**
- * 
- * @export
- * @interface Charge
- */
 export interface Charge {
     /**
      * The charge description
-     * @type {string}
-     * @memberof Charge
      */
     'name'?: string | null;
     /**
      * The charge monetary value
-     * @type {number}
-     * @memberof Charge
      */
     'amount'?: number | null;
     /**
      * The charge amount currency
-     * @type {string}
-     * @memberof Charge
      */
     'currency'?: string | null;
     /**
      * A surcharge id
-     * @type {string}
-     * @memberof Charge
      */
     'id'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Chronopost
- */
 export interface Chronopost {
-    /**
-     * 
-     * @type {string}
-     * @memberof Chronopost
-     */
     'account_number': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Chronopost
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Chronopost
-     */
-    'id_emit'?: string;
+    'id_emit'?: string | null;
     /**
      * Indicates a language string
-     * @type {string}
-     * @memberof Chronopost
      */
     'language'?: ChronopostLanguageEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Chronopost
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const ChronopostLanguageEnum = {
@@ -1668,125 +1138,83 @@ export const ChronopostLanguageEnum = {
 
 export type ChronopostLanguageEnum = typeof ChronopostLanguageEnum[keyof typeof ChronopostLanguageEnum];
 
-/**
- * 
- * @export
- * @interface Colissimo
- */
 export interface Colissimo {
-    /**
-     * 
-     * @type {string}
-     * @memberof Colissimo
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Colissimo
-     */
     'contract_number': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Colissimo
-     */
-    'laposte_api_key'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Colissimo
-     */
-    'account_country_code'?: string;
+    'laposte_api_key'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Commodity
- */
 export interface Commodity {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Commodity
      */
     'id'?: string;
     /**
      * The commodity\'s weight
-     * @type {number}
-     * @memberof Commodity
      */
     'weight': number;
     /**
      * The commodity\'s weight unit
-     * @type {string}
-     * @memberof Commodity
      */
     'weight_unit': CommodityWeightUnitEnum;
     /**
      * A description of the commodity
-     * @type {string}
-     * @memberof Commodity
      */
     'title'?: string | null;
     /**
      * A description of the commodity
-     * @type {string}
-     * @memberof Commodity
      */
     'description'?: string | null;
     /**
      * The commodity\'s quantity (number or item)
-     * @type {number}
-     * @memberof Commodity
      */
     'quantity'?: number;
     /**
      * The commodity\'s sku number
-     * @type {string}
-     * @memberof Commodity
      */
     'sku'?: string | null;
     /**
      * The commodity\'s hs_code number
-     * @type {string}
-     * @memberof Commodity
      */
     'hs_code'?: string | null;
     /**
      * The monetary value of the commodity
-     * @type {number}
-     * @memberof Commodity
      */
     'value_amount'?: number | null;
     /**
      * The currency of the commodity value amount
-     * @type {string}
-     * @memberof Commodity
      */
     'value_currency'?: CommodityValueCurrencyEnum | null;
     /**
      * The origin or manufacture country
-     * @type {string}
-     * @memberof Commodity
      */
     'origin_country'?: CommodityOriginCountryEnum | null;
     /**
+     * The product url
+     */
+    'product_url'?: string | null;
+    /**
+     * The image url
+     */
+    'image_url'?: string | null;
+    /**
+     * The product id
+     */
+    'product_id'?: string | null;
+    /**
+     * The variant id
+     */
+    'variant_id'?: string | null;
+    /**
      * The id of the related order line item.
-     * @type {string}
-     * @memberof Commodity
      */
     'parent_id'?: string | null;
     /**
      * <details>         <summary>Commodity user references metadata.</summary>          {             \"part_number\": \"5218487281\",             \"reference1\": \"# ref 1\",             \"reference2\": \"# ref 2\",             \"reference3\": \"# ref 3\",             ...         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof Commodity
      */
     'metadata'?: { [key: string]: any; } | null;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Commodity
      */
     'object_type'?: string;
 }
@@ -2192,82 +1620,69 @@ export const CommodityOriginCountryEnum = {
 
 export type CommodityOriginCountryEnum = typeof CommodityOriginCountryEnum[keyof typeof CommodityOriginCountryEnum];
 
-/**
- * 
- * @export
- * @interface CommodityData
- */
 export interface CommodityData {
     /**
      * The commodity\'s weight
-     * @type {number}
-     * @memberof CommodityData
      */
     'weight': number;
     /**
      * The commodity\'s weight unit
-     * @type {string}
-     * @memberof CommodityData
      */
     'weight_unit': CommodityDataWeightUnitEnum;
     /**
      * A description of the commodity
-     * @type {string}
-     * @memberof CommodityData
      */
     'title'?: string | null;
     /**
      * A description of the commodity
-     * @type {string}
-     * @memberof CommodityData
      */
     'description'?: string | null;
     /**
      * The commodity\'s quantity (number or item)
-     * @type {number}
-     * @memberof CommodityData
      */
     'quantity'?: number;
     /**
      * The commodity\'s sku number
-     * @type {string}
-     * @memberof CommodityData
      */
     'sku'?: string | null;
     /**
      * The commodity\'s hs_code number
-     * @type {string}
-     * @memberof CommodityData
      */
     'hs_code'?: string | null;
     /**
      * The monetary value of the commodity
-     * @type {number}
-     * @memberof CommodityData
      */
     'value_amount'?: number | null;
     /**
      * The currency of the commodity value amount
-     * @type {string}
-     * @memberof CommodityData
      */
     'value_currency'?: CommodityDataValueCurrencyEnum | null;
     /**
      * The origin or manufacture country
-     * @type {string}
-     * @memberof CommodityData
      */
     'origin_country'?: CommodityDataOriginCountryEnum | null;
     /**
+     * The product url
+     */
+    'product_url'?: string | null;
+    /**
+     * The image url
+     */
+    'image_url'?: string | null;
+    /**
+     * The product id
+     */
+    'product_id'?: string | null;
+    /**
+     * The variant id
+     */
+    'variant_id'?: string | null;
+    /**
      * The id of the related order line item.
-     * @type {string}
-     * @memberof CommodityData
      */
     'parent_id'?: string | null;
     /**
      * <details>         <summary>Commodity user references metadata.</summary>          {             \"part_number\": \"5218487281\",             \"reference1\": \"# ref 1\",             \"reference2\": \"# ref 2\",             \"reference3\": \"# ref 3\",             ...         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof CommodityData
      */
     'metadata'?: { [key: string]: any; } | null;
 }
@@ -2675,98 +2090,55 @@ export type CommodityDataOriginCountryEnum = typeof CommodityDataOriginCountryEn
 
 /**
  * @type ConnectionCredentialsField
- * @export
  */
-export type ConnectionCredentialsField = Aramex | AsendiaUs | Australiapost | Boxknight | Bpost | Canadapost | Canpar | Chronopost | Colissimo | DhlExpress | DhlParcelDe | DhlPoland | DhlUniversal | Dicom | Dpd | Dtdc | Easypost | Easyship | Eshipper | Fedex | Freightcom | Generic | Geodis | HayPost | Laposte | Locate2u | Mydhl | Nationex | Purolator | Roadie | Royalmail | Sapient | Seko | Sendle | Shipengine | Tge | Tnt | Ups | Usps | UspsInternational | Veho | Zoom2u;
+export type ConnectionCredentialsField = Aramex | AsendiaUs | Australiapost | Boxknight | Bpost | Canadapost | Canpar | Chronopost | Colissimo | DhlExpress | DhlParcelDe | DhlPoland | DhlUniversal | Dicom | Dpd | Dtdc | Easypost | Easyship | Eshipper | Fedex | Freightcom | Generic | Geodis | HayPost | Landmark | Laposte | Locate2u | Mydhl | Nationex | Purolator | Roadie | Royalmail | Sapient | Seko | Sendle | Shipengine | Tge | Tnt | Ups | Usps | UspsInternational | Veho | Zoom2u;
 
-/**
- * 
- * @export
- * @interface Customs
- */
 export interface Customs {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Customs
      */
     'id'?: string;
     /**
      * The parcel content items
-     * @type {Array<Commodity>}
-     * @memberof Customs
      */
     'commodities'?: Array<Commodity>;
     /**
      * The payment details.<br/>         **Note that this is required for a Dutiable parcel shipped internationally.**         
-     * @type {Duty}
-     * @memberof Customs
      */
     'duty'?: Duty | null;
     /**
      * The duty payor address.
-     * @type {Address}
-     * @memberof Customs
      */
     'duty_billing_address'?: Address | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof Customs
-     */
     'content_type'?: CustomsContentTypeEnum | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof Customs
-     */
     'content_description'?: string | null;
     /**
      * The customs \'term of trade\' also known as \'incoterm\'
-     * @type {string}
-     * @memberof Customs
      */
     'incoterm'?: CustomsIncotermEnum | null;
     /**
      * The invoice reference number
-     * @type {string}
-     * @memberof Customs
      */
     'invoice'?: string | null;
     /**
      * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof Customs
      */
     'invoice_date'?: string | null;
     /**
      * Indicates if the shipment is commercial
-     * @type {boolean}
-     * @memberof Customs
      */
     'commercial_invoice'?: boolean | null;
     /**
      * Indicate that signer certified confirmed all
-     * @type {boolean}
-     * @memberof Customs
      */
     'certify'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof Customs
-     */
     'signer'?: string | null;
     /**
      * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof Customs
      */
     'options'?: { [key: string]: any; };
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Customs
      */
     'object_type'?: string;
 }
@@ -2801,82 +2173,44 @@ export const CustomsIncotermEnum = {
 
 export type CustomsIncotermEnum = typeof CustomsIncotermEnum[keyof typeof CustomsIncotermEnum];
 
-/**
- * 
- * @export
- * @interface CustomsData
- */
 export interface CustomsData {
     /**
      * The parcel content items
-     * @type {Array<CommodityData>}
-     * @memberof CustomsData
      */
     'commodities': Array<CommodityData>;
     /**
      * The payment details.<br/>         **Note that this is required for a Dutiable parcel shipped internationally.**         
-     * @type {Duty}
-     * @memberof CustomsData
      */
     'duty'?: Duty | null;
     /**
      * The duty payor address.
-     * @type {AddressData}
-     * @memberof CustomsData
      */
     'duty_billing_address'?: AddressData | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsData
-     */
     'content_type'?: CustomsDataContentTypeEnum | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsData
-     */
     'content_description'?: string | null;
     /**
      * The customs \'term of trade\' also known as \'incoterm\'
-     * @type {string}
-     * @memberof CustomsData
      */
     'incoterm'?: CustomsDataIncotermEnum | null;
     /**
      * The invoice reference number
-     * @type {string}
-     * @memberof CustomsData
      */
     'invoice'?: string | null;
     /**
      * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof CustomsData
      */
     'invoice_date'?: string | null;
     /**
      * Indicates if the shipment is commercial
-     * @type {boolean}
-     * @memberof CustomsData
      */
     'commercial_invoice'?: boolean | null;
     /**
      * Indicate that signer certified confirmed all
-     * @type {boolean}
-     * @memberof CustomsData
      */
     'certify'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsData
-     */
     'signer'?: string | null;
     /**
      * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof CustomsData
      */
     'options'?: { [key: string]: any; };
 }
@@ -2911,147 +2245,35 @@ export const CustomsDataIncotermEnum = {
 
 export type CustomsDataIncotermEnum = typeof CustomsDataIncotermEnum[keyof typeof CustomsDataIncotermEnum];
 
-/**
- * 
- * @export
- * @interface DhlExpress
- */
 export interface DhlExpress {
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlExpress
-     */
     'site_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlExpress
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlExpress
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlExpress
-     */
-    'account_country_code'?: string;
+    'account_number'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface DhlParcelDe
- */
 export interface DhlParcelDe {
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlParcelDe
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlParcelDe
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlParcelDe
-     */
     'dhl_api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlParcelDe
-     */
-    'customer_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlParcelDe
-     */
-    'tracking_consumer_key'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlParcelDe
-     */
-    'tracking_consumer_secret'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlParcelDe
-     */
-    'account_country_code'?: string;
+    'customer_number'?: string | null;
+    'tracking_consumer_key'?: string | null;
+    'tracking_consumer_secret'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface DhlPoland
- */
 export interface DhlPoland {
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlPoland
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlPoland
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlPoland
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlPoland
-     */
-    'account_country_code'?: string;
+    'account_number'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface DhlUniversal
- */
 export interface DhlUniversal {
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlUniversal
-     */
     'consumer_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlUniversal
-     */
     'consumer_secret': string;
     /**
      * Indicates a language string
-     * @type {string}
-     * @memberof DhlUniversal
      */
     'language'?: DhlUniversalLanguageEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof DhlUniversal
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const DhlUniversalLanguageEnum = {
@@ -3061,200 +2283,109 @@ export const DhlUniversalLanguageEnum = {
 
 export type DhlUniversalLanguageEnum = typeof DhlUniversalLanguageEnum[keyof typeof DhlUniversalLanguageEnum];
 
-/**
- * 
- * @export
- * @interface Dicom
- */
 export interface Dicom {
-    /**
-     * 
-     * @type {string}
-     * @memberof Dicom
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dicom
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dicom
-     */
-    'billing_account'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dicom
-     */
-    'account_country_code'?: string;
+    'billing_account'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface DocumentData
- */
 export interface DocumentData {
     /**
      * The template name. **Required if template is not provided.**
-     * @type {string}
-     * @memberof DocumentData
      */
     'template_id'?: string;
     /**
      * The template content. **Required if template_id is not provided.**
-     * @type {string}
-     * @memberof DocumentData
      */
     'template'?: string;
     /**
      * The format of the document
-     * @type {string}
-     * @memberof DocumentData
      */
     'doc_format'?: string;
     /**
      * The file name
-     * @type {string}
-     * @memberof DocumentData
      */
     'doc_name'?: string;
     /**
      * The template data
-     * @type {{ [key: string]: any; }}
-     * @memberof DocumentData
      */
     'data'?: { [key: string]: any; };
     /**
      * The template rendering options
-     * @type {{ [key: string]: any; }}
-     * @memberof DocumentData
      */
     'options'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface DocumentDetails
- */
 export interface DocumentDetails {
     /**
      * The uploaded document id.
-     * @type {string}
-     * @memberof DocumentDetails
      */
     'doc_id'?: string;
     /**
      * The uploaded document file name.
-     * @type {string}
-     * @memberof DocumentDetails
      */
     'file_name'?: string;
 }
-/**
- * 
- * @export
- * @interface DocumentFileData
- */
 export interface DocumentFileData {
     /**
      * A base64 file to upload
-     * @type {string}
-     * @memberof DocumentFileData
      */
     'doc_file': string;
     /**
      * The file name
-     * @type {string}
-     * @memberof DocumentFileData
      */
     'doc_name': string;
     /**
      * The file format
-     * @type {string}
-     * @memberof DocumentFileData
      */
     'doc_format'?: string | null;
     /**
      *          Shipment document type          values: <br/>         `certificate_of_origin` `commercial_invoice` `pro_forma_invoice` `packing_list` `other`          For carrier specific packaging types, please consult the reference.         
-     * @type {string}
-     * @memberof DocumentFileData
      */
     'doc_type'?: string | null;
 }
-/**
- * 
- * @export
- * @interface DocumentTemplate
- */
 export interface DocumentTemplate {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'id'?: string;
     /**
      * The template name
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'name': string;
     /**
      * The template slug
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'slug': string;
     /**
      * The template content
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'template': string;
     /**
      * disable template flag.
-     * @type {boolean}
-     * @memberof DocumentTemplate
      */
     'active'?: boolean;
     /**
      * The template description
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'description'?: string;
     /**
      * The template metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof DocumentTemplate
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The template rendering options
-     * @type {{ [key: string]: any; }}
-     * @memberof DocumentTemplate
      */
     'options'?: { [key: string]: any; };
     /**
      * The template related object
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'related_object'?: DocumentTemplateRelatedObjectEnum;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'object_type'?: string;
     /**
      * The template preview URL
-     * @type {string}
-     * @memberof DocumentTemplate
      */
     'preview_url'?: string;
 }
@@ -3267,58 +2398,37 @@ export const DocumentTemplateRelatedObjectEnum = {
 
 export type DocumentTemplateRelatedObjectEnum = typeof DocumentTemplateRelatedObjectEnum[keyof typeof DocumentTemplateRelatedObjectEnum];
 
-/**
- * 
- * @export
- * @interface DocumentTemplateData
- */
 export interface DocumentTemplateData {
     /**
      * The template name
-     * @type {string}
-     * @memberof DocumentTemplateData
      */
     'name': string;
     /**
      * The template slug
-     * @type {string}
-     * @memberof DocumentTemplateData
      */
     'slug': string;
     /**
      * The template content
-     * @type {string}
-     * @memberof DocumentTemplateData
      */
     'template': string;
     /**
      * disable template flag.
-     * @type {boolean}
-     * @memberof DocumentTemplateData
      */
     'active'?: boolean;
     /**
      * The template description
-     * @type {string}
-     * @memberof DocumentTemplateData
      */
     'description'?: string;
     /**
      * The template metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof DocumentTemplateData
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The template rendering options
-     * @type {{ [key: string]: any; }}
-     * @memberof DocumentTemplateData
      */
     'options'?: { [key: string]: any; };
     /**
      * The template related object
-     * @type {string}
-     * @memberof DocumentTemplateData
      */
     'related_object'?: DocumentTemplateDataRelatedObjectEnum;
 }
@@ -3331,263 +2441,101 @@ export const DocumentTemplateDataRelatedObjectEnum = {
 
 export type DocumentTemplateDataRelatedObjectEnum = typeof DocumentTemplateDataRelatedObjectEnum[keyof typeof DocumentTemplateDataRelatedObjectEnum];
 
-/**
- * 
- * @export
- * @interface DocumentTemplateList
- */
 export interface DocumentTemplateList {
-    /**
-     * 
-     * @type {number}
-     * @memberof DocumentTemplateList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentTemplateList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentTemplateList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<DocumentTemplate>}
-     * @memberof DocumentTemplateList
-     */
     'results': Array<DocumentTemplate>;
 }
-/**
- * 
- * @export
- * @interface DocumentUploadData
- */
 export interface DocumentUploadData {
     /**
      * The documents related shipment.
-     * @type {string}
-     * @memberof DocumentUploadData
      */
     'shipment_id': string;
     /**
      * Shipping document files
-     * @type {Array<DocumentFileData>}
-     * @memberof DocumentUploadData
      */
     'document_files': Array<DocumentFileData>;
     /**
      * Shipping document file reference
-     * @type {string}
-     * @memberof DocumentUploadData
      */
     'reference'?: string | null;
 }
-/**
- * 
- * @export
- * @interface DocumentUploadRecord
- */
 export interface DocumentUploadRecord {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof DocumentUploadRecord
      */
     'id'?: string;
     /**
      * The shipment carrier
-     * @type {string}
-     * @memberof DocumentUploadRecord
      */
     'carrier_name'?: string | null;
     /**
      * The shipment carrier configured identifier
-     * @type {string}
-     * @memberof DocumentUploadRecord
      */
     'carrier_id'?: string | null;
     /**
      * the carrier shipping document ids
-     * @type {Array<DocumentDetails>}
-     * @memberof DocumentUploadRecord
      */
     'documents'?: Array<DocumentDetails>;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof DocumentUploadRecord
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * Shipping document file reference
-     * @type {string}
-     * @memberof DocumentUploadRecord
      */
     'reference'?: string | null;
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof DocumentUploadRecord
      */
     'messages'?: Array<Message>;
 }
-/**
- * 
- * @export
- * @interface DocumentUploadRecords
- */
 export interface DocumentUploadRecords {
-    /**
-     * 
-     * @type {number}
-     * @memberof DocumentUploadRecords
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentUploadRecords
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentUploadRecords
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<DocumentUploadRecord>}
-     * @memberof DocumentUploadRecords
-     */
     'results': Array<DocumentUploadRecord>;
 }
-/**
- * 
- * @export
- * @interface Documents
- */
 export interface Documents {
     /**
      * A shipping label in base64 string
-     * @type {string}
-     * @memberof Documents
      */
     'label'?: string | null;
     /**
      * A shipping invoice in base64 string
-     * @type {string}
-     * @memberof Documents
      */
     'invoice'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Dpd
- */
 export interface Dpd {
-    /**
-     * 
-     * @type {string}
-     * @memberof Dpd
-     */
     'delis_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dpd
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dpd
-     */
-    'depot'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dpd
-     */
-    'message_language'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dpd
-     */
-    'account_country_code'?: string;
+    'depot'?: string | null;
+    'message_language'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Dtdc
- */
 export interface Dtdc {
-    /**
-     * 
-     * @type {string}
-     * @memberof Dtdc
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dtdc
-     */
     'customer_code': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dtdc
-     */
-    'username'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dtdc
-     */
-    'password'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Dtdc
-     */
-    'account_country_code'?: string;
+    'username'?: string | null;
+    'password'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Duty
- */
 export interface Duty {
     /**
      * The duty payer
-     * @type {string}
-     * @memberof Duty
      */
     'paid_by'?: DutyPaidByEnum | null;
     /**
      * The declared value currency
-     * @type {string}
-     * @memberof Duty
      */
     'currency'?: DutyCurrencyEnum | null;
     /**
      * The package declared value
-     * @type {number}
-     * @memberof Duty
      */
     'declared_value'?: number | null;
     /**
      * The duty payment account number
-     * @type {string}
-     * @memberof Duty
      */
     'account_number'?: string | null;
 }
@@ -3750,261 +2698,77 @@ export const DutyCurrencyEnum = {
 
 export type DutyCurrencyEnum = typeof DutyCurrencyEnum[keyof typeof DutyCurrencyEnum];
 
-/**
- * 
- * @export
- * @interface Easypost
- */
 export interface Easypost {
-    /**
-     * 
-     * @type {string}
-     * @memberof Easypost
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Easypost
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Easyship
- */
 export interface Easyship {
-    /**
-     * 
-     * @type {string}
-     * @memberof Easyship
-     */
     'access_token': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Easyship
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface ErrorMessages
- */
 export interface ErrorMessages {
     /**
      * The list of error messages
-     * @type {Array<Message>}
-     * @memberof ErrorMessages
      */
     'messages'?: Array<Message>;
 }
-/**
- * 
- * @export
- * @interface ErrorResponse
- */
 export interface ErrorResponse {
     /**
      * The list of API errors
-     * @type {Array<APIError>}
-     * @memberof ErrorResponse
      */
     'errors'?: Array<APIError>;
 }
-/**
- * 
- * @export
- * @interface Eshipper
- */
 export interface Eshipper {
-    /**
-     * 
-     * @type {string}
-     * @memberof Eshipper
-     */
     'principal': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Eshipper
-     */
     'credential': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Eshipper
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Fedex
- */
 export interface Fedex {
-    /**
-     * 
-     * @type {string}
-     * @memberof Fedex
-     */
-    'api_key'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Fedex
-     */
-    'secret_key'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Fedex
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Fedex
-     */
-    'track_api_key'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Fedex
-     */
-    'track_secret_key'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Fedex
-     */
-    'account_country_code'?: string;
+    'api_key'?: string | null;
+    'secret_key'?: string | null;
+    'account_number'?: string | null;
+    'track_api_key'?: string | null;
+    'track_secret_key'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Freightcom
- */
 export interface Freightcom {
-    /**
-     * 
-     * @type {string}
-     * @memberof Freightcom
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Freightcom
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Freightcom
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface GeneratedDocument
- */
 export interface GeneratedDocument {
     /**
      * The template name
-     * @type {string}
-     * @memberof GeneratedDocument
      */
     'template_id'?: string;
     /**
      * The format of the document
-     * @type {string}
-     * @memberof GeneratedDocument
      */
     'doc_format'?: string;
     /**
      * The file name
-     * @type {string}
-     * @memberof GeneratedDocument
      */
     'doc_name'?: string;
     /**
      * A base64 file content
-     * @type {string}
-     * @memberof GeneratedDocument
      */
     'doc_file': string;
 }
-/**
- * 
- * @export
- * @interface Generic
- */
 export interface Generic {
-    /**
-     * 
-     * @type {string}
-     * @memberof Generic
-     */
     'display_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Generic
-     */
     'custom_carrier_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Generic
-     */
-    'account_country_code'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Generic
-     */
-    'account_number'?: string;
+    'account_country_code'?: string | null;
+    'account_number'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Geodis
- */
 export interface Geodis {
-    /**
-     * 
-     * @type {string}
-     * @memberof Geodis
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Geodis
-     */
     'identifier': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Geodis
-     */
-    'code_client'?: string;
+    'code_client'?: string | null;
     /**
      * Indicates a language string
-     * @type {string}
-     * @memberof Geodis
      */
     'language'?: GeodisLanguageEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Geodis
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const GeodisLanguageEnum = {
@@ -4014,86 +2778,38 @@ export const GeodisLanguageEnum = {
 
 export type GeodisLanguageEnum = typeof GeodisLanguageEnum[keyof typeof GeodisLanguageEnum];
 
-/**
- * 
- * @export
- * @interface HayPost
- */
 export interface HayPost {
-    /**
-     * 
-     * @type {string}
-     * @memberof HayPost
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof HayPost
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof HayPost
-     */
     'customer_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof HayPost
-     */
     'customer_type': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof HayPost
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Images
- */
 export interface Images {
     /**
      * A delivery image in base64 string
-     * @type {string}
-     * @memberof Images
      */
     'delivery_image'?: string | null;
     /**
      * A signature image in base64 string
-     * @type {string}
-     * @memberof Images
      */
     'signature_image'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Laposte
- */
+export interface Landmark {
+    'username': string;
+    'password': string;
+    'client_id': string;
+    'account_number'?: string | null;
+    'region'?: string | null;
+    'account_country_code'?: string | null;
+}
 export interface Laposte {
-    /**
-     * 
-     * @type {string}
-     * @memberof Laposte
-     */
     'api_key': string;
     /**
      * Indicates a lang string
-     * @type {string}
-     * @memberof Laposte
      */
     'lang'?: LaposteLangEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Laposte
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const LaposteLangEnum = {
@@ -4103,101 +2819,79 @@ export const LaposteLangEnum = {
 
 export type LaposteLangEnum = typeof LaposteLangEnum[keyof typeof LaposteLangEnum];
 
-/**
- * 
- * @export
- * @interface LineItem
- */
 export interface LineItem {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof LineItem
      */
     'id'?: string;
     /**
      * The commodity\'s weight
-     * @type {number}
-     * @memberof LineItem
      */
     'weight': number;
     /**
      * The commodity\'s weight unit
-     * @type {string}
-     * @memberof LineItem
      */
     'weight_unit': LineItemWeightUnitEnum;
     /**
      * A description of the commodity
-     * @type {string}
-     * @memberof LineItem
      */
     'title'?: string | null;
     /**
      * A description of the commodity
-     * @type {string}
-     * @memberof LineItem
      */
     'description'?: string | null;
     /**
      * The commodity\'s quantity (number or item)
-     * @type {number}
-     * @memberof LineItem
      */
     'quantity'?: number;
     /**
      * The commodity\'s sku number
-     * @type {string}
-     * @memberof LineItem
      */
     'sku'?: string | null;
     /**
      * The commodity\'s hs_code number
-     * @type {string}
-     * @memberof LineItem
      */
     'hs_code'?: string | null;
     /**
      * The monetary value of the commodity
-     * @type {number}
-     * @memberof LineItem
      */
     'value_amount'?: number | null;
     /**
      * The currency of the commodity value amount
-     * @type {string}
-     * @memberof LineItem
      */
     'value_currency'?: LineItemValueCurrencyEnum | null;
     /**
      * The origin or manufacture country
-     * @type {string}
-     * @memberof LineItem
      */
     'origin_country'?: LineItemOriginCountryEnum | null;
     /**
+     * The product url
+     */
+    'product_url'?: string | null;
+    /**
+     * The image url
+     */
+    'image_url'?: string | null;
+    /**
+     * The product id
+     */
+    'product_id'?: string | null;
+    /**
+     * The variant id
+     */
+    'variant_id'?: string | null;
+    /**
      * The id of the related order line item.
-     * @type {string}
-     * @memberof LineItem
      */
     'parent_id'?: string | null;
     /**
      * <details>         <summary>Commodity user references metadata.</summary>          {             \"part_number\": \"5218487281\",             \"reference1\": \"# ref 1\",             \"reference2\": \"# ref 2\",             \"reference3\": \"# ref 3\",             ...         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof LineItem
      */
     'metadata'?: { [key: string]: any; } | null;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof LineItem
      */
     'object_type'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof LineItem
-     */
     'unfulfilled_quantity'?: number;
 }
 
@@ -4602,406 +3296,198 @@ export const LineItemOriginCountryEnum = {
 
 export type LineItemOriginCountryEnum = typeof LineItemOriginCountryEnum[keyof typeof LineItemOriginCountryEnum];
 
-/**
- * 
- * @export
- * @interface Locate2u
- */
 export interface Locate2u {
-    /**
-     * 
-     * @type {string}
-     * @memberof Locate2u
-     */
-    'client_id'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Locate2u
-     */
-    'client_secret'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Locate2u
-     */
-    'account_country_code'?: string;
+    'client_id'?: string | null;
+    'client_secret'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Manifest
- */
 export interface Manifest {
     /**
      * A unique manifest identifier
-     * @type {string}
-     * @memberof Manifest
      */
     'id'?: string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Manifest
      */
     'object_type'?: string;
     /**
      * The manifest carrier
-     * @type {string}
-     * @memberof Manifest
      */
     'carrier_name': string;
     /**
      * The manifest carrier configured name
-     * @type {string}
-     * @memberof Manifest
      */
     'carrier_id': string;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof Manifest
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof Manifest
      */
     'test_mode': boolean;
     /**
      * The address of the warehouse or location where the shipments originate.
-     * @type {AddressData}
-     * @memberof Manifest
      */
     'address': AddressData;
     /**
      * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof Manifest
      */
     'options'?: { [key: string]: any; };
     /**
      * The manifest reference
-     * @type {string}
-     * @memberof Manifest
      */
     'reference'?: string | null;
     /**
      * The list of shipment identifiers you want to add to your manifest.<br/>         shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.         
-     * @type {Array<string>}
-     * @memberof Manifest
      */
     'shipment_identifiers': Array<string>;
     /**
      * User metadata for the pickup
-     * @type {{ [key: string]: any; }}
-     * @memberof Manifest
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The Manifest file URL
-     * @type {string}
-     * @memberof Manifest
      */
     'manifest_url'?: string | null;
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof Manifest
      */
     'messages'?: Array<Message>;
 }
-/**
- * 
- * @export
- * @interface ManifestData
- */
 export interface ManifestData {
     /**
      * The manifest\'s carrier
-     * @type {string}
-     * @memberof ManifestData
      */
     'carrier_name': string;
     /**
      * The address of the warehouse or location where the shipments originate.
-     * @type {AddressData}
-     * @memberof ManifestData
      */
     'address': AddressData;
     /**
      * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ManifestData
      */
     'options'?: { [key: string]: any; };
     /**
      * The manifest reference
-     * @type {string}
-     * @memberof ManifestData
      */
     'reference'?: string | null;
     /**
      * The list of existing shipment object ids with label purchased.
-     * @type {Array<string>}
-     * @memberof ManifestData
      */
     'shipment_ids': Array<string>;
 }
-/**
- * 
- * @export
- * @interface ManifestDetails
- */
 export interface ManifestDetails {
     /**
      * A unique manifest identifier
-     * @type {string}
-     * @memberof ManifestDetails
      */
     'id'?: string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof ManifestDetails
      */
     'object_type'?: string;
     /**
      * The manifest carrier
-     * @type {string}
-     * @memberof ManifestDetails
      */
     'carrier_name': string;
     /**
      * The manifest carrier configured name
-     * @type {string}
-     * @memberof ManifestDetails
      */
     'carrier_id': string;
     /**
      * The manifest documents
-     * @type {ManifestDocument}
-     * @memberof ManifestDetails
      */
     'doc'?: ManifestDocument | null;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof ManifestDetails
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof ManifestDetails
      */
     'test_mode': boolean;
 }
-/**
- * 
- * @export
- * @interface ManifestDocument
- */
 export interface ManifestDocument {
     /**
      * A manifest file in base64 string
-     * @type {string}
-     * @memberof ManifestDocument
      */
     'manifest'?: string | null;
 }
-/**
- * 
- * @export
- * @interface ManifestList
- */
 export interface ManifestList {
-    /**
-     * 
-     * @type {number}
-     * @memberof ManifestList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManifestList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManifestList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Manifest>}
-     * @memberof ManifestList
-     */
     'results': Array<Manifest>;
 }
-/**
- * 
- * @export
- * @interface ManifestRequest
- */
 export interface ManifestRequest {
     /**
      * The manifest\'s carrier
-     * @type {string}
-     * @memberof ManifestRequest
      */
     'carrier_name': string;
     /**
      * The address of the warehouse or location where the shipments originate.
-     * @type {AddressData}
-     * @memberof ManifestRequest
      */
     'address': AddressData;
     /**
      * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ManifestRequest
      */
     'options'?: { [key: string]: any; };
     /**
      * The manifest reference
-     * @type {string}
-     * @memberof ManifestRequest
      */
     'reference'?: string | null;
     /**
      * The list of shipment identifiers you want to add to your manifest.<br/>         shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.         
-     * @type {Array<string>}
-     * @memberof ManifestRequest
      */
     'shipment_identifiers': Array<string>;
 }
-/**
- * 
- * @export
- * @interface ManifestResponse
- */
 export interface ManifestResponse {
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof ManifestResponse
      */
     'messages'?: Array<Message>;
     /**
      * The manifest details
-     * @type {ManifestDetails}
-     * @memberof ManifestResponse
      */
     'manifest'?: ManifestDetails;
 }
-/**
- * 
- * @export
- * @interface Message
- */
 export interface Message {
     /**
      * The error or warning message
-     * @type {string}
-     * @memberof Message
      */
     'message'?: string;
     /**
      * The message code
-     * @type {string}
-     * @memberof Message
      */
     'code'?: string;
     /**
      * any additional details
-     * @type {{ [key: string]: any; }}
-     * @memberof Message
      */
     'details'?: { [key: string]: any; };
     /**
      * The targeted carrier
-     * @type {string}
-     * @memberof Message
      */
     'carrier_name'?: string;
     /**
      * The targeted carrier name (unique identifier)
-     * @type {string}
-     * @memberof Message
      */
     'carrier_id'?: string;
 }
-/**
- * 
- * @export
- * @interface Mydhl
- */
 export interface Mydhl {
-    /**
-     * 
-     * @type {string}
-     * @memberof Mydhl
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Mydhl
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Mydhl
-     */
     'account_number': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Mydhl
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Nationex
- */
 export interface Nationex {
-    /**
-     * 
-     * @type {string}
-     * @memberof Nationex
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Nationex
-     */
     'customer_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Nationex
-     */
-    'billing_account'?: string;
+    'billing_account'?: string | null;
     /**
      * Indicates a language string
-     * @type {string}
-     * @memberof Nationex
      */
     'language'?: NationexLanguageEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Nationex
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const NationexLanguageEnum = {
@@ -5011,175 +3497,107 @@ export const NationexLanguageEnum = {
 
 export type NationexLanguageEnum = typeof NationexLanguageEnum[keyof typeof NationexLanguageEnum];
 
-/**
- * 
- * @export
- * @interface Operation
- */
 export interface Operation {
     /**
      * Operation performed
-     * @type {string}
-     * @memberof Operation
      */
     'operation': string;
     /**
      * Specify whether the operation was successful
-     * @type {boolean}
-     * @memberof Operation
      */
     'success': boolean;
 }
-/**
- * 
- * @export
- * @interface OperationConfirmation
- */
 export interface OperationConfirmation {
     /**
      * Operation performed
-     * @type {string}
-     * @memberof OperationConfirmation
      */
     'operation': string;
     /**
      * Specify whether the operation was successful
-     * @type {boolean}
-     * @memberof OperationConfirmation
      */
     'success': boolean;
     /**
      * The operation carrier
-     * @type {string}
-     * @memberof OperationConfirmation
      */
     'carrier_name': string;
     /**
      * The targeted carrier\'s name (unique identifier)
-     * @type {string}
-     * @memberof OperationConfirmation
      */
     'carrier_id': string;
 }
-/**
- * 
- * @export
- * @interface OperationResponse
- */
 export interface OperationResponse {
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof OperationResponse
      */
     'messages'?: Array<Message>;
     /**
      * The operation details
-     * @type {OperationConfirmation}
-     * @memberof OperationResponse
      */
     'confirmation'?: OperationConfirmation;
 }
-/**
- * 
- * @export
- * @interface Order
- */
 export interface Order {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Order
      */
     'id'?: string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Order
      */
     'object_type'?: string;
     /**
      * The source\' order id.
-     * @type {string}
-     * @memberof Order
      */
     'order_id': string;
     /**
      * The order date. format: `YYYY-MM-DD`
-     * @type {string}
-     * @memberof Order
      */
     'order_date'?: string | null;
     /**
      * The order\'s source.
-     * @type {string}
-     * @memberof Order
      */
     'source'?: string;
     /**
      * The order status.
-     * @type {string}
-     * @memberof Order
      */
     'status'?: OrderStatusEnum;
     /**
      * The customer address for the order.
-     * @type {Address}
-     * @memberof Order
      */
     'shipping_to': Address;
     /**
      * The origin or warehouse address of the order items.
-     * @type {Address}
-     * @memberof Order
      */
     'shipping_from'?: Address | null;
     /**
      * The customer\' or shipping billing address.
-     * @type {AddressData}
-     * @memberof Order
      */
     'billing_address'?: AddressData | null;
     /**
      * The order line items.
-     * @type {Array<LineItem>}
-     * @memberof Order
      */
     'line_items': Array<LineItem>;
     /**
      * <details>         <summary>The options available for the order shipments.</summary>          {             \"currency\": \"USD\",             \"paid_by\": \"third_party\",             \"payment_account_number\": \"123456789\",             \"duty_paid_by\": \"third_party\",             \"duty_account_number\": \"123456789\",             \"invoice_number\": \"123456789\",             \"invoice_date\": \"2020-01-01\",             \"single_item_per_parcel\": true,             \"carrier_ids\": [\"canadapost-test\"],             \"preferred_service\": \"fedex_express_saver\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof Order
      */
     'options'?: { [key: string]: any; } | null;
     /**
      * system related metadata.
-     * @type {{ [key: string]: any; }}
-     * @memberof Order
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * User metadata for the order.
-     * @type {{ [key: string]: any; }}
-     * @memberof Order
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The shipments associated with the order.
-     * @type {Array<Shipment>}
-     * @memberof Order
      */
     'shipments'?: Array<Shipment>;
     /**
      * Specify whether the order is in test mode or not.
-     * @type {boolean}
-     * @memberof Order
      */
     'test_mode': boolean;
     /**
      * The shipment creation datetime.<br/>         Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`         
-     * @type {string}
-     * @memberof Order
      */
     'created_at': string;
 }
@@ -5194,223 +3612,127 @@ export const OrderStatusEnum = {
 
 export type OrderStatusEnum = typeof OrderStatusEnum[keyof typeof OrderStatusEnum];
 
-/**
- * 
- * @export
- * @interface OrderData
- */
 export interface OrderData {
     /**
      * The source\' order id.
-     * @type {string}
-     * @memberof OrderData
      */
     'order_id': string;
     /**
      * The order date. format: `YYYY-MM-DD`
-     * @type {string}
-     * @memberof OrderData
      */
     'order_date'?: string | null;
     /**
      * The order\'s source.<br/>         e.g. API, POS, ERP, Shopify, Woocommerce, etc.         
-     * @type {string}
-     * @memberof OrderData
      */
     'source'?: string;
     /**
      * The customer or recipient address for the order.
-     * @type {AddressData}
-     * @memberof OrderData
      */
     'shipping_to': AddressData;
     /**
      * The origin or warehouse address of the order items.
-     * @type {AddressData}
-     * @memberof OrderData
      */
     'shipping_from'?: AddressData | null;
     /**
      * The customer\' or shipping billing address.
-     * @type {AddressData}
-     * @memberof OrderData
      */
     'billing_address'?: AddressData | null;
     /**
      * The order line items.
-     * @type {Array<CommodityData>}
-     * @memberof OrderData
      */
     'line_items': Array<CommodityData>;
     /**
      * <details>         <summary>The options available for the order shipments.</summary>          {             \"currency\": \"USD\",             \"paid_by\": \"third_party\",             \"payment_account_number\": \"123456789\",             \"duty_paid_by\": \"third_party\",             \"duty_account_number\": \"123456789\",             \"invoice_number\": \"123456789\",             \"invoice_date\": \"2020-01-01\",             \"single_item_per_parcel\": true,             \"carrier_ids\": [\"canadapost-test\"],             \"preferred_service\": \"fedex_express_saver\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof OrderData
      */
     'options'?: { [key: string]: any; } | null;
     /**
      * User metadata for the order.
-     * @type {{ [key: string]: any; }}
-     * @memberof OrderData
      */
     'metadata'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface OrderList
- */
 export interface OrderList {
-    /**
-     * 
-     * @type {number}
-     * @memberof OrderList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof OrderList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Order>}
-     * @memberof OrderList
-     */
     'results': Array<Order>;
 }
-/**
- * 
- * @export
- * @interface OrderUpdateData
- */
 export interface OrderUpdateData {
     /**
      * <details>         <summary>The options available for the order shipments.</summary>          {             \"currency\": \"USD\",             \"paid_by\": \"third_party\",             \"payment_account_number\": \"123456789\",             \"duty_paid_by\": \"recipient\",             \"duty_account_number\": \"123456789\",             \"invoice_number\": \"123456789\",             \"invoice_date\": \"2020-01-01\",             \"single_item_per_parcel\": true,             \"carrier_ids\": [\"canadapost-test\"],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof OrderUpdateData
      */
     'options'?: { [key: string]: any; } | null;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof OrderUpdateData
      */
     'metadata'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface Parcel
- */
 export interface Parcel {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Parcel
      */
     'id'?: string;
     /**
      * The parcel\'s weight
-     * @type {number}
-     * @memberof Parcel
      */
     'weight': number;
     /**
      * The parcel\'s width
-     * @type {number}
-     * @memberof Parcel
      */
     'width'?: number | null;
     /**
      * The parcel\'s height
-     * @type {number}
-     * @memberof Parcel
      */
     'height'?: number | null;
     /**
      * The parcel\'s length
-     * @type {number}
-     * @memberof Parcel
      */
     'length'?: number | null;
     /**
      * The parcel\'s packaging type.<br/>         **Note that the packaging is optional when using a package preset.**<br/>         values: <br/>         `envelope` `pak` `tube` `pallet` `small_box` `medium_box` `your_packaging`<br/>         For carrier specific packaging types, please consult the reference.         
-     * @type {string}
-     * @memberof Parcel
      */
     'packaging_type'?: string | null;
     /**
      * The parcel\'s package preset.<br/>         For carrier specific package presets, please consult the reference.         
-     * @type {string}
-     * @memberof Parcel
      */
     'package_preset'?: string | null;
     /**
      * The parcel\'s description
-     * @type {string}
-     * @memberof Parcel
      */
     'description'?: string | null;
     /**
      * The parcel\'s content description
-     * @type {string}
-     * @memberof Parcel
      */
     'content'?: string | null;
     /**
      * Indicates if the parcel is composed of documents only
-     * @type {boolean}
-     * @memberof Parcel
      */
     'is_document'?: boolean | null;
     /**
      * The parcel\'s weight unit
-     * @type {string}
-     * @memberof Parcel
      */
     'weight_unit': ParcelWeightUnitEnum;
     /**
      * The parcel\'s dimension unit
-     * @type {string}
-     * @memberof Parcel
      */
     'dimension_unit'?: ParcelDimensionUnitEnum | null;
     /**
      * The parcel items.
-     * @type {Array<Commodity>}
-     * @memberof Parcel
      */
     'items'?: Array<Commodity>;
     /**
      * The parcel reference number.<br/>         (can be used as tracking number for custom carriers)         
-     * @type {string}
-     * @memberof Parcel
      */
     'reference_number'?: string | null;
     /**
      * The parcel\'s freight class for pallet and freight shipments.
-     * @type {string}
-     * @memberof Parcel
      */
     'freight_class'?: string | null;
     /**
      * <details>         <summary>Parcel specific options.</summary>          {             \"insurance\": \"100.00\",             \"insured_by\": \"carrier\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof Parcel
      */
     'options'?: { [key: string]: any; };
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Parcel
      */
     'object_type'?: string;
 }
@@ -5430,100 +3752,65 @@ export const ParcelDimensionUnitEnum = {
 
 export type ParcelDimensionUnitEnum = typeof ParcelDimensionUnitEnum[keyof typeof ParcelDimensionUnitEnum];
 
-/**
- * 
- * @export
- * @interface ParcelData
- */
 export interface ParcelData {
     /**
      * The parcel\'s weight
-     * @type {number}
-     * @memberof ParcelData
      */
     'weight': number;
     /**
      * The parcel\'s width
-     * @type {number}
-     * @memberof ParcelData
      */
     'width'?: number | null;
     /**
      * The parcel\'s height
-     * @type {number}
-     * @memberof ParcelData
      */
     'height'?: number | null;
     /**
      * The parcel\'s length
-     * @type {number}
-     * @memberof ParcelData
      */
     'length'?: number | null;
     /**
      * The parcel\'s packaging type.<br/>         **Note that the packaging is optional when using a package preset.**<br/>         values: <br/>         `envelope` `pak` `tube` `pallet` `small_box` `medium_box` `your_packaging`<br/>         For carrier specific packaging types, please consult the reference.         
-     * @type {string}
-     * @memberof ParcelData
      */
     'packaging_type'?: string | null;
     /**
      * The parcel\'s package preset.<br/>         For carrier specific package presets, please consult the reference.         
-     * @type {string}
-     * @memberof ParcelData
      */
     'package_preset'?: string | null;
     /**
      * The parcel\'s description
-     * @type {string}
-     * @memberof ParcelData
      */
     'description'?: string | null;
     /**
      * The parcel\'s content description
-     * @type {string}
-     * @memberof ParcelData
      */
     'content'?: string | null;
     /**
      * Indicates if the parcel is composed of documents only
-     * @type {boolean}
-     * @memberof ParcelData
      */
     'is_document'?: boolean | null;
     /**
      * The parcel\'s weight unit
-     * @type {string}
-     * @memberof ParcelData
      */
     'weight_unit': ParcelDataWeightUnitEnum;
     /**
      * The parcel\'s dimension unit
-     * @type {string}
-     * @memberof ParcelData
      */
     'dimension_unit'?: ParcelDataDimensionUnitEnum | null;
     /**
      * The parcel items.
-     * @type {Array<CommodityData>}
-     * @memberof ParcelData
      */
     'items'?: Array<CommodityData>;
     /**
      * The parcel reference number.<br/>         (can be used as tracking number for custom carriers)         
-     * @type {string}
-     * @memberof ParcelData
      */
     'reference_number'?: string | null;
     /**
      * The parcel\'s freight class for pallet and freight shipments.
-     * @type {string}
-     * @memberof ParcelData
      */
     'freight_class'?: string | null;
     /**
      * <details>         <summary>Parcel specific options.</summary>          {             \"insurance\": \"100.00\",             \"insured_by\": \"carrier\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ParcelData
      */
     'options'?: { [key: string]: any; };
 }
@@ -5543,131 +3830,71 @@ export const ParcelDataDimensionUnitEnum = {
 
 export type ParcelDataDimensionUnitEnum = typeof ParcelDataDimensionUnitEnum[keyof typeof ParcelDataDimensionUnitEnum];
 
-/**
- * 
- * @export
- * @interface ParcelList
- */
 export interface ParcelList {
-    /**
-     * 
-     * @type {number}
-     * @memberof ParcelList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ParcelList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ParcelList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Parcel>}
-     * @memberof ParcelList
-     */
     'results': Array<Parcel>;
 }
-/**
- * 
- * @export
- * @interface PatchedAddressData
- */
 export interface PatchedAddressData {
     /**
      * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'postal_code'?: string | null;
     /**
      * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'city'?: string | null;
     /**
      * The party frederal tax id
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'federal_tax_id'?: string | null;
     /**
      * The party state id
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'state_tax_id'?: string | null;
     /**
      * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'person_name'?: string | null;
     /**
      * The company name if the party is a company
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'company_name'?: string | null;
     /**
      * The address country code
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'country_code'?: PatchedAddressDataCountryCodeEnum;
     /**
      * The party email
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'email'?: string | null;
     /**
      * The party phone number.
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'phone_number'?: string | null;
     /**
      * The address state code
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'state_code'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof PatchedAddressData
      */
     'residential'?: boolean | null;
     /**
      * The address street number
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'street_number'?: string | null;
     /**
      * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'address_line1'?: string | null;
     /**
      * The address line with suite number
-     * @type {string}
-     * @memberof PatchedAddressData
      */
     'address_line2'?: string | null;
     /**
      * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof PatchedAddressData
      */
     'validate_location'?: boolean | null;
 }
@@ -5917,52 +4144,33 @@ export const PatchedAddressDataCountryCodeEnum = {
 
 export type PatchedAddressDataCountryCodeEnum = typeof PatchedAddressDataCountryCodeEnum[keyof typeof PatchedAddressDataCountryCodeEnum];
 
-/**
- * 
- * @export
- * @interface PatchedCarrierConnectionData
- */
 export interface PatchedCarrierConnectionData {
     /**
      * A carrier connection type.
-     * @type {string}
-     * @memberof PatchedCarrierConnectionData
      */
     'carrier_name'?: PatchedCarrierConnectionDataCarrierNameEnum;
     /**
      * A carrier connection friendly name.
-     * @type {string}
-     * @memberof PatchedCarrierConnectionData
      */
     'carrier_id'?: string;
     /**
      * Carrier connection credentials.
-     * @type {ConnectionCredentialsField}
-     * @memberof PatchedCarrierConnectionData
      */
     'credentials'?: ConnectionCredentialsField;
     /**
      * The carrier enabled capabilities.
-     * @type {Array<string>}
-     * @memberof PatchedCarrierConnectionData
      */
     'capabilities'?: Array<string> | null;
     /**
      * Carrier connection custom config.
-     * @type {{ [key: string]: any; }}
-     * @memberof PatchedCarrierConnectionData
      */
     'config'?: { [key: string]: any; };
     /**
      * User metadata for the carrier.
-     * @type {{ [key: string]: any; }}
-     * @memberof PatchedCarrierConnectionData
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The active flag indicates whether the carrier account is active or not.
-     * @type {boolean}
-     * @memberof PatchedCarrierConnectionData
      */
     'active'?: boolean;
 }
@@ -5992,6 +4200,7 @@ export const PatchedCarrierConnectionDataCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -6014,58 +4223,37 @@ export const PatchedCarrierConnectionDataCarrierNameEnum = {
 
 export type PatchedCarrierConnectionDataCarrierNameEnum = typeof PatchedCarrierConnectionDataCarrierNameEnum[keyof typeof PatchedCarrierConnectionDataCarrierNameEnum];
 
-/**
- * 
- * @export
- * @interface PatchedDocumentTemplateData
- */
 export interface PatchedDocumentTemplateData {
     /**
      * The template name
-     * @type {string}
-     * @memberof PatchedDocumentTemplateData
      */
     'name'?: string;
     /**
      * The template slug
-     * @type {string}
-     * @memberof PatchedDocumentTemplateData
      */
     'slug'?: string;
     /**
      * The template content
-     * @type {string}
-     * @memberof PatchedDocumentTemplateData
      */
     'template'?: string;
     /**
      * disable template flag.
-     * @type {boolean}
-     * @memberof PatchedDocumentTemplateData
      */
     'active'?: boolean;
     /**
      * The template description
-     * @type {string}
-     * @memberof PatchedDocumentTemplateData
      */
     'description'?: string;
     /**
      * The template metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof PatchedDocumentTemplateData
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The template rendering options
-     * @type {{ [key: string]: any; }}
-     * @memberof PatchedDocumentTemplateData
      */
     'options'?: { [key: string]: any; };
     /**
      * The template related object
-     * @type {string}
-     * @memberof PatchedDocumentTemplateData
      */
     'related_object'?: PatchedDocumentTemplateDataRelatedObjectEnum;
 }
@@ -6078,100 +4266,65 @@ export const PatchedDocumentTemplateDataRelatedObjectEnum = {
 
 export type PatchedDocumentTemplateDataRelatedObjectEnum = typeof PatchedDocumentTemplateDataRelatedObjectEnum[keyof typeof PatchedDocumentTemplateDataRelatedObjectEnum];
 
-/**
- * 
- * @export
- * @interface PatchedParcelData
- */
 export interface PatchedParcelData {
     /**
      * The parcel\'s weight
-     * @type {number}
-     * @memberof PatchedParcelData
      */
     'weight'?: number;
     /**
      * The parcel\'s width
-     * @type {number}
-     * @memberof PatchedParcelData
      */
     'width'?: number | null;
     /**
      * The parcel\'s height
-     * @type {number}
-     * @memberof PatchedParcelData
      */
     'height'?: number | null;
     /**
      * The parcel\'s length
-     * @type {number}
-     * @memberof PatchedParcelData
      */
     'length'?: number | null;
     /**
      * The parcel\'s packaging type.<br/>         **Note that the packaging is optional when using a package preset.**<br/>         values: <br/>         `envelope` `pak` `tube` `pallet` `small_box` `medium_box` `your_packaging`<br/>         For carrier specific packaging types, please consult the reference.         
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'packaging_type'?: string | null;
     /**
      * The parcel\'s package preset.<br/>         For carrier specific package presets, please consult the reference.         
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'package_preset'?: string | null;
     /**
      * The parcel\'s description
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'description'?: string | null;
     /**
      * The parcel\'s content description
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'content'?: string | null;
     /**
      * Indicates if the parcel is composed of documents only
-     * @type {boolean}
-     * @memberof PatchedParcelData
      */
     'is_document'?: boolean | null;
     /**
      * The parcel\'s weight unit
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'weight_unit'?: PatchedParcelDataWeightUnitEnum;
     /**
      * The parcel\'s dimension unit
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'dimension_unit'?: PatchedParcelDataDimensionUnitEnum | null;
     /**
      * The parcel items.
-     * @type {Array<CommodityData>}
-     * @memberof PatchedParcelData
      */
     'items'?: Array<CommodityData>;
     /**
      * The parcel reference number.<br/>         (can be used as tracking number for custom carriers)         
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'reference_number'?: string | null;
     /**
      * The parcel\'s freight class for pallet and freight shipments.
-     * @type {string}
-     * @memberof PatchedParcelData
      */
     'freight_class'?: string | null;
     /**
      * <details>         <summary>Parcel specific options.</summary>          {             \"insurance\": \"100.00\",             \"insured_by\": \"carrier\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof PatchedParcelData
      */
     'options'?: { [key: string]: any; };
 }
@@ -6191,34 +4344,21 @@ export const PatchedParcelDataDimensionUnitEnum = {
 
 export type PatchedParcelDataDimensionUnitEnum = typeof PatchedParcelDataDimensionUnitEnum[keyof typeof PatchedParcelDataDimensionUnitEnum];
 
-/**
- * 
- * @export
- * @interface PatchedWebhookData
- */
 export interface PatchedWebhookData {
     /**
      * The URL of the webhook endpoint.
-     * @type {string}
-     * @memberof PatchedWebhookData
      */
     'url'?: string;
     /**
      * An optional description of what the webhook is used for.
-     * @type {string}
-     * @memberof PatchedWebhookData
      */
     'description'?: string | null;
     /**
      * The list of events to enable for this endpoint.
-     * @type {Array<string>}
-     * @memberof PatchedWebhookData
      */
     'enabled_events'?: Array<PatchedWebhookDataEnabledEventsEnum>;
     /**
      * Indicates that the webhook is disabled
-     * @type {boolean}
-     * @memberof PatchedWebhookData
      */
     'disabled'?: boolean | null;
 }
@@ -6246,28 +4386,17 @@ export const PatchedWebhookDataEnabledEventsEnum = {
 
 export type PatchedWebhookDataEnabledEventsEnum = typeof PatchedWebhookDataEnabledEventsEnum[keyof typeof PatchedWebhookDataEnabledEventsEnum];
 
-/**
- * 
- * @export
- * @interface Payment
- */
 export interface Payment {
     /**
      * The payor type
-     * @type {string}
-     * @memberof Payment
      */
     'paid_by'?: PaymentPaidByEnum;
     /**
      * The payment amount currency
-     * @type {string}
-     * @memberof Payment
      */
     'currency'?: PaymentCurrencyEnum | null;
     /**
      * The payor account number
-     * @type {string}
-     * @memberof Payment
      */
     'account_number'?: string | null;
 }
@@ -6429,495 +4558,278 @@ export const PaymentCurrencyEnum = {
 
 export type PaymentCurrencyEnum = typeof PaymentCurrencyEnum[keyof typeof PaymentCurrencyEnum];
 
-/**
- * 
- * @export
- * @interface Pickup
- */
 export interface Pickup {
     /**
      * A unique pickup identifier
-     * @type {string}
-     * @memberof Pickup
      */
     'id'?: string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Pickup
      */
     'object_type'?: string;
     /**
      * The pickup carrier
-     * @type {string}
-     * @memberof Pickup
      */
     'carrier_name': string;
     /**
      * The pickup carrier configured name
-     * @type {string}
-     * @memberof Pickup
      */
     'carrier_id': string;
     /**
      * The pickup confirmation identifier
-     * @type {string}
-     * @memberof Pickup
      */
     'confirmation_number': string;
     /**
      * The pickup date
-     * @type {string}
-     * @memberof Pickup
      */
     'pickup_date'?: string | null;
     /**
      * The pickup cost details
-     * @type {Charge}
-     * @memberof Pickup
      */
     'pickup_charge'?: Charge | null;
     /**
      * The pickup expected ready time
-     * @type {string}
-     * @memberof Pickup
      */
     'ready_time'?: string | null;
     /**
      * The pickup expected closing or late time
-     * @type {string}
-     * @memberof Pickup
      */
     'closing_time'?: string | null;
     /**
      * User metadata for the pickup
-     * @type {{ [key: string]: any; }}
-     * @memberof Pickup
      */
     'metadata'?: { [key: string]: any; };
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof Pickup
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * The pickup address
-     * @type {Address}
-     * @memberof Pickup
      */
     'address': Address;
     /**
      * The shipment parcels to pickup.
-     * @type {Array<Parcel>}
-     * @memberof Pickup
      */
     'parcels': Array<Parcel>;
     /**
      * The pickup instruction.<br/>         eg: Handle with care.         
-     * @type {string}
-     * @memberof Pickup
      */
     'instruction'?: string | null;
     /**
      * The package(s) location.<br/>         eg: Behind the entrance door.         
-     * @type {string}
-     * @memberof Pickup
      */
     'package_location'?: string | null;
     /**
      * Advanced carrier specific pickup options
-     * @type {{ [key: string]: any; }}
-     * @memberof Pickup
      */
     'options'?: { [key: string]: any; } | null;
     /**
      * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof Pickup
      */
     'test_mode': boolean;
 }
-/**
- * 
- * @export
- * @interface PickupCancelData
- */
 export interface PickupCancelData {
     /**
      * The reason of the pickup cancellation
-     * @type {string}
-     * @memberof PickupCancelData
      */
     'reason'?: string;
 }
-/**
- * 
- * @export
- * @interface PickupCancelRequest
- */
 export interface PickupCancelRequest {
     /**
      * The pickup confirmation identifier
-     * @type {string}
-     * @memberof PickupCancelRequest
      */
     'confirmation_number': string;
     /**
      * The pickup address
-     * @type {AddressData}
-     * @memberof PickupCancelRequest
      */
     'address'?: AddressData;
     /**
      * The pickup date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof PickupCancelRequest
      */
     'pickup_date'?: string | null;
     /**
      * The reason of the pickup cancellation
-     * @type {string}
-     * @memberof PickupCancelRequest
      */
     'reason'?: string;
 }
-/**
- * 
- * @export
- * @interface PickupData
- */
 export interface PickupData {
     /**
      * The expected pickup date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof PickupData
      */
     'pickup_date': string;
     /**
      * The pickup address
-     * @type {AddressData}
-     * @memberof PickupData
      */
     'address'?: AddressData;
     /**
      * The ready time for pickup.<br/>         Time Format: `HH:MM`         
-     * @type {string}
-     * @memberof PickupData
      */
     'ready_time': string;
     /**
      * The closing or late time of the pickup.<br/>         Time Format: `HH:MM`         
-     * @type {string}
-     * @memberof PickupData
      */
     'closing_time': string;
     /**
      * The pickup instruction.<br/>         eg: Handle with care.         
-     * @type {string}
-     * @memberof PickupData
      */
     'instruction'?: string | null;
     /**
      * The package(s) location.<br/>         eg: Behind the entrance door.         
-     * @type {string}
-     * @memberof PickupData
      */
     'package_location'?: string | null;
     /**
      * Advanced carrier specific pickup options
-     * @type {{ [key: string]: any; }}
-     * @memberof PickupData
      */
     'options'?: { [key: string]: any; } | null;
     /**
      * The list of shipments to be picked up
-     * @type {Array<string>}
-     * @memberof PickupData
      */
     'tracking_numbers': Array<string>;
     /**
      * User metadata for the pickup
-     * @type {{ [key: string]: any; }}
-     * @memberof PickupData
      */
     'metadata'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface PickupList
- */
 export interface PickupList {
-    /**
-     * 
-     * @type {number}
-     * @memberof PickupList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PickupList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PickupList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Pickup>}
-     * @memberof PickupList
-     */
     'results': Array<Pickup>;
 }
-/**
- * 
- * @export
- * @interface PickupRequest
- */
 export interface PickupRequest {
     /**
      * The expected pickup date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof PickupRequest
      */
     'pickup_date': string;
     /**
      * The pickup address
-     * @type {AddressData}
-     * @memberof PickupRequest
      */
     'address': AddressData;
     /**
      * The shipment parcels to pickup.
-     * @type {Array<ParcelData>}
-     * @memberof PickupRequest
      */
     'parcels': Array<ParcelData>;
     /**
      * The ready time for pickup.<br/>         Time Format: `HH:MM`         
-     * @type {string}
-     * @memberof PickupRequest
      */
     'ready_time': string;
     /**
      * The closing or late time of the pickup.<br/>         Time Format: `HH:MM`         
-     * @type {string}
-     * @memberof PickupRequest
      */
     'closing_time': string;
     /**
      * The pickup instruction.<br/>         eg: Handle with care.         
-     * @type {string}
-     * @memberof PickupRequest
      */
     'instruction'?: string | null;
     /**
      * The package(s) location.<br/>         eg: Behind the entrance door.         
-     * @type {string}
-     * @memberof PickupRequest
      */
     'package_location'?: string | null;
     /**
      * Advanced carrier specific pickup options
-     * @type {{ [key: string]: any; }}
-     * @memberof PickupRequest
      */
     'options'?: { [key: string]: any; } | null;
 }
-/**
- * 
- * @export
- * @interface PickupResponse
- */
 export interface PickupResponse {
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof PickupResponse
      */
     'messages'?: Array<Message>;
     /**
      * The scheduled pickup\'s summary
-     * @type {Pickup}
-     * @memberof PickupResponse
      */
     'pickup'?: Pickup;
 }
-/**
- * 
- * @export
- * @interface PickupUpdateData
- */
 export interface PickupUpdateData {
     /**
      * The expected pickup date.<br/>         Date Format: YYYY-MM-DD         
-     * @type {string}
-     * @memberof PickupUpdateData
      */
     'pickup_date'?: string;
     /**
      * The pickup address
-     * @type {AddressData}
-     * @memberof PickupUpdateData
      */
     'address'?: AddressData;
     /**
      * The ready time for pickup.
-     * @type {string}
-     * @memberof PickupUpdateData
      */
     'ready_time'?: string | null;
     /**
      * The closing or late time of the pickup
-     * @type {string}
-     * @memberof PickupUpdateData
      */
     'closing_time'?: string | null;
     /**
      * The pickup instruction.<br/>         eg: Handle with care.         
-     * @type {string}
-     * @memberof PickupUpdateData
      */
     'instruction'?: string | null;
     /**
      * The package(s) location.<br/>         eg: Behind the entrance door.         
-     * @type {string}
-     * @memberof PickupUpdateData
      */
     'package_location'?: string | null;
     /**
      * Advanced carrier specific pickup options
-     * @type {{ [key: string]: any; }}
-     * @memberof PickupUpdateData
      */
     'options'?: { [key: string]: any; } | null;
     /**
      * The list of shipments to be picked up
-     * @type {Array<string>}
-     * @memberof PickupUpdateData
      */
     'tracking_numbers'?: Array<string>;
     /**
      * User metadata for the pickup
-     * @type {{ [key: string]: any; }}
-     * @memberof PickupUpdateData
      */
     'metadata'?: { [key: string]: any; };
     /**
      * pickup identification number
-     * @type {string}
-     * @memberof PickupUpdateData
      */
     'confirmation_number': string;
 }
-/**
- * 
- * @export
- * @interface PickupUpdateRequest
- */
 export interface PickupUpdateRequest {
     /**
      * The expected pickup date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof PickupUpdateRequest
      */
     'pickup_date': string;
     /**
      * The pickup address
-     * @type {Address}
-     * @memberof PickupUpdateRequest
      */
     'address': Address;
     /**
      * The shipment parcels to pickup.
-     * @type {Array<Parcel>}
-     * @memberof PickupUpdateRequest
      */
     'parcels': Array<Parcel>;
     /**
      * pickup identification number
-     * @type {string}
-     * @memberof PickupUpdateRequest
      */
     'confirmation_number': string;
     /**
      * The ready time for pickup.         Time Format: `HH:MM`         
-     * @type {string}
-     * @memberof PickupUpdateRequest
      */
     'ready_time': string;
     /**
      * The closing or late time of the pickup.<br/>         Time Format: `HH:MM`         
-     * @type {string}
-     * @memberof PickupUpdateRequest
      */
     'closing_time': string;
     /**
      * The pickup instruction.<br/>         eg: Handle with care.         
-     * @type {string}
-     * @memberof PickupUpdateRequest
      */
     'instruction'?: string | null;
     /**
      * The package(s) location.<br/>         eg: Behind the entrance door.         
-     * @type {string}
-     * @memberof PickupUpdateRequest
      */
     'package_location'?: string | null;
     /**
      * Advanced carrier specific pickup options
-     * @type {{ [key: string]: any; }}
-     * @memberof PickupUpdateRequest
      */
     'options'?: { [key: string]: any; } | null;
 }
-/**
- * 
- * @export
- * @interface Purolator
- */
 export interface Purolator {
-    /**
-     * 
-     * @type {string}
-     * @memberof Purolator
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Purolator
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Purolator
-     */
     'account_number': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Purolator
-     */
-    'user_token'?: string;
+    'user_token'?: string | null;
     /**
      * Indicates a language string
-     * @type {string}
-     * @memberof Purolator
      */
     'language'?: PurolatorLanguageEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Purolator
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const PurolatorLanguageEnum = {
@@ -6927,233 +4839,114 @@ export const PurolatorLanguageEnum = {
 
 export type PurolatorLanguageEnum = typeof PurolatorLanguageEnum[keyof typeof PurolatorLanguageEnum];
 
-/**
- * 
- * @export
- * @interface Rate
- */
 export interface Rate {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Rate
      */
     'id'?: string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Rate
      */
     'object_type'?: string;
     /**
      * The rate\'s carrier
-     * @type {string}
-     * @memberof Rate
      */
     'carrier_name': string;
     /**
      * The targeted carrier\'s name (unique identifier)
-     * @type {string}
-     * @memberof Rate
      */
     'carrier_id': string;
     /**
      * The rate monetary values currency code
-     * @type {string}
-     * @memberof Rate
      */
     'currency'?: string;
     /**
      * The carrier\'s rate (quote) service
-     * @type {string}
-     * @memberof Rate
      */
     'service'?: string | null;
     /**
      * The rate\'s monetary amount of the total charge.<br/>         This is the gross amount of the rate after adding the additional charges         
-     * @type {number}
-     * @memberof Rate
      */
     'total_charge'?: number;
     /**
      * The estimated delivery transit days
-     * @type {number}
-     * @memberof Rate
      */
     'transit_days'?: number | null;
     /**
      * list of the rate\'s additional charges
-     * @type {Array<Charge>}
-     * @memberof Rate
      */
     'extra_charges'?: Array<Charge>;
     /**
      * The delivery estimated date
-     * @type {string}
-     * @memberof Rate
      */
     'estimated_delivery'?: string | null;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof Rate
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof Rate
      */
     'test_mode': boolean;
 }
-/**
- * 
- * @export
- * @interface RateRequest
- */
 export interface RateRequest {
     /**
      * The address of the party<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof RateRequest
      */
     'shipper': AddressData;
     /**
      * The address of the party<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof RateRequest
      */
     'recipient': AddressData;
     /**
      * The shipment\'s parcels
-     * @type {Array<ParcelData>}
-     * @memberof RateRequest
      */
     'parcels': Array<ParcelData>;
     /**
      * The requested carrier service for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.         
-     * @type {Array<string>}
-     * @memberof RateRequest
      */
     'services'?: Array<string> | null;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof RateRequest
      */
     'options'?: { [key: string]: any; };
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof RateRequest
      */
     'reference'?: string | null;
     /**
      * The list of configured carriers you wish to get rates from.
-     * @type {Array<string>}
-     * @memberof RateRequest
      */
     'carrier_ids'?: Array<string> | null;
 }
-/**
- * 
- * @export
- * @interface RateResponse
- */
 export interface RateResponse {
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof RateResponse
      */
     'messages'?: Array<Message>;
     /**
      * The list of returned rates
-     * @type {Array<Rate>}
-     * @memberof RateResponse
      */
     'rates': Array<Rate>;
 }
-/**
- * 
- * @export
- * @interface Roadie
- */
 export interface Roadie {
-    /**
-     * 
-     * @type {string}
-     * @memberof Roadie
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Roadie
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Royalmail
- */
 export interface Royalmail {
-    /**
-     * 
-     * @type {string}
-     * @memberof Royalmail
-     */
     'client_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Royalmail
-     */
     'client_secret': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Royalmail
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Sapient
- */
 export interface Sapient {
-    /**
-     * 
-     * @type {string}
-     * @memberof Sapient
-     */
     'client_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Sapient
-     */
     'client_secret': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Sapient
-     */
     'shipping_account_id': string;
     /**
      * Indicates a sapient_carrier_code string
-     * @type {string}
-     * @memberof Sapient
      */
     'sapient_carrier_code'?: SapientSapientCarrierCodeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Sapient
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 export const SapientSapientCarrierCodeEnum = {
@@ -7166,277 +4959,148 @@ export const SapientSapientCarrierCodeEnum = {
 
 export type SapientSapientCarrierCodeEnum = typeof SapientSapientCarrierCodeEnum[keyof typeof SapientSapientCarrierCodeEnum];
 
-/**
- * 
- * @export
- * @interface Seko
- */
 export interface Seko {
-    /**
-     * 
-     * @type {string}
-     * @memberof Seko
-     */
     'access_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Seko
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Sendle
- */
 export interface Sendle {
-    /**
-     * 
-     * @type {string}
-     * @memberof Sendle
-     */
     'sendle_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Sendle
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Sendle
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Shipengine
- */
 export interface Shipengine {
-    /**
-     * 
-     * @type {string}
-     * @memberof Shipengine
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Shipengine
-     */
-    'carrier_ids'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Shipengine
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Shipengine
-     */
-    'account_country_code'?: string;
+    'carrier_ids'?: string | null;
+    'account_number'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Shipment
- */
 export interface Shipment {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Shipment
      */
     'id'?: string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Shipment
      */
     'object_type'?: string;
     /**
      * The shipment tracking url
-     * @type {string}
-     * @memberof Shipment
      */
     'tracking_url'?: string | null;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {Address}
-     * @memberof Shipment
      */
     'shipper': Address;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {Address}
-     * @memberof Shipment
      */
     'recipient': Address;
     /**
      * The return address for this shipment. Defaults to the shipper address.
-     * @type {AddressData}
-     * @memberof Shipment
      */
     'return_address'?: AddressData | null;
     /**
      * The payor address.
-     * @type {AddressData}
-     * @memberof Shipment
      */
     'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
-     * @type {Array<Parcel>}
-     * @memberof Shipment
      */
     'parcels': Array<Parcel>;
     /**
      * The carriers services requested for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.**         
-     * @type {Array<string>}
-     * @memberof Shipment
      */
     'services'?: Array<string> | null;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof Shipment
      */
     'options'?: { [key: string]: any; };
     /**
      * The payment details
-     * @type {Payment}
-     * @memberof Shipment
      */
     'payment'?: Payment;
     /**
      * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
-     * @type {Customs}
-     * @memberof Shipment
      */
     'customs'?: Customs | null;
     /**
      * The list for shipment rates fetched previously
-     * @type {Array<Rate>}
-     * @memberof Shipment
      */
     'rates'?: Array<Rate>;
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof Shipment
      */
     'reference'?: string | null;
     /**
      * The shipment label file type.
-     * @type {string}
-     * @memberof Shipment
      */
     'label_type'?: ShipmentLabelTypeEnum | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
-     * @type {Array<string>}
-     * @memberof Shipment
      */
     'carrier_ids'?: Array<string> | null;
     /**
      * The attached tracker id
-     * @type {string}
-     * @memberof Shipment
      */
     'tracker_id'?: string | null;
     /**
      * The shipment creation datetime.<br/>         Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`         
-     * @type {string}
-     * @memberof Shipment
      */
     'created_at': string;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof Shipment
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof Shipment
      */
     'messages'?: Array<Message>;
     /**
      * The current Shipment status
-     * @type {string}
-     * @memberof Shipment
      */
     'status'?: ShipmentStatusEnum;
     /**
      * The shipment carrier
-     * @type {string}
-     * @memberof Shipment
      */
     'carrier_name'?: string | null;
     /**
      * The shipment carrier configured identifier
-     * @type {string}
-     * @memberof Shipment
      */
     'carrier_id'?: string | null;
     /**
      * The shipment tracking number
-     * @type {string}
-     * @memberof Shipment
      */
     'tracking_number'?: string | null;
     /**
      * The shipment carrier system identifier
-     * @type {string}
-     * @memberof Shipment
      */
     'shipment_identifier'?: string | null;
     /**
      * The shipment selected rate
-     * @type {Rate}
-     * @memberof Shipment
      */
     'selected_rate'?: Rate | null;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof Shipment
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * The selected service
-     * @type {string}
-     * @memberof Shipment
      */
     'service'?: string | null;
     /**
      * The shipment selected rate.
-     * @type {string}
-     * @memberof Shipment
      */
     'selected_rate_id'?: string | null;
     /**
      * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof Shipment
      */
     'test_mode': boolean;
     /**
      * The shipment label URL
-     * @type {string}
-     * @memberof Shipment
      */
     'label_url'?: string | null;
     /**
      * The shipment invoice URL
-     * @type {string}
-     * @memberof Shipment
      */
     'invoice_url'?: string | null;
 }
@@ -7463,125 +5127,79 @@ export const ShipmentStatusEnum = {
 
 export type ShipmentStatusEnum = typeof ShipmentStatusEnum[keyof typeof ShipmentStatusEnum];
 
-/**
- * 
- * @export
- * @interface ShipmentCancelRequest
- */
 export interface ShipmentCancelRequest {
     /**
      * The shipment identifier returned during creation.
-     * @type {string}
-     * @memberof ShipmentCancelRequest
      */
     'shipment_identifier': string;
     /**
      * The selected shipment service
-     * @type {string}
-     * @memberof ShipmentCancelRequest
      */
     'service'?: string | null;
     /**
      * The shipment carrier_id for specific connection selection.
-     * @type {string}
-     * @memberof ShipmentCancelRequest
      */
     'carrier_id'?: string;
     /**
      * Advanced carrier specific cancellation options.
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentCancelRequest
      */
     'options'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface ShipmentData
- */
 export interface ShipmentData {
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShipmentData
      */
     'recipient': AddressData;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShipmentData
      */
     'shipper': AddressData;
     /**
      * The return address for this shipment. Defaults to the shipper address.
-     * @type {AddressData}
-     * @memberof ShipmentData
      */
     'return_address'?: AddressData | null;
     /**
      * The payor address.
-     * @type {AddressData}
-     * @memberof ShipmentData
      */
     'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
-     * @type {Array<ParcelData>}
-     * @memberof ShipmentData
      */
     'parcels': Array<ParcelData>;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentData
      */
     'options'?: { [key: string]: any; };
     /**
      * The payment details
-     * @type {Payment}
-     * @memberof ShipmentData
      */
     'payment'?: Payment;
     /**
      * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
-     * @type {CustomsData}
-     * @memberof ShipmentData
      */
     'customs'?: CustomsData | null;
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof ShipmentData
      */
     'reference'?: string | null;
     /**
      * The shipment label file type.
-     * @type {string}
-     * @memberof ShipmentData
      */
     'label_type'?: ShipmentDataLabelTypeEnum;
     /**
      * **Specify a service to Buy a label in one call without rating.**
-     * @type {string}
-     * @memberof ShipmentData
      */
     'service'?: string;
     /**
      * The requested carrier service for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request         you could specify a service per carrier.**         
-     * @type {Array<string>}
-     * @memberof ShipmentData
      */
     'services'?: Array<string> | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
-     * @type {Array<string>}
-     * @memberof ShipmentData
      */
     'carrier_ids'?: Array<string> | null;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentData
      */
     'metadata'?: { [key: string]: any; };
 }
@@ -7594,100 +5212,65 @@ export const ShipmentDataLabelTypeEnum = {
 
 export type ShipmentDataLabelTypeEnum = typeof ShipmentDataLabelTypeEnum[keyof typeof ShipmentDataLabelTypeEnum];
 
-/**
- * 
- * @export
- * @interface ShipmentDataReference
- */
 export interface ShipmentDataReference {
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShipmentDataReference
      */
     'recipient': AddressData;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShipmentDataReference
      */
     'shipper': AddressData;
     /**
      * The return address for this shipment. Defaults to the shipper address.
-     * @type {AddressData}
-     * @memberof ShipmentDataReference
      */
     'return_address'?: AddressData | null;
     /**
      * The payor address.
-     * @type {AddressData}
-     * @memberof ShipmentDataReference
      */
     'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
-     * @type {Array<ParcelData>}
-     * @memberof ShipmentDataReference
      */
     'parcels': Array<ParcelData>;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentDataReference
      */
     'options'?: { [key: string]: any; };
     /**
      * The payment details
-     * @type {Payment}
-     * @memberof ShipmentDataReference
      */
     'payment'?: Payment;
     /**
      * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
-     * @type {CustomsData}
-     * @memberof ShipmentDataReference
      */
     'customs'?: CustomsData | null;
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof ShipmentDataReference
      */
     'reference'?: string | null;
     /**
      * The shipment label file type.
-     * @type {string}
-     * @memberof ShipmentDataReference
      */
     'label_type'?: ShipmentDataReferenceLabelTypeEnum;
     /**
      * **Specify a service to Buy a label in one call without rating.**
-     * @type {string}
-     * @memberof ShipmentDataReference
      */
     'service'?: string;
     /**
      * The requested carrier service for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request         you could specify a service per carrier.**         
-     * @type {Array<string>}
-     * @memberof ShipmentDataReference
      */
     'services'?: Array<string> | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
-     * @type {Array<string>}
-     * @memberof ShipmentDataReference
      */
     'carrier_ids'?: Array<string> | null;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentDataReference
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The shipment id.
-     * @type {string}
-     * @memberof ShipmentDataReference
      */
     'id'?: string;
 }
@@ -7700,40 +5283,25 @@ export const ShipmentDataReferenceLabelTypeEnum = {
 
 export type ShipmentDataReferenceLabelTypeEnum = typeof ShipmentDataReferenceLabelTypeEnum[keyof typeof ShipmentDataReferenceLabelTypeEnum];
 
-/**
- * 
- * @export
- * @interface ShipmentPurchaseData
- */
 export interface ShipmentPurchaseData {
     /**
      * The shipment selected rate.
-     * @type {string}
-     * @memberof ShipmentPurchaseData
      */
     'selected_rate_id': string;
     /**
      * The shipment label file type.
-     * @type {string}
-     * @memberof ShipmentPurchaseData
      */
     'label_type'?: ShipmentPurchaseDataLabelTypeEnum;
     /**
      * The payment details
-     * @type {Payment}
-     * @memberof ShipmentPurchaseData
      */
     'payment'?: Payment;
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof ShipmentPurchaseData
      */
     'reference'?: string | null;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentPurchaseData
      */
     'metadata'?: { [key: string]: any; };
 }
@@ -7746,77 +5314,47 @@ export const ShipmentPurchaseDataLabelTypeEnum = {
 
 export type ShipmentPurchaseDataLabelTypeEnum = typeof ShipmentPurchaseDataLabelTypeEnum[keyof typeof ShipmentPurchaseDataLabelTypeEnum];
 
-/**
- * 
- * @export
- * @interface ShipmentRateData
- */
 export interface ShipmentRateData {
     /**
      * The requested carrier service for the shipment.<br/>         Please consult [the reference](#operation/references) for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request you could         specify a service per carrier.**         
-     * @type {Array<string>}
-     * @memberof ShipmentRateData
      */
     'services'?: Array<string> | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
-     * @type {Array<string>}
-     * @memberof ShipmentRateData
      */
     'carrier_ids'?: Array<string> | null;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentRateData
      */
     'options'?: { [key: string]: any; };
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof ShipmentRateData
      */
     'reference'?: string | null;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentRateData
      */
     'metadata'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface ShipmentUpdateData
- */
 export interface ShipmentUpdateData {
     /**
      * The shipment label file type.
-     * @type {string}
-     * @memberof ShipmentUpdateData
      */
     'label_type'?: ShipmentUpdateDataLabelTypeEnum;
     /**
      * The payment details
-     * @type {Payment}
-     * @memberof ShipmentUpdateData
      */
     'payment'?: Payment;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentUpdateData
      */
     'options'?: { [key: string]: any; };
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof ShipmentUpdateData
      */
     'reference'?: string | null;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentUpdateData
      */
     'metadata'?: { [key: string]: any; };
 }
@@ -7829,82 +5367,53 @@ export const ShipmentUpdateDataLabelTypeEnum = {
 
 export type ShipmentUpdateDataLabelTypeEnum = typeof ShipmentUpdateDataLabelTypeEnum[keyof typeof ShipmentUpdateDataLabelTypeEnum];
 
-/**
- * 
- * @export
- * @interface ShippingRequest
- */
 export interface ShippingRequest {
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShippingRequest
      */
     'recipient': AddressData;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShippingRequest
      */
     'shipper': AddressData;
     /**
      * The return address for this shipment. Defaults to the shipper address.
-     * @type {AddressData}
-     * @memberof ShippingRequest
      */
     'return_address'?: AddressData | null;
     /**
      * The payor address.
-     * @type {AddressData}
-     * @memberof ShippingRequest
      */
     'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
-     * @type {Array<ParcelData>}
-     * @memberof ShippingRequest
      */
     'parcels': Array<ParcelData>;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShippingRequest
      */
     'options'?: { [key: string]: any; };
     /**
      * The payment details
-     * @type {Payment}
-     * @memberof ShippingRequest
      */
     'payment'?: Payment;
     /**
      * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
-     * @type {CustomsData}
-     * @memberof ShippingRequest
      */
     'customs'?: CustomsData | null;
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof ShippingRequest
      */
     'reference'?: string | null;
     /**
      * The shipment label file type.
-     * @type {string}
-     * @memberof ShippingRequest
      */
     'label_type'?: ShippingRequestLabelTypeEnum;
     /**
      * The shipment selected rate.
-     * @type {string}
-     * @memberof ShippingRequest
      */
     'selected_rate_id': string;
     /**
      * The list for shipment rates fetched previously
-     * @type {Array<Rate>}
-     * @memberof ShippingRequest
      */
     'rates': Array<Rate>;
 }
@@ -7917,196 +5426,129 @@ export const ShippingRequestLabelTypeEnum = {
 
 export type ShippingRequestLabelTypeEnum = typeof ShippingRequestLabelTypeEnum[keyof typeof ShippingRequestLabelTypeEnum];
 
-/**
- * 
- * @export
- * @interface ShippingResponse
- */
 export interface ShippingResponse {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'id'?: string;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'object_type'?: string;
     /**
      * The shipment tracking url
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'tracking_url'?: string | null;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {Address}
-     * @memberof ShippingResponse
      */
     'shipper': Address;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {Address}
-     * @memberof ShippingResponse
      */
     'recipient': Address;
     /**
      * The return address for this shipment. Defaults to the shipper address.
-     * @type {AddressData}
-     * @memberof ShippingResponse
      */
     'return_address'?: AddressData | null;
     /**
      * The payor address.
-     * @type {AddressData}
-     * @memberof ShippingResponse
      */
     'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
-     * @type {Array<Parcel>}
-     * @memberof ShippingResponse
      */
     'parcels': Array<Parcel>;
     /**
      * The carriers services requested for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.**         
-     * @type {Array<string>}
-     * @memberof ShippingResponse
      */
     'services'?: Array<string> | null;
     /**
      * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShippingResponse
      */
     'options'?: { [key: string]: any; };
     /**
      * The payment details
-     * @type {Payment}
-     * @memberof ShippingResponse
      */
     'payment'?: Payment;
     /**
      * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
-     * @type {Customs}
-     * @memberof ShippingResponse
      */
     'customs'?: Customs | null;
     /**
      * The list for shipment rates fetched previously
-     * @type {Array<Rate>}
-     * @memberof ShippingResponse
      */
     'rates'?: Array<Rate>;
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'reference'?: string | null;
     /**
      * The shipment label file type.
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'label_type'?: ShippingResponseLabelTypeEnum | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
-     * @type {Array<string>}
-     * @memberof ShippingResponse
      */
     'carrier_ids'?: Array<string> | null;
     /**
      * The attached tracker id
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'tracker_id'?: string | null;
     /**
      * The shipment creation datetime.<br/>         Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`         
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'created_at': string;
     /**
      * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShippingResponse
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof ShippingResponse
      */
     'messages'?: Array<Message>;
     /**
      * The current Shipment status
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'status'?: ShippingResponseStatusEnum;
     /**
      * The shipment carrier
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'carrier_name'?: string | null;
     /**
      * The shipment carrier configured identifier
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'carrier_id'?: string | null;
     /**
      * The shipment tracking number
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'tracking_number'?: string | null;
     /**
      * The shipment carrier system identifier
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'shipment_identifier'?: string | null;
     /**
      * The shipment selected rate
-     * @type {Rate}
-     * @memberof ShippingResponse
      */
     'selected_rate'?: Rate | null;
     /**
      * The shipment documents
-     * @type {Documents}
-     * @memberof ShippingResponse
      */
     'docs'?: Documents | null;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof ShippingResponse
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * The selected service
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'service'?: string | null;
     /**
      * The shipment selected rate.
-     * @type {string}
-     * @memberof ShippingResponse
      */
     'selected_rate_id'?: string | null;
     /**
      * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof ShippingResponse
      */
     'test_mode': boolean;
 }
@@ -8133,274 +5575,99 @@ export const ShippingResponseStatusEnum = {
 
 export type ShippingResponseStatusEnum = typeof ShippingResponseStatusEnum[keyof typeof ShippingResponseStatusEnum];
 
-/**
- * 
- * @export
- * @interface Tge
- */
 export interface Tge {
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
     'toll_username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
     'toll_password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
     'my_toll_token': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
     'my_toll_identity': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
-    'account_code'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Tge
-     */
+    'account_code'?: string | null;
     'sscc_count'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Tge
-     */
     'shipment_count'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tge
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Tnt
- */
 export interface Tnt {
-    /**
-     * 
-     * @type {string}
-     * @memberof Tnt
-     */
     'username': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tnt
-     */
     'password': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tnt
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Tnt
-     */
-    'account_country_code'?: string;
+    'account_number'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface TokenObtainPair
- */
 export interface TokenObtainPair {
-    /**
-     * 
-     * @type {string}
-     * @memberof TokenObtainPair
-     */
     'email': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TokenObtainPair
-     */
     'password': string;
 }
-/**
- * 
- * @export
- * @interface TokenPair
- */
 export interface TokenPair {
-    /**
-     * 
-     * @type {string}
-     * @memberof TokenPair
-     */
     'access': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TokenPair
-     */
     'refresh': string;
 }
-/**
- * 
- * @export
- * @interface TokenRefresh
- */
 export interface TokenRefresh {
-    /**
-     * 
-     * @type {string}
-     * @memberof TokenRefresh
-     */
     'refresh': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TokenRefresh
-     */
     'access': string;
 }
-/**
- * 
- * @export
- * @interface TokenVerify
- */
 export interface TokenVerify {
-    /**
-     * 
-     * @type {string}
-     * @memberof TokenVerify
-     */
     'token': string;
 }
-/**
- * 
- * @export
- * @interface TrackerDetails
- */
 export interface TrackerDetails {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof TrackerDetails
      */
     'id'?: string;
     /**
      * The tracking carrier
-     * @type {string}
-     * @memberof TrackerDetails
      */
     'carrier_name': string;
     /**
      * The tracking carrier configured identifier
-     * @type {string}
-     * @memberof TrackerDetails
      */
     'carrier_id': string;
     /**
      * The shipment tracking number
-     * @type {string}
-     * @memberof TrackerDetails
      */
     'tracking_number': string;
     /**
      * The package and shipment tracking details
-     * @type {TrackingInfo}
-     * @memberof TrackerDetails
      */
     'info'?: TrackingInfo | null;
     /**
      * The tracking details events
-     * @type {Array<TrackingEvent>}
-     * @memberof TrackerDetails
      */
     'events'?: Array<TrackingEvent> | null;
     /**
      * Specified whether the related shipment was delivered
-     * @type {boolean}
-     * @memberof TrackerDetails
      */
     'delivered'?: boolean;
     /**
      * Specified whether the object was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof TrackerDetails
      */
     'test_mode': boolean;
     /**
      * The current tracking status
-     * @type {string}
-     * @memberof TrackerDetails
      */
     'status'?: TrackerDetailsStatusEnum;
     /**
      * The delivery estimated date
-     * @type {string}
-     * @memberof TrackerDetails
      */
     'estimated_delivery'?: string;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof TrackerDetails
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * The tracker documents
-     * @type {Images}
-     * @memberof TrackerDetails
      */
     'images'?: Images | null;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof TrackerDetails
      */
     'object_type'?: string;
     /**
      * User metadata for the tracker
-     * @type {{ [key: string]: any; }}
-     * @memberof TrackerDetails
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof TrackerDetails
      */
     'messages'?: Array<Message>;
 }
@@ -8421,96 +5688,45 @@ export const TrackerDetailsStatusEnum = {
 
 export type TrackerDetailsStatusEnum = typeof TrackerDetailsStatusEnum[keyof typeof TrackerDetailsStatusEnum];
 
-/**
- * 
- * @export
- * @interface TrackerList
- */
 export interface TrackerList {
-    /**
-     * 
-     * @type {number}
-     * @memberof TrackerList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackerList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackerList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<TrackingStatus>}
-     * @memberof TrackerList
-     */
     'results': Array<TrackingStatus>;
 }
-/**
- * 
- * @export
- * @interface TrackerUpdateData
- */
 export interface TrackerUpdateData {
     /**
      * The package and shipment tracking details
-     * @type {TrackingInfo}
-     * @memberof TrackerUpdateData
      */
     'info'?: TrackingInfo | null;
     /**
      * User metadata for the tracker
-     * @type {{ [key: string]: any; }}
-     * @memberof TrackerUpdateData
      */
     'metadata'?: { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface TrackingData
- */
 export interface TrackingData {
     /**
      * The package tracking number
-     * @type {string}
-     * @memberof TrackingData
      */
     'tracking_number': string;
     /**
      * The tracking carrier
-     * @type {string}
-     * @memberof TrackingData
      */
     'carrier_name': TrackingDataCarrierNameEnum;
     /**
      * The shipper account number
-     * @type {string}
-     * @memberof TrackingData
      */
     'account_number'?: string | null;
     /**
      * The shipment reference
-     * @type {string}
-     * @memberof TrackingData
      */
     'reference'?: string | null;
     /**
      * The package and shipment tracking details
-     * @type {TrackingInfo}
-     * @memberof TrackingData
      */
     'info'?: TrackingInfo | null;
     /**
      * The carrier user metadata.
-     * @type {{ [key: string]: any; }}
-     * @memberof TrackingData
      */
     'metadata'?: { [key: string]: any; };
 }
@@ -8536,6 +5752,7 @@ export const TrackingDataCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -8556,295 +5773,187 @@ export const TrackingDataCarrierNameEnum = {
 
 export type TrackingDataCarrierNameEnum = typeof TrackingDataCarrierNameEnum[keyof typeof TrackingDataCarrierNameEnum];
 
-/**
- * 
- * @export
- * @interface TrackingEvent
- */
 export interface TrackingEvent {
     /**
      * The tracking event\'s date. Format: `YYYY-MM-DD`
-     * @type {string}
-     * @memberof TrackingEvent
      */
     'date'?: string;
     /**
      * The tracking event\'s description
-     * @type {string}
-     * @memberof TrackingEvent
      */
     'description'?: string;
     /**
      * The tracking event\'s location
-     * @type {string}
-     * @memberof TrackingEvent
      */
     'location'?: string;
     /**
      * The tracking event\'s code
-     * @type {string}
-     * @memberof TrackingEvent
      */
     'code'?: string | null;
     /**
      * The tracking event\'s time. Format: `HH:MM AM/PM`
-     * @type {string}
-     * @memberof TrackingEvent
      */
     'time'?: string | null;
     /**
      * The tracking event\'s latitude.
-     * @type {number}
-     * @memberof TrackingEvent
      */
     'latitude'?: number | null;
     /**
      * The tracking event\'s longitude.
-     * @type {number}
-     * @memberof TrackingEvent
      */
     'longitude'?: number | null;
 }
-/**
- * 
- * @export
- * @interface TrackingInfo
- */
 export interface TrackingInfo {
     /**
      * The carrier tracking link
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'carrier_tracking_link'?: string | null;
     /**
      * The customer name
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'customer_name'?: string | null;
     /**
      * The expected delivery date
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'expected_delivery'?: string | null;
     /**
      * A tracking note
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'note'?: string | null;
     /**
      * The package order date
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'order_date'?: string | null;
     /**
      * The package order id or number
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'order_id'?: string | null;
     /**
      * The package weight
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'package_weight'?: string | null;
     /**
      * The package weight unit
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'package_weight_unit'?: string | null;
     /**
      * The package count
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_package_count'?: string | null;
     /**
      * The shipment pickup date
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_pickup_date'?: string | null;
     /**
      * The shipment delivery date
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_delivery_date'?: string | null;
     /**
      * The shipment service
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_service'?: string | null;
     /**
      * The shipment origin country
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_origin_country'?: string | null;
     /**
      * The shipment origin postal code
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_origin_postal_code'?: string | null;
     /**
      * The shipment destination country
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_destination_country'?: string | null;
     /**
      * The shipment destination postal code
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipment_destination_postal_code'?: string | null;
     /**
      * The shipping date
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'shipping_date'?: string | null;
     /**
      * The person who signed for the package
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'signed_by'?: string | null;
     /**
      * The tracker source
-     * @type {string}
-     * @memberof TrackingInfo
      */
     'source'?: string | null;
 }
-/**
- * 
- * @export
- * @interface TrackingResponse
- */
 export interface TrackingResponse {
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof TrackingResponse
      */
     'messages'?: Array<Message>;
     /**
      * The tracking details retrieved
-     * @type {TrackerDetails}
-     * @memberof TrackingResponse
      */
     'tracking'?: TrackerDetails;
 }
-/**
- * 
- * @export
- * @interface TrackingStatus
- */
 export interface TrackingStatus {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'id'?: string;
     /**
      * The tracking carrier
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'carrier_name': string;
     /**
      * The tracking carrier configured identifier
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'carrier_id': string;
     /**
      * The shipment tracking number
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'tracking_number': string;
     /**
      * The package and shipment tracking details
-     * @type {TrackingInfo}
-     * @memberof TrackingStatus
      */
     'info'?: TrackingInfo | null;
     /**
      * The tracking details events
-     * @type {Array<TrackingEvent>}
-     * @memberof TrackingStatus
      */
     'events'?: Array<TrackingEvent> | null;
     /**
      * Specified whether the related shipment was delivered
-     * @type {boolean}
-     * @memberof TrackingStatus
      */
     'delivered'?: boolean;
     /**
      * Specified whether the object was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof TrackingStatus
      */
     'test_mode': boolean;
     /**
      * The current tracking status
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'status'?: TrackingStatusStatusEnum;
     /**
      * The delivery estimated date
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'estimated_delivery'?: string;
     /**
      * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof TrackingStatus
      */
     'meta'?: { [key: string]: any; } | null;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'object_type'?: string;
     /**
      * User metadata for the tracker
-     * @type {{ [key: string]: any; }}
-     * @memberof TrackingStatus
      */
     'metadata'?: { [key: string]: any; };
     /**
      * The list of note or warning messages
-     * @type {Array<Message>}
-     * @memberof TrackingStatus
      */
     'messages'?: Array<Message>;
     /**
      * The shipment invoice URL
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'delivery_image_url'?: string | null;
     /**
      * The shipment invoice URL
-     * @type {string}
-     * @memberof TrackingStatus
      */
     'signature_image_url'?: string | null;
 }
@@ -8865,91 +5974,24 @@ export const TrackingStatusStatusEnum = {
 
 export type TrackingStatusStatusEnum = typeof TrackingStatusStatusEnum[keyof typeof TrackingStatusStatusEnum];
 
-/**
- * 
- * @export
- * @interface Ups
- */
 export interface Ups {
-    /**
-     * 
-     * @type {string}
-     * @memberof Ups
-     */
     'client_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Ups
-     */
     'client_secret': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Ups
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Ups
-     */
-    'account_country_code'?: string;
+    'account_number'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface Usps
- */
 export interface Usps {
-    /**
-     * 
-     * @type {string}
-     * @memberof Usps
-     */
     'client_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Usps
-     */
     'client_secret': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Usps
-     */
-    'account_number'?: string;
+    'account_number'?: string | null;
     /**
      * Indicates a account_type string
-     * @type {string}
-     * @memberof Usps
      */
     'account_type'?: UspsAccountTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Usps
-     */
-    'manifest_MID'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Usps
-     */
-    'CRID'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Usps
-     */
-    'MID'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Usps
-     */
-    'account_country_code'?: string;
+    'manifest_MID'?: string | null;
+    'CRID'?: string | null;
+    'MID'?: string | null;
+    'account_country_code'?: string | null;
 }
 
 export const UspsAccountTypeEnum = {
@@ -8960,60 +6002,18 @@ export const UspsAccountTypeEnum = {
 
 export type UspsAccountTypeEnum = typeof UspsAccountTypeEnum[keyof typeof UspsAccountTypeEnum];
 
-/**
- * 
- * @export
- * @interface UspsInternational
- */
 export interface UspsInternational {
-    /**
-     * 
-     * @type {string}
-     * @memberof UspsInternational
-     */
     'client_id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UspsInternational
-     */
     'client_secret': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UspsInternational
-     */
-    'account_number'?: string;
+    'account_number'?: string | null;
     /**
      * Indicates a account_type string
-     * @type {string}
-     * @memberof UspsInternational
      */
     'account_type'?: UspsInternationalAccountTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof UspsInternational
-     */
-    'manifest_MID'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UspsInternational
-     */
-    'CRID'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UspsInternational
-     */
-    'MID'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UspsInternational
-     */
-    'account_country_code'?: string;
+    'manifest_MID'?: string | null;
+    'CRID'?: string | null;
+    'MID'?: string | null;
+    'account_country_code'?: string | null;
 }
 
 export const UspsInternationalAccountTypeEnum = {
@@ -9024,114 +6024,54 @@ export const UspsInternationalAccountTypeEnum = {
 
 export type UspsInternationalAccountTypeEnum = typeof UspsInternationalAccountTypeEnum[keyof typeof UspsInternationalAccountTypeEnum];
 
-/**
- * 
- * @export
- * @interface Veho
- */
 export interface Veho {
-    /**
-     * 
-     * @type {string}
-     * @memberof Veho
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Veho
-     */
-    'account_number'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Veho
-     */
-    'account_country_code'?: string;
+    'account_number'?: string | null;
+    'account_country_code'?: string | null;
 }
-/**
- * 
- * @export
- * @interface VerifiedTokenObtainPair
- */
 export interface VerifiedTokenObtainPair {
-    /**
-     * 
-     * @type {string}
-     * @memberof VerifiedTokenObtainPair
-     */
     'refresh': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof VerifiedTokenObtainPair
-     */
     'access': string;
     /**
      * The OTP (One Time Password) token received by the user from the         configured Two Factor Authentication method.         
-     * @type {string}
-     * @memberof VerifiedTokenObtainPair
      */
     'otp_token': string;
 }
-/**
- * 
- * @export
- * @interface Webhook
- */
 export interface Webhook {
     /**
      * A unique identifier
-     * @type {string}
-     * @memberof Webhook
      */
     'id'?: string;
     /**
      * The URL of the webhook endpoint.
-     * @type {string}
-     * @memberof Webhook
      */
     'url': string;
     /**
      * An optional description of what the webhook is used for.
-     * @type {string}
-     * @memberof Webhook
      */
     'description'?: string | null;
     /**
      * The list of events to enable for this endpoint.
-     * @type {Array<string>}
-     * @memberof Webhook
      */
     'enabled_events': Array<WebhookEnabledEventsEnum>;
     /**
      * Indicates that the webhook is disabled
-     * @type {boolean}
-     * @memberof Webhook
      */
     'disabled'?: boolean | null;
     /**
      * Specifies the object type
-     * @type {string}
-     * @memberof Webhook
      */
     'object_type'?: string;
     /**
      * The datetime of the last event sent.
-     * @type {string}
-     * @memberof Webhook
      */
     'last_event_at'?: string | null;
     /**
      * Header signature secret
-     * @type {string}
-     * @memberof Webhook
      */
     'secret': string;
     /**
      * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof Webhook
      */
     'test_mode': boolean;
 }
@@ -9159,34 +6099,21 @@ export const WebhookEnabledEventsEnum = {
 
 export type WebhookEnabledEventsEnum = typeof WebhookEnabledEventsEnum[keyof typeof WebhookEnabledEventsEnum];
 
-/**
- * 
- * @export
- * @interface WebhookData
- */
 export interface WebhookData {
     /**
      * The URL of the webhook endpoint.
-     * @type {string}
-     * @memberof WebhookData
      */
     'url': string;
     /**
      * An optional description of what the webhook is used for.
-     * @type {string}
-     * @memberof WebhookData
      */
     'description'?: string | null;
     /**
      * The list of events to enable for this endpoint.
-     * @type {Array<string>}
-     * @memberof WebhookData
      */
     'enabled_events': Array<WebhookDataEnabledEventsEnum>;
     /**
      * Indicates that the webhook is disabled
-     * @type {boolean}
-     * @memberof WebhookData
      */
     'disabled'?: boolean | null;
 }
@@ -9214,73 +6141,22 @@ export const WebhookDataEnabledEventsEnum = {
 
 export type WebhookDataEnabledEventsEnum = typeof WebhookDataEnabledEventsEnum[keyof typeof WebhookDataEnabledEventsEnum];
 
-/**
- * 
- * @export
- * @interface WebhookList
- */
 export interface WebhookList {
-    /**
-     * 
-     * @type {number}
-     * @memberof WebhookList
-     */
     'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof WebhookList
-     */
     'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof WebhookList
-     */
     'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Webhook>}
-     * @memberof WebhookList
-     */
     'results': Array<Webhook>;
 }
-/**
- * 
- * @export
- * @interface WebhookTestRequest
- */
 export interface WebhookTestRequest {
-    /**
-     * 
-     * @type {{ [key: string]: any; }}
-     * @memberof WebhookTestRequest
-     */
     'payload': { [key: string]: any; };
 }
-/**
- * 
- * @export
- * @interface Zoom2u
- */
 export interface Zoom2u {
-    /**
-     * 
-     * @type {string}
-     * @memberof Zoom2u
-     */
     'api_key': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Zoom2u
-     */
-    'account_country_code'?: string;
+    'account_country_code'?: string | null;
 }
 
 /**
  * APIApi - axios parameter creator
- * @export
  */
 export const APIApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -9349,7 +6225,6 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
 
 /**
  * APIApi - functional programming interface
- * @export
  */
 export const APIApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = APIApiAxiosParamCreator(configuration)
@@ -9383,7 +6258,6 @@ export const APIApiFp = function(configuration?: Configuration) {
 
 /**
  * APIApi - factory interface
- * @export
  */
 export const APIApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = APIApiFp(configuration)
@@ -9411,9 +6285,6 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
 
 /**
  * APIApi - object-oriented interface
- * @export
- * @class APIApi
- * @extends {BaseAPI}
  */
 export class APIApi extends BaseAPI {
     /**
@@ -9421,7 +6292,6 @@ export class APIApi extends BaseAPI {
      * @summary Data References
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof APIApi
      */
     public data(options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).data(options).then((request) => request(this.axios, this.basePath));
@@ -9432,7 +6302,6 @@ export class APIApi extends BaseAPI {
      * @summary Instance Metadata
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof APIApi
      */
     public ping(options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).ping(options).then((request) => request(this.axios, this.basePath));
@@ -9443,7 +6312,6 @@ export class APIApi extends BaseAPI {
 
 /**
  * AddressesApi - axios parameter creator
- * @export
  */
 export const AddressesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -9694,7 +6562,6 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
 
 /**
  * AddressesApi - functional programming interface
- * @export
  */
 export const AddressesApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AddressesApiAxiosParamCreator(configuration)
@@ -9769,7 +6636,6 @@ export const AddressesApiFp = function(configuration?: Configuration) {
 
 /**
  * AddressesApi - factory interface
- * @export
  */
 export const AddressesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = AddressesApiFp(configuration)
@@ -9828,72 +6694,36 @@ export const AddressesApiFactory = function (configuration?: Configuration, base
 
 /**
  * Request parameters for create operation in AddressesApi.
- * @export
- * @interface AddressesApiCreateRequest
  */
 export interface AddressesApiCreateRequest {
-    /**
-     * 
-     * @type {AddressData}
-     * @memberof AddressesApiCreate
-     */
     readonly addressData: AddressData
 }
 
 /**
  * Request parameters for discard operation in AddressesApi.
- * @export
- * @interface AddressesApiDiscardRequest
  */
 export interface AddressesApiDiscardRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof AddressesApiDiscard
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for retrieve operation in AddressesApi.
- * @export
- * @interface AddressesApiRetrieveRequest
  */
 export interface AddressesApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof AddressesApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for update operation in AddressesApi.
- * @export
- * @interface AddressesApiUpdateRequest
  */
 export interface AddressesApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof AddressesApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {PatchedAddressData}
-     * @memberof AddressesApiUpdate
-     */
     readonly patchedAddressData?: PatchedAddressData
 }
 
 /**
  * AddressesApi - object-oriented interface
- * @export
- * @class AddressesApi
- * @extends {BaseAPI}
  */
 export class AddressesApi extends BaseAPI {
     /**
@@ -9902,7 +6732,6 @@ export class AddressesApi extends BaseAPI {
      * @param {AddressesApiCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AddressesApi
      */
     public create(requestParameters: AddressesApiCreateRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).create(requestParameters.addressData, options).then((request) => request(this.axios, this.basePath));
@@ -9914,7 +6743,6 @@ export class AddressesApi extends BaseAPI {
      * @param {AddressesApiDiscardRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AddressesApi
      */
     public discard(requestParameters: AddressesApiDiscardRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -9925,7 +6753,6 @@ export class AddressesApi extends BaseAPI {
      * @summary List all addresses
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AddressesApi
      */
     public list(options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -9937,7 +6764,6 @@ export class AddressesApi extends BaseAPI {
      * @param {AddressesApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AddressesApi
      */
     public retrieve(requestParameters: AddressesApiRetrieveRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -9949,7 +6775,6 @@ export class AddressesApi extends BaseAPI {
      * @param {AddressesApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AddressesApi
      */
     public update(requestParameters: AddressesApiUpdateRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedAddressData, options).then((request) => request(this.axios, this.basePath));
@@ -9960,7 +6785,6 @@ export class AddressesApi extends BaseAPI {
 
 /**
  * AuthApi - axios parameter creator
- * @export
  */
 export const AuthApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -10113,7 +6937,6 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
 
 /**
  * AuthApi - functional programming interface
- * @export
  */
 export const AuthApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AuthApiAxiosParamCreator(configuration)
@@ -10175,7 +6998,6 @@ export const AuthApiFp = function(configuration?: Configuration) {
 
 /**
  * AuthApi - factory interface
- * @export
  */
 export const AuthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = AuthApiFp(configuration)
@@ -10225,65 +7047,34 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
 
 /**
  * Request parameters for authenticate operation in AuthApi.
- * @export
- * @interface AuthApiAuthenticateRequest
  */
 export interface AuthApiAuthenticateRequest {
-    /**
-     * 
-     * @type {TokenObtainPair}
-     * @memberof AuthApiAuthenticate
-     */
     readonly tokenObtainPair: TokenObtainPair
 }
 
 /**
  * Request parameters for getVerifiedToken operation in AuthApi.
- * @export
- * @interface AuthApiGetVerifiedTokenRequest
  */
 export interface AuthApiGetVerifiedTokenRequest {
-    /**
-     * 
-     * @type {VerifiedTokenObtainPair}
-     * @memberof AuthApiGetVerifiedToken
-     */
     readonly verifiedTokenObtainPair: VerifiedTokenObtainPair
 }
 
 /**
  * Request parameters for refreshToken operation in AuthApi.
- * @export
- * @interface AuthApiRefreshTokenRequest
  */
 export interface AuthApiRefreshTokenRequest {
-    /**
-     * 
-     * @type {TokenRefresh}
-     * @memberof AuthApiRefreshToken
-     */
     readonly tokenRefresh: TokenRefresh
 }
 
 /**
  * Request parameters for verifyToken operation in AuthApi.
- * @export
- * @interface AuthApiVerifyTokenRequest
  */
 export interface AuthApiVerifyTokenRequest {
-    /**
-     * 
-     * @type {TokenVerify}
-     * @memberof AuthApiVerifyToken
-     */
     readonly tokenVerify: TokenVerify
 }
 
 /**
  * AuthApi - object-oriented interface
- * @export
- * @class AuthApi
- * @extends {BaseAPI}
  */
 export class AuthApi extends BaseAPI {
     /**
@@ -10292,7 +7083,6 @@ export class AuthApi extends BaseAPI {
      * @param {AuthApiAuthenticateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public authenticate(requestParameters: AuthApiAuthenticateRequest, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
@@ -10304,7 +7094,6 @@ export class AuthApi extends BaseAPI {
      * @param {AuthApiGetVerifiedTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public getVerifiedToken(requestParameters: AuthApiGetVerifiedTokenRequest, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(this.axios, this.basePath));
@@ -10316,7 +7105,6 @@ export class AuthApi extends BaseAPI {
      * @param {AuthApiRefreshTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public refreshToken(requestParameters: AuthApiRefreshTokenRequest, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).refreshToken(requestParameters.tokenRefresh, options).then((request) => request(this.axios, this.basePath));
@@ -10328,7 +7116,6 @@ export class AuthApi extends BaseAPI {
      * @param {AuthApiVerifyTokenRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AuthApi
      */
     public verifyToken(requestParameters: AuthApiVerifyTokenRequest, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).verifyToken(requestParameters.tokenVerify, options).then((request) => request(this.axios, this.basePath));
@@ -10339,7 +7126,6 @@ export class AuthApi extends BaseAPI {
 
 /**
  * BatchesApi - axios parameter creator
- * @export
  */
 export const BatchesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -10668,7 +7454,6 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
 
 /**
  * BatchesApi - functional programming interface
- * @export
  */
 export const BatchesApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = BatchesApiAxiosParamCreator(configuration)
@@ -10760,7 +7545,6 @@ export const BatchesApiFp = function(configuration?: Configuration) {
 
 /**
  * BatchesApi - factory interface
- * @export
  */
 export const BatchesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = BatchesApiFp(configuration)
@@ -10829,114 +7613,57 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
 
 /**
  * Request parameters for createOrders operation in BatchesApi.
- * @export
- * @interface BatchesApiCreateOrdersRequest
  */
 export interface BatchesApiCreateOrdersRequest {
-    /**
-     * 
-     * @type {BatchOrderData}
-     * @memberof BatchesApiCreateOrders
-     */
     readonly batchOrderData: BatchOrderData
 }
 
 /**
  * Request parameters for createShipments operation in BatchesApi.
- * @export
- * @interface BatchesApiCreateShipmentsRequest
  */
 export interface BatchesApiCreateShipmentsRequest {
-    /**
-     * 
-     * @type {BatchShipmentData}
-     * @memberof BatchesApiCreateShipments
-     */
     readonly batchShipmentData: BatchShipmentData
 }
 
 /**
  * Request parameters for createTrackers operation in BatchesApi.
- * @export
- * @interface BatchesApiCreateTrackersRequest
  */
 export interface BatchesApiCreateTrackersRequest {
-    /**
-     * 
-     * @type {BatchTrackerData}
-     * @memberof BatchesApiCreateTrackers
-     */
     readonly batchTrackerData: BatchTrackerData
 }
 
 /**
  * Request parameters for importFile operation in BatchesApi.
- * @export
- * @interface BatchesApiImportFileRequest
  */
 export interface BatchesApiImportFileRequest {
-    /**
-     * 
-     * @type {File}
-     * @memberof BatchesApiImportFile
-     */
     readonly dataFile?: File
 
     /**
      * A data template slug to use for the import.&lt;br/&gt;         **When nothing is specified, the system default headers are expected.**         
-     * @type {string}
-     * @memberof BatchesApiImportFile
      */
     readonly dataTemplate?: string
 
     /**
      * The type of the resource to import
-     * @type {'billing' | 'order' | 'shipment' | 'trackers'}
-     * @memberof BatchesApiImportFile
      */
     readonly resourceType?: ImportFileResourceTypeEnum
 
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchesApiImportFile
-     */
     readonly resourceType2?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchesApiImportFile
-     */
     readonly dataTemplate2?: string
 
-    /**
-     * 
-     * @type {File}
-     * @memberof BatchesApiImportFile
-     */
     readonly dataFile2?: File
 }
 
 /**
  * Request parameters for retrieve operation in BatchesApi.
- * @export
- * @interface BatchesApiRetrieveRequest
  */
 export interface BatchesApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof BatchesApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * BatchesApi - object-oriented interface
- * @export
- * @class BatchesApi
- * @extends {BaseAPI}
  */
 export class BatchesApi extends BaseAPI {
     /**
@@ -10945,7 +7672,6 @@ export class BatchesApi extends BaseAPI {
      * @param {BatchesApiCreateOrdersRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof BatchesApi
      */
     public createOrders(requestParameters: BatchesApiCreateOrdersRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).createOrders(requestParameters.batchOrderData, options).then((request) => request(this.axios, this.basePath));
@@ -10957,7 +7683,6 @@ export class BatchesApi extends BaseAPI {
      * @param {BatchesApiCreateShipmentsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof BatchesApi
      */
     public createShipments(requestParameters: BatchesApiCreateShipmentsRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).createShipments(requestParameters.batchShipmentData, options).then((request) => request(this.axios, this.basePath));
@@ -10969,7 +7694,6 @@ export class BatchesApi extends BaseAPI {
      * @param {BatchesApiCreateTrackersRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof BatchesApi
      */
     public createTrackers(requestParameters: BatchesApiCreateTrackersRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).createTrackers(requestParameters.batchTrackerData, options).then((request) => request(this.axios, this.basePath));
@@ -10981,7 +7705,6 @@ export class BatchesApi extends BaseAPI {
      * @param {BatchesApiImportFileRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof BatchesApi
      */
     public importFile(requestParameters: BatchesApiImportFileRequest = {}, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).importFile(requestParameters.dataFile, requestParameters.dataTemplate, requestParameters.resourceType, requestParameters.resourceType2, requestParameters.dataTemplate2, requestParameters.dataFile2, options).then((request) => request(this.axios, this.basePath));
@@ -10992,7 +7715,6 @@ export class BatchesApi extends BaseAPI {
      * @summary List all batch operations
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof BatchesApi
      */
     public list(options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -11004,16 +7726,12 @@ export class BatchesApi extends BaseAPI {
      * @param {BatchesApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof BatchesApi
      */
     public retrieve(requestParameters: BatchesApiRetrieveRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
-/**
- * @export
- */
 export const ImportFileResourceTypeEnum = {
     Billing: 'billing',
     Order: 'order',
@@ -11025,14 +7743,13 @@ export type ImportFileResourceTypeEnum = typeof ImportFileResourceTypeEnum[keyof
 
 /**
  * CarriersApi - axios parameter creator
- * @export
  */
 export const CarriersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * Retrieve a carrier\'s details
          * @summary Get carrier details
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11066,7 +7783,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve a carrier\'s options
          * @summary Get carrier options
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11100,7 +7817,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11166,7 +7883,6 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
 
 /**
  * CarriersApi - functional programming interface
- * @export
  */
 export const CarriersApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CarriersApiAxiosParamCreator(configuration)
@@ -11174,7 +7890,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s details
          * @summary Get carrier details
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11187,7 +7903,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s options
          * @summary Get carrier options
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11200,7 +7916,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11227,7 +7943,6 @@ export const CarriersApiFp = function(configuration?: Configuration) {
 
 /**
  * CarriersApi - factory interface
- * @export
  */
 export const CarriersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = CarriersApiFp(configuration)
@@ -11276,51 +7991,36 @@ export const CarriersApiFactory = function (configuration?: Configuration, baseP
 
 /**
  * Request parameters for getDetails operation in CarriersApi.
- * @export
- * @interface CarriersApiGetDetailsRequest
  */
 export interface CarriersApiGetDetailsRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
-     * @type {string}
-     * @memberof CarriersApiGetDetails
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
      */
     readonly carrierName: string
 }
 
 /**
  * Request parameters for getOptions operation in CarriersApi.
- * @export
- * @interface CarriersApiGetOptionsRequest
  */
 export interface CarriersApiGetOptionsRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
-     * @type {string}
-     * @memberof CarriersApiGetOptions
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
      */
     readonly carrierName: string
 }
 
 /**
  * Request parameters for getServices operation in CarriersApi.
- * @export
- * @interface CarriersApiGetServicesRequest
  */
 export interface CarriersApiGetServicesRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
-     * @type {string}
-     * @memberof CarriersApiGetServices
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
      */
     readonly carrierName: string
 }
 
 /**
  * CarriersApi - object-oriented interface
- * @export
- * @class CarriersApi
- * @extends {BaseAPI}
  */
 export class CarriersApi extends BaseAPI {
     /**
@@ -11329,7 +8029,6 @@ export class CarriersApi extends BaseAPI {
      * @param {CarriersApiGetDetailsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarriersApi
      */
     public getDetails(requestParameters: CarriersApiGetDetailsRequest, options?: AxiosRequestConfig) {
         return CarriersApiFp(this.configuration).getDetails(requestParameters.carrierName, options).then((request) => request(this.axios, this.basePath));
@@ -11341,7 +8040,6 @@ export class CarriersApi extends BaseAPI {
      * @param {CarriersApiGetOptionsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarriersApi
      */
     public getOptions(requestParameters: CarriersApiGetOptionsRequest, options?: AxiosRequestConfig) {
         return CarriersApiFp(this.configuration).getOptions(requestParameters.carrierName, options).then((request) => request(this.axios, this.basePath));
@@ -11353,7 +8051,6 @@ export class CarriersApi extends BaseAPI {
      * @param {CarriersApiGetServicesRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarriersApi
      */
     public getServices(requestParameters: CarriersApiGetServicesRequest, options?: AxiosRequestConfig) {
         return CarriersApiFp(this.configuration).getServices(requestParameters.carrierName, options).then((request) => request(this.axios, this.basePath));
@@ -11364,7 +8061,6 @@ export class CarriersApi extends BaseAPI {
      * @summary List all carriers
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CarriersApi
      */
     public list(options?: AxiosRequestConfig) {
         return CarriersApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -11375,7 +8071,6 @@ export class CarriersApi extends BaseAPI {
 
 /**
  * ConnectionsApi - axios parameter creator
- * @export
  */
 export const ConnectionsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -11433,7 +8128,7 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
          * Retrieve all carrier connections
          * @summary List carrier connections
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
@@ -11651,7 +8346,6 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
 
 /**
  * ConnectionsApi - functional programming interface
- * @export
  */
 export const ConnectionsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ConnectionsApiAxiosParamCreator(configuration)
@@ -11673,7 +8367,7 @@ export const ConnectionsApiFp = function(configuration?: Configuration) {
          * Retrieve all carrier connections
          * @summary List carrier connections
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
@@ -11731,7 +8425,6 @@ export const ConnectionsApiFp = function(configuration?: Configuration) {
 
 /**
  * ConnectionsApi - factory interface
- * @export
  */
 export const ConnectionsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = ConnectionsApiFp(configuration)
@@ -11791,114 +8484,54 @@ export const ConnectionsApiFactory = function (configuration?: Configuration, ba
 
 /**
  * Request parameters for add operation in ConnectionsApi.
- * @export
- * @interface ConnectionsApiAddRequest
  */
 export interface ConnectionsApiAddRequest {
-    /**
-     * 
-     * @type {CarrierConnectionData}
-     * @memberof ConnectionsApiAdd
-     */
     readonly carrierConnectionData: CarrierConnectionData
 }
 
 /**
  * Request parameters for list operation in ConnectionsApi.
- * @export
- * @interface ConnectionsApiListRequest
  */
 export interface ConnectionsApiListRequest {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ConnectionsApiList
-     */
     readonly active?: boolean
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
-     * @type {string}
-     * @memberof ConnectionsApiList
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
      */
     readonly carrierName?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectionsApiList
-     */
     readonly metadataKey?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectionsApiList
-     */
     readonly metadataValue?: string
 
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ConnectionsApiList
-     */
     readonly systemOnly?: boolean
 }
 
 /**
  * Request parameters for remove operation in ConnectionsApi.
- * @export
- * @interface ConnectionsApiRemoveRequest
  */
 export interface ConnectionsApiRemoveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectionsApiRemove
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for retrieve operation in ConnectionsApi.
- * @export
- * @interface ConnectionsApiRetrieveRequest
  */
 export interface ConnectionsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectionsApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for update operation in ConnectionsApi.
- * @export
- * @interface ConnectionsApiUpdateRequest
  */
 export interface ConnectionsApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ConnectionsApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {PatchedCarrierConnectionData}
-     * @memberof ConnectionsApiUpdate
-     */
     readonly patchedCarrierConnectionData?: PatchedCarrierConnectionData
 }
 
 /**
  * ConnectionsApi - object-oriented interface
- * @export
- * @class ConnectionsApi
- * @extends {BaseAPI}
  */
 export class ConnectionsApi extends BaseAPI {
     /**
@@ -11907,7 +8540,6 @@ export class ConnectionsApi extends BaseAPI {
      * @param {ConnectionsApiAddRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ConnectionsApi
      */
     public add(requestParameters: ConnectionsApiAddRequest, options?: AxiosRequestConfig) {
         return ConnectionsApiFp(this.configuration).add(requestParameters.carrierConnectionData, options).then((request) => request(this.axios, this.basePath));
@@ -11919,7 +8551,6 @@ export class ConnectionsApi extends BaseAPI {
      * @param {ConnectionsApiListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ConnectionsApi
      */
     public list(requestParameters: ConnectionsApiListRequest = {}, options?: AxiosRequestConfig) {
         return ConnectionsApiFp(this.configuration).list(requestParameters.active, requestParameters.carrierName, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.systemOnly, options).then((request) => request(this.axios, this.basePath));
@@ -11931,7 +8562,6 @@ export class ConnectionsApi extends BaseAPI {
      * @param {ConnectionsApiRemoveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ConnectionsApi
      */
     public remove(requestParameters: ConnectionsApiRemoveRequest, options?: AxiosRequestConfig) {
         return ConnectionsApiFp(this.configuration).remove(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -11943,7 +8573,6 @@ export class ConnectionsApi extends BaseAPI {
      * @param {ConnectionsApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ConnectionsApi
      */
     public retrieve(requestParameters: ConnectionsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return ConnectionsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -11955,7 +8584,6 @@ export class ConnectionsApi extends BaseAPI {
      * @param {ConnectionsApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ConnectionsApi
      */
     public update(requestParameters: ConnectionsApiUpdateRequest, options?: AxiosRequestConfig) {
         return ConnectionsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedCarrierConnectionData, options).then((request) => request(this.axios, this.basePath));
@@ -11966,7 +8594,6 @@ export class ConnectionsApi extends BaseAPI {
 
 /**
  * DocumentsApi - axios parameter creator
- * @export
  */
 export const DocumentsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -12426,7 +9053,6 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
 
 /**
  * DocumentsApi - functional programming interface
- * @export
  */
 export const DocumentsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DocumentsApiAxiosParamCreator(configuration)
@@ -12555,7 +9181,6 @@ export const DocumentsApiFp = function(configuration?: Configuration) {
 
 /**
  * DocumentsApi - factory interface
- * @export
  */
 export const DocumentsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = DocumentsApiFp(configuration)
@@ -12654,142 +9279,68 @@ export const DocumentsApiFactory = function (configuration?: Configuration, base
 
 /**
  * Request parameters for create operation in DocumentsApi.
- * @export
- * @interface DocumentsApiCreateRequest
  */
 export interface DocumentsApiCreateRequest {
-    /**
-     * 
-     * @type {DocumentTemplateData}
-     * @memberof DocumentsApiCreate
-     */
     readonly documentTemplateData: DocumentTemplateData
 }
 
 /**
  * Request parameters for discard operation in DocumentsApi.
- * @export
- * @interface DocumentsApiDiscardRequest
  */
 export interface DocumentsApiDiscardRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentsApiDiscard
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for generateDocument operation in DocumentsApi.
- * @export
- * @interface DocumentsApiGenerateDocumentRequest
  */
 export interface DocumentsApiGenerateDocumentRequest {
-    /**
-     * 
-     * @type {DocumentData}
-     * @memberof DocumentsApiGenerateDocument
-     */
     readonly documentData?: DocumentData
 }
 
 /**
  * Request parameters for retrieve operation in DocumentsApi.
- * @export
- * @interface DocumentsApiRetrieveRequest
  */
 export interface DocumentsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentsApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for retrieveUpload operation in DocumentsApi.
- * @export
- * @interface DocumentsApiRetrieveUploadRequest
  */
 export interface DocumentsApiRetrieveUploadRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentsApiRetrieveUpload
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for update operation in DocumentsApi.
- * @export
- * @interface DocumentsApiUpdateRequest
  */
 export interface DocumentsApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentsApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {PatchedDocumentTemplateData}
-     * @memberof DocumentsApiUpdate
-     */
     readonly patchedDocumentTemplateData?: PatchedDocumentTemplateData
 }
 
 /**
  * Request parameters for upload operation in DocumentsApi.
- * @export
- * @interface DocumentsApiUploadRequest
  */
 export interface DocumentsApiUploadRequest {
-    /**
-     * 
-     * @type {DocumentUploadData}
-     * @memberof DocumentsApiUpload
-     */
     readonly documentUploadData: DocumentUploadData
 }
 
 /**
  * Request parameters for uploads operation in DocumentsApi.
- * @export
- * @interface DocumentsApiUploadsRequest
  */
 export interface DocumentsApiUploadsRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentsApiUploads
-     */
     readonly createdAfter?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentsApiUploads
-     */
     readonly createdBefore?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof DocumentsApiUploads
-     */
     readonly shipmentId?: string
 }
 
 /**
  * DocumentsApi - object-oriented interface
- * @export
- * @class DocumentsApi
- * @extends {BaseAPI}
  */
 export class DocumentsApi extends BaseAPI {
     /**
@@ -12798,7 +9349,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public create(requestParameters: DocumentsApiCreateRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).create(requestParameters.documentTemplateData, options).then((request) => request(this.axios, this.basePath));
@@ -12810,7 +9360,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiDiscardRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public discard(requestParameters: DocumentsApiDiscardRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -12822,7 +9371,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiGenerateDocumentRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public generateDocument(requestParameters: DocumentsApiGenerateDocumentRequest = {}, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).generateDocument(requestParameters.documentData, options).then((request) => request(this.axios, this.basePath));
@@ -12833,7 +9381,6 @@ export class DocumentsApi extends BaseAPI {
      * @summary List all templates
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public list(options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -12845,7 +9392,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public retrieve(requestParameters: DocumentsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -12857,7 +9403,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiRetrieveUploadRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public retrieveUpload(requestParameters: DocumentsApiRetrieveUploadRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).retrieveUpload(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -12869,7 +9414,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public update(requestParameters: DocumentsApiUpdateRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedDocumentTemplateData, options).then((request) => request(this.axios, this.basePath));
@@ -12881,7 +9425,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiUploadRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public upload(requestParameters: DocumentsApiUploadRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).upload(requestParameters.documentUploadData, options).then((request) => request(this.axios, this.basePath));
@@ -12893,7 +9436,6 @@ export class DocumentsApi extends BaseAPI {
      * @param {DocumentsApiUploadsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DocumentsApi
      */
     public uploads(requestParameters: DocumentsApiUploadsRequest = {}, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).uploads(requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.shipmentId, options).then((request) => request(this.axios, this.basePath));
@@ -12904,7 +9446,6 @@ export class DocumentsApi extends BaseAPI {
 
 /**
  * ManifestsApi - axios parameter creator
- * @export
  */
 export const ManifestsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -12961,7 +9502,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
         /**
          * Retrieve all manifests.
          * @summary List manifests
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {*} [options] Override http request option.
@@ -13074,7 +9615,6 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
 
 /**
  * ManifestsApi - functional programming interface
- * @export
  */
 export const ManifestsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ManifestsApiAxiosParamCreator(configuration)
@@ -13095,7 +9635,7 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve all manifests.
          * @summary List manifests
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {*} [options] Override http request option.
@@ -13125,7 +9665,6 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
 
 /**
  * ManifestsApi - factory interface
- * @export
  */
 export const ManifestsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = ManifestsApiFp(configuration)
@@ -13165,65 +9704,34 @@ export const ManifestsApiFactory = function (configuration?: Configuration, base
 
 /**
  * Request parameters for create operation in ManifestsApi.
- * @export
- * @interface ManifestsApiCreateRequest
  */
 export interface ManifestsApiCreateRequest {
-    /**
-     * 
-     * @type {ManifestData}
-     * @memberof ManifestsApiCreate
-     */
     readonly manifestData: ManifestData
 }
 
 /**
  * Request parameters for list operation in ManifestsApi.
- * @export
- * @interface ManifestsApiListRequest
  */
 export interface ManifestsApiListRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
-     * @type {string}
-     * @memberof ManifestsApiList
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
      */
     readonly carrierName?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ManifestsApiList
-     */
     readonly createdAfter?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ManifestsApiList
-     */
     readonly createdBefore?: string
 }
 
 /**
  * Request parameters for retrieve operation in ManifestsApi.
- * @export
- * @interface ManifestsApiRetrieveRequest
  */
 export interface ManifestsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManifestsApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * ManifestsApi - object-oriented interface
- * @export
- * @class ManifestsApi
- * @extends {BaseAPI}
  */
 export class ManifestsApi extends BaseAPI {
     /**
@@ -13232,7 +9740,6 @@ export class ManifestsApi extends BaseAPI {
      * @param {ManifestsApiCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ManifestsApi
      */
     public create(requestParameters: ManifestsApiCreateRequest, options?: AxiosRequestConfig) {
         return ManifestsApiFp(this.configuration).create(requestParameters.manifestData, options).then((request) => request(this.axios, this.basePath));
@@ -13244,7 +9751,6 @@ export class ManifestsApi extends BaseAPI {
      * @param {ManifestsApiListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ManifestsApi
      */
     public list(requestParameters: ManifestsApiListRequest = {}, options?: AxiosRequestConfig) {
         return ManifestsApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, options).then((request) => request(this.axios, this.basePath));
@@ -13256,7 +9762,6 @@ export class ManifestsApi extends BaseAPI {
      * @param {ManifestsApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ManifestsApi
      */
     public retrieve(requestParameters: ManifestsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return ManifestsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -13267,7 +9772,6 @@ export class ManifestsApi extends BaseAPI {
 
 /**
  * OrdersApi - axios parameter creator
- * @export
  */
 export const OrdersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -13567,7 +10071,6 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
 
 /**
  * OrdersApi - functional programming interface
- * @export
  */
 export const OrdersApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = OrdersApiAxiosParamCreator(configuration)
@@ -13656,7 +10159,6 @@ export const OrdersApiFp = function(configuration?: Configuration) {
 
 /**
  * OrdersApi - factory interface
- * @export
  */
 export const OrdersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = OrdersApiFp(configuration)
@@ -13726,86 +10228,43 @@ export const OrdersApiFactory = function (configuration?: Configuration, basePat
 
 /**
  * Request parameters for cancel operation in OrdersApi.
- * @export
- * @interface OrdersApiCancelRequest
  */
 export interface OrdersApiCancelRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof OrdersApiCancel
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for create operation in OrdersApi.
- * @export
- * @interface OrdersApiCreateRequest
  */
 export interface OrdersApiCreateRequest {
-    /**
-     * 
-     * @type {OrderData}
-     * @memberof OrdersApiCreate
-     */
     readonly orderData: OrderData
 }
 
 /**
  * Request parameters for dismiss operation in OrdersApi.
- * @export
- * @interface OrdersApiDismissRequest
  */
 export interface OrdersApiDismissRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof OrdersApiDismiss
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for retrieve operation in OrdersApi.
- * @export
- * @interface OrdersApiRetrieveRequest
  */
 export interface OrdersApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof OrdersApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for update operation in OrdersApi.
- * @export
- * @interface OrdersApiUpdateRequest
  */
 export interface OrdersApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof OrdersApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {OrderUpdateData}
-     * @memberof OrdersApiUpdate
-     */
     readonly orderUpdateData?: OrderUpdateData
 }
 
 /**
  * OrdersApi - object-oriented interface
- * @export
- * @class OrdersApi
- * @extends {BaseAPI}
  */
 export class OrdersApi extends BaseAPI {
     /**
@@ -13814,7 +10273,6 @@ export class OrdersApi extends BaseAPI {
      * @param {OrdersApiCancelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof OrdersApi
      */
     public cancel(requestParameters: OrdersApiCancelRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).cancel(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -13826,7 +10284,6 @@ export class OrdersApi extends BaseAPI {
      * @param {OrdersApiCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof OrdersApi
      */
     public create(requestParameters: OrdersApiCreateRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).create(requestParameters.orderData, options).then((request) => request(this.axios, this.basePath));
@@ -13839,7 +10296,6 @@ export class OrdersApi extends BaseAPI {
      * @param {*} [options] Override http request option.
      * @deprecated
      * @throws {RequiredError}
-     * @memberof OrdersApi
      */
     public dismiss(requestParameters: OrdersApiDismissRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).dismiss(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -13850,7 +10306,6 @@ export class OrdersApi extends BaseAPI {
      * @summary List all orders
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof OrdersApi
      */
     public list(options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -13862,7 +10317,6 @@ export class OrdersApi extends BaseAPI {
      * @param {OrdersApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof OrdersApi
      */
     public retrieve(requestParameters: OrdersApiRetrieveRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -13874,7 +10328,6 @@ export class OrdersApi extends BaseAPI {
      * @param {OrdersApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof OrdersApi
      */
     public update(requestParameters: OrdersApiUpdateRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).update(requestParameters.id, requestParameters.orderUpdateData, options).then((request) => request(this.axios, this.basePath));
@@ -13885,7 +10338,6 @@ export class OrdersApi extends BaseAPI {
 
 /**
  * ParcelsApi - axios parameter creator
- * @export
  */
 export const ParcelsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -14136,7 +10588,6 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
 
 /**
  * ParcelsApi - functional programming interface
- * @export
  */
 export const ParcelsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ParcelsApiAxiosParamCreator(configuration)
@@ -14211,7 +10662,6 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
 
 /**
  * ParcelsApi - factory interface
- * @export
  */
 export const ParcelsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = ParcelsApiFp(configuration)
@@ -14270,72 +10720,36 @@ export const ParcelsApiFactory = function (configuration?: Configuration, basePa
 
 /**
  * Request parameters for create operation in ParcelsApi.
- * @export
- * @interface ParcelsApiCreateRequest
  */
 export interface ParcelsApiCreateRequest {
-    /**
-     * 
-     * @type {ParcelData}
-     * @memberof ParcelsApiCreate
-     */
     readonly parcelData: ParcelData
 }
 
 /**
  * Request parameters for discard operation in ParcelsApi.
- * @export
- * @interface ParcelsApiDiscardRequest
  */
 export interface ParcelsApiDiscardRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ParcelsApiDiscard
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for retrieve operation in ParcelsApi.
- * @export
- * @interface ParcelsApiRetrieveRequest
  */
 export interface ParcelsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ParcelsApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for update operation in ParcelsApi.
- * @export
- * @interface ParcelsApiUpdateRequest
  */
 export interface ParcelsApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ParcelsApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {PatchedParcelData}
-     * @memberof ParcelsApiUpdate
-     */
     readonly patchedParcelData?: PatchedParcelData
 }
 
 /**
  * ParcelsApi - object-oriented interface
- * @export
- * @class ParcelsApi
- * @extends {BaseAPI}
  */
 export class ParcelsApi extends BaseAPI {
     /**
@@ -14344,7 +10758,6 @@ export class ParcelsApi extends BaseAPI {
      * @param {ParcelsApiCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ParcelsApi
      */
     public create(requestParameters: ParcelsApiCreateRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).create(requestParameters.parcelData, options).then((request) => request(this.axios, this.basePath));
@@ -14356,7 +10769,6 @@ export class ParcelsApi extends BaseAPI {
      * @param {ParcelsApiDiscardRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ParcelsApi
      */
     public discard(requestParameters: ParcelsApiDiscardRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -14367,7 +10779,6 @@ export class ParcelsApi extends BaseAPI {
      * @summary List all parcels
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ParcelsApi
      */
     public list(options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -14379,7 +10790,6 @@ export class ParcelsApi extends BaseAPI {
      * @param {ParcelsApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ParcelsApi
      */
     public retrieve(requestParameters: ParcelsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -14391,7 +10801,6 @@ export class ParcelsApi extends BaseAPI {
      * @param {ParcelsApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ParcelsApi
      */
     public update(requestParameters: ParcelsApiUpdateRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedParcelData, options).then((request) => request(this.axios, this.basePath));
@@ -14402,7 +10811,6 @@ export class ParcelsApi extends BaseAPI {
 
 /**
  * PickupsApi - axios parameter creator
- * @export
  */
 export const PickupsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -14663,7 +11071,6 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
 
 /**
  * PickupsApi - functional programming interface
- * @export
  */
 export const PickupsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = PickupsApiAxiosParamCreator(configuration)
@@ -14740,7 +11147,6 @@ export const PickupsApiFp = function(configuration?: Configuration) {
 
 /**
  * PickupsApi - factory interface
- * @export
  */
 export const PickupsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = PickupsApiFp(configuration)
@@ -14799,86 +11205,40 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
 
 /**
  * Request parameters for cancel operation in PickupsApi.
- * @export
- * @interface PickupsApiCancelRequest
  */
 export interface PickupsApiCancelRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PickupsApiCancel
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {PickupCancelData}
-     * @memberof PickupsApiCancel
-     */
     readonly pickupCancelData?: PickupCancelData
 }
 
 /**
  * Request parameters for retrieve operation in PickupsApi.
- * @export
- * @interface PickupsApiRetrieveRequest
  */
 export interface PickupsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PickupsApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for schedule operation in PickupsApi.
- * @export
- * @interface PickupsApiScheduleRequest
  */
 export interface PickupsApiScheduleRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PickupsApiSchedule
-     */
     readonly carrierName: string
 
-    /**
-     * 
-     * @type {PickupData}
-     * @memberof PickupsApiSchedule
-     */
     readonly pickupData: PickupData
 }
 
 /**
  * Request parameters for update operation in PickupsApi.
- * @export
- * @interface PickupsApiUpdateRequest
  */
 export interface PickupsApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof PickupsApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {PickupUpdateData}
-     * @memberof PickupsApiUpdate
-     */
     readonly pickupUpdateData: PickupUpdateData
 }
 
 /**
  * PickupsApi - object-oriented interface
- * @export
- * @class PickupsApi
- * @extends {BaseAPI}
  */
 export class PickupsApi extends BaseAPI {
     /**
@@ -14887,7 +11247,6 @@ export class PickupsApi extends BaseAPI {
      * @param {PickupsApiCancelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof PickupsApi
      */
     public cancel(requestParameters: PickupsApiCancelRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).cancel(requestParameters.id, requestParameters.pickupCancelData, options).then((request) => request(this.axios, this.basePath));
@@ -14898,7 +11257,6 @@ export class PickupsApi extends BaseAPI {
      * @summary List shipment pickups
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof PickupsApi
      */
     public list(options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -14910,7 +11268,6 @@ export class PickupsApi extends BaseAPI {
      * @param {PickupsApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof PickupsApi
      */
     public retrieve(requestParameters: PickupsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -14922,7 +11279,6 @@ export class PickupsApi extends BaseAPI {
      * @param {PickupsApiScheduleRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof PickupsApi
      */
     public schedule(requestParameters: PickupsApiScheduleRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).schedule(requestParameters.carrierName, requestParameters.pickupData, options).then((request) => request(this.axios, this.basePath));
@@ -14934,7 +11290,6 @@ export class PickupsApi extends BaseAPI {
      * @param {PickupsApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof PickupsApi
      */
     public update(requestParameters: PickupsApiUpdateRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).update(requestParameters.id, requestParameters.pickupUpdateData, options).then((request) => request(this.axios, this.basePath));
@@ -14945,7 +11300,6 @@ export class PickupsApi extends BaseAPI {
 
 /**
  * ProxyApi - axios parameter creator
- * @export
  */
 export const ProxyApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -15433,7 +11787,6 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
 
 /**
  * ProxyApi - functional programming interface
- * @export
  */
 export const ProxyApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ProxyApiAxiosParamCreator(configuration)
@@ -15568,7 +11921,6 @@ export const ProxyApiFp = function(configuration?: Configuration) {
 
 /**
  * ProxyApi - factory interface
- * @export
  */
 export const ProxyApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = ProxyApiFp(configuration)
@@ -15669,184 +12021,83 @@ export const ProxyApiFactory = function (configuration?: Configuration, basePath
 
 /**
  * Request parameters for buyLabel operation in ProxyApi.
- * @export
- * @interface ProxyApiBuyLabelRequest
  */
 export interface ProxyApiBuyLabelRequest {
-    /**
-     * 
-     * @type {ShippingRequest}
-     * @memberof ProxyApiBuyLabel
-     */
     readonly shippingRequest: ShippingRequest
 }
 
 /**
  * Request parameters for cancelPickup operation in ProxyApi.
- * @export
- * @interface ProxyApiCancelPickupRequest
  */
 export interface ProxyApiCancelPickupRequest {
-    /**
-     * 
-     * @type {'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dtdc' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'mydhl' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'shipengine' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'veho' | 'zoom2u'}
-     * @memberof ProxyApiCancelPickup
-     */
     readonly carrierName: CancelPickupCarrierNameEnum
 
-    /**
-     * 
-     * @type {PickupCancelRequest}
-     * @memberof ProxyApiCancelPickup
-     */
     readonly pickupCancelRequest: PickupCancelRequest
 }
 
 /**
  * Request parameters for fetchRates operation in ProxyApi.
- * @export
- * @interface ProxyApiFetchRatesRequest
  */
 export interface ProxyApiFetchRatesRequest {
-    /**
-     * 
-     * @type {RateRequest}
-     * @memberof ProxyApiFetchRates
-     */
     readonly rateRequest: RateRequest
 }
 
 /**
  * Request parameters for generateManifest operation in ProxyApi.
- * @export
- * @interface ProxyApiGenerateManifestRequest
  */
 export interface ProxyApiGenerateManifestRequest {
-    /**
-     * 
-     * @type {ManifestRequest}
-     * @memberof ProxyApiGenerateManifest
-     */
     readonly manifestRequest: ManifestRequest
 }
 
 /**
  * Request parameters for getTracking operation in ProxyApi.
- * @export
- * @interface ProxyApiGetTrackingRequest
  */
 export interface ProxyApiGetTrackingRequest {
-    /**
-     * 
-     * @type {TrackingData}
-     * @memberof ProxyApiGetTracking
-     */
     readonly trackingData: TrackingData
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ProxyApiGetTracking
-     */
     readonly hub?: string
 }
 
 /**
  * Request parameters for schedulePickup operation in ProxyApi.
- * @export
- * @interface ProxyApiSchedulePickupRequest
  */
 export interface ProxyApiSchedulePickupRequest {
-    /**
-     * 
-     * @type {'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dtdc' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'mydhl' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'shipengine' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'veho' | 'zoom2u'}
-     * @memberof ProxyApiSchedulePickup
-     */
     readonly carrierName: SchedulePickupCarrierNameEnum
 
-    /**
-     * 
-     * @type {PickupRequest}
-     * @memberof ProxyApiSchedulePickup
-     */
     readonly pickupRequest: PickupRequest
 }
 
 /**
  * Request parameters for trackShipment operation in ProxyApi.
- * @export
- * @interface ProxyApiTrackShipmentRequest
  */
 export interface ProxyApiTrackShipmentRequest {
-    /**
-     * 
-     * @type {'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dtdc' | 'fedex' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'mydhl' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'veho' | 'zoom2u'}
-     * @memberof ProxyApiTrackShipment
-     */
     readonly carrierName: TrackShipmentCarrierNameEnum
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ProxyApiTrackShipment
-     */
     readonly trackingNumber: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ProxyApiTrackShipment
-     */
     readonly hub?: string
 }
 
 /**
  * Request parameters for updatePickup operation in ProxyApi.
- * @export
- * @interface ProxyApiUpdatePickupRequest
  */
 export interface ProxyApiUpdatePickupRequest {
-    /**
-     * 
-     * @type {'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dtdc' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'mydhl' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'shipengine' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'veho' | 'zoom2u'}
-     * @memberof ProxyApiUpdatePickup
-     */
     readonly carrierName: UpdatePickupCarrierNameEnum
 
-    /**
-     * 
-     * @type {PickupUpdateRequest}
-     * @memberof ProxyApiUpdatePickup
-     */
     readonly pickupUpdateRequest: PickupUpdateRequest
 }
 
 /**
  * Request parameters for voidLabel operation in ProxyApi.
- * @export
- * @interface ProxyApiVoidLabelRequest
  */
 export interface ProxyApiVoidLabelRequest {
-    /**
-     * 
-     * @type {'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dtdc' | 'easypost' | 'easyship' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'mydhl' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'seko' | 'sendle' | 'shipengine' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'veho' | 'zoom2u'}
-     * @memberof ProxyApiVoidLabel
-     */
     readonly carrierName: VoidLabelCarrierNameEnum
 
-    /**
-     * 
-     * @type {ShipmentCancelRequest}
-     * @memberof ProxyApiVoidLabel
-     */
     readonly shipmentCancelRequest: ShipmentCancelRequest
 }
 
 /**
  * ProxyApi - object-oriented interface
- * @export
- * @class ProxyApi
- * @extends {BaseAPI}
  */
 export class ProxyApi extends BaseAPI {
     /**
@@ -15855,7 +12106,6 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiBuyLabelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public buyLabel(requestParameters: ProxyApiBuyLabelRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).buyLabel(requestParameters.shippingRequest, options).then((request) => request(this.axios, this.basePath));
@@ -15867,7 +12117,6 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiCancelPickupRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public cancelPickup(requestParameters: ProxyApiCancelPickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).cancelPickup(requestParameters.carrierName, requestParameters.pickupCancelRequest, options).then((request) => request(this.axios, this.basePath));
@@ -15879,7 +12128,6 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiFetchRatesRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public fetchRates(requestParameters: ProxyApiFetchRatesRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).fetchRates(requestParameters.rateRequest, options).then((request) => request(this.axios, this.basePath));
@@ -15891,7 +12139,6 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiGenerateManifestRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public generateManifest(requestParameters: ProxyApiGenerateManifestRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).generateManifest(requestParameters.manifestRequest, options).then((request) => request(this.axios, this.basePath));
@@ -15903,7 +12150,6 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiGetTrackingRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public getTracking(requestParameters: ProxyApiGetTrackingRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).getTracking(requestParameters.trackingData, requestParameters.hub, options).then((request) => request(this.axios, this.basePath));
@@ -15915,7 +12161,6 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiSchedulePickupRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public schedulePickup(requestParameters: ProxyApiSchedulePickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).schedulePickup(requestParameters.carrierName, requestParameters.pickupRequest, options).then((request) => request(this.axios, this.basePath));
@@ -15928,7 +12173,6 @@ export class ProxyApi extends BaseAPI {
      * @param {*} [options] Override http request option.
      * @deprecated
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public trackShipment(requestParameters: ProxyApiTrackShipmentRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).trackShipment(requestParameters.carrierName, requestParameters.trackingNumber, requestParameters.hub, options).then((request) => request(this.axios, this.basePath));
@@ -15940,7 +12184,6 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiUpdatePickupRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public updatePickup(requestParameters: ProxyApiUpdatePickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).updatePickup(requestParameters.carrierName, requestParameters.pickupUpdateRequest, options).then((request) => request(this.axios, this.basePath));
@@ -15952,16 +12195,12 @@ export class ProxyApi extends BaseAPI {
      * @param {ProxyApiVoidLabelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ProxyApi
      */
     public voidLabel(requestParameters: ProxyApiVoidLabelRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).voidLabel(requestParameters.carrierName, requestParameters.shipmentCancelRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
-/**
- * @export
- */
 export const CancelPickupCarrierNameEnum = {
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -15987,6 +12226,7 @@ export const CancelPickupCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -16007,9 +12247,6 @@ export const CancelPickupCarrierNameEnum = {
     Zoom2u: 'zoom2u'
 } as const;
 export type CancelPickupCarrierNameEnum = typeof CancelPickupCarrierNameEnum[keyof typeof CancelPickupCarrierNameEnum];
-/**
- * @export
- */
 export const SchedulePickupCarrierNameEnum = {
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -16035,6 +12272,7 @@ export const SchedulePickupCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -16055,9 +12293,6 @@ export const SchedulePickupCarrierNameEnum = {
     Zoom2u: 'zoom2u'
 } as const;
 export type SchedulePickupCarrierNameEnum = typeof SchedulePickupCarrierNameEnum[keyof typeof SchedulePickupCarrierNameEnum];
-/**
- * @export
- */
 export const TrackShipmentCarrierNameEnum = {
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -16079,6 +12314,7 @@ export const TrackShipmentCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -16097,9 +12333,6 @@ export const TrackShipmentCarrierNameEnum = {
     Zoom2u: 'zoom2u'
 } as const;
 export type TrackShipmentCarrierNameEnum = typeof TrackShipmentCarrierNameEnum[keyof typeof TrackShipmentCarrierNameEnum];
-/**
- * @export
- */
 export const UpdatePickupCarrierNameEnum = {
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -16125,6 +12358,7 @@ export const UpdatePickupCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -16145,9 +12379,6 @@ export const UpdatePickupCarrierNameEnum = {
     Zoom2u: 'zoom2u'
 } as const;
 export type UpdatePickupCarrierNameEnum = typeof UpdatePickupCarrierNameEnum[keyof typeof UpdatePickupCarrierNameEnum];
-/**
- * @export
- */
 export const VoidLabelCarrierNameEnum = {
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -16173,6 +12404,7 @@ export const VoidLabelCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -16197,7 +12429,6 @@ export type VoidLabelCarrierNameEnum = typeof VoidLabelCarrierNameEnum[keyof typ
 
 /**
  * ShipmentsApi - axios parameter creator
- * @export
  */
 export const ShipmentsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -16303,7 +12534,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {boolean} [hasManifest] 
@@ -16648,7 +12879,6 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
 
 /**
  * ShipmentsApi - functional programming interface
- * @export
  */
 export const ShipmentsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ShipmentsApiAxiosParamCreator(configuration)
@@ -16683,7 +12913,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {boolean} [hasManifest] 
@@ -16769,7 +12999,6 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
 
 /**
  * ShipmentsApi - factory interface
- * @export
  */
 export const ShipmentsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = ShipmentsApiFp(configuration)
@@ -16849,247 +13078,101 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, base
 
 /**
  * Request parameters for cancel operation in ShipmentsApi.
- * @export
- * @interface ShipmentsApiCancelRequest
  */
 export interface ShipmentsApiCancelRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiCancel
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for create operation in ShipmentsApi.
- * @export
- * @interface ShipmentsApiCreateRequest
  */
 export interface ShipmentsApiCreateRequest {
-    /**
-     * 
-     * @type {ShipmentData}
-     * @memberof ShipmentsApiCreate
-     */
     readonly shipmentData: ShipmentData
 }
 
 /**
  * Request parameters for list operation in ShipmentsApi.
- * @export
- * @interface ShipmentsApiListRequest
  */
 export interface ShipmentsApiListRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly address?: string
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
-     * @type {string}
-     * @memberof ShipmentsApiList
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
      */
     readonly carrierName?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly createdAfter?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly createdBefore?: string
 
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ShipmentsApiList
-     */
     readonly hasManifest?: boolean
 
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ShipmentsApiList
-     */
     readonly hasTracker?: boolean
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly id?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly keyword?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly metaKey?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly metaValue?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly metadataKey?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly metadataValue?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly optionKey?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly optionValue?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly reference?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly service?: string
 
     /**
      * Valid shipment status. &lt;br/&gt;Values: &#x60;draft&#x60;, &#x60;purchased&#x60;, &#x60;cancelled&#x60;, &#x60;shipped&#x60;, &#x60;in_transit&#x60;, &#x60;delivered&#x60;, &#x60;needs_attention&#x60;, &#x60;out_for_delivery&#x60;, &#x60;delivery_failed&#x60;
-     * @type {string}
-     * @memberof ShipmentsApiList
      */
     readonly status?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiList
-     */
     readonly trackingNumber?: string
 }
 
 /**
  * Request parameters for purchase operation in ShipmentsApi.
- * @export
- * @interface ShipmentsApiPurchaseRequest
  */
 export interface ShipmentsApiPurchaseRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiPurchase
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {ShipmentPurchaseData}
-     * @memberof ShipmentsApiPurchase
-     */
     readonly shipmentPurchaseData: ShipmentPurchaseData
 }
 
 /**
  * Request parameters for rates operation in ShipmentsApi.
- * @export
- * @interface ShipmentsApiRatesRequest
  */
 export interface ShipmentsApiRatesRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiRates
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {ShipmentRateData}
-     * @memberof ShipmentsApiRates
-     */
     readonly shipmentRateData?: ShipmentRateData
 }
 
 /**
  * Request parameters for retrieve operation in ShipmentsApi.
- * @export
- * @interface ShipmentsApiRetrieveRequest
  */
 export interface ShipmentsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for update operation in ShipmentsApi.
- * @export
- * @interface ShipmentsApiUpdateRequest
  */
 export interface ShipmentsApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentsApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {ShipmentUpdateData}
-     * @memberof ShipmentsApiUpdate
-     */
     readonly shipmentUpdateData?: ShipmentUpdateData
 }
 
 /**
  * ShipmentsApi - object-oriented interface
- * @export
- * @class ShipmentsApi
- * @extends {BaseAPI}
  */
 export class ShipmentsApi extends BaseAPI {
     /**
@@ -17098,7 +13181,6 @@ export class ShipmentsApi extends BaseAPI {
      * @param {ShipmentsApiCancelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ShipmentsApi
      */
     public cancel(requestParameters: ShipmentsApiCancelRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).cancel(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -17110,7 +13192,6 @@ export class ShipmentsApi extends BaseAPI {
      * @param {ShipmentsApiCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ShipmentsApi
      */
     public create(requestParameters: ShipmentsApiCreateRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).create(requestParameters.shipmentData, options).then((request) => request(this.axios, this.basePath));
@@ -17122,7 +13203,6 @@ export class ShipmentsApi extends BaseAPI {
      * @param {ShipmentsApiListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ShipmentsApi
      */
     public list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
@@ -17134,7 +13214,6 @@ export class ShipmentsApi extends BaseAPI {
      * @param {ShipmentsApiPurchaseRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ShipmentsApi
      */
     public purchase(requestParameters: ShipmentsApiPurchaseRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).purchase(requestParameters.id, requestParameters.shipmentPurchaseData, options).then((request) => request(this.axios, this.basePath));
@@ -17146,7 +13225,6 @@ export class ShipmentsApi extends BaseAPI {
      * @param {ShipmentsApiRatesRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ShipmentsApi
      */
     public rates(requestParameters: ShipmentsApiRatesRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).rates(requestParameters.id, requestParameters.shipmentRateData, options).then((request) => request(this.axios, this.basePath));
@@ -17158,7 +13236,6 @@ export class ShipmentsApi extends BaseAPI {
      * @param {ShipmentsApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ShipmentsApi
      */
     public retrieve(requestParameters: ShipmentsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -17170,7 +13247,6 @@ export class ShipmentsApi extends BaseAPI {
      * @param {ShipmentsApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ShipmentsApi
      */
     public update(requestParameters: ShipmentsApiUpdateRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).update(requestParameters.id, requestParameters.shipmentUpdateData, options).then((request) => request(this.axios, this.basePath));
@@ -17181,7 +13257,6 @@ export class ShipmentsApi extends BaseAPI {
 
 /**
  * TrackersApi - axios parameter creator
- * @export
  */
 export const TrackersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -17313,7 +13388,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
@@ -17536,7 +13611,6 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
 
 /**
  * TrackersApi - functional programming interface
- * @export
  */
 export const TrackersApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TrackersApiAxiosParamCreator(configuration)
@@ -17576,7 +13650,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
@@ -17635,7 +13709,6 @@ export const TrackersApiFp = function(configuration?: Configuration) {
 
 /**
  * TrackersApi - factory interface
- * @export
  */
 export const TrackersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = TrackersApiFp(configuration)
@@ -17706,163 +13779,77 @@ export const TrackersApiFactory = function (configuration?: Configuration, baseP
 
 /**
  * Request parameters for add operation in TrackersApi.
- * @export
- * @interface TrackersApiAddRequest
  */
 export interface TrackersApiAddRequest {
-    /**
-     * 
-     * @type {TrackingData}
-     * @memberof TrackersApiAdd
-     */
     readonly trackingData: TrackingData
 
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiAdd
-     */
     readonly hub?: string
 
     /**
      * Add this flag to add the tracker whether the tracking info exist or not.When the package is eventually picked up, the tracker with capture real time updates.
-     * @type {boolean}
-     * @memberof TrackersApiAdd
      */
     readonly pendingPickup?: boolean
 }
 
 /**
  * Request parameters for create operation in TrackersApi.
- * @export
- * @interface TrackersApiCreateRequest
  */
 export interface TrackersApiCreateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiCreate
-     */
     readonly carrierName: string
 
-    /**
-     * 
-     * @type {'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dtdc' | 'fedex' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'mydhl' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'seko' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'veho' | 'zoom2u'}
-     * @memberof TrackersApiCreate
-     */
     readonly carrierName2: CreateCarrierNameEnum
 
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiCreate
-     */
     readonly trackingNumber: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiCreate
-     */
     readonly hub?: string
 }
 
 /**
  * Request parameters for list operation in TrackersApi.
- * @export
- * @interface TrackersApiListRequest
  */
 export interface TrackersApiListRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
-     * @type {string}
-     * @memberof TrackersApiList
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
      */
     readonly carrierName?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiList
-     */
     readonly createdAfter?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiList
-     */
     readonly createdBefore?: string
 
     /**
      * Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
-     * @type {string}
-     * @memberof TrackersApiList
      */
     readonly status?: string
 
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiList
-     */
     readonly trackingNumber?: string
 }
 
 /**
  * Request parameters for remove operation in TrackersApi.
- * @export
- * @interface TrackersApiRemoveRequest
  */
 export interface TrackersApiRemoveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiRemove
-     */
     readonly idOrTrackingNumber: string
 }
 
 /**
  * Request parameters for retrieve operation in TrackersApi.
- * @export
- * @interface TrackersApiRetrieveRequest
  */
 export interface TrackersApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiRetrieve
-     */
     readonly idOrTrackingNumber: string
 }
 
 /**
  * Request parameters for update operation in TrackersApi.
- * @export
- * @interface TrackersApiUpdateRequest
  */
 export interface TrackersApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof TrackersApiUpdate
-     */
     readonly idOrTrackingNumber: string
 
-    /**
-     * 
-     * @type {TrackerUpdateData}
-     * @memberof TrackersApiUpdate
-     */
     readonly trackerUpdateData?: TrackerUpdateData
 }
 
 /**
  * TrackersApi - object-oriented interface
- * @export
- * @class TrackersApi
- * @extends {BaseAPI}
  */
 export class TrackersApi extends BaseAPI {
     /**
@@ -17871,7 +13858,6 @@ export class TrackersApi extends BaseAPI {
      * @param {TrackersApiAddRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TrackersApi
      */
     public add(requestParameters: TrackersApiAddRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).add(requestParameters.trackingData, requestParameters.hub, requestParameters.pendingPickup, options).then((request) => request(this.axios, this.basePath));
@@ -17884,7 +13870,6 @@ export class TrackersApi extends BaseAPI {
      * @param {*} [options] Override http request option.
      * @deprecated
      * @throws {RequiredError}
-     * @memberof TrackersApi
      */
     public create(requestParameters: TrackersApiCreateRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).create(requestParameters.carrierName, requestParameters.carrierName2, requestParameters.trackingNumber, requestParameters.hub, options).then((request) => request(this.axios, this.basePath));
@@ -17896,7 +13881,6 @@ export class TrackersApi extends BaseAPI {
      * @param {TrackersApiListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TrackersApi
      */
     public list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
@@ -17908,7 +13892,6 @@ export class TrackersApi extends BaseAPI {
      * @param {TrackersApiRemoveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TrackersApi
      */
     public remove(requestParameters: TrackersApiRemoveRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).remove(requestParameters.idOrTrackingNumber, options).then((request) => request(this.axios, this.basePath));
@@ -17920,7 +13903,6 @@ export class TrackersApi extends BaseAPI {
      * @param {TrackersApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TrackersApi
      */
     public retrieve(requestParameters: TrackersApiRetrieveRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).retrieve(requestParameters.idOrTrackingNumber, options).then((request) => request(this.axios, this.basePath));
@@ -17932,16 +13914,12 @@ export class TrackersApi extends BaseAPI {
      * @param {TrackersApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof TrackersApi
      */
     public update(requestParameters: TrackersApiUpdateRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).update(requestParameters.idOrTrackingNumber, requestParameters.trackerUpdateData, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
-/**
- * @export
- */
 export const CreateCarrierNameEnum = {
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -17963,6 +13941,7 @@ export const CreateCarrierNameEnum = {
     Generic: 'generic',
     Geodis: 'geodis',
     HayPost: 'hay_post',
+    Landmark: 'landmark',
     Laposte: 'laposte',
     Locate2u: 'locate2u',
     Mydhl: 'mydhl',
@@ -17985,7 +13964,6 @@ export type CreateCarrierNameEnum = typeof CreateCarrierNameEnum[keyof typeof Cr
 
 /**
  * WebhooksApi - axios parameter creator
- * @export
  */
 export const WebhooksApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
@@ -18290,7 +14268,6 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
 
 /**
  * WebhooksApi - functional programming interface
- * @export
  */
 export const WebhooksApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = WebhooksApiAxiosParamCreator(configuration)
@@ -18379,7 +14356,6 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
 
 /**
  * WebhooksApi - factory interface
- * @export
  */
 export const WebhooksApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = WebhooksApiFp(configuration)
@@ -18448,93 +14424,45 @@ export const WebhooksApiFactory = function (configuration?: Configuration, baseP
 
 /**
  * Request parameters for create operation in WebhooksApi.
- * @export
- * @interface WebhooksApiCreateRequest
  */
 export interface WebhooksApiCreateRequest {
-    /**
-     * 
-     * @type {WebhookData}
-     * @memberof WebhooksApiCreate
-     */
     readonly webhookData: WebhookData
 }
 
 /**
  * Request parameters for remove operation in WebhooksApi.
- * @export
- * @interface WebhooksApiRemoveRequest
  */
 export interface WebhooksApiRemoveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof WebhooksApiRemove
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for retrieve operation in WebhooksApi.
- * @export
- * @interface WebhooksApiRetrieveRequest
  */
 export interface WebhooksApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof WebhooksApiRetrieve
-     */
     readonly id: string
 }
 
 /**
  * Request parameters for test operation in WebhooksApi.
- * @export
- * @interface WebhooksApiTestRequest
  */
 export interface WebhooksApiTestRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof WebhooksApiTest
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {WebhookTestRequest}
-     * @memberof WebhooksApiTest
-     */
     readonly webhookTestRequest: WebhookTestRequest
 }
 
 /**
  * Request parameters for update operation in WebhooksApi.
- * @export
- * @interface WebhooksApiUpdateRequest
  */
 export interface WebhooksApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof WebhooksApiUpdate
-     */
     readonly id: string
 
-    /**
-     * 
-     * @type {PatchedWebhookData}
-     * @memberof WebhooksApiUpdate
-     */
     readonly patchedWebhookData?: PatchedWebhookData
 }
 
 /**
  * WebhooksApi - object-oriented interface
- * @export
- * @class WebhooksApi
- * @extends {BaseAPI}
  */
 export class WebhooksApi extends BaseAPI {
     /**
@@ -18543,7 +14471,6 @@ export class WebhooksApi extends BaseAPI {
      * @param {WebhooksApiCreateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof WebhooksApi
      */
     public create(requestParameters: WebhooksApiCreateRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).create(requestParameters.webhookData, options).then((request) => request(this.axios, this.basePath));
@@ -18554,7 +14481,6 @@ export class WebhooksApi extends BaseAPI {
      * @summary List all webhooks
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof WebhooksApi
      */
     public list(options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
@@ -18566,7 +14492,6 @@ export class WebhooksApi extends BaseAPI {
      * @param {WebhooksApiRemoveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof WebhooksApi
      */
     public remove(requestParameters: WebhooksApiRemoveRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).remove(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -18578,7 +14503,6 @@ export class WebhooksApi extends BaseAPI {
      * @param {WebhooksApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof WebhooksApi
      */
     public retrieve(requestParameters: WebhooksApiRetrieveRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
@@ -18590,7 +14514,6 @@ export class WebhooksApi extends BaseAPI {
      * @param {WebhooksApiTestRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof WebhooksApi
      */
     public test(requestParameters: WebhooksApiTestRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).test(requestParameters.id, requestParameters.webhookTestRequest, options).then((request) => request(this.axios, this.basePath));
@@ -18602,7 +14525,6 @@ export class WebhooksApi extends BaseAPI {
      * @param {WebhooksApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof WebhooksApi
      */
     public update(requestParameters: WebhooksApiUpdateRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedWebhookData, options).then((request) => request(this.axios, this.basePath));

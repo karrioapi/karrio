@@ -61,10 +61,16 @@ class ConnectionConfig(lib.Enum):
 class ShippingServiceName(lib.StrEnum):
     """Carrier specific services"""
 
+    # fmt: off
     landmark_maxipak_scan_ddp = "MaxiPak Scan DDP"
     landmark_maxipak_scan_ddu = "MaxiPak Scan DDU"
     landmark_minipak_scan_ddp = "MiniPak Scan DDP (EU Only)"
     landmark_minipak_scan_ddu = "MiniPak Scan DDU shipments (EU & ROW)"
+    landmark_maxipak_scan_premium_ups_express_ddp = "MaxiPak Scan Premium UPS Express DDP"
+    landmark_maxipak_scan_premium_ups_express_ddu = "MaxiPak Scan Premium UPS Express DDU"
+    landmark_maxipak_scan_premium_ups_standard_ddp = "MaxiPak Scan Premium UPS Standard DDP"
+    landmark_maxipak_scan_premium_ups_standard_ddu = "MaxiPak Scan Premium UPS Standard DDU"
+    # fmt: on
 
 
 class ShippingService(lib.StrEnum):
@@ -78,6 +84,18 @@ class ShippingService(lib.StrEnum):
     landmark_minipak_scan_ddp = "LGINTBPIP"
     # MiniPak Scan DDU shipments (EU & ROW)
     landmark_minipak_scan_ddu = "LGINTBPIU"
+    # MaxiPak Scan DDP PUDO shipments
+    landmark_maxipak_scan_ddp_pudo = "LGINTPUDO"
+    # MaxiPak Scan Premium UPS Express DDP shipments
+    landmark_maxipak_scan_premium_ups_express_ddp = "LGINTUPSS"
+    # MaxiPak Scan Premium UPS Express DDU shipments
+    landmark_maxipak_scan_premium_ups_express_ddu = "LGINTUPSSU"
+    # MaxiPak Scan Premium UPS Standard DDP shipments
+    landmark_maxipak_scan_premium_ups_standard_ddp = "LGINTUPST"
+    # MaxiPak Scan Premium UPS Standard DDU shipments
+    landmark_maxipak_scan_premium_ups_standard_ddu = "LGINTUPSTU"
+
+    landmark_maxipak_scan_premium = landmark_maxipak_scan_premium_ups_standard_ddp
 
 
 class ShippingOption(lib.Enum):

@@ -164,20 +164,23 @@ if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
             pass  # Psycopg2 might not be installed
     
     # Instrument Redis if configured
-    if config("REDIS_HOST", default=None):
+    if config("REDIS_URL", default=None) or config("REDIS_HOST", default=None):
         try:
             RedisInstrumentor().instrument()
         except Exception:
             pass  # Redis might not be installed
-    
-    # Instrument Huey task queue (temporarily disabled due to compatibility issues)
-    # try:
-    #     from karrio.server.lib.otel_huey import instrument_huey
-    #     instrument_huey()
-    # except Exception as e:
-    #     logger = logging.getLogger(__name__)
-    #     logger.warning(f"Failed to instrument Huey: {e}")
-    
+
+    # Instrument Huey task queue
+    try:
+        from huey.contrib.djhuey import HUEY as huey_instance
+        from karrio.server.lib.otel_huey import HueyInstrumentor
+
+        instrumentor = HueyInstrumentor()
+        instrumentor.instrument(huey_instance)
+    except Exception as e:
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to instrument Huey: {e}")
+
     # Log that OpenTelemetry is enabled
     logger = logging.getLogger(__name__)
     logger.info(f"OpenTelemetry enabled: Service={OTEL_SERVICE_NAME}, Endpoint={OTEL_EXPORTER_OTLP_ENDPOINT}")

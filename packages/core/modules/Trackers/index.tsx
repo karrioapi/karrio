@@ -14,19 +14,20 @@ import {
   isNone,
   isNoneOrEmpty,
   preventPropagation,
+  snakeCase,
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/components/trackers-filter";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
 import { ListPagination } from "@karrio/ui/components/list-pagination";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell 
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
 } from "@karrio/ui/components/ui/table";
 import { Button } from "@karrio/ui/components/ui/button";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
@@ -72,7 +73,7 @@ export default function TrackersPage(pageProps: any) {
 
       setFilter(query);
     };
-    
+
     // Define filter options for the cards
     const getFilterOptions = () => [
       {
@@ -80,7 +81,7 @@ export default function TrackersPage(pageProps: any) {
         value: []
       },
       {
-        label: "In-Transit", 
+        label: "In-Transit",
         value: ["in_transit", "on_hold", "out_for_delivery", "ready_for_pickup"]
       },
       {
@@ -126,8 +127,8 @@ export default function TrackersPage(pageProps: any) {
           </div>
           <div className="flex flex-row items-center gap-1 flex-wrap">
             <TrackersFilter context={context} />
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="mx-1 w-auto"
               onClick={() => addTracker({ onChange: updateFilter })}
             >
@@ -173,7 +174,7 @@ export default function TrackersPage(pageProps: any) {
                         <div className="flex items-center">
                           <CarrierImage
                             carrier_name={
-                              tracker.meta?.carrier || tracker.carrier_name
+                              snakeCase(tracker.meta?.carrier || tracker.carrier_name)
                             }
                             containerClassName="mt-1 ml-1 mr-2"
                             height={28}

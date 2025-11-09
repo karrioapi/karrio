@@ -2,7 +2,6 @@
 
 import attr
 import typing
-import logging
 
 import karrio.core as core
 import karrio.api.proxy as proxy
@@ -11,8 +10,7 @@ import karrio.api.mapper as mapper
 import karrio.core.models as models
 import karrio.core.errors as errors
 import karrio.references as references
-
-logger = logging.getLogger(__name__)
+from karrio.core.utils.logger import logger
 
 
 @attr.s(auto_attribs=True)
@@ -163,7 +161,7 @@ class GatewayInitializer:
 
             return ICreate(initializer)
         except KeyError as e:
-            logger.error(e)
+            logger.error("Unknown provider requested", provider=key, error=str(e))
             raise errors.ShippingSDKError(f"Unknown provider '{key}'")
 
     @property
@@ -179,9 +177,4 @@ class GatewayInitializer:
         return GatewayInitializer.__instance
 
 
-nl = "\n    "
-logger.info(
-    f"""
-Karrio default gateway mapper initialized.
-"""
-)
+logger.info("Karrio default gateway mapper initialized")

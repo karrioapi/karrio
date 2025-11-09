@@ -8,7 +8,6 @@ import os
 import attr
 import pydoc
 import typing
-import logging
 import pkgutil
 import functools
 
@@ -16,14 +15,12 @@ import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.plugins as plugins
 import karrio.core.metadata as metadata
+from karrio.core.utils.logger import logger
 
 # Configure logger with a higher default level to reduce noise
 ENABLE_ALL_PLUGINS_BY_DEFAULT = bool(
     os.environ.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", True)
 )
-logger = logging.getLogger(__name__)
-if not logger.level:
-    logger.setLevel(logging.INFO)
 
 # Global references - DO NOT RENAME (used for backward compatibility)
 PROVIDERS: typing.Dict[str, metadata.PluginMetadata] = {}
@@ -79,7 +76,7 @@ def import_extensions() -> None:
     # Process collected metadata to find carriers, validators, and mappers
     for plugin_name, metadata_obj in PLUGIN_METADATA.items():
         if not isinstance(metadata_obj, metadata.PluginMetadata):
-            logger.error(f"Invalid metadata type in {plugin_name}, expected PluginMetadata")
+            logger.error("Invalid metadata type, expected PluginMetadata", plugin_name=plugin_name)
             continue
 
         # Process the plugin based on its capabilities
@@ -108,9 +105,9 @@ def import_extensions() -> None:
                     if metadata_obj.is_address_validator():
                         _register_validator(metadata_obj)
             except (AttributeError, ImportError) as e:
-                logger.error(f"Failed to import plugin {name}: {str(e)}")
+                logger.error("Failed to import plugin from karrio.plugins", plugin_name=name, error=str(e))
     except ImportError:
-        logger.error("Could not import karrio.plugins")
+        logger.error("Could not import karrio.plugins module")
 
     # Import carriers from built-in karrio mappers (legacy approach for backward compatibility)
     try:
@@ -127,16 +124,16 @@ def import_extensions() -> None:
                     PLUGIN_METADATA[name] = metadata_obj
                     _register_carrier(metadata_obj, name)
             except (AttributeError, ImportError) as e:
-                logger.error(f"Failed to import mapper {name}: {str(e)}")
+                logger.error("Failed to import mapper from karrio.mappers", mapper_name=name, error=str(e))
     except ImportError:
-        logger.error("Could not import karrio.mappers")
+        logger.error("Could not import karrio.mappers module")
 
     # Import address validators from built-in modules
     try:
         import karrio.validators
         _import_validators_from_module(karrio.validators)
     except ImportError:
-        logger.error("Could not import karrio.validators")
+        logger.error("Could not import karrio.validators module")
 
     # Import carriers from built-in modules
     try:
@@ -152,16 +149,16 @@ def import_extensions() -> None:
                     PLUGIN_METADATA[provider_name] = metadata_obj
                     _register_carrier(metadata_obj, provider_name)
             except (AttributeError, ImportError) as e:
-                logger.error(f"Failed to import provider {provider_name}: {str(e)}")
+                logger.error("Failed to import provider from karrio.providers", provider_name=provider_name, error=str(e))
                 continue
     except ImportError:
-        logger.error("Could not import karrio.providers")
+        logger.error("Could not import karrio.providers module")
 
     # Sort PLUGIN_METADATA and PROVIDERS alphabetically by their keys
     PLUGIN_METADATA = dict(sorted(PLUGIN_METADATA.items()))
     PROVIDERS = dict(sorted(PROVIDERS.items()))
 
-    logger.info(f"> Loaded {len(PLUGIN_METADATA)} plugins")
+    logger.info("Plugins loaded", count=len(PLUGIN_METADATA))
 
 
 def _import_validators_from_module(module):
@@ -179,7 +176,7 @@ def _import_validators_from_module(module):
                 PLUGIN_METADATA[validator_name] = metadata_obj
                 _register_validator(metadata_obj)
         except (AttributeError, ImportError) as e:
-            logger.error(f"Failed to import validator {validator_name}: {str(e)}")
+            logger.error("Failed to import validator", validator_name=validator_name, error=str(e))
             continue
 
 
@@ -196,11 +193,11 @@ def _register_carrier(metadata_obj: metadata.PluginMetadata, carrier_name: str) 
     carrier_id = metadata_obj.get("id")
 
     if not carrier_id:
-        logger.error(f"Carrier metadata missing ID")
+        logger.error("Carrier metadata missing ID", carrier_name=carrier_name)
         return
 
     if not hasattr(metadata_obj, 'Mapper') or not metadata_obj.Mapper:
-        logger.error(f"Carrier {carrier_id} has no Mapper defined")
+        logger.error("Carrier has no Mapper defined", carrier_id=carrier_id)
         return
 
     # Register carrier
@@ -224,11 +221,11 @@ def _register_validator(metadata_obj: metadata.PluginMetadata) -> None:
     validator_id = metadata_obj.get("id")
 
     if not validator_id:
-        logger.error(f"Validator metadata missing ID")
+        logger.error("Validator metadata missing ID")
         return
 
     if not hasattr(metadata_obj, 'Validator') or not metadata_obj.Validator:
-        logger.error(f"Address validator {validator_id} has no Validator defined")
+        logger.error("Address validator has no Validator defined", validator_id=validator_id)
         return
 
     # Register address validator
@@ -576,7 +573,7 @@ def collect_references(
         "failed_plugins": collect_failed_plugins_data(),
     }
 
-    logger.info(f"> Karrio references loaded. {len(PLUGIN_METADATA.keys())} plugins")
+    logger.info("Karrio references loaded", plugin_count=len(PLUGIN_METADATA.keys()))
     return REFERENCES
 
 
@@ -730,4 +727,4 @@ class Registry(dict):
             else:
                 setattr(self.registry, key, value)
         except Exception as e:
-            logger.error(f"Failed to set item {key} in registry: {e}")
+            logger.error("Failed to set item in registry", key=key, error=str(e))

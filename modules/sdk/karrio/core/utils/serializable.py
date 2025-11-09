@@ -1,10 +1,8 @@
 import attr
 import typing
-import logging
 
 from karrio.core.utils.helpers import identity
-
-logger = logging.getLogger(__name__)
+from karrio.core.utils.logger import logger
 
 XML_str = str
 T = typing.TypeVar("T")

@@ -1,7 +1,6 @@
 import typing
 import base64
 import PyPDF2
-import logging
 import datetime
 import functools
 import urllib.parse
@@ -9,8 +8,7 @@ import urllib.error
 import karrio.core.utils as utils
 import karrio.core.units as units
 import karrio.core.models as models
-
-logger = logging.getLogger(__name__)
+from karrio.core.utils.logger import logger
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
 mutate_xml_object_type = utils.mutate_xml_object_type

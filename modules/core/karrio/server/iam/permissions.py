@@ -1,14 +1,13 @@
 import typing
-import logging
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from karrio.server.core.logging import logger
 
 import karrio.server.core.utils as utils
 import karrio.server.user.models as users
 import karrio.server.iam.serializers as serializers
 
-logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -17,7 +16,7 @@ User = get_user_model()
 @utils.tenant_aware
 def setup_groups(**_):
     """This function create all standard group permissions if they don't exsist."""
-    print("> setting up permissions")
+    logger.info("Setting up permissions")
 
     # manage_apps
     setup_group(
