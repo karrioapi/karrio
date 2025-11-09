@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { usePathname } from "next/navigation";
 import { cn } from "@karrio/ui/lib/utils";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useAppMode } from "@karrio/hooks/app-mode";
 
 interface SettingsNavigationProps {
   showOrganization?: boolean;
@@ -46,6 +47,7 @@ const settingsItems = [
 export function SettingsNavigation({ showOrganization }: SettingsNavigationProps) {
   const pathname = usePathname();
   const { references } = useAPIMetadata();
+  const { basePath } = useAppMode();
 
   // Auto-detect multi-organization support
   const isMultiOrg = references?.MULTI_ORGANIZATIONS || showOrganization;
@@ -57,10 +59,10 @@ export function SettingsNavigation({ showOrganization }: SettingsNavigationProps
   return (
     <nav className="flex space-x-8 overflow-x-auto">
       {filteredItems.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive = pathname === `${basePath}${item.href}`.replace("//", "/");
 
         return (
-          <Link
+          <AppLink
             key={item.key}
             href={item.href}
             className={cn(
@@ -71,7 +73,7 @@ export function SettingsNavigation({ showOrganization }: SettingsNavigationProps
             )}
           >
             {item.label}
-          </Link>
+          </AppLink>
         );
       })}
     </nav>
