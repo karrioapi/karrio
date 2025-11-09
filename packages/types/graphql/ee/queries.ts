@@ -554,6 +554,7 @@ export const UPDATE_ORGANIZATION = gql`
     update_organization(input: $data) {
       organization {
         id
+        name
       }
       errors {
         field
