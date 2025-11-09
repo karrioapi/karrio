@@ -1,4 +1,3 @@
-import logging
 from rest_framework import status
 from django.db.models import signals
 
@@ -7,13 +6,12 @@ from karrio.server.conf import settings
 from karrio.server.core.utils import failsafe
 from karrio.server.events.serializers import EventTypes
 from karrio.server.orders.serializers.order import compute_order_status
+from karrio.server.core.logging import logger
 import karrio.server.orders.serializers as serializers
 import karrio.server.manager.models as manager
 import karrio.server.orders.models as models
 import karrio.server.events.tasks as tasks
 import karrio.server.core.exceptions as exceptions
-
-logger = logging.getLogger(__name__)
 
 
 def register_signals():
@@ -25,7 +23,7 @@ def register_signals():
     signals.post_save.connect(shipment_updated, sender=manager.Shipment)
     signals.post_save.connect(order_updated, sender=models.Order)
 
-    logger.info("karrio.order signals registered...")
+    logger.info("Signal registration complete", module="karrio.orders")
 
 
 @utils.disable_for_loaddata
@@ -86,7 +84,7 @@ def shipment_updated(
             if order.status != "cancelled" and status != order.status:
                 order.status = status
                 order.save(update_fields=["status"])
-                logger.info("shipment related order successfully updated")
+                logger.info("Order status updated from shipment", order_id=order.id, new_status=status)
 
 
 @utils.disable_for_loaddata
@@ -114,6 +112,7 @@ def order_updated(sender, instance, *args, **kwargs):
         if duplicates > 1:
             raise exceptions.APIException(
                 detail=f"An order with 'order_id' {instance.order_id} from {instance.source} already exists.",
+                code="duplicate_order_id",
                 status_code=status.HTTP_409_CONFLICT,
             )
 
@@ -156,4 +155,4 @@ def shipments_updated(
     if status != instance.status:
         instance.status = status
         instance.save(update_fields=["status"])
-        logger.info("shipment related order successfully updated")
+        logger.info("Order status updated from shipment", order_id=instance.id, new_status=status)

@@ -1,18 +1,16 @@
-import logging
 import functools
 import importlib
 from django.db.models import Q
 
 from karrio.server.serializers import Context
 from karrio.server.core.gateway import Rates
+from karrio.server.core.logging import logger
 import karrio.server.pricing.models as models
-
-logger = logging.getLogger(__name__)
 
 
 def register_rate_post_processing(*args, **kwargs):
     Rates.post_process_functions += [apply_custom_surcharges]
-    logger.info("karrio.pricing signals registered...")
+    logger.info("Signal registration complete", module="karrio.pricing")
 
 
 def apply_custom_surcharges(context: Context, result):

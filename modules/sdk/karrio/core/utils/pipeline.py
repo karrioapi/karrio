@@ -1,9 +1,7 @@
-import logging
 from functools import reduce
 from collections import OrderedDict
 from typing import Callable, TypeVar, Any, Generic, List, Tuple, Dict
-
-logger = logging.getLogger(__name__)
+from karrio.core.utils.logger import logger
 T = TypeVar("T")
 
 
@@ -34,7 +32,7 @@ class Pipeline(Generic[T]):
 
         def run(result: List[T], next_step: Tuple[str, Step]):
             name, step = next_step
-            logger.debug(f"run step {name}...")
+            logger.debug("Running pipeline step", step_name=name)
             last_run_result = result[-1] if len(result) > 0 else None
             job = step(last_run_result)
             return result + [process(job)]

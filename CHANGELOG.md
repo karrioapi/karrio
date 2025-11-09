@@ -2,6 +2,24 @@
 
 ## Changes
 
+### Feat
+
+- feat: improve logging with loguru
+- feat: add support for REDIS_URL and REDIS_SSL env var for simpler ways to configure Redis for deployment
+
+### Fix
+
+- fix: regression in package preset override
+
+### Docs
+
+- docs: update docs with missing env var and Redis set up instructions
+
+
+# Karrio 2025.5rc31
+
+## Changes
+
 ### Fix
 
 - hotfix: HUEY powered worker django settings

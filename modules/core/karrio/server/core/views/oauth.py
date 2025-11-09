@@ -1,9 +1,7 @@
-import logging
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from oauth2_provider.views import TokenView as BaseTokenView
-
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -20,11 +18,12 @@ class CustomTokenView(BaseTokenView):
         """
         Handle token requests with grant type conversion.
         """
-        print(f"CustomTokenView called")
-        print(f"Request method: {request.method}")
-        print(f"Request content type: {request.content_type}")
-        print(f"Request POST: {dict(request.POST)}")
-        print(f"Request body: {request.body.decode('utf-8') if request.body else 'Empty'}")
+        logger.debug("CustomTokenView called")
+        logger.debug("Processing token request",
+                    method=request.method,
+                    content_type=request.content_type,
+                    post_data=dict(request.POST),
+                    body=request.body.decode('utf-8') if request.body else 'Empty')
 
         # Parse the request body if POST data is empty
         if not request.POST and request.body:
@@ -54,21 +53,23 @@ class CustomTokenView(BaseTokenView):
         }
 
         original_grant_type = request.POST.get('grant_type')
-        print(f"Original grant type after parsing: {original_grant_type}")
+        logger.debug("Grant type parsed", grant_type=original_grant_type)
 
         if original_grant_type in grant_type_mapping:
             # Create a mutable copy of the POST data
             post_data = request.POST.copy()
             converted_grant_type = grant_type_mapping[original_grant_type]
-            print(f"Converting grant type from '{original_grant_type}' to '{converted_grant_type}'")
+            logger.debug("Converting grant type",
+                        original=original_grant_type,
+                        converted=converted_grant_type)
             post_data['grant_type'] = converted_grant_type
 
             # Replace the request POST data
             request.POST = post_data
             request._post = post_data
-            print(f"Updated grant type: {request.POST.get('grant_type')}")
+            logger.debug("Grant type updated", grant_type=request.POST.get('grant_type'))
         else:
-            print(f"No conversion needed for grant type: {original_grant_type}")
+            logger.debug("No grant type conversion needed", grant_type=original_grant_type)
 
         # Call the parent token view with converted grant type
         return super().post(request, *args, **kwargs)

@@ -1,6 +1,5 @@
 import typing
 import requests
-import logging
 from datetime import datetime
 from django.conf import settings
 from django.db.models import Q
@@ -8,11 +7,10 @@ from django.contrib.auth import get_user_model
 
 from karrio.core import utils
 from karrio.server.core.utils import identity
+from karrio.server.core.logging import logger
 from karrio.server.serializers import Context
 from karrio.server.events import models
 import karrio.server.events.serializers.event as serializers
-
-logger = logging.getLogger(__name__)
 NotificationResponse = typing.Tuple[str, requests.Response]
 User = get_user_model()
 
@@ -24,7 +22,7 @@ def notify_webhook_subscribers(
     ctx: dict,
     **kwargs,
 ):
-    logger.info(f"> starting {event} subscribers notification")
+    logger.info("Starting webhook subscribers notification", event=event)
     context = retrieve_context(ctx)
     query = (
         (Q(enabled_events__icontains=event) | Q(enabled_events__icontains="all")),
@@ -49,9 +47,9 @@ def notify_webhook_subscribers(
         )
         update_notified_webhooks(webhooks, responses, event_at)
     else:
-        logger.info("no subscribers found")
+        logger.info("No webhook subscribers found", event=event)
 
-    logger.info(f"> ending {event} subscribers notification")
+    logger.info("Finished webhook subscribers notification", event=event)
 
 
 def notify_subscribers(webhooks: typing.List[models.Webhook], payload: dict):
@@ -77,11 +75,11 @@ def update_notified_webhooks(
     responses: typing.List[NotificationResponse],
     event_at: datetime,
 ):
-    logger.info("> saving updated webhooks")
+    logger.info("Saving updated webhooks")
 
     for webhook_id, response in responses:
         try:
-            logger.debug(f"update webhook {webhook_id}")
+            logger.debug("Updating webhook", webhook_id=webhook_id)
 
             webhook = next((w for w in webhooks if w.id == webhook_id))
             if response.ok:
@@ -94,11 +92,11 @@ def update_notified_webhooks(
 
             webhook.save()
 
-            logger.debug(f"webhook {webhook_id} updated successfully")
+            logger.debug("Webhook updated successfully", webhook_id=webhook_id)
 
         except Exception as update_error:
-            logger.warning(f"failed to update webhook {webhook_id}")
-            logger.error(update_error, exc_info=True)
+            logger.warning("Failed to update webhook", webhook_id=webhook_id, error=str(update_error))
+            logger.exception("Webhook update error", webhook_id=webhook_id)
 
 
 def retrieve_context(info: dict) -> Context:

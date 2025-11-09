@@ -5,14 +5,13 @@ import { ChevronsUpDown, Plus, Building, Settings, LogOut, User } from "lucide-r
 import { useAppMode } from "@karrio/hooks/app-mode"
 import { useUser } from "@karrio/hooks/user"
 import { signOut } from "next-auth/react"
-import Link from "next/link"
+import { AppLink } from "@karrio/ui/core/components/app-link"
 import {
   OrganizationType,
   useOrganizationMutation,
   useOrganizations,
 } from "@karrio/hooks/organization";
 import { useCreateOrganizationDialog } from "@karrio/ui/components/create-organization-dialog";
-import { useAcceptInvitationDialog } from "@karrio/ui/components/accept-invitation-dialog";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useAPIToken } from "@karrio/hooks/api-token";
@@ -44,9 +43,7 @@ export function TeamSwitcher() {
   const mutation = useOrganizationMutation();
   const { setLoading } = useLoader();
   const { organizations, organization } = useOrganizations();
-  const { acceptInvitation } = useAcceptInvitationDialog();
   const { createOrganization } = useCreateOrganizationDialog();
-  const [initialized, setInitialized] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState(false);
 
   const user = userQuery.data?.user;
@@ -87,15 +84,7 @@ export function TeamSwitcher() {
     });
   };
 
-  React.useEffect(() => {
-    if (!initialized && !isNoneOrEmpty(searchParams.get("accept_invitation"))) {
-      acceptInvitation();
-      setInitialized(true);
-    }
-    if (searchParams && isNoneOrEmpty(searchParams.get("accept_invitation"))) {
-      setInitialized(true);
-    }
-  }, [initialized, searchParams, acceptInvitation, mutation]);
+  // Note: Invite acceptance is now handled inline on /accept-invite
 
   // Placeholder skeleton animation for loading states
   const renderPlaceholder = () => (
@@ -164,26 +153,26 @@ export function TeamSwitcher() {
               <div className="p-0">
                 {/* Settings */}
                 <div className="p-3 border-b">
-                  <Link
+                  <AppLink
                     href="/settings"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <Settings className="size-4 text-muted-foreground" />
                     <span>Settings</span>
-                  </Link>
+                  </AppLink>
                 </div>
 
                 {/* User Section */}
                 <div className="p-3">
-                  <Link
+                  <AppLink
                     href="/settings/profile"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <User className="size-4 text-muted-foreground" />
                     <span>{user?.full_name || user?.email || "Profile"}</span>
-                  </Link>
+                  </AppLink>
                   <button
                     onClick={() => {
                       setOpen(false);
@@ -254,14 +243,14 @@ export function TeamSwitcher() {
 
                 {/* Settings */}
                 <div className="p-3 border-b">
-                  <Link
+                  <AppLink
                     href="/settings"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <Settings className="size-4 text-muted-foreground" />
                     <span>Settings</span>
-                  </Link>
+                  </AppLink>
                 </div>
 
                 {/* Organizations */}
@@ -297,14 +286,14 @@ export function TeamSwitcher() {
 
                 {/* User Section */}
                 <div className="p-3">
-                  <Link
+                  <AppLink
                     href="/settings/profile"
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-left rounded-md hover:bg-muted transition-colors"
                     onClick={() => setOpen(false)}
                   >
                     <User className="size-4 text-muted-foreground" />
                     <span>{user?.full_name || user?.email || "Profile"}</span>
-                  </Link>
+                  </AppLink>
                   <button
                     onClick={() => {
                       setOpen(false);

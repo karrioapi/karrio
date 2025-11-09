@@ -1,16 +1,15 @@
 import typing
 import tablib
-import logging
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from import_export.resources import ModelResource
 
+from karrio.server.core.logging import logger
 import karrio.server.core.utils as utils
 import karrio.server.data.serializers as serializers
 import karrio.server.data.resources as resources
 import karrio.server.data.models as models
 
-logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -21,7 +20,7 @@ def trigger_batch_import(
     ctx: dict,
     **kwargs,
 ):
-    logger.info(f"> starting batch import operation ({batch_id})")
+    logger.info("Starting batch import operation", batch_id=batch_id)
     try:
         context = retrieve_context(ctx)
         batch_operation = (
@@ -41,12 +40,12 @@ def trigger_batch_import(
             batch_resources = process_resources(resource, dataset)
             update_batch_operation_resources(batch_operation, batch_resources)
         else:
-            logger.info("batch operation not found")
+            logger.info("Batch operation not found", batch_id=batch_id)
 
     except Exception as e:
-        logger.exception(e)
+        logger.exception("Batch import operation failed", batch_id=batch_id, error=str(e))
 
-    logger.info(f"> ending batch import operation ({batch_id})")
+    logger.info("Batch import operation complete", batch_id=batch_id)
 
 
 @utils.tenant_aware
@@ -56,7 +55,7 @@ def trigger_batch_saving(
     ctx: dict,
     **kwargs,
 ):
-    logger.info(f"> beging batch resources saving ({batch_id})")
+    logger.info("Starting batch resources saving", batch_id=batch_id)
     try:
         context = retrieve_context(ctx)
         batch_operation = (
@@ -70,12 +69,12 @@ def trigger_batch_saving(
             batch_resources = batch_seriazlizer.save_resources(data, batch_id, context)
             update_batch_operation_resources(batch_operation, batch_resources)
         else:
-            logger.info("batch operation not found")
+            logger.info("Batch operation not found", batch_id=batch_id)
 
     except Exception as e:
-        logger.exception(e)
+        logger.exception("Batch resources saving failed", batch_id=batch_id, error=str(e))
 
-    logger.info(f"> ending batch resources saving ({batch_id})")
+    logger.info("Batch resources saving complete", batch_id=batch_id)
 
 
 def process_resources(
@@ -103,16 +102,16 @@ def update_batch_operation_resources(
     batch_resources: typing.List[dict],
 ):
     try:
-        logger.debug(f"update batch operation {batch_operation.id}")
+        logger.debug("Updating batch operation", batch_id=batch_operation.id)
 
         batch_operation.resources = batch_resources
         batch_operation.status = serializers.BatchOperationStatus.running.value
         batch_operation.save(update_fields=["resources", "status"])
 
-        logger.debug(f"batch operation {batch_operation.id} updated successfully")
+        logger.debug("Batch operation updated successfully", batch_id=batch_operation.id)
     except Exception as update_error:
-        logger.warning(f"failed to update batch operation {batch_operation.id}")
-        logger.error(update_error, exc_info=True)
+        logger.warning("Failed to update batch operation", batch_id=batch_operation.id)
+        logger.error("Batch operation update error", batch_id=batch_operation.id, error=str(update_error))
 
 
 def retrieve_context(info: dict) -> serializers.Context:

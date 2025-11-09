@@ -1,5 +1,4 @@
 import typing
-import logging
 import datetime
 import strawberry
 import django.db.models as models
@@ -23,9 +22,9 @@ import karrio.server.providers.models as providers
 import karrio.server.orders.filters as order_filters
 import karrio.server.user.serializers as user_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
+from karrio.server.core.logging import logger
 
 User = get_user_model()
-logger = logging.getLogger(__name__)
 
 
 @strawberry.type
