@@ -41,6 +41,11 @@ export function useConfigMutation() {
     // invalidateQueries will automatically trigger refetch for active queries
     queryClient.invalidateQueries({ queryKey: ['admin_configs'] });
     queryClient.invalidateQueries({ queryKey: ['admin_system_usage'] });
+    // Also invalidate metadata-derived references so UI reflects feature toggles immediately
+    queryClient.invalidateQueries({ queryKey: ['references'] });
+    // Force refetch to ensure UI updates immediately
+    queryClient.refetchQueries({ queryKey: ['admin_configs'] });
+    queryClient.refetchQueries({ queryKey: ['references'] });
   };
 
   const updateConfigs = useAuthenticatedMutation({
