@@ -1,4 +1,29 @@
-# Karrio 2025.5rc31
+# Karrio 2025.5rc33
+
+## Changes
+
+### Feat
+
+- feat: Enhance API vs worker starter mode by enforcing Django vs HUEY setup and related cache + redis configurations
+- feat: Add support for `x-tenant-id` and `x-request-id` headers
+- feat: make karrio developer tools dark mode theme
+
+### Fix
+
+- fix: confusing `dhl_parcel_de` connection credentials and config
+- fix: fix demo shipping tasks app state management
+- fix: org-dropdown errors
+- fix: change invite member flow
+- fix: insecure authenticated Redis connection URL
+- fix: prevent dashboard crash on missing org header
+- fix: when changing org name in settings, UI now updates automatically instead of needing a manual refresh
+
+### Chores
+
+- chore: test disabling server redis connection on workers, leaving HUEY redis connection only, and unifydb connection
+
+
+# Karrio 2025.5rc32
 
 ## Changes
 

@@ -281,47 +281,58 @@ def get_available_rates(
         )
 
         # Check if weight and dimensions fit restrictions
-        package_length = (
-            package.length[service.dimension_unit]
-            if package.length is not None
-            else None
-        )
-        package_height = (
-            package.height[service.dimension_unit]
-            if package.height is not None
-            else None
-        )
-        package_width = (
-            package.width[service.dimension_unit] if package.width is not None else None
-        )
+        # Default to CM for dimensions and KG for weight if not specified
+        dimension_unit = service.dimension_unit or "CM"
+        weight_unit = service.weight_unit or "KG"
+
+        # Safely get package dimensions only if service specifies dimension unit
+        package_length = None
+        package_height = None
+        package_width = None
+        if service.dimension_unit is not None:
+            package_length = package.length[dimension_unit] if package.length is not None else None
+            package_height = package.height[dimension_unit] if package.height is not None else None
+            package_width = package.width[dimension_unit] if package.width is not None else None
+
+        # Safely get package weight only if service specifies weight unit
+        package_weight = None
+        if service.weight_unit is not None:
+            package_weight = package.weight[weight_unit]
 
         match_length_requirements = (
             service.max_length is not None
+            and service.dimension_unit is not None
             and package_length is not None
             and package_length
-            <= units.Dimension(service.max_length or 0, service.dimension_unit).value
+            <= units.Dimension(service.max_length or 0, dimension_unit).value
         ) or (service.max_length is None)
         match_height_requirements = (
             service.max_height is not None
+            and service.dimension_unit is not None
             and package_height is not None
             and package_height
-            <= units.Dimension(service.max_height, service.dimension_unit).value
+            <= units.Dimension(service.max_height, dimension_unit).value
         ) or (service.max_height is None)
         match_width_requirements = (
             service.max_width is not None
+            and service.dimension_unit is not None
             and package_width is not None
             and package_width
-            <= units.Dimension(service.max_width, service.dimension_unit).value
+            <= units.Dimension(service.max_width, dimension_unit).value
         ) or (service.max_width is None)
         match_min_weight_requirements = (
             service.min_weight is not None
-            and package.weight[service.weight_unit]
-            >= units.Weight(service.min_weight, service.weight_unit).value
+            and service.weight_unit is not None
+            and package_weight is not None
+            and package_weight
+            >= units.Weight(service.min_weight, weight_unit).value
         ) or (service.min_weight is None)
         match_max_weight_requirements = (
             service.max_weight is not None
-            and package.weight[service.weight_unit]
-            <= units.Weight(service.max_weight, service.weight_unit).value
+            and service.weight_unit is not None
+            and package_weight is not None
+            and package_weight
+            <= units.Weight(service.max_weight, weight_unit).value
         ) or (service.max_weight is None)
 
         # resolve matching zone using improved algorithm
