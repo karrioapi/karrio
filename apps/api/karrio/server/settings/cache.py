@@ -78,6 +78,12 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
             "KEY_PREFIX": REDIS_PREFIX,
         }
     }
+
+    # Configure health check to use the constructed Redis URL
+    # django-health-check reads from settings.REDIS_URL, not settings.HEALTH_CHECK
+    # Set REDIS_URL as a module-level setting for health check to find
+    REDIS_URL = REDIS_CONNECTION_URL
+
     print(f"Redis cache connection initialized")
 elif SKIP_DEFAULT_CACHE:
     print(
