@@ -21,9 +21,8 @@ Name | Type | Description | Notes
 **contract_number** | **string** |  | [default to undefined]
 **laposte_api_key** | **string** |  | [optional] [default to undefined]
 **site_id** | **string** |  | [default to undefined]
-**dhl_api_key** | **string** |  | [default to undefined]
-**tracking_consumer_key** | **string** |  | [optional] [default to undefined]
-**tracking_consumer_secret** | **string** |  | [optional] [default to undefined]
+**client_id** | **string** |  | [default to undefined]
+**client_secret** | **string** |  | [default to undefined]
 **consumer_key** | **string** |  | [default to undefined]
 **consumer_secret** | **string** |  | [default to undefined]
 **billing_account** | **string** |  | [optional] [default to undefined]
@@ -43,10 +42,8 @@ Name | Type | Description | Notes
 **code_client** | **string** |  | [optional] [default to undefined]
 **customer_id** | **string** |  | [default to undefined]
 **customer_type** | **string** |  | [default to undefined]
-**client_id** | **string** |  | [default to undefined]
 **region** | **string** |  | [optional] [default to 'Landmark CMH']
 **lang** | **string** | Indicates a lang string | [optional] [default to undefined]
-**client_secret** | **string** |  | [default to undefined]
 **user_token** | **string** |  | [optional] [default to undefined]
 **shipping_account_id** | **string** |  | [default to undefined]
 **sapient_carrier_code** | **string** | Indicates a sapient_carrier_code string | [optional] [default to undefined]
@@ -87,9 +84,8 @@ const instance: ConnectionCredentialsField = {
     contract_number,
     laposte_api_key,
     site_id,
-    dhl_api_key,
-    tracking_consumer_key,
-    tracking_consumer_secret,
+    client_id,
+    client_secret,
     consumer_key,
     consumer_secret,
     billing_account,
@@ -109,10 +105,8 @@ const instance: ConnectionCredentialsField = {
     code_client,
     customer_id,
     customer_type,
-    client_id,
     region,
     lang,
-    client_secret,
     user_token,
     shipping_account_id,
     sapient_carrier_code,

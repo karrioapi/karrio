@@ -30,7 +30,7 @@ function AcceptInvitePage() {
           router.push(
             `/signup?email=${encodeURIComponent(
               invite?.invitee_identifier || "",
-            )}&next=${encodeURIComponent(`/accept-invitation?token=${token}`)}`,
+            )}&next=${encodeURIComponent(`/accept-invite?token=${token}`)}`,
           ),
         1000,
       );
@@ -41,7 +41,7 @@ function AcceptInvitePage() {
       setTimeout(
         () =>
           router.push(
-            `/signin?email=${invite?.invitee?.email}&next=/?accept_invitation=${token}`,
+            `/signin?email=${encodeURIComponent(invite?.invitee?.email || "")}\u0026next=${encodeURIComponent(`/?accept_invitation=${token}`)}`,
           ),
         1000,
       );
@@ -59,17 +59,17 @@ function AcceptInvitePage() {
       <div className="px-4">
         <Card className="mx-auto mt-6 w-full max-w-md md:max-w-lg lg:max-w-xl border-0 bg-transparent shadow-none sm:border sm:bg-card sm:shadow">
           <CardContent className="p-6 sm:p-6 md:p-8 text-center space-y-3">
-          {!query.isFetched && query.isFetching && <Spinner />}
+            {!query.isFetched && query.isFetching && <Spinner />}
 
-          {query.isFetched && (query.error || !organization_invitation) && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Error, invalid or expired organization invitation token!
-              </AlertDescription>
-            </Alert>
-          )}
+            {query.isFetched && (query.error || !organization_invitation) && (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  Error, invalid or expired organization invitation token!
+                </AlertDescription>
+              </Alert>
+            )}
 
-          {organization_invitation && <p>Redirecting...</p>}
+            {organization_invitation && <p>Redirecting...</p>}
           </CardContent>
         </Card>
       </div>

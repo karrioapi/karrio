@@ -17,6 +17,7 @@ import { COUNTRY_OPTIONS, CURRENCY_OPTIONS } from "@karrio/types";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { NotificationType } from "@karrio/types";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { Switch } from "./ui/switch";
 import { Package as PackageIcon } from "lucide-react";
 
@@ -92,24 +93,33 @@ function CloseAccountDialog({ open, onOpenChange }: CloseAccountDialogProps) {
   const mutation = useUserMutation();
   const { notify } = useNotifier();
   const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
 
     try {
+      // Only handle mutation errors here
       await mutation.closeAccount.mutateAsync();
-      notify({
-        type: NotificationType.success,
-        message: "Account closed successfully"
-      });
-      // Redirect handled by mutation
     } catch (error: any) {
       notify({
         type: NotificationType.error,
         message: error.message || "Failed to close account"
       });
-    } finally {
+      return setLoading(false);
+    }
+
+    // Mutation succeeded: proceed to sign out/redirect; ignore errors here
+    try {
+      notify({
+        type: NotificationType.success,
+        message: "Account closed successfully"
+      });
+      await signOut({ callbackUrl: "/signin" });
+      router.push("/signin");
+    } catch { }
+    finally {
       setLoading(false);
     }
   };
@@ -167,28 +177,47 @@ export function AccountSettings() {
   const { updateWorkspaceConfig } = useWorkspaceConfigMutation();
   const workspace_config = query.data?.workspace_config;
 
-  const [formData, setFormData] = useState<any>({});
+  // Ensure fields are controlled on first render
+  const defaultFormData = {
+    default_currency: '',
+    default_country_code: '',
+    default_label_type: '',
+    default_weight_unit: '',
+    default_dimension_unit: '',
+    state_tax_id: '',
+    federal_tax_id: '',
+    customs_aes: '',
+    customs_eel_pfc: '',
+    customs_license_number: '',
+    customs_certificate_number: '',
+    customs_nip_number: '',
+    customs_eori_number: '',
+    customs_vat_registration_number: '',
+    insured_by_default: false,
+  } as const;
+
+  const [formData, setFormData] = useState<any>({ ...defaultFormData });
   const [editingFields, setEditingFields] = useState<Set<string>>(new Set());
   const [loadingFields, setLoadingFields] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (workspace_config) {
       setFormData({
-        default_currency: workspace_config.default_currency || '',
-        default_country_code: workspace_config.default_country_code || '',
-        default_label_type: workspace_config.default_label_type || '',
-        default_weight_unit: workspace_config.default_weight_unit || '',
-        default_dimension_unit: workspace_config.default_dimension_unit || '',
-        state_tax_id: workspace_config.state_tax_id || '',
-        federal_tax_id: workspace_config.federal_tax_id || '',
-        customs_aes: workspace_config.customs_aes || '',
-        customs_eel_pfc: workspace_config.customs_eel_pfc || '',
-        customs_license_number: workspace_config.customs_license_number || '',
-        customs_certificate_number: workspace_config.customs_certificate_number || '',
-        customs_nip_number: workspace_config.customs_nip_number || '',
-        customs_eori_number: workspace_config.customs_eori_number || '',
-        customs_vat_registration_number: workspace_config.customs_vat_registration_number || '',
-        insured_by_default: workspace_config.insured_by_default || false,
+        default_currency: workspace_config.default_currency ?? defaultFormData.default_currency,
+        default_country_code: workspace_config.default_country_code ?? defaultFormData.default_country_code,
+        default_label_type: workspace_config.default_label_type ?? defaultFormData.default_label_type,
+        default_weight_unit: workspace_config.default_weight_unit ?? defaultFormData.default_weight_unit,
+        default_dimension_unit: workspace_config.default_dimension_unit ?? defaultFormData.default_dimension_unit,
+        state_tax_id: workspace_config.state_tax_id ?? defaultFormData.state_tax_id,
+        federal_tax_id: workspace_config.federal_tax_id ?? defaultFormData.federal_tax_id,
+        customs_aes: workspace_config.customs_aes ?? defaultFormData.customs_aes,
+        customs_eel_pfc: workspace_config.customs_eel_pfc ?? defaultFormData.customs_eel_pfc,
+        customs_license_number: workspace_config.customs_license_number ?? defaultFormData.customs_license_number,
+        customs_certificate_number: workspace_config.customs_certificate_number ?? defaultFormData.customs_certificate_number,
+        customs_nip_number: workspace_config.customs_nip_number ?? defaultFormData.customs_nip_number,
+        customs_eori_number: workspace_config.customs_eori_number ?? defaultFormData.customs_eori_number,
+        customs_vat_registration_number: workspace_config.customs_vat_registration_number ?? defaultFormData.customs_vat_registration_number,
+        insured_by_default: workspace_config.insured_by_default ?? defaultFormData.insured_by_default,
       });
     }
   }, [workspace_config]);
@@ -228,7 +257,7 @@ export function AccountSettings() {
   const cancelField = (field: string) => {
     setFormData((prev: any) => ({
       ...prev,
-      [field]: workspace_config?.[field as keyof typeof workspace_config] || ''
+      [field]: (workspace_config?.[field as keyof typeof workspace_config] ?? (field === 'insured_by_default' ? false : ''))
     }));
     setEditingFields(prev => {
       const next = new Set(prev);

@@ -1,17 +1,15 @@
-import logging
 from django.db.models import signals
 
 import karrio.references as ref
 import karrio.server.core.utils as utils
+from karrio.server.core.logging import logger
 import karrio.server.providers.models as models
-
-logger = logging.getLogger(__name__)
 
 
 def register_signals():
     signals.post_save.connect(carrier_changed, sender=models.Carrier)
 
-    logger.info("karrio.providers signals registered...")
+    logger.info("Karrio providers signals registered")
 
 
 @utils.disable_for_loaddata

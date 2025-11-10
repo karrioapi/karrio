@@ -97,9 +97,15 @@ export function useAPIUsage({
       .request<get_organization>(gqlstr(GET_ORGANIZATION), {
         variables: { id: session?.orgId, usage: filter },
       })
-      .then(({ organization }) => ({
-        usage: organization?.usage as UsageType,
-      }));
+      .then(({ organization }) => ({ usage: organization?.usage as UsageType }))
+      .catch((e) => {
+        // Gracefully fallback so dashboard still loads if org context is missing
+        if ((e as any)?.response?.errors?.[0]?.code === "authentication_required" ||
+          /No active organization/i.test((e as any)?.response?.errors?.[0]?.message || "")) {
+          return systemUsage();
+        }
+        throw e;
+      });
 
   const query = useAuthenticatedQuery({
     queryKey: ["usage", filter],

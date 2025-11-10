@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import {
   User,
   Building2,
@@ -78,7 +78,7 @@ function SettingCard({ item }: { item: SettingItem }) {
   const Icon = item.icon;
 
   return (
-    <Link href={item.href} className="block h-full">
+    <AppLink href={item.href} className="block h-full">
       <Card className="cursor-pointer transition-colors hover:border-gray-300 group h-full border border-gray-200 shadow-none">
         <CardContent className="p-4 h-full flex flex-col">
           <div className="flex items-start gap-3 flex-1">
@@ -96,7 +96,7 @@ function SettingCard({ item }: { item: SettingItem }) {
           </div>
         </CardContent>
       </Card>
-    </Link>
+    </AppLink>
   );
 }
 

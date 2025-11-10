@@ -1,5 +1,4 @@
 import typing
-import logging
 import functools
 import django.db.models as models
 import django.core.validators as validators
@@ -11,8 +10,7 @@ import karrio.server.core.fields as fields
 import karrio.server.core.datatypes as datatypes
 import karrio.server.providers.models as providers
 import karrio.server.pricing.serializers as serializers
-
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 
 
 @core.register_model
@@ -117,7 +115,7 @@ class Surcharge(core.Entity):
                 applicable.append(rate.service in self.services)
 
             if any(applicable) and all(applicable):
-                logger.debug("applying broker surcharge to rate")
+                logger.debug("Applying broker surcharge to rate", rate_id=rate.id, surcharge_id=self.id)
 
                 amount = lib.to_decimal(
                     self.amount

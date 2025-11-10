@@ -38,10 +38,15 @@ const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage("django", django);
 hljs.registerLanguage("json", json);
 
-export default function Page(pageProps: any) {
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const Component = (): JSX.Element => {
-    const params = pageProps.params || {};
-    const { id } = params;
+    const [id, setId] = React.useState<string>();
+
+    React.useEffect(() => {
+      params.then(query => {
+        setId(query.id);
+      });
+    }, []);
 
     if (!id) return <></>;
 

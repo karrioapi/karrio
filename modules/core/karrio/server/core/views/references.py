@@ -73,9 +73,9 @@ def references(request: Request):
             status=status.HTTP_200_OK,
         )
     except Exception as e:
-        import logging
+        from karrio.server.core.logging import logger
 
-        logging.exception(e)
+        logger.exception("Failed to retrieve references", error=str(e))
         raise e
 
 

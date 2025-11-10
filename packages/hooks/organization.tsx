@@ -135,11 +135,13 @@ export function useOrganizationMutation() {
   const invalidateCache = () => {
     queryClient.invalidateQueries({ queryKey: ["organizations"] });
     // Invalidate common org-scoped caches
-    queryClient.invalidateQueries({ predicate: (q) => {
-      const key = q.queryKey as any[];
-      // If key has the session scope object with orgId, let it refetch after session.update
-      return Array.isArray(key) && key.length > 1 && typeof key[1] === 'object' && key[1] !== null && 'orgId' in key[1];
-    }});
+    queryClient.invalidateQueries({
+      predicate: (q) => {
+        const key = q.queryKey as any[];
+        // If key has the session scope object with orgId, let it refetch after session.update
+        return Array.isArray(key) && key.length > 1 && typeof key[1] === 'object' && key[1] !== null && 'orgId' in key[1];
+      }
+    });
   };
 
   const createOrganization = useAuthenticatedMutation({
@@ -338,7 +340,7 @@ export function useOrganizationInvitation(guid?: string) {
 
   // Mutations
   const acceptInvitation = useMutation(
-    (data: { guid: string }) =>
+    (data: { guid: string; full_name?: string; password?: string }) =>
       karrio.graphql.request<accept_organization_invitation>(
         gqlstr(ACCEPT_ORGANIZATION_INVITATION),
         { data },

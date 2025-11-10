@@ -1,16 +1,14 @@
-import logging
 import datetime
 import django.utils.timezone as timezone
 
 import karrio.server.conf as conf
 import karrio.server.core.utils as utils
+from karrio.server.core.logging import logger
 import karrio.server.core.models as core
 import karrio.server.events.models as events
 import karrio.server.orders.models as orders
 import karrio.server.tracing.models as tracing
 import karrio.server.manager.models as manager
-
-logger = logging.getLogger(__name__)
 
 
 def run_data_archiving(*args, **kwargs):
@@ -36,36 +34,36 @@ def run_data_archiving(*args, **kwargs):
     order_exists = orders.Order.objects.filter(created_at__lt=order_retention).exists()
 
     if tracing_exists:
-        logger.info(">> archiving SDK tracing backlog...")
+        logger.info("Archiving SDK tracing backlog", retention_days=conf.settings.API_LOGS_DATA_RETENTION)
         tracing_data = tracing.TracingRecord.objects.filter(created_at__lt=log_retention)
         utils.failsafe(lambda: _bulk_delete_tracing_data(tracing_data))
 
     if event_exists:
-        logger.info(">> archiving events backlog...")
+        logger.info("Archiving events backlog", retention_days=conf.settings.API_LOGS_DATA_RETENTION)
         event_data = events.Event.objects.filter(created_at__lt=log_retention)
         utils.failsafe(lambda: event_data.delete())
 
     if api_log_exists:
-        logger.info(">> archiving API request logs backlog...")
+        logger.info("Archiving API request logs backlog", retention_days=conf.settings.API_LOGS_DATA_RETENTION)
         api_log_data = core.APILog.objects.filter(requested_at__lt=log_retention)
         utils.failsafe(lambda: api_log_data.delete())
 
     if tracking_exists:
-        logger.info(">> archiving tracking data backlog...")
+        logger.info("Archiving tracking data backlog", retention_days=conf.settings.TRACKER_DATA_RETENTION)
         tracking_data = manager.Tracking.objects.filter(created_at__lt=tracker_retention)
         utils.failsafe(lambda: _bulk_delete_tracking_data(tracking_data))
 
     if shipping_exists:
-        logger.info(">> archiving shipping data backlog...")
+        logger.info("Archiving shipping data backlog", retention_days=conf.settings.SHIPMENT_DATA_RETENTION)
         shipping_data = manager.Shipment.objects.filter(created_at__lt=shipment_retention)
         utils.failsafe(lambda: _bulk_delete_shipment_data(shipping_data))
 
     if order_exists:
-        logger.info(">> archiving order data backlog...")
+        logger.info("Archiving order data backlog", retention_days=conf.settings.ORDER_DATA_RETENTION)
         order_data = orders.Order.objects.filter(created_at__lt=order_retention)
         utils.failsafe(lambda: _bulk_delete_order_data(order_data))
 
-    logger.info("> ending scheduled backlog archiving!")
+    logger.info("Finished scheduled backlog archiving")
 
 
 def _bulk_delete_tracing_data(tracing_queryset):
@@ -91,7 +89,7 @@ def _bulk_delete_tracing_data(tracing_queryset):
             deleted_count = tracing_queryset.filter(id__in=batch_ids).delete()[0]
             total_deleted += deleted_count
             
-            logger.info(f"Deleted {deleted_count} tracing records (total: {total_deleted})")
+            logger.info("Deleted tracing records batch", batch_count=deleted_count, total_deleted=total_deleted)
             
     except ImportError:
         # Organizations module not installed, just delete in batches
@@ -106,7 +104,7 @@ def _bulk_delete_tracing_data(tracing_queryset):
             deleted_count = tracing_queryset.filter(id__in=batch_ids).delete()[0]
             total_deleted += deleted_count
             
-            logger.info(f"Deleted {deleted_count} tracing records (total: {total_deleted})")
+            logger.info("Deleted tracing records batch", batch_count=deleted_count, total_deleted=total_deleted)
 
 
 def _bulk_delete_tracking_data(tracking_queryset):

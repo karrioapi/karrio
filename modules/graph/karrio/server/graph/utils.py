@@ -1,7 +1,6 @@
 from karrio.server.core.utils import *
 import typing
 import base64
-import logging
 import functools
 import strawberry
 import dataclasses
@@ -16,11 +15,11 @@ import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
 import karrio.server.core.permissions as permissions
 import karrio.server.core.serializers as serializers
+from karrio.server.core.logging import logger
 
 Cursor = str
 T = typing.TypeVar("T")
 GenericType = typing.TypeVar("GenericType")
-logger = logging.getLogger(__name__)
 
 error_logger = utils.error_wrapper
 

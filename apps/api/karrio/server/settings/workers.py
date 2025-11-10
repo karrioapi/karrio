@@ -50,7 +50,9 @@ else:
         REDIS_PASSWORD = parsed.password
 
         # Determine SSL from URL scheme (rediss:// means SSL is enabled)
-        REDIS_SCHEME = parsed.scheme if parsed.scheme in ("redis", "rediss") else "redis"
+        REDIS_SCHEME = (
+            parsed.scheme if parsed.scheme in ("redis", "rediss") else "redis"
+        )
         REDIS_SSL = REDIS_SCHEME == "rediss"
 
     else:
@@ -67,7 +69,9 @@ else:
         # Each worker replica needs: (workers_per_replica + 1 scheduler) connections
         # Formula: (worker_replicas * (threads_per_worker + 1)) + api_connections + buffer
         # Example: 100 connections = (5 replicas * (8 workers + 1 scheduler)) + 40 API + 15 buffer
-        REDIS_MAX_CONNECTIONS = decouple.config("REDIS_MAX_CONNECTIONS", default=100, cast=int)
+        REDIS_MAX_CONNECTIONS = decouple.config(
+            "REDIS_MAX_CONNECTIONS", default=100, cast=int
+        )
 
         # Connection pool configuration with timeouts
         # Use BlockingConnectionPool to wait for available connections instead of failing immediately

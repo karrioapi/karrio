@@ -1,12 +1,10 @@
 import pkgutil
-import logging
 import strawberry
 import strawberry
 import strawberry.schema.config as config
 
+from karrio.server.core.logging import logger
 import karrio.server.graph.schemas as schemas
-
-logger = logging.getLogger(__name__)
 
 QUERIES: list = []
 MUTATIONS: list = []
@@ -23,8 +21,8 @@ for _, name, _ in pkgutil.iter_modules(schemas.__path__):  # type: ignore
         if hasattr(schema, "extra_types"):
             EXTRA_TYPES += schema.extra_types
     except Exception as e:
-        logger.warning(f'Failed to register "{name}" schema')
-        logger.exception(e)
+        logger.warning("Failed to register GraphQL schema", schema_name=name, error=str(e))
+        logger.exception("GraphQL schema registration error", schema_name=name)
 
 
 @strawberry.type

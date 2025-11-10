@@ -867,6 +867,7 @@ export interface create_organizationVariables {
 
 export interface update_organization_update_organization_organization {
   id: string;
+  name: string;
 }
 
 export interface update_organization_update_organization_errors {
@@ -3123,12 +3124,14 @@ export interface DeleteOrganizationMutationInput {
 // null
 export interface CreateOrganizationMutationInput {
   name: string;
+  metadata?: any | null;
 }
 
 // null
 export interface UpdateOrganizationMutationInput {
   id: string;
   name?: string | null;
+  metadata?: any | null;
 }
 
 // null

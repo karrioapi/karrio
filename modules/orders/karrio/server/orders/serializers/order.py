@@ -1,4 +1,3 @@
-import logging
 from django.db import transaction
 from rest_framework import status
 
@@ -8,10 +7,9 @@ from karrio.server.serializers import (
     owned_model_serializer,
     save_one_to_one_data,
 )
+from karrio.server.core.logging import logger
 import karrio.server.orders.serializers as serializers
 import karrio.server.orders.models as models
-
-logger = logging.getLogger(__name__)
 
 
 @owned_model_serializer

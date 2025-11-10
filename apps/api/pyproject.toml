@@ -50,6 +50,7 @@ dependencies = [
     "opentelemetry-instrumentation-psycopg2",
     "opentelemetry-instrumentation-redis",
     "opentelemetry-semantic-conventions",
+    "loguru",
 ]
 
 [project.urls]

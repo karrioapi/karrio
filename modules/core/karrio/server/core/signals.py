@@ -1,11 +1,10 @@
-import logging
 from django.conf import settings
 from django.dispatch import receiver
 from constance import config
 from constance.signals import config_updated
 from django.core.signals import request_started
 
-logger = logging.getLogger(__name__)
+from karrio.server.core.logging import logger
 
 
 def register_signals():
@@ -13,22 +12,21 @@ def register_signals():
     # Defer config initialization until after Django is fully loaded
     request_started.connect(initialize_settings)
 
-    logger.info("karrio.core signals registered...")
+    logger.info("Signal registration complete", module="karrio.core")
 
 
 def initialize_settings(sender=None, **kwargs):
     # Only run once
-    if not getattr(initialize_settings, 'has_run', False):
+    if not getattr(initialize_settings, "has_run", False):
         try:
             update_settings(config)
             initialize_settings.has_run = True
         except Exception as e:
-            logger.error(f"Failed to initialize settings: {e}")
+            logger.error("Failed to initialize settings", error=str(e))
 
 
 @receiver(config_updated)
 def constance_updated(sender, key, old_value, new_value, **kwargs):
-    logger.info(f"Updated config {key} to {new_value}")
     update_settings(sender)
 
 
@@ -41,7 +39,7 @@ def update_settings(current):
         try:
             setattr(settings, key, getattr(current, key))
         except Exception as e:
-            logger.error(f"Failed to update setting {key}: {e}")
+            logger.error("Failed to update setting", setting_key=key, error=str(e))
 
     # Check EMAIL_ENABLED after all settings are updated
     try:
@@ -53,5 +51,5 @@ def update_settings(current):
             ]
         )
     except Exception as e:
-        logger.error(f"Failed to set EMAIL_ENABLED: {e}")
+        logger.error("Failed to set EMAIL_ENABLED", error=str(e))
         settings.EMAIL_ENABLED = False
