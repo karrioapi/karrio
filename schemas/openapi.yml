@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2025.5rc33`.
+    The current version is `2025.5rc31`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2025.5rc33
+  version: 2025.5rc31
 paths:
   /:
     get:
@@ -432,8 +432,9 @@ paths:
         name: data_template
         schema:
           type: string
-        description: "A data template slug to use for the import.<br/>\n        **When
-          nothing is specified, the system default headers are expected.**\n        "
+        description: "A data template slug to use for the import.<br/>\n        **When\
+          \ nothing is specified, the system default headers are expected.**\n   \
+          \     "
       - in: query
         name: resource_type
         schema:
@@ -932,14 +933,14 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dtdc`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `teleship`, `tge`,
+          `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -973,14 +974,14 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dtdc`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `teleship`, `tge`,
+          `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1025,14 +1026,14 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dtdc`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `teleship`, `tge`,
+          `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1098,14 +1099,14 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dtdc`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `teleship`, `tge`,
+          `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -1689,14 +1690,14 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dtdc`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `teleship`, `tge`,
+          `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2560,6 +2561,9 @@ paths:
         schema:
           type: string
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -2584,7 +2588,6 @@ paths:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -2596,6 +2599,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -2654,6 +2658,9 @@ paths:
         schema:
           type: string
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -2678,7 +2685,6 @@ paths:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -2690,6 +2696,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -2748,6 +2755,9 @@ paths:
         schema:
           type: string
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -2772,7 +2782,6 @@ paths:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -2784,6 +2793,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -2935,6 +2945,9 @@ paths:
         schema:
           type: string
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -2959,7 +2972,6 @@ paths:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -2971,6 +2983,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -3074,6 +3087,9 @@ paths:
         schema:
           type: string
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -3094,7 +3110,6 @@ paths:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -3104,6 +3119,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - teleship
           - tge
           - tnt
           - ups
@@ -3225,14 +3241,14 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dtdc`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `teleship`, `tge`,
+          `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3659,14 +3675,14 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dtdc`,
+          `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `mydhl`, `nationex`, `purolator`, `roadie`,
+          `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `teleship`, `tge`,
+          `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3790,6 +3806,9 @@ paths:
         schema:
           type: string
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -3810,7 +3829,6 @@ paths:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -3820,6 +3838,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - teleship
           - tge
           - tnt
           - ups
@@ -4261,14 +4280,14 @@ components:
         postal_code:
           type: string
           nullable: true
-          description: "The address postal code\n        **(required for shipment
-            purchase)**\n        "
+          description: "The address postal code\n        **(required for shipment\
+            \ purchase)**\n        "
           maxLength: 20
         city:
           type: string
           nullable: true
-          description: "The address city.\n        **(required for shipment purchase)**\n
-            \       "
+          description: "The address city.\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         federal_tax_id:
           type: string
@@ -4283,8 +4302,8 @@ components:
         person_name:
           type: string
           nullable: true
-          description: "Attention to\n        **(required for shipment purchase)**\n
-            \       "
+          description: "Attention to\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 100
         company_name:
           type: string
@@ -4534,7 +4553,7 @@ components:
           - MF
           - SX
           type: string
-          x-spec-enum-id: b4b44aee15c8daa0
+          x-spec-enum-id: 05a7b91de773db3e
           description: The address country code
         email:
           type: string
@@ -4563,8 +4582,8 @@ components:
         address_line1:
           type: string
           nullable: true
-          description: "The address line with street number <br/>\n        **(required
-            for shipment purchase)**\n        "
+          description: "The address line with street number <br/>\n        **(required\
+            \ for shipment purchase)**\n        "
           maxLength: 100
         address_line2:
           type: string
@@ -4593,14 +4612,14 @@ components:
         postal_code:
           type: string
           nullable: true
-          description: "The address postal code\n        **(required for shipment
-            purchase)**\n        "
+          description: "The address postal code\n        **(required for shipment\
+            \ purchase)**\n        "
           maxLength: 20
         city:
           type: string
           nullable: true
-          description: "The address city.\n        **(required for shipment purchase)**\n
-            \       "
+          description: "The address city.\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         federal_tax_id:
           type: string
@@ -4615,8 +4634,8 @@ components:
         person_name:
           type: string
           nullable: true
-          description: "Attention to\n        **(required for shipment purchase)**\n
-            \       "
+          description: "Attention to\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 100
         company_name:
           type: string
@@ -4866,7 +4885,7 @@ components:
           - MF
           - SX
           type: string
-          x-spec-enum-id: b4b44aee15c8daa0
+          x-spec-enum-id: 05a7b91de773db3e
           description: The address country code
         email:
           type: string
@@ -4895,8 +4914,8 @@ components:
         address_line1:
           type: string
           nullable: true
-          description: "The address line with street number <br/>\n        **(required
-            for shipment purchase)**\n        "
+          description: "The address line with street number <br/>\n        **(required\
+            \ for shipment purchase)**\n        "
           maxLength: 100
         address_line2:
           type: string
@@ -4957,7 +4976,7 @@ components:
           - completed
           - completed_with_errors
           type: string
-          x-spec-enum-id: b04b4aeb7eb45cf2
+          x-spec-enum-id: 75e3c72297e66209
           description: The batch operation resource status
         errors:
           type: object
@@ -4980,7 +4999,7 @@ components:
           - completed
           - completed_with_errors
           type: string
-          x-spec-enum-id: b04b4aeb7eb45cf2
+          x-spec-enum-id: 75e3c72297e66209
         resource_type:
           enum:
           - orders
@@ -4988,7 +5007,7 @@ components:
           - trackers
           - billing
           type: string
-          x-spec-enum-id: ab2ec94900a0feec
+          x-spec-enum-id: 11343e2af644580f
         resources:
           type: array
           items:
@@ -5070,6 +5089,9 @@ components:
           description: Specifies the object type
         carrier_name:
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -5094,7 +5116,6 @@ components:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -5106,6 +5127,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -5114,7 +5136,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: bda1f5384808ea85
           description: A carrier connection type.
         display_name:
           type: string
@@ -5165,6 +5187,9 @@ components:
       properties:
         carrier_name:
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -5189,7 +5214,6 @@ components:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -5201,6 +5225,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -5209,7 +5234,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: bda1f5384808ea85
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5268,6 +5293,9 @@ components:
       properties:
         carrier_name:
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -5292,7 +5320,6 @@ components:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -5304,6 +5331,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -5312,7 +5340,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: bda1f5384808ea85
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -5323,7 +5351,7 @@ components:
           - beta
           - production-ready
           type: string
-          x-spec-enum-id: d58225b23f9a1710
+          x-spec-enum-id: 12bd7dd6ff9a3b05
           description: The carrier integration status.
         capabilities:
           type: array
@@ -5392,7 +5420,7 @@ components:
           - OZ
           - G
           type: string
-          x-spec-enum-id: 3a766910e8401666
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The commodity's weight unit
         title:
           type: string
@@ -5571,7 +5599,7 @@ components:
           - ZAR
           - null
           type: string
-          x-spec-enum-id: fd73376ae25ab80b
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The currency of the commodity value amount
         origin_country:
@@ -5818,7 +5846,7 @@ components:
           - SX
           - null
           type: string
-          x-spec-enum-id: b4b44aee15c8daa0
+          x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
         product_url:
@@ -5845,10 +5873,11 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\n
-            \       {\n            \"part_number\": \"5218487281\",\n            \"reference1\":
-            \"# ref 1\",\n            \"reference2\": \"# ref 2\",\n            \"reference3\":
-            \"# ref 3\",\n            ...\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\
+            \n        {\n            \"part_number\": \"5218487281\",\n          \
+            \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
+            ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
+            \ }\n        </details>\n        "
         object_type:
           type: string
           default: commodity
@@ -5870,7 +5899,7 @@ components:
           - OZ
           - G
           type: string
-          x-spec-enum-id: 3a766910e8401666
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The commodity's weight unit
         title:
           type: string
@@ -6049,7 +6078,7 @@ components:
           - ZAR
           - null
           type: string
-          x-spec-enum-id: fd73376ae25ab80b
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The currency of the commodity value amount
         origin_country:
@@ -6296,7 +6325,7 @@ components:
           - SX
           - null
           type: string
-          x-spec-enum-id: b4b44aee15c8daa0
+          x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
         product_url:
@@ -6323,15 +6352,19 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\n
-            \       {\n            \"part_number\": \"5218487281\",\n            \"reference1\":
-            \"# ref 1\",\n            \"reference2\": \"# ref 2\",\n            \"reference3\":
-            \"# ref 3\",\n            ...\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\
+            \n        {\n            \"part_number\": \"5218487281\",\n          \
+            \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
+            ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
+            \ }\n        </details>\n        "
       required:
       - weight
       - weight_unit
     ConnectionCredentialsField:
       oneOf:
+      - $ref: '#/components/schemas/allied_express'
+      - $ref: '#/components/schemas/allied_express_local'
+      - $ref: '#/components/schemas/amazon_shipping'
       - $ref: '#/components/schemas/aramex'
       - $ref: '#/components/schemas/asendia_us'
       - $ref: '#/components/schemas/australiapost'
@@ -6356,7 +6389,6 @@ components:
       - $ref: '#/components/schemas/generic'
       - $ref: '#/components/schemas/geodis'
       - $ref: '#/components/schemas/hay_post'
-      - $ref: '#/components/schemas/landmark'
       - $ref: '#/components/schemas/laposte'
       - $ref: '#/components/schemas/locate2u'
       - $ref: '#/components/schemas/mydhl'
@@ -6368,6 +6400,7 @@ components:
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
       - $ref: '#/components/schemas/shipengine'
+      - $ref: '#/components/schemas/teleship'
       - $ref: '#/components/schemas/tge'
       - $ref: '#/components/schemas/tnt'
       - $ref: '#/components/schemas/ups'
@@ -6390,8 +6423,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Duty'
           nullable: true
-          description: "The payment details.<br/>\n        **Note that this is required
-            for a Dutiable parcel shipped internationally.**\n        "
+          description: "The payment details.<br/>\n        **Note that this is required\
+            \ for a Dutiable parcel shipped internationally.**\n        "
         duty_billing_address:
           allOf:
           - $ref: '#/components/schemas/Address'
@@ -6408,7 +6441,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: b8935f22b570da75
+          x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
           type: string
@@ -6431,7 +6464,7 @@ components:
           - FOB
           - null
           type: string
-          x-spec-enum-id: 61b2121fbcca17a7
+          x-spec-enum-id: 12d4fc0ac6f1cd2c
           nullable: true
           description: The customs 'term of trade' also known as 'incoterm'
         invoice:
@@ -6442,8 +6475,8 @@ components:
         invoice_date:
           type: string
           nullable: true
-          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n
-            \       "
+          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         commercial_invoice:
           type: boolean
           nullable: true
@@ -6460,12 +6493,13 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>Customs identification options.</summary>\n\n
-            \       {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\":
-            \"5218487281\",\n            \"license_number\": \"5218487281\",\n            \"certificate_number\":
-            \"5218487281\",\n            \"nip_number\": \"5218487281\",\n            \"eori_number\":
-            \"5218487281\",\n            \"vat_registration_number\": \"5218487281\",\n
-            \       }\n        </details>\n        "
+          description: "<details>\n        <summary>Customs identification options.</summary>\n\
+            \n        {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\"\
+            : \"5218487281\",\n            \"license_number\": \"5218487281\",\n \
+            \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
+            : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
+            \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
+            \     </details>\n        "
         object_type:
           type: string
           default: customs_info
@@ -6482,8 +6516,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Duty'
           nullable: true
-          description: "The payment details.<br/>\n        **Note that this is required
-            for a Dutiable parcel shipped internationally.**\n        "
+          description: "The payment details.<br/>\n        **Note that this is required\
+            \ for a Dutiable parcel shipped internationally.**\n        "
         duty_billing_address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -6500,7 +6534,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: b8935f22b570da75
+          x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
           type: string
@@ -6523,7 +6557,7 @@ components:
           - FOB
           - null
           type: string
-          x-spec-enum-id: 61b2121fbcca17a7
+          x-spec-enum-id: 12d4fc0ac6f1cd2c
           nullable: true
           description: The customs 'term of trade' also known as 'incoterm'
         invoice:
@@ -6534,8 +6568,8 @@ components:
         invoice_date:
           type: string
           nullable: true
-          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n
-            \       "
+          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         commercial_invoice:
           type: boolean
           nullable: true
@@ -6552,12 +6586,13 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>Customs identification options.</summary>\n\n
-            \       {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\":
-            \"5218487281\",\n            \"license_number\": \"5218487281\",\n            \"certificate_number\":
-            \"5218487281\",\n            \"nip_number\": \"5218487281\",\n            \"eori_number\":
-            \"5218487281\",\n            \"vat_registration_number\": \"5218487281\",\n
-            \       }\n        </details>\n        "
+          description: "<details>\n        <summary>Customs identification options.</summary>\n\
+            \n        {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\"\
+            : \"5218487281\",\n            \"license_number\": \"5218487281\",\n \
+            \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
+            : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
+            \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
+            \     </details>\n        "
       required:
       - commodities
     DocumentData:
@@ -6610,10 +6645,10 @@ components:
           type: string
           nullable: true
           default: other
-          description: "\n        Shipment document type\n\n        values: <br/>\n
-            \       `certificate_of_origin` `commercial_invoice` `pro_forma_invoice`
-            `packing_list` `other`\n\n        For carrier specific packaging types,
-            please consult the reference.\n        "
+          description: "\n        Shipment document type\n\n        values: <br/>\n\
+            \        `certificate_of_origin` `commercial_invoice` `pro_forma_invoice`\
+            \ `packing_list` `other`\n\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 50
       required:
       - doc_file
@@ -6657,7 +6692,7 @@ components:
           - order
           - other
           type: string
-          x-spec-enum-id: b3691dad14d14121
+          x-spec-enum-id: e453b27eb99d7157
           default: other
           description: The template related object
         object_type:
@@ -6708,7 +6743,7 @@ components:
           - order
           - other
           type: string
-          x-spec-enum-id: b3691dad14d14121
+          x-spec-enum-id: e453b27eb99d7157
           default: other
           description: The template related object
       required:
@@ -6832,7 +6867,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: 26ff4db10d761aa1
+          x-spec-enum-id: 4d1fdef60a9538c0
           nullable: true
           description: The duty payer
         currency:
@@ -6984,7 +7019,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: fd73376ae25ab80b
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The declared value currency
         declared_value:
@@ -7057,7 +7092,7 @@ components:
           - OZ
           - G
           type: string
-          x-spec-enum-id: 3a766910e8401666
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The commodity's weight unit
         title:
           type: string
@@ -7236,7 +7271,7 @@ components:
           - ZAR
           - null
           type: string
-          x-spec-enum-id: fd73376ae25ab80b
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The currency of the commodity value amount
         origin_country:
@@ -7483,7 +7518,7 @@ components:
           - SX
           - null
           type: string
-          x-spec-enum-id: b4b44aee15c8daa0
+          x-spec-enum-id: 05a7b91de773db3e
           nullable: true
           description: The origin or manufacture country
         product_url:
@@ -7510,10 +7545,11 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\n
-            \       {\n            \"part_number\": \"5218487281\",\n            \"reference1\":
-            \"# ref 1\",\n            \"reference2\": \"# ref 2\",\n            \"reference3\":
-            \"# ref 3\",\n            ...\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>Commodity user references metadata.</summary>\n\
+            \n        {\n            \"part_number\": \"5218487281\",\n          \
+            \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
+            ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
+            \ }\n        </details>\n        "
         object_type:
           type: string
           default: commodity
@@ -7557,11 +7593,11 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            manifest.</summary>\n\n        {\n            \"shipments\": [\n                {\n
-            \                   \"tracking_number\": \"123456789\",\n                    ...\n
-            \                   \"meta\": {...}\n                }\n            ]\n
-            \       }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
+            \             {\n                    \"tracking_number\": \"123456789\"\
+            ,\n                    ...\n                    \"meta\": {...}\n    \
+            \            }\n            ]\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -7570,9 +7606,9 @@ components:
           type: array
           items:
             type: string
-          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n
-            \       shipment_identifier is often a tracking_number or shipment_id
-            returned when you purchase a label.\n        "
+          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
+            \        shipment_identifier is often a tracking_number or shipment_id\
+            \ returned when you purchase a label.\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -7610,11 +7646,11 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            manifest.</summary>\n\n        {\n            \"shipments\": [\n                {\n
-            \                   \"tracking_number\": \"123456789\",\n                    ...\n
-            \                   \"meta\": {...}\n                }\n            ]\n
-            \       }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
+            \             {\n                    \"tracking_number\": \"123456789\"\
+            ,\n                    ...\n                    \"meta\": {...}\n    \
+            \            }\n            ]\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -7703,11 +7739,11 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            manifest.</summary>\n\n        {\n            \"shipments\": [\n                {\n
-            \                   \"tracking_number\": \"123456789\",\n                    ...\n
-            \                   \"meta\": {...}\n                }\n            ]\n
-            \       }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
+            \             {\n                    \"tracking_number\": \"123456789\"\
+            ,\n                    ...\n                    \"meta\": {...}\n    \
+            \            }\n            ]\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -7716,9 +7752,9 @@ components:
           type: array
           items:
             type: string
-          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n
-            \       shipment_identifier is often a tracking_number or shipment_id
-            returned when you purchase a label.\n        "
+          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
+            \        shipment_identifier is often a tracking_number or shipment_id\
+            \ returned when you purchase a label.\n        "
       required:
       - address
       - carrier_name
@@ -7826,7 +7862,7 @@ components:
           - delivered
           - partial
           type: string
-          x-spec-enum-id: 3f28be4b3ea42880
+          x-spec-enum-id: 4993b3ade2f339b3
           default: unfulfilled
           description: The order status.
         shipping_to:
@@ -7852,14 +7888,15 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "<details>\n        <summary>The options available for the
-            order shipments.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"paid_by\": \"third_party\",\n            \"payment_account_number\":
-            \"123456789\",\n            \"duty_paid_by\": \"third_party\",\n            \"duty_account_number\":
-            \"123456789\",\n            \"invoice_number\": \"123456789\",\n            \"invoice_date\":
-            \"2020-01-01\",\n            \"single_item_per_parcel\": true,\n            \"carrier_ids\":
-            [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\",\n
-            \       }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ order shipments.</summary>\n\n        {\n            \"currency\": \"\
+            USD\",\n            \"paid_by\": \"third_party\",\n            \"payment_account_number\"\
+            : \"123456789\",\n            \"duty_paid_by\": \"third_party\",\n   \
+            \         \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
+            : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
+            \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
+            : [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\"\
+            ,\n        }\n        </details>\n        "
         meta:
           type: object
           additionalProperties: {}
@@ -7880,8 +7917,8 @@ components:
           description: Specify whether the order is in test mode or not.
         created_at:
           type: string
-          description: "The shipment creation datetime.<br/>\n        Date Format:
-            `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
+          description: "The shipment creation datetime.<br/>\n        Date Format:\
+            \ `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
       required:
       - created_at
       - line_items
@@ -7901,8 +7938,8 @@ components:
         source:
           type: string
           default: API
-          description: "The order's source.<br/>\n        e.g. API, POS, ERP, Shopify,
-            Woocommerce, etc.\n        "
+          description: "The order's source.<br/>\n        e.g. API, POS, ERP, Shopify,\
+            \ Woocommerce, etc.\n        "
         shipping_to:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -7926,14 +7963,15 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "<details>\n        <summary>The options available for the
-            order shipments.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"paid_by\": \"third_party\",\n            \"payment_account_number\":
-            \"123456789\",\n            \"duty_paid_by\": \"third_party\",\n            \"duty_account_number\":
-            \"123456789\",\n            \"invoice_number\": \"123456789\",\n            \"invoice_date\":
-            \"2020-01-01\",\n            \"single_item_per_parcel\": true,\n            \"carrier_ids\":
-            [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\",\n
-            \       }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ order shipments.</summary>\n\n        {\n            \"currency\": \"\
+            USD\",\n            \"paid_by\": \"third_party\",\n            \"payment_account_number\"\
+            : \"123456789\",\n            \"duty_paid_by\": \"third_party\",\n   \
+            \         \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
+            : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
+            \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
+            : [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\"\
+            ,\n        }\n        </details>\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -7970,13 +8008,14 @@ components:
           type: object
           additionalProperties: {}
           nullable: true
-          description: "<details>\n        <summary>The options available for the
-            order shipments.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"paid_by\": \"third_party\",\n            \"payment_account_number\":
-            \"123456789\",\n            \"duty_paid_by\": \"recipient\",\n            \"duty_account_number\":
-            \"123456789\",\n            \"invoice_number\": \"123456789\",\n            \"invoice_date\":
-            \"2020-01-01\",\n            \"single_item_per_parcel\": true,\n            \"carrier_ids\":
-            [\"canadapost-test\"],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ order shipments.</summary>\n\n        {\n            \"currency\": \"\
+            USD\",\n            \"paid_by\": \"third_party\",\n            \"payment_account_number\"\
+            : \"123456789\",\n            \"duty_paid_by\": \"recipient\",\n     \
+            \       \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
+            : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
+            \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
+            : [\"canadapost-test\"],\n        }\n        </details>\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -8009,17 +8048,17 @@ components:
         packaging_type:
           type: string
           nullable: true
-          description: "The parcel's packaging type.<br/>\n        **Note that the
-            packaging is optional when using a package preset.**<br/>\n        values:
-            <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`
-            `your_packaging`<br/>\n        For carrier specific packaging types, please
-            consult the reference.\n        "
+          description: "The parcel's packaging type.<br/>\n        **Note that the\
+            \ packaging is optional when using a package preset.**<br/>\n        values:\
+            \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
+            \ `your_packaging`<br/>\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 100
         package_preset:
           type: string
           nullable: true
-          description: "The parcel's package preset.<br/>\n        For carrier specific
-            package presets, please consult the reference.\n        "
+          description: "The parcel's package preset.<br/>\n        For carrier specific\
+            \ package presets, please consult the reference.\n        "
           maxLength: 100
         description:
           type: string
@@ -8043,7 +8082,7 @@ components:
           - OZ
           - G
           type: string
-          x-spec-enum-id: 3a766910e8401666
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The parcel's weight unit
         dimension_unit:
           enum:
@@ -8062,8 +8101,8 @@ components:
         reference_number:
           type: string
           nullable: true
-          description: "The parcel reference number.<br/>\n        (can be used as
-            tracking number for custom carriers)\n        "
+          description: "The parcel reference number.<br/>\n        (can be used as\
+            \ tracking number for custom carriers)\n        "
           maxLength: 100
         freight_class:
           type: string
@@ -8074,9 +8113,9 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>Parcel specific options.</summary>\n\n
-            \       {\n            \"insurance\": \"100.00\",\n            \"insured_by\":
-            \"carrier\",\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>Parcel specific options.</summary>\n\
+            \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
+            : \"carrier\",\n        }\n        </details>\n        "
         object_type:
           type: string
           default: parcel
@@ -8109,17 +8148,17 @@ components:
         packaging_type:
           type: string
           nullable: true
-          description: "The parcel's packaging type.<br/>\n        **Note that the
-            packaging is optional when using a package preset.**<br/>\n        values:
-            <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`
-            `your_packaging`<br/>\n        For carrier specific packaging types, please
-            consult the reference.\n        "
+          description: "The parcel's packaging type.<br/>\n        **Note that the\
+            \ packaging is optional when using a package preset.**<br/>\n        values:\
+            \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
+            \ `your_packaging`<br/>\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 100
         package_preset:
           type: string
           nullable: true
-          description: "The parcel's package preset.<br/>\n        For carrier specific
-            package presets, please consult the reference.\n        "
+          description: "The parcel's package preset.<br/>\n        For carrier specific\
+            \ package presets, please consult the reference.\n        "
           maxLength: 100
         description:
           type: string
@@ -8143,7 +8182,7 @@ components:
           - OZ
           - G
           type: string
-          x-spec-enum-id: 3a766910e8401666
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The parcel's weight unit
         dimension_unit:
           enum:
@@ -8162,8 +8201,8 @@ components:
         reference_number:
           type: string
           nullable: true
-          description: "The parcel reference number.<br/>\n        (can be used as
-            tracking number for custom carriers)\n        "
+          description: "The parcel reference number.<br/>\n        (can be used as\
+            \ tracking number for custom carriers)\n        "
           maxLength: 100
         freight_class:
           type: string
@@ -8174,9 +8213,9 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>Parcel specific options.</summary>\n\n
-            \       {\n            \"insurance\": \"100.00\",\n            \"insured_by\":
-            \"carrier\",\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>Parcel specific options.</summary>\n\
+            \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
+            : \"carrier\",\n        }\n        </details>\n        "
       required:
       - weight
       - weight_unit
@@ -8206,14 +8245,14 @@ components:
         postal_code:
           type: string
           nullable: true
-          description: "The address postal code\n        **(required for shipment
-            purchase)**\n        "
+          description: "The address postal code\n        **(required for shipment\
+            \ purchase)**\n        "
           maxLength: 20
         city:
           type: string
           nullable: true
-          description: "The address city.\n        **(required for shipment purchase)**\n
-            \       "
+          description: "The address city.\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 50
         federal_tax_id:
           type: string
@@ -8228,8 +8267,8 @@ components:
         person_name:
           type: string
           nullable: true
-          description: "Attention to\n        **(required for shipment purchase)**\n
-            \       "
+          description: "Attention to\n        **(required for shipment purchase)**\n\
+            \        "
           maxLength: 100
         company_name:
           type: string
@@ -8479,7 +8518,7 @@ components:
           - MF
           - SX
           type: string
-          x-spec-enum-id: b4b44aee15c8daa0
+          x-spec-enum-id: 05a7b91de773db3e
           description: The address country code
         email:
           type: string
@@ -8508,8 +8547,8 @@ components:
         address_line1:
           type: string
           nullable: true
-          description: "The address line with street number <br/>\n        **(required
-            for shipment purchase)**\n        "
+          description: "The address line with street number <br/>\n        **(required\
+            \ for shipment purchase)**\n        "
           maxLength: 100
         address_line2:
           type: string
@@ -8526,6 +8565,9 @@ components:
       properties:
         carrier_name:
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -8550,7 +8592,6 @@ components:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -8562,6 +8603,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -8570,7 +8612,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: bda1f5384808ea85
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -8636,7 +8678,7 @@ components:
           - order
           - other
           type: string
-          x-spec-enum-id: b3691dad14d14121
+          x-spec-enum-id: e453b27eb99d7157
           default: other
           description: The template related object
     PatchedParcelData:
@@ -8664,17 +8706,17 @@ components:
         packaging_type:
           type: string
           nullable: true
-          description: "The parcel's packaging type.<br/>\n        **Note that the
-            packaging is optional when using a package preset.**<br/>\n        values:
-            <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`
-            `your_packaging`<br/>\n        For carrier specific packaging types, please
-            consult the reference.\n        "
+          description: "The parcel's packaging type.<br/>\n        **Note that the\
+            \ packaging is optional when using a package preset.**<br/>\n        values:\
+            \ <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box`\
+            \ `your_packaging`<br/>\n        For carrier specific packaging types,\
+            \ please consult the reference.\n        "
           maxLength: 100
         package_preset:
           type: string
           nullable: true
-          description: "The parcel's package preset.<br/>\n        For carrier specific
-            package presets, please consult the reference.\n        "
+          description: "The parcel's package preset.<br/>\n        For carrier specific\
+            \ package presets, please consult the reference.\n        "
           maxLength: 100
         description:
           type: string
@@ -8698,7 +8740,7 @@ components:
           - OZ
           - G
           type: string
-          x-spec-enum-id: 3a766910e8401666
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The parcel's weight unit
         dimension_unit:
           enum:
@@ -8717,8 +8759,8 @@ components:
         reference_number:
           type: string
           nullable: true
-          description: "The parcel reference number.<br/>\n        (can be used as
-            tracking number for custom carriers)\n        "
+          description: "The parcel reference number.<br/>\n        (can be used as\
+            \ tracking number for custom carriers)\n        "
           maxLength: 100
         freight_class:
           type: string
@@ -8729,9 +8771,9 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>Parcel specific options.</summary>\n\n
-            \       {\n            \"insurance\": \"100.00\",\n            \"insured_by\":
-            \"carrier\",\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>Parcel specific options.</summary>\n\
+            \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
+            : \"carrier\",\n        }\n        </details>\n        "
     PatchedWebhookData:
       type: object
       properties:
@@ -8766,7 +8808,7 @@ components:
             - batch_running
             - batch_completed
             type: string
-            x-spec-enum-id: 58b15b194a7f4598
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -8781,7 +8823,7 @@ components:
           - recipient
           - third_party
           type: string
-          x-spec-enum-id: 26ff4db10d761aa1
+          x-spec-enum-id: 4d1fdef60a9538c0
           default: sender
           description: The payor type
         currency:
@@ -8933,7 +8975,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: fd73376ae25ab80b
+          x-spec-enum-id: 75b9c0f2683aaef1
           nullable: true
           description: The payment amount currency
         account_number:
@@ -8998,14 +9040,14 @@ components:
         instruction:
           type: string
           nullable: true
-          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n
-            \       "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
           maxLength: 50
         package_location:
           type: string
           nullable: true
-          description: "The package(s) location.<br/>\n        eg: Behind the entrance
-            door.\n        "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
           maxLength: 50
         options:
           type: object
@@ -9041,8 +9083,8 @@ components:
         pickup_date:
           type: string
           nullable: true
-          description: "The pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n
-            \       "
+          description: "The pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         reason:
           type: string
           description: The reason of the pickup cancellation
@@ -9053,31 +9095,31 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n
-            \       "
+          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
           description: The pickup address
         ready_time:
           type: string
-          description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n
-            \       "
+          description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n\
+            \        "
         closing_time:
           type: string
-          description: "The closing or late time of the pickup.<br/>\n        Time
-            Format: `HH:MM`\n        "
+          description: "The closing or late time of the pickup.<br/>\n        Time\
+            \ Format: `HH:MM`\n        "
         instruction:
           type: string
           nullable: true
-          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n
-            \       "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
           maxLength: 50
         package_location:
           type: string
           nullable: true
-          description: "The package(s) location.<br/>\n        eg: Behind the entrance
-            door.\n        "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
           maxLength: 50
         options:
           type: object
@@ -9124,8 +9166,8 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n
-            \       "
+          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -9137,23 +9179,23 @@ components:
           description: The shipment parcels to pickup.
         ready_time:
           type: string
-          description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n
-            \       "
+          description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n\
+            \        "
         closing_time:
           type: string
-          description: "The closing or late time of the pickup.<br/>\n        Time
-            Format: `HH:MM`\n        "
+          description: "The closing or late time of the pickup.<br/>\n        Time\
+            \ Format: `HH:MM`\n        "
         instruction:
           type: string
           nullable: true
-          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n
-            \       "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
           maxLength: 50
         package_location:
           type: string
           nullable: true
-          description: "The package(s) location.<br/>\n        eg: Behind the entrance
-            door.\n        "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
           maxLength: 50
         options:
           type: object
@@ -9183,8 +9225,8 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "The expected pickup date.<br/>\n        Date Format: YYYY-MM-DD\n
-            \       "
+          description: "The expected pickup date.<br/>\n        Date Format: YYYY-MM-DD\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -9200,13 +9242,13 @@ components:
         instruction:
           type: string
           nullable: true
-          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n
-            \       "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
         package_location:
           type: string
           nullable: true
-          description: "The package(s) location.<br/>\n        eg: Behind the entrance
-            door.\n        "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
         options:
           type: object
           additionalProperties: {}
@@ -9232,8 +9274,8 @@ components:
       properties:
         pickup_date:
           type: string
-          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n
-            \       "
+          description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         address:
           allOf:
           - $ref: '#/components/schemas/Address'
@@ -9248,23 +9290,23 @@ components:
           description: pickup identification number
         ready_time:
           type: string
-          description: "The ready time for pickup.\n        Time Format: `HH:MM`\n
-            \       "
+          description: "The ready time for pickup.\n        Time Format: `HH:MM`\n\
+            \        "
         closing_time:
           type: string
-          description: "The closing or late time of the pickup.<br/>\n        Time
-            Format: `HH:MM`\n        "
+          description: "The closing or late time of the pickup.<br/>\n        Time\
+            \ Format: `HH:MM`\n        "
         instruction:
           type: string
           nullable: true
-          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n
-            \       "
+          description: "The pickup instruction.<br/>\n        eg: Handle with care.\n\
+            \        "
           maxLength: 50
         package_location:
           type: string
           nullable: true
-          description: "The package(s) location.<br/>\n        eg: Behind the entrance
-            door.\n        "
+          description: "The package(s) location.<br/>\n        eg: Behind the entrance\
+            \ door.\n        "
           maxLength: 50
         options:
           type: object
@@ -9305,9 +9347,9 @@ components:
           type: number
           format: double
           default: 0.0
-          description: "The rate's monetary amount of the total charge.<br/>\n        This
-            is the gross amount of the rate after adding the additional charges\n
-            \       "
+          description: "The rate's monetary amount of the total charge.<br/>\n   \
+            \     This is the gross amount of the rate after adding the additional\
+            \ charges\n        "
         transit_days:
           type: integer
           nullable: true
@@ -9340,15 +9382,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         parcels:
           type: array
           items:
@@ -9360,34 +9402,36 @@ components:
             type: string
           nullable: true
           default: []
-          description: "The requested carrier service for the shipment.<br/>\n        Please
-            consult the reference for specific carriers services.<br/>\n        Note
-            that this is a list because on a Multi-carrier rate request you could
-            specify a service per carrier.\n        "
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult the reference for specific carriers services.<br/>\n\
+            \        Note that this is a list because on a Multi-carrier rate request\
+            \ you could specify a service per carrier.\n        "
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -9436,15 +9480,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         return_address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -9467,34 +9511,36 @@ components:
             type: string
           nullable: true
           default: []
-          description: "The carriers services requested for the shipment.<br/>\n        Please
-            consult the reference for specific carriers services.<br/>\n        **Note
-            that this is a list because on a Multi-carrier rate request you could
-            specify a service per carrier.**\n        "
+          description: "The carriers services requested for the shipment.<br/>\n \
+            \       Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\
+            \ you could specify a service per carrier.**\n        "
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9507,8 +9553,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Customs'
           nullable: true
-          description: "The customs details.<br/>\n        **Note that this is required
-            for the shipment of an international Dutiable parcel.**\n        "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         rates:
           type: array
           items:
@@ -9527,7 +9573,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: 49b2c844813c9a67
+          x-spec-enum-id: d10a5d5e08394b13
           nullable: true
           description: The shipment label file type.
         carrier_ids:
@@ -9536,17 +9582,17 @@ components:
             type: string
           nullable: true
           default: []
-          description: "The list of configured carriers you wish to get rates from.<br/>\n
-            \       **Note that the request will be sent to all carriers in nothing
-            is specified**\n        "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         tracker_id:
           type: string
           nullable: true
           description: The attached tracker id
         created_at:
           type: string
-          description: "The shipment creation datetime.<br/>\n        Date Format:
-            `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
+          description: "The shipment creation datetime.<br/>\n        Date Format:\
+            \ `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -9570,7 +9616,7 @@ components:
           - out_for_delivery
           - delivery_failed
           type: string
-          x-spec-enum-id: 13f7a4063e5f8ed7
+          x-spec-enum-id: e418e9eb782a00a9
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -9652,15 +9698,15 @@ components:
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         shipper:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         return_address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -9681,26 +9727,28 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9713,8 +9761,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
           nullable: true
-          description: "The customs details.<br/>\n        **Note that this is required
-            for the shipment of an international Dutiable parcel.**\n        "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         reference:
           type: string
           nullable: true
@@ -9726,7 +9774,7 @@ components:
           - ZPL
           - PNG
           type: string
-          x-spec-enum-id: 49b2c844813c9a67
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         service:
@@ -9738,19 +9786,19 @@ components:
             type: string
           nullable: true
           default: []
-          description: "The requested carrier service for the shipment.<br/>\n        Please
-            consult the reference for specific carriers services.<br/>\n        **Note
-            that this is a list because on a Multi-carrier rate request\n        you
-            could specify a service per carrier.**\n        "
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\n\
+            \        you could specify a service per carrier.**\n        "
         carrier_ids:
           type: array
           items:
             type: string
           nullable: true
           default: []
-          description: "The list of configured carriers you wish to get rates from.<br/>\n
-            \       **Note that the request will be sent to all carriers in nothing
-            is specified**\n        "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -9766,15 +9814,15 @@ components:
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         shipper:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         return_address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -9795,26 +9843,28 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9827,8 +9877,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
           nullable: true
-          description: "The customs details.<br/>\n        **Note that this is required
-            for the shipment of an international Dutiable parcel.**\n        "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         reference:
           type: string
           nullable: true
@@ -9840,7 +9890,7 @@ components:
           - ZPL
           - PNG
           type: string
-          x-spec-enum-id: 49b2c844813c9a67
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         service:
@@ -9852,19 +9902,19 @@ components:
             type: string
           nullable: true
           default: []
-          description: "The requested carrier service for the shipment.<br/>\n        Please
-            consult the reference for specific carriers services.<br/>\n        **Note
-            that this is a list because on a Multi-carrier rate request\n        you
-            could specify a service per carrier.**\n        "
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\n\
+            \        you could specify a service per carrier.**\n        "
         carrier_ids:
           type: array
           items:
             type: string
           nullable: true
           default: []
-          description: "The list of configured carriers you wish to get rates from.<br/>\n
-            \       **Note that the request will be sent to all carriers in nothing
-            is specified**\n        "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -9889,7 +9939,7 @@ components:
           - ZPL
           - PNG
           type: string
-          x-spec-enum-id: 49b2c844813c9a67
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         payment:
@@ -9914,40 +9964,43 @@ components:
           items:
             type: string
           nullable: true
-          description: "The requested carrier service for the shipment.<br/>\n        Please
-            consult [the reference](#operation/references) for specific carriers services.<br/>\n
-            \       **Note that this is a list because on a Multi-carrier rate request
-            you could\n        specify a service per carrier.**\n        "
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult [the reference](#operation/references) for specific\
+            \ carriers services.<br/>\n        **Note that this is a list because\
+            \ on a Multi-carrier rate request you could\n        specify a service\
+            \ per carrier.**\n        "
         carrier_ids:
           type: array
           items:
             type: string
           nullable: true
-          description: "The list of configured carriers you wish to get rates from.<br/>\n
-            \       **Note that the request will be sent to all carriers in nothing
-            is specified**\n        "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -9965,7 +10018,7 @@ components:
           - ZPL
           - PNG
           type: string
-          x-spec-enum-id: 49b2c844813c9a67
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         payment:
@@ -9976,24 +10029,26 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -10008,15 +10063,15 @@ components:
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         shipper:
           allOf:
           - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         return_address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -10037,26 +10092,28 @@ components:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -10069,8 +10126,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
           nullable: true
-          description: "The customs details.<br/>\n        **Note that this is required
-            for the shipment of an international Dutiable parcel.**\n        "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         reference:
           type: string
           nullable: true
@@ -10082,7 +10139,7 @@ components:
           - ZPL
           - PNG
           type: string
-          x-spec-enum-id: 49b2c844813c9a67
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         selected_rate_id:
@@ -10117,15 +10174,15 @@ components:
         shipper:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/Address'
-          description: "The address of the party.<br/>\n        Origin address (ship
-            from) for the **shipper**<br/>\n        Destination address (ship to)
-            for the **recipient**\n        "
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
         return_address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -10148,34 +10205,36 @@ components:
             type: string
           nullable: true
           default: []
-          description: "The carriers services requested for the shipment.<br/>\n        Please
-            consult the reference for specific carriers services.<br/>\n        **Note
-            that this is a list because on a Multi-carrier rate request you could
-            specify a service per carrier.**\n        "
+          description: "The carriers services requested for the shipment.<br/>\n \
+            \       Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\
+            \ you could specify a service per carrier.**\n        "
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: "<details>\n        <summary>The options available for the
-            shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
-            \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",  # TODO: deprecate\n \
+            \           \"shipping_date\": \"2020-01-01T00:00\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"shipper_instructions\": \"This is a shipper instruction\"\
+            ,\n            \"recipient_instructions\": \"This is a recipient instruction\"\
+            ,\n            \"doc_files\": [\n                {\n                 \
+            \   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\"\
+            : \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\"\
+            ,\n                    \"doc_format\": \"pdf\",\n                }\n \
+            \           ],\n            \"doc_references\": [\n                {\n\
+            \                    \"doc_id\": \"123456789\",\n                    \"\
+            doc_type\": \"commercial_invoice\",\n                }\n            ],\n\
+            \        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -10188,8 +10247,8 @@ components:
           allOf:
           - $ref: '#/components/schemas/Customs'
           nullable: true
-          description: "The customs details.<br/>\n        **Note that this is required
-            for the shipment of an international Dutiable parcel.**\n        "
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
         rates:
           type: array
           items:
@@ -10208,7 +10267,7 @@ components:
           - ''
           - null
           type: string
-          x-spec-enum-id: 49b2c844813c9a67
+          x-spec-enum-id: d10a5d5e08394b13
           nullable: true
           description: The shipment label file type.
         carrier_ids:
@@ -10217,17 +10276,17 @@ components:
             type: string
           nullable: true
           default: []
-          description: "The list of configured carriers you wish to get rates from.<br/>\n
-            \       **Note that the request will be sent to all carriers in nothing
-            is specified**\n        "
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
         tracker_id:
           type: string
           nullable: true
           description: The attached tracker id
         created_at:
           type: string
-          description: "The shipment creation datetime.<br/>\n        Date Format:
-            `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
+          description: "The shipment creation datetime.<br/>\n        Date Format:\
+            \ `YYYY-MM-DD HH:MM:SS.mmmmmmz`\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -10251,7 +10310,7 @@ components:
           - out_for_delivery
           - delivery_failed
           type: string
-          x-spec-enum-id: 13f7a4063e5f8ed7
+          x-spec-enum-id: e418e9eb782a00a9
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -10410,7 +10469,7 @@ components:
           - delivery_failed
           - return_to_sender
           type: string
-          x-spec-enum-id: 4b3ef2e53ed98789
+          x-spec-enum-id: b774dd996160d59f
           default: pending
           description: The current tracking status
         estimated_delivery:
@@ -10486,6 +10545,9 @@ components:
           description: The package tracking number
         carrier_name:
           enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
           - aramex
           - asendia_us
           - australiapost
@@ -10506,7 +10568,6 @@ components:
           - generic
           - geodis
           - hay_post
-          - landmark
           - laposte
           - locate2u
           - mydhl
@@ -10516,6 +10577,7 @@ components:
           - royalmail
           - seko
           - sendle
+          - teleship
           - tge
           - tnt
           - ups
@@ -10524,7 +10586,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: b35b7d0cba4ec534
+          x-spec-enum-id: 9a8b8a6e6b8a688c
           description: The tracking carrier
         account_number:
           type: string
@@ -10735,7 +10797,7 @@ components:
           - delivery_failed
           - return_to_sender
           type: string
-          x-spec-enum-id: 4b3ef2e53ed98789
+          x-spec-enum-id: b774dd996160d59f
           default: pending
           description: The current tracking status
         estimated_delivery:
@@ -10786,8 +10848,8 @@ components:
           readOnly: true
         otp_token:
           type: string
-          description: "The OTP (One Time Password) token received by the user from
-            the\n        configured Two Factor Authentication method.\n        "
+          description: "The OTP (One Time Password) token received by the user from\
+            \ the\n        configured Two Factor Authentication method.\n        "
       required:
       - access
       - otp_token
@@ -10829,7 +10891,7 @@ components:
             - batch_running
             - batch_completed
             type: string
-            x-spec-enum-id: 58b15b194a7f4598
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -10889,7 +10951,7 @@ components:
             - batch_running
             - batch_completed
             type: string
-            x-spec-enum-id: 58b15b194a7f4598
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -10926,6 +10988,78 @@ components:
           additionalProperties: {}
       required:
       - payload
+    allied_express:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account:
+          type: string
+          nullable: true
+        service_type:
+          enum:
+          - R
+          - P
+          - PT
+          - PT2
+          type: string
+          x-spec-enum-id: 4c9d20aef483fdb4
+          description: Indicates a service_type string
+        account_country_code:
+          type: string
+          nullable: true
+          default: AU
+      required:
+      - password
+      - username
+    allied_express_local:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account:
+          type: string
+          nullable: true
+        service_type:
+          enum:
+          - R
+          - P
+          - PT
+          - PT2
+          type: string
+          x-spec-enum-id: 4c9d20aef483fdb4
+          description: Indicates a service_type string
+        account_country_code:
+          type: string
+          nullable: true
+          default: AU
+      required:
+      - password
+      - username
+    amazon_shipping:
+      type: object
+      properties:
+        seller_id:
+          type: string
+        developer_id:
+          type: string
+        mws_auth_token:
+          type: string
+        aws_region:
+          type: string
+          nullable: true
+          default: us-east-1
+        account_country_code:
+          type: string
+          nullable: true
+      required:
+      - developer_id
+      - mws_auth_token
+      - seller_id
     aramex:
       type: object
       properties:
@@ -11126,11 +11260,15 @@ components:
           type: string
         password:
           type: string
-        client_id:
-          type: string
-        client_secret:
+        dhl_api_key:
           type: string
         customer_number:
+          type: string
+          nullable: true
+        tracking_consumer_key:
+          type: string
+          nullable: true
+        tracking_consumer_secret:
           type: string
           nullable: true
         account_country_code:
@@ -11138,8 +11276,7 @@ components:
           nullable: true
           default: DE
       required:
-      - client_id
-      - client_secret
+      - dhl_api_key
       - password
       - username
     dhl_poland:
@@ -11171,7 +11308,7 @@ components:
           - en
           - de
           type: string
-          x-spec-enum-id: fe98ee970a2fed33
+          x-spec-enum-id: c8ebf97e9150e311
           description: Indicates a language string
         account_country_code:
           type: string
@@ -11335,7 +11472,7 @@ components:
           - fr
           - en
           type: string
-          x-spec-enum-id: e4be23cf445bc4cb
+          x-spec-enum-id: 658b2ddeb0ffc173
           description: Indicates a language string
         account_country_code:
           type: string
@@ -11363,29 +11500,6 @@ components:
       - customer_type
       - password
       - username
-    landmark:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        client_id:
-          type: string
-        account_number:
-          type: string
-          nullable: true
-        region:
-          type: string
-          nullable: true
-          default: Landmark CMH
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - client_id
-      - password
-      - username
     laposte:
       type: object
       properties:
@@ -11396,7 +11510,7 @@ components:
           - fr_FR
           - en_US
           type: string
-          x-spec-enum-id: e280227d9b64bf79
+          x-spec-enum-id: efa3dd717c7774fb
           description: Indicates a lang string
         account_country_code:
           type: string
@@ -11575,6 +11689,19 @@ components:
           nullable: true
       required:
       - api_key
+    teleship:
+      type: object
+      properties:
+        api_key:
+          type: string
+        account_number:
+          type: string
+          nullable: true
+        account_country_code:
+          type: string
+          nullable: true
+      required:
+      - api_key
     tge:
       type: object
       properties:
@@ -11659,7 +11786,7 @@ components:
           - PERMIT
           - METER
           type: string
-          x-spec-enum-id: e8d4abea89e0d6bd
+          x-spec-enum-id: 7efd1d6854b73018
           description: Indicates a account_type string
         manifest_MID:
           type: string
@@ -11693,7 +11820,7 @@ components:
           - PERMIT
           - METER
           type: string
-          x-spec-enum-id: e8d4abea89e0d6bd
+          x-spec-enum-id: 7efd1d6854b73018
           description: Indicates a account_type string
         manifest_MID:
           type: string
@@ -11772,70 +11899,78 @@ tags:
 - name: Auth
   description: "API authentication resources.\n                "
 - name: Carriers
-  description: "This is an object representing your Karrio carrier extension.\n                You
-    can retrieve all supported carrier extensions available.\n                "
+  description: "This is an object representing your Karrio carrier extension.\n  \
+    \              You can retrieve all supported carrier extensions available.\n\
+    \                "
 - name: Connections
-  description: "This is an object representing your Karrio carrier connections.\n
-    \               You can retrieve all carrier connections available to your account.\n
-    \               The `carrier_id` is a friendly name you assign to your connection.\n
-    \               "
+  description: "This is an object representing your Karrio carrier connections.\n\
+    \                You can retrieve all carrier connections available to your account.\n\
+    \                The `carrier_id` is a friendly name you assign to your connection.\n\
+    \                "
 - name: Addresses
-  description: "This is an object representing your Karrio shipping address.\n                You
-    can retrieve all addresses related to your Karrio account.\n                Address
-    objects are linked to your shipment history, and can be used for recurring shipping\n
-    \               to / from the same locations.\n                "
+  description: "This is an object representing your Karrio shipping address.\n   \
+    \             You can retrieve all addresses related to your Karrio account.\n\
+    \                Address objects are linked to your shipment history, and can\
+    \ be used for recurring shipping\n                to / from the same locations.\n\
+    \                "
 - name: Parcels
-  description: "This is an object representing your Karrio shipping parcel.\n                Parcel
-    objects are linked to your shipment history, and can be used for recurring shipping\n
-    \               using the same packaging.\n                "
+  description: "This is an object representing your Karrio shipping parcel.\n    \
+    \            Parcel objects are linked to your shipment history, and can be used\
+    \ for recurring shipping\n                using the same packaging.\n        \
+    \        "
 - name: Shipments
-  description: "This is an object representing your Karrio shipment.\n                A
-    Shipment guides you through process of preparing and purchasing a label for an
-    order.\n                A Shipment transitions through multiple statuses throughout
-    its lifetime as the package\n                shipped makes its journey to it's
-    destination.\n                "
+  description: "This is an object representing your Karrio shipment.\n           \
+    \     A Shipment guides you through process of preparing and purchasing a label\
+    \ for an order.\n                A Shipment transitions through multiple statuses\
+    \ throughout its lifetime as the package\n                shipped makes its journey\
+    \ to it's destination.\n                "
 - name: Documents
-  description: "This is an object representing your Karrio document upload record.\n
-    \               A Document upload record keep traces of shipping trade documents
-    uploaded to carriers\n                to fast track customs and border processing.\n
-    \               "
+  description: "This is an object representing your Karrio document upload record.\n\
+    \                A Document upload record keep traces of shipping trade documents\
+    \ uploaded to carriers\n                to fast track customs and border processing.\n\
+    \                "
 - name: Manifests
-  description: "This is an object representing your Karrio manifest details.\n                Some
-    carriers require manifests to be created after labels are generated.\n                A
-    manifest is a summary of all the shipments that are being sent out.\n                "
+  description: "This is an object representing your Karrio manifest details.\n   \
+    \             Some carriers require manifests to be created after labels are generated.\n\
+    \                A manifest is a summary of all the shipments that are being sent\
+    \ out.\n                "
 - name: Trackers
-  description: "This is an object representing your Karrio shipment tracker.\n                A
-    shipment tracker is an object attached to a shipment by it's tracking number.\n
-    \               The tracker provide the latest tracking status and events associated
-    with a shipment\n                "
+  description: "This is an object representing your Karrio shipment tracker.\n   \
+    \             A shipment tracker is an object attached to a shipment by it's tracking\
+    \ number.\n                The tracker provide the latest tracking status and\
+    \ events associated with a shipment\n                "
 - name: Pickups
-  description: "This is an object representing your Karrio pickup booking.\n                You
-    can retrieve all pickup booked historically for your Karrio account shipments.\n
-    \               "
+  description: "This is an object representing your Karrio pickup booking.\n     \
+    \           You can retrieve all pickup booked historically for your Karrio account\
+    \ shipments.\n                "
 - name: Proxy
-  description: "In some scenarios, all we need is to send request to a carrier using
-    the Karrio unified API.\n                The Proxy API comes handy for that as
-    it turn Karrio into a simple middleware that converts and\n                validate
-    your request and simply forward it to the shipping carrier server.<br/>\n                **Note:**<br/>\n
-    \                   When using the proxy API, no objects are created in the Karrio
-    system.\n                    excpet API logs and tracing records for debugging
-    purposes.\n                "
+  description: "In some scenarios, all we need is to send request to a carrier using\
+    \ the Karrio unified API.\n                The Proxy API comes handy for that\
+    \ as it turn Karrio into a simple middleware that converts and\n             \
+    \   validate your request and simply forward it to the shipping carrier server.<br/>\n\
+    \                **Note:**<br/>\n                    When using the proxy API,\
+    \ no objects are created in the Karrio system.\n                    excpet API\
+    \ logs and tracing records for debugging purposes.\n                "
 - name: Orders
-  description: "This is an object representing your Karrio order.\n                You
-    can create Karrio orders to organize your shipments and ship line items separately.\n
-    \               "
+  description: "This is an object representing your Karrio order.\n              \
+    \  You can create Karrio orders to organize your shipments and ship line items\
+    \ separately.\n                "
 - name: Webhooks
-  description: "This is an object representing your Karrio webhook.\n                You
-    can configure webhook endpoints via the API to be notified about events happen
-    in your\n                Karrio account.\n                "
+  description: "This is an object representing your Karrio webhook.\n            \
+    \    You can configure webhook endpoints via the API to be notified about events\
+    \ happen in your\n                Karrio account.\n                "
 - name: Batches
-  description: "This is an object representing your Karrio batch operation.\n                You
-    can retrieve all batch operations historically for your Karrio account.\n                "
+  description: "This is an object representing your Karrio batch operation.\n    \
+    \            You can retrieve all batch operations historically for your Karrio\
+    \ account.\n                "
 - name: Reference & Enums
   description: |+
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
+    | allied_express | Allied Express |
+    | allied_express_local | Allied Express Local |
+    | amazon_shipping | AmazonShipping |
     | aramex | Aramex |
     | asendia_us | Asendia US |
     | australiapost | Australia Post |
@@ -11859,7 +11994,6 @@ tags:
     | freightcom | Freightcom |
     | geodis | GEODIS |
     | hay_post | HayPost |
-    | landmark | Landmark Global |
     | laposte | La Poste |
     | locate2u | Locate2u |
     | mydhl | MyDHL |
@@ -11871,6 +12005,7 @@ tags:
     | seko | SEKO Logistics |
     | sendle | Sendle |
     | shipengine | ShipEngine |
+    | teleship | Teleship |
     | tge | TGE |
     | tnt | TNT |
     | ups | UPS |
@@ -11885,6 +12020,33 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
+    ### Allied Express
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | allied_road_service | R |
+    | allied_parcel_service | P |
+    | allied_standard_pallet_service | PT |
+    | allied_oversized_pallet_service | PT2 |
+
+    ### Allied Express Local
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | allied_road_service | R |
+    | allied_parcel_service | P |
+    | allied_standard_pallet_service | PT |
+    | allied_oversized_pallet_service | PT2 |
+    | allied_local_normal_service | N |
+    | allied_local_vip_service | V |
+    | allied_local_executive_service | E |
+    | allied_local_gold_service | G |
+
+    ### AmazonShipping
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | amazon_shipping_ground | Amazon Shipping Ground |
+    | amazon_shipping_standard | Amazon Shipping Standard |
+    | amazon_shipping_premium | Amazon Shipping Premium |
+
     ### Asendia US
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13172,19 +13334,6 @@ tags:
     | sprint_simple | 97 |
     | yes_ordered_value | 99 |
 
-    ### Landmark Global
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | landmark_maxipak_scan_ddp | LGINTSTD |
-    | landmark_maxipak_scan_ddu | LGINTSTDU |
-    | landmark_minipak_scan_ddp | LGINTBPIP |
-    | landmark_minipak_scan_ddu | LGINTBPIU |
-    | landmark_maxipak_scan_ddp_pudo | LGINTPUDO |
-    | landmark_maxipak_scan_premium_ups_express_ddp | LGINTUPSS |
-    | landmark_maxipak_scan_premium_ups_express_ddu | LGINTUPSSU |
-    | landmark_maxipak_scan_premium_ups_standard_ddp | LGINTUPST |
-    | landmark_maxipak_scan_premium_ups_standard_ddu | LGINTUPSTU |
-
     ### Locate2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13502,6 +13651,14 @@ tags:
     | ups_2nd_day_air | UPS 2nd Day Air |
     | ups_next_day_air | UPS Next Day Air |
     | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
+
+    ### Teleship
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | teleship_expedited_pickup | TELESHIP-EXPEDITED-PICKUP |
+    | teleship_expedited_dropoff | TELESHIP-EXPEDITED-DROPOFF |
+    | teleship_standard_dropoff | TELESHIP-STANDARD-DROPOFF |
+    | teleship_standard_pickup | TELESHIP-STANDARD-PICKUP |
 
     ### TGE
     | Code         | Service Name |

@@ -1096,7 +1096,7 @@ export default function Page() {
                                   className="label is-capitalized"
                                   style={{ fontSize: "0.8em" }}
                                 >
-                                  {references.carriers[carrier]}
+                                  {references.carriers?.[carrier] || carrier}
                                 </label>
                                 <hr className="my-1" style={{ height: "1px" }} />
 

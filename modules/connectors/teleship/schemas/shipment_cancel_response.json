@@ -1,0 +1,9 @@
+{
+  "shipmentId": "TELE-UK-US-123456789",
+  "trackingNumber": "TELE987654321GB",
+  "status": "voided",
+  "metadata": {
+    "voidedAt": "2025-11-03T20:53:09.821Z",
+    "voidedBy": "api_user"
+  }
+}

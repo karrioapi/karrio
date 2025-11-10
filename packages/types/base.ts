@@ -479,6 +479,7 @@ export const CARRIER_IMAGES: Collection = {
   freightcom: "generic",
   generic: "generic",
   sf_express: "sf_express",
+  teleship: "teleship",
   tnt: "tnt",
   usps_international: "usps",
   yunexpress: "yunexpress",

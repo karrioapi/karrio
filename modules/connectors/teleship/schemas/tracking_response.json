@@ -1,0 +1,58 @@
+{
+  "status": "in_transit",
+  "shipmentId": "TELE-UK-US-123456789",
+  "trackingNumber": "TELE987654321GB",
+  "customerReference": "#1001",
+  "shipDate": "2025-11-03T10:00:00.000Z",
+  "estimatedDelivery": "2025-11-10T18:00:00.000Z",
+  "shipFrom": {
+    "name": "UK Exports Ltd",
+    "city": "London",
+    "state": "LDN",
+    "postcode": "SW1A 1AA",
+    "country": "GB"
+  },
+  "shipTo": {
+    "name": "US Imports Inc",
+    "city": "Los Angeles",
+    "state": "CA",
+    "postcode": "90001",
+    "country": "US"
+  },
+  "firstMile": {
+    "status": "completed",
+    "carrier": "Royal Mail",
+    "trackingNumber": "RM123456789GB"
+  },
+  "lastMile": {
+    "status": "in_transit",
+    "carrier": "USPS",
+    "trackingNumber": "9400111111111111111111"
+  },
+  "events": [
+    {
+      "timestamp": "2025-11-03T10:00:00.000Z",
+      "status": "picked_up",
+      "location": "London, GB",
+      "description": "Package picked up from sender"
+    },
+    {
+      "timestamp": "2025-11-03T15:30:00.000Z",
+      "status": "in_transit",
+      "location": "Heathrow Airport, GB",
+      "description": "Package arrived at sorting facility"
+    },
+    {
+      "timestamp": "2025-11-04T08:00:00.000Z",
+      "status": "in_transit",
+      "location": "In Transit to USA",
+      "description": "Package departed UK"
+    },
+    {
+      "timestamp": "2025-11-05T14:00:00.000Z",
+      "status": "in_transit",
+      "location": "Los Angeles, CA, US",
+      "description": "Package arrived in destination country"
+    }
+  ]
+}
