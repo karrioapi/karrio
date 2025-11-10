@@ -144,7 +144,7 @@ function requestInterceptor(session?: ExtendedSessionType) {
       : {};
     const orgHeader: any = !!session?.orgId
       ? { "x-org-id": session.orgId }
-      : (cookieOrgId ? { "x-org-id": cookieOrgId } : {});
+      : {};
 
     config.headers = {
       ...config.headers,
