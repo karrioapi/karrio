@@ -60,9 +60,6 @@ else:
 
 # Configure Django cache if Redis is available and not in worker mode
 if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
-    HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
-    INSTALLED_APPS += ["health_check.contrib.redis"]
-
     # Configure connection pool with max_connections to prevent exhaustion
     # Default: 50 connections per process (2 Gunicorn workers = 100 total)
     # Azure Redis Basic: 256 max connections total
@@ -86,10 +83,12 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
         }
     }
 
-    # Configure health check to use the constructed Redis URL
-    # django-health-check reads from settings.REDIS_URL, not settings.HEALTH_CHECK
-    # Set REDIS_URL as a module-level setting for health check to find
-    REDIS_URL = REDIS_CONNECTION_URL
+    # Django cache health check uses the cache backend directly
+    # Only add Redis health check if REDIS_URL environment variable is set
+    # When using granular params, the cache check is sufficient
+    if config("REDIS_URL", default=None) is not None:
+        HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
+        INSTALLED_APPS += ["health_check.contrib.redis"]
 
     print(f"Redis cache connection initialized")
 elif SKIP_DEFAULT_CACHE:
