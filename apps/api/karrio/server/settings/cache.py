@@ -14,9 +14,9 @@ DETACHED_WORKER = config("DETACHED_WORKER", default=False, cast=bool)
 # Detect if running as a worker process (via run_huey command)
 IS_WORKER_PROCESS = any("run_huey" in arg for arg in sys.argv)
 
-# Skip default Redis cache configuration if in worker mode
-# Workers only need HUEY Redis, not the default Django cache
-SKIP_DEFAULT_CACHE = DETACHED_WORKER or IS_WORKER_PROCESS
+# Skip default Redis cache configuration only for worker processes
+# API servers should use Redis cache even when DETACHED_WORKER is True
+SKIP_DEFAULT_CACHE = IS_WORKER_PROCESS
 
 # Redis configuration - REDIS_URL takes precedence and supersedes granular env vars
 REDIS_URL = config("REDIS_URL", default=None)
