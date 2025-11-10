@@ -1,0 +1,18 @@
+import karrio.core.metadata as metadata
+import karrio.mappers.gls_group as mappers
+import karrio.providers.gls_group.units as units
+import karrio.providers.gls_group.utils as utils
+
+
+METADATA = metadata.Metadata(
+    id="gls_group",
+    label="GLS Group",
+    # Integrations
+    Mapper=mappers.Mapper,
+    Proxy=mappers.Proxy,
+    Settings=mappers.Settings,
+    # Data Units
+    is_hub=False,
+    options=units.ShippingOption,
+    services=units.ShippingService,
+)
