@@ -67,6 +67,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # HTTPS configuration
 if USE_HTTPS is True:
     global SECURE_SSL_REDIRECT
+    global SECURE_REDIRECT_EXEMPT
     global SECURE_PROXY_SSL_HEADER
     global SESSION_COOKIE_SECURE
     global SECURE_HSTS_SECONDS
@@ -75,6 +76,8 @@ if USE_HTTPS is True:
     global SECURE_HSTS_PRELOAD
 
     SECURE_SSL_REDIRECT = True
+    # Exempt health check endpoint from HTTPS redirect for Kubernetes probes
+    SECURE_REDIRECT_EXEMPT = [r'^status/$']
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 1
