@@ -285,6 +285,39 @@ class TestUniversalRating(unittest.TestCase):
             ParsedNoMatchingZone,
         )
 
+    def test_rate_request_with_weight_only(self):
+        """Test that rates are returned when only weight and weight_unit are provided.
+
+        When dimensions are absent, validation should assume they are valid.
+        This tests the fix for the issue where rates were not returned when
+        width/height/length were absent even though the service had dimension restrictions.
+        """
+        settings_with_dimensions = RatingMixinSettings(**settings_with_dimension_restrictions)
+        proxy = RatingMixinProxy(settings_with_dimensions)
+
+        WeightOnlyRequest = Serializable(
+            RateRequest(
+                **{
+                    **rate_request_data,
+                    "parcels": [
+                        {
+                            "weight": 2.0,
+                            "weight_unit": "LB",
+                            # No dimensions provided - should still return rates
+                        }
+                    ],
+                }
+            )
+        )
+        response_data = proxy.get_rates(WeightOnlyRequest)
+        rates = parse_rate_response(response_data, settings_with_dimensions)
+
+        # Should return rates even without dimensions
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedRateResponseWeightOnly,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -605,6 +638,43 @@ ParsedZoneSpecificityCityMatch = [
             "total_charge": 12.0,  # City-specific rate, not country rate
             "extra_charges": [
                 {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
+            ],
+        }
+    ],
+    [],
+]
+
+# Settings with dimension restrictions test data
+settings_with_dimension_restrictions = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Dimensional Service",
+            "service_code": "carrier_dimensional",
+            "currency": "USD",
+            "max_weight": 5.0,
+            "weight_unit": "LB",
+            "max_length": 20.0,
+            "max_width": 15.0,
+            "max_height": 10.0,
+            "dimension_unit": "IN",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 18.00}],
+        },
+    ],
+}
+
+ParsedRateResponseWeightOnly = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {"service_name": "Dimensional Service"},
+            "service": "carrier_dimensional",
+            "total_charge": 18.0,
+            "extra_charges": [
+                {"amount": 18.0, "currency": "USD", "name": "Base Charge"}
             ],
         }
     ],
