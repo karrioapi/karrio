@@ -299,41 +299,51 @@ def get_available_rates(
         if service.weight_unit is not None:
             package_weight = package.weight[weight_unit]
 
+        # Dimension and weight validation logic:
+        # - If service has no restriction (max_*/min_* is None): always match
+        # - If package doesn't provide the value (is None): assume valid (match)
+        # - If both service restriction and package value exist: check if within limits
+
         match_length_requirements = (
-            service.max_length is not None
-            and service.dimension_unit is not None
-            and package_length is not None
-            and package_length
-            <= units.Dimension(service.max_length or 0, dimension_unit).value
-        ) or (service.max_length is None)
+            service.max_length is None  # No restriction
+            or package_length is None  # No dimension provided = assume valid
+            or (
+                service.dimension_unit is not None
+                and package_length <= units.Dimension(service.max_length, dimension_unit).value
+            )
+        )
         match_height_requirements = (
-            service.max_height is not None
-            and service.dimension_unit is not None
-            and package_height is not None
-            and package_height
-            <= units.Dimension(service.max_height, dimension_unit).value
-        ) or (service.max_height is None)
+            service.max_height is None  # No restriction
+            or package_height is None  # No dimension provided = assume valid
+            or (
+                service.dimension_unit is not None
+                and package_height <= units.Dimension(service.max_height, dimension_unit).value
+            )
+        )
         match_width_requirements = (
-            service.max_width is not None
-            and service.dimension_unit is not None
-            and package_width is not None
-            and package_width
-            <= units.Dimension(service.max_width, dimension_unit).value
-        ) or (service.max_width is None)
+            service.max_width is None  # No restriction
+            or package_width is None  # No dimension provided = assume valid
+            or (
+                service.dimension_unit is not None
+                and package_width <= units.Dimension(service.max_width, dimension_unit).value
+            )
+        )
         match_min_weight_requirements = (
-            service.min_weight is not None
-            and service.weight_unit is not None
-            and package_weight is not None
-            and package_weight
-            >= units.Weight(service.min_weight, weight_unit).value
-        ) or (service.min_weight is None)
+            service.min_weight is None  # No restriction
+            or package_weight is None  # No weight provided = assume valid
+            or (
+                service.weight_unit is not None
+                and package_weight >= units.Weight(service.min_weight, weight_unit).value
+            )
+        )
         match_max_weight_requirements = (
-            service.max_weight is not None
-            and service.weight_unit is not None
-            and package_weight is not None
-            and package_weight
-            <= units.Weight(service.max_weight, weight_unit).value
-        ) or (service.max_weight is None)
+            service.max_weight is None  # No restriction
+            or package_weight is None  # No weight provided = assume valid
+            or (
+                service.weight_unit is not None
+                and package_weight <= units.Weight(service.max_weight, weight_unit).value
+            )
+        )
 
         # resolve matching zone using improved algorithm
         selected_zone: typing.Optional[models.ServiceZone] = find_best_matching_zone(
