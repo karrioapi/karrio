@@ -388,6 +388,16 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = "user.User"
 
 
+# Session configuration
+# Use a unique session cookie name to prevent conflicts with other applications
+# (e.g., ORY Kratos sessions in the shipping-app frontend)
+SESSION_COOKIE_NAME = config("SESSION_COOKIE_NAME", default="karrio_sessionid")
+SESSION_COOKIE_PATH = config("SESSION_COOKIE_PATH", default="/")
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = config("SESSION_COOKIE_SAMESITE", default="Lax")
+# SESSION_COOKIE_DOMAIN is intentionally not set to allow per-host cookies
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
