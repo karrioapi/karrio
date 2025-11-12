@@ -197,7 +197,9 @@ def owned_model_serializer(serializer: typing.Type[Serializer]):
             except Exception as e:
                 # Log simple error without traceback (exception handler will log full details)
                 meta = getattr(self.__class__, "Meta", None)
-                model_name = getattr(getattr(meta, "model", None), "__name__", "Unknown")
+                model_name = getattr(
+                    getattr(meta, "model", None), "__name__", "Unknown"
+                )
                 logger.error(
                     "Failed to create {} instance using {}",
                     model_name,
@@ -423,8 +425,10 @@ def process_dictionaries_mutations(
     """
     data = payload.copy()
 
-    for key in [k for k in keys if k in payload]:
-        value = lib.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
+    for key in [k for k in keys if k in payload and payload.get(k) is not None]:
+        value = lib.to_dict(
+            {**(getattr(entity, key, None) or {}), **(payload.get(key, None) or {})}
+        )
         data.update({key: value})
 
     return data
