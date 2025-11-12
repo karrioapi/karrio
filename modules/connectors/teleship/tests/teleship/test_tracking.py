@@ -22,36 +22,39 @@ class TestTeleshipTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TrackingRequest)
 
     def test_get_tracking(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/api/tracking/TELESHIP12345678901"
-            )
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = "{}"
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
+                print(f"Called URL: {mock.call_args[1]['url']}")
+                self.assertEqual(
+                    mock.call_args[1]["url"],
+                    f"{gateway.settings.server_url}/api/tracking/TELESHIP12345678901"
+                )
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = TrackingResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest)
-                .from_(gateway)
-                .parse()
-            )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = TrackingResponse
+                parsed_response = (
+                    karrio.Tracking.fetch(self.TrackingRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(f"Parsed response: {lib.to_dict(parsed_response)}")
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest)
-                .from_(gateway)
-                .parse()
-            )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = ErrorResponse
+                parsed_response = (
+                    karrio.Tracking.fetch(self.TrackingRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(f"Error response: {lib.to_dict(parsed_response)}")
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":

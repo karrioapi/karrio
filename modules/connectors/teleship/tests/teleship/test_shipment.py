@@ -23,25 +23,27 @@ class TestTeleshipShipment(unittest.TestCase):
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/api/shipments/labels"
-            )
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = "{}"
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
+                print(f"Called URL: {mock.call_args[1]['url']}")
+                self.assertEqual(
+                    mock.call_args[1]["url"],
+                    f"{gateway.settings.server_url}/api/shipments/labels"
+                )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = ShipmentResponse
+                parsed_response = (
+                    karrio.Shipment.create(self.ShipmentRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(f"Parsed response: {lib.to_dict(parsed_response)}")
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_shipment_cancel_request(self):
         request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
@@ -49,25 +51,27 @@ class TestTeleshipShipment(unittest.TestCase):
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/api/shipments/labels/SHP-UK-US-98765/void"
-            )
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = "{}"
+                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+                print(f"Called URL: {mock.call_args[1]['url']}")
+                self.assertEqual(
+                    mock.call_args[1]["url"],
+                    f"{gateway.settings.server_url}/api/shipments/labels/SHP-UK-US-98765/void"
+                )
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = ErrorResponse
+                parsed_response = (
+                    karrio.Shipment.create(self.ShipmentRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(f"Error response: {lib.to_dict(parsed_response)}")
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -169,13 +173,13 @@ ShipmentRequest = {
     },
     "weight": {
         "value": 1.2,
-        "unit": "KG"
+        "unit": "kg"
     },
     "dimensions": {
         "unit": "CM",
-        "length": 30,
-        "width": 20,
-        "height": 15
+        "length": 30.0,
+        "width": 20.0,
+        "height": 15.0
     },
     "commodities": [
         {
@@ -188,7 +192,7 @@ ShipmentRequest = {
             "quantity": 2,
             "unitWeight": {
                 "value": 0.6,
-                "unit": "KG"
+                "unit": "kg"
             },
             "description": "Consumer electronics widget",
             "countryOfOrigin": "GB"
@@ -196,7 +200,7 @@ ShipmentRequest = {
     ],
     "customs": {
         "EORI": "GB123456789000",
-        "contentType": "merchandise",
+        "contentType": "CommercialGoods",
         "invoiceDate": "2025-01-15",
         "invoiceNumber": "INV-2025-001"
     }
@@ -308,7 +312,7 @@ ParsedShipmentResponse = [
         "shipment_identifier": "SHP-UK-US-98765",
         "label_type": "PDF",
         "docs": {
-            "label": "https://labels.teleship.com/SHP-UK-US-98765.pdf"
+            "label": "JVBERi0xLjcKJeLjz9MK..."
         },
         "meta": {
             "service_code": "TELESHIP-EXPEDITED-DROPOFF",

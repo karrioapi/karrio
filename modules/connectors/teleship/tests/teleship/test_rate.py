@@ -22,36 +22,39 @@ class TestTeleshipRating(unittest.TestCase):
         self.assertEqual(lib.to_dict(request.serialize()), RateRequest)
 
     def test_get_rates(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Rating.fetch(self.RateRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/api/rates/quotes"
-            )
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = "{}"
+                karrio.Rating.fetch(self.RateRequest).from_(gateway)
+                print(f"Called URL: {mock.call_args[1]['url']}")
+                self.assertEqual(
+                    mock.call_args[1]["url"],
+                    f"{gateway.settings.server_url}/api/rates/quotes"
+                )
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest)
-                .from_(gateway)
-                .parse()
-            )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = RateResponse
+                parsed_response = (
+                    karrio.Rating.fetch(self.RateRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(f"Parsed response: {lib.to_dict(parsed_response)}")
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-            mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest)
-                .from_(gateway)
-                .parse()
-            )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
+            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+                mock.return_value = ErrorResponse
+                parsed_response = (
+                    karrio.Rating.fetch(self.RateRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(f"Error response: {lib.to_dict(parsed_response)}")
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -146,10 +149,10 @@ RateRequest = {
     },
     "weight": {
         "value": 1.2,
-        "unit": "KG"
+        "unit": "kg"
     },
     "dimensions": {
-        "unit": "CM",
+        "unit": "cm",
         "length": 30,
         "width": 20,
         "height": 15
@@ -165,7 +168,7 @@ RateRequest = {
             "quantity": 2,
             "unitWeight": {
                 "value": 0.6,
-                "unit": "KG"
+                "unit": "kg"
             },
             "description": "Consumer electronics widget",
             "countryOfOrigin": "GB"
@@ -173,7 +176,7 @@ RateRequest = {
     ],
     "customs": {
         "EORI": "GB123456789000",
-        "contentType": "merchandise",
+        "contentType": "CommercialGoods",
         "invoiceDate": "2025-01-15",
         "invoiceNumber": "INV-2025-001"
     }
@@ -322,7 +325,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "teleship",
             "carrier_name": "teleship",
-            "service": "TELESHIP-EXPEDITED-DROPOFF",
+            "service": "teleship_expedited_dropoff",
             "total_charge": 106.56,
             "currency": "GBP",
             "transit_days": 3,
@@ -351,7 +354,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "teleship",
             "carrier_name": "teleship",
-            "service": "TELESHIP-STANDARD-DROPOFF",
+            "service": "teleship_standard_dropoff",
             "total_charge": 78.95,
             "currency": "GBP",
             "transit_days": 7,
@@ -380,7 +383,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "teleship",
             "carrier_name": "teleship",
-            "service": "TELESHIP-EXPEDITED-PICKUP",
+            "service": "teleship_expedited_pickup",
             "total_charge": 142.3,
             "currency": "GBP",
             "transit_days": 2,

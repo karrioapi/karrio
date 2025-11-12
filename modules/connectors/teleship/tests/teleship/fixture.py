@@ -8,7 +8,7 @@ gateway = karrio.gateway["teleship"].create(
         id="123456789",
         test_mode=True,
         carrier_id="teleship",
-        account_number="123456789",
-        api_key="TEST_API_KEY",
+        client_id="TEST_CLIENT_ID",
+        client_secret="TEST_CLIENT_SECRET",
     )
 )
