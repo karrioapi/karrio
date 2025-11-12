@@ -160,11 +160,11 @@ def shipment_request(
         ),
         dimensions=lib.identity(
             teleship_req.DimensionsType(
-                unit=(package.dimension_unit or "CM").lower(),
-                length=int(package.length.value) if package.length else None,
-                width=int(package.width.value) if package.width else None,
-                height=int(package.height.value) if package.height else None,
-            ) if package and all([package.length, package.width, package.height]) else None
+                unit=package.dimension_unit,
+                length=package.length.value,
+                width=package.width.value,
+                height=package.height.value,
+            ) if package and all([package.length.value, package.width.value, package.height.value]) else None
         ),
         commodities=[
             teleship_req.CommodityType(
@@ -174,10 +174,10 @@ def shipment_request(
                     amount=int(commodity.value_amount or 0),
                     currency=commodity.value_currency or "USD",
                 ),
-                quantity=commodity.quantity or 1,
+                quantity=commodity.quantity,
                 unitWeight=teleship_req.WeightType(
                     value=commodity.weight,
-                    unit=(commodity.weight_unit or "KG").lower(),
+                    unit=(commodity.weight_unit).lower(),
                 ),
                 description=commodity.description,
                 countryOfOrigin=commodity.origin_country,
