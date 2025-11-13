@@ -126,6 +126,7 @@ RateRequest = {
     "packageType": "parcel",
     "shipTo": {
         "name": "Jane Doe",
+        "company": "US Imports Inc",
         "email": "receiving@usimports.com",
         "phone": "+13105551234",
         "address": {
@@ -139,6 +140,8 @@ RateRequest = {
     "shipFrom": {
         "name": "John Smith",
         "company": "UK Exports Ltd",
+        "email": "shipping@ukexports.co.uk",
+        "phone": "+442071234567",
         "address": {
             "line1": "123 Business Park",
             "city": "London",
@@ -161,6 +164,7 @@ RateRequest = {
         {
             "sku": "WIDGET-001",
             "title": "Electronic Widget",
+            "description": "Consumer electronics widget",
             "value": {
                 "amount": 150,
                 "currency": "GBP"
@@ -170,7 +174,6 @@ RateRequest = {
                 "value": 0.6,
                 "unit": "kg"
             },
-            "description": "Consumer electronics widget",
             "countryOfOrigin": "GB"
         }
     ],
