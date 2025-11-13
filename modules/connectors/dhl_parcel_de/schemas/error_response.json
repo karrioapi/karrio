@@ -1,6 +1,24 @@
 {
-  "title": "ok",
-  "statusCode": 200,
+  "title": "Error",
+  "statusCode": 400,
   "instance": "string",
-  "detail": "The Webservice call ran successfully."
+  "detail": "Validation failed.",
+  "status": {
+    "title": "Error",
+    "statusCode": 400,
+    "instance": "string",
+    "detail": "Validation failed."
+  },
+  "items": [
+    {
+      "shipmentNo": "340434310428091700",
+      "validationMessages": [
+        {
+          "property": "shipper.addressStreet",
+          "validationMessage": "Street name is required",
+          "validationState": "Error"
+        }
+      ]
+    }
+  ]
 }

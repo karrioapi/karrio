@@ -13,6 +13,7 @@ class LabelType:
 class SstatusType:
     title: typing.Optional[str] = None
     status: typing.Optional[int] = None
+    statusCode: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
