@@ -160,7 +160,7 @@ def shipment_request(
         ),
         dimensions=lib.identity(
             teleship_req.DimensionsType(
-                unit=package.dimension_unit,
+                unit=package.dimension_unit.lower(),
                 length=package.length.value,
                 width=package.width.value,
                 height=package.height.value,

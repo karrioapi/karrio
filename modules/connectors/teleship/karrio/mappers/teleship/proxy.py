@@ -16,7 +16,7 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.settings.api_key}",
+                "Authorization": f"Bearer {self.settings.access_token}",
                 **({
                     "x-account-id": self.settings.connection_config.account_id.state
                 } if self.settings.connection_config.account_id.state else {}),
@@ -33,7 +33,7 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.settings.api_key}",
+                "Authorization": f"Bearer {self.settings.access_token}",
                 **({
                     "x-account-id": self.settings.connection_config.account_id.state
                 } if self.settings.connection_config.account_id.state else {}),
@@ -52,7 +52,7 @@ class Proxy(proxy.Proxy):
             trace=self.trace_as("json"),
             method="DELETE",
             headers={
-                "Authorization": f"Bearer {self.settings.api_key}",
+                "Authorization": f"Bearer {self.settings.access_token}",
                 **({
                     "x-account-id": self.settings.connection_config.account_id.state
                 } if self.settings.connection_config.account_id.state else {}),
@@ -68,7 +68,7 @@ class Proxy(proxy.Proxy):
                 trace=self.trace_as("json"),
                 method="GET",
                 headers={
-                    "Authorization": f"Bearer {self.settings.api_key}",
+                    "Authorization": f"Bearer {self.settings.access_token}",
                     **({
                         "x-account-id": self.settings.connection_config.account_id.state
                     } if self.settings.connection_config.account_id.state else {}),

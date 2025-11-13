@@ -9,8 +9,8 @@ class Settings(provider_utils.Settings):
     """Teleship connection settings."""
 
     # Add carrier specific API connection properties here
-    api_key: str
-    account_number: str = None
+    client_id: str
+    client_secret: str
 
     # generic properties
     id: str = None

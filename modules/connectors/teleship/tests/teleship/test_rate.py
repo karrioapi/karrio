@@ -153,9 +153,9 @@ RateRequest = {
     },
     "dimensions": {
         "unit": "cm",
-        "length": 30,
-        "width": 20,
-        "height": 15
+        "length": 30.0,
+        "width": 20.0,
+        "height": 15.0
     },
     "commodities": [
         {

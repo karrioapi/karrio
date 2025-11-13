@@ -176,7 +176,7 @@ ShipmentRequest = {
         "unit": "kg"
     },
     "dimensions": {
-        "unit": "CM",
+        "unit": "cm",
         "length": 30.0,
         "width": 20.0,
         "height": 15.0
