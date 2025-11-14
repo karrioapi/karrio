@@ -1,5 +1,5 @@
 import io
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.urls import re_path, path
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
@@ -114,7 +114,7 @@ DataExportParameters: list = [
 ]
 
 
-class DataExport(api.LoginRequiredView, VirtualDownloadView):
+class DataExport(api.BaseAPIView):
     @openapi.extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}export_file",
@@ -136,29 +136,44 @@ class DataExport(api.LoginRequiredView, VirtualDownloadView):
         try:
             """Generate a file to export."""
             query_params = request.GET
-            self.attachment = "download" in query_params
-            self.resource = resource_type
-            self.format = export_format
 
-            self.dataset = resources.export(
+            # Export the data
+            dataset = resources.export(
                 resource_type, query_params, context=request
             )
 
-            response = super(DataExport, self).get(request, **kwargs)
-            response["X-Frame-Options"] = "ALLOWALL"
+            # Get the content
+            content = getattr(dataset, export_format, "")
+
+            # Determine content type
+            content_types = {
+                'csv': 'text/csv',
+                'xls': 'application/vnd.ms-excel',
+                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            }
+            content_type = content_types.get(export_format, 'application/octet-stream')
+
+            # Create response
+            if isinstance(content, str):
+                response = HttpResponse(content.encode('utf-8'), content_type=content_type)
+            else:
+                response = HttpResponse(content, content_type=content_type)
+
+            # Set headers
+            filename = f"{resource_type}.{export_format}"
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            response['X-Frame-Options'] = 'ALLOWALL'
+
+            # Don't set Content-Length to avoid mismatch issues with proxies
+            # The response will use chunked transfer encoding instead
+
             return response
+
         except Exception as e:
             return JsonResponse(
                 dict(errors=[{"message": str(e)}]),
                 status=status.HTTP_409_CONFLICT,
             )
-
-    def get_file(self):
-        content = getattr(self.dataset, self.format, "")
-        buffer = io.StringIO() if type(content) == str else io.BytesIO()
-        buffer.write(content)
-
-        return ContentFile(buffer.getvalue(), name=f"{self.resource}.{self.format}")
 
 
 urlpatterns = [
