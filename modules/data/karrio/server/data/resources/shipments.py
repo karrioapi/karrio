@@ -66,6 +66,40 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
         "created_at",
         "status",
         "reference",
+        # Service and carrier info
+        "service",
+        "carrier",
+        "rate",
+        "currency",
+        # Recipient address
+        "recipient_name",
+        "recipient_company",
+        "recipient_email",
+        "recipient_phone",
+        "recipient_address1",
+        "recipient_address2",
+        "recipient_city",
+        "recipient_state",
+        "recipient_postal_code",
+        "recipient_country",
+        # Shipper address
+        "shipper_name",
+        "shipper_company",
+        "shipper_email",
+        "shipper_phone",
+        "shipper_address1",
+        "shipper_city",
+        "shipper_state",
+        "shipper_postal_code",
+        "shipper_country",
+        # Parcel info
+        "pieces",
+        "parcel_weight",
+        "parcel_weight_unit",
+        "parcel_length",
+        "parcel_width",
+        "parcel_height",
+        "parcel_dimension_unit",
     )
 
     if "status" not in query_params:
@@ -83,8 +117,8 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
         def get_queryset(self):
             return ShipmentFilters(query_params, queryset).qs
 
-        def get_export_headers(self):
-            headers = super().get_export_headers()
+        def get_export_headers(self, **kwargs):
+            headers = super().get_export_headers(**kwargs)
             return [DEFAULT_HEADERS.get(k, k) for k in headers]
 
         @staticmethod
@@ -400,8 +434,8 @@ def shipment_import_resource(
         def get_queryset(self):
             return queryset
 
-        def get_export_headers(self):
-            headers = super().get_export_headers()
+        def get_export_headers(self, **kwargs):
+            headers = super().get_export_headers(**kwargs)
             return [field_headers.get(k, k) for k in headers]
 
         def init_instance(self, row=None):
