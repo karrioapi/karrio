@@ -38,8 +38,8 @@ def tracker_export_resource(query_params: dict, context, data_fields: dict = Non
         def get_queryset(self):
             return queryset
 
-        def get_export_headers(self):
-            headers = super().get_export_headers()
+        def get_export_headers(self, **kwargs):
+            headers = super().get_export_headers(**kwargs)
             return [field_headers.get(k, k) for k in headers]
 
         if "tracking_carrier" not in _exclude:
@@ -87,8 +87,8 @@ def tracker_import_resource(
         def get_queryset(self):
             return queryset
 
-        def get_export_headers(self):
-            headers = super().get_export_headers()
+        def get_export_headers(self, **kwargs):
+            headers = super().get_export_headers(**kwargs)
             return [field_headers.get(k, k) for k in headers]
 
         def init_instance(self, row=None):
