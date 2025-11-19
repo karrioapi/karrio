@@ -140,12 +140,14 @@ def shipping_options_initializer(
 class TrackingStatus(lib.Enum):
     """Carrier tracking status mapping"""
 
+    pending = [
+        "50",  # Shipment Data Uploaded
+    ]
     delivered = [
         "500",  # Item successfully delivered
         "510",  # Proof Of Delivery
     ]
     in_transit = [
-        "50",  # Shipment Data Uploaded
         "60",  # Shipment inventory allocated
         "75",  # Shipment Processed
         "80",  # Shipment Fulfilled
