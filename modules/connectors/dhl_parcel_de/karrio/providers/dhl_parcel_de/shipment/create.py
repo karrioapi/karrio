@@ -82,6 +82,7 @@ def shipment_request(
         weight_unit=units.WeightUnit.KG.name,
         option_type=provider_units.CustomsOption,
     )
+    is_intl = shipper.country_code != recipient.country_code
     doc_format, print_format = provider_units.LabelType.map(
         settings.connection_config.label_type.state or payload.label_type or "PDF"
     ).value
@@ -250,7 +251,7 @@ def shipment_request(
                             for item in customs.commodities
                         ],
                     )
-                    if payload.customs is not None
+                    if payload.customs is not None and is_intl
                     else None
                 ),
             )
