@@ -1,3 +1,16 @@
+# Karrio 2025.5rc34
+
+## Changes
+
+### Feat
+
+- feat: add missing pending status mapping for landmark cancellation handling
+- feat: adjust easyship shipemnt mapping to differentiate origin from sender and keep consistency with other integration shipper data mapping
+
+### Fix
+
+- hotfix: revert problematic org_id header cookie value assignment
+
 # Karrio 2025.5rc33
 
 ## Changes
