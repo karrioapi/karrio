@@ -1,6 +1,7 @@
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
+from typing import Dict, Set
 
 
 class PackagingType(lib.StrEnum):
@@ -90,14 +91,12 @@ class ConnectionConfig(lib.Enum):
     )
 
 
-
 class ShippingService(lib.Enum):
     """Carrier specific services"""
 
     dhl_parcel_de_paket = "V01PAK"
-    dhl_parcel_de_warenpost = "V62WP"
+    dhl_parcel_de_warenpost = "V62KP"
     dhl_parcel_de_europaket = "V54EPAK"
-    dhl_parcel_de_paket_international = "V53WPAK"
     dhl_parcel_de_warenpost_international = "V66WPI"
 
 
@@ -109,7 +108,6 @@ class ShippingOption(lib.Enum):
     dhl_parcel_de_preferred_location = lib.OptionEnum("preferredLocation")
     dhl_parcel_de_visual_check_of_age = lib.OptionEnum("visualCheckOfAge")
     dhl_parcel_de_named_person_only = lib.OptionEnum("namedPersonOnly", bool)
-    # dhl_parcel_de_ident_check = lib.OptionEnum("identCheck")
     dhl_parcel_de_signed_for_by_recipient = lib.OptionEnum("signedForByRecipient", bool)
     dhl_parcel_de_endorsement = lib.OptionEnum("endorsement")
     dhl_parcel_de_preferred_day = lib.OptionEnum("preferredDay")
@@ -121,13 +119,48 @@ class ShippingOption(lib.Enum):
     dhl_parcel_de_premium = lib.OptionEnum("premium", bool)
     dhl_parcel_de_closest_drop_point = lib.OptionEnum("closestDropPoint", bool)
     dhl_parcel_de_parcel_outlet_routing = lib.OptionEnum("parcelOutletRouting")
-    # dhl_parcel_de_dhl_retoure = lib.OptionEnum("dhlRetoure")
     dhl_parcel_de_postal_delivery_duty_paid = lib.OptionEnum("postalDeliveryDutyPaid", bool)
 
     """ Unified Option type mapping """
     insurance = dhl_parcel_de_additional_insurance
     cash_on_delivery = dhl_parcel_de_cash_on_delivery
     # fmt: on
+
+
+# Service to Options compatibility matrix
+# Based on https://developer.dhl.com/sites/default/files/inline-images/Verf%C3%BCgbare%20Services_en_0.png
+SERVICE_OPTION_COMPATIBILITY: Dict[str, Set[ShippingOption]] = {
+    ShippingService.dhl_parcel_de_paket.value: {  # V01PAK - DHL Paket (National)
+        ShippingOption.dhl_parcel_de_preferred_neighbour,
+        ShippingOption.dhl_parcel_de_preferred_location,
+        ShippingOption.dhl_parcel_de_visual_check_of_age,
+        ShippingOption.dhl_parcel_de_named_person_only,
+        ShippingOption.dhl_parcel_de_signed_for_by_recipient,
+        ShippingOption.dhl_parcel_de_preferred_day,
+        ShippingOption.dhl_parcel_de_no_neighbour_delivery,
+        ShippingOption.dhl_parcel_de_additional_insurance,
+        ShippingOption.dhl_parcel_de_bulky_goods,
+        ShippingOption.dhl_parcel_de_cash_on_delivery,
+        ShippingOption.dhl_parcel_de_individual_sender_requirement,
+        ShippingOption.dhl_parcel_de_premium,
+        ShippingOption.dhl_parcel_de_closest_drop_point,
+        ShippingOption.dhl_parcel_de_parcel_outlet_routing,
+    },
+    ShippingService.dhl_parcel_de_europaket.value: {  # V54EPAK - DHL EuroPaket (International Europe)
+        ShippingOption.dhl_parcel_de_additional_insurance,
+        ShippingOption.dhl_parcel_de_bulky_goods,
+        ShippingOption.dhl_parcel_de_cash_on_delivery,
+        ShippingOption.dhl_parcel_de_individual_sender_requirement,
+        ShippingOption.dhl_parcel_de_premium,
+        ShippingOption.dhl_parcel_de_endorsement,
+    },
+    ShippingService.dhl_parcel_de_warenpost.value: {  # V62KP - DHL Warenpost (National)
+        # Warenpost typically has no additional services
+    },
+    ShippingService.dhl_parcel_de_warenpost_international.value: {  # V66WPI - DHL Warenpost International
+        ShippingOption.dhl_parcel_de_endorsement,
+    },
+}
 
 
 def shipping_options_initializer(
@@ -179,21 +212,6 @@ DEFAULT_SERVICES = [
         zones=[models.ServiceZone(rate=0.0)],
     ),
     models.ServiceLevel(
-        service_name="DHL Paket International",
-        service_code="dhl_parcel_de_paket_international",
-        currency="EUR",
-        domicile=False,
-        international=True,
-        min_weight=0.01,
-        max_weight=31.5,
-        max_length=120,
-        max_width=60,
-        max_height=60,
-        weight_unit="KG",
-        dimension_unit="CM",
-        zones=[models.ServiceZone(rate=0.0)],
-    ),
-    models.ServiceLevel(
         service_name="DHL EuroPaket",
         service_code="dhl_parcel_de_europaket",
         currency="EUR",
@@ -216,8 +234,8 @@ DEFAULT_SERVICES = [
         international=False,
         min_weight=0.01,
         max_weight=1,
-        max_length=35,
-        max_width=7,
+        max_length=35.3,
+        max_width=25,
         max_height=5,
         weight_unit="KG",
         dimension_unit="CM",
@@ -232,8 +250,8 @@ DEFAULT_SERVICES = [
         min_weight=0.01,
         max_weight=1,
         max_length=35.3,
-        max_width=9,
-        max_height=10,
+        max_width=25,
+        max_height=5,
         weight_unit="KG",
         dimension_unit="CM",
         zones=[models.ServiceZone(rate=0.0)],

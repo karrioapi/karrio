@@ -3437,6 +3437,7 @@ export interface ShippingRuleConditionsInput {
   metadata?: any | null;
   address_type?: AddressTypeConditionInput | null;
   value?: number | null;
+  extensions?: any | null;
 }
 
 // null
@@ -3468,6 +3469,7 @@ export interface AddressTypeConditionInput {
 export interface ShippingRuleActionsInput {
   select_service?: SelectServiceActionInput | null;
   block_service?: boolean | null;
+  extensions?: any | null;
 }
 
 // null
