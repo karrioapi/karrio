@@ -25,7 +25,7 @@ dependencies = [
 Homepage = "https://github.com/karrioapi/karrio"
 
 [project.entry-points."karrio.plugins"]
-mydhl = "karrio.plugins.mydhl"
+mydhl = "karrio.plugins.mydhl:METADATA"
 
 [tool.setuptools]
 zip-safe = false
