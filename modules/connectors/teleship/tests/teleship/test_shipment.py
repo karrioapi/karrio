@@ -19,7 +19,6 @@ class TestTeleshipShipment(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
@@ -27,7 +26,6 @@ class TestTeleshipShipment(unittest.TestCase):
             with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
                 mock.return_value = "{}"
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-                print(f"Called URL: {mock.call_args[1]['url']}")
                 self.assertEqual(
                     mock.call_args[1]["url"],
                     f"{gateway.settings.server_url}/api/shipments/labels"
@@ -42,12 +40,10 @@ class TestTeleshipShipment(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
-                print(f"Parsed response: {lib.to_dict(parsed_response)}")
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_shipment_cancel_request(self):
         request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
-        print(f"Generated cancel request: {lib.to_dict(request.serialize())}")
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
@@ -55,7 +51,6 @@ class TestTeleshipShipment(unittest.TestCase):
             with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
                 mock.return_value = "{}"
                 karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-                print(f"Called URL: {mock.call_args[1]['url']}")
                 self.assertEqual(
                     mock.call_args[1]["url"],
                     f"{gateway.settings.server_url}/api/shipments/labels/SHP-UK-US-98765/void"
@@ -70,7 +65,6 @@ class TestTeleshipShipment(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
-                print(f"Error response: {lib.to_dict(parsed_response)}")
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 

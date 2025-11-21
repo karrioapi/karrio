@@ -18,7 +18,6 @@ class TestTeleshipTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
         self.assertEqual(request.serialize(), TrackingRequest)
 
     def test_get_tracking(self):
@@ -26,7 +25,6 @@ class TestTeleshipTracking(unittest.TestCase):
             with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
                 mock.return_value = "{}"
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
-                print(f"Called URL: {mock.call_args[1]['url']}")
                 self.assertEqual(
                     mock.call_args[1]["url"],
                     f"{gateway.settings.server_url}/api/tracking/TELESHIP12345678901"
@@ -41,7 +39,6 @@ class TestTeleshipTracking(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
-                print(f"Parsed response: {lib.to_dict(parsed_response)}")
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
@@ -53,7 +50,6 @@ class TestTeleshipTracking(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
-                print(f"Error response: {lib.to_dict(parsed_response)}")
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 

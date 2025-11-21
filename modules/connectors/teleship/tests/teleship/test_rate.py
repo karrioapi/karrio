@@ -18,7 +18,6 @@ class TestTeleshipRating(unittest.TestCase):
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
         self.assertEqual(lib.to_dict(request.serialize()), RateRequest)
 
     def test_get_rates(self):
@@ -26,7 +25,6 @@ class TestTeleshipRating(unittest.TestCase):
             with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
                 mock.return_value = "{}"
                 karrio.Rating.fetch(self.RateRequest).from_(gateway)
-                print(f"Called URL: {mock.call_args[1]['url']}")
                 self.assertEqual(
                     mock.call_args[1]["url"],
                     f"{gateway.settings.server_url}/api/rates/quotes"
@@ -41,7 +39,6 @@ class TestTeleshipRating(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
-                print(f"Parsed response: {lib.to_dict(parsed_response)}")
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
@@ -53,7 +50,6 @@ class TestTeleshipRating(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
-                print(f"Error response: {lib.to_dict(parsed_response)}")
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
