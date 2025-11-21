@@ -6,7 +6,7 @@
   "accounts": [
     {
       "typeCode": "shipper",
-      "number": "123456789"
+      "number": "ACC123456789"
     }
   ],
   "specialInstructions": [
@@ -19,7 +19,7 @@
   "customerDetails": {
     "shipperDetails": {
       "postalAddress": {
-        "postalCode": "14800",
+        "postalCode": "14800-AA",
         "cityName": "Prague",
         "countryCode": "CZ",
         "addressLine1": "V Parku 2308/10"
@@ -34,7 +34,7 @@
     },
     "receiverDetails": {
       "postalAddress": {
-        "postalCode": "10001",
+        "postalCode": "10001-5555",
         "cityName": "New York",
         "countryCode": "US",
         "addressLine1": "123 Main Street"
@@ -55,7 +55,7 @@
       "accounts": [
         {
           "typeCode": "shipper",
-          "number": "123456789"
+          "number": "ACC123456789"
         }
       ],
       "packages": [

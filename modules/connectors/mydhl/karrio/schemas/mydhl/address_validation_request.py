@@ -7,5 +7,5 @@ import typing
 class AddressValidationRequestType:
     type: typing.Optional[str] = None
     countryCode: typing.Optional[str] = None
-    postalCode: typing.Optional[int] = None
+    postalCode: typing.Optional[str] = None
     cityName: typing.Optional[str] = None

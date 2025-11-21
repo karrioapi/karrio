@@ -1,12 +1,12 @@
 {
   "customerDetails": {
     "shipperDetails": {
-      "postalCode": "14800",
+      "postalCode": "14800-AA",
       "cityName": "Prague",
       "countryCode": "CZ"
     },
     "receiverDetails": {
-      "postalCode": "10001",
+      "postalCode": "10001-5555",
       "cityName": "New York",
       "countryCode": "US"
     }
@@ -14,7 +14,7 @@
   "accounts": [
     {
       "typeCode": "shipper",
-      "number": "123456789"
+      "number": "ACC123456789"
     }
   ],
   "productCode": "P",

@@ -13,7 +13,7 @@ class ServiceAreaType:
 
 @attr.s(auto_attribs=True)
 class AddressType:
-    postalCode: typing.Optional[int] = None
+    postalCode: typing.Optional[str] = None
     cityName: typing.Optional[str] = None
     countryCode: typing.Optional[str] = None
     countyName: typing.Optional[str] = None

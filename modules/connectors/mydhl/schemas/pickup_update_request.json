@@ -13,7 +13,7 @@
   "customerDetails": {
     "shipperDetails": {
       "postalAddress": {
-        "postalCode": "14800",
+        "postalCode": "14800-AA",
         "cityName": "Prague",
         "countryCode": "CZ",
         "addressLine1": "V Parku 2308/10"

@@ -14,7 +14,7 @@ class ContactInformationType:
 
 @attr.s(auto_attribs=True)
 class PostalAddressType:
-    postalCode: typing.Optional[int] = None
+    postalCode: typing.Optional[str] = None
     cityName: typing.Optional[str] = None
     countryCode: typing.Optional[str] = None
     addressLine1: typing.Optional[str] = None

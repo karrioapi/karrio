@@ -160,7 +160,7 @@ def rate_request(
             [
                 mydhl_req.AccountType(
                     typeCode="shipper",
-                    number=int(settings.account_number) if settings.account_number and settings.account_number.isdigit() else None,
+                    number=settings.account_number,
                 )
             ]
             if settings.account_number

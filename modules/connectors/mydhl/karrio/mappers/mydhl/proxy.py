@@ -121,7 +121,7 @@ class Proxy(proxy.Proxy):
     
     def validate_address(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/address/validate",
+            url=f"{self.settings.server_url}/address-validate",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",

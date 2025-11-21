@@ -9,7 +9,7 @@
       "origin": {
         "address": {
           "addressLocality": "Prague",
-          "postalCode": "14800",
+          "postalCode": "14800-AA",
           "addressCountry": "CZ"
         },
         "servicePoint": {
@@ -20,7 +20,7 @@
       "destination": {
         "address": {
           "addressLocality": "New York",
-          "postalCode": "10001",
+          "postalCode": "10001-5555",
           "addressCountry": "US"
         },
         "servicePoint": {

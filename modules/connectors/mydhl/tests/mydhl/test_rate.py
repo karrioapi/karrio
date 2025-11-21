@@ -108,7 +108,7 @@ RateRequest = {
     "accounts": [
         {
             "typeCode": "shipper",
-            "number": 123456789
+            "number": "123456789"
         }
     ],
     "productCode": None,

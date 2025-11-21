@@ -6,7 +6,7 @@ import typing
 @attr.s(auto_attribs=True)
 class AddressType:
     addressLocality: typing.Optional[str] = None
-    postalCode: typing.Optional[int] = None
+    postalCode: typing.Optional[str] = None
     addressCountry: typing.Optional[str] = None
 
 
