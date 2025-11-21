@@ -10,23 +10,29 @@ import karrio.schemas.landmark.error_response as landmark
 def parse_error_response(
     response: lib.Element,
     settings: provider_utils.Settings,
+    details: dict = None,
     **kwargs,
 ) -> typing.List[models.Message]:
-    messages: typing.List[landmark.ErrorType] = sum(
+    responses = lib.to_list(response)
+    errors: typing.List[landmark.ErrorType] = sum(
         [
-            lib.find_element("Error", response, landmark.ErrorType)
-            for response in lib.to_list(response)
+            [
+                *(lib.find_element("Error", resp, landmark.ErrorType)),
+                *(lib.find_element("error", resp, landmark.ErrorType)),
+            ]
+            for resp in responses
         ],
-        start=[],
+        [],
     )
 
     return [
         models.Message(
-            carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
             code=error.ErrorCode,
             message=error.ErrorMessage,
-            details={**kwargs},
+            details={**kwargs, **(details or {})},
         )
-        for error in messages
+        for error in errors
+        if error.ErrorCode or error.ErrorMessage
     ]
