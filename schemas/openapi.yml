@@ -13184,6 +13184,7 @@ tags:
     | landmark_maxipak_scan_premium_ups_express_ddu | LGINTUPSSU |
     | landmark_maxipak_scan_premium_ups_standard_ddp | LGINTUPST |
     | landmark_maxipak_scan_premium_ups_standard_ddu | LGINTUPSTU |
+    | landmark_maxipak_scan_pddp | LGINTBPMO |
 
     ### Locate2u
     | Code         | Service Name |
