@@ -1,0 +1,171 @@
+{
+  "customerReference": "#1001",
+  "packageType": "parcel",
+  "description": "International shipment of jewelry items",
+  "shipDate": "2025-01-15",
+  "orderTrackingReference": "ORD-2025-001",
+  "commercialInvoiceReference": "CI-2025-001",
+  "shipTo": {
+    "name": "Fanny Dadin",
+    "email": "fanny@teleship.com",
+    "phone": "+1 213-601-6000",
+    "address": {
+      "line1": "1300 Eunice Avenue",
+      "line2": "Suite 200",
+      "city": "Los Angeles",
+      "state": "CA",
+      "country": "US",
+      "postcode": "90001"
+    }
+  },
+  "shipFrom": {
+    "name": "London Store",
+    "company": "TELESHIP LIMITED",
+    "email": "shipping@teleship.com",
+    "phone": "+44 20 7123 4567",
+    "address": {
+      "line1": "Flat 4, 24 Upper Tachbrook Street",
+      "line2": "",
+      "city": "London",
+      "state": "England",
+      "country": "GB",
+      "postcode": "SW1V 1SW"
+    }
+  },
+  "returnTo": {
+    "name": "Returns Department",
+    "company": "TELESHIP LIMITED",
+    "email": "returns@teleship.com",
+    "phone": "+44 20 7123 4568",
+    "address": {
+      "line1": "Flat 4, 24 Upper Tachbrook Street",
+      "line2": "",
+      "city": "London",
+      "state": "England",
+      "country": "GB",
+      "postcode": "SW1V 1SW"
+    }
+  },
+  "billTo": {
+    "name": "Billing Department",
+    "company": "TELESHIP LIMITED",
+    "email": "billing@teleship.com",
+    "phone": "+44 20 7123 4569",
+    "address": {
+      "line1": "Flat 4, 24 Upper Tachbrook Street",
+      "line2": "",
+      "city": "London",
+      "state": "England",
+      "country": "GB",
+      "postcode": "SW1V 1SW"
+    },
+    "taxId": {
+      "type": "VAT",
+      "value": "GB123456789"
+    }
+  },
+  "weight": {
+    "unit": "kg",
+    "value": 0.48
+  },
+  "dimensions": {
+    "unit": "cm",
+    "width": 25,
+    "height": 14,
+    "length": 35
+  },
+  "additionalServices": {
+    "signatureRequired": false,
+    "deliveryWarranty": false,
+    "deliveryPUDO": false,
+    "lowCarbon": true,
+    "dutyTaxCalculation": true
+  },
+  "commodities": [
+    {
+      "sku": "stock-1",
+      "SKU": "STOCK-1",
+      "EAN": "5060123456789",
+      "TARIC": "71131910",
+      "HSTariffNumber": "711319",
+      "title": "Tetras Small Earrings - One& Only Kea...",
+      "description": "Enjoy these beautiful earrings manufactured in Greece. Worn by Adele and other stars.",
+      "category": "Jewelry",
+      "value": {
+        "amount": 134,
+        "currency": "GBP"
+      },
+      "quantity": 1,
+      "unitWeight": {
+        "unit": "kg",
+        "value": 0.18
+      },
+      "netWeight": {
+        "unit": "kg",
+        "value": 0.15
+      },
+      "countryOfOrigin": "GR",
+      "imageUrl": "https://example.com/products/stock-1.jpg",
+      "productUrl": "https://example.com/products/stock-1",
+      "compliance": {
+        "requiresLicensing": false,
+        "isHazardous": false,
+        "isRestricted": false,
+        "regulatoryInfo": "Complies with EU jewelry regulations"
+      },
+      "dutiesAndTaxes": {
+        "dutyAmount": 13.4,
+        "dutyRate": 0.10,
+        "taxAmount": 26.8,
+        "taxRate": 0.20,
+        "currency": "GBP"
+      }
+    }
+  ],
+  "metadata": {
+    "fulfillmentOrderId": "gid://shopify/FulfillmentOrder/761708049XXX"
+  },
+  "customs": {
+    "EORI": "GB078617476000",
+    "IOSS": "IM1234567890",
+    "VAT": "GB123456789",
+    "EIN": "12-3456789",
+    "VOECNUMBER": "VOE123456",
+    "importerGST": "GST123456",
+    "exporterGST": "GST789012",
+    "consigneeGST": "GST345678",
+    "contentType": "CommercialGoods",
+    "invoiceDate": "2025-10-31T19:53:09.821Z",
+    "invoiceNumber": "#1001",
+    "GPSRContactInfo": {
+      "name": "Safety Compliance Officer",
+      "email": "safety@teleship.com",
+      "phone": "+44 20 7123 4570",
+      "address": {
+        "line1": "Flat 4, 24 Upper Tachbrook Street",
+        "city": "London",
+        "state": "England",
+        "country": "GB",
+        "postcode": "SW1V 1SW"
+      }
+    },
+    "importerOfRecord": {
+      "name": "Import Manager",
+      "company": "US Imports Inc",
+      "email": "imports@usimports.com",
+      "phone": "+1 213-601-6001",
+      "address": {
+        "line1": "1300 Eunice Avenue",
+        "line2": "Suite 100",
+        "city": "Los Angeles",
+        "state": "CA",
+        "country": "US",
+        "postcode": "90001"
+      },
+      "taxId": {
+        "type": "EIN",
+        "value": "98-7654321"
+      }
+    }
+  }
+}

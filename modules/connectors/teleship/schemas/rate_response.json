@@ -1,0 +1,74 @@
+{
+  "rates": [
+    {
+      "price": 106.56,
+      "currency": "GBP",
+      "transit": 3,
+      "service": {
+        "code": "TELESHIP-EXPEDITED-DROPOFF",
+        "name": "Teleship Hub Direct (for bundling packages, shipper delivers to Teleship hub)"
+      },
+      "charges": [
+        {
+          "name": "base",
+          "amount": 15.65,
+          "currency": "GBP"
+        },
+        {
+          "name": "VAT",
+          "amount": 90.91,
+          "currency": "GBP",
+          "rate": 0.19
+        }
+      ],
+      "estimatedDelivery": "2025-11-03T20:53:09.821Z"
+    },
+    {
+      "price": 109.35,
+      "currency": "GBP",
+      "transit": 4,
+      "service": {
+        "code": "TELESHIP-EXPEDITED-PICKUP",
+        "name": "Teleship End-to-End (service with first mile/collection included)"
+      },
+      "charges": [
+        {
+          "name": "base",
+          "amount": 18.44,
+          "currency": "GBP"
+        },
+        {
+          "name": "VAT",
+          "amount": 90.91,
+          "currency": "GBP",
+          "rate": 0.19
+        }
+      ],
+      "estimatedDelivery": "2025-11-04T20:53:09.821Z"
+    }
+  ],
+  "commodities": [
+    {
+      "itemNumber": 1,
+      "title": "Flix Earrings",
+      "charges": [
+        {
+          "name": "Duty",
+          "amount": 5.47,
+          "rate": 0.04
+        }
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "code": 423,
+      "timestamp": "2024-01-01T00:00:00.00Z",
+      "message": "Missing duties and taxes",
+      "details": [
+        "`commodities` are required to calculate duties and taxes",
+        "providing `customs.orderTotalValue` (optional) allows for more accurate duties and taxes"
+      ]
+    }
+  ]
+}

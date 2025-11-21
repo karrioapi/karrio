@@ -70,6 +70,7 @@ karrio_purolator @ file://${PWD}/modules/connectors/purolator
 karrio_sapient @ file://${PWD}/community/plugins/sapient
 karrio_seko @ file://${PWD}/modules/connectors/seko
 karrio_sendle @ file://${PWD}/modules/connectors/sendle
+karrio_teleship @ file://${PWD}/modules/connectors/teleship
 karrio_server @ file://${PWD}/apps/api
 karrio_server_core @ file://${PWD}/modules/core
 karrio_server_data @ file://${PWD}/modules/data
