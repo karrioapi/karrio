@@ -36,9 +36,21 @@ class PackagingType(lib.StrEnum):
 
 class ShippingService(lib.StrEnum):
     """ Carrier specific services """
-    mydhl_express_worldwide = "EXPRESS WORLDWIDE"
-    mydhl_express_12_00 = "EXPRESS 12:00"
-    mydhl_express_domestic = "EXPRESS DOMESTIC"
+    # Map product codes to service names
+    mydhl_express_worldwide = "P"
+    mydhl_express_12_00 = "T"
+    mydhl_express_domestic = "N"
+    mydhl_medical_express = "Q"
+    mydhl_express_easy = "8"
+
+    # Additional services by code
+    mydhl_jetline = "J"
+    mydhl_sprintline = "R"
+    mydhl_express_9_00 = "Y"
+    mydhl_economy_select = "W"
+    mydhl_express_10_30 = "X"
+    mydhl_globalmail = "G"
+    mydhl_same_day = "S"
 
 
 class ShippingOption(lib.Enum):
