@@ -188,9 +188,12 @@ def shipment_request(
                 customs=(
                     dhl_parcel_de.CustomsType(
                         invoiceNo=customs.invoice,
-                        exportType=provider_units.CustomsContentType.map(
-                            customs.content_type
-                        ).value,
+                        exportType=lib.identity(
+                            provider_units.CustomsContentType.map(
+                                customs.content_type
+                            ).value
+                            or "COMMERCIAL_GOODS"
+                        ),
                         exportDescription=customs.content_description,
                         shippingConditions=(
                             provider_units.Incoterm.map(customs.incoterm).value or "DDP"
@@ -225,9 +228,12 @@ def shipment_request(
                         consigneeCustomsRef=customs.options.consignee_customs_ref.state,
                         items=[
                             dhl_parcel_de.ItemType(
-                                itemDescription=item.description,
+                                itemDescription=item.description or item.title,
                                 countryOfOrigin=units.CountryCode.map(
                                     item.origin_country
+                                    or shipper.country_code
+                                    or settings.account_country_code
+                                    or "DE"
                                 ).value_or_key,
                                 hsCode=item.hs_code,
                                 packagedQuantity=item.quantity,
@@ -237,8 +243,9 @@ def shipment_request(
                                             item.value_currency
                                             or package.options.currency.state
                                             or customs.duty.currency
+                                            or "EUR"
                                         ),
-                                        value=item.value_amount,
+                                        value=item.value_amount or 0.0,
                                     )
                                     if item.value_amount is not None
                                     else None

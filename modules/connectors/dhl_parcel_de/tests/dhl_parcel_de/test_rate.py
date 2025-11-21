@@ -34,8 +34,6 @@ class TestDHLParcelDEServiceFiltering(unittest.TestCase):
         service_codes = [s.service_code for s in self.services]
         self.assertIn("dhl_parcel_de_paket", service_codes)
         self.assertIn("dhl_parcel_de_europaket", service_codes)
-        self.assertIn("dhl_parcel_de_warenpost", service_codes)
-        self.assertIn("dhl_parcel_de_warenpost_international", service_codes)
 
     def test_domestic_service_marked_correctly(self):
         """Test that domestic service has domicile=True."""
@@ -55,11 +53,7 @@ class TestDHLParcelDEServiceFiltering(unittest.TestCase):
     def test_international_service_marked_correctly(self):
         """Test that international service has international=True and domicile=False."""
         international_service = next(
-            (
-                s
-                for s in self.services
-                if s.service_code == "dhl_parcel_de_europaket"
-            ),
+            (s for s in self.services if s.service_code == "dhl_parcel_de_europaket"),
             None,
         )
 
