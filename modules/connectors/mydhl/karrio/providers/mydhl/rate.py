@@ -55,9 +55,6 @@ def _extract_details(
     currency = total_price.priceCurrency if total_price else "USD"
     total_charge = float(total_price.price) if total_price and total_price.price else 0.0
 
-    # Extract service information
-    service = lib.to_services(product.productCode, provider_units.ShippingService).first
-
     # Calculate transit days from delivery date
     transit_days = None
     if product.deliveryCapabilities and product.deliveryCapabilities.estimatedDeliveryDateAndTime:
@@ -88,16 +85,36 @@ def _extract_details(
                             )
                         )
 
+    # Map product code to service enum name for proper service identification
+    # Follow guide pattern: use product code directly, with display name in meta
+    service_map = {
+        "Q": "mydhl_medical_express",
+        "P": "mydhl_express_worldwide",
+        "8": "mydhl_express_easy",
+        "T": "mydhl_express_12_00",
+        "N": "mydhl_express_domestic",
+        "J": "mydhl_jetline",
+        "R": "mydhl_sprintline",
+        "Y": "mydhl_express_9_00",
+        "W": "mydhl_economy_select",
+        "X": "mydhl_express_10_30",
+        "G": "mydhl_globalmail",
+        "S": "mydhl_same_day",
+    }
+
+    service_code = service_map.get(product.productCode, f"mydhl_{product.productCode.lower()}")
+
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=service.name_or_key if service else product.productCode,
+        service=service_code,
         total_charge=lib.to_money(total_charge),
         currency=currency,
         transit_days=transit_days,
         extra_charges=extra_charges if extra_charges else None,
         meta=dict(
             service_name=product.productName or "",
+            product_code=product.productCode,
             network_type_code=product.networkTypeCode,
             local_product_code=product.localProductCode,
         ),
