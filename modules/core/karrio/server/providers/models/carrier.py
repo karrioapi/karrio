@@ -187,6 +187,11 @@ class Carrier(core.OwnedEntity):
         on_delete=models.SET_NULL,
     )
 
+    @classmethod
+    def resolve_context_data(cls, queryset, context):
+        """Apply context-aware carrier config resolution."""
+        return queryset.resolve_config_for(context)
+
     def __str__(self):
         return self.carrier_id
 
@@ -229,10 +234,16 @@ class Carrier(core.OwnedEntity):
 
     @property
     def config(self) -> dict:
-        if hasattr(self, '_computed_config'):
-            return self._computed_config or {}
-
-        return getattr(self.carrier_config, "config", {})
+        if hasattr(self, "_computed_config"):
+            annotated_config = self._computed_config
+            if annotated_config is not None:
+                return annotated_config
+            # If the annotation didn't resolve (eg. context missing), fall back to DB lookup.
+        resolved_config = getattr(self.carrier_config, "config", None)
+        if resolved_config is not None:
+            return resolved_config
+        # Return empty dict if no config is found - do NOT fallback to credentials
+        return {}
 
     @property
     def services(self) -> typing.Optional[typing.List[dict]]:
