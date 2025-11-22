@@ -5410,6 +5410,7 @@ export interface DeleteMutationInput {
 export interface LogFilter {
   offset?: number | null;
   first?: number | null;
+  query?: string | null;
   api_endpoint?: string | null;
   remote_addr?: string | null;
   date_after?: any | null;
