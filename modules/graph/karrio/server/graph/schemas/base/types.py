@@ -1067,7 +1067,6 @@ class PaymentType:
     paid_by: typing.Optional[utils.PaidByEnum] = None
     currency: typing.Optional[utils.CurrencyCodeEnum] = None
 
-
 @strawberry.type
 class ShipmentType:
     id: str
