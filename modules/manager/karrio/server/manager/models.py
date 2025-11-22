@@ -69,11 +69,23 @@ class CustomsManager(models.Manager):
 
 class PickupManager(models.Manager):
     def get_queryset(self):
+        from karrio.server.providers.models.carrier import Carrier
+
+        # Prefetch carrier with config resolution to avoid N+1 queries
+        carrier_queryset = Carrier.objects.resolve_config_for(None)
+
         return (
             super()
             .get_queryset()
+            .select_related(
+                "pickup_carrier",
+                "pickup_carrier__created_by",
+                "pickup_carrier__rate_sheet",
+            )
             .prefetch_related(
                 "shipments",
+                "pickup_carrier__active_users",
+                models.Prefetch("pickup_carrier", queryset=carrier_queryset),
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
@@ -81,6 +93,11 @@ class PickupManager(models.Manager):
 
 class ShipmentManager(models.Manager):
     def get_queryset(self):
+        from karrio.server.providers.models.carrier import Carrier
+
+        # Prefetch carrier with config resolution to avoid N+1 queries
+        carrier_queryset = Carrier.objects.resolve_config_for(None)
+
         return (
             super()
             .get_queryset()
@@ -94,12 +111,17 @@ class ShipmentManager(models.Manager):
                 "billing_address",
                 "shipment_tracker",
                 "shipment_upload_record",
+                "selected_rate_carrier",
+                "selected_rate_carrier__created_by",
+                "selected_rate_carrier__rate_sheet",
             )
             .prefetch_related(
                 "parcels",
                 "parcels__items",
                 "customs__commodities",
                 "customs__duty_billing_address",
+                "selected_rate_carrier__active_users",
+                models.Prefetch("selected_rate_carrier", queryset=carrier_queryset),
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
@@ -134,10 +156,22 @@ class TrackingManager(models.Manager):
 
 class DocumentUploadRecordManager(models.Manager):
     def get_queryset(self):
+        from karrio.server.providers.models.carrier import Carrier
+
+        # Prefetch carrier with config resolution to avoid N+1 queries
+        carrier_queryset = Carrier.objects.resolve_config_for(None)
+
         return (
             super()
             .get_queryset()
+            .select_related(
+                "upload_carrier",
+                "upload_carrier__created_by",
+                "upload_carrier__rate_sheet",
+            )
             .prefetch_related(
+                "upload_carrier__active_users",
+                models.Prefetch("upload_carrier", queryset=carrier_queryset),
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
@@ -145,12 +179,24 @@ class DocumentUploadRecordManager(models.Manager):
 
 class ManifestManager(models.Manager):
     def get_queryset(self):
+        from karrio.server.providers.models.carrier import Carrier
+
+        # Prefetch carrier with config resolution to avoid N+1 queries
+        carrier_queryset = Carrier.objects.resolve_config_for(None)
+
         # Load manifest details and associated carrier data efficiently
         return (
             super()
             .get_queryset()
             .defer("manifest")
+            .select_related(
+                "manifest_carrier",
+                "manifest_carrier__created_by",
+                "manifest_carrier__rate_sheet",
+            )
             .prefetch_related(
+                "manifest_carrier__active_users",
+                models.Prefetch("manifest_carrier", queryset=carrier_queryset),
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
