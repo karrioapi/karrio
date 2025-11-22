@@ -38,6 +38,7 @@ def update_trackers(
 ):
     logger.info("Starting scheduled trackers update", delta_seconds=delta.seconds, tracker_count=len(tracker_ids) if tracker_ids else 0)
 
+    # TrackingManager now handles all necessary prefetching including carrier config
     active_trackers = lib.identity(
         models.Tracking.objects.filter(id__in=tracker_ids)
         if any(tracker_ids)

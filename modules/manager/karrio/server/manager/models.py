@@ -107,6 +107,11 @@ class ShipmentManager(models.Manager):
 
 class TrackingManager(models.Manager):
     def get_queryset(self):
+        from karrio.server.providers.models.carrier import Carrier
+
+        # Prefetch carrier with config resolution to avoid N+1 queries
+        carrier_queryset = Carrier.objects.resolve_config_for(None)
+
         return (
             super()
             .get_queryset()
@@ -115,8 +120,13 @@ class TrackingManager(models.Manager):
                 "shipment",
                 "shipment__recipient",
                 "shipment__shipper",
+                "tracking_carrier",
+                "tracking_carrier__created_by",
+                "tracking_carrier__rate_sheet",
             )
             .prefetch_related(
+                "tracking_carrier__active_users",
+                models.Prefetch("tracking_carrier", queryset=carrier_queryset),
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
