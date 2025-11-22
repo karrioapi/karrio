@@ -98,6 +98,7 @@ def shipment_request(
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
     service = lib.to_services(payload.service, provider_units.ShippingService).first
+    service_code = service.value_or_key if service else None
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
@@ -144,7 +145,7 @@ def shipment_request(
             for package in packages
         ],
         # Add service code
-        serviceCode=service.value_or_key,
+        serviceCode=service_code,
         # Add account information
         customerNumber=settings.account_number,
         # Add label details
