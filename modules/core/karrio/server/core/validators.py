@@ -44,9 +44,13 @@ def dimensions_required_together(value):
         )
 
 
-def valid_time_format(prop: str):
-    def validate(value):
+class TimeFormatValidator:
+    """Validator for HH:MM time format that can be pickled."""
 
+    def __init__(self, prop: str):
+        self.prop = prop
+
+    def __call__(self, value):
         try:
             datetime.strptime(value, "%H:%M")
         except Exception:
@@ -55,12 +59,14 @@ def valid_time_format(prop: str):
                 code="invalid",
             )
 
-    return validate
 
+class DateFormatValidator:
+    """Validator for YYYY-MM-DD date format that can be pickled."""
 
-def valid_date_format(prop: str):
-    def validate(value):
+    def __init__(self, prop: str):
+        self.prop = prop
 
+    def __call__(self, value):
         try:
             datetime.strptime(value, "%Y-%m-%d")
         except Exception:
@@ -69,12 +75,14 @@ def valid_date_format(prop: str):
                 code="invalid",
             )
 
-    return validate
 
+class DateTimeFormatValidator:
+    """Validator for YYYY-MM-DD HH:MM datetime format that can be pickled."""
 
-def valid_datetime_format(prop: str):
-    def validate(value):
+    def __init__(self, prop: str):
+        self.prop = prop
 
+    def __call__(self, value):
         try:
             datetime.strptime(value, "%Y-%m-%d %H:%M")
         except Exception:
@@ -83,18 +91,37 @@ def valid_datetime_format(prop: str):
                 code="invalid",
             )
 
-    return validate
+
+def valid_time_format(prop: str):
+    """Factory function for time format validator."""
+    return TimeFormatValidator(prop)
 
 
-def valid_base64(prop: str, max_size: int = 5242880):
-    def validate(value: str):
+def valid_date_format(prop: str):
+    """Factory function for date format validator."""
+    return DateFormatValidator(prop)
+
+
+def valid_datetime_format(prop: str):
+    """Factory function for datetime format validator."""
+    return DateTimeFormatValidator(prop)
+
+
+class Base64Validator:
+    """Validator for base64 encoded content that can be pickled."""
+
+    def __init__(self, prop: str, max_size: int = 5242880):
+        self.prop = prop
+        self.max_size = max_size
+
+    def __call__(self, value: str):
         error = None
 
         try:
             buffer = lib.to_buffer(value, validate=True)
 
-            if buffer.getbuffer().nbytes > max_size:
-                error = f"Error: file size exceeds {max_size} bytes."
+            if buffer.getbuffer().nbytes > self.max_size:
+                error = f"Error: file size exceeds {self.max_size} bytes."
 
         except Exception as e:
             logger.error("Invalid base64 file content", error=str(e))
@@ -107,7 +134,10 @@ def valid_base64(prop: str, max_size: int = 5242880):
         if error is not None:
             raise serializers.ValidationError(error, code="invalid")
 
-    return validate
+
+def valid_base64(prop: str, max_size: int = 5242880):
+    """Factory function for base64 validator."""
+    return Base64Validator(prop, max_size)
 
 
 class OptionDefaultSerializer(serializers.Serializer):
