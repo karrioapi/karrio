@@ -199,6 +199,35 @@ def upper(value_str: Optional[str]) -> Optional[str]:
     return value_str.upper().replace("_", " ")
 
 
+def batch_get_constance_values(keys: List[str]) -> dict:
+    """
+    Batch fetch multiple configuration values from Django Constance.
+
+    This function uses Constance's mget() method to fetch all requested
+    configuration keys in a single database query, avoiding N+1 query issues.
+
+    Args:
+        keys: List of configuration key names to fetch
+
+    Returns:
+        Dictionary mapping configuration keys to their values
+
+    Example:
+        >>> flags = batch_get_constance_values(['AUDIT_LOGGING', 'ALLOW_SIGNUP'])
+        >>> print(flags['AUDIT_LOGGING'])
+        True
+    """
+    from constance import config
+
+    try:
+        # Use mget to fetch all config values in a single query
+        # mget returns a generator of (key, value) tuples
+        return dict(config._backend.mget(keys))
+    except Exception as e:
+        logger.warning("Failed to batch fetch constance values, returning empty dict", error=str(e))
+        return {}
+
+
 def compute_tracking_status(
     details: Optional[datatypes.Tracking] = None,
 ) -> serializers.TrackerStatus:
