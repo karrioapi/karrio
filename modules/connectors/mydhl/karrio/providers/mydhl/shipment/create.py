@@ -12,6 +12,7 @@
 import karrio.schemas.mydhl.shipment_request as mydhl_req
 import karrio.schemas.mydhl.shipment_response as mydhl_res
 
+import time
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -97,59 +98,229 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    service = lib.to_services(payload.service, provider_units.ShippingService).first
-    service_code = service.value_or_key if service else None
+    # Map service to DHL product code (e.g., "P", "T", "8")
+    # Use .map() following FedEx, UPS, Canada Post pattern
+    # Handles both service names ("mydhl_express_worldwide") and product codes ("P")
+    service_code = provider_units.ShippingService.map(payload.service).value_or_key
+
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Create the MyDHL shipment request object
-    request = mydhl_req.ShipmentRequestType(
-        # Map shipper details
-        shipper={
-            "addressLine1": shipper.address_line1,
-            "city": shipper.city,
-            "postalCode": shipper.postal_code,
-            "countryCode": shipper.country_code,
-            "stateCode": shipper.state_code,
-            "personName": shipper.person_name,
-            "companyName": shipper.company_name,
-            "phoneNumber": shipper.phone_number,
-            "email": shipper.email,
-        },
-        # Map recipient details
-        recipient={
-            "addressLine1": recipient.address_line1,
-            "city": recipient.city,
-            "postalCode": recipient.postal_code,
-            "countryCode": recipient.country_code,
-            "stateCode": recipient.state_code,
-            "personName": recipient.person_name,
-            "companyName": recipient.company_name,
-            "phoneNumber": recipient.phone_number,
-            "email": recipient.email,
-        },
-        # Map package details
+    # Extract customs information for international shipments
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=packages.weight_unit,
+    )
+
+    # Check if shipment is international (different countries)
+    is_international = shipper.country_code != recipient.country_code
+
+    # Calculate declared value for international shipments
+    # Follow integration guide pattern: extract from customs, options, or packages
+    declared_value = None
+    declared_currency = None
+
+    if is_international:
+        # Get declared value from multiple sources (priority order)
+        declared_value = (
+            # First check customs duty declared value
+            lib.to_money(customs.duty.declared_value) if customs and customs.duty else None
+        ) or (
+            # Then check options
+            lib.to_money(options.declared_value.state) if options.declared_value.state else None
+        ) or (
+            # Then check customs commodities value
+            lib.to_money(customs.commodities.value_amount) if customs and customs.commodities else None
+        ) or (
+            # Finally sum package values
+            sum([lib.to_money(p.total_value or 0) for p in packages]) or 1.0
+        )
+
+        # Get currency from customs or options, default to USD
+        declared_currency = (
+            customs.duty.currency if customs and customs.duty else None
+        ) or (
+            options.currency.state if options.currency.state else None
+        ) or "USD"
+
+    # Build export declaration for international dutiable shipments
+    # Required by DHL when isCustomsDeclarable=True
+    export_declaration = None
+    if is_international:
+        # Use customs commodities if provided, otherwise create default from package data
+        commodities_to_use = (
+            customs.commodities
+            if customs and customs.commodities
+            else None
+        )
+
+        # Generate line items from commodities or create default from packages
+        if commodities_to_use:
+            # Use provided customs commodities
+            line_items = [
+                mydhl_req.LineItemType(
+                    number=index,
+                    description=lib.text(
+                        item.description or item.title or "Commodity",
+                        max=75
+                    ),
+                    price=int(item.value_amount or 0),
+                    quantity=mydhl_req.QuantityType(
+                        value=item.quantity,
+                        unitOfMeasurement="PCS",
+                    ),
+                    commodityCodes=[
+                        mydhl_req.CommodityCodeType(
+                            typeCode="outbound",
+                            value=int(item.hs_code[:6]) if item.hs_code else None,
+                        )
+                    ] if item.hs_code else None,
+                    exportReasonType=(
+                        "permanent"
+                        if customs and customs.content_type in ["merchandise", "commercial_purpose_or_sale"]
+                        else "temporary" if customs and customs.content_type == "sample"
+                        else "return" if customs and customs.content_type in ["return_merchandise", "return_for_repair"]
+                        else "permanent"
+                    ),
+                    manufacturerCountry=item.origin_country or shipper.country_code,
+                    weight=mydhl_req.WeightType(
+                        netValue=item.weight,
+                        grossValue=item.weight,
+                    ),
+                )
+                for index, item in enumerate(commodities_to_use, start=1)
+            ]
+        else:
+            # Create default commodity from package data
+            total_weight = sum(p.weight.value for p in packages)
+            line_items = [
+                mydhl_req.LineItemType(
+                    number=1,
+                    description=lib.text(
+                        packages.description or "Goods",
+                        max=75
+                    ),
+                    price=int(declared_value or 1),
+                    quantity=mydhl_req.QuantityType(
+                        value=len(packages),
+                        unitOfMeasurement="PCS",
+                    ),
+                    exportReasonType="permanent",
+                    manufacturerCountry=shipper.country_code,
+                    weight=mydhl_req.WeightType(
+                        netValue=total_weight,
+                        grossValue=total_weight,
+                    ),
+                )
+            ]
+
+        export_declaration = mydhl_req.ExportDeclarationType(
+            lineItems=line_items,
+            invoice=mydhl_req.InvoiceType(
+                number=(customs.invoice if customs else None) or "INV-00000",
+                date=(customs.invoice_date if customs else None) or time.strftime("%Y-%m-%d"),
+            ),
+        )
+
+    # Build customer details with proper DHL structure
+    # DHL requires phone and companyName even for private addresses
+    customer_details = mydhl_req.CustomerDetailsType(
+        shipperDetails=mydhl_req.ErDetailsType(
+            postalAddress=mydhl_req.PostalAddressType(
+                postalCode=shipper.postal_code,
+                cityName=shipper.city,
+                countryCode=shipper.country_code,
+                addressLine1=shipper.address_line1,
+            ),
+            contactInformation=mydhl_req.ContactInformationType(
+                email=shipper.email,
+                phone=shipper.phone_number or "0000000000",
+                companyName=shipper.company_name or shipper.person_name or "N/A",
+                fullName=shipper.person_name,
+            ),
+            typeCode="business" if shipper.company_name else "private",
+        ),
+        receiverDetails=mydhl_req.ErDetailsType(
+            postalAddress=mydhl_req.PostalAddressType(
+                postalCode=recipient.postal_code,
+                cityName=recipient.city,
+                countryCode=recipient.country_code,
+                addressLine1=recipient.address_line1,
+            ),
+            contactInformation=mydhl_req.ContactInformationType(
+                email=recipient.email,
+                phone=recipient.phone_number or "0000000000",
+                companyName=recipient.company_name or recipient.person_name or "N/A",
+                fullName=recipient.person_name,
+            ),
+            typeCode="business" if recipient.company_name else "private",
+        ),
+    )
+
+    # Build content with packages
+    content = mydhl_req.ContentType(
         packages=[
-            {
-                "weight": package.weight.value,
-                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
-                "length": package.length.value if package.length else None,
-                "width": package.width.value if package.width else None,
-                "height": package.height.value if package.height else None,
-                "dimensionUnit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
-                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
-            }
+            mydhl_req.PackageType(
+                typeCode=provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
+                weight=package.weight.value,
+                dimensions=mydhl_req.DimensionsType(
+                    length=int(package.length.value) if package.length else None,
+                    width=int(package.width.value) if package.width else None,
+                    height=int(package.height.value) if package.height else None,
+                ) if package.length and package.width and package.height else None,
+            )
             for package in packages
         ],
-        # Add service code
-        serviceCode=service_code,
-        # Add account information
-        customerNumber=settings.account_number,
-        # Add label details
-        labelFormat=payload.label_type or "PDF",
+        isCustomsDeclarable=is_international,
+        declaredValue=declared_value,
+        declaredValueCurrency=declared_currency,
+        description=packages.description or "Shipment",
+        incoterm=customs.incoterm or "DAP" if (is_international and customs) else None,
+        exportDeclaration=export_declaration,
+        unitOfMeasurement="metric" if packages.weight_unit == "KG" else "imperial",
+    )
+
+    # Build output image properties for label
+    output_image_properties = mydhl_req.OutputImagePropertiesType(
+        printerDPI=300,
+        encodingFormat="pdf" if (payload.label_type or "PDF").lower() == "pdf" else "zpl",
+        imageOptions=[
+            mydhl_req.ImageOptionType(
+                typeCode="label",
+                templateName="ECOM26_84_001",
+                isRequested=True,
+            )
+        ],
+    )
+
+    # Get planned shipping date
+    import datetime
+    shipping_date = lib.to_date(payload.options.get("shipment_date") or payload.options.get("shipping_date"))
+    if not shipping_date:
+        shipping_date = datetime.datetime.now() + datetime.timedelta(days=1)
+    planned_date = shipping_date.strftime("%Y-%m-%dT%H:%M:%S GMT+00:00")
+
+    # Create the MyDHL shipment request object
+    request = mydhl_req.ShipmentRequestType(
+        plannedShippingDateAndTime=planned_date,
+        pickup=mydhl_req.PickupType(isRequested=False),
+        productCode=service_code,
+        localProductCode=service_code,
+        getRateEstimates=False,
+        accounts=[
+            mydhl_req.AccountType(
+                typeCode="shipper",
+                number=settings.account_number,
+            )
+        ] if settings.account_number else None,
+        outputImageProperties=output_image_properties,
+        customerDetails=customer_details,
+        content=content,
     )
 
     return lib.Serializable(request, lib.to_dict)
