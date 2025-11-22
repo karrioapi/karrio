@@ -25,7 +25,27 @@ class GraphTestCase(BaseAPITestCase):
         self.user = get_user_model().objects.create_superuser(
             "admin@example.com", "test"
         )
+
         self.token = Token.objects.create(user=self.user, test_mode=False)
+
+        # Create organization for multi-org support (if enabled)
+        from django.conf import settings
+        if settings.MULTI_ORGANIZATIONS:
+            from karrio.server.orgs.models import Organization, TokenLink
+            self.organization = Organization.objects.create(
+                name="Test Organization",
+                slug="test-org"
+            )
+            # Add user as owner (triggers permission sync via signals)
+            owner = self.organization.add_user(self.user, is_admin=True)
+            self.organization.change_owner(owner)
+            self.organization.save()
+
+            # Link token to organization
+            TokenLink.objects.create(
+                item=self.token,
+                org=self.organization
+            )
 
         # Setup API client.
         self.client = APIClient()

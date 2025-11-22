@@ -1,3 +1,50 @@
+# Karrio 2025.5rc45
+
+## Changes
+
+### Feat
+
+- feat: introduce shipping rules, app management, and improve types setup scripting
+- feat: introduce bulk print and shipment CSV export
+- feat: add landmark_maxipak_scan_pddp for LGINTBPMO landmark service
+- feat: add support for manual organization creation in the dashboard
+- feat: add sensitive default to DHL Parcel DE and missing required exportType
+- feat: introduce package_configuration field to shipping methods
+- feat: improve dhl parcel error parsing
+- feat: add full Sentry features
+
+### Fix
+
+- fix: regression for final N+1 manager models solution
+- fix: slow archiving queries
+- fix: database lock issue with SQLite-based worker
+- fix: N+1 issue with tenants resolution
+- fix: invalid GraphQL query filter applied to Logs on GraphQL
+- fix: JSONDecode issue with Sapient auth error
+- fix: N+1 issue with `constance` config
+- fix: shipment cancellation webhook notification unparsable format data
+- fix: N+1 issue for all carrier_config affected models
+- fix: N+1 issue with the tracker's background update
+- fix: Sentry caught a validator issue
+- fix: solve the orders duplication and race conditions issues
+- fix: N+1 issues across Models and GraphQL queries
+- fix: tests and installation for Teleship to be released
+- fix: OAuth token expiry calculation and add comprehensive error handling
+- fix: exclude customs node completely for DHL Parcel national label requests
+- fix: download header content causing failure in production
+- fix: AttributeError: 'ShipmentSerializer' object has no attribute 'Meta', overshadowing root cause error
+- fix: regression in custom rate resolution when dimensions are absent
+- fix: remove Redis health check when using granular parameters
+- fix: Redis configuration for health check and task queue
+- fix: regression redis connection setup for worker and API
+- fix: unstable state management for connections and method forms
+
+### Chores
+
+- chore: clean up dhl parcel and landmark tests to match coding design
+- chore: add data isolation tests for contextual carrier configs
+- chore: customize karrio admin session cookies to prevent clash with ORY sessions
+
 # Karrio 2025.5rc34
 
 ## Changes

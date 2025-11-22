@@ -199,6 +199,35 @@ def upper(value_str: Optional[str]) -> Optional[str]:
     return value_str.upper().replace("_", " ")
 
 
+def batch_get_constance_values(keys: List[str]) -> dict:
+    """
+    Batch fetch multiple configuration values from Django Constance.
+
+    This function uses Constance's mget() method to fetch all requested
+    configuration keys in a single database query, avoiding N+1 query issues.
+
+    Args:
+        keys: List of configuration key names to fetch
+
+    Returns:
+        Dictionary mapping configuration keys to their values
+
+    Example:
+        >>> flags = batch_get_constance_values(['AUDIT_LOGGING', 'ALLOW_SIGNUP'])
+        >>> print(flags['AUDIT_LOGGING'])
+        True
+    """
+    from constance import config
+
+    try:
+        # Use mget to fetch all config values in a single query
+        # mget returns a generator of (key, value) tuples
+        return dict(config._backend.mget(keys))
+    except Exception as e:
+        logger.warning("Failed to batch fetch constance values, returning empty dict", error=str(e))
+        return {}
+
+
 def compute_tracking_status(
     details: Optional[datatypes.Tracking] = None,
 ) -> serializers.TrackerStatus:
@@ -221,7 +250,7 @@ def compute_tracking_status(
 
 
 def is_sdk_message(
-    message: Optional[Union[datatypes.Message, List[datatypes.Message]]]
+    message: Optional[Union[datatypes.Message, List[datatypes.Message]]],
 ) -> bool:
     msg = next(iter(message), None) if isinstance(message, list) else message
 
@@ -353,8 +382,7 @@ def process_events(
     # Merge events: add only new non-duplicate events to existing ones
     current_hashes = {lib.to_json(event) for event in current_events}
     unique_new_events = [
-        event for event in new_events
-        if lib.to_json(event) not in current_hashes
+        event for event in new_events if lib.to_json(event) not in current_hashes
     ]
 
     # If no new unique events, return current events unchanged
@@ -420,7 +448,8 @@ def process_events(
 def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
     data = kwargs.get("data") or kwargs
     get = lambda key, default=None: lib.identity(
-        payload.get(key, data.get(key, default)) if isinstance(payload, dict)
+        payload.get(key, data.get(key, default))
+        if isinstance(payload, dict)
         else getattr(payload, key, data.get(key, default))
     )
 
@@ -441,14 +470,17 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
 
     # Select by id or service if provided
     if rate_id or service:
-        kwargs.update(selected_rate=next(
-            (
-                rate for rate in rates
-                if (rate_id and rate.get("id") == rate_id)
-                or (service and rate.get("service") == service)
-            ),
-            None,
-        ))
+        kwargs.update(
+            selected_rate=next(
+                (
+                    rate
+                    for rate in rates
+                    if (rate_id and rate.get("id") == rate_id)
+                    or (service and rate.get("service") == service)
+                ),
+                None,
+            )
+        )
         return kwargs
 
     # Apply shipping rules if enabled and no selected rate is provided
@@ -459,9 +491,7 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
 
         # Get active shipping rules
         active_rules = list(
-            automation_models.ShippingRule
-            .access_by(ctx)
-            .filter(is_active=True)
+            automation_models.ShippingRule.access_by(ctx).filter(is_active=True)
         )
 
         # Always run rule evaluation for activity tracking
@@ -469,6 +499,7 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
             _, rule_selected_rate, rule_activity = engine.process_shipping_rules(
                 shipment=payload,
                 rules=active_rules,
+                context=ctx,
             )
 
             kwargs.update(
@@ -510,8 +541,8 @@ def require_selected_rate(func):
                     "meta": {
                         **(result.meta or {}),
                         **({"rule_activity": kwargs.get("rule_activity")}),
-                    }
-                }
+                    },
+                },
             )
 
         if hasattr(result, "save") and kwargs.get("rule_activity"):

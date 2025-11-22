@@ -1,0 +1,13 @@
+{
+  "messages": [
+    {
+      "code": 400,
+      "message": "Bad Request",
+      "timestamp": "2025-11-03T20:53:09.821Z",
+      "details": [
+        "shipTo.address.postcode is required",
+        "weight.value must be greater than 0"
+      ]
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import karrio.lib as lib
 import karrio.references as ref
 import karrio.core.units as units
 import karrio.server.conf as conf
+import karrio.server.core.utils as utils
 
 
 PACKAGE_MAPPERS = ref.collect_providers_data()
@@ -63,6 +64,30 @@ def contextual_metadata(request: Request):
         else getattr(config, "APP_WEBSITE", None) or conf.settings.APP_WEBSITE
     )
 
+    # Batch fetch all feature flags
+    flag_names = [flag for flag, _ in conf.settings.FEATURE_FLAGS]
+
+    if conf.settings.MULTI_TENANTS:
+        # In multi-tenancy mode, feature flags come from tenant.feature_flags (JSON field)
+        # No N+1 issue since it's a single field access on an already-loaded tenant object
+        tenant = conf.settings.tenant
+        tenant_flags = getattr(tenant, "feature_flags", {}) if tenant else {}
+        feature_flags = {
+            flag: tenant_flags.get(flag, getattr(conf.settings, flag, None))
+            for flag in flag_names
+        }
+    else:
+        # In single-tenant mode, batch fetch from Constance to avoid N+1 queries
+        constance_values = utils.batch_get_constance_values(flag_names)
+        feature_flags = {
+            flag: (
+                constance_values.get(flag)
+                if flag in constance_values
+                else getattr(conf.settings, flag, None)
+            )
+            for flag in flag_names
+        }
+
     return {
         "VERSION": conf.settings.VERSION,
         "APP_NAME": name,
@@ -71,11 +96,7 @@ def contextual_metadata(request: Request):
         "ADMIN": f"{host}/admin",
         "GRAPHQL": f"{host}/graphql",
         "OPENAPI": f"{host}/openapi",
-        **{
-            # Prefer dynamic values from Constance so changes apply without restart
-            flag: getattr(config, flag, getattr(conf.settings, flag, None))
-            for flag, _ in conf.settings.FEATURE_FLAGS
-        },
+        **feature_flags,
     }
 
 

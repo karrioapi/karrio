@@ -14,9 +14,9 @@ DETACHED_WORKER = config("DETACHED_WORKER", default=False, cast=bool)
 # Detect if running as a worker process (via run_huey command)
 IS_WORKER_PROCESS = any("run_huey" in arg for arg in sys.argv)
 
-# Skip default Redis cache configuration if in worker mode
-# Workers only need HUEY Redis, not the default Django cache
-SKIP_DEFAULT_CACHE = DETACHED_WORKER or IS_WORKER_PROCESS
+# Skip default Redis cache configuration only for worker processes
+# API servers should use Redis cache even when DETACHED_WORKER is True
+SKIP_DEFAULT_CACHE = IS_WORKER_PROCESS
 
 # Redis configuration - REDIS_URL takes precedence and supersedes granular env vars
 REDIS_URL = config("REDIS_URL", default=None)
@@ -60,8 +60,16 @@ else:
 
 # Configure Django cache if Redis is available and not in worker mode
 if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
-    HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
-    INSTALLED_APPS += ["health_check.contrib.redis"]
+    # Configure connection pool with max_connections to prevent exhaustion
+    # Default: 50 connections per process (2 Gunicorn workers = 100 total)
+    # Azure Redis Basic: 256 max connections total
+    REDIS_CACHE_MAX_CONNECTIONS = config(
+        "REDIS_CACHE_MAX_CONNECTIONS", default=50, cast=int
+    )
+
+    pool_kwargs = {"max_connections": REDIS_CACHE_MAX_CONNECTIONS}
+    if REDIS_SSL:
+        pool_kwargs["ssl_cert_reqs"] = None
 
     CACHES = {
         "default": {
@@ -78,6 +86,14 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
             "KEY_PREFIX": REDIS_PREFIX,
         }
     }
+
+    # Django cache health check uses the cache backend directly
+    # Only add Redis health check if REDIS_URL environment variable is set
+    # When using granular params, the cache check is sufficient
+    if config("REDIS_URL", default=None) is not None:
+        HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
+        INSTALLED_APPS += ["health_check.contrib.redis"]
+
     print(f"Redis cache connection initialized")
 elif SKIP_DEFAULT_CACHE:
     print(

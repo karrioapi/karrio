@@ -92,8 +92,8 @@ def order_export_resource(query_params: dict, context, **kwargs):
             orders = OrderFilters(query_params, models.Order.access_by(context)).qs
             return queryset.filter(commodity_order__in=orders)
 
-        def get_export_headers(self):
-            headers = super().get_export_headers()
+        def get_export_headers(self, **kwargs):
+            headers = super().get_export_headers(**kwargs)
             return [DEFAULT_HEADERS.get(k, k) for k in headers]
 
         if "id" not in _exclude:
@@ -393,8 +393,8 @@ def order_import_resource(
         def get_queryset(self):
             return queryset
 
-        def get_export_headers(self):
-            headers = super().get_export_headers()
+        def get_export_headers(self, **kwargs):
+            headers = super().get_export_headers(**kwargs)
             return [field_headers.get(k, k) for k in headers]
 
         def init_instance(self, row=None):

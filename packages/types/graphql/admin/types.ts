@@ -1867,6 +1867,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  teleship = "teleship",
   tge = "tge",
   tnt = "tnt",
   ups = "ups",
@@ -2555,6 +2556,7 @@ export interface InstanceConfigMutationInput {
   SEKO_ENABLED?: boolean | null;
   SENDLE_ENABLED?: boolean | null;
   SHIPENGINE_ENABLED?: boolean | null;
+  TELESHIP_ENABLED?: boolean | null;
   TGE_ENABLED?: boolean | null;
   TNT_ENABLED?: boolean | null;
   UPS_ENABLED?: boolean | null;

@@ -70,6 +70,7 @@ class ShippingServiceName(lib.StrEnum):
     landmark_maxipak_scan_premium_ups_express_ddu = "MaxiPak Scan Premium UPS Express DDU"
     landmark_maxipak_scan_premium_ups_standard_ddp = "MaxiPak Scan Premium UPS Standard DDP"
     landmark_maxipak_scan_premium_ups_standard_ddu = "MaxiPak Scan Premium UPS Standard DDU"
+    landmark_maxipak_scan_pddp = "MaxiPak Scan Postal DDP"
     # fmt: on
 
 
@@ -94,6 +95,8 @@ class ShippingService(lib.StrEnum):
     landmark_maxipak_scan_premium_ups_standard_ddp = "LGINTUPST"
     # MaxiPak Scan Premium UPS Standard DDU shipments
     landmark_maxipak_scan_premium_ups_standard_ddu = "LGINTUPSTU"
+    # maxipak scan premium pddp
+    landmark_maxipak_scan_pddp = "LGINTBPMO"
 
     landmark_maxipak_scan_premium = landmark_maxipak_scan_premium_ups_standard_ddp
 
@@ -101,12 +104,9 @@ class ShippingService(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    landmark_shipment_insurance_freight = lib.OptionEnum(
-        "ShipmentInsuranceFreight", float
-    )
-    landmark_order_insurance_freight_total = lib.OptionEnum(
-        "OrderInsuranceFreightTotal", float
-    )
+    # fmt: off
+    landmark_shipment_insurance_freight = lib.OptionEnum("ShipmentInsuranceFreight", float)
+    landmark_order_insurance_freight_total = lib.OptionEnum("OrderInsuranceFreightTotal", float)
 
     """ Unified Option type mapping """
     landmark_produce_label = lib.OptionEnum("ProduceLabel", bool)
@@ -118,6 +118,7 @@ class ShippingOption(lib.Enum):
 
     """ unified option type mapping """
     insurance = landmark_shipment_insurance_freight
+    # fmt: on
 
 
 def shipping_options_initializer(

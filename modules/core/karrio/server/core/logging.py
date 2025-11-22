@@ -228,6 +228,27 @@ def configure_third_party_loggers(debug_mode: bool = False):
         # (they're typically not actionable in production)
         jstruct_logger.setLevel(logging.ERROR)
 
+    # Configure WeasyPrint/CSS parsing loggers to suppress CSS warnings
+    # WeasyPrint uses cssutils/tinycss2 which emit verbose CSS parsing warnings
+    # These warnings are typically not actionable and clutter the logs
+    css_loggers = [
+        "weasyprint",
+        "weasyprint.css",
+        "weasyprint.css.validation",
+        "weasyprint.html",
+        "cssutils",
+        "cssutils.css",
+        "tinycss2",
+    ]
+
+    for logger_name in css_loggers:
+        css_logger = logging.getLogger(logger_name)
+        # Suppress CSS parsing warnings - they're typically not useful
+        # Only show ERROR level and above
+        css_logger.setLevel(logging.ERROR)
+        # Disable propagation to prevent warnings from bubbling up to parent loggers
+        css_logger.propagate = False
+
 
 def get_request_context_logger(request):
     """

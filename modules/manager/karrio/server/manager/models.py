@@ -72,7 +72,6 @@ class PickupManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("pickup_carrier")
             .prefetch_related(
                 "shipments",
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -94,12 +93,13 @@ class ShipmentManager(models.Manager):
                 "return_address",
                 "billing_address",
                 "shipment_tracker",
-                "selected_rate_carrier",
                 "shipment_upload_record",
             )
             .prefetch_related(
                 "parcels",
-                "carriers",
+                "parcels__items",
+                "customs__commodities",
+                "customs__duty_billing_address",
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
@@ -112,7 +112,6 @@ class TrackingManager(models.Manager):
             .get_queryset()
             .select_related(
                 "created_by",
-                "tracking_carrier",
                 "shipment",
                 "shipment__recipient",
                 "shipment__shipper",
@@ -128,7 +127,6 @@ class DocumentUploadRecordManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("upload_carrier")
             .prefetch_related(
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
@@ -141,7 +139,6 @@ class ManifestManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("manifest_carrier")
             .defer("manifest")
             .prefetch_related(
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -483,6 +480,7 @@ class Customs(core.OwnedEntity):
 
 @core.register_model
 class Pickup(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["pickup_carrier"]
     DIRECT_PROPS = [
         "confirmation_number",
         "pickup_date",
@@ -545,6 +543,16 @@ class Pickup(core.OwnedEntity):
         handle = self.address or super()
         return handle.delete(*args, **kwargs)
 
+    @classmethod
+    def resolve_context_data(cls, queryset, context):
+        """Apply context-aware carrier config resolution for pickup_carrier."""
+        from karrio.server.providers.models.carrier import Carrier
+
+        carrier_queryset = Carrier.objects.resolve_config_for(context)
+        return queryset.prefetch_related(
+            models.Prefetch("pickup_carrier", queryset=carrier_queryset),
+        )
+
     @property
     def object_type(self):
         return "pickup"
@@ -572,6 +580,7 @@ class Pickup(core.OwnedEntity):
 
 @core.register_model
 class Tracking(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["tracking_carrier"]
     DIRECT_PROPS = [
         "metadata",
         "info",
@@ -640,6 +649,16 @@ class Tracking(core.OwnedEntity):
         "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
     )
 
+    @classmethod
+    def resolve_context_data(cls, queryset, context):
+        """Apply context-aware carrier config resolution for tracking_carrier."""
+        from karrio.server.providers.models.carrier import Carrier
+
+        carrier_queryset = Carrier.objects.resolve_config_for(context)
+        return queryset.prefetch_related(
+            models.Prefetch("tracking_carrier", queryset=carrier_queryset),
+        )
+
     @property
     def object_type(self):
         return "tracker"
@@ -683,6 +702,7 @@ class Tracking(core.OwnedEntity):
 
 @core.register_model
 class Shipment(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["selected_rate_carrier", "carriers"]
     DIRECT_PROPS = [
         "options",
         "services",
@@ -833,6 +853,25 @@ class Shipment(core.OwnedEntity):
         self.customs and self.customs.delete()
         return super().delete(*args, **kwargs)
 
+    @classmethod
+    def resolve_context_data(cls, queryset, context):
+        """
+        Apply context-aware prefetching for carriers with proper config resolution.
+        This is called by access_by() to ensure carrier configs are resolved for the request context.
+        """
+        from karrio.server.providers.models.carrier import Carrier
+
+        # Resolve carrier configs with the request context for user/org-specific config
+        carrier_queryset = Carrier.objects.resolve_config_for(context)
+
+        # Re-apply carrier prefetches with context-aware config resolution
+        # Note: Manager's get_queryset() already sets up base prefetches with context=None
+        # This overrides those prefetches with context-aware ones when called via access_by()
+        return queryset.prefetch_related(
+            models.Prefetch("carriers", queryset=carrier_queryset),
+            models.Prefetch("selected_rate_carrier", queryset=carrier_queryset),
+        )
+
     @property
     def object_type(self):
         return "shipment"
@@ -910,6 +949,7 @@ class Shipment(core.OwnedEntity):
 
 @core.register_model
 class DocumentUploadRecord(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["upload_carrier"]
     HIDDEN_PROPS = (
         "upload_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -951,6 +991,16 @@ class DocumentUploadRecord(core.OwnedEntity):
         related_name="shipment_upload_record",
     )
 
+    @classmethod
+    def resolve_context_data(cls, queryset, context):
+        """Apply context-aware carrier config resolution for upload_carrier."""
+        from karrio.server.providers.models.carrier import Carrier
+
+        carrier_queryset = Carrier.objects.resolve_config_for(context)
+        return queryset.prefetch_related(
+            models.Prefetch("upload_carrier", queryset=carrier_queryset),
+        )
+
     # Computed properties
 
     @property
@@ -987,6 +1037,8 @@ class Manifest(core.OwnedEntity):
         verbose_name_plural = "Manifests"
         ordering = ["-created_at"]
 
+    CONTEXT_RELATIONS = ["manifest_carrier"]
+
     id = models.CharField(
         max_length=50,
         primary_key=True,
@@ -1015,6 +1067,16 @@ class Manifest(core.OwnedEntity):
     # System Reference fields
 
     manifest_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
+
+    @classmethod
+    def resolve_context_data(cls, queryset, context):
+        """Apply context-aware carrier config resolution for manifest_carrier."""
+        from karrio.server.providers.models.carrier import Carrier
+
+        carrier_queryset = Carrier.objects.resolve_config_for(context)
+        return queryset.prefetch_related(
+            models.Prefetch("manifest_carrier", queryset=carrier_queryset),
+        )
 
     # Computed properties
 

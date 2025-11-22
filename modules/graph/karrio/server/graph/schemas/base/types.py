@@ -1067,7 +1067,6 @@ class PaymentType:
     paid_by: typing.Optional[utils.PaidByEnum] = None
     currency: typing.Optional[utils.CurrencyCodeEnum] = None
 
-
 @strawberry.type
 class ShipmentType:
     id: str
@@ -1316,7 +1315,9 @@ class SystemConnectionType:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
         connections = filters.CarrierFilters(
             _filter.to_dict(),
-            providers.Carrier.system_carriers.filter(
+            providers.Carrier.system_carriers.resolve_config_for(
+                info.context.request
+            ).filter(
                 active=True,
                 test_mode=getattr(info.context.request, "test_mode", False),
             ),
@@ -1368,7 +1369,7 @@ class CarrierConnectionType:
     @staticmethod
     @utils.utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
+    @utils.authorization_required(["read_carriers"])
     def resolve(
         info,
         id: str,
@@ -1381,7 +1382,7 @@ class CarrierConnectionType:
     @staticmethod
     @utils.utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
+    @utils.authorization_required(["read_carriers"])
     def resolve_list(
         info,
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,

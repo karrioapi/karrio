@@ -5246,6 +5246,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  teleship = "teleship",
   tge = "tge",
   tnt = "tnt",
   ups = "ups",
@@ -5409,6 +5410,7 @@ export interface DeleteMutationInput {
 export interface LogFilter {
   offset?: number | null;
   first?: number | null;
+  query?: string | null;
   api_endpoint?: string | null;
   remote_addr?: string | null;
   date_after?: any | null;

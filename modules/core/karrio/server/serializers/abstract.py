@@ -2,11 +2,11 @@ import yaml
 import pydoc
 import typing
 from django.db import models
-from django.conf import empty, settings
+from django.conf import settings
 from django.db import transaction
-from rest_framework import serializers
 from django.forms.models import model_to_dict
 from drf_spectacular.types import OpenApiTypes
+from rest_framework import serializers, request
 
 import karrio.lib as lib
 from karrio.server.core.logging import logger
@@ -21,6 +21,9 @@ class Context(typing.NamedTuple):
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+
+RequestContext = typing.Union[Context, dict, request.Request]
 
 
 class DecoratedSerializer:
@@ -156,7 +159,9 @@ def PaginatedResult(serializer_name: str, content_serializer: typing.Type[Serial
     )
 
 
-def owned_model_serializer(serializer: typing.Type[Serializer]):
+def owned_model_serializer(
+    serializer: typing.Type[typing.Union[Serializer, ModelSerializer]],
+):
     class MetaSerializer(serializer):  # type: ignore
         context: dict = {}
 
@@ -195,15 +200,15 @@ def owned_model_serializer(serializer: typing.Type[Serializer]):
                 instance = super().create(payload, context=self.__context)
                 link_org(instance, self.__context)  # Link to organization if supported
             except Exception as e:
-                # Log simple error without traceback (exception handler will log full details)
+                # Log exception with full traceback for debugging
                 meta = getattr(self.__class__, "Meta", None)
-                model_name = getattr(getattr(meta, "model", None), "__name__", "Unknown")
-                logger.error(
-                    "Failed to create {} instance using {}",
-                    model_name,
-                    self.__class__.__name__,
+                model_name = getattr(
+                    getattr(meta, "model", None), "__name__", "Unknown"
                 )
-                raise e
+                logger.exception(
+                    f"Failed to create {model_name} instance using {self.__class__.__name__}: {str(e)}"
+                )
+                raise
 
             return instance
 
@@ -216,18 +221,22 @@ def owned_model_serializer(serializer: typing.Type[Serializer]):
 
 
 def link_org(entity: ModelSerializer, context: Context):
-    if (
-        context.org is not None
-        and hasattr(entity, "org")
-        and hasattr(entity.org, "exists")
-        and not entity.org.exists()
-    ):
-        entity.link = entity.__class__.link.related.related_model.objects.create(
-            org=context.org, item=entity
-        )
-        entity.save(
-            update_fields=(["created_at"] if hasattr(entity, "created_at") else [])
-        )
+    from django.utils.functional import SimpleLazyObject
+
+    # Evaluate org from context (handles SimpleLazyObject)
+    org = (
+        context.org if not isinstance(context.org, SimpleLazyObject)
+        else (context.org if context.org else None)
+    )
+
+    # Check if entity can be linked to org
+    entity_org = getattr(entity, "org", None)
+    has_org_relation = entity_org is not None and hasattr(entity_org, "exists")
+    should_link = org is not None and has_org_relation and not entity_org.exists()
+
+    if should_link:
+        entity.link = entity.__class__.link.related.related_model.objects.create(org=org, item=entity)
+        entity.save(update_fields=(["created_at"] if hasattr(entity, "created_at") else []))
 
 
 def bulk_link_org(entities: typing.List[models.Model], context: Context):
@@ -415,6 +424,80 @@ def is_field_optional(model, field_name: str) -> bool:
     return False
 
 
+def deep_merge_remove_nulls(base: dict, updates: dict) -> dict:
+    """Deep merge two dictionaries, removing keys with null values from updates.
+
+    Args:
+        base: The base dictionary (existing data)
+        updates: The updates dictionary (new data with potential nulls to remove)
+
+    Returns:
+        Merged dictionary with null values removed
+
+    Examples:
+        >>> base = {"a": 1, "b": {"c": 2, "d": 3}}
+        >>> updates = {"b": {"c": null, "e": 4}}
+        >>> deep_merge_remove_nulls(base, updates)
+        {"a": 1, "b": {"d": 3, "e": 4}}  # c removed due to null
+    """
+    result = base.copy()
+
+    for key, value in updates.items():
+        if value is None:
+            # Explicit null means remove the key
+            result.pop(key, None)
+        elif isinstance(value, dict) and isinstance(result.get(key), dict):
+            # Both are dicts: recursively merge
+            result[key] = deep_merge_remove_nulls(result[key], value)
+        else:
+            # Overwrite with new value
+            result[key] = value
+
+    return result
+
+
+def process_nested_dictionaries_mutations(
+    keys: typing.List[str], payload: dict, entity
+) -> dict:
+    """Process nested dictionary mutations with deep merge and null removal.
+
+    This function is designed for complex nested JSON fields where you need:
+    - Deep merging of nested objects
+    - Removal of keys when explicit null is sent
+    - Preservation of unaffected nested keys
+
+    Use this for fields like shipping rule actions/conditions that have nested extensions.
+    For simple flat dictionaries, use process_dictionaries_mutations instead.
+
+    Args:
+        keys: List of field names to process
+        payload: Input data from mutation
+        entity: Existing entity instance
+
+    Returns:
+        Updated payload with deep merged values
+
+    Examples:
+        Existing: {"actions": {"select_service": {"carrier": "ups"}, "extensions": {"old": "data"}}}
+        Update: {"actions": {"extensions": {"new": "data"}}}
+        Result: {"actions": {"select_service": {"carrier": "ups"}, "extensions": {"old": "data", "new": "data"}}}
+    """
+    data = payload.copy()
+
+    for key in [k for k in keys if k in payload]:
+        existing_value = getattr(entity, key, None) or {}
+        new_value = payload.get(key)
+
+        if new_value is None:
+            # Explicit null means clear the entire field
+            data[key] = {}
+        else:
+            # Deep merge with null removal
+            data[key] = deep_merge_remove_nulls(existing_value, new_value)
+
+    return data
+
+
 def process_dictionaries_mutations(
     keys: typing.List[str], payload: dict, entity
 ) -> dict:
@@ -423,8 +506,10 @@ def process_dictionaries_mutations(
     """
     data = payload.copy()
 
-    for key in [k for k in keys if k in payload]:
-        value = lib.to_dict({**getattr(entity, key, {}), **payload.get(key, {})})
+    for key in [k for k in keys if k in payload and payload.get(k) is not None]:
+        value = lib.to_dict(
+            {**(getattr(entity, key, None) or {}), **(payload.get(key, None) or {})}
+        )
         data.update({key: value})
 
     return data

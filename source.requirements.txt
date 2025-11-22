@@ -80,6 +80,7 @@ karrio_server_manager @ file://${PWD}/modules/manager
 karrio_server_orders @ file://${PWD}/modules/orders
 karrio_server_pricing @ file://${PWD}/modules/pricing
 karrio_server_proxy @ file://${PWD}/modules/proxy
+karrio_teleship @ file://${PWD}/modules/connectors/teleship
 karrio_ups @ file://${PWD}/modules/connectors/ups
 karrio_usps @ file://${PWD}/modules/connectors/usps
 karrio_usps_international @ file://${PWD}/modules/connectors/usps_international
@@ -108,7 +109,7 @@ opentelemetry-sdk==1.38.0
 opentelemetry-semantic-conventions==0.59b0
 opentelemetry-util-http==0.59b0
 packaging==25.0
-phonenumbers==9.0.18
+phonenumbers==9.0.19
 pillow==12.0.0
 posthog==7.0.1
 protobuf==6.33.1
@@ -134,7 +135,7 @@ rpds-py==0.29.0
 sentry-sdk==2.45.0
 six==1.17.0
 sqlparse==0.5.3
-strawberry-graphql==0.286.0
+strawberry-graphql==0.287.0
 tablib==3.9.0
 tinycss2==1.5.0
 tinyhtml5==2.0.0

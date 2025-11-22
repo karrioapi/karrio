@@ -67,6 +67,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # HTTPS configuration
 if USE_HTTPS is True:
     global SECURE_SSL_REDIRECT
+    global SECURE_REDIRECT_EXEMPT
     global SECURE_PROXY_SSL_HEADER
     global SESSION_COOKIE_SECURE
     global SECURE_HSTS_SECONDS
@@ -75,6 +76,8 @@ if USE_HTTPS is True:
     global SECURE_HSTS_PRELOAD
 
     SECURE_SSL_REDIRECT = True
+    # Exempt health check endpoint from HTTPS redirect for Kubernetes probes
+    SECURE_REDIRECT_EXEMPT = [r'^status/$']
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 1
@@ -383,6 +386,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 AUTH_USER_MODEL = "user.User"
+
+
+# Session configuration
+# Use a unique session cookie name to prevent conflicts with other applications
+# (e.g., ORY Kratos sessions in the shipping-app frontend)
+SESSION_COOKIE_NAME = config("SESSION_COOKIE_NAME", default="karrio_sessionid")
+SESSION_COOKIE_PATH = config("SESSION_COOKIE_PATH", default="/")
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = config("SESSION_COOKIE_SAMESITE", default="Lax")
+# SESSION_COOKIE_DOMAIN is intentionally not set to allow per-host cookies
 
 
 # Internationalization

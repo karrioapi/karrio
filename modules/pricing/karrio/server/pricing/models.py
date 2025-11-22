@@ -14,11 +14,13 @@ from karrio.server.core.logging import logger
 
 
 @core.register_model
-class Surcharge(core.Entity):
+class Surcharge(core.ControlledAccessModel, core.Entity):
     class Meta:
         db_table = "surcharge"
         verbose_name = "Markup"
         verbose_name_plural = "Markups"
+
+    CONTEXT_RELATIONS = ["carrier_accounts"]
 
     id = models.CharField(
         max_length=50,

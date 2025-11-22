@@ -24,9 +24,31 @@ def setup_groups(**_):
         permissions=Permission.objects.filter(content_type__app_label="apps"),
     )
 
-    # manage_carriers
+    # manage_carriers (deprecated - kept for backward compatibility)
     setup_group(
         serializers.PermissionGroup.manage_carriers.name,
+        permissions=[
+            *Permission.objects.filter(content_type__app_label="providers"),
+            *Permission.objects.filter(
+                models.Q(content_type__app_label="orgs")
+                & models.Q(name__icontains="carrier")
+            ),
+        ],
+        override=True,
+    )
+
+    # read_carriers (view permissions only)
+    setup_group(
+        serializers.PermissionGroup.read_carriers.name,
+        permissions=Permission.objects.filter(
+            content_type__app_label="providers", name__icontains="view"
+        ),
+        override=True,
+    )
+
+    # write_carriers (create, update, delete permissions)
+    setup_group(
+        serializers.PermissionGroup.write_carriers.name,
         permissions=[
             *Permission.objects.filter(content_type__app_label="providers"),
             *Permission.objects.filter(

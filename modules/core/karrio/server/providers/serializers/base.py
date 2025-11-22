@@ -201,7 +201,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
         context: serializers.Context,
         **kwargs,
     ) -> providers.Carrier:
-        config = validated_data.pop("config")
+        config = validated_data.pop("config", None)
         carrier_name = validated_data.pop("carrier_name")
         default_capabilities = references.get_carrier_capabilities(carrier_name)
         capabilities = lib.identity(

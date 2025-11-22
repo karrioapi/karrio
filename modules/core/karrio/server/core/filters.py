@@ -601,6 +601,10 @@ class TrackerFilters(filters.FilterSet):
 
 
 class LogFilter(filters.FilterSet):
+    query = filters.CharFilter(
+        method="query_filter",
+        help_text="search in entity_id, path, and other log fields",
+    )
     api_endpoint = filters.CharFilter(field_name="path", lookup_expr="icontains")
     remote_addr = filters.CharFilter(field_name="remote_addr", lookup_expr="exact")
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
@@ -640,6 +644,16 @@ class LogFilter(filters.FilterSet):
             return queryset.filter(status_code__range=[400, 599])
 
         return queryset
+
+    def query_filter(self, queryset, name, value):
+        return queryset.filter(
+            models.Q(entity_id__icontains=value) |
+            models.Q(data__icontains=value) |
+            models.Q(path__icontains=value) |
+            models.Q(remote_addr__icontains=value) |
+            models.Q(host__icontains=value) |
+            models.Q(method__icontains=value)
+        )
 
     def keyword_filter(self, queryset, name, value):
         return queryset.filter(

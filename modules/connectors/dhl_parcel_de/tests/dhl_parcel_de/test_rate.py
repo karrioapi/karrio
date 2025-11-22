@@ -33,7 +33,7 @@ class TestDHLParcelDEServiceFiltering(unittest.TestCase):
         # Check that we have both domestic and international services
         service_codes = [s.service_code for s in self.services]
         self.assertIn("dhl_parcel_de_paket", service_codes)
-        self.assertIn("dhl_parcel_de_paket_international", service_codes)
+        self.assertIn("dhl_parcel_de_europaket", service_codes)
 
     def test_domestic_service_marked_correctly(self):
         """Test that domestic service has domicile=True."""
@@ -53,11 +53,7 @@ class TestDHLParcelDEServiceFiltering(unittest.TestCase):
     def test_international_service_marked_correctly(self):
         """Test that international service has international=True and domicile=False."""
         international_service = next(
-            (
-                s
-                for s in self.services
-                if s.service_code == "dhl_parcel_de_paket_international"
-            ),
+            (s for s in self.services if s.service_code == "dhl_parcel_de_europaket"),
             None,
         )
 
@@ -106,7 +102,7 @@ class TestDHLParcelDEServiceFiltering(unittest.TestCase):
         service_codes = [rate.service for rate in rates]
         self.assertIn("dhl_parcel_de_paket", service_codes)
         self.assertNotIn(
-            "dhl_parcel_de_paket_international",
+            "dhl_parcel_de_europaket",
             service_codes,
             "International services should not be returned for domestic requests",
         )
@@ -146,7 +142,7 @@ class TestDHLParcelDEServiceFiltering(unittest.TestCase):
 
         # All returned services should be international
         service_codes = [rate.service for rate in rates]
-        self.assertIn("dhl_parcel_de_paket_international", service_codes)
+        self.assertIn("dhl_parcel_de_europaket", service_codes)
         self.assertNotIn(
             "dhl_parcel_de_paket",
             service_codes,

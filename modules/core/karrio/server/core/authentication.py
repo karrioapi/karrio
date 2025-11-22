@@ -300,11 +300,13 @@ def get_request_org(request, user, org_id: str = None, default_org=None):
                 org = default_org
             elif user and hasattr(user, "id") and user.id:
                 orgs = Organization.objects.filter(users__id=user.id)
-                org = (
-                    orgs.filter(id=org_id).first()
-                    if org_id is not None and orgs.filter(id=org_id).exists()
-                    else orgs.filter(is_active=True).first()
-                )
+                org = None
+
+                if org_id is not None:
+                    org = orgs.filter(id=org_id).first()
+
+                if org is None:
+                    org = orgs.filter(is_active=True).first()
             else:
                 org = None
 

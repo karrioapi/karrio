@@ -84,6 +84,29 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
+    def test_parse_validation_messages_response(self):
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
+            mock.return_value = ValidationMessagesErrorResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedValidationMessagesErrorResponse
+            )
+
+    def test_parse_multiple_validation_messages_response(self):
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
+            mock.return_value = MultipleValidationMessagesErrorResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedMultipleValidationMessagesErrorResponse,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -405,3 +428,120 @@ ErrorResponse = """{
   "detail": "Unauthorized for given resource."
 }
 """
+
+ValidationMessagesErrorResponse = """{
+  "status": {
+    "title": "Error",
+    "statusCode": 400,
+    "instance": "string",
+    "detail": "Validation failed."
+  },
+  "items": [
+    {
+      "shipmentNo": "340434310428091700",
+      "validationMessages": [
+        {
+          "property": "shipper.addressStreet",
+          "validationMessage": "Street name is required",
+          "validationState": "Error"
+        }
+      ]
+    }
+  ]
+}
+"""
+
+ParsedValidationMessagesErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
+            "code": "400",
+            "details": {"instance": "string", "title": "Error"},
+            "message": "Validation failed.",
+        },
+        {
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
+            "code": "Error",
+            "details": {
+                "property": "shipper.addressStreet",
+                "shipmentNo": "340434310428091700",
+                "validationState": "Error",
+            },
+            "message": "shipper.addressStreet: Street name is required",
+        },
+    ],
+]
+
+MultipleValidationMessagesErrorResponse = """{
+  "status": {
+    "title": "ok",
+    "statusCode": 200,
+    "instance": "string",
+    "detail": "The Webservice call ran successfully."
+  },
+  "items": [
+    {
+      "shipmentNo": "340434310428091701",
+      "validationMessages": [
+        {
+          "property": "consignee.postalCode",
+          "validationMessage": "Postal code format is invalid",
+          "validationState": "Error"
+        },
+        {
+          "property": "consignee.city",
+          "validationMessage": "City name is required",
+          "validationState": "Error"
+        },
+        {
+          "property": "details.weight",
+          "validationMessage": "Weight exceeds maximum limit",
+          "validationState": "Warning"
+        }
+      ]
+    }
+  ]
+}
+"""
+
+ParsedMultipleValidationMessagesErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
+            "code": "Error",
+            "details": {
+                "property": "consignee.postalCode",
+                "shipmentNo": "340434310428091701",
+                "validationState": "Error",
+            },
+            "message": "consignee.postalCode: Postal code format is invalid",
+        },
+        {
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
+            "code": "Error",
+            "details": {
+                "property": "consignee.city",
+                "shipmentNo": "340434310428091701",
+                "validationState": "Error",
+            },
+            "message": "consignee.city: City name is required",
+        },
+        {
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
+            "code": "Warning",
+            "details": {
+                "property": "details.weight",
+                "shipmentNo": "340434310428091701",
+                "validationState": "Warning",
+            },
+            "message": "details.weight: Weight exceeds maximum limit",
+        },
+    ],
+]

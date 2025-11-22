@@ -1,5 +1,9 @@
-from django.db import transaction
+from typing import Optional
+from django.conf import settings
+from django.apps import apps as django_apps
+from django.db import transaction, IntegrityError
 from rest_framework import status
+from django.utils.functional import SimpleLazyObject
 
 from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (
@@ -10,6 +14,86 @@ from karrio.server.serializers import (
 from karrio.server.core.logging import logger
 import karrio.server.orders.serializers as serializers
 import karrio.server.orders.models as models
+
+
+class ScopeResolver:
+    """Chain of responsibility for order scope resolution.
+
+    Determines whether orders are scoped to an organization or user,
+    supporting both multi-org and single-org deployments.
+    """
+
+    @staticmethod
+    def from_context(context) -> str:
+        """Resolve scope from request context.
+
+        Returns:
+            str: Scope identifier in format 'org:{id}' or 'user:{id}'
+
+        Raises:
+            APIException: If no authenticated user is found
+        """
+        user, org = ScopeResolver._extract_context(context)
+
+        if scope_id := ScopeResolver._resolve_org_scope(org, user):
+            return f"org:{scope_id}"
+
+        if user_id := getattr(user, "id", None):
+            return f"user:{user_id}"
+
+        raise APIException(
+            "An authenticated user is required to create orders.",
+            code="user_required",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @staticmethod
+    def _extract_context(context):
+        """Extract user and org from various context types."""
+        if isinstance(context, dict):
+            user = context.get("user")
+            org = context.get("org")
+        else:
+            user = getattr(context, "user", None)
+            org = getattr(context, "org", None)
+
+        # Unwrap lazy objects
+        if isinstance(org, SimpleLazyObject):
+            org = getattr(org, "_wrapped", None)
+
+        return user, org
+
+    @staticmethod
+    def _resolve_org_scope(org, user) -> Optional[str]:
+        """Try to resolve organization scope if multi-org is enabled."""
+        if not (
+            settings.MULTI_ORGANIZATIONS
+            and django_apps.is_installed("karrio.server.orgs")
+        ):
+            return None
+
+        # Try direct org first
+        if org_id := getattr(org, "id", None):
+            return org_id
+
+        # Fallback to user's first active org
+        user_id = getattr(user, "id", None)
+        if user_id:
+            try:
+                import karrio.server.orgs.models as orgs
+
+                org_obj = orgs.Organization.objects.filter(
+                    users__id=user_id, is_active=True
+                ).first()
+                return getattr(org_obj, "id", None)
+            except (ModuleNotFoundError, AttributeError):
+                pass
+
+        return None
+
+
+# Backward compatibility alias
+resolve_order_scope = ScopeResolver.from_context
 
 
 @owned_model_serializer
@@ -24,6 +108,9 @@ class OrderSerializer(serializers.OrderData):
     @transaction.atomic
     def create(self, validated_data: dict, context: dict, **kwargs) -> models.Order:
         test_mode = getattr(context, "test_mode", False)
+        scope = ScopeResolver.from_context(context)
+        source = validated_data.get("source") or "API"
+        order_identifier = validated_data.get("order_id")
 
         order_data = {
             **{
@@ -52,7 +139,15 @@ class OrderSerializer(serializers.OrderData):
             ),
         }
 
-        order = models.Order.objects.create(**order_data)
+        # Acquire deduplication lock and create order
+        with models.OrderKey.objects.acquire_lock(
+            scope=scope,
+            source=source,
+            order_reference=order_identifier,
+            test_mode=test_mode,
+        ) as lock:
+            order = models.Order.objects.create(**order_data)
+            lock.bind_order(order)
 
         save_many_to_many_data(
             "line_items",

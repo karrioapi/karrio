@@ -17,6 +17,7 @@ import {
   loadUserData,
   getCurrentDomain,
   requireAuthentication,
+  requireOrganization,
 } from "@karrio/core/context/main";
 import { DeveloperToolsProvider, DeveloperToolsDrawer } from "@karrio/developers";
 
@@ -34,6 +35,8 @@ export default async function Layout({
   const user = await loadUserData(session, metadata.metadata as Metadata, domain!);
   const org = await loadOrgData(session, metadata.metadata as Metadata, domain!);
   const orgId = ((session as any)?.orgId as string) || null;
+
+  await requireOrganization(session, metadata.metadata as Metadata, org);
 
   const pageProps = {
     orgId,

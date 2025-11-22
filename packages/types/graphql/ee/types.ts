@@ -3423,6 +3423,8 @@ export interface CreateShippingRuleMutationInput {
   priority?: number | null;
   conditions?: ShippingRuleConditionsInput | null;
   actions?: ShippingRuleActionsInput | null;
+  conditions_extensions?: any | null;
+  actions_extensions?: any | null;
   metadata?: any | null;
   is_active?: boolean | null;
 }
@@ -3437,6 +3439,7 @@ export interface ShippingRuleConditionsInput {
   metadata?: any | null;
   address_type?: AddressTypeConditionInput | null;
   value?: number | null;
+  extensions?: any | null;
 }
 
 // null
@@ -3468,6 +3471,7 @@ export interface AddressTypeConditionInput {
 export interface ShippingRuleActionsInput {
   select_service?: SelectServiceActionInput | null;
   block_service?: boolean | null;
+  extensions?: any | null;
 }
 
 // null
@@ -3486,6 +3490,8 @@ export interface UpdateShippingRuleMutationInput {
   priority?: number | null;
   conditions?: ShippingRuleConditionsInput | null;
   actions?: ShippingRuleActionsInput | null;
+  conditions_extensions?: any | null;
+  actions_extensions?: any | null;
   metadata?: any | null;
   is_active?: boolean | null;
 }

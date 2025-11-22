@@ -29,7 +29,11 @@ export async function getCurrentDomain(): Promise<string | null> {
 }
 
 export async function requireAuthentication(session: Session | null) {
-  if (!session || (session as any)?.error === "RefreshAccessTokenError") {
+  const hasError = (session as any)?.error === "RefreshAccessTokenError";
+
+  logger.debug("requireAuthentication", { hasSession: !!session, hasError, error: (session as any)?.error });
+
+  if (!session || hasError) {
     const [pathname, search] = [
       (await headers()).get("x-pathname") || "/",
       (await headers()).get("x-search") || "",
@@ -41,8 +45,45 @@ export async function requireAuthentication(session: Session | null) {
       ? `?${search}`
       : `?next=${pathname}${search}`;
 
-    logger.debug("redirecting to signin");
+    logger.info("redirecting to signin", { pathname, reason: !session ? "no session" : "token error" });
     redirect(`/signin${location}`);
+  }
+}
+
+export async function requireOrganization(
+  session: Session | null,
+  metadata?: Metadata,
+  org?: any,
+) {
+  if (!session || !metadata?.MULTI_ORGANIZATIONS) {
+    logger.debug("requireOrganization: skipping", { hasSession: !!session, multiOrg: metadata?.MULTI_ORGANIZATIONS });
+    return;
+  }
+
+  const pathname = (await headers()).get("x-pathname") || "/";
+
+  // Skip check if already on create-organization page
+  if (pathname.includes("/create-organization")) {
+    logger.debug("requireOrganization: already on create-organization page");
+    return;
+  }
+
+  const organizations = org?.organizations || [];
+  const hasOrgId = !!(session as any)?.orgId;
+
+  logger.debug("requireOrganization: checking organizations", {
+    count: organizations.length,
+    pathname,
+    hasOrgId,
+    orgId: (session as any)?.orgId,
+    hasError: !!org?.error
+  });
+
+  // If user has an orgId in session but no organizations loaded, there might be a query error
+  // Don't redirect in this case to avoid infinite loops
+  if (!organizations.length && !hasOrgId) {
+    logger.info("redirecting to create-organization", { pathname });
+    redirect("/create-organization");
   }
 }
 
@@ -162,7 +203,7 @@ export async function loadUserData(session: any, metadata?: Metadata, domain?: s
 
 export async function loadOrgData(session: any, metadata?: Metadata, domain?: string) {
   if (!session || !metadata || !metadata.MULTI_ORGANIZATIONS) {
-    return { organization: null };
+    return { organizations: [] };
   }
 
   const API_URL = await getAPIURL(metadata, domain);
@@ -185,7 +226,7 @@ export async function loadOrgData(session: any, metadata?: Metadata, domain?: st
         ? ServerErrorCode.API_AUTH_ERROR
         : ServerErrorCode.API_CONNECTION_ERROR;
       return {
-        data: {},
+        data: [],
         error: {
           code,
           message: `
@@ -316,9 +357,6 @@ const ACCOUNT_DATA_QUERY = `{
   }
 }`;
 const ORG_DATA_QUERY = `{
-  organization {
-    id
-  }
   organizations(filter: {is_active: true}) {
     page_info {
       count

@@ -20,6 +20,7 @@ django-debug-toolbar
 -e ./modules/connectors/purolator
 -e ./modules/connectors/seko
 -e ./modules/connectors/sendle
+-e ./modules/connectors/teleship
 -e ./modules/connectors/ups
 -e ./modules/connectors/usps
 -e ./modules/connectors/usps_international

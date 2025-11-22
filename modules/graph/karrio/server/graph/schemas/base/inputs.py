@@ -10,6 +10,7 @@ import karrio.server.graph.utils as utils
 
 @strawberry.input
 class LogFilter(utils.Paginated):
+    query: typing.Optional[str] = strawberry.UNSET
     api_endpoint: typing.Optional[str] = strawberry.UNSET
     remote_addr: typing.Optional[str] = strawberry.UNSET
     date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
