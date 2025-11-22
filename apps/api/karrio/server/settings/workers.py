@@ -124,8 +124,16 @@ else:
         "ENGINE": "django.db.backends.sqlite3",
     }
 
+    # SQLite-specific Huey configuration
+    # WAL mode (Write-Ahead Logging) enables better concurrency for multiple workers
+    # Increased timeout helps handle lock contention under concurrent access
     HUEY = huey.SqliteHuey(
         name="default",
         filename=WORKER_DB_FILE_NAME,
+        # Storage-specific kwargs for better concurrent access handling
+        journal_mode="wal",  # Enable Write-Ahead Logging for better concurrency
+        timeout=30,  # Increase timeout to 30s to handle lock contention with multiple workers
+        cache_mb=16,  # Increase cache size for better performance (default: 8MB)
+        fsync=False,  # Disable forced fsync for better performance (default: False)
         **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {}),
     )
