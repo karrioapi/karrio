@@ -72,7 +72,6 @@ class PickupManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("pickup_carrier")
             .prefetch_related(
                 "shipments",
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -94,12 +93,13 @@ class ShipmentManager(models.Manager):
                 "return_address",
                 "billing_address",
                 "shipment_tracker",
-                "selected_rate_carrier",
                 "shipment_upload_record",
             )
             .prefetch_related(
                 "parcels",
-                "carriers",
+                "parcels__items",
+                "customs__commodities",
+                "customs__duty_billing_address",
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
@@ -112,7 +112,6 @@ class TrackingManager(models.Manager):
             .get_queryset()
             .select_related(
                 "created_by",
-                "tracking_carrier",
                 "shipment",
                 "shipment__recipient",
                 "shipment__shipper",
@@ -128,7 +127,6 @@ class DocumentUploadRecordManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("upload_carrier")
             .prefetch_related(
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
@@ -141,7 +139,6 @@ class ManifestManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("manifest_carrier")
             .defer("manifest")
             .prefetch_related(
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -483,6 +480,7 @@ class Customs(core.OwnedEntity):
 
 @core.register_model
 class Pickup(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["pickup_carrier"]
     DIRECT_PROPS = [
         "confirmation_number",
         "pickup_date",
@@ -572,6 +570,7 @@ class Pickup(core.OwnedEntity):
 
 @core.register_model
 class Tracking(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["tracking_carrier"]
     DIRECT_PROPS = [
         "metadata",
         "info",
@@ -683,6 +682,7 @@ class Tracking(core.OwnedEntity):
 
 @core.register_model
 class Shipment(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["selected_rate_carrier", "carriers"]
     DIRECT_PROPS = [
         "options",
         "services",
@@ -910,6 +910,7 @@ class Shipment(core.OwnedEntity):
 
 @core.register_model
 class DocumentUploadRecord(core.OwnedEntity):
+    CONTEXT_RELATIONS = ["upload_carrier"]
     HIDDEN_PROPS = (
         "upload_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -986,6 +987,8 @@ class Manifest(core.OwnedEntity):
         verbose_name = "Manifest"
         verbose_name_plural = "Manifests"
         ordering = ["-created_at"]
+
+    CONTEXT_RELATIONS = ["manifest_carrier"]
 
     id = models.CharField(
         max_length=50,

@@ -3,6 +3,7 @@ import functools
 import django.conf as conf
 import django.forms as forms
 import django.db.models as models
+from django.db.models import Q, OuterRef, Subquery, Case, When, IntegerField
 
 import karrio.lib as lib
 import karrio.sdk as karrio
@@ -21,37 +22,80 @@ DIMENSION_UNITS = [(c.name, c.name) for c in units.DimensionUnit]
 CAPABILITIES_CHOICES = [(c, c) for c in units.CarrierCapabilities.get_capabilities()]
 
 
+class CarrierQuerySet(models.QuerySet):
+    def resolve_config_for(self, context):
+        from karrio.server.providers.models.config import CarrierConfig
+
+        if context is None:
+            return self
+
+        user = getattr(context, "user", None)
+        org = getattr(context, "org", None)
+
+        if isinstance(context, dict):
+            user = user or context.get("user")
+            org = org or context.get("org")
+
+        # 1. Define what "My Config" looks like (User or Org specific)
+        my_config_filter = Q()
+        if org:
+            my_config_filter = Q(org=org)
+        elif user and getattr(user, "is_authenticated", False):
+            my_config_filter = Q(created_by=user)
+
+        # 2. Define what "System Default" looks like
+        system_default_filter = Q(created_by__is_staff=True)
+        if hasattr(CarrierConfig, "org"):
+            system_default_filter &= Q(org__isnull=True)
+
+        # 3. Build the Subquery - only use priority if we have a user/org filter
+        config_filter = my_config_filter | system_default_filter if my_config_filter else system_default_filter
+
+        config_query = CarrierConfig.objects.filter(carrier=OuterRef("pk")).filter(config_filter)
+
+        if my_config_filter:
+            # Prioritize user/org config over system default
+            config_query = config_query.annotate(
+                priority=Case(
+                    When(my_config_filter, then=0),
+                    default=1,
+                    output_field=IntegerField(),
+                )
+            ).order_by("priority")
+
+        # 4. Annotate the queryset
+        return self.annotate(_computed_config=Subquery(config_query.values("config")[:1]))
+
+
 class Manager(models.Manager):
     def get_queryset(self):
         return (
-            super()
-            .get_queryset()
+            CarrierQuerySet(self.model, using=self._db)
             .select_related(
                 "created_by",
+                "rate_sheet",
                 *(("link",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
+            .prefetch_related(
+                "active_users",
+                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
         )
+
+    def resolve_config_for(self, context):
+        return self.get_queryset().resolve_config_for(context)
 
 
 class CarrierManager(Manager):
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related(
-                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-            )
-            .filter(is_system=False)
-        )
+        return super().get_queryset().filter(is_system=False)
 
 
 class SystemCarrierManager(models.Manager):
     def get_queryset(self):
         return (
-            super()
-            .get_queryset()
+            CarrierQuerySet(self.model, using=self._db)
             .prefetch_related(
-                "configs",
                 *(("active_orgs",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
             .select_related(
@@ -61,11 +105,16 @@ class SystemCarrierManager(models.Manager):
             .filter(is_system=True)
         )
 
+    def resolve_config_for(self, context):
+        return self.get_queryset().resolve_config_for(context)
+
 
 @core.register_model
 class Carrier(core.OwnedEntity):
     class Meta:
         ordering = ["test_mode", "-created_at"]
+
+    CONTEXT_RELATIONS = ["rate_sheet"]
 
     objects = Manager()
     user_carriers = CarrierManager()
@@ -180,6 +229,9 @@ class Carrier(core.OwnedEntity):
 
     @property
     def config(self) -> dict:
+        if hasattr(self, '_computed_config'):
+            return self._computed_config or {}
+
         return getattr(self.carrier_config, "config", {})
 
     @property
@@ -237,12 +289,6 @@ class Carrier(core.OwnedEntity):
     def resolve_config(
         carrier, is_user_config: bool = False, is_system_config: bool = False
     ):
-        """Resolve the config for a carrier.
-        Here are the rules:
-        - If the carrier is a system carrier, return the first config with no org
-        - If the carrier is an org carrier, return the first config from the org
-        - If the carrier is a user carrier, return the first config from the user
-        """
         import karrio.server.serializers as serializers
         import karrio.server.core.middleware as middleware
         from django.contrib.auth.models import AnonymousUser

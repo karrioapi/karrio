@@ -98,8 +98,16 @@ def order_updated(sender, instance, *args, **kwargs):
     post_create = created or "created_at" in changes
 
     if post_create:
+        class Context:
+            def __init__(self, user, org, test_mode):
+                self.user = user
+                self.org = org
+                self.test_mode = test_mode
+
+        user = instance.created_by
+        org = instance.org.first() if hasattr(instance, "org") and instance.org.exists() else None
         duplicates = (
-            models.Order.access_by(instance.created_by)
+            models.Order.access_by(Context(user, org, instance.test_mode))
             .exclude(status="cancelled")
             .filter(
                 source=instance.source,

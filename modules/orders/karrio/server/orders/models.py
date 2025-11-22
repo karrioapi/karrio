@@ -6,6 +6,7 @@ from django.db import models
 from karrio.server.core.utils import identity
 from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.manager import models as manager
+import karrio.server.providers.models as providers
 
 from karrio.server.orders.serializers.base import ORDER_STATUS
 
@@ -38,7 +39,17 @@ class LineItem(manager.Commodity):
 
 class OrderManager(models.Manager):
     def get_queryset(self):
-        return (
+        from django.db.models import Prefetch
+
+        # Get the current context if available to optimize shipment queries
+        context = None
+        try:
+            from karrio.server.core.middleware import SessionContext
+            context = SessionContext.get_current_request()
+        except:
+            pass
+
+        queryset = (
             super()
             .get_queryset()
             .select_related(
@@ -49,9 +60,20 @@ class OrderManager(models.Manager):
             )
             .prefetch_related(
                 "line_items",
-                "shipments",
             )
         )
+
+        # Only add optimized shipment prefetch if we have context
+        # This prevents issues during deletion and other edge cases
+        if context is not None:
+            shipment_qs = manager.Shipment.access_by(context)
+            queryset = queryset.prefetch_related(
+                Prefetch("shipments", queryset=shipment_qs)
+            )
+        else:
+            queryset = queryset.prefetch_related("shipments")
+
+        return queryset
 
 
 @register_model
@@ -78,6 +100,8 @@ class Order(OwnedEntity):
             # Index for archiving queries based on creation date
             models.Index(fields=["created_at"], name="order_created_at_idx"),
         ]
+
+    # CONTEXT_RELATIONS = ["shipments"]  # Temporarily disabled - causes issues during deletion
 
     id = models.CharField(
         max_length=50,

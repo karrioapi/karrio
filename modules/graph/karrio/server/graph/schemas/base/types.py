@@ -1316,7 +1316,9 @@ class SystemConnectionType:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
         connections = filters.CarrierFilters(
             _filter.to_dict(),
-            providers.Carrier.system_carriers.filter(
+            providers.Carrier.system_carriers.resolve_config_for(
+                info.context.request
+            ).filter(
                 active=True,
                 test_mode=getattr(info.context.request, "test_mode", False),
             ),
