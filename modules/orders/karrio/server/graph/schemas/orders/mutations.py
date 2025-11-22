@@ -27,21 +27,18 @@ class CreateOrderMutation(utils.BaseMutation):
     ) -> "CreateOrderMutation":
         test_mode = info.context.request.test_mode
 
-        # Generate order_id using atomic counter
-        org_id = info.context.request.org.id
+        # Generate order_id using atomic counter per scope (organization or user)
+        scope_id = model_serializers.ScopeResolver.from_context(info.context.request)
 
         with transaction.atomic():
             # Get or create counter with immediate lock to prevent any race condition
-            counter_obj, created = models.OrderCounter.objects.select_for_update().get_or_create(
-                org_id=org_id,
-                test_mode=test_mode,
-                defaults={'counter': 0}
+            counter_obj, _ = models.OrderCounter.objects.select_for_update().get_or_create(
+                org_id=scope_id, test_mode=test_mode, defaults={"counter": 0}
             )
 
             # Increment counter atomically at database level using F() expression
             models.OrderCounter.objects.filter(id=counter_obj.id).update(
-                counter=F('counter') + 1,
-                updated_at=timezone.now()
+                counter=F("counter") + 1, updated_at=timezone.now()
             )
 
             # Refresh to get the updated counter value
@@ -49,7 +46,7 @@ class CreateOrderMutation(utils.BaseMutation):
             counter_value = counter_obj.counter
 
             # Generate sequential order_id
-            order_id = "1" + str(counter_value).zfill(5)
+            order_id = f"order_{counter_value:09d}"
 
         serializer = model_serializers.OrderSerializer(
             context=info.context.request,

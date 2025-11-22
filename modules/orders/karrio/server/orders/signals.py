@@ -97,32 +97,14 @@ def order_updated(sender, instance, *args, **kwargs):
     changes = kwargs.get("update_fields") or []
     post_create = created or "created_at" in changes
 
-    if post_create:
-        class Context:
-            def __init__(self, user, org, test_mode):
-                self.user = user
-                self.org = org
-                self.test_mode = test_mode
-
-        user = instance.created_by
-        org = instance.org.first() if hasattr(instance, "org") and instance.org.exists() else None
-        duplicates = (
-            models.Order.access_by(Context(user, org, instance.test_mode))
-            .exclude(status="cancelled")
-            .filter(
-                source=instance.source,
-                order_id=instance.order_id,
-                test_mode=instance.test_mode,
-            )
-            .count()
-        )
-
-        if duplicates > 1:
-            raise exceptions.APIException(
-                detail=f"An order with 'order_id' {instance.order_id} from {instance.source} already exists.",
-                code="duplicate_order_id",
-                status_code=status.HTTP_409_CONFLICT,
-            )
+    # Clean up deduplication lock when order reaches a terminal state
+    if not post_create and "status" in changes:
+        terminal_statuses = [
+            serializers.OrderStatus.cancelled.value,
+            serializers.OrderStatus.delivered.value,
+        ]
+        if instance.status in terminal_statuses:
+            models.OrderKey.objects.filter(order=instance).delete()
 
     if post_create:
         event = EventTypes.order_created.value
