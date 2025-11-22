@@ -1368,7 +1368,7 @@ class CarrierConnectionType:
     @staticmethod
     @utils.utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
+    @utils.authorization_required(["read_carriers"])
     def resolve(
         info,
         id: str,
@@ -1381,7 +1381,7 @@ class CarrierConnectionType:
     @staticmethod
     @utils.utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
+    @utils.authorization_required(["read_carriers"])
     def resolve_list(
         info,
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,

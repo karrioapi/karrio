@@ -36,7 +36,10 @@ class GraphTestCase(BaseAPITestCase):
                 name="Test Organization",
                 slug="test-org"
             )
-            self.organization.users.add(self.user)
+            # Add user as owner (triggers permission sync via signals)
+            owner = self.organization.add_user(self.user, is_admin=True)
+            self.organization.change_owner(owner)
+            self.organization.save()
 
             # Link token to organization
             TokenLink.objects.create(

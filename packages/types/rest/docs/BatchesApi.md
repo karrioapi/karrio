@@ -7,6 +7,7 @@ All URIs are relative to *http://localhost*
 |[**createOrders**](#createorders) | **POST** /v1/batches/orders | Create order batch|
 |[**createShipments**](#createshipments) | **POST** /v1/batches/shipments | Create shipment batch|
 |[**createTrackers**](#createtrackers) | **POST** /v1/batches/trackers | Create tracker batch|
+|[**exportFile**](#exportfile) | **GET** /v1/batches/data/export/{resource_type}.{export_format} | Export data files|
 |[**importFile**](#importfile) | **POST** /v1/batches/data/import | Import data files|
 |[**list**](#list) | **GET** /v1/batches/operations | List all batch operations|
 |[**retrieve**](#retrieve) | **GET** /v1/batches/operations/{id} | Retrieve a batch operation|
@@ -169,6 +170,64 @@ const { status, data } = await apiInstance.createTrackers(
 |-------------|-------------|------------------|
 |**200** |  |  -  |
 |**404** |  |  -  |
+|**500** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **exportFile**
+> File exportFile()
+
+
+### Example
+
+```typescript
+import {
+    BatchesApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BatchesApi(configuration);
+
+let exportFormat: 'billing' | 'order' | 'shipment' | 'trackers'; // (default to undefined)
+let resourceType: 'billing' | 'order' | 'shipment' | 'trackers'; // (default to undefined)
+let dataTemplate: string; //A data template slug to use for the import.<br/>         **When nothing is specified, the system default headers are expected.**          (optional) (default to undefined)
+
+const { status, data } = await apiInstance.exportFile(
+    exportFormat,
+    resourceType,
+    dataTemplate
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **exportFormat** | [**&#39;billing&#39; | &#39;order&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** |  | defaults to undefined|
+| **resourceType** | [**&#39;billing&#39; | &#39;order&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** |  | defaults to undefined|
+| **dataTemplate** | [**string**] | A data template slug to use for the import.&lt;br/&gt;         **When nothing is specified, the system default headers are expected.**          | (optional) defaults to undefined|
+
+
+### Return type
+
+**File**
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [JWT](../README.md#JWT), [TokenBasic](../README.md#TokenBasic), [Token](../README.md#Token)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/octet-stream, application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+|**409** |  |  -  |
 |**500** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

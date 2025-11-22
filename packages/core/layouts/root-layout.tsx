@@ -1,17 +1,12 @@
 import { ErrorBoundary } from "@karrio/ui/core/components/error-boudaries";
-import { loadMetadata, getCurrentDomain } from "@karrio/core/context/main";
 import { Toaster } from "@karrio/ui/components/ui/toaster";
 import { PublicEnvScript } from "next-runtime-env";
-import { ServerErrorCode } from "@karrio/lib";
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const domain = await getCurrentDomain();
-  const { error } = await loadMetadata(domain!);
-
   return (
     <html lang="en">
       <head>
@@ -43,31 +38,12 @@ export default async function Layout({
         <meta name="theme-color" content="#9504af" />
         <link rel="manifest" href={`/manifest.json`} />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <noscript>You need to enable JavaScript to run this app.</noscript>
 
         <div id="root" style={{ minHeight: "100vh" }}>
           <ErrorBoundary>
-            {error?.code !== ServerErrorCode.API_CONNECTION_ERROR ? (
-              children
-            ) : (
-              <section className="hero is-fullheight">
-                <div className="container">
-                  <div className="has-text-centered mt-4 mb-5">
-                    <span className="has-text-primary has-text-weight-bold is-size-4">
-                      Uh Oh!
-                    </span>
-                  </div>
-
-                  <div className="card isolated-card my-6">
-                    <div className="card-content has-text-centered ">
-                      <p>{error?.message}</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            )}
-
+            {children}
             <Toaster />
           </ErrorBoundary>
         </div>

@@ -9,7 +9,9 @@ class PermissionGroup(lib.StrEnum):
     manage_orders = "manage_orders"
     manage_data = "manage_data"
     manage_pickups = "manage_pickups"
-    manage_carriers = "manage_carriers"
+    manage_carriers = "manage_carriers"  # Deprecated: use read_carriers + write_carriers
+    read_carriers = "read_carriers"
+    write_carriers = "write_carriers"
     manage_trackers = "manage_trackers"
     manage_webhooks = "manage_webhooks"
     manage_shipments = "manage_shipments"
@@ -22,7 +24,8 @@ ROLES_GROUPS: typing.Dict[str, typing.List[str]] = {
         PermissionGroup.manage_org_owner.value,
         PermissionGroup.manage_team.value,
         PermissionGroup.manage_apps.value,
-        PermissionGroup.manage_carriers.value,
+        PermissionGroup.read_carriers.value,
+        PermissionGroup.write_carriers.value,
         PermissionGroup.manage_webhooks.value,
         PermissionGroup.manage_data.value,
         PermissionGroup.manage_orders.value,
@@ -33,10 +36,12 @@ ROLES_GROUPS: typing.Dict[str, typing.List[str]] = {
     "admin": [
         PermissionGroup.manage_team.value,
         PermissionGroup.manage_apps.value,
-        PermissionGroup.manage_carriers.value,
+        PermissionGroup.read_carriers.value,
+        PermissionGroup.write_carriers.value,
     ],
     "developer": [
         PermissionGroup.manage_webhooks.value,
+        PermissionGroup.read_carriers.value,
     ],
     "member": [
         PermissionGroup.manage_data.value,
@@ -44,5 +49,6 @@ ROLES_GROUPS: typing.Dict[str, typing.List[str]] = {
         PermissionGroup.manage_pickups.value,
         PermissionGroup.manage_trackers.value,
         PermissionGroup.manage_shipments.value,
+        PermissionGroup.read_carriers.value,
     ],
 }

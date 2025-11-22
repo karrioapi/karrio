@@ -32,6 +32,7 @@ class TokenSerializer(serializers.Serializer):
         if queyset.exists():
             return queyset.first()
 
+        # Handle multi-organization mode
         if org_id is not None and conf.settings.MULTI_ORGANIZATIONS:
             import karrio.server.orgs.models as orgs
 

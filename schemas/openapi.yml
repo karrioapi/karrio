@@ -410,6 +410,64 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: discardAddress
+  /v1/batches/data/export/{resource_type}.{export_format}:
+    get:
+      operationId: '&&&&$export_file'
+      summary: Export data files
+      parameters:
+      - in: query
+        name: data_template
+        schema:
+          type: string
+        description: "A data template slug to use for the import.<br/>\n        **When
+          nothing is specified, the system default headers are expected.**\n        "
+      - in: path
+        name: export_format
+        schema:
+          type: string
+          enum:
+          - billing
+          - order
+          - shipment
+          - trackers
+        required: true
+      - in: path
+        name: resource_type
+        schema:
+          type: string
+          enum:
+          - billing
+          - order
+          - shipment
+          - trackers
+        required: true
+      tags:
+      - Batches
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/batches/data/import:
     post:
       operationId: '&&&&$import_file'
@@ -938,8 +996,8 @@ paths:
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
           `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
           `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+          `shipengine`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -979,8 +1037,8 @@ paths:
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
           `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
           `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+          `shipengine`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1031,8 +1089,8 @@ paths:
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
           `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
           `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+          `shipengine`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1104,8 +1162,8 @@ paths:
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
           `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
           `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+          `shipengine`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -1695,8 +1753,8 @@ paths:
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
           `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
           `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+          `shipengine`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2596,6 +2654,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -2690,6 +2749,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -2784,6 +2844,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -2971,6 +3032,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -3104,6 +3166,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - teleship
           - tge
           - tnt
           - ups
@@ -3231,8 +3294,8 @@ paths:
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
           `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
           `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+          `shipengine`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3665,8 +3728,8 @@ paths:
           `dicom`, `dpd`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`,
           `generic`, `geodis`, `hay_post`, `landmark`, `laposte`, `locate2u`, `mydhl`,
           `nationex`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`,
-          `shipengine`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`,
-          `zoom2u`'
+          `shipengine`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3820,6 +3883,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - teleship
           - tge
           - tnt
           - ups
@@ -5106,6 +5170,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -5114,7 +5179,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: ebeac04838e5f7fc
           description: A carrier connection type.
         display_name:
           type: string
@@ -5201,6 +5266,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -5209,7 +5275,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: ebeac04838e5f7fc
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5304,6 +5370,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -5312,7 +5379,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: ebeac04838e5f7fc
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -6368,6 +6435,7 @@ components:
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
       - $ref: '#/components/schemas/shipengine'
+      - $ref: '#/components/schemas/teleship'
       - $ref: '#/components/schemas/tge'
       - $ref: '#/components/schemas/tnt'
       - $ref: '#/components/schemas/ups'
@@ -8562,6 +8630,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - teleship
           - tge
           - tnt
           - ups
@@ -8570,7 +8639,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0829cc4ec7f54bd3
+          x-spec-enum-id: ebeac04838e5f7fc
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -10516,6 +10585,7 @@ components:
           - royalmail
           - seko
           - sendle
+          - teleship
           - tge
           - tnt
           - ups
@@ -10524,7 +10594,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: b35b7d0cba4ec534
+          x-spec-enum-id: f8f21d4b3e109c7b
           description: The tracking carrier
         account_number:
           type: string
@@ -11575,6 +11645,19 @@ components:
           nullable: true
       required:
       - api_key
+    teleship:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        account_country_code:
+          type: string
+          nullable: true
+      required:
+      - client_id
+      - client_secret
     tge:
       type: object
       properties:
@@ -11871,6 +11954,7 @@ tags:
     | seko | SEKO Logistics |
     | sendle | Sendle |
     | shipengine | ShipEngine |
+    | teleship | Teleship |
     | tge | TGE |
     | tnt | TNT |
     | ups | UPS |
@@ -12033,9 +12117,8 @@ tags:
     | Code         | Service Name |
     | ------------ | ------------ |
     | dhl_parcel_de_paket | V01PAK |
-    | dhl_parcel_de_warenpost | V62WP |
+    | dhl_parcel_de_warenpost | V62KP |
     | dhl_parcel_de_europaket | V54EPAK |
-    | dhl_parcel_de_paket_international | V53WPAK |
     | dhl_parcel_de_warenpost_international | V66WPI |
 
     ### DHL Parcel Poland
@@ -13503,6 +13586,14 @@ tags:
     | ups_2nd_day_air | UPS 2nd Day Air |
     | ups_next_day_air | UPS Next Day Air |
     | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
+
+    ### Teleship
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | teleship_expedited_pickup | TELESHIP-EXPEDITED-PICKUP |
+    | teleship_expedited_dropoff | TELESHIP-EXPEDITED-DROPOFF |
+    | teleship_standard_dropoff | TELESHIP-STANDARD-DROPOFF |
+    | teleship_standard_pickup | TELESHIP-STANDARD-PICKUP |
 
     ### TGE
     | Code         | Service Name |

@@ -3423,6 +3423,8 @@ export interface CreateShippingRuleMutationInput {
   priority?: number | null;
   conditions?: ShippingRuleConditionsInput | null;
   actions?: ShippingRuleActionsInput | null;
+  conditions_extensions?: any | null;
+  actions_extensions?: any | null;
   metadata?: any | null;
   is_active?: boolean | null;
 }
@@ -3488,6 +3490,8 @@ export interface UpdateShippingRuleMutationInput {
   priority?: number | null;
   conditions?: ShippingRuleConditionsInput | null;
   actions?: ShippingRuleActionsInput | null;
+  conditions_extensions?: any | null;
+  actions_extensions?: any | null;
   metadata?: any | null;
   is_active?: boolean | null;
 }

@@ -221,18 +221,22 @@ def owned_model_serializer(
 
 
 def link_org(entity: ModelSerializer, context: Context):
-    if (
-        context.org is not None
-        and hasattr(entity, "org")
-        and hasattr(entity.org, "exists")
-        and not entity.org.exists()
-    ):
-        entity.link = entity.__class__.link.related.related_model.objects.create(
-            org=context.org, item=entity
-        )
-        entity.save(
-            update_fields=(["created_at"] if hasattr(entity, "created_at") else [])
-        )
+    from django.utils.functional import SimpleLazyObject
+
+    # Evaluate org from context (handles SimpleLazyObject)
+    org = (
+        context.org if not isinstance(context.org, SimpleLazyObject)
+        else (context.org if context.org else None)
+    )
+
+    # Check if entity can be linked to org
+    entity_org = getattr(entity, "org", None)
+    has_org_relation = entity_org is not None and hasattr(entity_org, "exists")
+    should_link = org is not None and has_org_relation and not entity_org.exists()
+
+    if should_link:
+        entity.link = entity.__class__.link.related.related_model.objects.create(org=org, item=entity)
+        entity.save(update_fields=(["created_at"] if hasattr(entity, "created_at") else []))
 
 
 def bulk_link_org(entities: typing.List[models.Model], context: Context):

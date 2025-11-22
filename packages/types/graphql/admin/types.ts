@@ -1831,23 +1831,50 @@ export interface GetAccountCarrierConnectionsVariables {
 //==============================================================
 
 export enum CarrierNameEnum {
+  aramex = "aramex",
+  asendia_us = "asendia_us",
   australiapost = "australiapost",
+  boxknight = "boxknight",
+  bpost = "bpost",
   canadapost = "canadapost",
+  canpar = "canpar",
+  chronopost = "chronopost",
+  colissimo = "colissimo",
   dhl_express = "dhl_express",
   dhl_parcel_de = "dhl_parcel_de",
   dhl_poland = "dhl_poland",
   dhl_universal = "dhl_universal",
+  dicom = "dicom",
   dpd = "dpd",
+  dtdc = "dtdc",
+  easypost = "easypost",
+  easyship = "easyship",
+  eshipper = "eshipper",
   fedex = "fedex",
+  freightcom = "freightcom",
   generic = "generic",
+  geodis = "geodis",
+  hay_post = "hay_post",
   landmark = "landmark",
   laposte = "laposte",
+  locate2u = "locate2u",
+  mydhl = "mydhl",
+  nationex = "nationex",
   purolator = "purolator",
+  roadie = "roadie",
+  royalmail = "royalmail",
+  sapient = "sapient",
   seko = "seko",
   sendle = "sendle",
+  shipengine = "shipengine",
+  teleship = "teleship",
+  tge = "tge",
+  tnt = "tnt",
   ups = "ups",
   usps = "usps",
   usps_international = "usps_international",
+  veho = "veho",
+  zoom2u = "zoom2u",
 }
 
 export enum CountryCodeEnum {
@@ -2488,23 +2515,55 @@ export interface InstanceConfigMutationInput {
   SHIPPING_RULES?: boolean | null;
   PERSIST_SDK_TRACING?: boolean | null;
   ENABLE_ALL_PLUGINS_BY_DEFAULT?: boolean | null;
+  ADDRESSCOMPLETE_ENABLED?: boolean | null;
+  ALLIED_EXPRESS_ENABLED?: boolean | null;
+  ALLIED_EXPRESS_LOCAL_ENABLED?: boolean | null;
+  AMAZON_SHIPPING_ENABLED?: boolean | null;
+  ARAMEX_ENABLED?: boolean | null;
+  ASENDIA_US_ENABLED?: boolean | null;
   AUSTRALIAPOST_ENABLED?: boolean | null;
+  BOXKNIGHT_ENABLED?: boolean | null;
+  BPOST_ENABLED?: boolean | null;
   CANADAPOST_ENABLED?: boolean | null;
+  CANPAR_ENABLED?: boolean | null;
+  CHRONOPOST_ENABLED?: boolean | null;
+  COLISSIMO_ENABLED?: boolean | null;
   DHL_EXPRESS_ENABLED?: boolean | null;
   DHL_PARCEL_DE_ENABLED?: boolean | null;
   DHL_POLAND_ENABLED?: boolean | null;
   DHL_UNIVERSAL_ENABLED?: boolean | null;
+  DICOM_ENABLED?: boolean | null;
   DPD_ENABLED?: boolean | null;
+  DTDC_ENABLED?: boolean | null;
+  EASYPOST_ENABLED?: boolean | null;
+  EASYSHIP_ENABLED?: boolean | null;
+  ESHIPPER_ENABLED?: boolean | null;
   FEDEX_ENABLED?: boolean | null;
+  FREIGHTCOM_ENABLED?: boolean | null;
   GENERIC_ENABLED?: boolean | null;
+  GEODIS_ENABLED?: boolean | null;
+  GOOGLEGEOCODING_ENABLED?: boolean | null;
+  HAY_POST_ENABLED?: boolean | null;
   LANDMARK_ENABLED?: boolean | null;
   LAPOSTE_ENABLED?: boolean | null;
+  LOCATE2U_ENABLED?: boolean | null;
+  MYDHL_ENABLED?: boolean | null;
+  NATIONEX_ENABLED?: boolean | null;
   PUROLATOR_ENABLED?: boolean | null;
+  ROADIE_ENABLED?: boolean | null;
+  ROYALMAIL_ENABLED?: boolean | null;
+  SAPIENT_ENABLED?: boolean | null;
   SEKO_ENABLED?: boolean | null;
   SENDLE_ENABLED?: boolean | null;
+  SHIPENGINE_ENABLED?: boolean | null;
+  TELESHIP_ENABLED?: boolean | null;
+  TGE_ENABLED?: boolean | null;
+  TNT_ENABLED?: boolean | null;
   UPS_ENABLED?: boolean | null;
   USPS_ENABLED?: boolean | null;
   USPS_INTERNATIONAL_ENABLED?: boolean | null;
+  VEHO_ENABLED?: boolean | null;
+  ZOOM2U_ENABLED?: boolean | null;
 }
 
 // null
