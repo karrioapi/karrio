@@ -1,5 +1,6 @@
 # Server dev dependencies
 django-debug-toolbar
+djangorestframework-stubs
 
 # Karrio dev packages
 -e ./modules/sdk
