@@ -63,7 +63,9 @@ def fail_safe(gateway: gateway.Gateway):
             try:
                 return func(*args, **kwargs)
             except Exception as error:
-                logger.exception("Operation failed", carrier=gateway.settings.carrier_name)
+                logger.exception(
+                    "Operation failed", carrier=gateway.settings.carrier_name
+                )
 
                 return IDeserialize(
                     functools.partial(abort, gateway=gateway, error=error)
@@ -145,7 +147,7 @@ class Address:
 
     @staticmethod
     def validate(
-        args: typing.Union[models.AddressValidationRequest, dict]
+        args: typing.Union[models.AddressValidationRequest, dict],
     ) -> IRequestFrom:
         """Validate an address
 
@@ -516,6 +518,80 @@ class Manifest:
             @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_manifest_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+
+class DutiesAndTaxes:
+    """The unified Duties & Taxes API fluent interface"""
+
+    @staticmethod
+    def fetch(
+        args: typing.Union[models.DutiesAndTaxesRequest, dict],
+    ) -> IRequestFrom:
+        """Fetch duties and taxes from a carrier
+
+        Args:
+            args (Union[DutiesAndTaxesRequest, dict]): the duties and taxes request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
+        logger.debug("Fetching duties and taxes", payload=lib.to_dict(args))
+        payload = lib.to_object(models.DutiesAndTaxesRequest, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, "fetch_duties_and_taxes")
+            if not is_valid:
+                return abortion
+
+            request: lib.Serializable = gateway.mapper.create_duties_and_taxes_request(
+                payload
+            )
+            response: lib.Deserializable = gateway.proxy.fetch_duties_and_taxes(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_duties_and_taxes_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+
+class Insurance:
+    """The unified Insurance API fluent interface"""
+
+    @staticmethod
+    def apply(args: typing.Union[models.InsuranceRequest, dict]) -> IRequestFrom:
+        """Apply insurance coverage to a package
+
+        Args:
+            args (Union[InsuranceRequest, dict]): the insurance request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
+        logger.debug(
+            "Applying insurance coverage to package", payload=lib.to_dict(args)
+        )
+        payload = lib.to_object(models.InsuranceRequest, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, "apply_insurance_coverage")
+            if not is_valid:
+                return abortion
+
+            request: lib.Serializable = gateway.mapper.create_insurance_request(payload)
+            response: lib.Deserializable = gateway.proxy.apply_insurance_coverage(
+                request
+            )
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_insurance_response(response)
 
             return IDeserialize(deserialize)
 

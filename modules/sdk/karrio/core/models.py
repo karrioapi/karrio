@@ -232,6 +232,7 @@ class AddressValidationRequest:
     """address validation request unified data type."""
 
     address: Address = JStruct[Address, REQUIRED]
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -247,6 +248,60 @@ class ManifestRequest:
 
 
 @attr.s(auto_attribs=True)
+class ChargeDetails:
+    """Karrio unified charge data type."""
+
+    name: str = None
+    amount: float = None
+    currency: str = None
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class DutiesAndTaxesRequest:
+    """duties and taxes request unified data type."""
+
+    shipment_identifier: str
+    shipper: Address = JStruct[Address, REQUIRED]
+    recipient: Address = JStruct[Address, REQUIRED]
+    customs: Customs = JStruct[Customs, REQUIRED]
+
+    shipping_charge: ChargeDetails = JStruct[ChargeDetails]
+    insurance_charge: ChargeDetails = JStruct[ChargeDetails]
+    reference: str = None
+    metadata: Dict = {}
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class InsuranceRequest:
+    """insurance request unified data type."""
+
+    shipment_identifier: str
+    amount: float = None
+    currency: str = None
+    shipper: Address = JStruct[Address, REQUIRED]
+    recipient: Address = JStruct[Address, REQUIRED]
+
+    parcel: Parcel = JStruct[Parcel]
+    provider: str = None
+    reference: str = None
+    metadata: Dict = {}
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class WebhookRegistrationRequest:
+    """webhook registration request unified data type."""
+
+    url: str
+    description: str = None
+    enabled_events: List[str] = []
+    options: Dict = {}
+    metadata: Dict = {}
+
+
+@attr.s(auto_attribs=True)
 class Message:
     """Karrio unified Message data type."""
 
@@ -256,16 +311,6 @@ class Message:
     code: str = None
     level: str = None
     details: Dict = None
-
-
-@attr.s(auto_attribs=True)
-class ChargeDetails:
-    """Karrio unified charge data type."""
-
-    name: str = None
-    amount: float = None
-    currency: str = None
-    id: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -425,6 +470,56 @@ class ConfirmationDetails:
     carrier_id: str
     success: bool
     operation: str
+
+
+@attr.s(auto_attribs=True)
+class DutiesAndTaxesDetails:
+    """Karrio unified duties and taxes details data type."""
+
+    carrier_name: str
+    carrier_id: str
+    total_charge: float
+    currency: str
+
+    charges: List[ChargeDetails] = JList[ChargeDetails]
+    meta: dict = None
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class InsuranceDetails:
+    """Karrio unified insurance details data type."""
+
+    carrier_name: str
+    carrier_id: str
+
+    fees: List[ChargeDetails] = JList[ChargeDetails]
+    meta: dict = None
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class WebhookRegistrationDetails:
+    """Karrio unified webhook registration details data type."""
+
+    carrier_name: str
+    carrier_id: str
+    secret: str
+
+    webhook_identifier: str = None
+    meta: dict = None
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class WebhookEventDetails:
+    """Karrio unified webhook event data details data type."""
+
+    carrier_name: str
+    carrier_id: str
+
+    tracking: TrackingDetails = JStruct[TrackingDetails]
+    shipment: ShipmentDetails = JStruct[ShipmentDetails]
 
 
 @attr.s(auto_attribs=True)

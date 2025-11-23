@@ -10,6 +10,7 @@ import karrio.api.mapper as mapper
 import karrio.core.models as models
 import karrio.core.errors as errors
 import karrio.references as references
+import karrio.api.callback as callback
 from karrio.core.utils.logger import logger
 
 
@@ -22,6 +23,7 @@ class Gateway:
     mapper: mapper.Mapper
     tracer: utils.Tracer
     settings: core.Settings
+    callback: callback.Callback
 
     @property
     def capabilities(self) -> typing.List[str]:
@@ -152,6 +154,7 @@ class GatewayInitializer:
                         settings=settings_value,
                         mapper=provider.Mapper(settings_value),
                         proxy=provider.Proxy(settings_value),
+                        callback=provider.Callback(settings_value),
                     )
 
                 except Exception as er:
@@ -177,4 +180,4 @@ class GatewayInitializer:
         return GatewayInitializer.__instance
 
 
-logger.info("Karrio default gateway mapper initialized")
+logger.info("Karrio SDK gateway initialized")

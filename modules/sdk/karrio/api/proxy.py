@@ -2,7 +2,6 @@
 
 import abc
 import attr
-import functools
 import karrio.lib as lib
 import karrio.core.errors as errors
 import karrio.core.settings as settings
@@ -19,6 +18,16 @@ class Proxy(abc.ABC):
 
     def trace_as(self, format: str):
         return self.settings.trace_as(format)
+
+    def authenticate(self, request: lib.Serializable) -> lib.Deserializable:
+        """Authenticate with the carrier API
+
+        Returns:
+            Deserializable: a Deserializable authentication response (xml, json, text...)
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.authenticate.__name__, self.settings.carrier_name
+        )
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to get shipment rates from a carrier webservice
@@ -178,4 +187,50 @@ class Proxy(abc.ABC):
         """
         raise errors.MethodNotSupportedError(
             self.__class__.create_manifest.__name__, self.settings.carrier_name
+        )
+
+    def fetch_duties_and_taxes(self, request: lib.Serializable) -> lib.Deserializable:
+        """Send one or many request(s) to fetch duties and taxes from a provider API.
+
+        Args:
+            request (Serializable): a provider specific serializable request data type
+
+        Returns:
+            Deserializable: a provider specific deserializable response data type
+
+        Raises:
+            MethodNotSupportedError: Is raised when the provider integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.fetch_duties_and_taxes.__name__, self.settings.carrier_name
+        )
+
+    def apply_insurance_coverage(self, request: lib.Serializable) -> lib.Deserializable:
+        """Send one or many request(s) to apply insurance coverage to a package.
+
+        Args:
+            request (Serializable): a provider specific serializable request data type
+
+        Returns:
+            Deserializable: a provider specific deserializable response data type
+
+        Raises:
+            MethodNotSupportedError: Is raised when the provider integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.apply_insurance_coverage.__name__,
+            self.settings.carrier_name,
+        )
+
+    def register_webhook(self, request: lib.Serializable) -> lib.Deserializable:
+        """Send one or many request(s) to register a webhook from a carrier webservice
+
+        Args:
+            request (Serializable): a carrier specific serializable request data type
+
+        Returns:
+            Deserializable: a carrier specific deserializable response data type
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.register_webhook.__name__, self.settings.carrier_name
         )
