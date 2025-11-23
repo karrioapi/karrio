@@ -151,4 +151,4 @@ def tracking_request(
         ],
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(request, lib.to_dict, dict(auth_type="track_auth"))

@@ -242,6 +242,19 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
+    def create_webhook_deregistration_request(
+        self, payload: models.WebhookDeregistrationRequest
+    ) -> lib.Serializable:
+        """Create a carrier specific webhook deregistration request data from payload
+
+        Args:
+            payload (WebhookDeregistrationRequest): the webhook deregistration request payload
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_webhook_deregistration_request.__name__,
+            self.settings.carrier_name,
+        )
+
     """Response Parsers"""
 
     def parse_address_validation_response(
@@ -482,5 +495,25 @@ class Mapper(abc.ABC):
         """
         raise errors.MethodNotSupportedError(
             self.__class__.parse_webhook_registration_response.__name__,
+            self.settings.carrier_name,
+        )
+
+    def parse_webhook_deregistration_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+        """Create a unified API webhook deregistration result from carrier response
+
+        Args:
+            response (Deserializable): a deserializable webhook deregistration response (xml, json, text...)
+
+        Returns:
+            Tuple[ConfirmationDetails, List[Message]]: the operation confirmation details
+                as well as errors and messages returned
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.parse_webhook_deregistration_response.__name__,
             self.settings.carrier_name,
         )

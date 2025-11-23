@@ -234,3 +234,16 @@ class Proxy(abc.ABC):
         raise errors.MethodNotSupportedError(
             self.__class__.register_webhook.__name__, self.settings.carrier_name
         )
+
+    def deregister_webhook(self, request: lib.Serializable) -> lib.Deserializable:
+        """Send one or many request(s) to deregister a webhook from a carrier webservice
+
+        Args:
+            request (Serializable): a carrier specific serializable request data type
+
+        Returns:
+            Deserializable: a carrier specific deserializable response data type
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.deregister_webhook.__name__, self.settings.carrier_name
+        )

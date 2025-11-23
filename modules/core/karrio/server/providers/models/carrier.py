@@ -49,9 +49,15 @@ class CarrierQuerySet(models.QuerySet):
             system_default_filter &= Q(org__isnull=True)
 
         # 3. Build the Subquery - only use priority if we have a user/org filter
-        config_filter = my_config_filter | system_default_filter if my_config_filter else system_default_filter
+        config_filter = (
+            my_config_filter | system_default_filter
+            if my_config_filter
+            else system_default_filter
+        )
 
-        config_query = CarrierConfig.objects.filter(carrier=OuterRef("pk")).filter(config_filter)
+        config_query = CarrierConfig.objects.filter(carrier=OuterRef("pk")).filter(
+            config_filter
+        )
 
         if my_config_filter:
             # Prioritize user/org config over system default
@@ -64,7 +70,9 @@ class CarrierQuerySet(models.QuerySet):
             ).order_by("priority")
 
         # 4. Annotate the queryset
-        return self.annotate(_computed_config=Subquery(config_query.values("config")[:1]))
+        return self.annotate(
+            _computed_config=Subquery(config_query.values("config")[:1])
+        )
 
 
 class Manager(models.Manager):
@@ -224,9 +232,11 @@ class Carrier(core.OwnedEntity):
     def display_name(self):
         import karrio.references as references
 
-        return self.credentials.get("display_name") or references.REFERENCES[
-            "carriers"
-        ].get(self.ext) or "generic"
+        return (
+            self.credentials.get("display_name")
+            or references.REFERENCES["carriers"].get(self.ext)
+            or "generic"
+        )
 
     @property
     def carrier_config(self):

@@ -596,3 +596,73 @@ class Insurance:
             return IDeserialize(deserialize)
 
         return IRequestFrom(action)
+
+
+class Webhook:
+    """The unified Webhook API fluent interface"""
+
+    @staticmethod
+    def register(
+        args: typing.Union[models.WebhookRegistrationRequest, dict],
+    ) -> IRequestFrom:
+        """Register a webhook for a carrier
+
+        Args:
+            args (Union[WebhookRegistrationRequest, dict]): the webhook registration request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
+        logger.debug("Registering webhook", payload=lib.to_dict(args))
+        payload = lib.to_object(models.WebhookRegistrationRequest, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, "register_webhook")
+            if not is_valid:
+                return abortion
+
+            request: lib.Serializable = (
+                gateway.mapper.create_webhook_registration_request(payload)
+            )
+            response: lib.Deserializable = gateway.proxy.register_webhook(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_webhook_registration_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+    @staticmethod
+    def deregister(
+        args: typing.Union[models.WebhookDeregistrationRequest, dict],
+    ) -> IRequestFrom:
+        """Deregister a webhook for a carrier
+
+        Args:
+            args (Union[WebhookDeregistrationRequest, dict]): the webhook deregistration request payload
+
+        Returns:
+            IRequestFrom: a lazy request dataclass instance
+        """
+        logger.debug("Deregistering webhook", payload=lib.to_dict(args))
+        payload = lib.to_object(models.WebhookDeregistrationRequest, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, "deregister_webhook")
+            if not is_valid:
+                return abortion
+
+            request: lib.Serializable = (
+                gateway.mapper.create_webhook_deregistration_request(payload)
+            )
+            response: lib.Deserializable = gateway.proxy.deregister_webhook(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_webhook_deregistration_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)

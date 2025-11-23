@@ -302,6 +302,14 @@ class WebhookRegistrationRequest:
 
 
 @attr.s(auto_attribs=True)
+class WebhookDeregistrationRequest:
+    """webhook deregistration request unified data type."""
+
+    webhook_id: str
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
 class Message:
     """Karrio unified Message data type."""
 

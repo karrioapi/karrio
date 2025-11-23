@@ -196,7 +196,11 @@ class Shipments:
                 "carrier": rate_provider,
                 "service_name": service_name,
                 "rate_provider": rate_provider,  # TODO: deprecate 'rate_provider' in favor of 'carrier'
-                **({"custom_carrier_name": custom_carrier_name} if custom_carrier_name else {}),
+                **(
+                    {"custom_carrier_name": custom_carrier_name}
+                    if custom_carrier_name
+                    else {}
+                ),
             }
 
         def process_selected_rate() -> dict:

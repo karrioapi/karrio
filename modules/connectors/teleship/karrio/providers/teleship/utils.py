@@ -1,4 +1,3 @@
-
 import base64
 import datetime
 import logging
@@ -33,8 +32,6 @@ class Settings(core.Settings):
     def tracking_url(self):
         return "https://track.teleship.com/{}"
 
-
-
     @property
     def connection_config(self) -> lib.units.Options:
         return lib.to_connection_config(
@@ -62,8 +59,6 @@ class Settings(core.Settings):
 def login(settings: Settings):
     """Retrieve OAuth access token from Teleship API with comprehensive error handling"""
     import karrio.providers.teleship.error as error
-
-    logger.info(f"Requesting OAuth token from Teleship API (test_mode={settings.test_mode})")
 
     try:
         result = lib.request(
@@ -122,7 +117,9 @@ def login(settings: Settings):
     if expires_in:
         # Convert milliseconds to seconds and use relative time (preferred)
         expires_in_seconds = float(expires_in) / 1000.0
-        expiry = datetime.datetime.now() + datetime.timedelta(seconds=expires_in_seconds)
+        expiry = datetime.datetime.now() + datetime.timedelta(
+            seconds=expires_in_seconds
+        )
         logger.info(
             f"Using 'expiresIn' field: OAuth token expires in {expires_in_seconds:.1f} seconds "
             f"({expires_in}ms) at {expiry}"
@@ -136,7 +133,9 @@ def login(settings: Settings):
             # Convert milliseconds to seconds for Unix timestamp
             expiration_timestamp_seconds = float(expiration_time) / 1000.0
             expiry = datetime.datetime.fromtimestamp(expiration_timestamp_seconds)
-            logger.info(f"Parsed absolute expiry time: {expiry} from timestamp {expiration_timestamp_seconds}")
+            logger.info(
+                f"Parsed absolute expiry time: {expiry} from timestamp {expiration_timestamp_seconds}"
+            )
         except (ValueError, AttributeError, OSError) as e:
             # If parsing fails, use safe default
             logger.warning(
