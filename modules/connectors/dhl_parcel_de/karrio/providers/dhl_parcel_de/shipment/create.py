@@ -53,7 +53,6 @@ def _extract_details(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
             shipmentNo=shipment.shipmentNo,
             shipmentRefNo=shipment.shipmentRefNo,
-            label_url=shipment.label.url,
             tracking_numbers=[tracking_number],
             shipment_identifiers=[tracking_number],
         ),

@@ -212,7 +212,6 @@ ParsedShipmentResponse = [
         "label_type": "PDF",
         "meta": {
             "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=340434310428091700",
-            "label_url": "https://api-dev.dhl.com/parcel/de/shipping/v1-feature-order-endpoint/labels?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEXhP9PQ8tAVdPeXD26RZ6JZqF5NCJlrihrAv1%2FAOzuDPqWJLRVaRq461BpT4bcbzChAAHVg%2FHUaQAkeIkaZ8NqfcxWEQzK1AYJWczpy6sv6",
             "shipmentNo": "340434310428091700",
             "shipmentRefNo": "340434310428091700",
             "shipment_identifiers": ["340434310428091700"],
