@@ -87,13 +87,13 @@ def _extract_webhook_tracking(
         tracking_number=tracking.trackingNumber,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event.timestamp, "%Y-%m-%dT%H:%M:%SZ"),
-                time=lib.flocaltime(event.timestamp, "%Y-%m-%dT%H:%M:%SZ"),
+                date=lib.fdate(event.timestamp, try_formats=timestamp_formats),
+                time=lib.flocaltime(event.timestamp, try_formats=timestamp_formats),
                 description=event.description,
                 code=event.code,
                 location=event.location,
             )
-            for event in tracking.events
+            for event in (tracking.events or [])
         ],
         delivered=status == "delivered",
         status=status,

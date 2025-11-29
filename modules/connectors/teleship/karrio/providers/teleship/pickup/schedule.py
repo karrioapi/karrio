@@ -22,7 +22,11 @@ def parse_pickup_response(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             confirmation_number=details.pickup.id,
-            pickup_date=lib.fdate(details.pickup.startAt),
+            pickup_date=lib.fdatetime(
+                details.pickup.startAt,
+                current_format="%Y-%m-%dT%H:%M:%S.%fZ",
+                output_format="%Y-%m-%d",
+            ),
             meta=lib.to_dict(details.pickup),
         )
         if details and details.pickup and details.pickup.id

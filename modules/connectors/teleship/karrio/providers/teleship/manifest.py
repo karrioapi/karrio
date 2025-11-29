@@ -21,7 +21,8 @@ def parse_manifest_response(
         models.ManifestDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            manifest_id=details.id,
+            id=details.id,
+            doc=None,
             meta=dict(
                 status=details.status,
                 reference=details.reference,

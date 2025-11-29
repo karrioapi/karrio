@@ -88,6 +88,7 @@ Tracking = interface.Tracking
 Address = interface.Address
 Document = interface.Document
 Manifest = interface.Manifest
+Duties = interface.Duties
 Hooks = interface.Hooks
 Webhook = interface.Webhook
 
@@ -100,6 +101,7 @@ __all__ = [
     "Address",
     "Document",
     "Manifest",
+    "Duties",
     "Gateway",
     "Webhook",
     "Hooks",

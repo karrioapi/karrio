@@ -65,10 +65,14 @@ def on_oauth_callback(
     Teleship returns account_client_id and account_client_secret in the callback
     query parameters which are the user's credentials for API access.
     """
-    query = lib.typed(payload.query or {})
+    query = payload.query or {}
     messages = error.parse_error_response(payload.body, settings)
 
-    if not query.code:
+    code = query.get("code")
+    account_client_id = query.get("account_client_id")
+    account_client_secret = query.get("account_client_secret")
+
+    if not code:
         messages.append(
             models.Message(
                 carrier_id=settings.carrier_id,
@@ -79,7 +83,7 @@ def on_oauth_callback(
         )
         return None, messages
 
-    if not query.account_client_id or not query.account_client_secret:
+    if not account_client_id or not account_client_secret:
         messages.append(
             models.Message(
                 carrier_id=settings.carrier_id,
@@ -92,8 +96,8 @@ def on_oauth_callback(
 
     # Return credentials that map to the Teleship connection settings
     credentials = dict(
-        client_id=query.account_client_id,
-        client_secret=query.account_client_secret,
+        client_id=account_client_id,
+        client_secret=account_client_secret,
     )
 
     return credentials, messages

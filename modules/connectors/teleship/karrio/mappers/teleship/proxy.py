@@ -232,4 +232,8 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        # DELETE returns 204 No Content on success - handle empty response
+        return lib.Deserializable(
+            response,
+            lambda r: lib.to_dict(r) if r and r.strip() else {},
+        )
