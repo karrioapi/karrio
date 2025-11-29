@@ -60,10 +60,8 @@
       "country": "GB",
       "postcode": "SW1V 1SW"
     },
-    "taxId": {
-      "type": "VAT",
-      "value": "GB123456789"
-    }
+    "stateTaxId": "VAT123456",
+    "countryTaxId": "GB123456789"
   },
   "weight": {
     "unit": "kg",
@@ -85,10 +83,7 @@
   "commodities": [
     {
       "sku": "stock-1",
-      "SKU": "STOCK-1",
-      "EAN": "5060123456789",
-      "TARIC": "71131910",
-      "HSTariffNumber": "711319",
+      "hsCode": "711319",
       "title": "Tetras Small Earrings - One& Only Kea...",
       "description": "Enjoy these beautiful earrings manufactured in Greece. Worn by Adele and other stars.",
       "category": "Jewelry",
@@ -101,10 +96,6 @@
         "unit": "kg",
         "value": 0.18
       },
-      "netWeight": {
-        "unit": "kg",
-        "value": 0.15
-      },
       "countryOfOrigin": "GR",
       "imageUrl": "https://example.com/products/stock-1.jpg",
       "productUrl": "https://example.com/products/stock-1",
@@ -113,13 +104,6 @@
         "isHazardous": false,
         "isRestricted": false,
         "regulatoryInfo": "Complies with EU jewelry regulations"
-      },
-      "dutiesAndTaxes": {
-        "dutyAmount": 13.4,
-        "dutyRate": 0.10,
-        "taxAmount": 26.8,
-        "taxRate": 0.20,
-        "currency": "GBP"
       }
     }
   ],
@@ -145,18 +129,7 @@
     "contentType": "CommercialGoods",
     "invoiceDate": "2025-10-31T19:53:09.821Z",
     "invoiceNumber": "#1001",
-    "GPSRContactInfo": {
-      "name": "Safety Compliance Officer",
-      "email": "safety@teleship.com",
-      "phone": "+44 20 7123 4570",
-      "address": {
-        "line1": "Flat 4, 24 Upper Tachbrook Street",
-        "city": "London",
-        "state": "England",
-        "country": "GB",
-        "postcode": "SW1V 1SW"
-      }
-    },
+    "GPSRContactInfo": "Safety Compliance Officer, safety@teleship.com, +44 20 7123 4570, Flat 4, 24 Upper Tachbrook Street, London, SW1V 1SW, GB",
     "importerOfRecord": {
       "name": "Import Manager",
       "company": "US Imports Inc",
@@ -170,10 +143,8 @@
         "country": "US",
         "postcode": "90001"
       },
-      "taxId": {
-        "type": "EIN",
-        "value": "98-7654321"
-      }
+      "stateTaxId": "CA123456",
+      "countryTaxId": "98-7654321"
     }
   }
 }

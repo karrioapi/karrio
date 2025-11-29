@@ -7848,9 +7848,9 @@ components:
           description: The operation carrier
         carrier_id:
           type: string
+          nullable: true
           description: The targeted carrier's name (unique identifier)
       required:
-      - carrier_id
       - carrier_name
       - operation
       - success
@@ -12117,8 +12117,9 @@ tags:
     | Code         | Service Name |
     | ------------ | ------------ |
     | dhl_parcel_de_paket | V01PAK |
-    | dhl_parcel_de_warenpost | V62KP |
+    | dhl_parcel_de_kleinpaket | V62KP |
     | dhl_parcel_de_europaket | V54EPAK |
+    | dhl_parcel_de_paket_international | V53WPAK |
     | dhl_parcel_de_warenpost_international | V66WPI |
 
     ### DHL Parcel Poland
@@ -13594,6 +13595,8 @@ tags:
     | teleship_expedited_dropoff | TELESHIP-EXPEDITED-DROPOFF |
     | teleship_standard_dropoff | TELESHIP-STANDARD-DROPOFF |
     | teleship_standard_pickup | TELESHIP-STANDARD-PICKUP |
+    | teleship_postal_dropoff | TELESHIP-POSTAL-DROPOFF |
+    | teleship_postal_pickup | TELESHIP-POSTAL-PICKUP |
 
     ### TGE
     | Code         | Service Name |

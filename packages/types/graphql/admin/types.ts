@@ -2564,6 +2564,8 @@ export interface InstanceConfigMutationInput {
   USPS_INTERNATIONAL_ENABLED?: boolean | null;
   VEHO_ENABLED?: boolean | null;
   ZOOM2U_ENABLED?: boolean | null;
+  TELESHIP_OAUTH_CLIENT_ID?: string | null;
+  TELESHIP_OAUTH_CLIENT_SECRET?: string | null;
 }
 
 // null

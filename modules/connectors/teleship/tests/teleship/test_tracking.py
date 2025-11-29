@@ -1,14 +1,12 @@
 """Teleship carrier tracking tests."""
 
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from .fixture import gateway
-import logging
+
 import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
-
-logger = logging.getLogger(__name__)
 
 
 class TestTeleshipTracking(unittest.TestCase):
@@ -18,54 +16,48 @@ class TestTeleshipTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
+
         self.assertEqual(request.serialize(), TrackingRequest)
 
     def test_get_tracking(self):
-        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
-            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-                mock.return_value = "{}"
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
-                self.assertEqual(
-                    mock.call_args[1]["url"],
-                    f"{gateway.settings.server_url}/api/tracking/TELESHIP12345678901"
-                )
+        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
+
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/api/tracking/TELESHIP12345678901",
+            )
 
     def test_parse_tracking_response(self):
-        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
-            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-                mock.return_value = TrackingResponse
-                parsed_response = (
-                    karrio.Tracking.fetch(self.TrackingRequest)
-                    .from_(gateway)
-                    .parse()
-                )
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
+        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+            mock.return_value = TrackingResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
-        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
-            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-                mock.return_value = ErrorResponse
-                parsed_response = (
-                    karrio.Tracking.fetch(self.TrackingRequest)
-                    .from_(gateway)
-                    .parse()
-                )
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
-# 1. Karrio Input Payload
 TrackingPayload = {
     "tracking_numbers": ["TELESHIP12345678901"],
 }
 
-# 2. Carrier Request Format (from generated schemas)
 TrackingRequest = ["TELESHIP12345678901"]
 
-# 3. Carrier Response Mock (actual API format)
 TrackingResponse = """{
     "trackingNumber": "TELESHIP12345678901",
     "shipmentId": "SHP-UK-US-98765",
@@ -75,17 +67,21 @@ TrackingResponse = """{
     "estimatedDelivery": "2025-01-20",
     "shipFrom": {
         "name": "UK Exports Ltd",
-        "city": "London",
-        "state": "LDN",
-        "postcode": "SW1A 1AA",
-        "country": "GB"
+        "address": {
+            "city": "London",
+            "state": "LDN",
+            "postcode": "SW1A 1AA",
+            "country": "GB"
+        }
     },
     "shipTo": {
         "name": "US Imports Inc",
-        "city": "Los Angeles",
-        "state": "CA",
-        "postcode": "90001",
-        "country": "US"
+        "address": {
+            "city": "Los Angeles",
+            "state": "CA",
+            "postcode": "90001",
+            "country": "US"
+        }
     },
     "firstMile": {
         "carrier": "DPD UK",
@@ -98,38 +94,37 @@ TrackingResponse = """{
     "events": [
         {
             "timestamp": "2025-01-15T09:15:00Z",
-            "status": "collected",
+            "code": "collected",
             "description": "Package collected from sender",
             "location": "London, GB"
         },
         {
             "timestamp": "2025-01-15T14:30:00Z",
-            "status": "in_hub",
+            "code": "in_hub",
             "description": "Arrived at UK sorting hub",
             "location": "Heathrow Hub, GB"
         },
         {
             "timestamp": "2025-01-16T02:45:00Z",
-            "status": "in_transit",
+            "code": "in_transit",
             "description": "In transit to destination country",
             "location": "International Transit"
         },
         {
             "timestamp": "2025-01-17T18:20:00Z",
-            "status": "customs_cleared",
+            "code": "customs_cleared",
             "description": "Cleared customs",
             "location": "Los Angeles ISC, US"
         },
         {
             "timestamp": "2025-01-18T08:00:00Z",
-            "status": "in_transit",
+            "code": "in_transit",
             "description": "Out for delivery",
             "location": "Los Angeles, CA, US"
         }
     ]
 }"""
 
-# 4. Error Response Mock
 ErrorResponse = """{
     "messages": [
         {
@@ -144,7 +139,6 @@ ErrorResponse = """{
     ]
 }"""
 
-# 5. Parsed Success Response (Karrio format)
 ParsedTrackingResponse = [
     [
         {
@@ -156,37 +150,37 @@ ParsedTrackingResponse = [
                     "date": "2025-01-15",
                     "description": "Package collected from sender",
                     "code": "collected",
-                    "time": "09:15:00",
-                    "location": "London, GB"
+                    "time": "09:15 AM",
+                    "location": "London, GB",
                 },
                 {
                     "date": "2025-01-15",
                     "description": "Arrived at UK sorting hub",
                     "code": "in_hub",
-                    "time": "14:30:00",
-                    "location": "Heathrow Hub, GB"
+                    "time": "14:30 PM",
+                    "location": "Heathrow Hub, GB",
                 },
                 {
                     "date": "2025-01-16",
                     "description": "In transit to destination country",
                     "code": "in_transit",
-                    "time": "02:45:00",
-                    "location": "International Transit"
+                    "time": "02:45 AM",
+                    "location": "International Transit",
                 },
                 {
                     "date": "2025-01-17",
                     "description": "Cleared customs",
                     "code": "customs_cleared",
-                    "time": "18:20:00",
-                    "location": "Los Angeles ISC, US"
+                    "time": "18:20 PM",
+                    "location": "Los Angeles ISC, US",
                 },
                 {
                     "date": "2025-01-18",
                     "description": "Out for delivery",
                     "code": "in_transit",
-                    "time": "08:00:00",
-                    "location": "Los Angeles, CA, US"
-                }
+                    "time": "08:00 AM",
+                    "location": "Los Angeles, CA, US",
+                },
             ],
             "delivered": False,
             "estimated_delivery": "2025-01-20",
@@ -196,25 +190,20 @@ ParsedTrackingResponse = [
                 "customer_name": "Los Angeles",
                 "shipment_service": "DPD UK",
                 "shipment_origin_country": "GB",
-                "shipment_destination_country": "US"
+                "shipment_destination_country": "US",
             },
             "meta": {
                 "shipment_id": "SHP-UK-US-98765",
                 "customer_reference": "UK-US-12345",
                 "ship_date": "2025-01-15",
-                "ship_from": "London, GB",
-                "ship_to": "Los Angeles, CA, US",
-                "first_mile_carrier": "DPD UK",
-                "first_mile_tracking": "DPD987654321GB",
                 "last_mile_carrier": "USPS",
-                "last_mile_tracking": "9400111899223456789012"
-            }
+                "last_mile_tracking": "9400111899223456789012",
+            },
         }
     ],
-    []
+    [],
 ]
 
-# 6. Parsed Error Response
 ParsedErrorResponse = [
     [],
     [
@@ -228,9 +217,9 @@ ParsedErrorResponse = [
                 "tracking_number": "TELESHIP12345678901",
                 "details": [
                     "No shipment found with tracking number: TELESHIP12345678901",
-                    "Please verify the tracking number is correct"
-                ]
-            }
+                    "Please verify the tracking number is correct",
+                ],
+            },
         }
-    ]
+    ],
 ]

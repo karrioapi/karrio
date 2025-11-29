@@ -1,0 +1,14 @@
+{
+  "url": "https://example.com/webhook",
+  "description": "Shopify app tracking milestones Webhook",
+  "enabled": true,
+  "enabledEvents": [
+    "shipment.updated",
+    "label.generated",
+    "manifest.created"
+  ],
+  "metadata": {
+    "shopId": "shop_123456",
+    "environment": "production"
+  }
+}

@@ -197,16 +197,16 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_duties_and_taxes_request(
-        self, payload: models.DutiesAndTaxesRequest
+    def create_duties_calculation_request(
+        self, payload: models.DutiesCalculationRequest
     ) -> lib.Serializable:
-        """Create a carrier specific duties and taxes request data from payload
+        """Create a carrier specific duties calculation request data from payload
 
         Args:
-            payload (DutiesAndTaxesRequest): the duties and taxes request payload
+            payload (DutiesCalculationRequest): the duties calculation request payload
         """
         raise errors.MethodNotSupportedError(
-            self.__class__.create_duties_and_taxes_request.__name__,
+            self.__class__.create_duties_calculation_request.__name__,
             self.settings.carrier_name,
         )
 
@@ -452,16 +452,16 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def parse_duties_and_taxes_response(
+    def parse_duties_calculation_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.DutiesAndTaxesDetails, typing.List[models.Message]]:
-        """Create a unified API duties and taxes result from carrier response
+    ) -> typing.Tuple[models.DutiesCalculationDetails, typing.List[models.Message]]:
+        """Create a unified API duties calculation result from carrier response
 
         Args:
-            response (Deserializable): a deserializable duties and taxes response (xml, json, text...)
+            response (Deserializable): a deserializable duties calculation response (xml, json, text...)
         """
         raise errors.MethodNotSupportedError(
-            self.__class__.parse_duties_and_taxes_response.__name__,
+            self.__class__.parse_duties_calculation_response.__name__,
             self.settings.carrier_name,
         )
 

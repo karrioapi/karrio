@@ -1,4 +1,5 @@
 import django.urls as urls
+import django.db.models as django
 import rest_framework.status as status
 import rest_framework.request as request
 import rest_framework.response as response
@@ -12,7 +13,7 @@ import karrio.server.core.filters as filters
 import karrio.server.core.gateway as gateway
 import karrio.server.providers.models as models
 import karrio.server.providers.serializers as serializers
-from karrio.server.core.logging import logger
+
 ENDPOINT_ID = "&&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 CarrierConnectionList = serializers.PaginatedResult(
     "CarrierConnectionList", serializers.CarrierConnection
@@ -160,6 +161,360 @@ class CarrierConnectionDetail(api.APIView):
         return response.Response(serializers.CarrierConnection(connection).data)
 
 
+class ConnectionWebhookRegister(api.APIView):
+    @openapi.extend_schema(
+        exclude=True,
+        tags=["Connections"],
+        operation_id=f"{ENDPOINT_ID}webhook-register",
+        extensions={"x-operationId": "webhookRegister"},
+        summary="Register a webhook for a carrier connection",
+        request=serializers.WebhookRegisterData(),
+        responses={
+            200: serializers.WebhookOperationResponse(),
+            400: serializers.ErrorResponse(),
+            424: serializers.ErrorMessages(),
+        },
+    )
+    def post(self, request: request.Request, pk: str):
+        """Register a webhook endpoint for a carrier connection."""
+        connection = models.Carrier.access_by(request).get(pk=pk)
+        webhook_url = request.build_absolute_uri(f"/v1/connections/webhook/{pk}/events")
+
+        webhook_details = (
+            serializers.WebhookRegisterSerializer.map(
+                connection,
+                data={"webhook_url": webhook_url, **request.data},
+                context=request,
+            )
+            .save()
+            .instance
+        )
+
+        updated = lib.identity(
+            serializers.CarrierConnectionModelSerializer.map(
+                connection,
+                data=dict(
+                    config=dict(
+                        webhook_id=webhook_details.webhook_identifier,
+                        webhook_secret=webhook_details.secret,
+                        webhook_url=webhook_url,
+                    )
+                ),
+                context=request,
+            )
+            .save()
+            .instance
+        )
+
+        return response.Response(
+            serializers.WebhookOperationResponse(
+                dict(
+                    carrier_name=updated.carrier_name,
+                    carrier_id=updated.carrier_id,
+                    operation="Webhook registration",
+                    success=True,
+                )
+            ).data,
+            status=status.HTTP_200_OK,
+        )
+
+
+class ConnectionWebhookDeregister(api.APIView):
+    @openapi.extend_schema(
+        exclude=True,
+        tags=["Connections"],
+        operation_id=f"{ENDPOINT_ID}webhook-deregister",
+        extensions={"x-operationId": "webhookDeregister"},
+        summary="Deregister a webhook for a carrier connection",
+        responses={
+            200: serializers.WebhookOperationResponse(),
+            400: serializers.ErrorResponse(),
+            424: serializers.ErrorMessages(),
+        },
+    )
+    def post(self, request: request.Request, pk: str):
+        """Deregister a webhook endpoint from a carrier connection."""
+        connection = models.Carrier.access_by(request).get(pk=pk)
+
+        serializers.WebhookDeregisterSerializer.map(
+            connection,
+            data=dict(webhook_id=connection.config.get("webhook_id")),
+            context=request,
+        ).save()
+
+        updated = lib.identity(
+            serializers.CarrierConnectionModelSerializer.map(
+                connection,
+                data=dict(
+                    config=dict(
+                        webhook_id=None,
+                        webhook_secret=None,
+                        webhook_url=None,
+                    )
+                ),
+                context=request,
+            )
+            .save()
+            .instance
+        )
+
+        return response.Response(
+            serializers.WebhookOperationResponse(
+                dict(
+                    operation="Webhook deregistration",
+                    success=True,
+                    carrier_name=updated.carrier_name,
+                    carrier_id=updated.carrier_id,
+                )
+            ).data,
+            status=status.HTTP_200_OK,
+        )
+
+
+class ConnectionWebhookDisconnect(api.APIView):
+    @openapi.extend_schema(
+        exclude=True,
+        tags=["Connections"],
+        operation_id=f"{ENDPOINT_ID}webhook-disconnect",
+        extensions={"x-operationId": "webhookDisconnect"},
+        summary="Force disconnect a webhook for a carrier connection",
+        responses={
+            200: serializers.WebhookOperationResponse(),
+            400: serializers.ErrorResponse(),
+        },
+    )
+    def post(self, request: request.Request, pk: str):
+        """Force disconnect a webhook from a carrier connection (local only)."""
+        connection = models.Carrier.access_by(request).get(pk=pk)
+
+        updated = lib.identity(
+            serializers.CarrierConnectionModelSerializer.map(
+                connection,
+                data=dict(
+                    config=dict(
+                        webhook_id=None,
+                        webhook_secret=None,
+                        webhook_url=None,
+                    )
+                ),
+                context=request,
+            )
+            .save()
+            .instance
+        )
+
+        return response.Response(
+            serializers.WebhookOperationResponse(
+                dict(
+                    operation="Webhook disconnect",
+                    success=True,
+                    carrier_name=updated.carrier_name,
+                    carrier_id=updated.carrier_id,
+                )
+            ).data,
+            status=status.HTTP_200_OK,
+        )
+
+
+class ConnectionWebhookEvent(api.APIView):
+    """Handle inbound webhook events from carriers."""
+
+    throttle_classes: list = []
+    permission_classes: list = []
+    authentication_classes: list = []
+
+    @openapi.extend_schema(
+        exclude=True,
+        tags=["Connections"],
+        operation_id=f"{ENDPOINT_ID}webhook-event",
+        extensions={"x-operationId": "webhookEvent"},
+        summary="Handle carrier webhook events",
+        responses={
+            200: serializers.OperationConfirmation(),
+        },
+    )
+    def post(self, request: request.Request, pk: str):
+        """Handle inbound webhook events from a carrier.
+
+        This endpoint receives webhook events from carriers (tracking updates,
+        shipment status changes, etc.) and processes them through the Karrio
+        hooks system.
+        """
+        try:
+            connection = models.Carrier.objects.get(pk=pk)
+        except models.Carrier.DoesNotExist:
+            return response.Response(
+                dict(
+                    operation="Webhook event",
+                    success=False,
+                    messages=[{"message": f"Connection not found: {pk}"}],
+                ),
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        event, messages = gateway.Hooks.on_webhook_event(
+            payload=dict(
+                url=request.build_absolute_uri(),
+                body=request.data,
+                query=dict(request.query_params),
+                headers=dict(request.headers),
+            ),
+            carrier=connection,
+        )
+
+        if event and event.tracking:
+            import karrio.server.manager.models as manager_models
+            import karrio.server.manager.serializers.tracking as tracking_serializers
+
+            tracker = manager_models.Tracking.objects.filter(
+                django.Q(tracking_number=event.tracking.tracking_number)
+                | django.Q(tracking_carrier=connection)
+            ).first()
+
+            if tracker:
+                tracking_serializers.update_tracker(
+                    tracker, lib.to_dict(event.tracking)
+                )
+
+        return response.Response(
+            dict(
+                operation="Webhook event",
+                success=len(messages) == 0,
+                carrier_name=connection.carrier_name,
+                carrier_id=connection.carrier_id,
+                messages=lib.to_dict(messages),
+            ),
+            status=status.HTTP_200_OK,
+        )
+
+
+class ConnectionOauthAuthorize(api.APIView):
+    @openapi.extend_schema(
+        exclude=True,
+        tags=["Connections"],
+        operation_id=f"{ENDPOINT_ID}oauth-authorize",
+        extensions={"x-operationId": "oauthAuthorize"},
+        summary="Handle an OAuth authorize",
+        request=serializers.OAuthAuthorizeData(),
+    )
+    def post(self, request: request.Request, carrier_name: str):
+        """Handle an OAuth authorize."""
+
+        [output, messages] = gateway.Hooks.on_oauth_authorize(
+            serializers.OAuthAuthorizeData.map(
+                data={
+                    "redirect_uri": request.build_absolute_uri(
+                        f"/v1/connections/oauth/{carrier_name}/callback"
+                    ),
+                    **request.data,
+                }
+            ).data,
+            carrier_name=carrier_name,
+            test_mode=request.test_mode,
+        )
+
+        # Include the frontend_url for the callback to redirect to
+        frontend_url = request.data.get("frontend_url")
+
+        return response.Response(
+            dict(
+                operation="OAuth authorize",
+                request=lib.to_dict(output),
+                messages=lib.to_dict(messages),
+                frontend_url=frontend_url,
+            ),
+            status=status.HTTP_200_OK,
+        )
+
+
+class ConnectionOauthCallback(api.APIView):
+    @openapi.extend_schema(
+        exclude=True,
+        tags=["Connections"],
+        operation_id=f"{ENDPOINT_ID}oauth-callback",
+        extensions={"x-operationId": "oauthCallback"},
+        summary="Handle an OAuth callback",
+        request=serializers.OAuthCallbackData(),
+        responses={
+            200: serializers.OperationConfirmation(),
+        },
+    )
+    def get(self, request: request.Request, carrier_name: str):
+        """Handle an OAuth callback.
+
+        Returns JSON with OAuth result for the frontend to process.
+        When called from a browser popup, renders template or redirects to frontend.
+        """
+        import json
+        import base64
+        from django.shortcuts import render
+        from django.http import HttpResponseRedirect
+
+        [output, messages] = gateway.Hooks.on_oauth_callback(
+            payload=serializers.OAuthCallbackData.map(
+                data=dict(
+                    query=request.query_params.dict(),
+                    body=(
+                        request.data.dict()
+                        if hasattr(request.data, "dict")
+                        else dict(request.data or {})
+                    ),
+                    headers=dict(request.headers),
+                    url=request.build_absolute_uri(),
+                )
+            ).data,
+            carrier_name=carrier_name,
+            test_mode=request.test_mode,
+            context=request,
+        )
+
+        result = dict(
+            type="oauth_callback",
+            success=output is not None,
+            carrier_name=carrier_name,
+            credentials=lib.to_dict(output) if output else None,
+            messages=lib.to_dict(messages),
+            state=request.query_params.get("state"),
+        )
+
+        # Try to extract frontend_url from state parameter
+        frontend_url = None
+        state = request.query_params.get("state")
+        if state:
+            try:
+                state_data = json.loads(base64.b64decode(state).decode("utf-8"))
+                frontend_url = state_data.get("frontend_url")
+            except Exception:
+                pass
+
+        # Check if this is a browser request (Accept header includes text/html)
+        accept_header = request.headers.get("Accept", "")
+
+        if "text/html" in accept_header and frontend_url:
+            result_encoded = base64.b64encode(
+                json.dumps(result).encode("utf-8")
+            ).decode("utf-8")
+            return HttpResponseRedirect(f"{frontend_url}?oauth_result={result_encoded}")
+
+        if "text/html" in accept_header:
+            error_message = (
+                result["messages"][0]["message"]
+                if result["messages"]
+                else "An error occurred during authorization."
+            )
+            return render(
+                request._request,
+                "providers/oauth_callback.html",
+                dict(
+                    success=result["success"],
+                    error_message=error_message,
+                    result_json=json.dumps(result),
+                ),
+            )
+
+        return response.Response(result, status=status.HTTP_200_OK)
+
+
 urlpatterns = [
     urls.path(
         "connections",
@@ -170,5 +525,35 @@ urlpatterns = [
         "connections/<str:pk>",
         CarrierConnectionDetail.as_view(),
         name="carrier-connection-details",
+    ),
+    urls.path(
+        "connections/oauth/<str:carrier_name>/authorize",
+        ConnectionOauthAuthorize.as_view(),
+        name="connection-oauth-authorize",
+    ),
+    urls.path(
+        "connections/oauth/<str:carrier_name>/callback",
+        ConnectionOauthCallback.as_view(),
+        name="connection-oauth-callback",
+    ),
+    urls.path(
+        "connections/webhook/<str:pk>/events",
+        ConnectionWebhookEvent.as_view(),
+        name="connection-webhook-event",
+    ),
+    urls.path(
+        "connections/webhook/<str:pk>/register",
+        ConnectionWebhookRegister.as_view(),
+        name="connection-webhook-register",
+    ),
+    urls.path(
+        "connections/webhook/<str:pk>/deregister",
+        ConnectionWebhookDeregister.as_view(),
+        name="connection-webhook-deregister",
+    ),
+    urls.path(
+        "connections/webhook/<str:pk>/disconnect",
+        ConnectionWebhookDisconnect.as_view(),
+        name="connection-webhook-disconnect",
     ),
 ]

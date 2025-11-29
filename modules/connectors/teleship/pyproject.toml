@@ -25,7 +25,7 @@ dependencies = [
 Homepage = "https://github.com/karrioapi/karrio"
 
 [project.entry-points."karrio.plugins"]
-teleship = "karrio.plugins.teleship"
+teleship = "karrio.plugins.teleship:METADATA"
 
 [tool.setuptools]
 zip-safe = false

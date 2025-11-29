@@ -7,52 +7,66 @@
   "estimatedDelivery": "2025-11-10T18:00:00.000Z",
   "shipFrom": {
     "name": "UK Exports Ltd",
-    "city": "London",
-    "state": "LDN",
-    "postcode": "SW1A 1AA",
-    "country": "GB"
+    "email": "exports@ukexports.com",
+    "phone": "+44 20 7946 0958",
+    "company": "UK Exports Ltd",
+    "address": {
+      "line1": "123 Oxford Street",
+      "line2": "Suite 456",
+      "city": "London",
+      "state": "England",
+      "postcode": "SW1A 1AA",
+      "country": "GB"
+    }
   },
   "shipTo": {
     "name": "US Imports Inc",
-    "city": "Los Angeles",
-    "state": "CA",
-    "postcode": "90001",
-    "country": "US"
+    "email": "imports@usimports.com",
+    "phone": "+1 213-601-6000",
+    "company": "US Imports Inc",
+    "address": {
+      "line1": "1300 Eunice Avenue",
+      "line2": "Suite 200",
+      "city": "Los Angeles",
+      "state": "CA",
+      "postcode": "90001",
+      "country": "US"
+    }
   },
   "firstMile": {
-    "status": "completed",
     "carrier": "Royal Mail",
-    "trackingNumber": "RM123456789GB"
+    "trackingNumber": "RM123456789GB",
+    "trackingUrl": "https://www.royalmail.com/track-your-item?trackNumber=RM123456789GB"
   },
   "lastMile": {
-    "status": "in_transit",
     "carrier": "USPS",
-    "trackingNumber": "9400111111111111111111"
+    "trackingNumber": "9400111111111111111111",
+    "trackingUrl": "https://tools.usps.com/go/TrackConfirmAction?tLabels=9400111111111111111111"
   },
   "events": [
     {
       "timestamp": "2025-11-03T10:00:00.000Z",
-      "status": "picked_up",
-      "location": "London, GB",
-      "description": "Package picked up from sender"
+      "code": "picked_up",
+      "description": "Package picked up from sender",
+      "location": "London, GB"
     },
     {
       "timestamp": "2025-11-03T15:30:00.000Z",
-      "status": "in_transit",
-      "location": "Heathrow Airport, GB",
-      "description": "Package arrived at sorting facility"
+      "code": "in_transit",
+      "description": "Package arrived at sorting facility",
+      "location": "Heathrow Airport, GB"
     },
     {
       "timestamp": "2025-11-04T08:00:00.000Z",
-      "status": "in_transit",
-      "location": "In Transit to USA",
-      "description": "Package departed UK"
+      "code": "in_transit",
+      "description": "Package departed UK",
+      "location": "In Transit to USA"
     },
     {
       "timestamp": "2025-11-05T14:00:00.000Z",
-      "status": "in_transit",
-      "location": "Los Angeles, CA, US",
-      "description": "Package arrived in destination country"
+      "code": "in_transit",
+      "description": "Package arrived in destination country",
+      "location": "Los Angeles, CA, US"
     }
   ]
 }

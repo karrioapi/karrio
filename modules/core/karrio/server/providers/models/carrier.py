@@ -222,11 +222,6 @@ class Carrier(core.OwnedEntity):
             if "custom_carrier_name" in self.credentials
             else lib.failsafe(lambda: self.carrier_code) or "generic"
         )
-        # return (
-        #     self.credentials.get("custom_carrier_name")
-        #     if "custom_carrier_name" in self.credentials
-        #     else lib.failsafe(lambda: self.carrier_code) or "generic"
-        # )
 
     @property
     def display_name(self):
@@ -295,15 +290,18 @@ class Carrier(core.OwnedEntity):
     @property
     def gateway(self) -> gateway.Gateway:
         import karrio.server.core.middleware as middleware
+        import karrio.server.core.config as system_config
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", lib.Tracer())
         _cache = lib.Cache(caching.cache)
+        _config = lib.SystemConfig(system_config.config)
 
         return karrio.gateway[self.ext].create(
             self.data.to_dict(),
             _tracer,
             _cache,
+            _config,
         )
 
     @staticmethod

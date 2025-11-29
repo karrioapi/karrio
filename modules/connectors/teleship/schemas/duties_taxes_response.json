@@ -1,0 +1,40 @@
+{
+  "messages": [],
+  "price": 41.58,
+  "currency": "EUR",
+  "charges": [
+    {
+      "name": "Duty",
+      "amount": 15.50,
+      "currency": "EUR",
+      "rate": 0.04
+    },
+    {
+      "name": "VAT",
+      "amount": 26.08,
+      "currency": "EUR",
+      "rate": 0.19
+    }
+  ],
+  "commodities": [
+    {
+      "itemNumber": 1,
+      "title": "Flix Earrings",
+      "charges": [
+        {
+          "name": "Duty",
+          "amount": 5.47,
+          "currency": "EUR",
+          "rate": 0.04
+        },
+        {
+          "name": "VAT",
+          "amount": 26.08,
+          "currency": "EUR",
+          "rate": 0.19
+        }
+      ],
+      "restrictions": []
+    }
+  ]
+}

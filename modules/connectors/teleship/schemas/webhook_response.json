@@ -1,0 +1,16 @@
+{
+  "id": "wh_1234567890abc",
+  "url": "https://example.com/webhook",
+  "description": "Shopify app tracking milestones Webhook",
+  "enabledEvents": [
+    "shipment.updated",
+    "label.generated",
+    "manifest.created"
+  ],
+  "secret": "whsec_abcdef1234567890",
+  "enabled": true,
+  "metadata": {
+    "shopId": "shop_123456",
+    "environment": "production"
+  }
+}

@@ -7,8 +7,8 @@ import {
   isEqual,
   isNone,
   isNoneOrEmpty,
-  p,
   toNumber,
+  p,
 } from "@karrio/lib";
 import {
   AddressType,

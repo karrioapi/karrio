@@ -1,0 +1,20 @@
+{
+  "id": "mft_xyz789abc123",
+  "status": "created",
+  "reference": "MANIFEST-2024-001",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "address": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "company": "ACME Corp",
+    "address": {
+      "line1": "123 Main St",
+      "line2": "Suite 100",
+      "city": "New York",
+      "state": "NY",
+      "postcode": "10001",
+      "country": "US"
+    }
+  }
+}

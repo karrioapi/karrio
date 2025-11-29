@@ -189,8 +189,8 @@ class Proxy(abc.ABC):
             self.__class__.create_manifest.__name__, self.settings.carrier_name
         )
 
-    def fetch_duties_and_taxes(self, request: lib.Serializable) -> lib.Deserializable:
-        """Send one or many request(s) to fetch duties and taxes from a provider API.
+    def calculate_duties(self, request: lib.Serializable) -> lib.Deserializable:
+        """Send one or many request(s) to calculate duties from a provider API.
 
         Args:
             request (Serializable): a provider specific serializable request data type
@@ -202,7 +202,7 @@ class Proxy(abc.ABC):
             MethodNotSupportedError: Is raised when the provider integration does not implement this method
         """
         raise errors.MethodNotSupportedError(
-            self.__class__.fetch_duties_and_taxes.__name__, self.settings.carrier_name
+            self.__class__.calculate_duties.__name__, self.settings.carrier_name
         )
 
     def apply_insurance_coverage(self, request: lib.Serializable) -> lib.Deserializable:

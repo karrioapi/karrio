@@ -23,19 +23,14 @@ class AddressType:
 
 
 @attr.s(auto_attribs=True)
-class TaxIDType:
-    type: typing.Optional[str] = None
-    value: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
 class BillToType:
     name: typing.Optional[str] = None
     company: typing.Optional[str] = None
     email: typing.Optional[str] = None
     phone: typing.Optional[str] = None
     address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
-    taxId: typing.Optional[TaxIDType] = jstruct.JStruct[TaxIDType]
+    stateTaxId: typing.Optional[str] = None
+    countryTaxId: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -44,15 +39,6 @@ class ComplianceType:
     isHazardous: typing.Optional[bool] = None
     isRestricted: typing.Optional[bool] = None
     regulatoryInfo: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class DutiesAndTaxesType:
-    dutyAmount: typing.Optional[float] = None
-    dutyRate: typing.Optional[float] = None
-    taxAmount: typing.Optional[float] = None
-    taxRate: typing.Optional[float] = None
-    currency: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -70,30 +56,17 @@ class ValueType:
 @attr.s(auto_attribs=True)
 class CommodityType:
     sku: typing.Optional[str] = None
-    SKU: typing.Optional[str] = None
-    EAN: typing.Optional[str] = None
-    TARIC: typing.Optional[int] = None
-    HSTariffNumber: typing.Optional[int] = None
+    hsCode: typing.Optional[int] = None
     title: typing.Optional[str] = None
     description: typing.Optional[str] = None
     category: typing.Optional[str] = None
     value: typing.Optional[ValueType] = jstruct.JStruct[ValueType]
     quantity: typing.Optional[int] = None
     unitWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
-    netWeight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
     countryOfOrigin: typing.Optional[str] = None
     imageUrl: typing.Optional[str] = None
     productUrl: typing.Optional[str] = None
     compliance: typing.Optional[ComplianceType] = jstruct.JStruct[ComplianceType]
-    dutiesAndTaxes: typing.Optional[DutiesAndTaxesType] = jstruct.JStruct[DutiesAndTaxesType]
-
-
-@attr.s(auto_attribs=True)
-class GPSRContactInfoType:
-    name: typing.Optional[str] = None
-    email: typing.Optional[str] = None
-    phone: typing.Optional[str] = None
-    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
 
 
 @attr.s(auto_attribs=True)
@@ -109,7 +82,7 @@ class CustomsType:
     contentType: typing.Optional[str] = None
     invoiceDate: typing.Optional[str] = None
     invoiceNumber: typing.Optional[str] = None
-    GPSRContactInfo: typing.Optional[GPSRContactInfoType] = jstruct.JStruct[GPSRContactInfoType]
+    GPSRContactInfo: typing.Optional[str] = None
     importerOfRecord: typing.Optional[BillToType] = jstruct.JStruct[BillToType]
 
 
@@ -134,6 +107,15 @@ class MetadataType:
 
 
 @attr.s(auto_attribs=True)
+class ReturnToType:
+    name: typing.Optional[str] = None
+    company: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
+
+
+@attr.s(auto_attribs=True)
 class ShipmentRequestType:
     serviceCode: typing.Optional[str] = None
     customerReference: typing.Optional[str] = None
@@ -142,9 +124,9 @@ class ShipmentRequestType:
     shipDate: typing.Optional[str] = None
     orderTrackingReference: typing.Optional[str] = None
     commercialInvoiceReference: typing.Optional[str] = None
-    shipTo: typing.Optional[BillToType] = jstruct.JStruct[BillToType]
-    shipFrom: typing.Optional[BillToType] = jstruct.JStruct[BillToType]
-    returnTo: typing.Optional[BillToType] = jstruct.JStruct[BillToType]
+    shipTo: typing.Optional[ReturnToType] = jstruct.JStruct[ReturnToType]
+    shipFrom: typing.Optional[ReturnToType] = jstruct.JStruct[ReturnToType]
+    returnTo: typing.Optional[ReturnToType] = jstruct.JStruct[ReturnToType]
     billTo: typing.Optional[BillToType] = jstruct.JStruct[BillToType]
     weight: typing.Optional[WeightType] = jstruct.JStruct[WeightType]
     dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]

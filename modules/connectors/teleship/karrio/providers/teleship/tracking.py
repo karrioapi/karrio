@@ -19,7 +19,9 @@ def parse_tracking_response(
     # Aggregate error messages using functional sum pattern
     messages: typing.List[models.Message] = sum(
         [
-            error.parse_error_response(response, settings, **dict(tracking_number=tracking_number))
+            error.parse_error_response(
+                response, settings, **dict(tracking_number=tracking_number)
+            )
             for tracking_number, response in responses
         ],
         start=[],
@@ -27,7 +29,7 @@ def parse_tracking_response(
 
     # Extract tracking details using list comprehension (skip error responses)
     tracking_details = [
-        _extract_details(details, settings, tracking_number)
+        _extract_details(details, settings)
         for tracking_number, details in responses
         if details and not details.get("messages")
     ]
@@ -38,70 +40,53 @@ def parse_tracking_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
-    tracking_number: str = None,
 ) -> models.TrackingDetails:
     """Extract tracking details from carrier response data"""
-    # Convert to typed object for safe attribute access
+
     tracking = lib.to_object(teleship_res.TrackingResponseType, data)
-
-    # Extract events using functional list comprehension
-    events = [
-        models.TrackingEvent(
-            date=lib.fdate(event.timestamp, "%Y-%m-%dT%H:%M:%SZ") if event.timestamp else None,
-            time=lib.ftime(event.timestamp, "%Y-%m-%dT%H:%M:%SZ", "%H:%M:%S") if event.timestamp else None,
-            description=event.description or "",
-            code=event.status or "",
-            location=event.location or "",
-        )
-        for event in (tracking.events or [])
-    ]
-
-    # Map carrier status to karrio standard using functional pattern
-    status = provider_units.TrackingStatus.map(tracking.status or "").name_or_key
-
-    # Build location string from shipFrom and shipTo
-    ship_from_location = lib.identity(
-        ", ".join(filter(None, [
-            tracking.shipFrom.city if tracking.shipFrom else None,
-            tracking.shipFrom.country if tracking.shipFrom else None,
-        ]))
-        if tracking.shipFrom else None
-    )
-
-    ship_to_location = lib.identity(
-        ", ".join(filter(None, [
-            tracking.shipTo.city if tracking.shipTo else None,
-            tracking.shipTo.state if tracking.shipTo else None,
-            tracking.shipTo.country if tracking.shipTo else None,
-        ]))
-        if tracking.shipTo else None
+    last_event = next(iter(tracking.events or []), None)
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if last_event and last_event.code in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
     )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=tracking_number or tracking.trackingNumber,
-        events=events,
+        tracking_number=tracking.trackingNumber,
+        events=[
+            models.TrackingEvent(
+                date=lib.fdate(event.timestamp, "%Y-%m-%dT%H:%M:%SZ"),
+                time=lib.flocaltime(event.timestamp, "%Y-%m-%dT%H:%M:%SZ"),
+                description=event.description,
+                code=event.code,
+                location=event.location,
+            )
+            for event in tracking.events
+        ],
         delivered=status == "delivered",
         status=status,
-        estimated_delivery=lib.fdate(tracking.estimatedDelivery, "%Y-%m-%d") if tracking.estimatedDelivery else None,
+        estimated_delivery=lib.fdate(
+            tracking.estimatedDelivery,
+            try_formats=["%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"],
+        ),
         info=models.TrackingInfo(
-            shipment_service=tracking.firstMile.carrier if tracking.firstMile else None,
-            carrier_tracking_link=settings.tracking_url.format(tracking_number or tracking.trackingNumber),
-            customer_name=tracking.shipTo.city if tracking.shipTo else None,
-            shipment_destination_country=tracking.shipTo.country if tracking.shipTo else None,
-            shipment_origin_country=tracking.shipFrom.country if tracking.shipFrom else None,
+            shipment_service=tracking.firstMile.carrier,
+            carrier_tracking_link=settings.tracking_url.format(tracking.trackingNumber),
+            customer_name=tracking.shipTo.address.city,
+            shipment_destination_country=tracking.shipTo.address.country,
+            shipment_origin_country=tracking.shipFrom.address.country,
         ),
         meta=dict(
             shipment_id=tracking.shipmentId,
             customer_reference=tracking.customerReference,
             ship_date=tracking.shipDate,
-            ship_from=ship_from_location,
-            ship_to=ship_to_location,
-            first_mile_carrier=tracking.firstMile.carrier if tracking.firstMile else None,
-            first_mile_tracking=tracking.firstMile.trackingNumber if tracking.firstMile else None,
-            last_mile_carrier=tracking.lastMile.carrier if tracking.lastMile else None,
-            last_mile_tracking=tracking.lastMile.trackingNumber if tracking.lastMile else None,
+            last_mile_carrier=tracking.lastMile.carrier,
+            last_mile_tracking=tracking.lastMile.trackingNumber,
         ),
     )
 

@@ -32,15 +32,17 @@ import { GetSystemConnections_system_carrier_connections_edges_node } from "@kar
 import { IntegrationStatusBadge } from "@karrio/ui/core/components/integration-status-badge";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { EnhancedMetadataEditor } from "./enhanced-metadata-editor";
+import { useOAuthConnection, supportsOAuth, useCarrierWebhook, supportsWebhook } from "@karrio/hooks/carrier-connections";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { References } from "@karrio/types";
 import { useForm } from "react-hook-form";
-import { isEqual } from "@karrio/lib";
+import { isEqual, KARRIO_API } from "@karrio/lib";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "./ui/input";
+import { Zap, Loader2, Webhook, Check, X, Copy } from "lucide-react";
 import * as z from "zod";
 
 
@@ -55,7 +57,6 @@ const formSchema = z.object({
   carrier_name: z.string().min(1, { message: "Carrier is required" }),
   carrier_id: z.string().min(1, { message: "Carrier ID is required" }),
   active: z.boolean(),
-  capabilities: z.array(z.string()),
   credentials: z.record(z.any()),
   config: z.record(z.any()),
   metadata: z.record(z.any()),
@@ -87,13 +88,46 @@ export function CarrierConnectionDialog({
   onSubmit,
 }: CarrierConnectionDialogProps) {
   const [initialValues, setInitialValues] = useState<FormData | null>(null);
+  const [oauthCredentials, setOauthCredentials] = useState<Record<string, any> | null>(null);
   const { toast } = useToast();
+
+  // OAuth connection hook
+  const {
+    initiateOAuth,
+    cancelOAuth,
+    isLoading: isOAuthLoading,
+  } = useOAuthConnection({
+    onSuccess: (result) => {
+      if (result.credentials) {
+        // Store OAuth credentials to prefill form
+        setOauthCredentials(result.credentials);
+        toast({
+          title: "Authorization Successful",
+          description: "Your account has been authorized. Please complete the connection details.",
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: "Authorization Failed",
+        description: error instanceof Error ? error.message : "OAuth authorization failed",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Carrier webhook hook
+  const {
+    registerWebhook,
+    deregisterWebhook,
+    disconnectWebhook,
+    isLoading: isWebhookLoading,
+  } = useCarrierWebhook();
 
   const defaultValues: FormData = {
     carrier_name: "",
     carrier_id: "",
     active: false,
-    capabilities: [],
     credentials: {},
     config: {},
     metadata: {},
@@ -203,7 +237,6 @@ export function CarrierConnectionDialog({
           carrier_name: selectedConnection.credentials?.custom_carrier_name ? "generic" : selectedConnection.carrier_name || "",
           carrier_id: selectedConnection.carrier_id || "",
           active: selectedConnection.active || false,
-          capabilities: selectedConnection.capabilities || [],
           credentials: selectedConnection.credentials || {},
           config: selectedConnection.config || {},
           metadata: selectedConnection.metadata || {},
@@ -239,19 +272,123 @@ export function CarrierConnectionDialog({
           {}
         );
         setValue("credentials", defaultCredentials);
-
-        // Set all capabilities as checked by default
-        const capabilities = references?.carrier_capabilities?.[carrierName] || [];
-        setValue("capabilities", capabilities);
       }
     });
     return () => subscription.unsubscribe();
   }, [watch, setValue, selectedConnection, references]);
 
+  // Apply OAuth credentials when received
+  useEffect(() => {
+    if (oauthCredentials) {
+      const currentCredentials = form.getValues("credentials") || {};
+      // Merge OAuth credentials with existing credentials
+      form.setValue("credentials", {
+        ...currentCredentials,
+        ...oauthCredentials,
+      }, { shouldDirty: true });
+    }
+  }, [oauthCredentials, form]);
+
+  // Reset OAuth state when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setOauthCredentials(null);
+      cancelOAuth();
+    }
+  }, [open, cancelOAuth]);
 
   const handleModalClose = () => {
     onOpenChange(false);
   };
+
+  // Handle OAuth connect button click
+  const handleOAuthConnect = async () => {
+    const carrierName = watch("carrier_name");
+    if (!carrierName) return;
+
+    try {
+      await initiateOAuth(carrierName);
+    } catch (error) {
+      // Error is already handled by the hook's onError callback
+    }
+  };
+
+  // Check if current carrier supports OAuth
+  const currentCarrierSupportsOAuth = supportsOAuth(
+    watch("carrier_name"),
+    references?.carrier_capabilities
+  );
+
+  // Check if current carrier supports webhook registration
+  const currentCarrierSupportsWebhook = supportsWebhook(
+    watch("carrier_name"),
+    references?.carrier_capabilities
+  );
+
+  // Check if webhook is currently registered (from connection config)
+  const webhookId = watch("config.webhook_id");
+  const webhookUrl = watch("config.webhook_url");
+  const webhookSecret = watch("config.webhook_secret");
+
+  // Webhook is considered enabled if webhook_id OR webhook_secret is set
+  // (users may manually configure webhook_secret without auto-registration)
+  const isWebhookEnabled = !!(webhookId || webhookSecret);
+
+  // Webhook operation handler - reduces repetition across register/deregister/disconnect
+  const handleWebhookOperation = async (
+    operation: () => Promise<any>,
+    successTitle: string,
+    successDescription: string,
+    errorTitle: string,
+    clearConfig: boolean = false,
+  ) => {
+    if (!selectedConnection?.id) return;
+
+    try {
+      const result = await operation();
+      if (!result.success) return;
+
+      if (clearConfig) {
+        ["webhook_id", "webhook_secret", "webhook_url"].forEach((key) =>
+          form.setValue(`config.${key}` as any, "", { shouldDirty: false })
+        );
+      }
+
+      toast({ title: successTitle, description: successDescription });
+    } catch (error: any) {
+      toast({
+        title: errorTitle,
+        description: error?.message || `${errorTitle.toLowerCase()}.`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRegisterWebhook = () =>
+    handleWebhookOperation(
+      () => registerWebhook(selectedConnection!.id),
+      "Webhook Registered",
+      "Webhook has been successfully registered with the carrier. Close and reopen to see updated configuration.",
+      "Registration Failed",
+    );
+
+  const handleDeregisterWebhook = () =>
+    handleWebhookOperation(
+      () => deregisterWebhook(selectedConnection!.id),
+      "Webhook Deregistered",
+      "Webhook has been successfully removed from the carrier.",
+      "Deregistration Failed",
+      true,
+    );
+
+  const handleDisconnectWebhook = () =>
+    handleWebhookOperation(
+      () => disconnectWebhook(selectedConnection!.id),
+      "Webhook Disconnected",
+      "Webhook configuration has been cleared locally.",
+      "Disconnect Failed",
+      true,
+    );
 
   const formatLabel = (label: string) => {
     return label
@@ -600,51 +737,6 @@ export function CarrierConnectionDialog({
     );
   };
 
-  const renderCapabilityFields = () => {
-    const carrierName = watch("carrier_name");
-    if (!carrierName) return null;
-    const capabilities = references?.carrier_capabilities?.[carrierName] || [];
-
-    if (capabilities.length === 0) {
-      return <p className="text-sm text-muted-foreground">No capabilities for this carrier.</p>;
-    }
-
-    return (
-      <div className="space-y-2">
-        {capabilities.map((capability: string) => (
-          <FormField
-            key={capability}
-            control={form.control}
-            name="capabilities"
-            render={({ field }) => {
-              const isChecked = (field.value || []).includes(capability);
-              return (
-                <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Switch
-                      checked={isChecked}
-                      onCheckedChange={(checked) => {
-                        const currentCapabilities = field.value || [];
-                        if (checked) {
-                          field.onChange([...currentCapabilities, capability]);
-                        } else {
-                          field.onChange(currentCapabilities.filter(c => c !== capability));
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">
-                    {formatLabel(capability)}
-                  </FormLabel>
-                </FormItem>
-              );
-            }}
-          />
-        ))}
-      </div>
-    );
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col">
@@ -791,7 +883,7 @@ export function CarrierConnectionDialog({
 
                 {watch("carrier_name") && (
                   <Tabs defaultValue="credentials" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
+                    <TabsList className={`grid w-full ${currentCarrierSupportsWebhook ? 'grid-cols-4' : 'grid-cols-3'}`}>
                       <TabsTrigger value="credentials">Credentials</TabsTrigger>
                       <TabsTrigger
                         value="config"
@@ -799,11 +891,72 @@ export function CarrierConnectionDialog({
                       >
                         Config
                       </TabsTrigger>
-                      <TabsTrigger value="capabilities">Capabilities</TabsTrigger>
+                      {currentCarrierSupportsWebhook && (
+                        <TabsTrigger value="webhook">Webhook</TabsTrigger>
+                      )}
                       <TabsTrigger value="metadata">Metadata</TabsTrigger>
                     </TabsList>
                     <TabsContent value="credentials" className="pt-6">
                       <div className="space-y-4">
+                        {/* OAuth Quick Connect Banner - only show for new connections with OAuth support */}
+                        {!selectedConnection && currentCarrierSupportsOAuth && (
+                          <>
+                            <div className="rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4">
+                              <div className="flex items-start gap-3">
+                                <div className="flex-shrink-0">
+                                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+                                    <Zap className="h-5 w-5 text-purple-600" />
+                                  </div>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-purple-900">
+                                    Quick Connect
+                                  </h4>
+                                  <p className="mt-1 text-sm text-purple-700">
+                                    Connect your {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")} account instantly with secure OAuth authorization.
+                                  </p>
+                                  <Button
+                                    type="button"
+                                    onClick={handleOAuthConnect}
+                                    disabled={isOAuthLoading}
+                                    className="mt-3 bg-purple-600 hover:bg-purple-700 text-white"
+                                    size="sm"
+                                  >
+                                    {isOAuthLoading ? (
+                                      <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Connecting...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Zap className="mr-2 h-4 w-4" />
+                                        Connect with {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")}
+                                      </>
+                                    )}
+                                  </Button>
+                                </div>
+                              </div>
+                              {oauthCredentials && (
+                                <div className="mt-3 rounded-md bg-green-50 border border-green-200 p-2">
+                                  <p className="text-xs text-green-700 flex items-center gap-1">
+                                    <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
+                                    Authorization successful! Credentials have been prefilled below.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                            <div className="relative">
+                              <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                              </div>
+                              <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-background px-2 text-muted-foreground">
+                                  Or enter credentials manually
+                                </span>
+                              </div>
+                            </div>
+                          </>
+                        )}
                         {renderCredentialFields()}
                       </div>
                     </TabsContent>
@@ -812,11 +965,197 @@ export function CarrierConnectionDialog({
                         {renderConfigFields()}
                       </div>
                     </TabsContent>
-                    <TabsContent value="capabilities" className="pt-6">
-                      <div className="space-y-4">
-                        {renderCapabilityFields()}
-                      </div>
-                    </TabsContent>
+                    {currentCarrierSupportsWebhook && (
+                      <TabsContent value="webhook" className="pt-6">
+                        <div className="space-y-6">
+                          {/* Inbound Webhook URL Section */}
+                          <div className="rounded-lg border bg-muted/50 p-4">
+                            <h4 className="text-sm font-medium mb-2">Inbound Webhook URL</h4>
+                            <p className="text-xs text-muted-foreground mb-3">
+                              Use this URL to receive tracking updates and shipment events from {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")}.
+                            </p>
+                            {selectedConnection?.id ? (
+                              <div className="flex items-center gap-2">
+                                <code className="flex-1 text-xs bg-background border rounded px-3 py-2 overflow-x-auto whitespace-nowrap">
+                                  {KARRIO_API}/v1/connections/webhook/{selectedConnection.id}/events
+                                </code>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(
+                                      `${KARRIO_API}/v1/connections/webhook/${selectedConnection.id}/events`
+                                    );
+                                    toast({
+                                      title: "Copied!",
+                                      description: "Webhook URL copied to clipboard.",
+                                    });
+                                  }}
+                                >
+                                  <Copy className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-muted-foreground italic">
+                                Save the connection first to generate the webhook URL.
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Auto Registration Section - only for existing connections */}
+                          {selectedConnection ? (
+                            <>
+                              <div className="border-t pt-4">
+                                <h4 className="text-sm font-medium mb-3">Auto Registration</h4>
+                                <p className="text-xs text-muted-foreground mb-4">
+                                  Automatically register a webhook with the carrier to receive events at your Karrio endpoint.
+                                </p>
+
+                                {isWebhookEnabled ? (
+                                  // Webhook is enabled (either auto-registered or manually configured)
+                                  <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                                    <div className="flex items-start gap-3">
+                                      <div className="flex-shrink-0">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+                                          <Check className="h-4 w-4 text-green-600" />
+                                        </div>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h5 className="text-sm font-medium text-green-900">
+                                          Webhook {webhookId ? "Active" : "Configured"}
+                                        </h5>
+                                        <p className="mt-1 text-xs text-green-700 break-all">
+                                          {webhookUrl || (webhookId ? "Webhook registered with carrier" : "Webhook manually configured")}
+                                        </p>
+                                        {webhookSecret && (
+                                          <p className="mt-1 text-xs text-green-600">
+                                            Secret configured for signature verification
+                                          </p>
+                                        )}
+                                        <div className="flex gap-2 mt-3">
+                                          {/* Only show Deregister if we have a webhook_id (auto-registered) */}
+                                          {webhookId && (
+                                            <Button
+                                              type="button"
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={handleDeregisterWebhook}
+                                              disabled={isWebhookLoading}
+                                              className="border-red-200 text-red-600 hover:bg-red-50"
+                                            >
+                                              {isWebhookLoading ? (
+                                                <>
+                                                  <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                                                  Processing...
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <X className="mr-2 h-3 w-3" />
+                                                  Deregister
+                                                </>
+                                              )}
+                                            </Button>
+                                          )}
+                                          <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={handleDisconnectWebhook}
+                                            disabled={isWebhookLoading}
+                                            className="text-muted-foreground hover:text-foreground"
+                                            title="Clear local webhook config without notifying the carrier"
+                                          >
+                                            {isWebhookLoading ? (
+                                              <>
+                                                <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                                                Processing...
+                                              </>
+                                            ) : (
+                                              <>
+                                                Disconnect
+                                              </>
+                                            )}
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  // Webhook is not registered
+                                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                    <div className="flex items-start gap-3">
+                                      <div className="flex-shrink-0">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                                          <Webhook className="h-4 w-4 text-blue-600" />
+                                        </div>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h5 className="text-sm font-medium text-blue-900">
+                                          Enable Carrier Webhooks
+                                        </h5>
+                                        <p className="mt-1 text-xs text-blue-700">
+                                          Register a webhook to receive real-time tracking updates and shipment events from the carrier.
+                                        </p>
+                                        <Button
+                                          type="button"
+                                          size="sm"
+                                          onClick={handleRegisterWebhook}
+                                          disabled={isWebhookLoading}
+                                          className="mt-3 bg-blue-600 hover:bg-blue-700 text-white"
+                                        >
+                                          {isWebhookLoading ? (
+                                            <>
+                                              <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                                              Registering...
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Webhook className="mr-2 h-3 w-3" />
+                                              Register Webhook
+                                            </>
+                                          )}
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                              <p className="text-xs text-amber-700">
+                                Save the connection first to enable automatic webhook registration.
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Manual webhook secret input */}
+                          <div className="border-t pt-4">
+                            <FormField
+                              control={form.control}
+                              name="config.webhook_secret"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Webhook Secret</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      value={field.value || ""}
+                                      type="password"
+                                      placeholder="Enter webhook secret for signature verification"
+                                    />
+                                  </FormControl>
+                                  <p className="text-xs text-muted-foreground">
+                                    Used to verify webhook signatures. Auto-populated when using the register button, or enter manually if you registered the webhook externally.
+                                  </p>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+                      </TabsContent>
+                    )}
                     <TabsContent value="metadata" className="pt-6">
                       <EnhancedMetadataEditor
                         value={watch("metadata") || {}}

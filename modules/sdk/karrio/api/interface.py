@@ -524,37 +524,37 @@ class Manifest:
         return IRequestFrom(action)
 
 
-class DutiesAndTaxes:
-    """The unified Duties & Taxes API fluent interface"""
+class Duties:
+    """The unified Duties API fluent interface"""
 
     @staticmethod
-    def fetch(
-        args: typing.Union[models.DutiesAndTaxesRequest, dict],
+    def calculate(
+        args: typing.Union[models.DutiesCalculationRequest, dict],
     ) -> IRequestFrom:
-        """Fetch duties and taxes from a carrier
+        """Calculate duties for a shipment
 
         Args:
-            args (Union[DutiesAndTaxesRequest, dict]): the duties and taxes request payload
+            args (Union[DutiesCalculationRequest, dict]): the duties calculation request payload
 
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug("Fetching duties and taxes", payload=lib.to_dict(args))
-        payload = lib.to_object(models.DutiesAndTaxesRequest, lib.to_dict(args))
+        logger.debug("Calculating duties", payload=lib.to_dict(args))
+        payload = lib.to_object(models.DutiesCalculationRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
-            is_valid, abortion = check_operation(gateway, "fetch_duties_and_taxes")
+            is_valid, abortion = check_operation(gateway, "calculate_duties")
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = gateway.mapper.create_duties_and_taxes_request(
-                payload
+            request: lib.Serializable = (
+                gateway.mapper.create_duties_calculation_request(payload)
             )
-            response: lib.Deserializable = gateway.proxy.fetch_duties_and_taxes(request)
+            response: lib.Deserializable = gateway.proxy.calculate_duties(request)
 
             @fail_safe(gateway)
             def deserialize():
-                return gateway.mapper.parse_duties_and_taxes_response(response)
+                return gateway.mapper.parse_duties_calculation_response(response)
 
             return IDeserialize(deserialize)
 
@@ -662,6 +662,91 @@ class Webhook:
             @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_webhook_deregistration_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+
+class Hooks:
+    """The unified Hooks API fluent interface"""
+
+    @staticmethod
+    def on_webhook_event(
+        args: typing.Union[models.RequestPayload, dict],
+    ) -> IRequestFrom:
+        """Process a webhook event from a carrier
+
+        Args:
+            args (Union[RequestPayload, dict]): the webhook event request payload
+        """
+        logger.debug("Processing webhook event", payload=lib.to_dict(args))
+        payload = lib.to_object(models.RequestPayload, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, "on_webhook_event")
+            if not is_valid:
+                return abortion
+
+            result = gateway.hooks.on_webhook_event(payload)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return result
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+    @staticmethod
+    def on_oauth_authorize(
+        args: typing.Union[models.OAuthAuthorizePayload, dict],
+    ) -> IRequestFrom:
+        """Create a OAuth authorize request for a carrier OAuth flow
+
+        Args:
+            args (Union[OAuthAuthorizePayload, dict]): the OAuth authorize request payload
+        """
+        logger.debug("Creating OAuth authorize request", payload=lib.to_dict(args))
+        payload = lib.to_object(models.OAuthAuthorizePayload, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, "on_oauth_authorize")
+            if not is_valid:
+                return abortion
+
+            result = gateway.hooks.on_oauth_authorize(payload)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return result
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+    @staticmethod
+    def on_oauth_callback(
+        args: typing.Union[models.RequestPayload, dict],
+    ) -> IRequestFrom:
+        """Process a OAuth callback from a carrier
+
+        Args:
+            args (Union[RequestPayload, dict]): the OAuth callback request payload
+        """
+        logger.debug("Processing OAuth callback", payload=lib.to_dict(args))
+        payload = lib.to_object(models.RequestPayload, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway) -> IDeserialize:
+            is_valid, abortion = check_operation(gateway, "on_oauth_callback")
+            if not is_valid:
+                return abortion
+
+            result = gateway.hooks.on_oauth_callback(payload)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return result
 
             return IDeserialize(deserialize)
 

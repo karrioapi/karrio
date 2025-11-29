@@ -73,7 +73,7 @@ Use the `sdk add-extension` command to generate the complete directory structure
   --confirm
 ```
 
-**Available Features**: `address`, `document`, `manifest`, `pickup`, `rating`, `shipping`, `tracking`
+**Available Features**: `address`, `callback`, `document`, `duties`, `insurance`, `manifest`, `pickup`, `rating`, `shipping`, `tracking`, `webhook`
 **Use**: `--no-is-xml-api` for JSON API and `--is-xml-api` for XML APIs
 **Try Help if you encounter an error**: `./bin/cli sdk add-extension --help` (at the root of the project and make sure the env var has been activated.)
 
@@ -819,6 +819,286 @@ def shipment_request(
     )
 
     return lib.Serializable(request, lib.to_dict)  # Use lib.to_xml for XML APIs
+```
+
+#### Manifest Implementation
+
+**File**: `karrio/providers/[carrier_name]/manifest.py`
+
+```python
+"""Karrio [Carrier Name] manifest creation implementation."""
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].error as error
+import karrio.providers.[carrier_name].utils as provider_utils
+import karrio.schemas.[carrier_name].manifest_request as [carrier_name]_req
+import karrio.schemas.[carrier_name].manifest_response as [carrier_name]_res
+
+def parse_manifest_response(
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
+    messages = error.parse_error_response(response, settings)
+    manifest = _extract_details(response, settings) if not messages else None
+
+    return manifest, messages
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.ManifestDetails:
+    manifest = lib.to_object([carrier_name]_res.ManifestResponseType, data)
+
+    return models.ManifestDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        manifest_id=manifest.manifestId if hasattr(manifest, 'manifestId') else "",
+        doc=models.ManifestDocument(manifest=manifest.manifestData) if hasattr(manifest, 'manifestData') else None,
+        meta=dict(
+            status=manifest.status if hasattr(manifest, 'status') else "",
+        ),
+    ) if manifest else None
+
+def manifest_request(
+    payload: models.ManifestRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    request = [carrier_name]_req.ManifestRequestType(
+        accountNumber=settings.account_number,
+        shipments=[
+            {"trackingNumber": identifier}
+            for identifier in payload.shipment_identifiers
+        ],
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+```
+
+#### Duties & Taxes Implementation
+
+**File**: `karrio/providers/[carrier_name]/duties.py`
+
+```python
+"""Karrio [Carrier Name] duties and taxes calculation implementation."""
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].error as error
+import karrio.providers.[carrier_name].utils as provider_utils
+import karrio.schemas.[carrier_name].duties_taxes_request as [carrier_name]_req
+import karrio.schemas.[carrier_name].duties_taxes_response as [carrier_name]_res
+
+def parse_duties_response(
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.DutiesDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
+    messages = error.parse_error_response(response, settings)
+    duties = _extract_details(response, settings) if not messages else None
+
+    return duties, messages
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.DutiesDetails:
+    duties = lib.to_object([carrier_name]_res.DutiesTaxesResponseType, data)
+
+    return models.DutiesDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        duties=lib.to_money(duties.dutiesAmount) if hasattr(duties, 'dutiesAmount') else 0,
+        taxes=lib.to_money(duties.taxesAmount) if hasattr(duties, 'taxesAmount') else 0,
+        total=lib.to_money(duties.totalAmount) if hasattr(duties, 'totalAmount') else 0,
+        currency=duties.currency if hasattr(duties, 'currency') else "USD",
+        meta=dict(
+            breakdown=duties.breakdown if hasattr(duties, 'breakdown') else {},
+        ),
+    ) if duties else None
+
+def duties_request(
+    payload: models.DutiesRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+
+    request = [carrier_name]_req.DutiesTaxesRequestType(
+        originCountry=shipper.country_code,
+        destinationCountry=recipient.country_code,
+        items=[
+            {
+                "description": item.description,
+                "quantity": item.quantity,
+                "value": item.value,
+                "hsCode": item.hs_code,
+            }
+            for item in (payload.commodities or [])
+        ],
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+```
+
+#### Insurance Implementation
+
+**File**: `karrio/providers/[carrier_name]/insurance.py`
+
+```python
+"""Karrio [Carrier Name] insurance application implementation."""
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].error as error
+import karrio.providers.[carrier_name].utils as provider_utils
+import karrio.schemas.[carrier_name].insurance_request as [carrier_name]_req
+import karrio.schemas.[carrier_name].insurance_response as [carrier_name]_res
+
+def parse_insurance_response(
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.InsuranceDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
+    messages = error.parse_error_response(response, settings)
+    insurance = _extract_details(response, settings) if not messages else None
+
+    return insurance, messages
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.InsuranceDetails:
+    insurance = lib.to_object([carrier_name]_res.InsuranceResponseType, data)
+
+    return models.InsuranceDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        insurance_id=insurance.policyId if hasattr(insurance, 'policyId') else "",
+        premium=lib.to_money(insurance.premium) if hasattr(insurance, 'premium') else 0,
+        coverage=lib.to_money(insurance.coverage) if hasattr(insurance, 'coverage') else 0,
+        currency=insurance.currency if hasattr(insurance, 'currency') else "USD",
+        meta=dict(
+            policy_number=insurance.policyNumber if hasattr(insurance, 'policyNumber') else "",
+        ),
+    ) if insurance else None
+
+def insurance_request(
+    payload: models.InsuranceRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    request = [carrier_name]_req.InsuranceRequestType(
+        shipmentId=payload.shipment_identifier,
+        coverage=payload.coverage_amount,
+        currency=payload.currency or "USD",
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+```
+
+#### Webhook Registration Implementation
+
+**File**: `karrio/providers/[carrier_name]/webhook/register.py`
+
+```python
+"""Karrio [Carrier Name] webhook registration implementation."""
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].error as error
+import karrio.providers.[carrier_name].utils as provider_utils
+import karrio.schemas.[carrier_name].webhook_request as [carrier_name]_req
+import karrio.schemas.[carrier_name].webhook_response as [carrier_name]_res
+
+def parse_webhook_registration_response(
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.WebhookDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
+    messages = error.parse_error_response(response, settings)
+    webhook = _extract_details(response, settings) if not messages else None
+
+    return webhook, messages
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.WebhookDetails:
+    webhook = lib.to_object([carrier_name]_res.WebhookResponseType, data)
+
+    return models.WebhookDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        webhook_id=webhook.webhookId if hasattr(webhook, 'webhookId') else "",
+        url=webhook.url if hasattr(webhook, 'url') else "",
+        events=webhook.events if hasattr(webhook, 'events') else [],
+        meta=dict(
+            status=webhook.status if hasattr(webhook, 'status') else "",
+        ),
+    ) if webhook else None
+
+def webhook_registration_request(
+    payload: models.WebhookRegistrationRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    request = [carrier_name]_req.WebhookRequestType(
+        url=payload.url,
+        events=payload.events or ["shipment.created", "shipment.delivered"],
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+```
+
+#### Callback/OAuth Implementation (for carriers with OAuth flows)
+
+**File**: `karrio/providers/[carrier_name]/callback/oauth.py`
+
+```python
+"""Karrio [Carrier Name] OAuth callback implementation."""
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.[carrier_name].error as error
+import karrio.providers.[carrier_name].utils as provider_utils
+
+def parse_oauth_callback_response(
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.OAuthDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
+    messages = error.parse_error_response(response, settings)
+
+    oauth = models.OAuthDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        access_token=response.get("access_token"),
+        refresh_token=response.get("refresh_token"),
+        expires_in=response.get("expires_in"),
+        token_type=response.get("token_type", "Bearer"),
+    ) if not messages else None
+
+    return oauth, messages
+
+def oauth_callback_request(
+    payload: models.OAuthCallbackRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    # Handle OAuth code exchange
+    request = dict(
+        grant_type="authorization_code",
+        code=payload.code,
+        redirect_uri=payload.redirect_uri,
+        client_id=settings.client_id,
+        client_secret=settings.client_secret,
+    )
+
+    return lib.Serializable(request, lib.to_dict)
 ```
 
 ### Step 12: Configure Plugin Metadata

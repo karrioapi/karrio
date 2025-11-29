@@ -131,13 +131,30 @@ class Carriers:
 
 class Address:
     @staticmethod
-    def validate(payload: dict) -> datatypes.AddressValidation:
-        validation = validators.Address.validate(datatypes.Address(**payload))
+    def validate(
+        payload: dict,
+        provider: providers.Carrier = None,
+        **carrier_filters,
+    ) -> datatypes.AddressValidation:
+        provider = provider or Carriers.first(
+            **{
+                **dict(active=True, raise_not_found=True),
+                **carrier_filters,
+            }
+        )
 
-        if validation.success is False:
-            raise exceptions.APIException(detail=validation, code="invalid_address")
+        if "validate_address" not in provider.gateway.proxy_methods:
+            raise exceptions.APIException(
+                detail=f"address validation is not supported by carrier: '{provider.carrier_id}'",
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            )
 
-        return validation
+        request = karrio.Address.validate(
+            lib.to_object(datatypes.AddressValidationRequest, payload)
+        )
+
+        # The request is wrapped in utils.identity to simplify mocking in tests.
+        return utils.identity(lambda: request.from_(provider.gateway).parse())
 
 
 class Shipments:
@@ -737,4 +754,232 @@ class Manifests:
                 }
             ),
             messages=messages,
+        )
+
+
+class Insurance:
+    @staticmethod
+    def apply(
+        payload: dict, provider: providers.Carrier = None, **provider_filters
+    ) -> datatypes.InsuranceDetails:
+        provider = provider or Carriers.first(
+            **{
+                **dict(active=True, raise_not_found=True),
+                **provider_filters,
+            }
+        )
+
+        if "apply_insurance" not in provider.gateway.proxy_methods:
+            raise exceptions.APIException(
+                detail=f"insurance application is not supported by carrier: '{provider.carrier_id}'",
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            )
+
+        request = karrio.Insurance.apply(
+            lib.to_object(datatypes.InsuranceRequest, payload)
+        )
+
+        # The request call is wrapped in utils.identity to simplify mocking in tests
+        insurance, messages = utils.identity(
+            lambda: request.from_(provider.gateway).parse()
+        )
+
+        if insurance is None:
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
+            )
+
+        def process_meta(parent) -> dict:
+            return {
+                **(parent.meta or {}),
+                "ext": provider.ext,
+            }
+
+        return datatypes.InsuranceResponse(
+            insurance=datatypes.Insurance(
+                **{
+                    **payload,
+                    **lib.to_dict(insurance),
+                    "id": f"ins_{uuid.uuid4().hex}",
+                    "test_mode": provider.test_mode,
+                    "meta": process_meta(insurance),
+                    "messages": messages,
+                }
+            ),
+            messages=messages,
+        )
+
+
+class Duties:
+    @staticmethod
+    def calculate(
+        payload: dict,
+        provider: providers.Carrier = None,
+        **provider_filters,
+    ) -> datatypes.DutiesResponse:
+        provider = provider or Carriers.first(
+            **{
+                **dict(active=True, raise_not_found=True),
+                **provider_filters,
+            }
+        )
+
+        if "calculate_duties" not in provider.gateway.proxy_methods:
+            raise exceptions.APIException(
+                detail=f"duties calculation is not supported by carrier: '{provider.carrier_id}'",
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            )
+
+        request = karrio.Duty.calculate(
+            lib.to_object(datatypes.DutiesCalculationRequest, payload)
+        )
+
+        # The request is wrapped in utils.identity to simplify mocking in tests.
+        duties, messages = utils.identity(
+            lambda: request.from_(provider.gateway).parse()
+        )
+
+        if duties is None:
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
+            )
+
+        return datatypes.DutiesResponse(duties=duties, messages=messages)
+
+
+class Webhooks:
+    @staticmethod
+    def register(
+        payload: dict,
+        carrier: providers.Carrier = None,
+        **carrier_filters,
+    ) -> datatypes.DocumentUploadResponse:
+        carrier = carrier or Carriers.first(
+            **{
+                **dict(active=True, raise_not_found=True),
+                **carrier_filters,
+            }
+        )
+
+        if "register_webhook" not in carrier.gateway.proxy_methods:
+            raise exceptions.APIException(
+                detail=f"webhook registration is not supported by carrier: '{carrier.carrier_id}'",
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            )
+
+        request = karrio.Webhook.register(
+            lib.to_object(datatypes.WebhookRegistrationRequest, payload)
+        )
+
+        # The request is wrapped in utils.identity to simplify mocking in tests.
+        return utils.identity(lambda: request.from_(carrier.gateway).parse())
+
+    @staticmethod
+    def unregister(
+        payload: dict,
+        carrier: providers.Carrier = None,
+        **carrier_filters,
+    ) -> datatypes.ConfirmationResponse:
+        carrier = carrier or Carriers.first(
+            **{
+                **dict(active=True, raise_not_found=True),
+                **carrier_filters,
+            }
+        )
+
+        if "deregister_webhook" not in carrier.gateway.proxy_methods:
+            raise exceptions.APIException(
+                detail=f"webhook deregistration is not supported by carrier: '{carrier.carrier_id}'",
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            )
+
+        request = karrio.Webhook.deregister(
+            lib.to_object(datatypes.WebhookDeregistrationRequest, payload)
+        )
+
+        # The request is wrapped in utils.identity to simplify mocking in tests.
+        return utils.identity(lambda: request.from_(carrier.gateway).parse())
+
+
+class Hooks:
+
+    @staticmethod
+    def create_stub_gateway(
+        carrier_name: str, test_mode: bool = False
+    ) -> karrio.Gateway:
+        import karrio.server.core.middleware as middleware
+        import karrio.server.core.config as system_config
+        import django.core.cache as caching
+
+        _context = middleware.SessionContext.get_current_request()
+        _tracer = getattr(_context, "tracer", lib.Tracer())
+        _cache = lib.Cache(caching.cache)
+        _config = lib.SystemConfig(system_config.config)
+
+        return karrio.gateway[carrier_name].create(
+            dict(
+                carrier_id=carrier_name,
+                test_mode=test_mode,
+            ),
+            _tracer,
+            _cache,
+            _config,
+            is_stub=True,
+        )
+
+    @staticmethod
+    def on_webhook_event(
+        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+    ) -> typing.Tuple[datatypes.WebhookEventDetails, typing.List[datatypes.Message]]:
+        carrier = carrier or Carriers.first(
+            **{
+                **dict(active=True, raise_not_found=True),
+                **carrier_filters,
+            }
+        )
+
+        if carrier is None:
+            raise NotFound("No active carrier connection found to process the request")
+
+        request = karrio.Hooks.on_webhook_event(
+            lib.to_object(datatypes.RequestPayload, lib.to_dict(payload))
+        )
+
+        # The request call is wrapped in utils.identity to simplify mocking in tests
+        return utils.identity(lambda: request.from_(carrier.gateway).parse())
+
+    @staticmethod
+    def on_oauth_authorize(
+        payload: dict,
+        carrier: providers.Carrier = None,
+        carrier_name: str = None,
+        test_mode: bool = False,
+        **kwargs,
+    ) -> typing.Tuple[datatypes.OAuthAuthorizeRequest, typing.List[datatypes.Message]]:
+        gateway = lib.identity(
+            getattr(carrier, "gateway", None)
+            or Hooks.create_stub_gateway(carrier_name, test_mode)
+        )
+
+        return utils.identity(
+            lambda: karrio.Hooks.on_oauth_authorize(payload).from_(gateway).parse()
+        )
+
+    @staticmethod
+    def on_oauth_callback(
+        payload: dict,
+        carrier_name: str = None,
+        test_mode: bool = False,
+        carrier: providers.Carrier = None,
+        **kwargs,
+    ) -> typing.Tuple[typing.List[typing.Dict], typing.List[datatypes.Message]]:
+        gateway = lib.identity(
+            getattr(carrier, "gateway", None)
+            or Hooks.create_stub_gateway(carrier_name, test_mode)
+        )
+
+        return utils.identity(
+            lambda: karrio.Hooks.on_oauth_callback(payload).from_(gateway).parse()
         )

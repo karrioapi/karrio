@@ -12,7 +12,7 @@ class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
-        auth = lib.typed(self.authenticate(request).deserialize())
+        access_token = self.authenticate(request).deserialize()
         response = lib.request(
             url=f"{self.settings.server_url}/rate/v1/rates/quotes",
             data=lib.to_json(request.serialize()),
@@ -21,7 +21,7 @@ class Proxy(proxy.Proxy):
             headers={
                 "x-locale": "en_US",
                 "content-type": "application/json",
-                "authorization": f"Bearer {auth.access_token}",
+                "authorization": f"Bearer {access_token}",
             },
             decoder=provider_utils.parse_response,
             on_error=lambda b: provider_utils.parse_response(b.read()),
@@ -30,7 +30,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
-        auth = lib.typed(self.authenticate(request).deserialize())
+        access_token = self.authenticate(request).deserialize()
         response = lib.request(
             url=f"{self.settings.server_url}/track/v1/trackingnumbers",
             data=lib.to_json(request.serialize()),
@@ -39,7 +39,7 @@ class Proxy(proxy.Proxy):
             headers={
                 "x-locale": "en_US",
                 "content-type": "application/json",
-                "authorization": f"Bearer {auth.access_token}",
+                "authorization": f"Bearer {access_token}",
             },
             decoder=provider_utils.parse_response,
             on_error=lambda b: provider_utils.parse_response(b.read()),
@@ -48,7 +48,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        auth = lib.typed(self.authenticate(request).deserialize())
+        access_token = self.authenticate(request).deserialize()
         responses = lib.request(
             url=f"{self.settings.server_url}/ship/v1/shipments",
             data=lib.to_json(request.serialize()),
@@ -57,7 +57,7 @@ class Proxy(proxy.Proxy):
             headers={
                 "x-locale": "en_US",
                 "content-type": "application/json",
-                "authorization": f"Bearer {auth.access_token}",
+                "authorization": f"Bearer {access_token}",
             },
             decoder=provider_utils.parse_response,
             on_error=lambda b: provider_utils.parse_response(b.read()),
@@ -66,7 +66,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(responses, lib.to_dict)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        auth = lib.typed(self.authenticate(request).deserialize())
+        access_token = self.authenticate(request).deserialize()
         response = lib.request(
             url=f"{self.settings.server_url}/ship/v1/shipments/cancel",
             data=lib.to_json(request.serialize()),
@@ -75,7 +75,7 @@ class Proxy(proxy.Proxy):
             headers={
                 "x-locale": "en_US",
                 "content-type": "application/json",
-                "authorization": f"Bearer {auth.access_token}",
+                "authorization": f"Bearer {access_token}",
             },
             decoder=provider_utils.parse_response,
             on_error=lambda b: provider_utils.parse_response(b.read()),
@@ -84,7 +84,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def upload_document(self, requests: lib.Serializable) -> lib.Deserializable:
-        auth = lib.typed(self.authenticate(requests).deserialize())
+        access_token = self.authenticate(requests).deserialize()
         response = lib.run_asynchronously(
             lambda _: lib.request(
                 url=(
@@ -97,7 +97,7 @@ class Proxy(proxy.Proxy):
                 method="POST",
                 headers={
                     "content-Type": "multipart/form-data",
-                    "authorization": f"Bearer {auth.access_token}",
+                    "authorization": f"Bearer {access_token}",
                 },
             ),
             requests.serialize(),
@@ -109,7 +109,7 @@ class Proxy(proxy.Proxy):
         )
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        auth = lib.typed(self.authenticate(request).deserialize())
+        access_token = self.authenticate(request).deserialize()
         response = lib.request(
             url=f"{self.settings.server_url}/pickup/v1/pickups",
             data=lib.to_json(request.serialize()),
@@ -118,7 +118,7 @@ class Proxy(proxy.Proxy):
             headers={
                 "x-locale": "en_US",
                 "content-type": "application/json",
-                "authorization": f"Bearer {auth.access_token}",
+                "authorization": f"Bearer {access_token}",
             },
             decoder=provider_utils.parse_response,
             on_error=lambda b: provider_utils.parse_response(b.read()),
@@ -136,7 +136,7 @@ class Proxy(proxy.Proxy):
         return response
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        auth = lib.typed(self.authenticate(request).deserialize())
+        access_token = self.authenticate(request).deserialize()
         response = lib.request(
             url=f"{self.settings.server_url}/pickup/v1/pickups/cancel",
             data=lib.to_json(request.serialize()),
@@ -145,7 +145,7 @@ class Proxy(proxy.Proxy):
             headers={
                 "x-locale": "en_US",
                 "content-type": "application/json",
-                "authorization": f"Bearer {auth.access_token}",
+                "authorization": f"Bearer {access_token}",
             },
             decoder=provider_utils.parse_response,
             on_error=lambda b: provider_utils.parse_response(b.read()),
@@ -158,36 +158,38 @@ class Proxy(proxy.Proxy):
         or collect it from the cache if an unexpired access_token exist.
         """
         auth_type = lib.typed(
-            shipping_auth=dict(
-                required_values=[
-                    self.settings.api_key,
-                    self.settings.secret_key,
-                    self.settings.account_number,
-                ],
-                cache_key=f"{self.settings.carrier_name}|{self.settings.api_key}|{self.settings.secret_key}",
-                required_fields="api_key, secret_key, account_number",
-                service="Rate, Ship and Other API requests.",
-                data=dict(
-                    grant_type="client_credentials",
-                    client_id=self.settings.api_key,
-                    client_secret=self.settings.secret_key,
+            dict(
+                shipping_auth=dict(
+                    required_values=[
+                        self.settings.api_key,
+                        self.settings.secret_key,
+                        self.settings.account_number,
+                    ],
+                    cache_key=f"{self.settings.carrier_name}|{self.settings.api_key}|{self.settings.secret_key}",
+                    required_fields="api_key, secret_key, account_number",
+                    service="Rate, Ship and Other API requests.",
+                    data=dict(
+                        grant_type="client_credentials",
+                        client_id=self.settings.api_key,
+                        client_secret=self.settings.secret_key,
+                    ),
                 ),
-            ),
-            track_auth=dict(
-                required_values=[
-                    self.settings.track_api_key,
-                    self.settings.track_secret_key,
-                ],
-                cache_key=f"{self.settings.carrier_name}|{self.settings.track_api_key}|{self.settings.track_secret_key}",
-                required_fields="track_api_key, track_secret_key",
-                service="Track API requests.",
-                data=dict(
-                    grant_type="client_credentials",
-                    client_id=self.settings.track_api_key,
-                    client_secret=self.settings.track_secret_key,
+                track_auth=dict(
+                    required_values=[
+                        self.settings.track_api_key,
+                        self.settings.track_secret_key,
+                    ],
+                    cache_key=f"{self.settings.carrier_name}|{self.settings.track_api_key}|{self.settings.track_secret_key}",
+                    required_fields="track_api_key, track_secret_key",
+                    service="Track API requests.",
+                    data=dict(
+                        grant_type="client_credentials",
+                        client_id=self.settings.track_api_key,
+                        client_secret=self.settings.track_secret_key,
+                    ),
                 ),
-            ),
-        )[request.ctx.get("auth_type", "shipping_auth")]
+            )[request.ctx.get("auth_type", "shipping_auth")]
+        )
 
         if not all(auth_type.required_values):
             raise Exception(

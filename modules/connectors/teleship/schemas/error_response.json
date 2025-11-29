@@ -2,6 +2,7 @@
   "messages": [
     {
       "code": 400,
+      "level": "error",
       "message": "Bad Request",
       "timestamp": "2025-11-03T20:53:09.821Z",
       "details": [

@@ -3525,7 +3525,7 @@ export interface OperationConfirmation {
     /**
      * The targeted carrier\'s name (unique identifier)
      */
-    'carrier_id': string;
+    'carrier_id'?: string | null;
 }
 export interface OperationResponse {
     /**

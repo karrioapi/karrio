@@ -23,13 +23,24 @@ from karrio.core.models import (
     PickupCancelRequest as BasePickupCancelRequest,
     ConfirmationDetails as Confirmation,
     TrackingEvent,
-    TrackingDetails,
     TrackingInfo,
+    ManifestDocument,
+    TrackingDetails,
     DocumentFile,
     DocumentUploadRequest,
     ManifestRequest,
     ManifestDetails,
-    ManifestDocument,
+    RequestPayload,
+    OAuthAuthorizePayload,
+    OAuthAuthorizeRequest,
+    WebhookEventDetails,
+    WebhookRegistrationDetails,
+    WebhookDeregistrationRequest,
+    WebhookRegistrationRequest,
+    DutiesCalculationRequest,
+    DutiesCalculationDetails,
+    InsuranceRequest,
+    InsuranceDetails,
 )
 
 
@@ -363,7 +374,19 @@ class ManifestResponse:
 
 
 @attr.s(auto_attribs=True)
+class DutiesResponse:
+    messages: typing.List[Message] = jstruct.JList[Message]
+    duties: DutiesCalculationDetails = jstruct.JStruct[DutiesCalculationDetails]
+
+
+@attr.s(auto_attribs=True)
+class InsuranceResponse:
+    messages: typing.List[Message] = jstruct.JList[Message]
+    insurance: InsuranceDetails = jstruct.JStruct[InsuranceDetails]
+
+
+@attr.s(auto_attribs=True)
 class Error:
-    message: str = None
     code: str = None
+    message: str = None
     details: typing.Dict = None

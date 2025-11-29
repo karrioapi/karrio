@@ -1,0 +1,84 @@
+{
+  "messages": [
+    {
+      "code": 0,
+      "level": "error",
+      "timestamp": "2024-01-01T00:00:00.00Z",
+      "message": "An error occurred",
+      "details": [
+        "Missing required field"
+      ]
+    }
+  ],
+  "shipTo": {
+    "name": "Lepold",
+    "email": "lepold@example.com",
+    "phone": "+49 89 123456",
+    "company": "German Imports GmbH",
+    "address": {
+      "line1": "Leopoldstraße 119",
+      "line2": "2nd Floor",
+      "city": "München",
+      "state": "Bavaria",
+      "postcode": "80804",
+      "country": "DE"
+    }
+  },
+  "shipFrom": {
+    "name": "Jane",
+    "email": "jane@ukexports.com",
+    "phone": "+44 20 7946 0958",
+    "company": "UK Exports Ltd",
+    "address": {
+      "line1": "3 Belvedere Pl",
+      "line2": "",
+      "city": "London",
+      "state": "England",
+      "postcode": "SE1 0AD",
+      "country": "GB"
+    }
+  },
+  "commodities": [
+    {
+      "title": "Flix Earrings",
+      "description": "Gold-plated jewelry earrings",
+      "hsCode": "7117190090",
+      "sku": "stock-1",
+      "quantity": 1,
+      "value": {
+        "amount": 136.74,
+        "currency": "GBP"
+      },
+      "unitWeight": {
+        "unit": "kg",
+        "value": 0.18
+      },
+      "countryOfOrigin": "GR",
+      "category": "Jewelry",
+      "imageUrl": "https://example.com/products/flix-earrings.jpg",
+      "productUrl": "https://example.com/products/flix-earrings"
+    }
+  ],
+  "customs": {
+    "contentType": "CommercialGoods",
+    "incoterms": "DDP",
+    "invoiceNumber": "INV-2024-001",
+    "invoiceDate": "2024-01-15T00:00:00.000Z",
+    "EORI": "GB078617476000",
+    "VAT": "GB123456789"
+  },
+  "currency": "EUR",
+  "orderTrackingReference": "1234567890",
+  "freightCost": {
+    "amount": 15.00,
+    "currency": "GBP"
+  },
+  "consigneeCharges": {
+    "amount": 0,
+    "currency": "EUR"
+  },
+  "insuranceValue": {
+    "amount": 10.00,
+    "currency": "GBP"
+  }
+}

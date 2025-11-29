@@ -1,0 +1,32 @@
+{
+  "messages": [
+    {
+      "code": 0,
+      "level": "error",
+      "timestamp": "2024-01-01T00:00:00.00Z",
+      "message": "An error occurred",
+      "details": [
+        "Missing required field"
+      ]
+    }
+  ],
+  "shipmentIds": [
+    "shp_1234567890",
+    "shp_0987654321"
+  ],
+  "reference": "MANIFEST-2024-001",
+  "address": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "company": "ACME Corp",
+    "address": {
+      "line1": "123 Main St",
+      "line2": "Suite 100",
+      "city": "New York",
+      "state": "NY",
+      "postcode": "10001",
+      "country": "US"
+    }
+  }
+}

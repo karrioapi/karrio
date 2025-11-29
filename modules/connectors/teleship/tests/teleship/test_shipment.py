@@ -1,14 +1,12 @@
 """Teleship carrier shipment tests."""
 
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from .fixture import gateway
-import logging
+
 import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
-
-logger = logging.getLogger(__name__)
 
 
 class TestTeleshipShipment(unittest.TestCase):
@@ -19,60 +17,57 @@ class TestTeleshipShipment(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
+
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
-        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
-            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-                mock.return_value = "{}"
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-                self.assertEqual(
-                    mock.call_args[1]["url"],
-                    f"{gateway.settings.server_url}/api/shipments/labels"
-                )
+        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
+
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/api/shipments/labels",
+            )
 
     def test_parse_shipment_response(self):
-        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
-            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-                mock.return_value = ShipmentResponse
-                parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest)
-                    .from_(gateway)
-                    .parse()
-                )
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
+        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+            mock.return_value = ShipmentResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_shipment_cancel_request(self):
         request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
-        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
-            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-                mock.return_value = "{}"
-                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-                self.assertEqual(
-                    mock.call_args[1]["url"],
-                    f"{gateway.settings.server_url}/api/shipments/labels/SHP-UK-US-98765/void"
-                )
+        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/api/shipments/labels/SHP-UK-US-98765/void",
+            )
 
     def test_parse_error_response(self):
-        with patch.object(type(gateway.settings), 'access_token', new_callable=lambda: property(lambda self: "test_token_123")):
-            with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
-                mock.return_value = ErrorResponse
-                parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest)
-                    .from_(gateway)
-                    .parse()
-                )
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+        with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
-# 1. Karrio Input Payload
 ShipmentPayload = {
     "shipper": {
         "address_line1": "123 Business Park",
@@ -83,7 +78,7 @@ ShipmentPayload = {
         "person_name": "John Smith",
         "company_name": "UK Exports Ltd",
         "phone_number": "+442071234567",
-        "email": "shipping@ukexports.co.uk"
+        "email": "shipping@ukexports.co.uk",
     },
     "recipient": {
         "address_line1": "555 Industrial Blvd",
@@ -94,7 +89,7 @@ ShipmentPayload = {
         "person_name": "Jane Doe",
         "company_name": "US Imports Inc",
         "phone_number": "+13105551234",
-        "email": "receiving@usimports.com"
+        "email": "receiving@usimports.com",
     },
     "parcels": [
         {
@@ -104,7 +99,7 @@ ShipmentPayload = {
             "length": 30.0,
             "weight_unit": "KG",
             "dimension_unit": "CM",
-            "packaging_type": "parcel"
+            "packaging_type": "parcel",
         }
     ],
     "service": "teleship_expedited_dropoff",
@@ -124,100 +119,79 @@ ShipmentPayload = {
                 "weight_unit": "KG",
                 "value_amount": 150.00,
                 "value_currency": "GBP",
-                "origin_country": "GB"
+                "origin_country": "GB",
             }
         ],
-        "options": {
-            "eori_number": "GB123456789000"
-        }
-    }
+        "options": {"eori_number": "GB123456789000"},
+    },
 }
 
-ShipmentCancelPayload = {
-    "shipment_identifier": "SHP-UK-US-98765"
-}
+ShipmentCancelPayload = {"shipment_identifier": "SHP-UK-US-98765"}
 
-# 2. Carrier Request Format (from generated schemas)
-ShipmentRequest = {
-    "serviceCode": "TELESHIP-EXPEDITED-DROPOFF",
-    "customerReference": "UK-US-12345",
-    "packageType": "parcel",
-    "shipTo": {
-        "name": "Jane Doe",
-        "company": "US Imports Inc",
-        "email": "receiving@usimports.com",
-        "phone": "+13105551234",
-        "address": {
-            "line1": "555 Industrial Blvd",
-            "city": "Los Angeles",
-            "state": "CA",
-            "postcode": "90001",
-            "country": "US"
-        }
-    },
-    "shipFrom": {
-        "name": "John Smith",
-        "company": "UK Exports Ltd",
-        "email": "shipping@ukexports.co.uk",
-        "phone": "+442071234567",
-        "address": {
-            "line1": "123 Business Park",
-            "city": "London",
-            "state": "LDN",
-            "postcode": "SW1A 1AA",
-            "country": "GB"
-        }
-    },
-    "weight": {
-        "value": 1.2,
-        "unit": "kg"
-    },
-    "dimensions": {
-        "unit": "cm",
-        "length": 30.0,
-        "width": 20.0,
-        "height": 15.0
-    },
-    "commodities": [
-        {
-            "sku": "WIDGET-001",
-            "title": "Electronic Widget",
-            "description": "Consumer electronics widget",
-            "value": {
-                "amount": 150,
-                "currency": "GBP"
+ShipmentRequest = [
+    {
+        "commercialInvoiceReference": "INV-2025-001",
+        "commodities": [
+            {
+                "countryOfOrigin": "GB",
+                "description": "Consumer electronics widget",
+                "quantity": 2,
+                "sku": "WIDGET-001",
+                "title": "Electronic Widget",
+                "unitWeight": {"unit": "kg", "value": 0.6},
+                "value": {"amount": 150.0, "currency": "GBP"},
+            }
+        ],
+        "customerReference": "UK-US-12345",
+        "customs": {
+            "EORI": "GB123456789000",
+            "contentType": "CommercialGoods",
+            "invoiceDate": "2025-01-15",
+            "invoiceNumber": "INV-2025-001",
+        },
+        "dimensions": {"height": 15.0, "length": 30.0, "unit": "cm", "width": 20.0},
+        "packageType": "parcel",
+        "serviceCode": "TELESHIP-EXPEDITED-DROPOFF",
+        "shipFrom": {
+            "address": {
+                "city": "London",
+                "country": "GB",
+                "line1": "123 Business Park",
+                "postcode": "SW1A 1AA",
+                "state": "LDN",
             },
-            "quantity": 2,
-            "unitWeight": {
-                "value": 0.6,
-                "unit": "kg"
+            "company": "UK Exports Ltd",
+            "email": "shipping@ukexports.co.uk",
+            "name": "John Smith",
+            "phone": "+442071234567",
+        },
+        "shipTo": {
+            "address": {
+                "city": "Los Angeles",
+                "country": "US",
+                "line1": "555 Industrial Blvd",
+                "postcode": "90001",
+                "state": "CA",
             },
-            "countryOfOrigin": "GB"
-        }
-    ],
-    "customs": {
-        "EORI": "GB123456789000",
-        "contentType": "CommercialGoods",
-        "invoiceDate": "2025-01-15",
-        "invoiceNumber": "INV-2025-001"
+            "company": "US Imports Inc",
+            "email": "receiving@usimports.com",
+            "name": "Jane Doe",
+            "phone": "+13105551234",
+        },
+        "weight": {"unit": "kg", "value": 1.2},
     }
-}
+]
 
-ShipmentCancelRequest = {
-    "shipmentId": "SHP-UK-US-98765"
-}
+ShipmentCancelRequest = {"shipmentId": "SHP-UK-US-98765"}
 
-# 3. Carrier Response Mock (actual API format)
 ShipmentResponse = """{
     "shipment": {
         "shipmentId": "SHP-UK-US-98765",
         "trackingNumber": "TELESHIP12345678901",
-        "status": "created",
+        "status": "label_created",
         "customerReference": "UK-US-12345",
-        "serviceCode": "TELESHIP-EXPEDITED-DROPOFF",
-        "serviceName": "Teleship Expedited Drop-off",
-        "shipDate": "2025-01-15",
-        "estimatedDelivery": "2025-01-20",
+        "shipDate": "2025-01-15T00:00:00.00Z",
+        "estimatedDelivery": "2025-01-20T00:00:00.00Z",
         "packageType": "parcel",
         "documents": [
             {
@@ -229,13 +203,13 @@ ShipmentResponse = """{
         ],
         "weight": {
             "value": 1.2,
-            "unit": "KG"
+            "unit": "kg"
         },
         "dimensions": {
             "length": 30,
             "width": 20,
             "height": 15,
-            "unit": "CM"
+            "unit": "cm"
         },
         "shipTo": {
             "name": "Jane Doe",
@@ -260,31 +234,36 @@ ShipmentResponse = """{
                 "country": "GB"
             }
         },
-        "charges": [
-            {
-                "name": "Base Freight",
-                "amount": 85.00,
-                "currency": "GBP"
+        "rate": {
+            "price": 106.56,
+            "currency": "GBP",
+            "transit": 3,
+            "estimatedDelivery": "2025-01-20T00:00:00.00Z",
+            "service": {
+                "name": "Teleship Expedited Drop-off",
+                "code": "TELESHIP-EXPEDITED-DROPOFF"
             },
-            {
-                "name": "Fuel Surcharge",
-                "amount": 12.75,
-                "currency": "GBP"
-            },
-            {
-                "name": "Customs Clearance",
-                "amount": 8.81,
-                "currency": "GBP"
-            }
-        ],
-        "totalCharge": {
-            "amount": 106.56,
-            "currency": "GBP"
+            "charges": [
+                {
+                    "name": "Base Freight",
+                    "amount": 85.00,
+                    "currency": "GBP"
+                },
+                {
+                    "name": "Fuel Surcharge",
+                    "amount": 12.75,
+                    "currency": "GBP"
+                },
+                {
+                    "name": "Customs Clearance",
+                    "amount": 8.81,
+                    "currency": "GBP"
+                }
+            ]
         }
     }
 }"""
 
-# 4. Error Response Mock
 ErrorResponse = """{
     "messages": [
         {
@@ -300,7 +279,6 @@ ErrorResponse = """{
     ]
 }"""
 
-# 5. Parsed Success Response (Karrio format)
 ParsedShipmentResponse = [
     {
         "carrier_id": "teleship",
@@ -308,49 +286,31 @@ ParsedShipmentResponse = [
         "tracking_number": "TELESHIP12345678901",
         "shipment_identifier": "SHP-UK-US-98765",
         "label_type": "PDF",
-        "docs": {
-            "label": "JVBERi0xLjcKJeLjz9MK..."
-        },
+        "docs": {"label": "JVBERi0xLjcKJeLjz9MK..."},
         "meta": {
-            "service_code": "TELESHIP-EXPEDITED-DROPOFF",
-            "service_name": "Teleship Expedited Drop-off",
             "customer_reference": "UK-US-12345",
-            "ship_date": "2025-01-15",
-            "estimated_delivery": "2025-01-20",
-            "package_type": "parcel"
+            "service_name": "teleship_expedited_dropoff",
+            "ship_date": "2025-01-15T00:00:00.00Z",
         },
         "selected_rate": {
             "carrier_id": "teleship",
             "carrier_name": "teleship",
-            "service": "TELESHIP-EXPEDITED-DROPOFF",
+            "service": "teleship_expedited_dropoff",
             "total_charge": 106.56,
             "currency": "GBP",
+            "transit_days": 3,
+            "estimated_delivery": "2025-01-20",
             "extra_charges": [
-                {
-                    "name": "Base Freight",
-                    "amount": 85.0,
-                    "currency": "GBP"
-                },
-                {
-                    "name": "Fuel Surcharge",
-                    "amount": 12.75,
-                    "currency": "GBP"
-                },
-                {
-                    "name": "Customs Clearance",
-                    "amount": 8.81,
-                    "currency": "GBP"
-                }
+                {"name": "Base Freight", "amount": 85.0, "currency": "GBP"},
+                {"name": "Fuel Surcharge", "amount": 12.75, "currency": "GBP"},
+                {"name": "Customs Clearance", "amount": 8.81, "currency": "GBP"},
             ],
-            "meta": {
-                "service_name": "Teleship Expedited Drop-off"
-            }
-        }
+            "meta": {"service_name": "teleship_expedited_dropoff"},
+        },
     },
-    []
+    [],
 ]
 
-# 6. Parsed Error Response
 ParsedErrorResponse = [
     None,
     [
@@ -364,9 +324,9 @@ ParsedErrorResponse = [
                 "details": [
                     "Invalid customs declaration for international shipment",
                     "EORI number format is invalid",
-                    "Commodity value must be specified for customs clearance"
-                ]
-            }
+                    "Commodity value must be specified for customs clearance",
+                ],
+            },
         }
-    ]
+    ],
 ]

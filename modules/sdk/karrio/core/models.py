@@ -258,8 +258,8 @@ class ChargeDetails:
 
 
 @attr.s(auto_attribs=True)
-class DutiesAndTaxesRequest:
-    """duties and taxes request unified data type."""
+class DutiesCalculationRequest:
+    """duties calculation request unified data type."""
 
     shipment_identifier: str
     shipper: Address = JStruct[Address, REQUIRED]
@@ -278,12 +278,12 @@ class InsuranceRequest:
     """insurance request unified data type."""
 
     shipment_identifier: str
-    amount: float = None
-    currency: str = None
+    amount: float
+    currency: str
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
+    parcel: Parcel = JStruct[Parcel, REQUIRED]
 
-    parcel: Parcel = JStruct[Parcel]
     provider: str = None
     reference: str = None
     metadata: Dict = {}
@@ -481,8 +481,8 @@ class ConfirmationDetails:
 
 
 @attr.s(auto_attribs=True)
-class DutiesAndTaxesDetails:
-    """Karrio unified duties and taxes details data type."""
+class DutiesCalculationDetails:
+    """Karrio unified duties calculation details data type."""
 
     carrier_name: str
     carrier_id: str
@@ -526,8 +526,40 @@ class WebhookEventDetails:
     carrier_name: str
     carrier_id: str
 
+    tracking_number: str = None
+    shipment_identifier: str = None
     tracking: TrackingDetails = JStruct[TrackingDetails]
     shipment: ShipmentDetails = JStruct[ShipmentDetails]
+
+
+@attr.s(auto_attribs=True)
+class OAuthAuthorizePayload:
+    """Karrio unified OAuth authorize request data type."""
+
+    redirect_uri: str
+    state: str
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class OAuthAuthorizeRequest:
+    """Karrio unified OAuth authorize response data type."""
+
+    carrier_name: str
+    authorization_url: str
+
+    state: str = None
+    meta: Dict = {}
+
+
+@attr.s(auto_attribs=True)
+class RequestPayload:
+    """Karrio unified hooks request payload data type."""
+
+    url: str
+    body: dict = {}
+    query: dict = {}
+    headers: dict = {}
 
 
 @attr.s(auto_attribs=True)
