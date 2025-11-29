@@ -6,11 +6,11 @@ import {
   ShipmentType,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
-import { formatRef, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
+import { useDocumentPrinter, FormatType } from "@karrio/hooks/resource-token";
+import { formatRef, isNone, isNoneOrEmpty, p } from "@karrio/lib";
 import { ConfirmModalContext } from "../modals/confirm-modal";
 import { useShipmentMutation } from "@karrio/hooks/shipment";
 import React, { useState, useRef, useContext } from "react";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
 
@@ -27,11 +27,11 @@ export const ShipmentMenu = ({
 }: ShipmentMenuComponent): JSX.Element => {
   const router = useRouter();
   const { basePath } = useAppMode();
-  const { references } = useAPIMetadata();
   const mutation = useShipmentMutation();
   const trigger = useRef<HTMLDivElement>(null);
   const [isActive, setIsActive] = useState(false);
   const { confirm: confirmCancellation } = useContext(ConfirmModalContext);
+  const documentPrinter = useDocumentPrinter();
   const {
     query: { data: { document_templates } = {} },
   } = useDocumentTemplates({
@@ -109,10 +109,11 @@ export const ShipmentMenu = ({
 
           {!isNone(shipment.label_url) && (
             <a
-              className="dropdown-item"
-              href={url$`${references.HOST}/${shipment?.label_url}`}
-              target="_blank"
-              rel="noreferrer"
+              className={`dropdown-item ${documentPrinter.isLoading ? 'is-loading' : ''}`}
+              onClick={() => documentPrinter.openShipmentLabel(
+                shipment.id,
+                { format: (shipment.label_type || "pdf").toLowerCase() as FormatType, doc: "label" }
+              )}
             >
               <span>Print Label</span>
             </a>
@@ -120,10 +121,11 @@ export const ShipmentMenu = ({
 
           {!isNone(shipment.invoice_url) && (
             <a
-              className="dropdown-item"
-              href={url$`${references.HOST}/${shipment.invoice_url}`}
-              target="_blank"
-              rel="noreferrer"
+              className={`dropdown-item ${documentPrinter.isLoading ? 'is-loading' : ''}`}
+              onClick={() => documentPrinter.openShipmentLabel(
+                shipment.id,
+                { format: "pdf", doc: "invoice" }
+              )}
             >
               Print Invoice
             </a>
@@ -271,10 +273,11 @@ export const ShipmentMenu = ({
 
           {(document_templates?.edges || []).map(({ node: template }) => (
             <a
-              href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${shipment.id}`}
-              className="dropdown-item"
-              target="_blank"
-              rel="noreferrer"
+              className={`dropdown-item ${documentPrinter.isLoading ? 'is-loading' : ''}`}
+              onClick={() => documentPrinter.openTemplate(
+                template.id,
+                { shipments: shipment.id }
+              )}
               key={template.id}
             >
               Download {template.name}

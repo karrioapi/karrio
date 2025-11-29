@@ -6,11 +6,11 @@ import {
   formatDateTime,
   isNone,
   preventPropagation,
-  url$,
 } from "@karrio/lib";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import { useDocumentPrinter } from "@karrio/hooks/resource-token";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { MenuComponent } from "@karrio/ui/core/components/menu";
 import { AddressType, ManifestType } from "@karrio/types";
@@ -32,7 +32,7 @@ export default function Page() {
 
     const searchParams = useSearchParams();
     const loader = useLoader();
-    const { references } = useAPIMetadata();
+    const documentPrinter = useDocumentPrinter();
     const [allChecked, setAllChecked] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
     const { user_connections } = useCarrierConnections();
@@ -168,16 +168,15 @@ export default function Page() {
                     {selection.length > 0 && (
                       <td className="p-1 is-vcentered" colSpan={6}>
                         <div className="buttons has-addons">
-                          <a
-                            href={url$`${references.HOST}/documents/manifests/manifest.pdf?manifests=${selection.join(",")}`}
-                            className={`button is-small is-default px-3`}
-                            target="_blank"
-                            rel="noreferrer"
+                          <button
+                            className={`button is-small is-default px-3 ${documentPrinter.isLoading ? "is-loading" : ""}`}
+                            onClick={() => documentPrinter.openBatchManifests(selection)}
+                            disabled={documentPrinter.isLoading}
                           >
                             <span className="has-text-weight-semibold">
                               Print Manifests
                             </span>
-                          </a>
+                          </button>
                         </div>
                       </td>
                     )}
@@ -293,10 +292,13 @@ export default function Page() {
                             }
                           >
                             <a
-                              className={`dropdown-item ${isNone(manifest.manifest_url) ? "is-static" : ""}`}
-                              href={url$`${references.HOST}/${manifest.manifest_url}`}
-                              target="_blank"
-                              rel="noreferrer"
+                              className={`dropdown-item ${isNone(manifest.manifest_url) || documentPrinter.isLoading ? "is-static" : ""}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (!isNone(manifest.manifest_url)) {
+                                  documentPrinter.openManifest(manifest.id);
+                                }
+                              }}
                             >
                               <span>Print Manifest</span>
                             </a>

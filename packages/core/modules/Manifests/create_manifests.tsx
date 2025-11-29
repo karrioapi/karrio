@@ -406,10 +406,8 @@ export default function Page() {
   };
 
   return (
-    <>
-      <ContextProviders>
-        <Component />
-      </ContextProviders>
-    </>
+    <ContextProviders>
+      <Component />
+    </ContextProviders>
   );
 }

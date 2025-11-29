@@ -334,6 +334,250 @@ class ConfirmationToken(jwt.Token):
         return token
 
 
+class ResourceAccessToken(jwt.Token):
+    """JWT token for limited resource access (documents, exports, etc.)."""
+
+    token_type = "resource_access"
+    lifetime = timedelta(minutes=5)
+
+    @classmethod
+    def for_resource(
+        cls,
+        user,
+        resource_type: str,
+        resource_ids: List[str],
+        access: List[str],
+        format: Optional[str] = None,
+        org_id: Optional[str] = None,
+        test_mode: Optional[bool] = None,
+        expires_in: Optional[int] = None,
+    ) -> "ResourceAccessToken":
+        """Generate a resource access token.
+
+        Args:
+            user: The authenticated user
+            resource_type: Type of resource (shipment, manifest, template, document)
+            resource_ids: List of resource IDs to grant access to
+            access: List of access permissions (label, invoice, manifest, render, etc.)
+            format: Document format (pdf, png, zpl)
+            org_id: Organization ID for multi-tenant environments
+            test_mode: Whether this is test mode
+            expires_in: Custom expiration time in seconds
+
+        Returns:
+            ResourceAccessToken instance
+        """
+        token = cls()
+        token["user_id"] = user.id if hasattr(user, "id") else user
+        token["resource_type"] = resource_type
+        token["resource_ids"] = resource_ids
+        token["access"] = access
+
+        if format:
+            token["format"] = format
+        if org_id:
+            token["org_id"] = org_id
+        if test_mode is not None:
+            token["test_mode"] = test_mode
+        if expires_in:
+            token.set_exp(lifetime=timedelta(seconds=expires_in))
+
+        return token
+
+    @classmethod
+    def decode(cls, token_string: str) -> dict:
+        """Decode and validate a resource access token.
+
+        Args:
+            token_string: The JWT token string
+
+        Returns:
+            Dictionary with token claims
+
+        Raises:
+            rest_framework_simplejwt.exceptions.TokenError: If token is invalid
+        """
+        token = cls(token_string)
+        return {
+            "user_id": token.get("user_id"),
+            "resource_type": token.get("resource_type"),
+            "resource_ids": token.get("resource_ids", []),
+            "access": token.get("access", []),
+            "format": token.get("format"),
+            "org_id": token.get("org_id"),
+            "test_mode": token.get("test_mode"),
+        }
+
+    @classmethod
+    def validate_access(
+        cls,
+        token_string: str,
+        resource_type: str,
+        resource_id: str,
+        access: str,
+    ) -> dict:
+        """Validate token grants access to specific resource and action.
+
+        Args:
+            token_string: The JWT token string
+            resource_type: Expected resource type
+            resource_id: Resource ID to check access for
+            access: Access permission to check
+
+        Returns:
+            Token claims if valid
+
+        Raises:
+            rest_framework_simplejwt.exceptions.TokenError: If token is invalid
+            PermissionError: If access is not granted
+        """
+        claims = cls.decode(token_string)
+
+        if claims["resource_type"] != resource_type:
+            raise PermissionError(
+                f"Token not valid for resource type: {resource_type}"
+            )
+
+        if resource_id not in claims["resource_ids"]:
+            raise PermissionError(
+                f"Token not valid for resource: {resource_id}"
+            )
+
+        if access not in claims["access"]:
+            raise PermissionError(
+                f"Token does not grant access: {access}"
+            )
+
+        return claims
+
+    @classmethod
+    def validate_batch_access(
+        cls,
+        token_string: str,
+        resource_type: str,
+        resource_ids: List[str],
+        access: str,
+    ) -> dict:
+        """Validate token grants access to multiple resources.
+
+        Args:
+            token_string: The JWT token string
+            resource_type: Expected resource type
+            resource_ids: List of resource IDs to check access for
+            access: Access permission to check
+
+        Returns:
+            Token claims if valid
+
+        Raises:
+            rest_framework_simplejwt.exceptions.TokenError: If token is invalid
+            PermissionError: If access is not granted
+        """
+        claims = cls.decode(token_string)
+
+        if claims["resource_type"] != resource_type:
+            raise PermissionError(
+                f"Token not valid for resource type: {resource_type}"
+            )
+
+        if access not in claims["access"]:
+            raise PermissionError(
+                f"Token does not grant access: {access}"
+            )
+
+        token_ids = set(claims["resource_ids"])
+        request_ids = set(resource_ids)
+        if not request_ids.issubset(token_ids):
+            missing = request_ids - token_ids
+            raise PermissionError(
+                f"Token does not grant access to resources: {', '.join(missing)}"
+            )
+
+        return claims
+
+
+def validate_resource_token(
+    request,
+    resource_type: str,
+    resource_ids: List[str],
+    access: str,
+):
+    """Validate resource access token. Returns error response if invalid, None if valid.
+
+    Args:
+        request: The HTTP request object
+        resource_type: Expected resource type (shipment, manifest, template, etc.)
+        resource_ids: List of resource IDs to validate access for
+        access: Required access permission (label, invoice, manifest, render, etc.)
+
+    Returns:
+        HttpResponseForbidden if validation fails, None if valid
+
+    Example:
+        error = validate_resource_token(request, "shipment", [pk], "label")
+        if error:
+            return error
+    """
+    from django.http import HttpResponseForbidden
+
+    token = request.GET.get("token")
+
+    if not token:
+        return HttpResponseForbidden(
+            "Access token required. Use /api/tokens to generate one."
+        )
+
+    try:
+        ResourceAccessToken.validate_batch_access(
+            token_string=token,
+            resource_type=resource_type,
+            resource_ids=resource_ids,
+            access=access,
+        )
+        return None
+    except PermissionError as e:
+        return HttpResponseForbidden(str(e))
+    except Exception as e:
+        logger.warning("Invalid resource access token: %s", str(e))
+        return HttpResponseForbidden("Invalid or expired token.")
+
+
+def require_resource_token(
+    resource_type: str,
+    access: str,
+    get_resource_ids: Callable[..., List[str]],
+):
+    """Decorator for views requiring resource access token validation.
+
+    Args:
+        resource_type: Expected resource type (shipment, manifest, template, etc.)
+        access: Required access permission (label, invoice, manifest, render, etc.)
+        get_resource_ids: Callable that extracts resource IDs from request and view kwargs.
+                         Receives (request, **kwargs), returns list of resource IDs.
+
+    Example:
+        @require_resource_token(
+            resource_type="document",
+            access="batch_labels",
+            get_resource_ids=lambda req, **kw: req.GET.get("shipments", "").split(","),
+        )
+        def get(self, request, **kwargs):
+            ...
+    """
+    def decorator(method):
+        @functools.wraps(method)
+        def wrapper(self, request, *args, **kwargs):
+            resource_ids = get_resource_ids(request, **kwargs)
+            error = validate_resource_token(request, resource_type, resource_ids, access)
+            if error:
+                return error
+            return method(self, request, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
 def app_tracking_query_params(url: str, carrier) -> str:
     hub_flag = f"&hub={carrier.carrier_name}" if carrier.gateway.is_hub else ""
 

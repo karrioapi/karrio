@@ -10,7 +10,6 @@ import {
   isNone,
   isNoneOrEmpty,
   preventPropagation,
-  url$,
 } from "@karrio/lib";
 import {
   OrderPreview,
@@ -20,6 +19,7 @@ import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocodi
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { useDocumentPrinter } from "@karrio/hooks/resource-token";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { useContext, useEffect } from "react";
@@ -36,13 +36,13 @@ import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { ListPagination } from "@karrio/ui/components/list-pagination";
 import { Skeleton } from "@karrio/ui/components/ui/skeleton";
 import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell 
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
 } from "@karrio/ui/components/ui/table";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 
@@ -52,6 +52,7 @@ export default function OrdersPage() {
     const { setLoading } = useLoader();
     const searchParams = useSearchParams();
     const { references } = useAPIMetadata();
+    const documentPrinter = useDocumentPrinter();
     const modal = searchParams.get("modal") as string;
     const { previewOrder } = useContext(OrderPreviewContext);
     const [allChecked, setAllChecked] = React.useState(false);
@@ -354,56 +355,34 @@ export default function OrdersPage() {
                     <TableHead className="p-2" colSpan={6}>
                       <div className="flex items-center gap-2 flex-wrap">
                         <Button
-                          asChild
                           variant="outline"
                           size="sm"
-                          disabled={!compatibleTypeSelection(selection)}
+                          disabled={!compatibleTypeSelection(selection) || documentPrinter.isLoading}
                           className={`px-3 ${!compatibleTypeSelection(selection) ? 'opacity-40 pointer-events-none' : ''}`}
+                          onClick={() => documentPrinter.openOrderLabels(selection, { format: (computeDocFormat(selection) || "pdf")?.toLowerCase() as any })}
                         >
-                          <a
-                            href={compatibleTypeSelection(selection) ? url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(",")}` : undefined}
-                            target={compatibleTypeSelection(selection) ? "_blank" : undefined}
-                            rel={compatibleTypeSelection(selection) ? "noreferrer" : undefined}
-                            onClick={(e) => {
-                              if (!compatibleTypeSelection(selection)) {
-                                e.preventDefault();
-                                return false;
-                              }
-                            }}
-                          >
-                            Print Labels
-                          </a>
+                          Print Labels
                         </Button>
                         <Button
-                          asChild
                           variant="outline"
                           size="sm"
                           className="px-3"
+                          disabled={documentPrinter.isLoading}
+                          onClick={() => documentPrinter.openOrderLabels(selection, { doc: "invoice" })}
                         >
-                          <a
-                            href={url$`${references.HOST}/documents/orders/invoice.pdf?orders=${selection.join(",")}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Print Invoices
-                          </a>
+                          Print Invoices
                         </Button>
                         {(document_templates?.edges || []).map(
                           ({ node: template }) => (
                             <Button
                               key={template.id}
-                              asChild
                               variant="outline"
                               size="sm"
                               className="px-3"
+                              disabled={documentPrinter.isLoading}
+                              onClick={() => documentPrinter.openTemplate(template.id, { orders: selection.join(",") })}
                             >
-                              <a
-                                href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${selection.join(",")}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Print {template.name}
-                              </a>
+                              Print {template.name}
                             </Button>
                           ),
                         )}
