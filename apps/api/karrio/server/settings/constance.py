@@ -1,4 +1,4 @@
-""" Dynamic configuration editable on runtime powered by django-constance."""
+"""Dynamic configuration editable on runtime powered by django-constance."""
 
 from decouple import config
 import karrio.references as ref
@@ -22,6 +22,7 @@ GOOGLE_CLOUD_API_KEY = config("GOOGLE_CLOUD_API_KEY", default="")
 CANADAPOST_ADDRESS_COMPLETE_API_KEY = config(
     "CANADAPOST_ADDRESS_COMPLETE_API_KEY", default=""
 )
+
 # data retention env in days
 ORDER_DATA_RETENTION = config("ORDER_DATA_RETENTION", default=183, cast=int)
 TRACKER_DATA_RETENTION = config("TRACKER_DATA_RETENTION", default=183, cast=int)
@@ -29,7 +30,9 @@ SHIPMENT_DATA_RETENTION = config("SHIPMENT_DATA_RETENTION", default=183, cast=in
 API_LOGS_DATA_RETENTION = config("API_LOGS_DATA_RETENTION", default=92, cast=int)
 
 # registry config
-ENABLE_ALL_PLUGINS_BY_DEFAULT = config("ENABLE_ALL_PLUGINS_BY_DEFAULT", default=True if base.DEBUG else False, cast=bool)
+ENABLE_ALL_PLUGINS_BY_DEFAULT = config(
+    "ENABLE_ALL_PLUGINS_BY_DEFAULT", default=True if base.DEBUG else False, cast=bool
+)
 
 # Create feature flags config only for modules that exist
 FEATURE_FLAGS_CONFIG = {
@@ -161,8 +164,21 @@ PLUGIN_REGISTRY = {
             config(f"{ext.upper()}_ENABLED", default=True, cast=bool),
             f"{metadata.get('label')} plugin",
             bool,
-        ) for ext, metadata in ref.PLUGIN_METADATA.items()
-    }
+        )
+        for ext, metadata in ref.PLUGIN_METADATA.items()
+    },
+}
+
+# Collect plugin system configs from ref.SYSTEM_CONFIGS
+# Format: Dict[str, Tuple[default_value, description, type]]
+PLUGIN_SYSTEM_CONFIG = {
+    key: (config(key, default=default_value, cast=value_type), description, value_type)
+    for key, (default_value, description, value_type) in ref.SYSTEM_CONFIGS.items()
+}
+PLUGIN_SYSTEM_CONFIG_FIELDSETS = {
+    f"{metadata.get('label')} Config": tuple(metadata.get("system_config", {}).keys())
+    for _, metadata in ref.PLUGIN_METADATA.items()
+    if metadata.get("system_config")
 }
 
 
@@ -218,6 +234,7 @@ CONSTANCE_CONFIG = {
     ),
     **{k: v for k, v in FEATURE_FLAGS_CONFIG.items() if v is not None},
     **PLUGIN_REGISTRY,
+    **PLUGIN_SYSTEM_CONFIG,
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -241,5 +258,12 @@ CONSTANCE_CONFIG_FIELDSETS = {
     ),
     "Feature Flags": tuple(FEATURE_FLAGS_FIELDSET),
     "Registry Config": ("ENABLE_ALL_PLUGINS_BY_DEFAULT",),
-    "Registry Plugins": tuple([k for k in PLUGIN_REGISTRY.keys() if not k in ("ENABLE_ALL_PLUGINS_BY_DEFAULT",)]),
+    "Registry Plugins": tuple(
+        [
+            k
+            for k in PLUGIN_REGISTRY.keys()
+            if not k in ("ENABLE_ALL_PLUGINS_BY_DEFAULT",)
+        ]
+    ),
+    **PLUGIN_SYSTEM_CONFIG_FIELDSETS,
 }

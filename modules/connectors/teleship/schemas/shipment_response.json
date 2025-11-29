@@ -1,76 +1,294 @@
 {
+  "messages": [
+    {
+      "code": 0,
+      "level": "error",
+      "timestamp": "2024-01-01T00:00:00.00Z",
+      "message": "An error occurred",
+      "details": [
+        "Missing required field"
+      ]
+    }
+  ],
   "shipment": {
-    "shipmentId": "TELE-UK-US-123456789",
-    "trackingNumber": "TELE987654321GB",
-    "status": "created",
-    "customerReference": "#1001",
-    "serviceCode": "TELESHIP-EXPEDITED-DROPOFF",
-    "serviceName": "Teleship Hub Direct (for bundling packages, shipper delivers to Teleship hub)",
-    "shipDate": "2025-11-03T00:00:00.000Z",
-    "estimatedDelivery": "2025-11-10T00:00:00.000Z",
-    "packageType": "parcel",
+    "shipmentId": "string",
+    "trackingNumber": "string",
+    "status": "label_created",
+    "shipDate": "2024-01-01T00:00:00.00Z",
+    "estimatedDelivery": "2024-01-01T00:00:00.00Z",
     "documents": [
       {
         "type": "LABEL",
         "format": "PDF",
-        "url": "https://api.teleship.com/labels/TELE-UK-US-123456789.pdf",
-        "base64String": "JVBERi0xLjcKJeLjz9MK..."
-      },
-      {
-        "type": "INVOICE",
-        "format": "PDF",
-        "url": "https://api.teleship.com/invoices/TELE-UK-US-123456789.pdf"
+        "url": "https://api.teleship.com/api/shipments/labels/f5233746-71d4-4b05-bf63-56f4abaed5f6/label.pdf",
+        "base64String": "JVBERi0xLjQKJQlJbTgKMSAwIG9iago8PSplbiAkZwoKCSvQ=="
       }
     ],
-    "weight": {
-      "value": 0.48,
-      "unit": "kg"
-    },
-    "dimensions": {
-      "length": 35,
-      "width": 25,
-      "height": 14,
-      "unit": "cm"
-    },
     "shipTo": {
-      "name": "Fanny Dadin",
-      "email": "fanny@teleship.com",
-      "phone": "+1 213-601-6000",
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "company": "string",
       "address": {
-        "line1": "1300 Eunice Avenue",
-        "city": "Los Angeles",
-        "state": "CA",
-        "postcode": "90001",
-        "country": "US"
+        "line1": "",
+        "city": "",
+        "postcode": "",
+        "country": "US",
+        "state": "California"
       }
     },
     "shipFrom": {
-      "name": "London Store",
-      "company": "TELESHIP LIMITED",
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "company": "string",
       "address": {
-        "line1": "Flat 4, 24 Upper Tachbrook Street",
-        "city": "London",
-        "state": "England",
-        "postcode": "SW1V 1SW",
-        "country": "GB"
+        "line1": "",
+        "city": "",
+        "postcode": "",
+        "country": "GB",
+        "state": "London"
       }
     },
-    "charges": [
+    "returnTo": {
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "company": "string",
+      "address": {
+        "line1": "",
+        "city": "",
+        "postcode": "",
+        "country": "GB",
+        "state": "London"
+      }
+    },
+    "billTo": {
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "company": "string",
+      "stateTaxId": "string",
+      "countryTaxId": "string",
+      "address": {
+        "line1": "",
+        "city": "",
+        "postcode": "",
+        "country": "GB",
+        "state": "London"
+      }
+    },
+    "weight": {
+      "value": 1,
+      "unit": "kg"
+    },
+    "dimensions": {
+      "length": 40,
+      "width": 30,
+      "height": 16,
+      "unit": "cm"
+    },
+    "packageType": "parcel",
+    "description": "string",
+    "commodities": [
       {
-        "name": "base",
-        "amount": 15.65,
-        "currency": "GBP"
-      },
-      {
-        "name": "VAT",
-        "amount": 2.97,
-        "currency": "GBP"
+        "title": "string",
+        "description": "string",
+        "hsCode": "string",
+        "predictedHsCode": "string",
+        "predictedTaxCode": "string",
+        "sku": "string",
+        "quantity": 1,
+        "value": {
+          "amount": 15,
+          "currency": "GBP"
+        },
+        "unitWeight": {
+          "value": 1,
+          "unit": "kg"
+        },
+        "countryOfOrigin": "AF",
+        "category": "string",
+        "imageUrl": "string",
+        "productUrl": "string",
+        "productId": "string",
+        "variantId": "string",
+        "compliance": {
+          "isControlGood": true,
+          "controlType": "string",
+          "regulatoryAgency": "string",
+          "regulatoryProgram": "string",
+          "regulatoryCategoryCode": "21-CFR-XYZ",
+          "EIN": "string",
+          "iossNumber": "string",
+          "importLicenseNumber": "string",
+          "certificationType": "string",
+          "certificationReference": "CE-DECL-12345"
+        },
+        "dutiesAndTaxes": [
+          "string"
+        ],
+        "metadata": {}
       }
     ],
-    "totalCharge": {
-      "amount": 18.62,
-      "currency": "GBP"
-    }
-  },
-  "messages": []
+    "customs": {
+      "contentType": "Documents",
+      "incoterms": "DAP",
+      "invoiceNumber": "string",
+      "invoiceDate": "2025-11-25T01:21:05.468Z",
+      "orderId": "string",
+      "orderTotalValue": {
+        "amount": 15,
+        "currency": "GBP"
+      },
+      "certified": true,
+      "signedBy": "string",
+      "EORI": "string",
+      "IOSS": "string",
+      "VAT": "string",
+      "EIN": "string",
+      "VOECNUMBER": "string",
+      "SWISSVAT": "string",
+      "KAR_VAT": "string",
+      "CA_GST": "string",
+      "AU_GST": "string",
+      "NZ_GST": "string",
+      "JPConsumptionTax": "string",
+      "GPSRContactInfo": "string",
+      "importerOfRecord": {
+        "name": "string",
+        "email": "string",
+        "phone": "string",
+        "company": "string",
+        "stateTaxId": "string",
+        "countryTaxId": "string",
+        "address": {
+          "line1": "",
+          "city": "",
+          "postcode": "",
+          "country": "GB",
+          "state": "London"
+        }
+      }
+    },
+    "additionalServices": {
+      "signatureRequired": true,
+      "deliveryWarranty": true,
+      "deliveryPUDO": true,
+      "lowCarbon": true,
+      "dutyTaxCalculation": "DUTY_TAX_GUARANTEE"
+    },
+    "rate": {
+      "price": 10.59,
+      "currency": "GBP",
+      "transit": 5,
+      "estimatedDelivery": "2024-01-01T00:00:00.00Z",
+      "service": {
+        "name": "string",
+        "checkoutName": "string",
+        "code": "string",
+        "description": "string",
+        "transit": 0,
+        "dispatchDays": 1,
+        "includeFirstMile": false,
+        "isActive": true,
+        "id": "string"
+      },
+      "charges": [
+        {
+          "name": "base",
+          "amount": 22.77,
+          "currency": "GBP"
+        },
+        {
+          "name": "Duty",
+          "amount": 1.2,
+          "currency": "GBP"
+        },
+        {
+          "name": "VAT",
+          "amount": 0.5,
+          "currency": "GBP"
+        }
+      ]
+    },
+    "scaleWeight": {
+      "value": 1,
+      "unit": "kg"
+    },
+    "dimWeight": {
+      "value": 1,
+      "unit": "kg"
+    },
+    "billWeight": {
+      "value": 1,
+      "unit": "kg"
+    },
+    "actualBillWeight": {
+      "value": 1,
+      "unit": "kg"
+    },
+    "actualScaleWeight": {
+      "value": 1,
+      "unit": "kg"
+    },
+    "actualDimensions": {
+      "length": 40,
+      "width": 30,
+      "height": 16,
+      "unit": "cm"
+    },
+    "customerReference": "string",
+    "commercialInvoiceReference": "string",
+    "metadata": {},
+    "firstMile": {
+      "carrier": "string",
+      "trackingNumber": "string",
+      "trackingUrl": "string"
+    },
+    "lastMile": {
+      "carrier": "string",
+      "trackingNumber": "string",
+      "trackingUrl": "string"
+    },
+    "dropOffLocation": {
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "company": "string",
+      "stateTaxId": "string",
+      "countryTaxId": "string",
+      "address": {
+        "line1": "",
+        "city": "",
+        "postcode": "",
+        "country": "GB",
+        "state": "London"
+      }
+    },
+    "events": [
+      {
+        "timestamp": "2025-11-25T01:21:05.468Z",
+        "code": "string",
+        "description": "string",
+        "location": "string"
+      }
+    ],
+    "surcharges": [
+      {
+        "id": "string",
+        "type": "string",
+        "name": "string",
+        "amount": 0,
+        "currency": "GBP",
+        "metadata": {},
+        "shipmentId": "string",
+        "updatedAt": "2025-11-25T01:21:05.468Z",
+        "createdAt": "2025-11-25T01:21:05.468Z"
+      }
+    ],
+    "trackingURL": "https://teleship.com/tracking?trackingNumber=1234567890",
+    "createdAt": "2025-11-25T01:21:05.468Z",
+    "updatedAt": "2025-11-25T01:21:05.468Z"
+  }
 }

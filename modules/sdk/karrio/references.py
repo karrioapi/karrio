@@ -1,6 +1,6 @@
 """Karrio Interface references.
 
-This module provides references to carrier integrations, address validators,
+This module provides references to carrier integrations, LSP plugins,
 and other plugin-related functionality in the Karrio system.
 """
 
@@ -22,169 +22,165 @@ ENABLE_ALL_PLUGINS_BY_DEFAULT = bool(
     os.environ.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", True)
 )
 
-# Global references - DO NOT RENAME (used for backward compatibility)
-PROVIDERS: typing.Dict[str, metadata.PluginMetadata] = {}
-ADDRESS_VALIDATORS: typing.Dict[str, metadata.PluginMetadata] = {}
+# Global references
+PROVIDERS: typing.Dict[str, metadata.PluginMetadata] = {}  # Shipping carriers only
+LSP_PLUGINS: typing.Dict[str, metadata.PluginMetadata] = {}  # Logistics Service Providers
 MAPPERS: typing.Dict[str, typing.Any] = {}
+HOOKS: typing.Dict[str, typing.Any] = {}
 SCHEMAS: typing.Dict[str, typing.Any] = {}
 FAILED_IMPORTS: typing.Dict[str, typing.Any] = {}
 PLUGIN_METADATA: typing.Dict[str, metadata.PluginMetadata] = {}
 REFERENCES: typing.Dict[str, typing.Any] = {}
+SYSTEM_CONFIGS: typing.Dict[str, typing.Tuple[typing.Any, str, type]] = {}  # Plugin system configs
 
 
 def import_extensions() -> None:
     """
     Import extensions from main modules and plugins.
 
-    This method collects carriers, address validators and mappers from
-    built-in modules and plugins through multiple discovery methods:
+    This method collects carriers, LSP plugins and mappers from
+    built-in modules and plugins through multiple discovery methods with
+    priority-based hierarchy (higher priority sources take precedence):
 
-    1. Directory-based plugins
-    2. Entrypoint-based plugins (setuptools entry_points)
-    3. Built-in modules
+    Priority order (highest to lowest):
+    1. Entrypoint-based plugins (setuptools entry_points) - most explicit
+    2. karrio.plugins namespace packages - new plugin architecture
+    3. karrio.mappers namespace packages - legacy architecture
+    4. Directory-based plugins - local development plugins
+
+    Plugins already loaded from a higher-priority source are skipped in
+    lower-priority sources to avoid duplication and conflicts.
     """
-    global PROVIDERS, ADDRESS_VALIDATORS, MAPPERS, SCHEMAS, FAILED_IMPORTS, PLUGIN_METADATA, REFERENCES
+    global PROVIDERS, LSP_PLUGINS, MAPPERS, HOOKS, SCHEMAS, FAILED_IMPORTS, PLUGIN_METADATA, REFERENCES, SYSTEM_CONFIGS
     # Reset collections
     PROVIDERS = {}
-    ADDRESS_VALIDATORS = {}
+    LSP_PLUGINS = {}
     MAPPERS = {}
+    HOOKS = {}
     SCHEMAS = {}
     FAILED_IMPORTS = {}
     PLUGIN_METADATA = {}
     REFERENCES = {}
+    SYSTEM_CONFIGS = {}
 
-    # Load plugins (if not already loaded)
+    # Load local plugins to extend karrio namespaces (but don't process metadata yet)
     plugins.load_local_plugins()
 
-    # Discover and import modules from directory-based plugins
-    plugin_modules = plugins.discover_plugin_modules()
-    metadata_dict, failed_metadata = plugins.collect_plugin_metadata(plugin_modules)
-    PLUGIN_METADATA.update(metadata_dict)
-
-    # Discover and import modules from entrypoint-based plugins
+    # =========================================================================
+    # STEP 1: Load from entrypoints (highest priority - most explicit)
+    # =========================================================================
     entrypoint_plugins = plugins.discover_entrypoint_plugins()
     entrypoint_metadata, entrypoint_failed = plugins.collect_plugin_metadata(entrypoint_plugins)
     PLUGIN_METADATA.update(entrypoint_metadata)
 
-    # Update failed imports
-    FAILED_IMPORTS.update(plugins.get_failed_plugin_modules())
-    for key, value in failed_metadata.items():
-        FAILED_IMPORTS[f"metadata.{key}"] = value
+    # Only record failures for plugins not already loaded
     for key, value in entrypoint_failed.items():
-        FAILED_IMPORTS[f"entrypoint.metadata.{key}"] = value
+        plugin_name = value.get("plugin", key)
+        if plugin_name not in PLUGIN_METADATA:
+            FAILED_IMPORTS[f"entrypoint.{key}"] = value
 
-    # Process collected metadata to find carriers, validators, and mappers
-    for plugin_name, metadata_obj in PLUGIN_METADATA.items():
-        if not isinstance(metadata_obj, metadata.PluginMetadata):
-            logger.error("Invalid metadata type, expected PluginMetadata", plugin_name=plugin_name)
-            continue
-
-        # Process the plugin based on its capabilities
-        # Capabilities are now automatically determined from registered components
-        if metadata_obj.is_carrier_integration():
-            _register_carrier(metadata_obj, plugin_name)
-
-        if metadata_obj.is_address_validator():
-            _register_validator(metadata_obj)
-
-    # Import packages from karrio.plugins (new plugin architecture)
+    # =========================================================================
+    # STEP 2: Load from karrio.plugins namespace (new plugin architecture)
+    # =========================================================================
     try:
-        import karrio.plugins
-        # Use pkgutil to find all modules within karrio.plugins
-        for _, name, ispkg in pkgutil.iter_modules(karrio.plugins.__path__):
+        import karrio.plugins as karrio_plugins_module
+        for _, name, ispkg in pkgutil.iter_modules(karrio_plugins_module.__path__):
             if name.startswith('_'):
+                continue
+            # Skip if already loaded from entrypoints
+            if name in PLUGIN_METADATA:
                 continue
             try:
                 module = __import__(f"karrio.plugins.{name}", fromlist=[name])
                 metadata_obj = getattr(module, 'METADATA', None)
                 if metadata_obj and isinstance(metadata_obj, metadata.PluginMetadata):
-                    # Add to PLUGIN_METADATA so it's accessible via plugin management interfaces
                     PLUGIN_METADATA[name] = metadata_obj
-                    if metadata_obj.is_carrier_integration():
-                        _register_carrier(metadata_obj, name)
-                    if metadata_obj.is_address_validator():
-                        _register_validator(metadata_obj)
             except (AttributeError, ImportError) as e:
-                logger.error("Failed to import plugin from karrio.plugins", plugin_name=name, error=str(e))
+                # Only log error if not already loaded
+                if name not in PLUGIN_METADATA:
+                    logger.error("Failed to import plugin from karrio.plugins", plugin_name=name, error=str(e))
     except ImportError:
-        logger.error("Could not import karrio.plugins module")
+        pass  # karrio.plugins module may not exist
 
-    # Import carriers from built-in karrio mappers (legacy approach for backward compatibility)
+    # =========================================================================
+    # STEP 3: Load from karrio.mappers namespace (legacy architecture)
+    # =========================================================================
     try:
-        import karrio.mappers
-        # Use pkgutil to find all modules within karrio.mappers
-        for _, name, ispkg in pkgutil.iter_modules(karrio.mappers.__path__):
+        import karrio.mappers as karrio_mappers_module
+        for _, name, ispkg in pkgutil.iter_modules(karrio_mappers_module.__path__):
             if name.startswith('_'):
+                continue
+            # Skip if already loaded from higher priority sources
+            if name in PLUGIN_METADATA:
                 continue
             try:
                 module = __import__(f"karrio.mappers.{name}", fromlist=[name])
                 metadata_obj = getattr(module, 'METADATA', None)
                 if metadata_obj and isinstance(metadata_obj, metadata.PluginMetadata):
-                    # Add to PLUGIN_METADATA so it's accessible via plugin management interfaces
                     PLUGIN_METADATA[name] = metadata_obj
-                    _register_carrier(metadata_obj, name)
             except (AttributeError, ImportError) as e:
-                logger.error("Failed to import mapper from karrio.mappers", mapper_name=name, error=str(e))
+                # Only log error if not already loaded
+                if name not in PLUGIN_METADATA:
+                    logger.error("Failed to import mapper from karrio.mappers", mapper_name=name, error=str(e))
     except ImportError:
-        logger.error("Could not import karrio.mappers module")
+        pass  # karrio.mappers module may not exist
 
-    # Import address validators from built-in modules
-    try:
-        import karrio.validators
-        _import_validators_from_module(karrio.validators)
-    except ImportError:
-        logger.error("Could not import karrio.validators module")
+    # =========================================================================
+    # STEP 4: Load from directory-based plugins (lowest priority - local dev)
+    # =========================================================================
+    plugin_modules = plugins.discover_plugin_modules()
+    metadata_dict, failed_metadata = plugins.collect_plugin_metadata(plugin_modules)
 
-    # Import carriers from built-in modules
-    try:
-        import karrio.providers
-        for provider_name in dir(karrio.providers):
-            if provider_name.startswith('_'):
-                continue
-            try:
-                provider = getattr(karrio.providers, provider_name)
-                metadata_obj = getattr(provider, 'METADATA', None)
-                if metadata_obj and isinstance(metadata_obj, metadata.PluginMetadata):
-                    # Add to PLUGIN_METADATA so it's accessible via plugin management interfaces
-                    PLUGIN_METADATA[provider_name] = metadata_obj
-                    _register_carrier(metadata_obj, provider_name)
-            except (AttributeError, ImportError) as e:
-                logger.error("Failed to import provider from karrio.providers", provider_name=provider_name, error=str(e))
-                continue
-    except ImportError:
-        logger.error("Could not import karrio.providers module")
+    # Only add plugins not already loaded from higher priority sources
+    for plugin_name, metadata_obj in metadata_dict.items():
+        if plugin_name not in PLUGIN_METADATA:
+            PLUGIN_METADATA[plugin_name] = metadata_obj
 
-    # Sort PLUGIN_METADATA and PROVIDERS alphabetically by their keys
+    # Only record failures for plugins not already loaded
+    for key, value in failed_metadata.items():
+        plugin_name = value.get("plugin", key)
+        if plugin_name not in PLUGIN_METADATA:
+            FAILED_IMPORTS[f"local.{key}"] = value
+
+    # Update failed imports from plugin module loading
+    for key, value in plugins.get_failed_plugin_modules().items():
+        plugin_name = value.get("plugin", key)
+        if plugin_name not in PLUGIN_METADATA:
+            FAILED_IMPORTS[key] = value
+
+    # =========================================================================
+    # Process all collected metadata and register carriers/LSPs
+    # =========================================================================
+    for plugin_name, metadata_obj in PLUGIN_METADATA.items():
+        if not isinstance(metadata_obj, metadata.PluginMetadata):
+            logger.error("Invalid metadata type, expected PluginMetadata", plugin_name=plugin_name)
+            continue
+
+        # Process the plugin based on its service_type
+        if metadata_obj.is_carrier():
+            _register_carrier(metadata_obj, plugin_name)
+        elif metadata_obj.is_lsp():
+            _register_lsp(metadata_obj, plugin_name)
+
+    # Sort PLUGIN_METADATA, PROVIDERS, and LSP_PLUGINS alphabetically by their keys
     PLUGIN_METADATA = dict(sorted(PLUGIN_METADATA.items()))
     PROVIDERS = dict(sorted(PROVIDERS.items()))
+    LSP_PLUGINS = dict(sorted(LSP_PLUGINS.items()))
+
+    # Collect system configs from all plugins
+    for _, metadata_obj in PLUGIN_METADATA.items():
+        system_config = metadata_obj.get("system_config")
+        if system_config and isinstance(system_config, dict):
+            SYSTEM_CONFIGS.update(system_config)
 
     logger.info("Plugins loaded", count=len(PLUGIN_METADATA))
 
 
-def _import_validators_from_module(module):
-    """
-    Import validators from a module by looking for METADATA in submodules.
-    """
-    for validator_name in dir(module):
-        if validator_name.startswith('_'):
-            continue
-        try:
-            validator_module = getattr(module, validator_name)
-            metadata_obj = getattr(validator_module, 'METADATA', None)
-            if metadata_obj and isinstance(metadata_obj, metadata.PluginMetadata):
-                # Add to PLUGIN_METADATA so it's accessible via plugin management interfaces
-                PLUGIN_METADATA[validator_name] = metadata_obj
-                _register_validator(metadata_obj)
-        except (AttributeError, ImportError) as e:
-            logger.error("Failed to import validator", validator_name=validator_name, error=str(e))
-            continue
-
-
 def _register_carrier(metadata_obj: metadata.PluginMetadata, carrier_name: str) -> None:
     """
-    Register a carrier from its metadata.
+    Register a shipping carrier from its metadata.
 
-    This adds the carrier to providers and imports any mappers/schemas.
+    This adds the carrier to PROVIDERS and imports any mappers/callbacks/schemas.
 
     Args:
         metadata_obj: The carrier plugin metadata
@@ -206,36 +202,54 @@ def _register_carrier(metadata_obj: metadata.PluginMetadata, carrier_name: str) 
     # Register mapper
     MAPPERS[carrier_id] = metadata_obj.Mapper
 
+    # Register hooks if available
+    if hasattr(metadata_obj, 'Hooks') and metadata_obj.Hooks:
+        HOOKS[carrier_id] = metadata_obj.Hooks
+
     # Register schemas if available
-    if hasattr(metadata_obj, 'Settings'):
+    if hasattr(metadata_obj, 'Settings') and metadata_obj.Settings:
         SCHEMAS[carrier_id] = metadata_obj.Settings
 
 
-def _register_validator(metadata_obj: metadata.PluginMetadata) -> None:
+def _register_lsp(metadata_obj: metadata.PluginMetadata, plugin_name: str) -> None:
     """
-    Register an address validator from its metadata.
+    Register a Logistics Service Provider (LSP) plugin from its metadata.
+
+    LSP plugins provide services like address validation, geocoding, duties calculation, etc.
 
     Args:
-        metadata_obj: The validator plugin metadata
+        metadata_obj: The LSP plugin metadata
+        plugin_name: The name of the plugin
     """
-    validator_id = metadata_obj.get("id")
+    plugin_id = metadata_obj.get("id")
 
-    if not validator_id:
-        logger.error("Validator metadata missing ID")
+    if not plugin_id:
+        logger.error("LSP plugin metadata missing ID", plugin_name=plugin_name)
         return
 
-    if not hasattr(metadata_obj, 'Validator') or not metadata_obj.Validator:
-        logger.error("Address validator has no Validator defined", validator_id=validator_id)
+    if not hasattr(metadata_obj, 'Mapper') or not metadata_obj.Mapper:
+        logger.error("LSP plugin has no Mapper defined", plugin_id=plugin_id)
         return
 
-    # Register address validator
-    ADDRESS_VALIDATORS[validator_id] = metadata_obj
+    # Register LSP plugin
+    LSP_PLUGINS[plugin_id] = metadata_obj
+
+    # Register mapper
+    MAPPERS[plugin_id] = metadata_obj.Mapper
+
+    # Register hooks if available
+    if hasattr(metadata_obj, 'Hooks') and metadata_obj.Hooks:
+        HOOKS[plugin_id] = metadata_obj.Hooks
+
+    # Register schemas if available
+    if hasattr(metadata_obj, 'Settings') and metadata_obj.Settings:
+        SCHEMAS[plugin_id] = metadata_obj.Settings
 
 
 @functools.lru_cache(maxsize=1)
 def get_providers() -> typing.Dict[str, metadata.PluginMetadata]:
     """
-    Get all available provider metadata.
+    Get all available carrier provider metadata.
 
     Returns:
         Dictionary of carrier ID to carrier metadata
@@ -244,34 +258,45 @@ def get_providers() -> typing.Dict[str, metadata.PluginMetadata]:
 
 
 @functools.lru_cache(maxsize=1)
-def get_address_validators() -> typing.Dict[str, metadata.PluginMetadata]:
+def get_lsp_plugins() -> typing.Dict[str, metadata.PluginMetadata]:
     """
-    Get all available address validator metadata.
+    Get all available LSP (Logistics Service Provider) plugin metadata.
 
     Returns:
-        Dictionary of validator ID to validator metadata
+        Dictionary of plugin ID to plugin metadata
     """
-    return ADDRESS_VALIDATORS
+    return LSP_PLUGINS
 
 
 @functools.lru_cache(maxsize=1)
 def get_mappers() -> typing.Dict[str, typing.Any]:
     """
-    Get all available carrier mappers.
+    Get all available mappers (both carriers and LSP plugins).
 
     Returns:
-        Dictionary of carrier ID to mapper class
+        Dictionary of plugin ID to mapper class
     """
     return MAPPERS
 
 
 @functools.lru_cache(maxsize=1)
-def get_schemas() -> typing.Dict[str, typing.Any]:
+def get_hooks() -> typing.Dict[str, typing.Any]:
     """
-    Get all available carrier settings schemas.
+    Get all available hooks handlers.
 
     Returns:
-        Dictionary of carrier ID to settings schema
+        Dictionary of plugin ID to hooks class
+    """
+    return HOOKS
+
+
+@functools.lru_cache(maxsize=1)
+def get_schemas() -> typing.Dict[str, typing.Any]:
+    """
+    Get all available settings schemas.
+
+    Returns:
+        Dictionary of plugin ID to settings schema
     """
     return SCHEMAS
 
@@ -342,33 +367,43 @@ def collect_providers_data() -> typing.Dict[str, metadata.PluginMetadata]:
     }
 
 
-def collect_address_validators_data() -> typing.Dict[str, dict]:
+def collect_lsp_plugins_data() -> typing.Dict[str, dict]:
     """
-    Collect address validator metadata from loaded validators.
+    Collect LSP plugin metadata from loaded plugins.
 
     Returns:
-        Dict mapping validator names to their metadata
+        Dict mapping plugin names to their metadata
     """
-    if not ADDRESS_VALIDATORS:
+    if not LSP_PLUGINS:
         import_extensions()
 
     return {
-        validator_name: attr.asdict(metadata_obj)
-        for validator_name, metadata_obj in ADDRESS_VALIDATORS.items()
+        plugin_name: attr.asdict(metadata_obj)
+        for plugin_name, metadata_obj in LSP_PLUGINS.items()
     }
 
 
-def detect_capabilities(proxy_methods: typing.List[str]) -> typing.List[str]:
+def detect_capabilities(
+    proxy_methods: typing.List[str],
+    hooks_methods: typing.List[str] = None,
+) -> typing.List[str]:
     """
-    Map proxy methods to carrier capabilities.
+    Map proxy methods and hooks methods to carrier capabilities.
 
     Args:
         proxy_methods: List of method names from a Proxy class
+        hooks_methods: Optional list of method names from a Hooks class
 
     Returns:
         List of capability identifiers
     """
-    return list(set([units.CarrierCapabilities.map_capability(prop) for prop in proxy_methods]))
+    all_methods = proxy_methods + (hooks_methods or [])
+    capabilities = [
+        units.CarrierCapabilities.map_capability(prop)
+        for prop in all_methods
+    ]
+    # Filter out None values from unmapped methods
+    return list(set(cap for cap in capabilities if cap is not None))
 
 
 def detect_proxy_methods(proxy_type: object) -> typing.List[str]:
@@ -387,6 +422,24 @@ def detect_proxy_methods(proxy_type: object) -> typing.List[str]:
         if "_" not in prop[0] and prop != "settings"
     ]
 
+
+def detect_hooks_methods(hooks_type: object) -> typing.List[str]:
+    """
+    Extract all public methods from a hooks type that are actually implemented.
+
+    Args:
+        hooks_type: A Hooks class
+
+    Returns:
+        List of method names that are implemented (not just inherited from base)
+    """
+    return [
+        prop
+        for prop in hooks_type.__dict__.keys()
+        if "_" not in prop[0] and prop != "settings"
+    ]
+
+
 # Fields to exclude when collecting connection fields
 COMMON_FIELDS = ["id", "carrier_id", "test_mode", "carrier_name"]
 
@@ -395,16 +448,16 @@ def collect_references(
     plugin_registry: dict = None,
 ) -> dict:
     """
-    Collect all references from carriers, validators, and plugins.
+    Collect all references from carriers, LSP plugins, and other plugins.
 
     This function builds a comprehensive dictionary of all available
     references in the system, including services, options, countries,
-    currencies, carriers, etc.
+    currencies, carriers, LSP plugins, etc.
 
     Returns:
         Dictionary containing all reference data
     """
-    global REFERENCES, PROVIDERS
+    global REFERENCES, PROVIDERS, LSP_PLUGINS
     if not PROVIDERS:
         import_extensions()
 
@@ -418,6 +471,12 @@ def collect_references(
     enabled_carrier_ids = set(
         carrier_id for carrier_id in PROVIDERS.keys()
         if registry.get(f"{carrier_id.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"))
+    )
+
+    # Determine enabled LSP plugins
+    enabled_lsp_ids = set(
+        plugin_id for plugin_id in LSP_PLUGINS.keys()
+        if registry.get(f"{plugin_id.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"))
     )
 
     services = {
@@ -502,18 +561,29 @@ def collect_references(
             for carrier_id, metadata_obj in PROVIDERS.items()
             if carrier_id in enabled_carrier_ids and metadata_obj.is_hub
         },
-        "address_validators": {
-            validator_id: metadata_obj.get("label", "")
-            for validator_id, metadata_obj in collect_address_validators_data().items()
+        "lsp_plugins": {
+            plugin_id: metadata_obj.get("label", "")
+            for plugin_id, metadata_obj in collect_lsp_plugins_data().items()
         },
         "services": services,
         "options": options,
         "connection_fields": connection_fields,
         "connection_configs": connection_configs,
         "carrier_capabilities": {
-            key: detect_capabilities(detect_proxy_methods(mapper.get("Proxy")))
+            key: detect_capabilities(
+                detect_proxy_methods(mapper.get("Proxy")) if mapper.get("Proxy") else [],
+                detect_hooks_methods(mapper.get("Hooks")) if mapper.get("Hooks") else [],
+            )
             for key, mapper in PROVIDERS.items()
             if key in enabled_carrier_ids and mapper.get("Proxy") is not None
+        },
+        "lsp_capabilities": {
+            key: detect_capabilities(
+                detect_proxy_methods(mapper.get("Proxy")) if mapper.get("Proxy") else [],
+                detect_hooks_methods(mapper.get("Hooks")) if mapper.get("Hooks") else [],
+            )
+            for key, mapper in LSP_PLUGINS.items()
+            if key in enabled_lsp_ids and mapper.get("Proxy") is not None
         },
         "packaging_types": {
             key: {c.name: c.value for c in list(mapper.get("packaging_types", []))}
@@ -541,24 +611,25 @@ def collect_references(
         "integration_status": {
             carrier_id: metadata_obj.status for carrier_id, metadata_obj in PROVIDERS.items() if carrier_id in enabled_carrier_ids
         },
-        "address_validator_details": {
-            validator_id: {
-                "id": validator_id,
-                "provider": validator_id,
+        "lsp_plugin_details": {
+            plugin_id: {
+                "id": plugin_id,
                 "display_name": metadata_obj.get("label", ""),
+                "service_type": metadata_obj.get("service_type", "LSP"),
                 "integration_status": metadata_obj.get("status", ""),
                 "website": metadata_obj.get("website", ""),
                 "description": metadata_obj.get("description", ""),
                 "documentation": metadata_obj.get("documentation", ""),
                 "readme": metadata_obj.get("readme", ""),
             }
-            for validator_id, metadata_obj in collect_address_validators_data().items()
+            for plugin_id, metadata_obj in collect_lsp_plugins_data().items()
         },
         "plugins": {
             name: {
                 "id": metadata_obj.get("id", ""),
                 "name": name,
                 "display_name": metadata_obj.get("label", ""),
+                "service_type": metadata_obj.get("service_type", "carrier"),
                 "integration_status": metadata_obj.get("status", ""),
                 "website": metadata_obj.get("website", ""),
                 "description": metadata_obj.get("description", ""),
@@ -566,7 +637,6 @@ def collect_references(
                 "readme": metadata_obj.get("readme", ""),
                 "type": metadata_obj.plugin_type,
                 "types": metadata_obj.plugin_types,
-                "is_dual_purpose": metadata_obj.is_dual_purpose()
             }
             for name, metadata_obj in PLUGIN_METADATA.items()
         },
@@ -588,8 +658,10 @@ def get_carrier_capabilities(carrier_name) -> typing.List[str]:
         List of capability identifiers
     """
     proxy_class = pydoc.locate(f"karrio.mappers.{carrier_name}.Proxy")
-    proxy_methods = detect_proxy_methods(proxy_class)
-    return detect_capabilities(proxy_methods)
+    hooks_class = pydoc.locate(f"karrio.mappers.{carrier_name}.Hooks")
+    proxy_methods = detect_proxy_methods(proxy_class) if proxy_class else []
+    hooks_methods = detect_hooks_methods(hooks_class) if hooks_class else []
+    return detect_capabilities(proxy_methods, hooks_methods)
 
 
 def parse_type(_type: type) -> str:
@@ -663,19 +735,19 @@ def get_carrier_details(
     )
 
 
-def get_validator_details(validator_id: str, contextual_reference: dict = None) -> dict:
+def get_lsp_plugin_details(plugin_id: str, contextual_reference: dict = None) -> dict:
     """
-    Get detailed information about an address validator plugin.
+    Get detailed information about an LSP plugin.
 
     Args:
-        validator_id: The ID of the validator plugin
+        plugin_id: The ID of the LSP plugin
         contextual_reference: Optional pre-computed references dictionary
 
     Returns:
-        Dictionary with detailed validator information
+        Dictionary with detailed LSP plugin information
     """
     references = contextual_reference or collect_references()
-    return references["address_validator_details"].get(validator_id, {})
+    return references["lsp_plugin_details"].get(plugin_id, {})
 
 
 def get_plugin_details(plugin_name: str, contextual_reference: dict = None) -> dict:

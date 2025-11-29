@@ -6,14 +6,14 @@ User = get_user_model()
 
 
 class TestUserRegistration(GraphTestCase):
-    
-    @patch('karrio.server.conf.settings.ALLOW_SIGNUP', True)
-    @patch('karrio.server.conf.settings.EMAIL_ENABLED', False)
+
+    @patch("karrio.server.conf.settings.ALLOW_SIGNUP", True)
+    @patch("karrio.server.conf.settings.EMAIL_ENABLED", False)
     def test_register_user_mutation(self):
         """Test successful user registration"""
         # Ensure user doesn't exist
         User.objects.filter(email="newuser@example.com").delete()
-        
+
         response = self.query(
             """
             mutation register_user($data: RegisterUserMutationInput!) {
@@ -33,21 +33,26 @@ class TestUserRegistration(GraphTestCase):
                     "full_name": "New Test User",
                     "password1": "TestPassword123!",
                     "password2": "TestPassword123!",
-                    "redirect_url": "http://localhost:3000/email"
+                    "redirect_url": "http://example.com/email",
                 }
-            }
+            },
         )
-        
+
         self.assertResponseNoErrors(response)
-        self.assertIsNotNone(response.data['data']['register_user']['user'])
-        self.assertEqual(response.data['data']['register_user']['user']['email'], "newuser@example.com")
-        self.assertEqual(response.data['data']['register_user']['user']['full_name'], "New Test User")
-        
+        self.assertIsNotNone(response.data["data"]["register_user"]["user"])
+        self.assertEqual(
+            response.data["data"]["register_user"]["user"]["email"],
+            "newuser@example.com",
+        )
+        self.assertEqual(
+            response.data["data"]["register_user"]["user"]["full_name"], "New Test User"
+        )
+
         # Verify user was created in database
         user = User.objects.get(email="newuser@example.com")
         self.assertEqual(user.full_name, "New Test User")
-    
-    @patch('karrio.server.conf.settings.ALLOW_SIGNUP', True)
+
+    @patch("karrio.server.conf.settings.ALLOW_SIGNUP", True)
     def test_register_user_password_mismatch(self):
         """Test registration fails with mismatched passwords"""
         response = self.query(
@@ -67,25 +72,25 @@ class TestUserRegistration(GraphTestCase):
                     "full_name": "Mismatch User",
                     "password1": "TestPassword123!",
                     "password2": "DifferentPassword123!",
-                    "redirect_url": "http://localhost:3000/email"
+                    "redirect_url": "http://example.com/email",
                 }
-            }
+            },
         )
-        
+
         # Should have errors
-        self.assertIsNotNone(response.data.get('errors'))
-        self.assertIn("password", str(response.data['errors'][0]))
-    
-    @patch('karrio.server.conf.settings.ALLOW_SIGNUP', True)
+        self.assertIsNotNone(response.data.get("errors"))
+        self.assertIn("password", str(response.data["errors"][0]))
+
+    @patch("karrio.server.conf.settings.ALLOW_SIGNUP", True)
     def test_register_user_duplicate_email(self):
         """Test registration fails with duplicate email"""
         # First create a user
         User.objects.create_user(
             email="existing@example.com",
             password="ExistingPass123!",
-            full_name="Existing User"
+            full_name="Existing User",
         )
-        
+
         response = self.query(
             """
             mutation register_user($data: RegisterUserMutationInput!) {
@@ -103,15 +108,15 @@ class TestUserRegistration(GraphTestCase):
                     "full_name": "Duplicate User",
                     "password1": "TestPassword123!",
                     "password2": "TestPassword123!",
-                    "redirect_url": "http://localhost:3000/email"
+                    "redirect_url": "http://example.com/email",
                 }
-            }
+            },
         )
-        
+
         # Should have errors about duplicate email
-        self.assertIsNotNone(response.data.get('errors'))
-    
-    @patch('karrio.server.conf.settings.ALLOW_SIGNUP', False)
+        self.assertIsNotNone(response.data.get("errors"))
+
+    @patch("karrio.server.conf.settings.ALLOW_SIGNUP", False)
     def test_register_user_signup_disabled(self):
         """Test registration fails when signup is disabled"""
         response = self.query(
@@ -131,28 +136,28 @@ class TestUserRegistration(GraphTestCase):
                     "full_name": "Disabled User",
                     "password1": "TestPassword123!",
                     "password2": "TestPassword123!",
-                    "redirect_url": "http://localhost:3000/email"
+                    "redirect_url": "http://example.com/email",
                 }
-            }
+            },
         )
-        
+
         # Should have errors about signup not allowed
-        self.assertIsNotNone(response.data.get('errors'))
-        self.assertIn("Signup is not allowed", str(response.data['errors'][0]))
+        self.assertIsNotNone(response.data.get("errors"))
+        self.assertIn("Signup is not allowed", str(response.data["errors"][0]))
 
 
 class TestPasswordReset(GraphTestCase):
-    
+
     def setUp(self):
         super().setUp()
         # Create a test user for password reset
         self.reset_user = User.objects.create_user(
             email="resetuser@example.com",
             password="OldPassword123!",
-            full_name="Reset User"
+            full_name="Reset User",
         )
-    
-    @patch('django.core.mail.send_mail')
+
+    @patch("django.core.mail.send_mail")
     def test_request_password_reset(self, mock_send_mail):
         """Test requesting a password reset"""
         response = self.query(
@@ -168,22 +173,25 @@ class TestPasswordReset(GraphTestCase):
             variables={
                 "data": {
                     "email": "resetuser@example.com",
-                    "redirect_url": "http://localhost:3000/password/reset"
+                    "redirect_url": "http://example.com/password/reset",
                 }
-            }
+            },
         )
-        
+
         self.assertResponseNoErrors(response)
-        self.assertEqual(response.data['data']['request_password_reset']['email'], "resetuser@example.com")
+        self.assertEqual(
+            response.data["data"]["request_password_reset"]["email"],
+            "resetuser@example.com",
+        )
 
 
 class TestEmailConfirmation(GraphTestCase):
-    
-    @patch('karrio.server.graph.schemas.base.mutations.email_verification.verify_token')
+
+    @patch("karrio.server.graph.schemas.base.mutations.email_verification.verify_token")
     def test_confirm_email(self, mock_verify):
         """Test email confirmation"""
         mock_verify.return_value = (True, None)
-        
+
         response = self.query(
             """
             mutation confirm_email($data: ConfirmEmailMutationInput!) {
@@ -193,13 +201,9 @@ class TestEmailConfirmation(GraphTestCase):
             }
             """,
             operation_name="confirm_email",
-            variables={
-                "data": {
-                    "token": "test-confirmation-token"
-                }
-            }
+            variables={"data": {"token": "test-confirmation-token"}},
         )
-        
+
         self.assertResponseNoErrors(response)
-        self.assertTrue(response.data['data']['confirm_email']['success'])
+        self.assertTrue(response.data["data"]["confirm_email"]["success"])
         mock_verify.assert_called_once_with("test-confirmation-token")

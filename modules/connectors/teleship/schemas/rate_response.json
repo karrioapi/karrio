@@ -1,12 +1,26 @@
 {
+  "messages": [
+    {
+      "code": 423,
+      "level": "warning",
+      "timestamp": "2024-01-01T00:00:00.00Z",
+      "message": "Missing duties and taxes",
+      "details": [
+        "`commodities` are required to calculate duties and taxes",
+        "providing `customs.orderTotalValue` (optional) allows for more accurate duties and taxes"
+      ]
+    }
+  ],
   "rates": [
     {
       "price": 106.56,
       "currency": "GBP",
       "transit": 3,
+      "estimatedDelivery": "2025-11-03T20:53:09.821Z",
       "service": {
         "code": "TELESHIP-EXPEDITED-DROPOFF",
-        "name": "Teleship Hub Direct (for bundling packages, shipper delivers to Teleship hub)"
+        "name": "Teleship Hub Direct (for bundling packages, shipper delivers to Teleship hub)",
+        "checkoutName": "Teleship Express Dropoff"
       },
       "charges": [
         {
@@ -20,16 +34,22 @@
           "currency": "GBP",
           "rate": 0.19
         }
-      ],
-      "estimatedDelivery": "2025-11-03T20:53:09.821Z"
+      ]
     },
     {
       "price": 109.35,
       "currency": "GBP",
       "transit": 4,
+      "estimatedDelivery": "2025-11-04T20:53:09.821Z",
       "service": {
         "code": "TELESHIP-EXPEDITED-PICKUP",
-        "name": "Teleship End-to-End (service with first mile/collection included)"
+        "name": "Teleship End-to-End (service with first mile/collection included)",
+        "description": "End-to-end service with pickup included",
+        "checkoutName": "Teleship Express Pickup",
+        "transit": 4,
+        "dispatchDays": 1,
+        "includeFirstMile": true,
+        "isActive": true
       },
       "charges": [
         {
@@ -43,8 +63,7 @@
           "currency": "GBP",
           "rate": 0.19
         }
-      ],
-      "estimatedDelivery": "2025-11-04T20:53:09.821Z"
+      ]
     }
   ],
   "commodities": [
@@ -55,20 +74,23 @@
         {
           "name": "Duty",
           "amount": 5.47,
+          "currency": "GBP",
           "rate": 0.04
         }
-      ]
+      ],
+      "restrictions": []
     }
   ],
-  "messages": [
-    {
-      "code": 423,
-      "timestamp": "2024-01-01T00:00:00.00Z",
-      "message": "Missing duties and taxes",
-      "details": [
-        "`commodities` are required to calculate duties and taxes",
-        "providing `customs.orderTotalValue` (optional) allows for more accurate duties and taxes"
-      ]
-    }
-  ]
+  "scaleWeight": {
+    "value": 0.48,
+    "unit": "kg"
+  },
+  "dimWeight": {
+    "value": 2.04,
+    "unit": "kg"
+  },
+  "billWeight": {
+    "value": 2.04,
+    "unit": "kg"
+  }
 }

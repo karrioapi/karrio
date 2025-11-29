@@ -1,21 +1,25 @@
 from jinja2 import Template
 
 PROVIDER_MANIFEST_TEMPLATE = Template(
-    '''"""Karrio {{name}} manifest API implementation."""
+    '''"""Karrio {{name}} manifest creation implementation."""
 
 # IMPLEMENTATION INSTRUCTIONS:
 # 1. Uncomment the imports when the schema types are generated
 # 2. Import the specific request and response types you need
 # 3. Create a request instance with the appropriate request type
-# 4. Extract manifest details from the response
+# 4. Extract manifest details from the response to populate ManifestDetails
+#
+# NOTE: JSON schema types are generated with "Type" suffix (e.g., ManifestRequestType),
+# while XML schema types don't have this suffix (e.g., ManifestRequest).
+
+import karrio.schemas.{{id}}.manifest_request as {{id}}_req
+import karrio.schemas.{{id}}.manifest_response as {{id}}_res
 
 import typing
-import base64
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
-import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_manifest_response(
@@ -23,7 +27,7 @@ def parse_manifest_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
     """
-    Parse manifest response from carrier API
+    Parse manifest creation response from carrier API
 
     _response: The carrier response to deserialize
     settings: The carrier connection settings
@@ -32,9 +36,11 @@ def parse_manifest_response(
     """
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    details = _extract_details(response, settings)
 
-    return details, messages
+    # Extract manifest details
+    manifest = _extract_details(response, settings)
+
+    return manifest, messages
 
 
 def _extract_details(
@@ -50,44 +56,35 @@ def _extract_details(
     Returns a ManifestDetails object with the manifest information
     """
     {% if is_xml_api %}
-    # Example implementation for XML response:
-    # Extract manifest ID and document from the response
-    # manifest_id = lib.find_element("manifest-id", data, first=True).text
-    # manifest_content = lib.find_element("manifest-document", data, first=True).text
-    # shipments = []
-    # for shipment_elem in lib.find_element("shipment", data):
-    #     shipments.append(lib.find_element("tracking-number", shipment_elem, first=True).text)
+    # For XML APIs, convert Element to proper response object
+    manifest = lib.to_object({{id}}_res.ManifestResponse, data)
 
-    # For development, return sample data
-    manifest_id = "MAN123456"
-    manifest_content = "base64_encoded_manifest_pdf"
-    shipments = ["TRACK123456", "TRACK789012"]
+    # Extract manifest details
+    manifest_id = manifest.manifest_id if hasattr(manifest, 'manifest_id') else ""
+    manifest_url = manifest.manifest_url if hasattr(manifest, 'manifest_url') else ""
+    manifest_document = manifest.manifest_document if hasattr(manifest, 'manifest_document') else ""
+    status = manifest.status if hasattr(manifest, 'status') else ""
     {% else %}
-    # Example implementation for JSON response:
-    # manifest_id = data.get("manifestId", "")
-    # manifest_content = data.get("manifestDocument", "")
-    # shipments = []
-    # for shipment in data.get("shipments", []):
-    #     shipments.append(shipment.get("trackingNumber", ""))
+    # For JSON APIs, convert dict to proper response object
+    manifest = lib.to_object({{id}}_res.ManifestResponseType, data)
 
-    # For development, return sample data
-    manifest_id = "MAN123456"
-    manifest_content = "base64_encoded_manifest_pdf"
-    shipments = ["TRACK123456", "TRACK789012"]
+    # Extract manifest details
+    manifest_id = manifest.manifestId if hasattr(manifest, 'manifestId') else ""
+    manifest_url = manifest.manifestUrl if hasattr(manifest, 'manifestUrl') else ""
+    manifest_document = manifest.manifestData if hasattr(manifest, 'manifestData') else ""
+    status = manifest.status if hasattr(manifest, 'status') else ""
     {% endif %}
 
     return models.ManifestDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         manifest_id=manifest_id,
-        shipments=shipments,
-        doc=models.ManifestDocument(manifest=manifest_content),
+        doc=models.ManifestDocument(manifest=manifest_document) if manifest_document else None,
         meta=dict(
-            # Additional carrier-specific metadata
-            created_at="2023-07-01T12:00:00Z",
-            submission_id="SUB123456"
+            status=status,
+            manifest_url=manifest_url,
         ),
-    )
+    ) if manifest_id else None
 
 
 def manifest_request(
@@ -102,82 +99,32 @@ def manifest_request(
 
     Returns a Serializable object that can be sent to the carrier API
     """
-    # Extract tracking numbers (shipments) to be included in the manifest
-    tracking_numbers = payload.shipments
+    # Convert karrio models to carrier-specific format
+    address = lib.to_address(payload.address) if payload.address else None
 
     {% if is_xml_api %}
-    # Example implementation for XML manifest request:
-    # import karrio.schemas.{{id}}.manifest_request as {{id}}_req
-    #
-    # shipment_list = []
-    # for tracking_number in tracking_numbers:
-    #     shipment_list.append({{id}}_req.Shipment(
-    #         tracking_number=tracking_number
-    #     ))
-    #
-    # request = {{id}}_req.ManifestRequest(
-    #     account_number=settings.account_number,
-    #     close_date=payload.close_date or lib.today(),
-    #     shipments=shipment_list
-    # )
-    #
-    # return lib.Serializable(
-    #     request,
-    #     lambda _: lib.to_xml(
-    #         _,
-    #         name_="ManifestRequest",
-    #         namespacedef_='xmlns="http://{{id}}.com/schema/manifest"'
-    #     )
-    # )
-
-    # For development, return a simple XML request
-    close_date = payload.close_date or lib.today()
-    shipments_xml = ""
-    for tracking_number in tracking_numbers:
-        shipments_xml += f"  <shipment>\n    <tracking-number>{tracking_number}</tracking-number>\n  </shipment>\n"
-
-    request = f"""<?xml version="1.0"?>
-<manifest-request>
-  <account-number>{settings.account_number}</account-number>
-  <close-date>{close_date}</close-date>
-  <shipments>
-{shipments_xml}  </shipments>
-</manifest-request>"""
-
-    return lib.Serializable(request, lambda r: r)
+    # For XML API request
+    request = {{id}}_req.ManifestRequest(
+        account_number=settings.account_number,
+        close_date=payload.options.get("close_date") if payload.options else None,
+        shipments=[
+            {{id}}_req.Shipment(tracking_number=identifier)
+            for identifier in payload.shipment_identifiers
+        ],
+    )
     {% else %}
-    # Example implementation for JSON manifest request:
-    # import karrio.schemas.{{id}}.manifest_request as {{id}}_req
-    #
-    # shipment_list = []
-    # for tracking_number in tracking_numbers:
-    #     shipment_list.append({
-    #         "trackingNumber": tracking_number
-    #     })
-    #
-    # request = {{id}}_req.ManifestRequestType(
-    #     accountNumber=settings.account_number,
-    #     closeDate=payload.close_date or lib.today(),
-    #     shipments=shipment_list
-    # )
-    #
-    # return lib.Serializable(request, lib.to_dict)
-
-    # For development, return a simple JSON request
-    shipment_list = []
-    for tracking_number in tracking_numbers:
-        shipment_list.append({
-            "trackingNumber": tracking_number
-        })
-
-    request = {
-        "accountNumber": settings.account_number,
-        "closeDate": str(payload.close_date or lib.today()),
-        "shipments": shipment_list
-    }
-
-    return lib.Serializable(request, lib.to_dict)
+    # For JSON API request
+    request = {{id}}_req.ManifestRequestType(
+        accountNumber=settings.account_number,
+        closeDate=payload.options.get("closeDate") if payload.options else None,
+        shipments=[
+            {"trackingNumber": identifier}
+            for identifier in payload.shipment_identifiers
+        ],
+    )
     {% endif %}
+
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 '''
 )
 

@@ -153,69 +153,28 @@ def save_updated_trackers(
                     t for t in trackers if t.tracking_number == details.tracking_number
                 ]
                 for tracker in related_trackers:
-                    # update values only if changed; This is important for webhooks notification
-                    changes = []
-                    meta = details.meta or {}
+                    # Compute status from tracking details
                     status = utils.compute_tracking_status(details).value
-                    events = utils.process_events(
-                        response_events=details.events,
-                        current_events=tracker.events,
-                    )
+                    # Merge options with existing tracker options
                     options = {
                         **(tracker.options or {}),
                         tracker.tracking_number: details.meta,
                     }
-                    info = lib.to_dict(details.info or {})
 
-                    if events != tracker.events:
-                        tracker.events = events
-                        changes.append("events")
-
-                    if options != tracker.options:
-                        tracker.options = options
-                        changes.append("options")
-
-                    if details.meta != tracker.meta:
-                        tracker.meta = meta
-                        changes.append("meta")
-
-                    if details.delivered != tracker.delivered:
-                        tracker.delivered = details.delivered
-                        changes.append("delivered")
-
-                    if status != tracker.status:
-                        tracker.status = status
-                        changes.append("status")
-
-                    if details.estimated_delivery != tracker.estimated_delivery:
-                        tracker.estimated_delivery = details.estimated_delivery
-                        changes.append("estimated_delivery")
-
-                    if details.images is not None and (
-                        details.images.delivery_image != tracker.delivery_image
-                        or details.images.signature_image != tracker.signature_image
-                    ):
-                        changes.append("delivery_image")
-                        changes.append("signature_image")
-                        tracker.delivery_image = (
-                            details.images.delivery_image or tracker.delivery_image
-                        )
-                        tracker.signature_image = (
-                            details.images.signature_image or tracker.signature_image
-                        )
-
-                    if any(info.keys()) and info != tracker.info:
-                        tracker.info = serializers.process_dictionaries_mutations(
-                            ["info"], dict(info=info), tracker
-                        )["info"]
-                        changes.append("info")
-
-                    if any(changes):
-                        tracker.save(update_fields=changes)
-                        serializers.update_shipment_tracker(tracker)
-                        logger.debug("Tracking info updated successfully", tracking_number=details.tracking_number, changes=changes)
-                    else:
-                        logger.debug("No changes detected", tracking_number=details.tracking_number)
+                    # Use the centralized update_tracker function
+                    serializers.update_tracker(
+                        tracker,
+                        dict(
+                            events=details.events,
+                            delivered=details.delivered,
+                            status=status,
+                            estimated_delivery=details.estimated_delivery,
+                            options=options,
+                            meta=details.meta,
+                            info=lib.to_dict(details.info or {}),
+                            images=details.images,
+                        ),
+                    )
 
             except Exception as update_error:
                 logger.warning("Failed to update tracker", tracking_number=details.tracking_number, error=str(update_error))

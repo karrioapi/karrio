@@ -3,6 +3,7 @@ from karrio.core.metadata import PluginMetadata
 from karrio.mappers.teleship.mapper import Mapper
 from karrio.mappers.teleship.proxy import Proxy
 from karrio.mappers.teleship.settings import Settings
+from karrio.mappers.teleship.hooks import Hooks
 import karrio.providers.teleship.units as units
 import karrio.providers.teleship.utils as utils
 
@@ -18,11 +19,13 @@ METADATA = PluginMetadata(
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
+    Hooks=Hooks,
     # Data Units
     is_hub=False,
     options=units.ShippingOption,
     services=units.ShippingService,
-    connection_configs=utils.ConnectionConfig,
+    connection_configs=units.ConnectionConfig,
+    system_config=units.SYSTEM_CONFIG,
     # Extra info
     website="https://www.teleship.com",
     documentation="https://developers.teleship.com",

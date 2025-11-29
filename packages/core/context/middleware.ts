@@ -20,7 +20,11 @@ export async function middleware(req: NextRequest) {
     return;
   }
 
-  if (pathname.startsWith("/api") || MULTI_TENANT === false) {
+  if (
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/oauth") ||
+    MULTI_TENANT === false
+  ) {
     return NextResponse.next({
       request: {
         headers: requestHeaders,

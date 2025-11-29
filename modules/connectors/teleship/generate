@@ -17,4 +17,12 @@ generate_schema "${SCHEMAS}/shipment_cancel_request.json" "${LIB_MODULES}/shipme
 generate_schema "${SCHEMAS}/shipment_cancel_response.json" "${LIB_MODULES}/shipment_cancel_response.py"
 generate_schema "${SCHEMAS}/tracking_request.json" "${LIB_MODULES}/tracking_request.py"
 generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+generate_schema "${SCHEMAS}/pickup_request.json" "${LIB_MODULES}/pickup_request.py"
+generate_schema "${SCHEMAS}/pickup_response.json" "${LIB_MODULES}/pickup_response.py"
+generate_schema "${SCHEMAS}/manifest_request.json" "${LIB_MODULES}/manifest_request.py"
+generate_schema "${SCHEMAS}/manifest_response.json" "${LIB_MODULES}/manifest_response.py"
+generate_schema "${SCHEMAS}/duties_taxes_request.json" "${LIB_MODULES}/duties_taxes_request.py"
+generate_schema "${SCHEMAS}/duties_taxes_response.json" "${LIB_MODULES}/duties_taxes_response.py"
+generate_schema "${SCHEMAS}/webhook_request.json" "${LIB_MODULES}/webhook_request.py"
+generate_schema "${SCHEMAS}/webhook_response.json" "${LIB_MODULES}/webhook_response.py"
 

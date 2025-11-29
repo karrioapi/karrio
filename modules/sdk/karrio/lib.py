@@ -23,6 +23,8 @@ Element = utils.Element
 Tracer = utils.Tracer
 Trace = utils.Trace
 Cache = utils.Cache
+SystemConfig = utils.SystemConfig
+AbstractSystemConfig = utils.AbstractSystemConfig
 Job = utils.Job
 OptionEnum = utils.OptionEnum
 Enum = utils.Enum
@@ -624,6 +626,22 @@ def to_customs_info(
         shipper=shipper,
         recipient=recipient,
     )
+
+
+def to_commodities(
+    commodities: typing.List[models.Commodity],
+    weight_unit: str = None,
+) -> units.Products:
+    """Convert a list of Commodity models to a Products helper for processing.
+
+    Args:
+        commodities: List of Commodity models
+        weight_unit: Optional weight unit to use for all commodities
+
+    Returns:
+        Products: An iterable collection of processed Product items
+    """
+    return units.Products(commodities, weight_unit=weight_unit)
 
 
 def to_document_files(

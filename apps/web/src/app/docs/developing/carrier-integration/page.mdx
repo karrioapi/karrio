@@ -78,7 +78,26 @@ modules/connectors/[carrier_name]/
 │   │       ├── __init__.py
 │   │       ├── rate.py       # Rating implementation
 │   │       ├── tracking.py   # Tracking implementation
-│   │       ├── shipment.py   # Shipping implementation
+│   │       ├── shipment/     # Shipping implementation
+│   │       │   ├── __init__.py
+│   │       │   ├── create.py
+│   │       │   └── cancel.py
+│   │       ├── pickup/       # Pickup implementation
+│   │       │   ├── __init__.py
+│   │       │   ├── create.py
+│   │       │   ├── update.py
+│   │       │   └── cancel.py
+│   │       ├── manifest.py   # Manifest implementation
+│   │       ├── duties.py     # Duties calculation
+│   │       ├── insurance.py  # Insurance application
+│   │       ├── webhook/      # Webhook management
+│   │       │   ├── __init__.py
+│   │       │   ├── register.py
+│   │       │   └── deregister.py
+│   │       ├── callback/     # OAuth/webhook callback
+│   │       │   ├── __init__.py
+│   │       │   ├── event.py
+│   │       │   └── oauth.py
 │   │       ├── units.py      # Enums and constants
 │   │       ├── utils.py      # Utility functions
 │   │       └── error.py      # Error handling
@@ -131,8 +150,24 @@ Use the Karrio CLI to generate the complete extension structure:
 - `--path`: `modules/connectors` (direct carriers) or `community/plugins` (hub carriers)
 - `--carrier-slug`: Unique identifier (e.g., `dhl_express`, `fedex`)
 - `--display-name`: Human-readable name (e.g., "DHL Express")
-- `--features`: Comma-separated list: `address`, `document`, `manifest`, `pickup`, `rating`, `shipping`, `tracking`
+- `--features`: Comma-separated list of capabilities (see table below)
 - `--is-xml-api`: `true` for XML/SOAP APIs, `false` for JSON APIs
+
+**Available Capabilities:**
+
+| Capability | Description |
+|------------|-------------|
+| `address` | Address validation |
+| `callback` | OAuth and webhook callback handling |
+| `document` | Document upload (customs forms, etc.) |
+| `duties` | Duties and taxes calculation |
+| `insurance` | Shipment insurance application |
+| `manifest` | End-of-day manifest creation |
+| `pickup` | Pickup scheduling and management |
+| `rating` | Rate/quote retrieval |
+| `shipping` | Label creation and shipment management |
+| `tracking` | Package tracking |
+| `webhook` | Webhook registration/deregistration |
 
 ## Step 3: Prepare Schema Files
 
@@ -142,7 +177,12 @@ Create JSON (or XML) schema files in the `schemas/` directory based on the carri
 - `error_response.json` (always required)
 - `rate_request.json` + `rate_response.json` (if rating enabled)
 - `shipment_request.json` + `shipment_response.json` (if shipping enabled)
-- `tracking_request.json` + `tracking_response.json` (if tracking enabled)
+- `tracking_response.json` (if tracking enabled)
+- `pickup_request.json` + `pickup_response.json` (if pickup enabled)
+- `manifest_request.json` + `manifest_response.json` (if manifest enabled)
+- `duties_taxes_request.json` + `duties_taxes_response.json` (if duties enabled)
+- `insurance_request.json` + `insurance_response.json` (if insurance enabled)
+- `webhook_request.json` + `webhook_response.json` (if webhook enabled)
 
 **Note**: Use actual API request/response examples, not JSON Schema definitions.
 

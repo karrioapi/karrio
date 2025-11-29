@@ -1,0 +1,36 @@
+{
+  "messages": [
+    {
+      "code": 423,
+      "level": "warning",
+      "timestamp": "2024-01-01T00:00:00.00Z",
+      "message": "Missing duties and taxes",
+      "details": [
+        "`commodities` are required to calculate duties and taxes",
+        "providing `customs.orderTotalValue` (optional) allows for more accurate duties and taxes"
+      ]
+    }
+  ],
+  "pickup": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "created",
+    "startAt": "2024-01-15T08:00:00Z",
+    "endAt": "2024-01-15T12:00:00Z",
+    "address": {
+      "name": "John Smith",
+      "email": "john.smith@company.com",
+      "phone": "+44 20 7946 0958",
+      "company": "London Exports Ltd",
+      "address": {
+        "line1": "123 Oxford Street",
+        "line2": "Suite 456",
+        "city": "London",
+        "state": "England",
+        "postcode": "W1D 1BS",
+        "country": "GB"
+      }
+    },
+    "reference": "PICKUP-2024-001",
+    "createdAt": "2024-01-10T10:30:00Z"
+  }
+}

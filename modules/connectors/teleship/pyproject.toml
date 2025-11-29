@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_teleship"
-version = "2025.5rc35"
+version = "2025.5rc36"
 description = "Karrio - Teleship Shipping Extension"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -25,7 +25,7 @@ dependencies = [
 Homepage = "https://github.com/karrioapi/karrio"
 
 [project.entry-points."karrio.plugins"]
-teleship = "karrio.plugins.teleship"
+teleship = "karrio.plugins.teleship:METADATA"
 
 [tool.setuptools]
 zip-safe = false

@@ -62,7 +62,7 @@ dependencies = [
 Homepage = "https://github.com/karrioapi/karrio"
 
 [project.entry-points."karrio.plugins"]
-{{id}} = "karrio.plugins.{{id}}"
+{{id}} = "karrio.plugins.{{id}}:METADATA"
 
 [tool.setuptools]
 zip-safe = false
@@ -130,7 +130,13 @@ generateDS --no-namespace-defs -o "${LIB_MODULES}/shipment_response.py" $SCHEMAS
 generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_request.py" $SCHEMAS/tracking_request.xsd
 generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_response.py" $SCHEMAS/tracking_response.xsd{% endif %}{% if "document" in features %}
 generateDS --no-namespace-defs -o "${LIB_MODULES}/document_upload_request.py" $SCHEMAS/document_upload_request.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/document_upload_response.py" $SCHEMAS/document_upload_response.xsd{% endif %}
+generateDS --no-namespace-defs -o "${LIB_MODULES}/document_upload_response.py" $SCHEMAS/document_upload_response.xsd{% endif %}{% if "webhook" in features %}
+generateDS --no-namespace-defs -o "${LIB_MODULES}/webhook_request.py" $SCHEMAS/webhook_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/webhook_response.py" $SCHEMAS/webhook_response.xsd{% endif %}{% if "duties" in features %}
+generateDS --no-namespace-defs -o "${LIB_MODULES}/duties_taxes_request.py" $SCHEMAS/duties_taxes_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/duties_taxes_response.py" $SCHEMAS/duties_taxes_response.xsd{% endif %}{% if "insurance" in features %}
+generateDS --no-namespace-defs -o "${LIB_MODULES}/insurance_request.py" $SCHEMAS/insurance_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/insurance_response.py" $SCHEMAS/insurance_response.xsd{% endif %}
 """
 )
 
@@ -157,7 +163,13 @@ kcli codegen generate "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipme
 kcli codegen generate "${SCHEMAS}/tracking_request.json" "${LIB_MODULES}/tracking_request.py"
 kcli codegen generate "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"{% endif %}{% if "document" in features %}
 kcli codegen generate "${SCHEMAS}/document_upload_request.json" "${LIB_MODULES}/document_upload_request.py"
-kcli codegen generate "${SCHEMAS}/document_upload_response.json" "${LIB_MODULES}/document_upload_response.py"{% endif %}
+kcli codegen generate "${SCHEMAS}/document_upload_response.json" "${LIB_MODULES}/document_upload_response.py"{% endif %}{% if "webhook" in features %}
+kcli codegen generate "${SCHEMAS}/webhook_request.json" "${LIB_MODULES}/webhook_request.py"
+kcli codegen generate "${SCHEMAS}/webhook_response.json" "${LIB_MODULES}/webhook_response.py"{% endif %}{% if "duties" in features %}
+kcli codegen generate "${SCHEMAS}/duties_taxes_request.json" "${LIB_MODULES}/duties_taxes_request.py"
+kcli codegen generate "${SCHEMAS}/duties_taxes_response.json" "${LIB_MODULES}/duties_taxes_response.py"{% endif %}{% if "insurance" in features %}
+kcli codegen generate "${SCHEMAS}/insurance_request.json" "${LIB_MODULES}/insurance_request.py"
+kcli codegen generate "${SCHEMAS}/insurance_response.json" "${LIB_MODULES}/insurance_response.py"{% endif %}
 
 
 """
@@ -167,33 +179,6 @@ MAPPER_IMPORTS_TEMPLATE = Template(
     """from karrio.mappers.{{id}}.mapper import Mapper
 from karrio.mappers.{{id}}.proxy import Proxy
 from karrio.mappers.{{id}}.settings import Settings
-"""
-)
-
-MAPPER_METADATA_TEMPLATE = Template(
-    """from karrio.core.metadata import Metadata
-
-from karrio.mappers.{{id}}.mapper import Mapper
-from karrio.mappers.{{id}}.proxy import Proxy
-from karrio.mappers.{{id}}.settings import Settings
-import karrio.providers.{{id}}.units as units
-import karrio.providers.{{id}}.utils as utils
-
-
-METADATA = Metadata(
-    id="{{id}}",
-    label="{{name}}",
-    # Integrations
-    Mapper=Mapper,
-    Proxy=Proxy,
-    Settings=Settings,
-    # Data Units
-    is_hub=False,
-    # options=units.ShippingOption,
-    # services=units.ShippingService,
-    connection_configs=utils.ConnectionConfig,
-)
-
 """
 )
 
@@ -222,7 +207,7 @@ METADATA = PluginMetadata(
     is_hub=False,
     # options=units.ShippingOption,
     # services=units.ShippingService,
-    connection_configs=utils.ConnectionConfig,
+    connection_configs=units.ConnectionConfig,
     # Extra info
     website="",
     documentation="",
@@ -344,6 +329,46 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.AddressValidationDetails], typing.List[models.Message]]:
         return provider.parse_address_validation_response(response, self.settings)
+    {% endif %}{% if "webhook" in features %}
+    def create_webhook_registration_request(
+        self, payload: models.WebhookRegistrationRequest
+    ) -> lib.Serializable:
+        return provider.webhook_registration_request(payload, self.settings)
+
+    def parse_webhook_registration_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.WebhookRegistrationDetails, typing.List[models.Message]]:
+        return provider.parse_webhook_registration_response(response, self.settings)
+
+    def create_webhook_deregistration_request(
+        self, payload: models.WebhookDeregistrationRequest
+    ) -> lib.Serializable:
+        return provider.webhook_deregistration_request(payload, self.settings)
+
+    def parse_webhook_deregistration_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+        return provider.parse_webhook_deregistration_response(response, self.settings)
+    {% endif %}{% if "duties" in features %}
+    def create_duties_calculation_request(
+        self, payload: models.DutiesCalculationRequest
+    ) -> lib.Serializable:
+        return provider.duties_calculation_request(payload, self.settings)
+
+    def parse_duties_calculation_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.DutiesCalculationDetails, typing.List[models.Message]]:
+        return provider.parse_duties_calculation_response(response, self.settings)
+    {% endif %}{% if "insurance" in features %}
+    def create_insurance_request(
+        self, payload: models.InsuranceRequest
+    ) -> lib.Serializable:
+        return provider.insurance_request(payload, self.settings)
+
+    def parse_insurance_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.InsuranceDetails, typing.List[models.Message]]:
+        return provider.parse_insurance_response(response, self.settings)
     {% endif %}
 
 '''
@@ -564,7 +589,127 @@ class Proxy(proxy.Proxy):
         {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
+    {% endif %}{% if "webhook" in features %}
+    def register_webhook(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
+        # ---------------------------------------------------------
+        # Example implementation:
+        # response = lib.request(
+        #     url=f"{self.settings.server_url}/webhooks",
+        #     data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
+        #     trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
+        #     method="POST",
+        #     headers={
+        #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
+        #     },
+        # )
+
+        # During development, use stub response from schema examples
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
+
+        return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
+    {% endif %}{% if "webhook" in features %}
+    def deregister_webhook(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
+        # ---------------------------------------------------------
+        # Example implementation:
+        # webhook_id = request.serialize()
+        # response = lib.request(
+        #     url=f"{self.settings.server_url}/webhooks/{webhook_id}",
+        #     trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
+        #     method="DELETE",
+        #     headers={
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
+        #     },
+        # )
+
+        # During development, use stub response from schema examples
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
+
+        return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
+    {% endif %}{% if "duties" in features %}
+    def calculate_duties(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
+        # ---------------------------------------------------------
+        # Example implementation:
+        # response = lib.request(
+        #     url=f"{self.settings.server_url}/duties/calculate",
+        #     data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
+        #     trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
+        #     method="POST",
+        #     headers={
+        #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
+        #     },
+        # )
+
+        # During development, use stub response from schema examples
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
+
+        return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
+    {% endif %}{% if "insurance" in features %}
+    def apply_insurance(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
+        # ---------------------------------------------------------
+        # Example implementation:
+        # response = lib.request(
+        #     url=f"{self.settings.server_url}/insurance/apply",
+        #     data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
+        #     trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
+        #     method="POST",
+        #     headers={
+        #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
+        #     },
+        # )
+
+        # During development, use stub response from schema examples
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
+
+        return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}
+    def authenticate(self, request: lib.Serializable) -> lib.Deserializable[dict]:
+        # REPLACE THIS WITH YOUR ACTUAL AUTHENTICATION IMPLEMENTATION
+        # ------------------------------------------------------------
+        # Example OAuth2 implementation:
+        # cache_key = f"{self.settings.carrier_name}|{self.settings.client_id}|{self.settings.client_secret}"
+        #
+        # def get_token():
+        #     response = lib.request(
+        #         url=f"{self.settings.server_url}/oauth/token",
+        #         method="POST",
+        #         headers={"content-Type": "application/x-www-form-urlencoded"},
+        #         data=lib.to_query_string({
+        #             "grant_type": "client_credentials",
+        #             "client_id": self.settings.client_id,
+        #             "client_secret": self.settings.client_secret,
+        #         }),
+        #         decoder=lib.to_dict,
+        #     )
+        #
+        #     messages = provider_error.parse_error_response(response, self.settings)
+        #     if any(messages):
+        #         raise errors.ParsedMessagesError(messages)
+        #
+        #     expiry = datetime.datetime.now() + datetime.timedelta(
+        #         seconds=float(response.get("expires_in", 3600))
+        #     )
+        #
+        #     return {**response, "expiry": lib.fdatetime(expiry)}
+        #
+        # token = self.settings.connection_cache.thread_safe(
+        #     refresh_func=get_token,
+        #     cache_key=cache_key,
+        #     buffer_minutes=30,
+        #     token_field="access_token",
+        # )
+        #
+        # return lib.Deserializable(token.get_state())
+
+        # DEVELOPMENT ONLY: Remove this stub and implement actual authentication
+        return lib.Deserializable({"access_token": "STUB_TOKEN", "expires_in": 3600})
+
 '''
 )
 
@@ -631,8 +776,26 @@ from karrio.providers.{{id}}.document import (
 from karrio.providers.{{id}}.manifest import (
     parse_manifest_response,
     manifest_request,
+){% endif %}{% if "webhook" in features %}
+from karrio.providers.{{id}}.webhook import (
+    webhook_registration_request,
+    parse_webhook_registration_response,
+    webhook_deregistration_request,
+    parse_webhook_deregistration_response,
 )
-{% endif %}
+from karrio.providers.{{id}}.hooks import (
+    on_webhook_event,
+    on_oauth_authorize,
+    on_oauth_callback,
+){% endif %}{% if "duties" in features %}
+from karrio.providers.{{id}}.duties import (
+    duties_calculation_request,
+    parse_duties_calculation_response,
+){% endif %}{% if "insurance" in features %}
+from karrio.providers.{{id}}.insurance import (
+    insurance_request,
+    parse_insurance_response,
+){% endif %}
 '''
 )
 
@@ -668,6 +831,14 @@ def parse_error_response(
 PROVIDER_UNITS_TEMPLATE = Template('''
 import karrio.lib as lib
 import karrio.core.units as units
+
+
+class ConnectionConfig(lib.Enum):
+    """Carrier connection configuration options."""
+
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+    label_type = lib.OptionEnum("label_type", str, "PDF")  # Example of label type config with PDF default
 
 
 class PackagingType(lib.StrEnum):
@@ -763,65 +934,14 @@ class Settings(core.Settings):
     # def tracking_url(self):
     #     return "https://www.carrier.com/tracking?tracking-id={}"
 
-    {% if is_xml_api %}@property
-    def authorization(self):
-        pair = "%s:%s" % (self.username, self.password)
-        return base64.b64encode(pair.encode("utf-8")).decode("ascii"){% endif %}
-
     @property
     def connection_config(self) -> lib.units.Options:
+        from karrio.providers.{{id}}.units import ConnectionConfig
+
         return lib.to_connection_config(
             self.config or {},
             option_type=ConnectionConfig,
         )
-
-#     """uncomment the following code block to implement the oauth login."""
-#     @property
-#     def access_token(self):
-#         """Retrieve the access_token using the client_id|client_secret pair
-#         or collect it from the cache if an unexpired access_token exist.
-#         """
-#         cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
-#
-#         return self.connection_cache.thread_safe(
-#             refresh_func=lambda: login(self),
-#             cache_key=cache_key,
-#             buffer_minutes=30,
-#         ).get_state()
-
-# """uncomment the following code block to implement the oauth login."""
-# def login(settings: Settings):
-#     import karrio.providers.{{id}}.error as error
-
-#     result = lib.request(
-#         url=f"{settings.server_url}/oauth/token",
-#         method="POST",
-#         headers={"content-Type": "application/x-www-form-urlencoded"},
-#         data=lib.to_query_string(
-#             dict(
-#                 grant_type="client_credentials",
-#                 client_id=settings.client_id,
-#                 client_secret=settings.client_secret,
-#             )
-#         ),
-#     )
-
-#     response = lib.to_dict(result)
-#     messages = error.parse_error_response(response, settings)
-
-#     if any(messages):
-#         raise errors.ParsedMessagesError(messages)
-
-#     expiry = datetime.datetime.now() + datetime.timedelta(
-#         seconds=float(response.get("expires_in", 0))
-#     )
-#     return {**response, "expiry": lib.fdatetime(expiry)}
-
-
-class ConnectionConfig(lib.Enum):
-    shipping_options = lib.OptionEnum("shipping_options", list)
-    shipping_services = lib.OptionEnum("shipping_services", list)
-    label_type = lib.OptionEnum("label_type", str, "PDF")  # Example of label type config with PDF default
 
 '''
 )
@@ -901,41 +1021,3 @@ JSON_SCHEMA_ERROR_TEMPLATE = Template(
 """
 )
 
-VALIDATOR_IMPORTS_TEMPLATE = Template(
-    """from karrio.validators.{{id}}.validator import Validator
-"""
-)
-
-VALIDATOR_TEMPLATE = Template('''"""{{name}} address validator."""
-
-import typing
-import karrio.lib as lib
-import karrio.api.validator as validator
-import karrio.core.models as models
-import karrio.providers.{{id}} as provider
-from karrio.providers.{{id}}.utils import Settings
-
-
-class Validator(validator.Validator):
-    """{{name}} address validator."""
-
-    def __init__(self, settings: Settings):
-        self.settings = settings
-
-    def validate_address(self, payload: models.Address) -> models.AddressValidation:
-        """
-        Validate a shipping address using {{name}}'s API.
-
-        Args:
-            payload: The address to validate
-
-        Returns:
-            AddressValidation object with validation results
-        """
-        request = provider.address_validation_request(payload, self.settings)
-        response = provider.validation_call(request, self.settings)
-        result = provider.parse_address_validation_response(response, self.settings)
-
-        return result
-'''
-)

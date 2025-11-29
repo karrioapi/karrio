@@ -4,8 +4,8 @@ import abc
 import attr
 import typing
 import karrio.lib as lib
-import karrio.core.errors as errors
 import karrio.core.models as models
+import karrio.core.errors as errors
 import karrio.core.settings as settings
 
 
@@ -194,6 +194,64 @@ class Mapper(abc.ABC):
         """
         raise errors.MethodNotSupportedError(
             self.__class__.create_manifest_request.__name__,
+            self.settings.carrier_name,
+        )
+
+    def create_duties_calculation_request(
+        self, payload: models.DutiesCalculationRequest
+    ) -> lib.Serializable:
+        """Create a carrier specific duties calculation request data from payload
+
+        Args:
+            payload (DutiesCalculationRequest): the duties calculation request payload
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_duties_calculation_request.__name__,
+            self.settings.carrier_name,
+        )
+
+    def create_insurance_request(
+        self, payload: models.InsuranceRequest
+    ) -> lib.Serializable:
+        """Create a carrier specific insurance request data from payload
+
+        Args:
+            payload (InsuranceRequest): the insurance request payload
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_insurance_request.__name__,
+            self.settings.carrier_name,
+        )
+
+    def create_webhook_registration_request(
+        self, payload: models.WebhookRegistrationRequest
+    ) -> lib.Serializable:
+        """Create a carrier specific webhook registration request data from payload
+
+        Args:
+            payload (WebhookRegistrationRequest): the webhook registration request payload
+
+        Returns:
+            Serializable: a carrier specific serializable request data type
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_webhook_registration_request.__name__,
+            self.settings.carrier_name,
+        )
+
+    def create_webhook_deregistration_request(
+        self, payload: models.WebhookDeregistrationRequest
+    ) -> lib.Serializable:
+        """Create a carrier specific webhook deregistration request data from payload
+
+        Args:
+            payload (WebhookDeregistrationRequest): the webhook deregistration request payload
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_webhook_deregistration_request.__name__,
             self.settings.carrier_name,
         )
 
@@ -391,5 +449,71 @@ class Mapper(abc.ABC):
         """
         raise errors.MethodNotSupportedError(
             self.__class__.parse_manifest_response.__name__,
+            self.settings.carrier_name,
+        )
+
+    def parse_duties_calculation_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.DutiesCalculationDetails, typing.List[models.Message]]:
+        """Create a unified API duties calculation result from carrier response
+
+        Args:
+            response (Deserializable): a deserializable duties calculation response (xml, json, text...)
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.parse_duties_calculation_response.__name__,
+            self.settings.carrier_name,
+        )
+
+    def parse_insurance_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.InsuranceDetails, typing.List[models.Message]]:
+        """Create a unified API insurance result from carrier response
+
+        Args:
+            response (Deserializable): a deserializable insurance response (xml, json, text...)
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.parse_insurance_response.__name__,
+            self.settings.carrier_name,
+        )
+
+    def parse_webhook_registration_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.WebhookRegistrationDetails, typing.List[models.Message]]:
+        """Create a unified API webhook registration result from carrier response
+
+        Args:
+            response (Deserializable): a deserializable webhook registration response (xml, json, text...)
+
+        Returns:
+            Tuple[WebhookRegistrationDetails, List[Message]]: the webhook registration details
+                as well as errors and messages returned
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.parse_webhook_registration_response.__name__,
+            self.settings.carrier_name,
+        )
+
+    def parse_webhook_deregistration_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+        """Create a unified API webhook deregistration result from carrier response
+
+        Args:
+            response (Deserializable): a deserializable webhook deregistration response (xml, json, text...)
+
+        Returns:
+            Tuple[ConfirmationDetails, List[Message]]: the operation confirmation details
+                as well as errors and messages returned
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.parse_webhook_deregistration_response.__name__,
             self.settings.carrier_name,
         )

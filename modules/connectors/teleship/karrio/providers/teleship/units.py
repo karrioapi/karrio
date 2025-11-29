@@ -2,19 +2,65 @@ import karrio.lib as lib
 import karrio.core.units as units
 
 
+# System config schema for runtime settings (e.g., OAuth credentials)
+# Format: Dict[str, Tuple[default_value, description, type]]
+# Note: The actual env values are read by the server (constance.py) using decouple
+SYSTEM_CONFIG = {
+    "TELESHIP_OAUTH_CLIENT_ID": (
+        "",
+        "The Teleship OAuth client ID",
+        str,
+    ),
+    "TELESHIP_OAUTH_CLIENT_SECRET": (
+        "",
+        "The Teleship OAuth client secret",
+        str,
+    ),
+    "TELESHIP_SANDBOX_OAUTH_CLIENT_ID": (
+        "",
+        "The Teleship sandbox OAuth client ID",
+        str,
+    ),
+    "TELESHIP_SANDBOX_OAUTH_CLIENT_SECRET": (
+        "",
+        "The Teleship sandbox OAuth client secret",
+        str,
+    ),
+}
+
+
+class LabelType(lib.StrEnum):
+    """Carrier specific label type"""
+
+    PDF = "PDF"
+    ZPL = "ZPL"
+    PNG = "PNG"
+
+
+class ConnectionConfig(lib.Enum):
+    """Teleship connection configuration."""
+
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+    label_format = lib.OptionEnum(
+        "label_format",
+        lib.units.create_enum("LabelType", [_.name for _ in list(LabelType)]),
+        "PDF",
+    )
+
+
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
-    teleship_parcel = "parcel"
-    teleship_envelope = "envelope"
-    teleship_document = "document"
+    envelope = "envelope"
+    tube = "tube"
+    parcel = "parcel"
 
     """ Unified Packaging type mapping """
-    envelope = teleship_envelope
-    pak = teleship_envelope
-    small_box = teleship_parcel
-    medium_box = teleship_parcel
-    your_packaging = teleship_parcel
+    pak = envelope
+    small_box = parcel
+    medium_box = parcel
+    your_packaging = parcel
 
 
 class ShippingService(lib.StrEnum):
@@ -24,28 +70,21 @@ class ShippingService(lib.StrEnum):
     teleship_expedited_dropoff = "TELESHIP-EXPEDITED-DROPOFF"
     teleship_standard_dropoff = "TELESHIP-STANDARD-DROPOFF"
     teleship_standard_pickup = "TELESHIP-STANDARD-PICKUP"
+    teleship_postal_dropoff = "TELESHIP-POSTAL-DROPOFF"
+    teleship_postal_pickup = "TELESHIP-POSTAL-PICKUP"
 
 
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    teleship_customer_reference = lib.OptionEnum("customerReference")
-    teleship_order_tracking_reference = lib.OptionEnum("orderTrackingReference")
-    teleship_include_first_mile = lib.OptionEnum("includeFirstMile", bool)
-    teleship_label_format = lib.OptionEnum("labelFormat")
-    teleship_service_code = lib.OptionEnum("serviceCode")
-    teleship_shipment_description = lib.OptionEnum("shipmentDescription")
-    teleship_return_address = lib.OptionEnum("returnAddress", bool)
     teleship_signature_required = lib.OptionEnum("signatureRequired", bool)
     teleship_delivery_warranty = lib.OptionEnum("deliveryWarranty", bool)
-    teleship_delivery_pudo = lib.OptionEnum("deliveryPUDO", bool)
+    teleship_delivery_PUDO = lib.OptionEnum("deliveryPUDO", bool)
     teleship_low_carbon = lib.OptionEnum("lowCarbon", bool)
     teleship_duty_tax_calculation = lib.OptionEnum("dutyTaxCalculation", bool)
-
-    """ Unified Option type mapping """
-    insurance = lib.OptionEnum("insurance", float)
-    signature_required = lib.OptionEnum("signature", bool)
-    shipment_date = lib.OptionEnum("shipDate")
+    teleship_customer_reference = lib.OptionEnum("customerReference")
+    teleship_order_tracking_reference = lib.OptionEnum("orderTrackingReference")
+    teleship_commercial_invoice_reference = lib.OptionEnum("commercialInvoiceReference")
 
 
 def shipping_options_initializer(
@@ -69,20 +108,15 @@ class CustomsContentType(lib.StrEnum):
     """Teleship customs content types"""
 
     # Teleship-specific values (PascalCase)
-    teleship_documents = "Documents"
-    teleship_gift = "Gift"
-    teleship_sample = "Sample"
-    teleship_other = "Other"
-    teleship_commercial_goods = "CommercialGoods"
-    teleship_return_of_goods = "ReturnOfGoods"
+    documents = "Documents"
+    gift = "Gift"
+    sample = "Sample"
+    other = "Other"
+    commercial_goods = "CommercialGoods"
+    return_of_goods = "ReturnOfGoods"
 
     """ Unified content type mapping """
-    documents = teleship_documents
-    gift = teleship_gift
-    sample = teleship_sample
-    other = teleship_other
-    merchandise = teleship_commercial_goods
-    returned_goods = teleship_return_of_goods
+    merchandise = commercial_goods
 
 
 class CustomsOption(lib.Enum):
@@ -93,40 +127,6 @@ class CustomsOption(lib.Enum):
     VAT = lib.OptionEnum("VAT")
     EIN = lib.OptionEnum("EIN")
     VOECNUMBER = lib.OptionEnum("VOECNUMBER")
-
-    # Commercial invoice and tax IDs
-    commercial_invoice_reference = lib.OptionEnum("commercialInvoiceReference")
-    tax_id_type = lib.OptionEnum("taxIdType")
-    tax_id = lib.OptionEnum("taxId")
-
-    # GST numbers
-    importer_gst = lib.OptionEnum("importerGST")
-    exporter_gst = lib.OptionEnum("exporterGST")
-    consignee_gst = lib.OptionEnum("consigneeGST")
-
-    # GPSR Contact Information
-    gpsr_contact_name = lib.OptionEnum("gpsrContactName")
-    gpsr_contact_email = lib.OptionEnum("gpsrContactEmail")
-    gpsr_contact_phone = lib.OptionEnum("gpsrContactPhone")
-    gpsr_contact_address_line1 = lib.OptionEnum("gpsrContactAddressLine1")
-    gpsr_contact_city = lib.OptionEnum("gpsrContactCity")
-    gpsr_contact_state = lib.OptionEnum("gpsrContactState")
-    gpsr_contact_country = lib.OptionEnum("gpsrContactCountry")
-    gpsr_contact_postcode = lib.OptionEnum("gpsrContactPostcode")
-
-    # Importer of Record
-    importer_name = lib.OptionEnum("importerName")
-    importer_company = lib.OptionEnum("importerCompany")
-    importer_email = lib.OptionEnum("importerEmail")
-    importer_phone = lib.OptionEnum("importerPhone")
-    importer_address_line1 = lib.OptionEnum("importerAddressLine1")
-    importer_address_line2 = lib.OptionEnum("importerAddressLine2")
-    importer_city = lib.OptionEnum("importerCity")
-    importer_state = lib.OptionEnum("importerState")
-    importer_country = lib.OptionEnum("importerCountry")
-    importer_postcode = lib.OptionEnum("importerPostcode")
-    importer_tax_id_type = lib.OptionEnum("importerTaxIdType")
-    importer_tax_id = lib.OptionEnum("importerTaxId")
 
     """ Unified Customs Identifier type mapping """
 

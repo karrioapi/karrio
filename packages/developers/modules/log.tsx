@@ -62,8 +62,13 @@ export const LogComponent = ({
                 <StatusCode code={log?.status_code as number} />
               </span>
             </div>
-            {isPreview && (
-              <div className="column is-2 is-flex is-justify-content-end">
+            <div className="column is-2 is-flex is-justify-content-end">
+              <CopiableLink
+                text="Copy as JSON"
+                value={jsonify(log)}
+                className="button is-default is-small mx-1"
+              />
+              {isPreview && (
                 <AppLink
                   href={`/developers/logs/${logId}`}
                   target="_blank"
@@ -73,8 +78,8 @@ export const LogComponent = ({
                     <i className="fas fa-external-link-alt"></i>
                   </span>
                 </AppLink>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <hr className="mt-1 mb-2" style={{ height: "1px" }} />

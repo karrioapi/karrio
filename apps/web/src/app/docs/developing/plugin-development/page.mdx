@@ -1,199 +1,465 @@
 ---
 sidebarTitle: Guides
 title: Plugin Development
-description: Learn how to create a custom plugin for Karrio
-tags: [development, integration]
+description: Build plugins to extend Karrio with carriers and logistics service providers
+tags: [development, plugins, integration]
 author: Karrio Team
 ---
 
 # Plugin Development
 
-Karrio's plugin system is the cornerstone of its extensibility, allowing you to seamlessly integrate custom carriers, address validators, and other third-party services. This guide provides a comprehensive overview of how to develop, structure, and register plugins with Karrio.
+Karrio plugins extend the platform with shipping carriers and logistics service providers (LSP). All plugins follow the same Mapper/Proxy/Settings pattern.
 
 ## Plugin Types
 
-Karrio is designed to support a variety of plugin types, including:
+| Type | `service_type` | Description | Examples |
+|------|----------------|-------------|----------|
+| **Carrier** | `"carrier"` | Full shipping integration (rates, shipments, tracking) | UPS, FedEx, DHL |
+| **LSP** | `"LSP"` | Logistics Service Provider (standalone services) | Smarty, InsureShield, Avalara |
 
-- **Carrier Integrations**: Connect to any shipping carrier's API. This is the most common plugin type.
-- **Address Validators**: Integrate third-party address verification services.
-- **Upcoming**: Duty & Tax Calculators, Insurance Providers, and Payment Services.
+### When to Use Each Type
 
-## Plugin Development Approaches
+**Carrier plugins** (`service_type="carrier"`) are for shipping carriers that provide core logistics operations. Some carriers also offer additional services:
+- **Address validation**: UPS, FedEx, DHL Express, Easyship, EasyPost
+- **Insurance**: UPS, FedEx, DHL Express, Easyship, EasyPost
+- **Duties & taxes**: Teleship, Easyship
 
-Karrio supports two methods for developing and registering plugins:
+**LSP plugins** (`service_type="LSP"`) are for standalone service providers that specialize in specific logistics capabilities:
+- **Address validation**: Smarty, Google Geocoding, AddressComplete
+- **Insurance**: InsureShield, Shipsurance
+- **Duties & taxes**: Avalara, Zonos
 
-1.  **Directory-based plugins**: The traditional method where plugins are loaded from a specific local directory. This is ideal for private, in-house integrations.
-2.  **Entrypoint-based plugins**: The modern, recommended method where plugins are distributed as standard Python packages and registered via entrypoints. This is best for open-source or publicly distributed plugins.
+## Architecture Overview
 
----
+Karrio's plugin system allows carriers and LSP services to work together, supplementing core shipping operations with specialized capabilities.
 
-## Directory-Based Plugins
+```mermaid
+flowchart TB
+    subgraph Client["Client Application"]
+        API[Karrio API]
+    end
 
-Directory-based plugins are loaded from a local folder and do not require a full Python package setup, making them quick to create and test.
+    subgraph Core["Core Shipping Operations"]
+        Rating[Rating]
+        Shipping[Shipping]
+        Tracking[Tracking]
+        Pickup[Pickup]
+    end
 
-### Directory Structure
+    subgraph Supplementary["Supplementary Services"]
+        Address[Address Validation]
+        Duties[Duties & Taxes]
+        Insurance[Insurance]
+        Manifest[Manifest]
+        Webhook[Webhooks]
+    end
 
-A valid plugin directory must contain a `karrio` sub-directory, which mirrors the structure of a native Karrio integration:
+    subgraph Carriers["Carrier Plugins"]
+        UPS[UPS]
+        FedEx[FedEx]
+        DHL[DHL Express]
+        Teleship[Teleship]
+        Easyship[Easyship]
+    end
 
-```text
-/your_plugins_folder/
-└── my_carrier/
-    └── karrio/
-        ├── mappers/
-        │   └── my_carrier/
-        │       ├── __init__.py  # Contains the legacy METADATA object (optional)
-        │       ├── mapper.py
-        │       ├── proxy.py
-        │       └── settings.py
-        ├── providers/
-        │   └── my_carrier/
-        │       ├── __init__.py
-        │       ├── rate.py
-        │       └── ...
-        └── schemas/
-            └── my_carrier/
-                └── ...
+    subgraph LSP["LSP Plugins"]
+        Smarty[Smarty]
+        Avalara[Avalara]
+        InsureShield[InsureShield]
+    end
+
+    API --> Core
+    API --> Supplementary
+
+    Core --> Carriers
+
+    Supplementary --> Carriers
+    Supplementary --> LSP
+
+    UPS -.->|"rates, ship, track"| Core
+    UPS -.->|"address, insurance"| Supplementary
+    FedEx -.->|"rates, ship, track"| Core
+    FedEx -.->|"address, insurance"| Supplementary
+    Teleship -.->|"rates, ship, track"| Core
+    Teleship -.->|"duties"| Supplementary
+
+    Smarty -.->|"address"| Supplementary
+    Avalara -.->|"duties"| Supplementary
+    InsureShield -.->|"insurance"| Supplementary
 ```
 
-### Loading Directory-Based Plugins
+### How It Works
 
-Karrio can load plugins from a directory specified in one of two ways:
+1. **Core operations** (rating, shipping, tracking, pickup) are handled by carrier plugins
+2. **Supplementary services** can be provided by:
+   - The same carrier (e.g., UPS address validation during shipment)
+   - A dedicated LSP plugin (e.g., Smarty for address validation)
+3. **Flexibility**: Use carrier-provided services or integrate specialized LSP providers based on your needs
 
-1.  **Default `plugins` directory**: Place your plugin folder (e.g., `my_carrier`) inside a directory named `plugins` in your current working directory.
-2.  **`KARRIO_PLUGINS` Environment Variable**: Set the `KARRIO_PLUGINS` environment variable to the absolute path of your plugins folder.
-    ```bash
-    export KARRIO_PLUGINS=/path/to/your_plugins_folder
-    ```
+### Example Flow: Shipment with Address Validation
 
----
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant K as Karrio API
+    participant LSP as Smarty (LSP)
+    participant C as UPS (Carrier)
 
-## Entrypoint-Based Plugins
-
-This is the standard and recommended approach for creating distributable plugins. Your plugin is built as a standard Python package and registered with Karrio's plugin system using a `pyproject.toml` entrypoint.
-
-### Package Structure
-
-The internal structure of your package should follow the standard Karrio extension format:
-
-```text
-/karrio-my-carrier/
-├── pyproject.toml
-└── karrio/
-    └── plugins/
-        └── my_carrier/
-            └── __init__.py   # Contains the METADATA object
+    App->>K: Create Shipment Request
+    K->>LSP: Validate Address
+    LSP-->>K: Validated Address
+    K->>C: Create Shipment
+    C-->>K: Label + Tracking
+    K-->>App: Shipment Response
 ```
 
-### Registering the Plugin
+## Supported Capabilities
 
-In your `pyproject.toml`, you define an entrypoint under the `karrio.plugins` group. This tells Karrio where to find your plugin's `METADATA`.
+Plugins can implement any combination of features:
+
+| Feature | Proxy Method | Description |
+|---------|-------------|-------------|
+| Rating | `get_rates` | Fetch shipping rates |
+| Shipping | `create_shipment`, `cancel_shipment` | Create/cancel shipments |
+| Tracking | `get_tracking` | Track packages |
+| Pickup | `schedule_pickup`, `modify_pickup`, `cancel_pickup` | Manage pickups |
+| Address | `validate_address` | Validate addresses |
+| Document | `upload_document` | Upload trade documents |
+| Manifest | `create_manifest` | Create shipping manifests |
+| Webhook | `register_webhook`, `deregister_webhook` | Carrier webhook management |
+| Callback | OAuth and webhook event processing | Handle carrier callbacks |
+| Duties | `calculate_duties` | Calculate duties and taxes |
+| Insurance | `apply_insurance` | Apply shipment insurance |
+
+## Quick Start
+
+### Bootstrap with CLI
+
+```bash
+# Activate environment
+source ./bin/activate-env
+
+# Create carrier plugin
+./bin/cli sdk add-extension \
+  --path modules/connectors \
+  --carrier-slug my_carrier \
+  --display-name "My Carrier" \
+  --features "rating,shipping,tracking" \
+  --confirm
+
+# Create LSP plugin (e.g., address validation service)
+./bin/cli sdk add-extension \
+  --path plugins \
+  --carrier-slug my_lsp \
+  --display-name "My LSP Service" \
+  --features "address" \
+  --confirm
+```
+
+### Generated Structure
+
+```text
+my_carrier/
+├── pyproject.toml              # Package config with entrypoints
+├── generate                    # Schema generation script
+├── schemas/                    # API schema files (JSON/XML)
+├── karrio/
+│   ├── plugins/my_carrier/     # Plugin registration
+│   │   └── __init__.py         # METADATA definition
+│   ├── mappers/my_carrier/     # Integration layer
+│   │   ├── mapper.py           # Request/response routing
+│   │   ├── proxy.py            # HTTP client
+│   │   └── settings.py         # Credentials config
+│   ├── providers/my_carrier/   # Implementation
+│   │   ├── rate.py             # Rating logic
+│   │   ├── tracking.py         # Tracking logic
+│   │   ├── shipment/           # Shipping logic
+│   │   ├── units.py            # Services, options
+│   │   ├── utils.py            # Helpers
+│   │   └── error.py            # Error parsing
+│   └── schemas/my_carrier/     # Generated Python types
+└── tests/my_carrier/           # Test suite
+```
+
+## Plugin Metadata
+
+Define your plugin in `karrio/plugins/[name]/__init__.py`:
+
+### Carrier Plugin
+
+```python
+from karrio.core.metadata import PluginMetadata
+from karrio.mappers.my_carrier.mapper import Mapper
+from karrio.mappers.my_carrier.proxy import Proxy
+from karrio.mappers.my_carrier.settings import Settings
+
+METADATA = PluginMetadata(
+    id="my_carrier",
+    label="My Carrier",
+    description="Ship with My Carrier",
+    status="beta",
+    service_type="carrier",  # default
+
+    # Required components
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+
+    # Optional: callback handler
+    # Callback=Callback,
+
+    # Optional metadata
+    is_hub=False,  # True for aggregators like Easyship
+    website="https://mycarrier.com",
+    documentation="https://api.mycarrier.com/docs",
+)
+```
+
+### LSP Plugin (Logistics Service Provider)
+
+```python
+from karrio.core.metadata import PluginMetadata
+from karrio.mappers.smarty.mapper import Mapper
+from karrio.mappers.smarty.proxy import Proxy
+from karrio.mappers.smarty.settings import Settings
+
+METADATA = PluginMetadata(
+    id="smarty",
+    label="Smarty",
+    description="Address validation and verification service",
+    status="production-ready",
+    service_type="LSP",  # Marks as Logistics Service Provider
+
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+
+    website="https://www.smarty.com",
+)
+```
+
+> **Note**: The same Mapper/Proxy/Settings pattern applies to all LSP types—whether for address validation (Smarty), insurance (InsureShield), or duties calculation (Avalara).
+
+## Core Components
+
+### Settings
+
+Define connection credentials:
+
+```python
+# karrio/mappers/my_carrier/settings.py
+import attr
+import karrio.core.settings as settings
+
+@attr.s(auto_attribs=True)
+class Settings(settings.Settings):
+    api_key: str
+    secret_key: str = None
+    account_number: str = None
+
+    # Connection config
+    id: str = None
+    test_mode: bool = False
+    carrier_id: str = "my_carrier"
+
+    @property
+    def carrier_name(self):
+        return "my_carrier"
+
+    @property
+    def server_url(self):
+        return (
+            "https://sandbox.api.mycarrier.com"
+            if self.test_mode
+            else "https://api.mycarrier.com"
+        )
+```
+
+### Proxy
+
+Implement HTTP communication:
+
+```python
+# karrio/mappers/my_carrier/proxy.py
+import karrio.lib as lib
+import karrio.api.proxy as proxy
+from karrio.mappers.my_carrier.settings import Settings
+
+class Proxy(proxy.Proxy):
+    settings: Settings
+
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
+        response = lib.request(
+            url=f"{self.settings.server_url}/v1/rates",
+            data=lib.to_json(request.serialize()),
+            headers={
+                "Authorization": f"Bearer {self.settings.api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+            trace=self.trace_as("json"),
+        )
+        return lib.Deserializable(response, lib.to_dict)
+
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        # Similar pattern...
+        pass
+```
+
+### Mapper
+
+Route requests to provider implementations:
+
+```python
+# karrio/mappers/my_carrier/mapper.py
+import typing
+import karrio.lib as lib
+import karrio.api.mapper as mapper
+import karrio.core.models as models
+import karrio.providers.my_carrier as provider
+from karrio.mappers.my_carrier.settings import Settings
+
+class Mapper(mapper.Mapper):
+    settings: Settings
+
+    def create_rate_request(self, payload: models.RateRequest) -> lib.Serializable:
+        return provider.rate_request(payload, self.settings)
+
+    def parse_rate_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+        return provider.parse_rate_response(response, self.settings)
+```
+
+### Provider Implementation
+
+Transform between Karrio models and carrier API:
+
+```python
+# karrio/providers/my_carrier/rate.py
+import karrio.schemas.my_carrier.rate_request as rate_req
+import karrio.schemas.my_carrier.rate_response as rate_res
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+from karrio.providers.my_carrier import units
+from karrio.providers.my_carrier.utils import Settings
+
+def rate_request(payload: models.RateRequest, settings: Settings) -> lib.Serializable:
+    request = rate_req.RateRequestType(
+        origin=payload.shipper.postal_code,
+        destination=payload.recipient.postal_code,
+        weight=payload.parcels[0].weight,
+        # Map other fields...
+    )
+    return lib.Serializable(request, lib.to_dict)
+
+def parse_rate_response(
+    response: lib.Deserializable[dict],
+    settings: Settings,
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    data = response.deserialize()
+    rates = [
+        models.RateDetails(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            service=units.ShippingService.map(r["serviceCode"]).name_or_key,
+            total_charge=lib.to_money(r["totalPrice"]),
+            currency=r["currency"],
+        )
+        for r in data.get("rates", [])
+    ]
+    return rates, []
+```
+
+## Plugin Registration
+
+### Entrypoint (Recommended)
+
+In `pyproject.toml`:
 
 ```toml
-# pyproject.toml
 [project.entry-points."karrio.plugins"]
 my_carrier = "karrio.plugins.my_carrier"
 ```
 
-The key (`my_carrier`) is the unique identifier for your plugin, and the value (`karrio.plugins.my_carrier`) is the Python path to the module containing the `METADATA` object.
+### Directory-based
 
-### Installing the Plugin
+Place plugin in `./plugins/` or set `KARRIO_PLUGINS` environment variable.
 
-Install your package in editable mode during development:
+## Development Workflow
 
 ```bash
-pip install -e .
+# 1. Bootstrap
+./bin/cli sdk add-extension --path modules/connectors ...
+
+# 2. Add schema files to schemas/ directory
+
+# 3. Generate Python types
+./bin/run-generate-on modules/connectors/my_carrier
+
+# 4. Implement provider logic
+
+# 5. Run tests
+python -m unittest discover -v modules/connectors/my_carrier/tests
+
+# 6. Verify registration
+./bin/cli plugins list | grep my_carrier
+./bin/cli plugins show my_carrier
 ```
 
-Karrio will automatically discover and load the plugin upon restart.
+## Adding Features to Existing Plugins
 
----
+```bash
+./bin/cli sdk add-features \
+  --path modules/connectors \
+  --carrier-slug my_carrier \
+  --display-name "My Carrier" \
+  --features "pickup,manifest" \
+  --confirm
+```
 
-## Plugin Metadata
+## Testing
 
-Every plugin, regardless of type, must define a `METADATA` object. This object, an instance of `PluginMetadata`, is the manifest that describes your plugin to Karrio.
-
-### Example: Carrier Integration Metadata
-
-For a carrier, the `METADATA` object references the `Mapper` and `Settings` classes.
+Follow the standard test pattern:
 
 ```python
-# karrio/plugins/my_carrier/__init__.py
-from karrio.core.metadata import PluginMetadata
-from karrio.mappers.my_carrier.mapper import Mapper
-from karrio.mappers.my_carrier.settings import Settings
+# tests/my_carrier/test_rate.py
+import unittest
+from unittest.mock import patch
+import karrio.sdk as karrio
+import karrio.lib as lib
+from .fixture import gateway
 
-METADATA = PluginMetadata(
-    # Core properties
-    id="my_carrier",
-    label="My Carrier",
+class TestMyCarrierRating(unittest.TestCase):
+    def setUp(self):
+        self.RateRequest = karrio.core.models.RateRequest(**RatePayload)
 
-    # Integration Schemas
-    Mapper=Mapper,
-    Settings=Settings,
+    def test_create_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
+        self.assertEqual(request.serialize(), RateRequest)
 
-    # Optional metadata
-    is_hub=False
-)
+    def test_get_rates(self):
+        with patch("karrio.mappers.my_carrier.proxy.lib.request") as mock:
+            mock.return_value = RateResponse
+            karrio.Rating.fetch(self.RateRequest).from_(gateway)
+            self.assertEqual(mock.call_args[1]["url"], "https://api...")
+
+    def test_parse_rate_response(self):
+        with patch("karrio.mappers.my_carrier.proxy.lib.request") as mock:
+            mock.return_value = RateResponse
+            result = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(result), ParsedRateResponse)
+
+# Test data at end of file
+RatePayload = {...}
+RateRequest = {...}
+RateResponse = """..."""
+ParsedRateResponse = [[...], []]
 ```
 
-### Example: Address Validator Metadata
+## Resources
 
-For an address validator, the `METADATA` object references the `Validator` and `Settings` classes.
-
-```python
-# karrio/plugins/my_validator/__init__.py
-from karrio.core.metadata import PluginMetadata
-from karrio.validators.my_validator.validator import Validator
-from karrio.validators.my_validator.settings import Settings
-
-METADATA = PluginMetadata(
-    # Core properties
-    id="my_validator",
-    label="My Validator",
-
-    # Integration Schemas
-    Validator=Validator,
-    Settings=Settings,
-)
-```
-
-## Plugin Discovery Flow
-
-Karrio's plugin loading mechanism is designed to be robust and flexible.
-
-```mermaid
-graph TD
-    A[Karrio Starts] --> B{Discover Plugins};
-    B --> C[1. Scan Entrypoints<br/>(e.g., from `pip install`)];
-    B --> D[2. Scan `KARRIO_PLUGINS` Directory];
-    B --> E[3. Scan `./plugins` Directory];
-    C --> F[Load & Register Metadata];
-    D --> F;
-    E --> F;
-    F --> G[Extend Karrio's<br/>`mappers`, `providers`, `validators`];
-```
-
-**Precedence**: If plugins with the same `id` are found in multiple locations, Karrio uses the following order of precedence (first one found wins):
-
-1.  Entrypoint-based plugins
-2.  Plugins from `KARRIO_PLUGINS`
-3.  Plugins from the default `./plugins` directory
-
-## Testing Your Plugin
-
-1.  **For Directory-based plugins**: Place your plugin in one of the specified directories and restart the Karrio server.
-2.  **For Entrypoint-based plugins**: Install your package in editable mode (`pip install -e .`) and restart the Karrio server.
-
-Check the Karrio server logs on startup to confirm that your plugin was successfully discovered and loaded.
-
-## Troubleshooting
-
-If your plugin isn't loading:
-
-- **Check Logs**: Karrio logs any errors encountered during plugin discovery.
-- **Verify Structure**: Ensure your directory structure and `METADATA` object are correct.
-- **Confirm Installation**: For entrypoint plugins, double-check that your package is properly installed in the Python environment (`pip list`).
-
-## Additional Resources
-
-- [Carrier Integration Guide](/docs/developing/carrier-integration): A deep dive into creating carrier-specific integrations.
+- [Carrier Integration Guide](/docs/developing/carrier-integration) - Detailed carrier implementation
+- [CLI Guide](/docs/developing/cli-guide) - CLI commands reference
+- [Schema Generation](/docs/developing/carrier-integration/schema-generation) - Generate Python types

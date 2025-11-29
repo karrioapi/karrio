@@ -7,3 +7,7 @@ from karrio_cli.templates.rates import *
 from karrio_cli.templates.sdk import *
 from karrio_cli.templates.shipments import *
 from karrio_cli.templates.tracking import *
+from karrio_cli.templates import webhook
+from karrio_cli.templates import hooks
+from karrio_cli.templates import duties
+from karrio_cli.templates import insurance

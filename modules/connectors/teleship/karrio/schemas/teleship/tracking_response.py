@@ -6,25 +6,35 @@ import typing
 @attr.s(auto_attribs=True)
 class EventType:
     timestamp: typing.Optional[str] = None
-    status: typing.Optional[str] = None
-    location: typing.Optional[str] = None
+    code: typing.Optional[str] = None
     description: typing.Optional[str] = None
+    location: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class StMileType:
-    status: typing.Optional[str] = None
     carrier: typing.Optional[str] = None
     trackingNumber: typing.Optional[str] = None
+    trackingUrl: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class AddressType:
+    line1: typing.Optional[str] = None
+    line2: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    postcode: typing.Optional[str] = None
+    country: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class ShipType:
     name: typing.Optional[str] = None
-    city: typing.Optional[str] = None
-    state: typing.Optional[str] = None
-    postcode: typing.Optional[str] = None
-    country: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
+    company: typing.Optional[str] = None
+    address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
 
 
 @attr.s(auto_attribs=True)

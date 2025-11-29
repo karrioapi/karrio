@@ -177,6 +177,10 @@ class CarrierCapabilities(utils.Enum):
     tracking = "tracking"
     paperless = "paperless"
     manifest = "manifest"
+    duties = "duties"
+    insurance = "insurance"
+    webhook = "webhook"
+    oauth = "oauth"
 
     @classmethod
     def get_capabilities(cls):
@@ -198,6 +202,14 @@ class CarrierCapabilities(utils.Enum):
             return "paperless"
         elif "manifest" in method_name:
             return "manifest"
+        elif "duties" in method_name:
+            return "duties"
+        elif "insurance" in method_name:
+            return "insurance"
+        elif "webhook" in method_name:
+            return "webhook"
+        elif "oauth" in method_name:
+            return "oauth"
 
         return None
 

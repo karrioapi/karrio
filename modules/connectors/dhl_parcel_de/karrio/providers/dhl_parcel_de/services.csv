@@ -1,0 +1,6 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+V01PAK,DHL Paket,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,,true,false
+V62KP,DHL Kleinpaket,Germany,DE,0.01,1.0,35.3,25,5,0.0,EUR,,true,false
+V54EPAK,DHL EuroPaket,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,31.5,120,60,60,0.0,EUR,,false,true
+V53WPAK,DHL Paket International,Rest of World,,0.01,31.5,120,60,60,0.0,EUR,,false,true
+V66WPI,DHL Warenpost International,Rest of World,,0.01,1.0,35.3,25,5,0.0,EUR,,false,true

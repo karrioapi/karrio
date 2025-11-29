@@ -2,8 +2,8 @@
 Karrio Plugins Module.
 
 This module provides functionality for loading and managing Karrio plugins.
-Plugins allow extending Karrio's functionality with custom carriers, mappers,
-and address validators.
+Plugins allow extending Karrio's functionality with custom carriers and LSP
+(Logistics Service Provider) plugins like address validation, geocoding, etc.
 
 Usage:
     There are several ways to use plugins with Karrio:
@@ -22,62 +22,20 @@ Usage:
        plugins.add_plugin_directory('/path/to/your/plugins')
 
 Plugin Directory Structure:
-    A valid plugin directory can have either of the following structures:
+    A valid plugin directory must have the following structure:
 
-    1. New Structure (Recommended):
     /your_plugin_directory/
     ├── plugin_name/
     │   └── karrio/
-    │       ├── plugins/           # For plugins (carrier integrations, address validators, etc...)
+    │       ├── plugins/           # For plugins (carrier integrations, LSP plugins, etc...)
     │       │   └── plugin_name/
     │       │       └── __init__.py # Contains METADATA
-    │       ├── mappers/           # For carrier integrations
+    │       ├── mappers/           # For carrier/LSP integrations
     │       │   └── plugin_name/
     │       │       ├── __init__.py # Contains METADATA
     │       │       ├── mapper.py   # Implementation of the mapper
     │       │       ├── proxy.py    # Implementation of the proxy
     │       │       └── settings.py # Settings schema
-    │       ├── validators/        # For address validators
-    │       │   └── plugin_name/
-    │       │       ├── __init__.py # Contains METADATA
-    │       │       └── validator.py # Implementation of the validator
-    │       ├── providers/         # Provider-specific implementations
-    │       │   └── plugin_name/
-    │       │       ├── __init__.py
-    │       │       ├── error.py    # Error handling
-    │       │       ├── units.py    # Units and enums
-    │       │       ├── utils.py    # Utility functions
-    │       │       ├── rate.py     # Rating functionality
-    │       │       ├── tracking.py # Tracking functionality
-    │       │       ├── manifest.py # Manifest functionality
-    │       │       ├── shipment/   # Shipment operations
-    │       │       │   ├── __init__.py
-    │       │       │   ├── create.py
-    │       │       │   └── cancel.py
-    │       │       └── pickup/     # Pickup operations
-    │       │           ├── __init__.py
-    │       │           ├── create.py
-    │       │           ├── update.py
-    │       │           └── cancel.py
-    │       └── schemas/          # API schema definitions
-    │           └── plugin_name/
-    │               ├── __init__.py
-    │               └── various schema files...
-
-    2. Legacy Structure (Supported for backward compatibility):
-    /your_plugin_directory/
-    ├── plugin_name/
-    │   └── karrio/
-    │       ├── mappers/           # For carrier integrations
-    │       │   └── plugin_name/
-    │       │       ├── __init__.py # Contains METADATA
-    │       │       ├── mapper.py   # Implementation of the mapper
-    │       │       ├── proxy.py    # Implementation of the proxy
-    │       │       └── settings.py # Settings schema
-    │       ├── validators/        # For address validators
-    │       │   └── plugin_name/
-    │       │       ├── __init__.py # Contains METADATA
-    │       │       └── validator.py # Implementation of the validator
     │       ├── providers/         # Provider-specific implementations
     │       │   └── plugin_name/
     │       │       ├── __init__.py
@@ -105,8 +63,9 @@ Plugin Metadata:
     Each plugin must define a METADATA object of type PluginMetadata in its __init__.py file.
     The metadata should specify the plugin's capabilities, features, and other relevant information.
 
-    The plugin's capabilities (carrier integration, address validation, etc.) are automatically
-    determined based on the components defined in the metadata and registered modules.
+    service_type field distinguishes plugin types:
+        - "carrier": Full shipping carriers with rating, shipping, tracking capabilities (default)
+        - "LSP": Logistics Service Providers (address validation, geocoding, duties calculation, etc.)
 """
 
 import os
@@ -209,7 +168,7 @@ def discover_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
 
     Scans the given directories (or DEFAULT_PLUGINS if none specified)
     for valid Karrio plugin structures. A valid plugin structure must
-    have a 'karrio' subdirectory with plugins, mappers and/or validators.
+    have a 'karrio' subdirectory with plugins and/or mappers.
 
     Args:
         plugin_dirs: List of directories to scan for plugins.
@@ -240,16 +199,11 @@ def discover_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
                 if not os.path.isdir(karrio_dir):
                     continue
 
-                # Check for plugins, mappers or validators subdirectories
+                # Check for plugins or mappers subdirectories
                 plugins_dir = os.path.join(karrio_dir, "plugins")
                 mappers_dir = os.path.join(karrio_dir, "mappers")
-                validators_dir = os.path.join(karrio_dir, "validators")
 
-                if (
-                    os.path.isdir(plugins_dir)
-                    or os.path.isdir(mappers_dir)
-                    or os.path.isdir(validators_dir)
-                ):
+                if os.path.isdir(plugins_dir) or os.path.isdir(mappers_dir):
                     plugins.append(item_path)
 
     # Ensure returned plugin paths are unique
@@ -262,12 +216,12 @@ def discover_plugin_modules(
     """
     Discover and collect modules from plugins by type.
 
-    Scans plugin directories for modules of specified types (plugins, mappers, validators, etc.)
+    Scans plugin directories for modules of specified types (plugins, mappers, etc.)
     and returns them organized by plugin name and module type.
 
     Args:
         plugin_dirs: List of plugin directories to scan (uses DEFAULT_PLUGINS if None)
-        module_types: List of module types to discover (defaults to ["plugins", "mappers", "validators"])
+        module_types: List of module types to discover (defaults to ["plugins", "mappers"])
 
     Returns:
         Dict mapping plugin names to a dict of module types and their module objects
@@ -276,7 +230,7 @@ def discover_plugin_modules(
     FAILED_PLUGIN_MODULES = {}
 
     if module_types is None:
-        module_types = ["plugins", "mappers", "validators"]
+        module_types = ["plugins", "mappers"]
 
     plugin_paths = discover_plugins(plugin_dirs)
     plugin_modules: Dict[str, Dict[str, Any]] = {}
@@ -355,20 +309,47 @@ def collect_plugin_metadata(
 
     Args:
         plugin_modules: Dictionary of plugin modules organized by plugin name and module type
+                       Module types can be: "plugins", "mappers", or "entrypoint"
 
     Returns:
         Tuple containing:
         - Dictionary of successful plugin metadata
         - Dictionary of failed plugin metadata attempts
     """
+    from karrio.core.metadata import PluginMetadata
+
     plugin_metadata = {}
     failed_metadata = {}
 
     for plugin_name, modules_by_type in plugin_modules.items():
         metadata_found = False
 
-        # First try to find metadata in plugins (new structure)
-        if "plugins" in modules_by_type:
+        # First check if this is an entrypoint plugin (METADATA loaded directly)
+        if "entrypoint" in modules_by_type:
+            for submodule_name, obj in modules_by_type["entrypoint"].items():
+                try:
+                    # Entrypoints can load METADATA directly or a module containing METADATA
+                    if isinstance(obj, PluginMetadata):
+                        # METADATA was loaded directly via entrypoint
+                        plugin_metadata[plugin_name] = obj
+                        metadata_found = True
+                        break
+                    elif hasattr(obj, "METADATA"):
+                        # Module was loaded, get METADATA from it
+                        plugin_metadata[plugin_name] = obj.METADATA
+                        metadata_found = True
+                        break
+                except Exception as e:
+                    key = f"{plugin_name}.entrypoint.{submodule_name}"
+                    failed_metadata[key] = {
+                        "plugin": plugin_name,
+                        "module_type": "entrypoint",
+                        "submodule": submodule_name,
+                        "error": str(e),
+                    }
+
+        # Then try to find metadata in plugins (new structure)
+        if not metadata_found and "plugins" in modules_by_type:
             for submodule_name, module in modules_by_type["plugins"].items():
                 try:
                     if hasattr(module, "METADATA"):
@@ -401,48 +382,12 @@ def collect_plugin_metadata(
                         "error": str(e),
                     }
 
-        # If not found in mappers, try validators (legacy structure)
-        if not metadata_found and "validators" in modules_by_type:
-            for submodule_name, module in modules_by_type["validators"].items():
-                try:
-                    if hasattr(module, "METADATA"):
-                        plugin_metadata[plugin_name] = module.METADATA
-                        metadata_found = True
-                        break
-                except Exception as e:
-                    key = f"{plugin_name}.validators.{submodule_name}"
-                    failed_metadata[key] = {
-                        "plugin": plugin_name,
-                        "module_type": "validators",
-                        "submodule": submodule_name,
-                        "error": str(e),
-                    }
-
         if not metadata_found and modules_by_type:
             # Record error only if we have some modules but no metadata
             failed_metadata[plugin_name] = {
                 "plugin": plugin_name,
                 "error": "No METADATA found in any module",
             }
-
-        # NEW: Try direct import of karrio.plugins.[plugin_name] and karrio.mappers.[plugin_name] if not found
-        if not metadata_found:
-            for modtype in ["plugins", "mappers"]:
-                try:
-                    module_path = f"karrio.{modtype}.{plugin_name}"
-                    module = importlib.import_module(module_path)
-                    if hasattr(module, "METADATA"):
-                        plugin_metadata[plugin_name] = module.METADATA
-                        metadata_found = True
-                        break
-                except Exception as e:
-                    key = f"{plugin_name}.{modtype}.__init__"
-                    failed_metadata[key] = {
-                        "plugin": plugin_name,
-                        "module_type": modtype,
-                        "submodule": "__init__",
-                        "error": str(e),
-                    }
 
     return plugin_metadata, failed_metadata
 
@@ -472,7 +417,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
     )  # Track which plugins have been processed to avoid duplicates
 
     # Ensure all required namespaces exist
-    required_namespaces = ["plugins", "mappers", "providers", "schemas", "validators"]
+    required_namespaces = ["plugins", "mappers", "providers", "schemas"]
     for namespace in required_namespaces:
         module_name = f"karrio.{namespace}"
         try:

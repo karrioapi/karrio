@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "py-soap"
-version = "2025.5rc35"
+version = "2025.5rc36"
 description = "SOAP client library"
 requires-python = ">=3.11"
 license = "Apache-2.0"

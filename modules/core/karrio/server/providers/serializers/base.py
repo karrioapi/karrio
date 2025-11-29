@@ -1,5 +1,6 @@
 import typing
 import django.db.transaction as transaction
+from rest_framework import status as http_status
 
 import karrio.lib as lib
 import karrio.references as references
@@ -7,8 +8,9 @@ import karrio.server.openapi as openapi
 import karrio.server.core.utils as utils
 import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
+import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
-from karrio.server.core.serializers import CARRIERS
+from karrio.server.core.serializers import CARRIERS, Message
 
 
 def generate_carrier_serializers() -> typing.Dict[str, serializers.Serializer]:
@@ -275,3 +277,100 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             )
 
         return super().update(instance, validated_data, **kwargs)
+
+
+# =============================================================================
+# Webhook Management Serializers
+# =============================================================================
+
+
+class WebhookOperationResponse(serializers.Serializer):
+    """Response serializer for webhook operations."""
+
+    operation = serializers.CharField(help_text="The operation performed")
+    success = serializers.BooleanField(help_text="Whether the operation was successful")
+    carrier_name = serializers.CharField(help_text="The carrier name")
+    carrier_id = serializers.CharField(help_text="The carrier connection ID")
+    messages = Message(
+        required=False,
+        many=True,
+        help_text="Operation messages or errors",
+    )
+
+
+class WebhookRegisterData(serializers.Serializer):
+    """Request serializer for webhook registration."""
+
+    enabled_events = serializers.StringListField(
+        required=False,
+        default=["*"],
+        help_text="Events to subscribe to. Defaults to all events.",
+    )
+    description = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Description for the webhook registration.",
+    )
+
+
+class WebhookRegisterSerializer(serializers.Serializer):
+    """Handles webhook registration with carriers. Returns webhook details on success."""
+
+    webhook_url = serializers.URLField(
+        required=True,
+        help_text="The URL to receive webhook events.",
+    )
+    description = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Description for the webhook registration.",
+    )
+
+    @utils.error_wrapper
+    def update(self, connection: providers.Carrier, validated_data: dict, **kwargs):
+        import karrio.server.core.gateway as gateway
+
+        webhook_url = validated_data["webhook_url"]
+        description = validated_data.get(
+            "description", f"Karrio webhook for {connection.carrier_id}"
+        )
+
+        webhook_details, messages = gateway.Webhooks.register(
+            dict(url=webhook_url, description=description),
+            carrier=connection,
+            **kwargs,
+        )
+
+        if webhook_details is None:
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=http_status.HTTP_424_FAILED_DEPENDENCY,
+            )
+
+        return webhook_details
+
+
+class WebhookDeregisterSerializer(serializers.Serializer):
+    """Handles webhook deregistration from carriers. Returns confirmation on success."""
+
+    webhook_id = serializers.CharField(
+        required=True,
+        help_text="The webhook ID to deregister.",
+    )
+
+    @utils.error_wrapper
+    def update(self, connection: providers.Carrier, validated_data: dict, **kwargs):
+        import karrio.server.core.gateway as gateway
+
+        confirmation, messages = gateway.Webhooks.unregister(
+            payload=dict(webhook_id=validated_data["webhook_id"]),
+            carrier=connection,
+        )
+
+        if not (confirmation and confirmation.success):
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=http_status.HTTP_424_FAILED_DEPENDENCY,
+            )
+
+        return confirmation

@@ -329,6 +329,47 @@ def _add_extension(
                 f"{providers_dir}/pickup/__init__.py"
             )
 
+        if "webhook" in features:
+            os.makedirs(f"{providers_dir}/webhook", exist_ok=True)
+            templates.webhook.WEBHOOK_REGISTER_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/webhook/register.py"
+            )
+            templates.webhook.WEBHOOK_DEREGISTER_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/webhook/deregister.py"
+            )
+            templates.webhook.WEBHOOK_INIT_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/webhook/__init__.py"
+            )
+
+            os.makedirs(f"{providers_dir}/callback", exist_ok=True)
+            templates.callback.CALLBACK_EVENT_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/callback/event.py"
+            )
+            templates.callback.CALLBACK_OAUTH_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/callback/oauth.py"
+            )
+            templates.callback.CALLBACK_INIT_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/callback/__init__.py"
+            )
+
+            templates.callback.CALLBACK_MAPPER_TEMPLATE.stream(**context).dump(
+                f"{mappers_dir}/callback.py"
+            )
+
+        if "duties" in features:
+            templates.duties.DUTIES_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/duties.py"
+            )
+
+        if "insurance" in features:
+            os.makedirs(f"{providers_dir}/insurance", exist_ok=True)
+            templates.insurance.INSURANCE_APPLY_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/insurance/apply.py"
+            )
+            templates.insurance.INSURANCE_INIT_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/insurance/__init__.py"
+            )
+
         if "manifest" in features:
             if is_xml_api:
                 templates.XML_SCHEMA_MANIFEST_REQUEST_TEMPLATE.stream(**context).dump(

@@ -1,0 +1,23 @@
+{
+  "startAt": "2024-01-15T08:00",
+  "endAt": "2024-01-15T12:00",
+  "shipmentIds": [
+    "a7c8961f-8693-44cf-b325-99b3c4b37b08",
+    "b8d9072g-9704-55dg-c436-00c4d5c48c19"
+  ],
+  "address": {
+    "name": "John Smith",
+    "email": "john.smith@company.com",
+    "phone": "+44 20 7946 0958",
+    "company": "London Exports Ltd",
+    "address": {
+      "line1": "123 Oxford Street",
+      "line2": "Suite 456",
+      "city": "London",
+      "state": "England",
+      "postcode": "W1D 1BS",
+      "country": "GB"
+    }
+  },
+  "reference": "PICKUP-2024-001"
+}

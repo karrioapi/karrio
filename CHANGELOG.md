@@ -1,3 +1,29 @@
+# Karrio 2025.5rc46
+
+## Changes
+
+### Feat
+
+- feat: add karrio hooks interface
+- feat: add karrio duties interface
+- feat: add karrio insurance interface
+- feat: add karrio webhook interface
+- feat: add standardized auth proxy interface
+- feat: add default service csv file for dhl parcel and rollback packet International service
+
+### Docs
+
+- docs: karrio plugins development guide
+
+### Tests
+
+- tests: consolidate new interface integrations with tests
+
+### Chores
+
+- chore: update website with karrio embed page
+- devX: add drf type stub for better IDE type suggestions
+
 # Karrio 2025.5rc45
 
 ## Changes

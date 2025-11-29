@@ -1,7 +1,19 @@
 from jinja2 import Template
 
 PROVIDER_PICKUP_CREATE_TEMPLATE = Template(
-    '''"""Karrio {{name}} pickup API implementation."""
+    '''"""Karrio {{name}} pickup scheduling implementation."""
+
+# IMPLEMENTATION INSTRUCTIONS:
+# 1. Uncomment the imports when the schema types are generated
+# 2. Import the specific request and response types you need
+# 3. Create a request instance with the appropriate request type
+# 4. Extract pickup details from the response to populate PickupDetails
+#
+# NOTE: JSON schema types are generated with "Type" suffix (e.g., PickupRequestType),
+# while XML schema types don't have this suffix (e.g., PickupRequest).
+
+import karrio.schemas.{{id}}.pickup_request as {{id}}_req
+import karrio.schemas.{{id}}.pickup_response as {{id}}_res
 
 import typing
 import karrio.lib as lib
@@ -15,7 +27,7 @@ def parse_pickup_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
     """
-    Parse pickup response from carrier API
+    Parse pickup scheduling response from carrier API
 
     _response: The carrier response to deserialize
     settings: The carrier connection settings
@@ -32,7 +44,7 @@ def parse_pickup_response(
 
 
 def _extract_details(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
     settings: provider_utils.Settings,
 ) -> models.PickupDetails:
     """
@@ -44,31 +56,23 @@ def _extract_details(
     Returns a PickupDetails object with the pickup information
     """
     {% if is_xml_api %}
-    # Example implementation for XML response:
-    # Extract pickup details from the XML response
-    # confirmation_number = lib.find_element("confirmation-number", response, first=True).text
-    # pickup_date = lib.find_element("pickup-date", response, first=True).text
-    # ready_time = lib.find_element("ready-time", response, first=True).text
-    # closing_time = lib.find_element("closing-time", response, first=True).text
+    # For XML APIs, convert Element to proper response object
+    pickup = lib.to_object({{id}}_res.PickupResponse, data)
 
-    # For development, return sample data
-    confirmation_number = "PICKUP123"
-    pickup_date = lib.today_str()
-    ready_time = "09:00"
-    closing_time = "17:00"
+    # Extract pickup confirmation details
+    confirmation_number = pickup.confirmation_number if hasattr(pickup, 'confirmation_number') else ""
+    pickup_date = pickup.pickup_date if hasattr(pickup, 'pickup_date') else ""
+    ready_time = pickup.ready_time if hasattr(pickup, 'ready_time') else ""
+    closing_time = pickup.closing_time if hasattr(pickup, 'closing_time') else ""
     {% else %}
-    # Example implementation for JSON response:
-    # Extract pickup details from the JSON response
-    # confirmation_number = response.get("confirmationNumber")
-    # pickup_date = response.get("pickupDate")
-    # ready_time = response.get("readyTime")
-    # closing_time = response.get("closingTime")
+    # For JSON APIs, convert dict to proper response object
+    pickup = lib.to_object({{id}}_res.PickupResponseType, data)
 
-    # For development, return sample data
-    confirmation_number = "PICKUP123"
-    pickup_date = lib.today_str()
-    ready_time = "09:00"
-    closing_time = "17:00"
+    # Extract pickup confirmation details
+    confirmation_number = pickup.confirmationNumber if hasattr(pickup, 'confirmationNumber') else ""
+    pickup_date = pickup.pickupDate if hasattr(pickup, 'pickupDate') else ""
+    ready_time = pickup.readyTime if hasattr(pickup, 'readyTime') else ""
+    closing_time = pickup.closingTime if hasattr(pickup, 'closingTime') else ""
     {% endif %}
 
     return models.PickupDetails(
@@ -78,7 +82,7 @@ def _extract_details(
         pickup_date=lib.fdate(pickup_date),
         ready_time=ready_time,
         closing_time=closing_time,
-    )
+    ) if confirmation_number else None
 
 
 def pickup_request(
@@ -93,54 +97,54 @@ def pickup_request(
 
     Returns a Serializable object that can be sent to the carrier API
     """
-    # Extract pickup details
+    # Convert karrio models to carrier-specific format
     address = lib.to_address(payload.address)
-    pickup_date = payload.pickup_date or lib.today_str()
-    ready_time = payload.ready_time or "09:00"
-    closing_time = payload.closing_time or "17:00"
 
     {% if is_xml_api %}
-    # Example implementation for XML request:
-    request = f"""<?xml version="1.0"?>
-<pickup-request>
-    <pickup-date>{pickup_date}</pickup-date>
-    <ready-time>{ready_time}</ready-time>
-    <closing-time>{closing_time}</closing-time>
-    <address>
-        <address-line1>{address.address_line1}</address-line1>
-        <city>{address.city}</city>
-        <postal-code>{address.postal_code}</postal-code>
-        <country-code>{address.country_code}</country-code>
-        <state-code>{address.state_code}</state-code>
-        <person-name>{address.person_name}</person-name>
-        <company-name>{address.company_name}</company-name>
-        <phone-number>{address.phone_number}</phone-number>
-        <email>{address.email}</email>
-    </address>
-</pickup-request>"""
-
-    return lib.Serializable(request, lambda r: r)
+    # For XML API request
+    request = {{id}}_req.PickupRequest(
+        account_number=settings.account_number,
+        pickup_date=payload.pickup_date,
+        ready_time=payload.ready_time,
+        closing_time=payload.closing_time,
+        instruction=payload.instruction,
+        address={{id}}_req.Address(
+            company_name=address.company_name,
+            person_name=address.person_name,
+            street=address.address_line1,
+            city=address.city,
+            state=address.state_code,
+            postal_code=address.postal_code,
+            country=address.country_code,
+            phone=address.phone_number,
+            email=address.email,
+        ),
+        parcel_count=len(payload.parcels) if payload.parcels else 1,
+    )
     {% else %}
-    # Example implementation for JSON request:
-    request = {
-        "pickupDate": pickup_date,
-        "readyTime": ready_time,
-        "closingTime": closing_time,
-        "address": {
-            "addressLine1": address.address_line1,
-            "city": address.city,
-            "postalCode": address.postal_code,
-            "countryCode": address.country_code,
-            "stateCode": address.state_code,
-            "personName": address.person_name,
+    # For JSON API request
+    request = {{id}}_req.PickupRequestType(
+        accountNumber=settings.account_number,
+        pickupDate=payload.pickup_date,
+        readyTime=payload.ready_time,
+        closingTime=payload.closing_time,
+        instruction=payload.instruction,
+        address={
             "companyName": address.company_name,
-            "phoneNumber": address.phone_number,
+            "personName": address.person_name,
+            "street": address.address_line1,
+            "city": address.city,
+            "state": address.state_code,
+            "postalCode": address.postal_code,
+            "country": address.country_code,
+            "phone": address.phone_number,
             "email": address.email,
-        }
-    }
-
-    return lib.Serializable(request, lib.to_dict)
+        },
+        parcelCount=len(payload.parcels) if payload.parcels else 1,
+    )
     {% endif %}
+
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 '''
 )
 

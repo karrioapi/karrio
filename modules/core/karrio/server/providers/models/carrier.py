@@ -49,9 +49,15 @@ class CarrierQuerySet(models.QuerySet):
             system_default_filter &= Q(org__isnull=True)
 
         # 3. Build the Subquery - only use priority if we have a user/org filter
-        config_filter = my_config_filter | system_default_filter if my_config_filter else system_default_filter
+        config_filter = (
+            my_config_filter | system_default_filter
+            if my_config_filter
+            else system_default_filter
+        )
 
-        config_query = CarrierConfig.objects.filter(carrier=OuterRef("pk")).filter(config_filter)
+        config_query = CarrierConfig.objects.filter(carrier=OuterRef("pk")).filter(
+            config_filter
+        )
 
         if my_config_filter:
             # Prioritize user/org config over system default
@@ -64,7 +70,9 @@ class CarrierQuerySet(models.QuerySet):
             ).order_by("priority")
 
         # 4. Annotate the queryset
-        return self.annotate(_computed_config=Subquery(config_query.values("config")[:1]))
+        return self.annotate(
+            _computed_config=Subquery(config_query.values("config")[:1])
+        )
 
 
 class Manager(models.Manager):
@@ -214,19 +222,16 @@ class Carrier(core.OwnedEntity):
             if "custom_carrier_name" in self.credentials
             else lib.failsafe(lambda: self.carrier_code) or "generic"
         )
-        # return (
-        #     self.credentials.get("custom_carrier_name")
-        #     if "custom_carrier_name" in self.credentials
-        #     else lib.failsafe(lambda: self.carrier_code) or "generic"
-        # )
 
     @property
     def display_name(self):
         import karrio.references as references
 
-        return self.credentials.get("display_name") or references.REFERENCES[
-            "carriers"
-        ].get(self.ext) or "generic"
+        return (
+            self.credentials.get("display_name")
+            or references.REFERENCES["carriers"].get(self.ext)
+            or "generic"
+        )
 
     @property
     def carrier_config(self):
@@ -285,15 +290,18 @@ class Carrier(core.OwnedEntity):
     @property
     def gateway(self) -> gateway.Gateway:
         import karrio.server.core.middleware as middleware
+        import karrio.server.core.config as system_config
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", lib.Tracer())
         _cache = lib.Cache(caching.cache)
+        _config = lib.SystemConfig(system_config.config)
 
         return karrio.gateway[self.ext].create(
             self.data.to_dict(),
             _tracer,
             _cache,
+            _config,
         )
 
     @staticmethod

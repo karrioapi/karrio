@@ -77,7 +77,7 @@ Attributes:
 
 """
 
-from karrio.api.gateway import GatewayInitializer
+from karrio.api.gateway import GatewayInitializer, Gateway
 import karrio.api.interface as interface
 
 gateway = GatewayInitializer.get_instance()
@@ -88,7 +88,9 @@ Tracking = interface.Tracking
 Address = interface.Address
 Document = interface.Document
 Manifest = interface.Manifest
-
+Duties = interface.Duties
+Hooks = interface.Hooks
+Webhook = interface.Webhook
 
 __all__ = [
     "gateway",
@@ -99,4 +101,8 @@ __all__ = [
     "Address",
     "Document",
     "Manifest",
+    "Duties",
+    "Gateway",
+    "Webhook",
+    "Hooks",
 ]

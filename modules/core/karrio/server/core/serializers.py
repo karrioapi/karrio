@@ -1776,7 +1776,10 @@ class OperationConfirmation(Operation):
         required=True, help_text="The operation carrier"
     )
     carrier_id = serializers.CharField(
-        required=True, help_text="The targeted carrier's name (unique identifier)"
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The targeted carrier's name (unique identifier)",
     )
 
 
@@ -1910,6 +1913,49 @@ class DocumentUploadRecord(serializers.EntitySerializer):
         many=True,
         default=[],
         help_text="The list of note or warning messages",
+    )
+
+
+class OAuthAuthorizeData(serializers.Serializer):
+    """OAuth authorization request data serializer."""
+
+    state = serializers.CharField(
+        required=True,
+        help_text="A unique state value for CSRF protection.",
+    )
+    redirect_uri = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The URI to redirect to after authorization.",
+    )
+    options = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="Additional carrier-specific options.",
+    )
+
+
+class OAuthCallbackData(serializers.Serializer):
+    """OAuth callback request data serializer."""
+
+    url = serializers.CharField(
+        required=True,
+        help_text="The full callback URL.",
+    )
+    query = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="The query parameters from the callback URL.",
+    )
+    body = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="The request body if any.",
+    )
+    headers = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="The request headers.",
     )
 
 

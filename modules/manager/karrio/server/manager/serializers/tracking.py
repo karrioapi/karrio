@@ -120,64 +120,26 @@ class TrackingSerializer(TrackingDetails):
                 ).data,
                 carrier=carrier,
             )
-            # update values only if changed; This is important for webhooks notification
-            changes = []
-            details = response.tracking
-            info = lib.to_dict(details.info or {})
-            events = utils.process_events(
-                response_events=details.events, current_events=instance.events
-            )
 
-            if events != instance.events:
-                instance.events = events
-                changes.append("events")
-
-            if response.messages != instance.messages:
-                instance.messages = lib.to_dict(response.messages)
-                changes.append("messages")
-
-            if details.delivered != instance.delivered:
-                instance.delivered = details.delivered
-                changes.append("delivered")
-
-            if details.status != instance.status:
-                instance.status = details.status
-                changes.append("status")
-
-            if details.estimated_delivery != instance.estimated_delivery:
-                instance.estimated_delivery = details.estimated_delivery
-                changes.append("estimated_delivery")
-
-            if details.options != instance.options:
-                instance.options = details.options
-                changes.append("options")
-
-            if any(info.keys()) and info != instance.info:
-                instance.info = serializers.process_dictionaries_mutations(
-                    ["info"], dict(info=info), instance
-                )["info"]
-                changes.append("info")
-
+            # Handle carrier change separately (not part of tracking_details)
             if carrier.id != instance.tracking_carrier.id:
-                instance.carrier = carrier
-                changes.append("tracking_carrier")
+                instance.tracking_carrier = carrier
+                instance.save(update_fields=["tracking_carrier"])
 
-            if details.images is not None and (
-                details.images.delivery_image != instance.delivery_image
-                or details.images.signature_image != instance.signature_image
-            ):
-                changes.append("delivery_image")
-                changes.append("signature_image")
-                instance.delivery_image = (
-                    details.images.delivery_image or instance.delivery_image
-                )
-                instance.signature_image = (
-                    details.images.signature_image or instance.signature_image
-                )
-
-            if any(changes):
-                instance.save(update_fields=changes)
-                update_shipment_tracker(instance)
+            # Use update_tracker for the rest of the tracking details
+            update_tracker(
+                instance,
+                dict(
+                    events=response.tracking.events,
+                    messages=response.messages,
+                    delivered=response.tracking.delivered,
+                    status=response.tracking.status,
+                    estimated_delivery=response.tracking.estimated_delivery,
+                    options=response.tracking.options,
+                    info=lib.to_dict(response.tracking.info or {}),
+                    images=response.tracking.images,
+                ),
+            )
 
         return instance
 
@@ -246,3 +208,120 @@ def update_shipment_tracker(tracker: models.Tracking):
             tracker.shipment.save(update_fields=["status"])
     except Exception as e:
         logger.exception("Failed to update the tracked shipment", error=str(e), tracker_id=tracker.id, tracking_number=tracker.tracking_number)
+
+
+def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.Tracking:
+    """Update tracker with new tracking details from webhook or external source.
+
+    This utility function consolidates the change detection logic for updating
+    a tracker instance. It only saves fields that have changed and triggers
+    the shipment status update via update_shipment_tracker.
+
+    Args:
+        tracker: The Tracking model instance to update
+        tracking_details: Dictionary containing tracking details with keys like:
+            - events: List of tracking event dictionaries
+            - messages: List of message dictionaries
+            - delivered: Boolean delivery status
+            - status: Tracker status string
+            - estimated_delivery: Estimated delivery date string
+            - options: Dictionary of tracking options
+            - meta: Dictionary of metadata
+            - info: Dictionary of tracking info
+            - images: Dictionary with delivery_image and signature_image
+
+    Returns:
+        The updated Tracking model instance
+    """
+    try:
+        changes = []
+
+        # Process events - merge with existing events
+        new_events = tracking_details.get("events") or []
+        if new_events:
+            events = utils.process_events(
+                response_events=new_events, current_events=tracker.events
+            )
+            if events != tracker.events:
+                tracker.events = events
+                changes.append("events")
+
+        # Update messages
+        messages = tracking_details.get("messages")
+        if messages is not None and messages != tracker.messages:
+            tracker.messages = lib.to_dict(messages)
+            changes.append("messages")
+
+        # Update delivered status
+        delivered = tracking_details.get("delivered")
+        if delivered is not None and delivered != tracker.delivered:
+            tracker.delivered = delivered
+            changes.append("delivered")
+
+        # Update status
+        status = tracking_details.get("status")
+        if status is not None and status != tracker.status:
+            tracker.status = status
+            changes.append("status")
+
+        # Update estimated delivery
+        estimated_delivery = tracking_details.get("estimated_delivery")
+        if estimated_delivery is not None and estimated_delivery != tracker.estimated_delivery:
+            tracker.estimated_delivery = estimated_delivery
+            changes.append("estimated_delivery")
+
+        # Update options
+        options = tracking_details.get("options")
+        if options is not None and options != tracker.options:
+            tracker.options = options
+            changes.append("options")
+
+        # Update meta
+        meta = tracking_details.get("meta")
+        if meta is not None and meta != tracker.meta:
+            tracker.meta = {**(tracker.meta or {}), **meta}
+            changes.append("meta")
+
+        # Update info - merge with existing info
+        info = tracking_details.get("info") or {}
+        if any(info.keys()) and info != tracker.info:
+            tracker.info = serializers.process_dictionaries_mutations(
+                ["info"], dict(info=info), tracker
+            )["info"]
+            changes.append("info")
+
+        # Update images
+        images = tracking_details.get("images") or {}
+        delivery_image = images.get("delivery_image") if isinstance(images, dict) else getattr(images, "delivery_image", None)
+        signature_image = images.get("signature_image") if isinstance(images, dict) else getattr(images, "signature_image", None)
+
+        if delivery_image is not None or signature_image is not None:
+            if delivery_image != tracker.delivery_image or signature_image != tracker.signature_image:
+                if delivery_image is not None:
+                    tracker.delivery_image = delivery_image
+                    changes.append("delivery_image")
+                if signature_image is not None:
+                    tracker.signature_image = signature_image
+                    changes.append("signature_image")
+
+        # Save changes and update associated shipment
+        if any(changes):
+            tracker.save(update_fields=changes)
+            update_shipment_tracker(tracker)
+            logger.info(
+                "Tracker updated via webhook",
+                tracker_id=tracker.id,
+                tracking_number=tracker.tracking_number,
+                changes=changes,
+            )
+
+        return tracker
+
+    except Exception as e:
+        logger.exception(
+            "Failed to update tracker",
+            error=str(e),
+            tracker_id=tracker.id,
+            tracking_number=tracker.tracking_number,
+        )
+        return tracker
