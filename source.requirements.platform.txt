@@ -28,8 +28,8 @@ django-import-export==4.3.14
 django-oauth-toolkit==3.1.0
 django-organizations==2.5.0
 django-otp==1.6.3
-django-phonenumber-field==8.3.0
-django-picklefield==3.3
+django-phonenumber-field==8.4.0
+django-picklefield==3.4.0
 django-redis==6.0.0
 django-tenants==3.9.0
 django-two-factor-auth==1.18.1
@@ -37,7 +37,7 @@ djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 drf-api-tracking==1.8.4
 drf-spectacular==0.29.0
-fonttools==4.60.1
+fonttools==4.61.0
 googleapis-common-protos==1.72.0
 graphql-core==3.2.7
 grpcio==1.76.0
@@ -145,12 +145,12 @@ redis==7.1.0
 referencing==0.37.0
 requests==2.32.5
 rpds-py==0.29.0
-sentry-sdk==2.45.0
+sentry-sdk==2.46.0
 six==1.17.0
-sqlparse==0.5.3
+sqlparse==0.5.4
 strawberry-graphql==0.287.0
 tablib==3.9.0
-tinycss2==1.5.0
+tinycss2==1.5.1
 tinyhtml5==2.0.0
 toml==0.10.2
 typing_extensions==4.15.0

@@ -283,6 +283,8 @@ class TestConnectionList(APITestCase):
                 client_secret="system_secret",
             ),
         )
+        # Grant the test user access to the system carrier
+        self.system_carrier.active_users.add(self.user)
 
     def test_list_connections(self):
         """Test GET /v1/connections returns user and system connections."""
