@@ -63,7 +63,7 @@ class NonHtmlDebugToolbarMiddleware:
     """
     The Django Debug Toolbar usually only works for views that return HTML.
     This middleware wraps any non-HTML response in HTML if the request
-    has a 'debug' query parameter (e.g. http://localhost/foo?debug)
+    has a 'debug' query parameter (e.g. https://api.karrio.io/foo?debug)
     Special handling for json (pretty printing) and
     binary data (only show data length)
     """
