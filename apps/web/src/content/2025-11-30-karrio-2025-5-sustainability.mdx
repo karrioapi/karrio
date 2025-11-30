@@ -1,0 +1,183 @@
+---
+title: "Karrio 2025.5: Our Path to Sustainability"
+date: "2025-11-30"
+description: "We're transitioning Karrio toward a Fair Source model to build a sustainable foundation while keeping the platform accessible for self-hosted users and plugin developers."
+author: "Karrio Team"
+image: /blog/release-2025.5-banner.png
+tags: ["release", "announcement", "licensing", "sustainability", "fair-source"]
+category: "Announcement"
+---
+
+Today we're announcing Karrio 2025.5, a milestone release that marks a new chapter for the project. Beyond the technical improvements, this release begins our transition toward a **Fair Source** licensing model—similar to what n8n has pioneered—designed to ensure Karrio's long-term sustainability while keeping the platform accessible for self-hosted users and contributors.
+
+## New Customers, New Possibilities
+
+We're thrilled to share that recent customer partnerships have given us the resources to take Karrio to the next level. This isn't just about sustaining the project—it's about accelerating it. With dedicated funding, we can now invest in:
+
+- **Faster carrier integrations** with deeper testing and certification
+- **Improved documentation** and developer experience
+- **Dedicated community support** with faster PR reviews
+- **Enterprise-grade reliability** for production deployments
+
+**If your company could benefit from Karrio's shipping infrastructure and you're interested in becoming a design partner for our Enterprise Edition, we'd love to hear from you.** Design partners get direct influence on our roadmap, priority support, and early access to new features. Reach out at **hello@karrio.io**.
+
+## Transitioning to Fair Source
+
+Over the coming months, we'll be transitioning Karrio to a [Fair Source](https://faircode.io/) project structure and licensing model. We're learning from sustainable projects that have paved the way before us:
+
+- **[n8n's Sustainable Use License](https://blog.n8n.io/announcing-new-sustainable-use-license/)** — Balancing openness with sustainability
+- **[Sentry's Fair Source journey](https://blog.sentry.io/sentry-is-now-fair-source/)** — Proving Fair Source works at scale
+
+We're carefully evaluating licensing options to ensure the model is:
+
+- **Frictionless for self-hosted users** — You can continue to run Karrio on your own infrastructure
+- **Welcoming to contributors** — Plugin developers and community contributors retain permissive licensing options
+- **Sustainable for the project** — Enterprise features fund continued development
+
+### License Change: Apache 2.0 → LGPL-3.0
+
+With this release, we're moving the core platform and community plugins from **Apache 2.0** to **LGPL-3.0**. This change:
+
+- **Preserves your freedoms** — You can still self-host, modify, and extend Karrio
+- **Ensures improvements flow back** — Modifications to the core must be shared under LGPL-3.0
+- **Allows proprietary plugins** — Your carrier integrations can remain proprietary
+
+| Component | License | What's Included |
+|-----------|---------|-----------------|
+| **Core Platform** | LGPL-3.0 | Server, SDK, core modules |
+| **Community Plugins** | LGPL-3.0 | Carrier integrations in `/community` |
+| **Enterprise Edition** | Karrio EE License | Features in `/ee` directory |
+
+**What this means for you:**
+
+- Self-host Karrio freely for any purpose
+- Modify and extend the platform
+- Build carrier integrations without restrictions (plugins can be proprietary)
+- Contribute back to the community
+
+### Enterprise Edition
+
+Enterprise-only features live in the `/ee` directory:
+
+| Feature | Description |
+|---------|-------------|
+| Multi-tenancy | Platform-level tenant isolation |
+| Shipping Rules | Advanced automation and rules engine |
+| Audit Logging | Compliance and security tracking |
+| SSO/SAML | Enterprise authentication |
+| Priority Support | SLA-backed support and services |
+
+## Discontinuation of Karrio Insiders
+
+With this release, we're discontinuing the **Karrio Insiders** program in favor of a focused **Karrio Enterprise License**. This change simplifies our offering and provides clearer value for organizations with embedding and white-labeling needs.
+
+**What changes:**
+
+- Insiders subscriptions will transition to Enterprise licenses
+- All existing Insiders features are now part of the Enterprise Edition
+- Enterprise customers get dedicated support channels and SLAs
+
+**What stays the same:**
+
+- The open-source core remains fully functional
+- Community carrier plugins continue to be freely available
+- Self-hosting capabilities are unchanged
+
+## What This Means for You
+
+### For Self-Hosted Users
+
+Nothing changes for your deployments. The core platform, SDK, and community plugins remain open source. You'll continue to receive updates, bug fixes, and new carrier integrations.
+
+### For Enterprise Customers & Design Partners
+
+A more focused offering with clearer value:
+
+- **Deeper integrations** with dedicated QA and carrier certification
+- **Compliance-ready features** including audit logging and SSO
+- **SLA-backed support** with guaranteed response times
+- **Roadmap influence** with direct input on feature priorities
+
+**Interested in becoming a design partner?** We're looking for companies that can help shape the Enterprise Edition. Contact us at **hello@karrio.io**.
+
+### For Plugin Developers
+
+Under LGPL-3.0, plugins that link to Karrio (rather than modifying it) can use any license you choose:
+
+- Build proprietary carrier connectors
+- Monetize your plugins independently
+- Contribute to the community repository under LGPL-3.0
+
+## Technical Highlights in 2025.5
+
+Beyond the licensing changes, this release includes significant technical improvements:
+
+### New Interfaces & APIs
+
+- **Hooks Interface** for custom shipping logic
+- **Duties Interface** for international shipping
+- **Insurance Interface** for shipment protection
+- **Webhook Interface** for event-driven integrations
+- **Auth Proxy Interface** for standardized authentication
+
+### Performance & Reliability
+
+- Resolved N+1 query issues across models and GraphQL
+- Fixed database lock issues with SQLite-based workers
+- Improved Redis configuration for deployment flexibility
+- Enhanced logging with Loguru integration
+
+### Developer Experience
+
+- New plugin development guide
+- DRF type stubs for better IDE support
+- Dark mode theme for developer tools
+- Improved error parsing across carriers
+
+### Carrier Updates
+
+- FedEx REST API integration
+- DHL Parcel DE improvements
+- Landmark service enhancements
+- Easyship mapping refinements
+
+## The Vision: Open Ecosystem for Modern Shipping
+
+Our long-term vision hasn't changed. We're building the open ecosystem for modern shipping infrastructure:
+
+**For Developers:** First-class DX with intuitive APIs, comprehensive documentation, and powerful SDKs.
+
+**For Businesses:** Carrier flexibility without vendor lock-in, full control over shipping data, and a modern tech stack that fits how you build software.
+
+**For the Industry:** Lower barriers to shipping integration, shared innovation through community-driven carrier support, and competition on service quality rather than integration capabilities.
+
+## How the Licensing Aligns for Everyone
+
+| Stakeholder | Benefit |
+|-------------|---------|
+| Self-hosted users | Core platform remains free; improved community resources |
+| Plugin developers | Permissive licensing; freedom to monetize |
+| Enterprise customers | Premium features, support, and reliability |
+| Design partners | Direct roadmap influence and early access |
+| Partners & SIs | Platform to build on with clear commercial terms |
+
+## Get Started
+
+- **Upgrade to 2025.5:** Check the [GitHub release](https://github.com/karrioapi/karrio/releases/tag/2025.5) for installation instructions
+- **Read the docs:** Updated [licensing documentation](https://karrio.io/docs/overview/license) explains the license model
+- **Join the community:** [Discord](https://discord.gg/gS88uE7sEx) and [GitHub Discussions](https://github.com/orgs/karrioapi/discussions) for questions
+- **Become a design partner:** Contact **hello@karrio.io** to learn more
+
+## Thank You
+
+To everyone who has used Karrio, contributed code, reported bugs, or believed in what we're building—thank you. This transition is about ensuring Karrio can serve you better for years to come.
+
+A special thanks to our new customers whose partnership makes this next chapter possible. Your trust in Karrio allows us to invest in the platform and community in ways we couldn't before.
+
+We're excited about this next chapter and committed to building the open shipping platform the logistics industry deserves.
+
+---
+
+*The Karrio Team*
+
+Questions? Reach out at hello@karrio.io or join us on [Discord](https://discord.gg/gS88uE7sEx).
