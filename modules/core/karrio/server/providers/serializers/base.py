@@ -374,3 +374,165 @@ class WebhookDeregisterSerializer(serializers.Serializer):
             )
 
         return confirmation
+
+
+# =============================================================================
+# OAuth Callback Serializers
+# =============================================================================
+
+
+class OAuthAuthorizeData(serializers.Serializer):
+    """Request serializer for OAuth authorization."""
+
+    frontend_url = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Frontend URL to redirect to after OAuth callback.",
+    )
+
+
+class OAuthCallbackData(serializers.Serializer):
+    """Request serializer for OAuth callback data."""
+
+    query = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="Query parameters from the OAuth callback.",
+    )
+    body = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="Body data from the OAuth callback.",
+    )
+    headers = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="Headers from the OAuth callback.",
+    )
+    url = serializers.CharField(
+        required=False,
+        help_text="The full callback URL.",
+    )
+
+
+class OAuthCallbackSerializer(serializers.Serializer):
+    """Handles OAuth callback processing logic."""
+
+    @staticmethod
+    def process_callback(
+        request,
+        carrier_name: str,
+    ) -> dict:
+        """Process OAuth callback and return result dict."""
+        import json
+        import base64
+        import karrio.lib as lib
+        import karrio.server.core.gateway as gateway
+
+        payload = OAuthCallbackData.map(
+            data=dict(
+                query=request.query_params.dict(),
+                body=(
+                    request.data.dict()
+                    if hasattr(request.data, "dict")
+                    else dict(request.data or {})
+                ),
+                headers=dict(request.headers),
+                url=request.build_absolute_uri(),
+            )
+        ).data
+
+        [output, messages] = gateway.Hooks.on_oauth_callback(
+            payload=payload,
+            carrier_name=carrier_name,
+            test_mode=request.test_mode,
+            context=request,
+        )
+
+        result = dict(
+            type="oauth_callback",
+            success=output is not None,
+            carrier_name=carrier_name,
+            credentials=lib.to_dict(output) if output else None,
+            messages=lib.to_dict(messages),
+            state=request.query_params.get("state"),
+        )
+
+        frontend_url = None
+        state = request.query_params.get("state")
+        if state:
+            try:
+                state_data = json.loads(base64.b64decode(state).decode("utf-8"))
+                frontend_url = state_data.get("frontend_url")
+            except Exception:
+                pass
+
+        return result, frontend_url
+
+
+# =============================================================================
+# Webhook Event Serializers
+# =============================================================================
+
+
+class WebhookEventSerializer(serializers.Serializer):
+    """Handles webhook event processing logic."""
+
+    @staticmethod
+    def process_event(request, pk: str) -> tuple:
+        """
+        Process webhook event and return response data and status code.
+
+        Returns:
+            tuple: (response_data, http_status_code)
+        """
+        import django.db.models as django
+        import karrio.lib as lib
+        import karrio.server.core.gateway as gateway
+
+        try:
+            connection = providers.Carrier.objects.get(pk=pk)
+        except providers.Carrier.DoesNotExist:
+            return (
+                dict(
+                    operation="Webhook event",
+                    success=False,
+                    messages=[{"message": f"Connection not found: {pk}"}],
+                ),
+                http_status.HTTP_404_NOT_FOUND,
+            )
+
+        event, messages = gateway.Hooks.on_webhook_event(
+            payload=dict(
+                url=request.build_absolute_uri(),
+                body=request.data,
+                query=dict(request.query_params),
+                headers=dict(request.headers),
+            ),
+            carrier=connection,
+        )
+
+        if event and event.tracking:
+            import karrio.server.manager.models as manager_models
+            import karrio.server.manager.serializers.tracking as tracking_serializers
+
+            tracker = manager_models.Tracking.objects.filter(
+                django.Q(tracking_number=event.tracking.tracking_number)
+                | django.Q(tracking_carrier=connection)
+            ).first()
+
+            if tracker:
+                tracking_serializers.update_tracker(
+                    tracker, lib.to_dict(event.tracking)
+                )
+
+        return (
+            dict(
+                operation="Webhook event",
+                success=len(messages) == 0,
+                carrier_name=connection.carrier_name,
+                carrier_id=connection.carrier_id,
+                messages=lib.to_dict(messages),
+            ),
+            http_status.HTTP_200_OK,
+        )

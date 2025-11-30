@@ -33,19 +33,19 @@ import {
   useDocumentTemplateMutation,
   useDocumentTemplates,
 } from "@karrio/hooks/document-template";
+import { useDocumentPrinter } from "@karrio/hooks/resource-token";
 import { DocumentTemplateType, NotificationType } from "@karrio/types";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useRouter } from "next/navigation";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 
 export function TemplatesManagement() {
   const router = useRouter();
   const { notify } = useNotifier();
   const mutation = useDocumentTemplateMutation();
+  const documentPrinter = useDocumentPrinter();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
   const [templateToDelete, setTemplateToDelete] = React.useState<DocumentTemplateType | null>(null);
-  const { references } = useAPIMetadata();
 
   const {
     query: { data: { document_templates } = {}, ...query },
@@ -62,24 +62,14 @@ export function TemplatesManagement() {
   };
 
   const handlePreview = (template: DocumentTemplateType) => {
-    if (template.preview_url) {
-      const previewUrl = template.preview_url.startsWith('http')
-        ? template.preview_url
-        : `${references.HOST?.replace(/\/$/, '')}${template.preview_url}`;
-      window.open(previewUrl, '_blank');
-      return;
+    // Build params for the template based on related object
+    const params: Record<string, string> = {};
+    if (template.related_object) {
+      params[`${template.related_object}s`] = "sample";
     }
 
-    const computeParams = (template: DocumentTemplateType) => {
-      const params: Record<string, string> = {};
-      if (template.related_object) {
-        params.doc_type = template.related_object;
-      }
-      params.doc_template = template.slug;
-      return params;
-    };
-    const params = new URLSearchParams(computeParams(template));
-    window.open(`/document_template_preview?${params}`, '_blank');
+    // Use documentPrinter with token-based access
+    documentPrinter.openTemplate(template.id, Object.keys(params).length > 0 ? params : undefined);
   };
 
   const handleDelete = (template: DocumentTemplateType) => {

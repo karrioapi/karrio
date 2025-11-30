@@ -7,20 +7,20 @@ import {
   isNone,
   preventPropagation,
 } from "@karrio/lib";
+import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { useDocumentPrinter } from "@karrio/hooks/resource-token";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { MenuComponent } from "@karrio/ui/core/components/menu";
-import { AddressType, ManifestType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { ModalProvider } from "@karrio/ui/core/modals/modal";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { AddressType, ManifestType } from "@karrio/types";
 import { useManifests } from "@karrio/hooks/manifests";
 import { bundleContexts } from "@karrio/hooks/utils";
-import { useSearchParams } from "next/navigation";
 import { Spinner } from "@karrio/ui/core/components";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 const ContextProviders = bundleContexts([ModalProvider]);
@@ -32,6 +32,7 @@ export default function Page() {
 
     const searchParams = useSearchParams();
     const loader = useLoader();
+    const { references } = useAPIMetadata();
     const documentPrinter = useDocumentPrinter();
     const [allChecked, setAllChecked] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
@@ -219,7 +220,7 @@ export default function Page() {
                             carrier_name={
                               manifest.meta?.carrier ||
                               manifest.carrier_name ||
-                              formatCarrierSlug(references.APP_NAME)
+                              formatCarrierSlug(references?.APP_NAME)
                             }
                             containerClassName="mt-1 ml-1 mr-2"
                             height={28}
