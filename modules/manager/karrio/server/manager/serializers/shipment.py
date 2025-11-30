@@ -288,7 +288,16 @@ class ShipmentSerializer(ShipmentData):
 
 
 class ShipmentPurchaseData(Serializer):
-    selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
+    selected_rate_id = CharField(
+        required=False,
+        allow_null=True,
+        help_text="The shipment selected rate.",
+    )
+    service = CharField(
+        required=False,
+        allow_null=True,
+        help_text="The carrier service to use for the shipment (alternative to selected_rate_id).",
+    )
     label_type = ChoiceField(
         required=False,
         choices=LABEL_TYPES,
@@ -305,6 +314,15 @@ class ShipmentPurchaseData(Serializer):
     metadata = PlainDictField(
         required=False, help_text="User metadata for the shipment"
     )
+
+    def validate(self, data):
+        if not data.get("selected_rate_id") and not data.get("service"):
+            raise exceptions.APIException(
+                "Either 'selected_rate_id' or 'service' must be provided.",
+                code="validation_error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+        return data
 
 
 class ShipmentUpdateData(validators.OptionDefaultSerializer):

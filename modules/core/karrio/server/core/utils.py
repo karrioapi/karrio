@@ -264,14 +264,15 @@ def filter_rate_carrier_compatible_gateways(
     This function filters the carriers based on the capability to "rating"
     and if no explicit carrier list is provided, it will filter out any
     carrier that does not support the shipper's country code.
+    Carriers with no account_country_code set are always included.
     """
     _gateways = [
         carrier.gateway
         for carrier in carriers
         if (
-            # If no carrier list is provided, and gateway has "rating" capability.
+            # If explicit carrier list is provided and gateway has "rating" capability.
             ("rating" in carrier.gateway.capabilities and len(carrier_ids) > 0)
-            # If a carrier list is provided, and gateway is in the list.
+            # If no carrier list is provided, and gateway is in the list.
             or (
                 # the gateway has "rating" capability.
                 "rating" in carrier.gateway.capabilities
@@ -280,9 +281,10 @@ def filter_rate_carrier_compatible_gateways(
                 # and the shipper country code is provided.
                 and shipper_country_code is not None
                 and (
-                    carrier.gateway.settings.account_country_code
+                    # Carriers with no account_country_code work across countries
+                    not carrier.gateway.settings.account_country_code
+                    or carrier.gateway.settings.account_country_code
                     == shipper_country_code
-                    or carrier.gateway.settings.account_country_code is None
                 )
             )
         )
@@ -689,6 +691,22 @@ def process_events(
     return sorted(merged_events, key=create_sort_key, reverse=True)
 
 
+def _get_carrier_for_service(service: str, context=None) -> typing.Optional[str]:
+    """Resolve carrier name from service code using karrio references."""
+    import karrio.server.core.dataunits as dataunits
+
+    services_map = dataunits.contextual_reference(context).get("services", {})
+
+    return next(
+        (
+            carrier_name
+            for carrier_name, services in services_map.items()
+            if service in services
+        ),
+        None,
+    )
+
+
 def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
     data = kwargs.get("data") or kwargs
     get = lambda key, default=None: lib.identity(
@@ -725,6 +743,40 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
                 None,
             )
         )
+
+        # has_alternative_services fallback when no exact match found
+        has_alternative_services = options.get("has_alternative_services", False)
+
+        if (
+            kwargs.get("selected_rate") is None
+            and has_alternative_services
+            and service
+        ):
+            carrier_name = _get_carrier_for_service(service, ctx)
+            fallback_rate = lib.identity(
+                next(
+                    (r for r in rates if r.get("carrier_name") == carrier_name),
+                    None,
+                )
+                if carrier_name
+                else None
+            )
+
+            kwargs.update(
+                selected_rate=lib.identity(
+                    {
+                        **fallback_rate,
+                        "service": service,
+                        "meta": {
+                            **(fallback_rate.get("meta") or {}),
+                            "has_alternative_services": True,
+                        },
+                    }
+                    if fallback_rate
+                    else None
+                )
+            )
+
         return kwargs
 
     # Apply shipping rules if enabled and no selected rate is provided
