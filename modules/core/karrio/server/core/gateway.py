@@ -14,7 +14,6 @@ import karrio.server.core.utils as utils
 import karrio.server.core.models as core
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.dataunits as dataunits
-import karrio.server.core.validators as validators
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 import karrio.server.serializers as base_serializers
@@ -131,6 +130,7 @@ class Carriers:
 
 class Address:
     @staticmethod
+    @utils.with_telemetry("address_validate")
     def validate(
         payload: dict,
         provider: providers.Carrier = None,
@@ -159,6 +159,7 @@ class Address:
 
 class Shipments:
     @staticmethod
+    @utils.with_telemetry("shipment_create")
     @utils.require_selected_rate
     def create(
         payload: dict,
@@ -307,6 +308,7 @@ class Shipments:
         )
 
     @staticmethod
+    @utils.with_telemetry("shipment_cancel")
     def cancel(
         payload: dict, carrier: providers.Carrier = None, **carrier_filters
     ) -> datatypes.ConfirmationResponse:
@@ -357,6 +359,7 @@ class Shipments:
         )
 
     @staticmethod
+    @utils.with_telemetry("tracking_fetch")
     def track(
         payload: dict,
         carrier: providers.Carrier = None,
@@ -446,6 +449,7 @@ class Shipments:
 
 class Pickups:
     @staticmethod
+    @utils.with_telemetry("pickup_schedule")
     def schedule(
         payload: dict, carrier: providers.Carrier = None, **carrier_filters
     ) -> datatypes.PickupResponse:
@@ -495,6 +499,7 @@ class Pickups:
         )
 
     @staticmethod
+    @utils.with_telemetry("pickup_update")
     def update(
         payload: dict, carrier: providers.Carrier = None, **carrier_filters
     ) -> datatypes.PickupResponse:
@@ -535,6 +540,7 @@ class Pickups:
         )
 
     @staticmethod
+    @utils.with_telemetry("pickup_cancel")
     def cancel(
         payload: dict, carrier: providers.Carrier = None, **carrier_filters
     ) -> datatypes.ConfirmationResponse:
@@ -583,6 +589,7 @@ class Rates:
     post_process_functions: typing.List[typing.Callable] = []
 
     @staticmethod
+    @utils.with_telemetry("rates_fetch")
     def fetch(
         payload: dict,
         carriers: typing.List[providers.Carrier] = None,
@@ -661,6 +668,7 @@ class Rates:
 
 class Documents:
     @staticmethod
+    @utils.with_telemetry("document_upload")
     def upload(
         payload: dict,
         carrier: providers.Carrier = None,
@@ -708,6 +716,7 @@ class Documents:
 
 class Manifests:
     @staticmethod
+    @utils.with_telemetry("manifest_create")
     def create(
         payload: dict, carrier: providers.Carrier = None, **carrier_filters
     ) -> datatypes.ManifestResponse:
@@ -759,6 +768,7 @@ class Manifests:
 
 class Insurance:
     @staticmethod
+    @utils.with_telemetry("insurance_apply")
     def apply(
         payload: dict, provider: providers.Carrier = None, **provider_filters
     ) -> datatypes.InsuranceDetails:
@@ -813,6 +823,7 @@ class Insurance:
 
 class Duties:
     @staticmethod
+    @utils.with_telemetry("duties_calculate")
     def calculate(
         payload: dict,
         provider: providers.Carrier = None,
@@ -851,6 +862,7 @@ class Duties:
 
 class Webhooks:
     @staticmethod
+    @utils.with_telemetry("webhook_register")
     def register(
         payload: dict,
         carrier: providers.Carrier = None,
@@ -877,6 +889,7 @@ class Webhooks:
         return utils.identity(lambda: request.from_(carrier.gateway).parse())
 
     @staticmethod
+    @utils.with_telemetry("webhook_unregister")
     def unregister(
         payload: dict,
         carrier: providers.Carrier = None,
@@ -930,6 +943,7 @@ class Hooks:
         )
 
     @staticmethod
+    @utils.with_telemetry("hook_webhook_event")
     def on_webhook_event(
         payload: dict, carrier: providers.Carrier = None, **carrier_filters
     ) -> typing.Tuple[datatypes.WebhookEventDetails, typing.List[datatypes.Message]]:
@@ -951,6 +965,7 @@ class Hooks:
         return utils.identity(lambda: request.from_(carrier.gateway).parse())
 
     @staticmethod
+    @utils.with_telemetry("hook_oauth_authorize")
     def on_oauth_authorize(
         payload: dict,
         carrier: providers.Carrier = None,
@@ -968,6 +983,7 @@ class Hooks:
         )
 
     @staticmethod
+    @utils.with_telemetry("hook_oauth_callback")
     def on_oauth_callback(
         payload: dict,
         carrier_name: str = None,

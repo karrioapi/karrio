@@ -85,6 +85,74 @@ def get_log_format(debug: bool = False) -> str:
         )
 
 
+def _is_sentry_enabled() -> bool:
+    """Check if Sentry is configured and enabled."""
+    try:
+        from django.conf import settings
+        return bool(getattr(settings, "SENTRY_DSN", None))
+    except Exception:
+        return False
+
+
+def _sentry_sink(message):
+    """Loguru sink that sends logs to Sentry.
+
+    - ERROR and CRITICAL level logs are sent as Sentry events
+    - WARNING level logs are added as Sentry breadcrumbs
+    - INFO and DEBUG logs are ignored (too noisy for Sentry)
+    """
+    try:
+        import sentry_sdk
+
+        record = message.record
+        level = record["level"].name
+        log_message = record["message"]
+
+        # Build extra context from record
+        extra = dict(record.get("extra", {}))
+        extra["logger"] = record["name"]
+        extra["function"] = record["function"]
+        extra["line"] = record["line"]
+        extra["file"] = record["file"].name if record["file"] else None
+
+        if level in ("ERROR", "CRITICAL"):
+            # Send as Sentry event
+            exception = record.get("exception")
+            if exception:
+                # If there's an exception, capture it
+                exc_type, exc_value, exc_tb = exception.value
+                if exc_value:
+                    with sentry_sdk.push_scope() as scope:
+                        scope.set_context("loguru", extra)
+                        scope.set_tag("log_level", level)
+                        sentry_sdk.capture_exception(exc_value)
+            else:
+                # No exception, send as message
+                with sentry_sdk.push_scope() as scope:
+                    scope.set_context("loguru", extra)
+                    scope.set_tag("log_level", level)
+                    sentry_sdk.capture_message(
+                        log_message,
+                        level="error" if level == "ERROR" else "fatal"
+                    )
+
+        elif level == "WARNING":
+            # Add as breadcrumb for context
+            sentry_sdk.add_breadcrumb(
+                message=log_message,
+                category="loguru",
+                level="warning",
+                data=extra,
+            )
+
+    except ImportError:
+        # Sentry not installed
+        pass
+    except Exception:
+        # Fail silently - don't let logging errors break the app
+        pass
+
+
 def setup_django_loguru(
     level: Optional[str] = None,
     log_file: Optional[str] = None,
@@ -145,6 +213,18 @@ def setup_django_loguru(
             serialize=serialize,
         )
         _logger.info(f"Django file logging enabled: {log_file_path}")
+
+    # Add Sentry handler if Sentry is configured
+    if _is_sentry_enabled():
+        _logger.add(
+            _sentry_sink,
+            level="WARNING",  # Only WARNING and above go to Sentry
+            format="{message}",  # Simple format for Sentry
+            enqueue=True,  # Async to not block
+            backtrace=True,
+            diagnose=False,  # Don't include verbose diagnostics in Sentry
+        )
+        _logger.info("Sentry logging handler enabled")
 
     # Intercept Django's standard logging
     if intercept_django:

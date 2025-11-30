@@ -29,6 +29,102 @@ def identity(value: Union[Any, Callable]) -> Any:
     return value() if callable(value) else value
 
 
+def execute_gateway_operation(
+    operation_name: str,
+    callable: Callable[[], T],
+    carrier: Any = None,
+    context: Any = None,
+) -> T:
+    """Execute a gateway operation with telemetry instrumentation.
+
+    This function wraps SDK gateway calls (rates, shipments, tracking, etc.)
+    with telemetry spans for observability when Sentry is configured.
+
+    Args:
+        operation_name: Name of the operation (e.g., "rates_fetch", "shipment_create")
+        callable: The callable that performs the SDK operation
+        carrier: Optional carrier instance for context
+        context: Optional request context for accessing the tracer
+
+    Returns:
+        The result of the callable
+
+    Example:
+        result = execute_gateway_operation(
+            "rates_fetch",
+            lambda: karrio.Rating.fetch(request).from_(carrier.gateway).parse(),
+            carrier=carrier,
+            context=context,
+        )
+    """
+    tracer = _get_tracer_from_context(context)
+
+    # Build span attributes
+    attributes = {}
+    if carrier:
+        attributes["carrier_name"] = getattr(carrier, "carrier_code", None)
+        attributes["carrier_id"] = getattr(carrier, "carrier_id", None)
+        attributes["test_mode"] = getattr(carrier, "test_mode", None)
+
+    span_name = f"karrio_{operation_name}"
+
+    with tracer.start_span(span_name, attributes=attributes) as span:
+        try:
+            result = callable()
+            span.set_status("ok")
+
+            # Record success metric
+            tracer.record_metric(
+                f"karrio_{operation_name}_success",
+                1,
+                tags={
+                    "carrier": attributes.get("carrier_name", "unknown"),
+                    "test_mode": str(attributes.get("test_mode", False)).lower(),
+                },
+            )
+
+            return result
+
+        except Exception as e:
+            span.set_status("error", str(e))
+            span.record_exception(e)
+
+            # Record failure metric
+            tracer.record_metric(
+                f"karrio_{operation_name}_error",
+                1,
+                tags={
+                    "carrier": attributes.get("carrier_name", "unknown"),
+                    "error_type": type(e).__name__,
+                },
+            )
+
+            raise
+
+
+def _get_tracer_from_context(context: Any) -> lib.Tracer:
+    """Get the tracer from request context or return a default one."""
+    if context is None:
+        # Try to get from current request via middleware
+        try:
+            from karrio.server.core.middleware import SessionContext
+            request = SessionContext.get_current_request()
+            if request and hasattr(request, "tracer"):
+                return request.tracer
+        except Exception:
+            pass
+
+    # Try to get from context object
+    if hasattr(context, "tracer"):
+        return context.tracer
+
+    if hasattr(context, "request") and hasattr(context.request, "tracer"):
+        return context.request.tracer
+
+    # Return a default tracer (with NoOpTelemetry)
+    return lib.Tracer()
+
+
 def failsafe(callable: Callable[[], T], warning: str = None) -> T:
     """This higher order function wraps a callable in a try..except
     scope to capture any exception raised.
@@ -75,6 +171,81 @@ def async_wrapper(func):
         return run_async(_run)
 
     return wrapper
+
+
+def with_telemetry(operation_name: str = None):
+    """Decorator that adds telemetry instrumentation to gateway methods.
+
+    This decorator wraps gateway methods with telemetry spans for observability.
+    When Sentry is configured, it creates spans for each operation with relevant
+    context (carrier info, operation type, etc.).
+
+    Args:
+        operation_name: Optional custom operation name. If not provided,
+                       the function name is used.
+
+    Usage:
+        class Shipments:
+            @staticmethod
+            @with_telemetry("shipment_create")
+            def create(payload: dict, carrier: Carrier = None, **kwargs):
+                ...
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            op_name = operation_name or func.__name__
+
+            # Extract carrier and context from kwargs if available
+            carrier = kwargs.get("carrier")
+            context = kwargs.get("context")
+
+            # Get tracer from context
+            tracer = _get_tracer_from_context(context)
+
+            # Build span attributes
+            attributes = {"operation": op_name}
+            if carrier:
+                attributes["carrier_name"] = getattr(carrier, "carrier_code", None)
+                attributes["carrier_id"] = getattr(carrier, "carrier_id", None)
+                attributes["test_mode"] = getattr(carrier, "test_mode", None)
+
+            span_name = f"karrio_{op_name}"
+
+            with tracer.start_span(span_name, attributes=attributes) as span:
+                try:
+                    result = func(*args, **kwargs)
+                    span.set_status("ok")
+
+                    # Record success metric
+                    tracer.record_metric(
+                        f"karrio_{op_name}_success",
+                        1,
+                        tags={
+                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
+                        },
+                    )
+
+                    return result
+
+                except Exception as e:
+                    span.set_status("error", str(e))
+                    span.record_exception(e)
+
+                    # Record error metric
+                    tracer.record_metric(
+                        f"karrio_{op_name}_error",
+                        1,
+                        tags={
+                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
+                            "error_type": type(e).__name__,
+                        },
+                    )
+
+                    raise
+
+        return wrapper
+    return decorator
 
 
 def tenant_aware(func):

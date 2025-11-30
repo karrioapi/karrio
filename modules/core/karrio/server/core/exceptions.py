@@ -51,6 +51,10 @@ def custom_exception_handler(exc, context):
     request_details = _get_request_details(context)
     _log_exception(exc, request_details, debug=getattr(settings, "DEBUG", False))
 
+    # Capture exception to telemetry (Sentry/OTEL/Datadog)
+    # This ensures handled exceptions are still tracked in APM
+    _capture_exception_to_telemetry(exc, request_details, context)
+
     response = exception_handler(exc, context)
     detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
@@ -223,6 +227,61 @@ def _get_request_details(context: dict) -> dict:
         "query_params": dict(getattr(request, "GET", {})),
         "content_type": getattr(request, "content_type", None),
     }
+
+
+def _capture_exception_to_telemetry(exc: Exception, request_details: dict, context: dict):
+    """Capture exception to APM telemetry (Sentry/OTEL/Datadog).
+
+    This ensures that handled exceptions (which return proper HTTP responses)
+    are still tracked in external APM tools for visibility and alerting.
+    """
+    from karrio.server.core.utils import failsafe
+
+    def _capture():
+        from karrio.server.core.telemetry import get_telemetry_for_request
+
+        telemetry = get_telemetry_for_request()
+        status_code = getattr(exc, "status_code", 500)
+
+        # Build context for the exception
+        exc_context = {
+            "exception_type": type(exc).__name__,
+            "status_code": status_code,
+            **{k: str(v) if isinstance(v, (dict, list)) else v for k, v in request_details.items()},
+        }
+
+        # Add carrier info if available in exception detail
+        detail = getattr(exc, "detail", None)
+        if isinstance(detail, list) and len(detail) > 0:
+            first = detail[0]
+            if hasattr(first, "carrier_name"):
+                exc_context["carrier_name"] = first.carrier_name
+            if hasattr(first, "carrier_id"):
+                exc_context["carrier_id"] = first.carrier_id
+
+        # Build tags
+        tags = {
+            "error_type": type(exc).__name__,
+            "status_code": str(status_code),
+            "error_class": "client" if status_code < 500 else "server",
+        }
+
+        # Capture to telemetry
+        telemetry.capture_exception(exc, context=exc_context, tags=tags)
+
+        # Record error metric
+        telemetry.record_metric(
+            "karrio.api.exception",
+            1,
+            tags={
+                "exception_type": type(exc).__name__,
+                "status_code": str(status_code),
+                "path": request_details.get("path", "unknown"),
+            },
+            metric_type="counter",
+        )
+
+    failsafe(_capture)
 
 
 def _log_exception(exc: Exception, request_details: dict, debug: bool = False):
