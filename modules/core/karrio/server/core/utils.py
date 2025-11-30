@@ -536,7 +536,7 @@ def validate_resource_token(
         )
         return None
     except PermissionError as e:
-        return HttpResponseForbidden(str(e))
+        return HttpResponseForbidden("You do not have permission to access these resources.")
     except Exception as e:
         logger.warning("Invalid resource access token: %s", str(e))
         return HttpResponseForbidden("Invalid or expired token.")
