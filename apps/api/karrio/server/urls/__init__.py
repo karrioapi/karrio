@@ -46,6 +46,7 @@ urlpatterns = [
                     for (subpath, urls, namespace) in settings.NAMESPACED_URLS
                 ],
                 path("", include("karrio.server.urls.jwt")),
+                path("", include("karrio.server.urls.tokens")),
                 path("", include("karrio.server.user.urls")),
                 *[path("", include(urls)) for urls in settings.KARRIO_URLS],
                 path("admin/", admin.site.urls, name="app_admin"),

@@ -4932,6 +4932,72 @@ export interface RateResponse {
      */
     'rates': Array<Rate>;
 }
+export interface ResourceTokenRequest {
+    /**
+     * The type of resource to grant access to.
+     */
+    'resource_type': ResourceTokenRequestResourceTypeEnum;
+    /**
+     * List of resource IDs to grant access to.
+     */
+    'resource_ids': Array<string>;
+    /**
+     * List of access permissions to grant.
+     */
+    'access': Array<ResourceTokenRequestAccessEnum>;
+    /**
+     * Document format (optional).
+     */
+    'format'?: ResourceTokenRequestFormatEnum | null;
+    /**
+     * Token expiration time in seconds (60-3600, default: 300).
+     */
+    'expires_in'?: number;
+}
+
+export const ResourceTokenRequestResourceTypeEnum = {
+    Shipment: 'shipment',
+    Manifest: 'manifest',
+    Order: 'order',
+    Template: 'template',
+    Document: 'document'
+} as const;
+
+export type ResourceTokenRequestResourceTypeEnum = typeof ResourceTokenRequestResourceTypeEnum[keyof typeof ResourceTokenRequestResourceTypeEnum];
+export const ResourceTokenRequestAccessEnum = {
+    Label: 'label',
+    Invoice: 'invoice',
+    Manifest: 'manifest',
+    Render: 'render',
+    BatchLabels: 'batch_labels',
+    BatchInvoices: 'batch_invoices',
+    BatchManifests: 'batch_manifests'
+} as const;
+
+export type ResourceTokenRequestAccessEnum = typeof ResourceTokenRequestAccessEnum[keyof typeof ResourceTokenRequestAccessEnum];
+export const ResourceTokenRequestFormatEnum = {
+    Pdf: 'pdf',
+    Png: 'png',
+    Zpl: 'zpl',
+    Gif: 'gif'
+} as const;
+
+export type ResourceTokenRequestFormatEnum = typeof ResourceTokenRequestFormatEnum[keyof typeof ResourceTokenRequestFormatEnum];
+
+export interface ResourceTokenResponse {
+    /**
+     * The JWT access token.
+     */
+    'token': string;
+    /**
+     * Token expiration timestamp.
+     */
+    'expires_at': string;
+    /**
+     * Map of resource IDs to their access URLs with token.
+     */
+    'resource_urls': { [key: string]: string; };
+}
 export interface Roadie {
     'api_key': string;
     'account_country_code'?: string | null;
@@ -6834,6 +6900,56 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+         * @summary Generate resource access token
+         * @param {ResourceTokenRequest} resourceTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateResourceToken: async (resourceTokenRequest: ResourceTokenRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resourceTokenRequest' is not null or undefined
+            assertParamExists('generateResourceToken', 'resourceTokenRequest', resourceTokenRequest)
+            const localVarPath = `/api/tokens`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(resourceTokenRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * @summary Get verified JWT token
          * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
@@ -6964,6 +7080,19 @@ export const AuthApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+         * @summary Generate resource access token
+         * @param {ResourceTokenRequest} resourceTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async generateResourceToken(resourceTokenRequest: ResourceTokenRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ResourceTokenResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.generateResourceToken(resourceTokenRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuthApi.generateResourceToken']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * @summary Get verified JWT token
          * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
@@ -7022,6 +7151,16 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.authenticate(requestParameters.tokenObtainPair, options).then((request) => request(axios, basePath));
         },
         /**
+         *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+         * @summary Generate resource access token
+         * @param {AuthApiGenerateResourceTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateResourceToken(requestParameters: AuthApiGenerateResourceTokenRequest, options?: AxiosRequestConfig): AxiosPromise<ResourceTokenResponse> {
+            return localVarFp.generateResourceToken(requestParameters.resourceTokenRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * @summary Get verified JWT token
          * @param {AuthApiGetVerifiedTokenRequest} requestParameters Request parameters.
@@ -7062,6 +7201,13 @@ export interface AuthApiAuthenticateRequest {
 }
 
 /**
+ * Request parameters for generateResourceToken operation in AuthApi.
+ */
+export interface AuthApiGenerateResourceTokenRequest {
+    readonly resourceTokenRequest: ResourceTokenRequest
+}
+
+/**
  * Request parameters for getVerifiedToken operation in AuthApi.
  */
 export interface AuthApiGetVerifiedTokenRequest {
@@ -7095,6 +7241,17 @@ export class AuthApi extends BaseAPI {
      */
     public authenticate(requestParameters: AuthApiAuthenticateRequest, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+     * @summary Generate resource access token
+     * @param {AuthApiGenerateResourceTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public generateResourceToken(requestParameters: AuthApiGenerateResourceTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).generateResourceToken(requestParameters.resourceTokenRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

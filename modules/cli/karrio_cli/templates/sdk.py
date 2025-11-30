@@ -45,7 +45,7 @@ version = "{{version}}"
 description = "Karrio - {{name}} Shipping Extension"
 readme = "README.md"
 requires-python = ">=3.11"
-license = "Apache-2.0"
+license = "LGPL-3.0"
 authors = [
     {name = "karrio", email = "hello@karrio.io"}
 ]

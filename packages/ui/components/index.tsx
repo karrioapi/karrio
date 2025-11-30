@@ -42,6 +42,9 @@ export * from "./enhanced-metadata-editor";
 export * from "./commodity-edit-dialog";
 export * from "./recent-activity";
 
+// Document Preview
+export * from "./document-preview-modal";
+
 
 
 

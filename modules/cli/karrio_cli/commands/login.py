@@ -41,7 +41,7 @@ def login(
 
     Example:
     ```terminal
-    kcli login --host http://localhost:5002 --api-key your_api_key_here | jq '{message: "Login successful", host: .host}'
+    kcli login --host https://api.karrio.io --api-key your_api_key_here | jq '{message: "Login successful", host: .host}'
     ```
     """
     if not host:

@@ -15,9 +15,10 @@
   </picture>
 </a>
 
-The open-source platform for shipping integration
+The open-source shipping platform for modern logistics
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![License](https://img.shields.io/badge/License-LGPL_3.0-blue.svg)](./LICENSE)
+[![Enterprise](https://img.shields.io/badge/Enterprise-Karrio_EE-orange.svg)](./ee/LICENSE)
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![karrio-build](https://github.com/karrioapi/karrio/actions/workflows/build.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
@@ -103,30 +104,62 @@ Karrio makes modern shipping accessible to brands, retailers as well as business
 
 When onboarding new carriers, your IT team can meet their requirements in a week or less.
 
+## License
+
+This repository contains both open-source and commercial components, distributed under a dual-license model.
+
+### Open Source (LGPL-3.0)
+
+The following components are licensed under [LGPL-3.0](./LICENSE):
+
+| Component             | Description                          |
+| --------------------- | ------------------------------------ |
+| **Karrio Server**     | Core shipping API server and SDK     |
+| **Community Plugins** | Carrier integrations in `/community` |
+| **Modules**           | Core modules (`/modules/*`)          |
+
+You are free to:
+
+- Use Karrio for any purpose (commercial or non-commercial)
+- Self-host and modify the open-source components
+- Build and distribute carrier plugins and integrations
+- Contribute improvements back to the community
+
+### Enterprise Edition (Karrio EE)
+
+The `/ee` directory contains enterprise-only features under the [Karrio Enterprise License](./ee/LICENSE):
+
+| Feature                | Description                          |
+| ---------------------- | ------------------------------------ |
+| **Multi-tenancy**      | Platform-level tenant isolation      |
+| **Advanced workflows** | Shipping automation and rules engine |
+| **Audit logging**      | Compliance and security tracking     |
+| **SSO/SAML**           | Enterprise authentication            |
+| **Priority support**   | SLA-backed support and services      |
+
+Enterprise features require a valid [Karrio subscription](https://karrio.io/pricing).
+
+### Plugin Development
+
+Carrier plugins and integrations can be developed under permissive licenses (Apache-2.0 or LGPL-3.0). This allows you to:
+
+- Build proprietary carrier connectors
+- Monetize your plugins independently
+- Contribute plugins to the community repository
+
+See our [Plugin Development Guide](https://www.karrio.io/docs/developing/plugin-development) for details.
+
 ## Contributing
 
 We <3 contributions big and small. In priority order (although everything is appreciated) with the most helpful first:
 
--   Ask general question on [Github Discussions](https://github.com/orgs/karrioapi/discussions)
--   Submit a [feature request](https://github.com/orgs/karrioapi/discussions)
--   Review the [Repository Guidelines](https://www.karrio.io/docs/developing/oss-contribution) for project-specific conventions
--   Open a PR (see our instructions on [developing Karrio locally](https://www.karrio.io/docs/developing/local-development))
+- Ask general question on [Github Discussions](https://github.com/orgs/karrioapi/discussions)
+- Submit a [feature request](https://github.com/orgs/karrioapi/discussions)
+- Review the [Repository Guidelines](https://www.karrio.io/docs/developing/oss-contribution) for project-specific conventions
+- Open a PR (see our instructions on [developing Karrio locally](https://www.karrio.io/docs/developing/local-development))
 
 ### Contributors
 
 <a href="https://github.com/karrioapi/karrio/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=karrioapi/karrio" />
 </a>
-
-## Sponsors
-
-We are building an open and global shipping tech stack that makes shipping integration fun and accessible using open-source software.
-
-Special thanks to our sponsors
-
-<a href="https://appsandbrains.com/" target="_blank"><img alt="Apps & Brains" src="screenshots/apps-&-brains.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-<a href="https://superroute.ca/" target="_blank"><img alt="SuperRoute" src="screenshots/superroute.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-
-### Become a sponsor
-
-<a href="https://github.com/sponsors/karrioapi" target="_blank"><img alt="New Sponsor" src="screenshots/become-a-sponsor.png" /></a>

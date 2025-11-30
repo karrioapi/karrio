@@ -1,3 +1,4 @@
+import re
 import typing
 from rest_framework.response import Response
 from rest_framework import status, exceptions
@@ -59,11 +60,13 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, exceptions.ValidationError) or isinstance(
         exc, sdk.ValidationError
     ):
+        formatted_errors = _format_validation_errors(detail) if detail else None
         return Response(
             messages
             or dict(
                 errors=lib.to_dict(
-                    [
+                    formatted_errors
+                    or [
                         Error(
                             code=code or "validation",
                             message=detail if isinstance(detail, str) else None,
@@ -77,13 +80,17 @@ def custom_exception_handler(exc, context):
         )
 
     if isinstance(exc, ObjectDoesNotExist):
+        resource_name = _get_resource_name(exc)
+        message = f"{resource_name} not found" if resource_name else (
+            detail if isinstance(detail, str) else "Resource not found"
+        )
         return Response(
             dict(
                 errors=lib.to_dict(
                     [
                         Error(
                             code=code or "not_found",
-                            message=detail if isinstance(detail, str) else None,
+                            message=message,
                             details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
@@ -253,3 +260,86 @@ def _log_exception(exc: Exception, request_details: dict, debug: bool = False):
             exc_type,
             **context,
         )
+
+
+def _get_resource_name(exc: ObjectDoesNotExist) -> typing.Optional[str]:
+    """Extract resource name from ObjectDoesNotExist exception."""
+    exc_class_name = type(exc).__name__
+
+    # Handle Model.DoesNotExist pattern (e.g., Address.DoesNotExist -> Address)
+    if exc_class_name == "DoesNotExist" and hasattr(exc, "args") and exc.args:
+        match = re.search(r"(\w+) matching query", str(exc.args[0]))
+        if match:
+            return match.group(1)
+
+    # Handle ObjectDoesNotExist with model info in class hierarchy
+    for cls in type(exc).__mro__:
+        if cls.__name__ not in ("DoesNotExist", "ObjectDoesNotExist", "Exception", "BaseException", "object"):
+            return cls.__name__
+
+    return None
+
+
+def _format_validation_errors(
+    detail: typing.Any,
+    prefix: str = "",
+) -> typing.Optional[typing.List[Error]]:
+    """Format validation errors with items[index].field pattern for list errors."""
+    if detail is None:
+        return None
+
+    if isinstance(detail, str):
+        return [Error(code="validation", message=detail)]
+
+    def _build_path(base: str, key: str) -> str:
+        return f"{base}.{key}" if base else key
+
+    def _build_index_path(base: str, index: int, field: str = None) -> str:
+        index_part = f"{base}[{index}]" if base else f"items[{index}]"
+        return f"{index_part}.{field}" if field else index_part
+
+    def _flatten_errors(data: typing.Any, path: str = "") -> typing.List[Error]:
+        if data is None:
+            return []
+
+        if isinstance(data, str):
+            message = f"{path}: {data}" if path else data
+            return [Error(code="validation", message=message)]
+
+        if isinstance(data, dict):
+            return [
+                err
+                for key, value in data.items()
+                for err in _flatten_errors(value, _build_path(path, key))
+            ]
+
+        if isinstance(data, list):
+            has_indexed_items = any(isinstance(item, dict) for item in data)
+            if has_indexed_items:
+                return [
+                    err
+                    for index, item in enumerate(data)
+                    if item  # skip empty dicts for list rows without errors
+                    for err in (
+                        [
+                            nested_err
+                            for field, field_errors in item.items()
+                            for nested_err in _flatten_errors(
+                                field_errors, _build_index_path(path, index, field)
+                            )
+                        ]
+                        if isinstance(item, dict)
+                        else _flatten_errors(item, _build_index_path(path, index))
+                    )
+                ]
+            return [
+                Error(code="validation", message=f"{path}: {item}" if path else str(item))
+                for item in data
+                if item
+            ]
+
+        message = f"{path}: {data}" if path else str(data)
+        return [Error(code="validation", message=message)]
+
+    errors = _flatten_errors(detail, prefix)
+    return errors if errors else None

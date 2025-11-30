@@ -53,7 +53,7 @@ class TestConnectionOAuthAuthorize(APITestCase):
 class TestConnectionOAuthCallback(APITestCase):
     """Tests for OAuth callback handling."""
 
-    def test_oauth_callback(self):
+    def test_oauth_callback_get(self):
         """Test GET /v1/connections/oauth/{carrier_name}/callback with valid credentials."""
         url = reverse(
             "karrio.server.providers:connection-oauth-callback",
@@ -69,6 +69,27 @@ class TestConnectionOAuthCallback(APITestCase):
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = OAUTH_CALLBACK_RETURNED_VALUE
             response = self.client.get(f"{url}{query_params}")
+            response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response_data, OAUTH_CALLBACK_RESPONSE)
+
+    def test_oauth_callback_post(self):
+        """Test POST /v1/connections/oauth/{carrier_name}/callback with valid credentials."""
+        url = reverse(
+            "karrio.server.providers:connection-oauth-callback",
+            kwargs=dict(carrier_name="teleship"),
+        )
+        query_params = (
+            "?code=auth_code_12345"
+            "&account_client_id=user_client_abc"
+            "&account_client_secret=user_secret_xyz"
+            "&state=eyJjb25uZWN0aW9uX2lkIjogIjEyMyJ9"
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = OAUTH_CALLBACK_RETURNED_VALUE
+            response = self.client.post(f"{url}{query_params}", {}, format="json")
             response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

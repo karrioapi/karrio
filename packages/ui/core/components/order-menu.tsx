@@ -5,14 +5,13 @@ import {
   OrderStatusEnum,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
+import { useDocumentPrinter } from "@karrio/hooks/resource-token";
 import { ConfirmModalContext } from "../modals/confirm-modal";
 import React, { useState, useRef, useContext } from "react";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useOrderMutation } from "@karrio/hooks/order";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { AppLink } from "./app-link";
-import { url$ } from "@karrio/lib";
 
 interface OrderMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
   order: OrderType;
@@ -26,7 +25,7 @@ export const OrderMenu = ({
 }: OrderMenuComponent): JSX.Element => {
   const router = useRouter();
   const { basePath } = useAppMode();
-  const { references } = useAPIMetadata();
+  const documentPrinter = useDocumentPrinter();
   const mutation = useOrderMutation();
   const trigger = useRef<HTMLDivElement>(null);
   const [isActive, setIsActive] = useState(false);
@@ -91,10 +90,11 @@ export const OrderMenu = ({
           ).length > 0 && (
             <>
               <a
-                href={url$`${references.HOST}/documents/orders/label.${order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status))[0].label_type}?orders=${order.id}`}
-                className={`dropdown-item`}
-                target="_blank"
-                rel="noreferrer"
+                className={`dropdown-item ${documentPrinter.isLoading ? "is-loading" : ""}`}
+                onClick={() => {
+                  const format = order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status))[0].label_type?.toLowerCase() || "pdf";
+                  documentPrinter.openOrderLabels([order.id], { format: format as any });
+                }}
               >
                 <span>{`Print Label${order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""}`}</span>
               </a>
@@ -161,10 +161,8 @@ export const OrderMenu = ({
 
           {(document_templates?.edges || []).map(({ node: template }) => (
             <a
-              href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${order.id}`}
-              className="dropdown-item"
-              target="_blank"
-              rel="noreferrer"
+              className={`dropdown-item ${documentPrinter.isLoading ? "is-loading" : ""}`}
+              onClick={() => documentPrinter.openTemplate(template.id, { orders: order.id })}
               key={template.id}
             >
               <span>Download {template.name}</span>

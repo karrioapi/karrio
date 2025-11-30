@@ -32,6 +32,7 @@ import {
   useDocumentTemplate,
   useDocumentTemplateMutation,
 } from "@karrio/hooks/document-template";
+import { useDocumentPrinter } from "@karrio/hooks/resource-token";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { DEFAULT_DOCUMENT_TEMPLATE } from "@karrio/lib/sample";
 import { useLoader } from "@karrio/ui/core/components/loader";
@@ -85,6 +86,7 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
   const { documents } = useKarrio();
   const loader = useLoader();
   const notifier = useNotifier();
+  const documentPrinter = useDocumentPrinter();
 
   const searchParams = useSearchParams();
   const id = templateId || searchParams.get("id") as string;
@@ -213,16 +215,14 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
 
   const handlePreview = () => {
     if (!isNoneOrEmpty(template.id)) {
-      if (template.preview_url) {
-        const previewUrl = template.preview_url.startsWith('http')
-          ? template.preview_url
-          : `${references.HOST?.replace(/\/$/, '')}${template.preview_url}`;
-        window.open(previewUrl, '_blank');
-        return;
-      }
+      // Use documentPrinter for saved templates with token-based access
+      const params = computeParams(template).replace(/^\?/, '').split('&').reduce((acc, param) => {
+        const [key, value] = param.split('=');
+        if (key && value) acc[key] = decodeURIComponent(value);
+        return acc;
+      }, {} as Record<string, string>);
 
-      const previewUrl = url$`${references.HOST}/documents/templates/${template.id}.${template.slug}${computeParams(template)}`;
-      window.open(previewUrl, '_blank');
+      documentPrinter.openTemplate(template.id as string, Object.keys(params).length > 0 ? params : undefined);
     } else {
       generatePreview();
     }

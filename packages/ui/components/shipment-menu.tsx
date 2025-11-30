@@ -7,11 +7,11 @@ import {
   ShipmentType,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
-import { formatRef, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
+import { useDocumentPrinter, FormatType } from "@karrio/hooks/resource-token";
+import { formatRef, isNone, isNoneOrEmpty, p } from "@karrio/lib";
 import { useShipmentMutation } from "@karrio/hooks/shipment";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import React, { useState } from "react";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { useToast } from "@karrio/ui/hooks/use-toast";
@@ -40,8 +40,8 @@ export const ShipmentMenu = ({
 }: ShipmentMenuComponent): JSX.Element => {
   const router = useRouter();
   const { basePath } = useAppMode();
-  const { references } = useAPIMetadata();
   const mutation = useShipmentMutation();
+  const documentPrinter = useDocumentPrinter();
   const { toast } = useToast();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<{
@@ -199,28 +199,26 @@ export const ShipmentMenu = ({
             )}
 
           {!isNone(shipment.label_url) && (
-            <DropdownMenuItem asChild>
-              <a
-                href={url$`${references.HOST}/${shipment?.label_url}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center"
-              >
-                <span>Print Label</span>
-              </a>
+            <DropdownMenuItem
+              onClick={() => documentPrinter.openShipmentLabel(
+                shipment.id,
+                { format: (shipment.label_type || "pdf").toLowerCase() as FormatType, doc: "label" }
+              )}
+              disabled={documentPrinter.isLoading}
+            >
+              <span>Print Label</span>
             </DropdownMenuItem>
           )}
 
           {!isNone(shipment.invoice_url) && (
-            <DropdownMenuItem asChild>
-              <a
-                href={url$`${references.HOST}/${shipment.invoice_url}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center"
-              >
-                <span>Print Invoice</span>
-              </a>
+            <DropdownMenuItem
+              onClick={() => documentPrinter.openShipmentLabel(
+                shipment.id,
+                { format: "pdf", doc: "invoice" }
+              )}
+              disabled={documentPrinter.isLoading}
+            >
+              <span>Print Invoice</span>
             </DropdownMenuItem>
           )}
 
@@ -352,15 +350,15 @@ export const ShipmentMenu = ({
           )}
 
           {(document_templates?.edges || []).map(({ node: template }) => (
-            <DropdownMenuItem asChild key={template.id}>
-              <a
-                href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${shipment.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center"
-              >
-                <span>Download {template.name}</span>
-              </a>
+            <DropdownMenuItem
+              key={template.id}
+              onClick={() => documentPrinter.openTemplate(
+                template.id,
+                { shipments: shipment.id }
+              )}
+              disabled={documentPrinter.isLoading}
+            >
+              <span>Download {template.name}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

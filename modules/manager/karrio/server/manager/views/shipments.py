@@ -14,9 +14,9 @@ import karrio.lib as lib
 import karrio.server.openapi as openapi
 import karrio.server.core.filters as filters
 import karrio.server.manager.models as models
-from karrio.server.core.logging import logger
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import ShipmentFilters
+from karrio.server.core.utils import require_resource_token
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
     process_dictionaries_mutations,
@@ -259,20 +259,20 @@ class ShipmentPurchase(APIView):
 
 class ShipmentDocs(VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
-    def get(
-        self,
-        request: Request,
-        pk: str,
-        doc: str = "label",
-        format: str = "pdf",
-        **kwargs,
-    ):
-        """Retrieve a shipment label."""
+    def get(self, request: Request, pk: str, doc: str = "label", format: str = "pdf", **kwargs):
+        """Retrieve a shipment label or invoice."""
+        from karrio.server.core.utils import validate_resource_token
+
+        error = validate_resource_token(request, "shipment", [pk], doc)
+        if error:
+            return error
+
+        query_params = request.GET.dict()
+
         self.shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
         self.document = getattr(self.shipment, doc, None)
         self.name = f"{doc}_{self.shipment.tracking_number}.{format}"
 
-        query_params = request.GET.dict()
         self.preview = "preview" in query_params
         self.attachment = "download" in query_params
 

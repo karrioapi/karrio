@@ -4,6 +4,7 @@ from unittest.mock import ANY
 from django.urls import reverse
 from rest_framework import status
 from karrio.server.core.tests import APITestCase
+from karrio.server.core.utils import ResourceAccessToken
 from karrio.server.documents.models import DocumentTemplate
 import karrio.server.manager.models as manager_models
 import karrio.server.orders.models as order_models
@@ -170,8 +171,16 @@ class TestDocumentPrinters(APITestCase):
 
     def test_template_docs_printer(self):
         """Test template document printing endpoint"""
+        token = str(
+            ResourceAccessToken.for_resource(
+                user=self.user,
+                resource_type="template",
+                resource_ids=[self.template.id],
+                access=["render"],
+            )
+        )
         url = f"/documents/templates/{self.template.id}.{self.template.slug}"
-        response = self.client.get(url, {"title": "Printed Document"})
+        response = self.client.get(url, {"title": "Printed Document", "token": token})
 
         # Debug information if test fails
         if response.status_code != status.HTTP_200_OK:
@@ -191,8 +200,18 @@ class TestDocumentPrinters(APITestCase):
 
     def test_template_docs_printer_with_download(self):
         """Test template document printing with download flag"""
+        token = str(
+            ResourceAccessToken.for_resource(
+                user=self.user,
+                resource_type="template",
+                resource_ids=[self.template.id],
+                access=["render"],
+            )
+        )
         url = f"/documents/templates/{self.template.id}.{self.template.slug}"
-        response = self.client.get(url, {"download": "true", "title": "Download Test"})
+        response = self.client.get(
+            url, {"download": "true", "title": "Download Test", "token": token}
+        )
 
         # Debug information if test fails
         if response.status_code != status.HTTP_200_OK:

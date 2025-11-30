@@ -10,7 +10,7 @@ import rest_framework.pagination as pagination
 import rest_framework.throttling as throttling
 import django_filters.rest_framework as django_filters
 
-from karrio.server.core.logging import logger
+from karrio.server.core.utils import validate_resource_token
 import karrio.server.openapi as openapi
 import karrio.server.core.views.api as api
 import karrio.server.core.filters as filters
@@ -107,26 +107,24 @@ class ManifestDetails(api.APIView):
 
 class ManifestDoc(django_downloadview.VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
-    def get(
-        self,
-        request: request.Request,
-        pk: str,
-        doc: str = "manifest",
-        format: str = "pdf",
-        **kwargs,
-    ):
+    def get(self, req: request.Request, pk: str, doc: str = "manifest", format: str = "pdf", **kwargs):
         """Retrieve a manifest file."""
+        error = validate_resource_token(req, "manifest", [pk], "manifest")
+        if error:
+            return error
+
+        query_params = req.GET.dict()
+
         self.manifest = models.Manifest.objects.get(pk=pk, manifest__isnull=False)
         self.document = getattr(self.manifest, doc, None)
         self.name = f"{doc}_{self.manifest.id}.{format}"
 
-        query_params = request.GET.dict()
         self.preview = "preview" in query_params
         self.attachment = "download" in query_params
 
-        response = super(ManifestDoc, self).get(request, pk, doc, format, **kwargs)
-        response["X-Frame-Options"] = "ALLOWALL"
-        return response
+        resp = super(ManifestDoc, self).get(req, pk, doc, format, **kwargs)
+        resp["X-Frame-Options"] = "ALLOWALL"
+        return resp
 
     def get_file(self):
         content = base64.b64decode(self.document or "")

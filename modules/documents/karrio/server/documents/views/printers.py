@@ -13,18 +13,17 @@ import karrio.server.openapi as openapi
 import karrio.server.documents.models as models
 import karrio.server.documents.generator as generator
 from karrio.server.core.logging import logger
+from karrio.server.core.utils import validate_resource_token
 
 
 class TemplateDocsPrinter(VirtualDownloadView):
-    def get(
-        self,
-        request,
-        pk: str,
-        slug: str,
-        **kwargs,
-    ):
+    def get(self, request, pk: str, slug: str, **kwargs):
+        """Generate a document from template."""
+        error = validate_resource_token(request, "template", [pk], "render")
+        if error:
+            return error
+
         try:
-            """Generate a document."""
             template = models.DocumentTemplate.objects.get(pk=pk, slug=slug)
             query_params = request.GET.dict()
 
@@ -34,16 +33,21 @@ class TemplateDocsPrinter(VirtualDownloadView):
             self.name = f"{slug}.pdf"
             self.attachment = "download" in query_params
 
-            response = super(TemplateDocsPrinter, self).get(request, pk, slug, **kwargs)
+            response = super().get(request, pk, slug, **kwargs)
             response["X-Frame-Options"] = "ALLOWALL"
             return response
         except Exception as e:
-            logger.exception("Template document generation failed", template_id=pk, template_slug=slug, error=str(e))
+            logger.exception(
+                "Template document generation failed",
+                template_id=pk,
+                template_slug=slug,
+                error=str(e),
+            )
             _, __, exc_traceback = sys.exc_info()
             trace = exc_traceback
-            while True:
+            while trace and trace.tb_next:
                 trace = trace.tb_next
-                if "<template>" in str(trace.tb_frame) or not trace.tb_next:
+                if "<template>" in str(trace.tb_frame):
                     break
 
             return JsonResponse(
@@ -57,14 +61,8 @@ class TemplateDocsPrinter(VirtualDownloadView):
 
 class ShipmentDocsPrinter(VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
-    def get(
-        self,
-        request,
-        doc: str = "label",
-        format: str = "pdf",
-        **kwargs,
-    ):
-        """Retrieve a shipment label."""
+    def get(self, request, doc: str = "label", format: str = "pdf", **kwargs):
+        """Retrieve batch shipment labels or invoices."""
         from karrio.server.manager.models import Shipment
 
         if doc not in ["label", "invoice"]:
@@ -73,27 +71,30 @@ class ShipmentDocsPrinter(VirtualDownloadView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        resource_ids = request.GET.get("shipments", "").split(",")
+        access_type = "batch_labels" if doc == "label" else "batch_invoices"
+
+        error = validate_resource_token(request, "document", resource_ids, access_type)
+        if error:
+            return error
+
         query_params = request.GET.dict()
         self.attachment = "download" in query_params
-        ids = query_params.get("shipments", "").split(",")
-
         self.format = (format or "").lower()
         self.name = f"{doc}s - {timezone.now()}.{self.format}"
-        _queryset = Shipment.objects.filter(id__in=ids)
 
+        _queryset = Shipment.objects.filter(id__in=resource_ids)
         if doc == "label":
             _queryset = _queryset.filter(
                 label__isnull=False,
                 label_type__contains=self.format.upper(),
             )
-        if doc == "invoice":
+        elif doc == "invoice":
             _queryset = _queryset.filter(invoice__isnull=False)
 
         self.documents = _queryset.values_list(doc, "label_type")
 
-        response = super(ShipmentDocsPrinter, self).get(
-            request, doc, self.format, **kwargs
-        )
+        response = super().get(request, doc, self.format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -103,20 +104,13 @@ class ShipmentDocsPrinter(VirtualDownloadView):
         )
         buffer = io.BytesIO()
         buffer.write(content)
-
         return ContentFile(buffer.getvalue(), name=self.name)
 
 
 class OrderDocsPrinter(VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
-    def get(
-        self,
-        request,
-        doc: str = "label",
-        format: str = "pdf",
-        **kwargs,
-    ):
-        """Retrieve a shipment label."""
+    def get(self, request, doc: str = "label", format: str = "pdf", **kwargs):
+        """Retrieve batch order labels or invoices."""
         from karrio.server.orders.models import Order
 
         if doc not in ["label", "invoice"]:
@@ -125,14 +119,20 @@ class OrderDocsPrinter(VirtualDownloadView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        resource_ids = request.GET.get("orders", "").split(",")
+        access_type = "batch_labels" if doc == "label" else "batch_invoices"
+
+        error = validate_resource_token(request, "order", resource_ids, access_type)
+        if error:
+            return error
+
         query_params = request.GET.dict()
         self.attachment = "download" in query_params
-        ids = query_params.get("orders", "").split(",")
-
         self.format = (format or "").lower()
         self.name = f"{doc}s - {timezone.now()}.{self.format}"
+
         _queryset = Order.objects.filter(
-            id__in=ids, shipments__id__isnull=False
+            id__in=resource_ids, shipments__id__isnull=False
         ).distinct()
 
         if doc == "label":
@@ -140,16 +140,14 @@ class OrderDocsPrinter(VirtualDownloadView):
                 shipments__label__isnull=False,
                 shipments__label_type__contains=self.format.upper(),
             )
-        if doc == "invoice":
+        elif doc == "invoice":
             _queryset = _queryset.filter(shipments__invoice__isnull=False)
 
         self.documents = list(
             set(_queryset.values_list(f"shipments__{doc}", "shipments__label_type"))
         )
 
-        response = super(OrderDocsPrinter, self).get(
-            request, doc, self.format, **kwargs
-        )
+        response = super().get(request, doc, self.format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -159,20 +157,13 @@ class OrderDocsPrinter(VirtualDownloadView):
         )
         buffer = io.BytesIO()
         buffer.write(content)
-
         return ContentFile(buffer.getvalue(), name=self.name)
 
 
 class ManifestDocsPrinter(VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
-    def get(
-        self,
-        request,
-        doc: str = "manifest",
-        format: str = "pdf",
-        **kwargs,
-    ):
-        """Retrieve a shipment label."""
+    def get(self, request, doc: str = "manifest", format: str = "pdf", **kwargs):
+        """Retrieve batch manifests."""
         from karrio.server.manager.models import Manifest
 
         if doc not in ["manifest"]:
@@ -181,19 +172,21 @@ class ManifestDocsPrinter(VirtualDownloadView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        resource_ids = request.GET.get("manifests", "").split(",")
+
+        error = validate_resource_token(request, "document", resource_ids, "batch_manifests")
+        if error:
+            return error
+
         query_params = request.GET.dict()
         self.attachment = "download" in query_params
-        ids = query_params.get("manifests", "").split(",")
-
         self.format = (format or "").lower()
         self.name = f"{doc}s - {timezone.now()}.{self.format}"
-        queryset = Manifest.objects.filter(id__in=ids, manifest__isnull=False)
 
+        queryset = Manifest.objects.filter(id__in=resource_ids, manifest__isnull=False)
         self.documents = queryset.values_list(doc, "reference")
 
-        response = super(ManifestDocsPrinter, self).get(
-            request, doc, self.format, **kwargs
-        )
+        response = super().get(request, doc, self.format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -203,7 +196,6 @@ class ManifestDocsPrinter(VirtualDownloadView):
         )
         buffer = io.BytesIO()
         buffer.write(content)
-
         return ContentFile(buffer.getvalue(), name=self.name)
 
 

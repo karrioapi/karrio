@@ -1,5 +1,4 @@
 import django.urls as urls
-import django.db.models as django
 import rest_framework.status as status
 import rest_framework.request as request
 import rest_framework.response as response
@@ -334,58 +333,11 @@ class ConnectionWebhookEvent(api.APIView):
         },
     )
     def post(self, request: request.Request, pk: str):
-        """Handle inbound webhook events from a carrier.
-
-        This endpoint receives webhook events from carriers (tracking updates,
-        shipment status changes, etc.) and processes them through the Karrio
-        hooks system.
-        """
-        try:
-            connection = models.Carrier.objects.get(pk=pk)
-        except models.Carrier.DoesNotExist:
-            return response.Response(
-                dict(
-                    operation="Webhook event",
-                    success=False,
-                    messages=[{"message": f"Connection not found: {pk}"}],
-                ),
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        event, messages = gateway.Hooks.on_webhook_event(
-            payload=dict(
-                url=request.build_absolute_uri(),
-                body=request.data,
-                query=dict(request.query_params),
-                headers=dict(request.headers),
-            ),
-            carrier=connection,
+        """Handle inbound webhook events from a carrier via POST."""
+        data, http_status = serializers.WebhookEventSerializer.process_event(
+            request, pk
         )
-
-        if event and event.tracking:
-            import karrio.server.manager.models as manager_models
-            import karrio.server.manager.serializers.tracking as tracking_serializers
-
-            tracker = manager_models.Tracking.objects.filter(
-                django.Q(tracking_number=event.tracking.tracking_number)
-                | django.Q(tracking_carrier=connection)
-            ).first()
-
-            if tracker:
-                tracking_serializers.update_tracker(
-                    tracker, lib.to_dict(event.tracking)
-                )
-
-        return response.Response(
-            dict(
-                operation="Webhook event",
-                success=len(messages) == 0,
-                carrier_name=connection.carrier_name,
-                carrier_id=connection.carrier_id,
-                messages=lib.to_dict(messages),
-            ),
-            status=status.HTTP_200_OK,
-        )
+        return response.Response(data, status=http_status)
 
 
 class ConnectionOauthAuthorize(api.APIView):
@@ -440,7 +392,26 @@ class ConnectionOauthCallback(api.APIView):
         },
     )
     def get(self, request: request.Request, carrier_name: str):
-        """Handle an OAuth callback.
+        """Handle an OAuth callback via GET."""
+        return self._handle_callback(request, carrier_name)
+
+    @openapi.extend_schema(
+        exclude=True,
+        tags=["Connections"],
+        operation_id=f"{ENDPOINT_ID}oauth-callback-post",
+        extensions={"x-operationId": "oauthCallbackPost"},
+        summary="Handle an OAuth callback via POST",
+        request=serializers.OAuthCallbackData(),
+        responses={
+            200: serializers.OperationConfirmation(),
+        },
+    )
+    def post(self, request: request.Request, carrier_name: str):
+        """Handle an OAuth callback via POST."""
+        return self._handle_callback(request, carrier_name)
+
+    def _handle_callback(self, request: request.Request, carrier_name: str):
+        """Handle OAuth callback processing.
 
         Returns JSON with OAuth result for the frontend to process.
         When called from a browser popup, renders template or redirects to frontend.
@@ -450,44 +421,10 @@ class ConnectionOauthCallback(api.APIView):
         from django.shortcuts import render
         from django.http import HttpResponseRedirect
 
-        [output, messages] = gateway.Hooks.on_oauth_callback(
-            payload=serializers.OAuthCallbackData.map(
-                data=dict(
-                    query=request.query_params.dict(),
-                    body=(
-                        request.data.dict()
-                        if hasattr(request.data, "dict")
-                        else dict(request.data or {})
-                    ),
-                    headers=dict(request.headers),
-                    url=request.build_absolute_uri(),
-                )
-            ).data,
-            carrier_name=carrier_name,
-            test_mode=request.test_mode,
-            context=request,
+        result, frontend_url = serializers.OAuthCallbackSerializer.process_callback(
+            request, carrier_name
         )
 
-        result = dict(
-            type="oauth_callback",
-            success=output is not None,
-            carrier_name=carrier_name,
-            credentials=lib.to_dict(output) if output else None,
-            messages=lib.to_dict(messages),
-            state=request.query_params.get("state"),
-        )
-
-        # Try to extract frontend_url from state parameter
-        frontend_url = None
-        state = request.query_params.get("state")
-        if state:
-            try:
-                state_data = json.loads(base64.b64decode(state).decode("utf-8"))
-                frontend_url = state_data.get("frontend_url")
-            except Exception:
-                pass
-
-        # Check if this is a browser request (Accept header includes text/html)
         accept_header = request.headers.get("Accept", "")
 
         if "text/html" in accept_header and frontend_url:

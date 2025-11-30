@@ -6,14 +6,14 @@ import {
   OrderStatusEnum,
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
+import { useDocumentPrinter } from "@karrio/hooks/resource-token";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import React, { useState } from "react";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useOrderMutation } from "@karrio/hooks/order";
 import { useRouter } from "next/navigation";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { useToast } from "@karrio/ui/hooks/use-toast";
-import { url$, p } from "@karrio/lib";
+import { p } from "@karrio/lib";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +36,7 @@ export const OrderMenu = ({
 }: OrderMenuComponent): JSX.Element => {
   const router = useRouter();
   const { basePath } = useAppMode();
-  const { references } = useAPIMetadata();
+  const documentPrinter = useDocumentPrinter();
   const mutation = useOrderMutation();
   const { toast } = useToast();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -129,19 +129,17 @@ export const OrderMenu = ({
           {order.shipments.filter(
             (s) => !["cancelled", "draft"].includes(s.status),
           ).length > 0 && (
-            <DropdownMenuItem asChild>
-              <a
-                href={url$`${references.HOST}/documents/orders/label.${
-                  order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status))[0].label_type
-                }?orders=${order.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center w-full"
-              >
-                <span>{`Print Label${
-                  order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""
-                }`}</span>
-              </a>
+            <DropdownMenuItem
+              onClick={() => {
+                const format = order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status))[0].label_type?.toLowerCase() || "pdf";
+                documentPrinter.openOrderLabels([order.id], { format: format as any });
+              }}
+              disabled={documentPrinter.isLoading}
+              className="cursor-pointer"
+            >
+              <span>{`Print Label${
+                order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""
+              }`}</span>
             </DropdownMenuItem>
           )}
 
@@ -198,15 +196,13 @@ export const OrderMenu = ({
             ) && <DropdownMenuSeparator />}
 
           {(document_templates?.edges || []).map(({ node: template }) => (
-            <DropdownMenuItem asChild key={template.id}>
-              <a
-                href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${order.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center w-full"
-              >
-                <span>Download {template.name}</span>
-              </a>
+            <DropdownMenuItem
+              key={template.id}
+              onClick={() => documentPrinter.openTemplate(template.id, { orders: order.id })}
+              disabled={documentPrinter.isLoading}
+              className="cursor-pointer"
+            >
+              <span>Download {template.name}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
