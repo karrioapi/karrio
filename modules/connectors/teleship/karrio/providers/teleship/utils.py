@@ -1,10 +1,7 @@
-import base64
-import datetime
+import os
 import logging
 import karrio.lib as lib
 import karrio.core as core
-import karrio.core.errors as errors
-from karrio.core.utils.caching import ThreadSafeTokenManager
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +19,8 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            # "https://sandbox.teleship.com"
-            "http://localhost:3000"
+        return os.getenv("TELESHIP_SERVER_URL") or (
+            "https://sandbox.teleship.com"
             if self.test_mode
             else "https://api.teleship.com"
         )

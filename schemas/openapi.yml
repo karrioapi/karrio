@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2025.5rc36`.
+    The current version is `2025.5`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2025.5rc36
+  version: 2025.5
 paths:
   /:
     get:
@@ -200,6 +200,51 @@ paths:
         required: true
       responses:
         '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/tokens:
+    post:
+      operationId: '&&generate_resource_token'
+      description: "\nGenerate a short-lived JWT token for accessing specific resources.\n\nThis
+        endpoint is used to create secure, time-limited access tokens for\nresources
+        like shipment labels, manifests, and document templates.\n\n**Use cases:**\n-
+        Generate a token to allow document preview in a new browser window\n- Create
+        shareable links for documents with automatic expiration\n- Enable secure document
+        downloads without exposing API keys\n\n**Token lifetime:** Default 5 minutes,
+        configurable up to 1 hour.\n        "
+      summary: Generate resource access token
+      tags:
+      - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceTokenRequest'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceTokenResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '401':
           content:
             application/json:
               schema:
@@ -3609,7 +3654,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ShipmentPurchaseData'
-        required: true
       security:
       - TokenBasic: []
       - Token: []
@@ -9487,6 +9531,80 @@ components:
           description: The list of returned rates
       required:
       - rates
+    ResourceTokenRequest:
+      type: object
+      properties:
+        resource_type:
+          enum:
+          - shipment
+          - manifest
+          - order
+          - template
+          - document
+          type: string
+          x-spec-enum-id: 5fdf96337fe1e4d4
+          description: The type of resource to grant access to.
+        resource_ids:
+          type: array
+          items:
+            type: string
+          description: List of resource IDs to grant access to.
+          minItems: 1
+        access:
+          type: array
+          items:
+            enum:
+            - label
+            - invoice
+            - manifest
+            - render
+            - batch_labels
+            - batch_invoices
+            - batch_manifests
+            type: string
+            x-spec-enum-id: a1a77b3fd6daff18
+          description: List of access permissions to grant.
+          minItems: 1
+        format:
+          enum:
+          - pdf
+          - png
+          - zpl
+          - gif
+          - null
+          type: string
+          x-spec-enum-id: 198a9c60a4805fd0
+          nullable: true
+          description: Document format (optional).
+        expires_in:
+          type: integer
+          maximum: 3600
+          minimum: 60
+          default: 300
+          description: 'Token expiration time in seconds (60-3600, default: 300).'
+      required:
+      - access
+      - resource_ids
+      - resource_type
+    ResourceTokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: The JWT access token.
+        expires_at:
+          type: string
+          format: date-time
+          description: Token expiration timestamp.
+        resource_urls:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of resource IDs to their access URLs with token.
+      required:
+      - expires_at
+      - resource_urls
+      - token
     Shipment:
       type: object
       properties:
@@ -9951,7 +10069,13 @@ components:
       properties:
         selected_rate_id:
           type: string
+          nullable: true
           description: The shipment selected rate.
+        service:
+          type: string
+          nullable: true
+          description: The carrier service to use for the shipment (alternative to
+            selected_rate_id).
         label_type:
           enum:
           - PDF
@@ -9973,8 +10097,6 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
-      required:
-      - selected_rate_id
     ShipmentRateData:
       type: object
       properties:
@@ -11200,7 +11322,7 @@ components:
           type: string
         client_secret:
           type: string
-        customer_number:
+        billing_number:
           type: string
           nullable: true
         account_country_code:

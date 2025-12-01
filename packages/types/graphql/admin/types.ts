@@ -2566,6 +2566,8 @@ export interface InstanceConfigMutationInput {
   ZOOM2U_ENABLED?: boolean | null;
   TELESHIP_OAUTH_CLIENT_ID?: string | null;
   TELESHIP_OAUTH_CLIENT_SECRET?: string | null;
+  TELESHIP_SANDBOX_OAUTH_CLIENT_ID?: string | null;
+  TELESHIP_SANDBOX_OAUTH_CLIENT_SECRET?: string | null;
 }
 
 // null

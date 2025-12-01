@@ -117,7 +117,9 @@ class Address(BaseAddress):
     residential: bool = False
 
     address_line1: str = ""
-    address_line2: str = ""
+    address_line2: str = None
+    street_number: str = None
+    suite: str = None
 
     federal_tax_id: str = None
     state_tax_id: str = None

@@ -831,3 +831,195 @@ CANCEL_PURCHASED_RESPONSE = {
     "label_url": None,
     "invoice_url": None,
 }
+
+
+class TestShipmentPurchaseWithAlternativeServices(TestShipmentFixture):
+    def setUp(self) -> None:
+        super().setUp()
+        carrier = providers.Carrier.objects.get(carrier_id="canadapost")
+        # Rates have "canadapost_regular_parcel" but we'll request "canadapost_priority"
+        self.shipment.rates = [
+            {
+                "id": "rat_alt_service_test",
+                "carrier_id": "canadapost",
+                "carrier_name": "canadapost",
+                "currency": "CAD",
+                "estimated_delivery": None,
+                "extra_charges": [
+                    {"amount": 50.00, "currency": "CAD", "name": "Base charge"},
+                ],
+                "service": "canadapost_regular_parcel",
+                "total_charge": 50.00,
+                "transit_days": 5,
+                "test_mode": True,
+                "meta": {
+                    "rate_provider": "canadapost",
+                    "service_name": "CANADAPOST REGULAR PARCEL",
+                    "carrier_connection_id": carrier.pk,
+                },
+            }
+        ]
+        self.shipment.options = {"has_alternative_services": True}
+        self.shipment.save()
+
+    def test_purchase_with_alternative_service(self):
+        """
+        Test that when canadapost_priority is requested but only canadapost_regular_parcel
+        is in rates, the purchase proceeds with has_alternative_services=True,
+        delegating service resolution to the carrier.
+        """
+        url = reverse(
+            "karrio.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        data = {"service": "canadapost_priority"}
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_RESPONSE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertDictEqual(response_data, ALTERNATIVE_SERVICE_PURCHASED_SHIPMENT)
+
+
+ALTERNATIVE_SERVICE_PURCHASED_SHIPMENT = {
+    "id": ANY,
+    "object_type": "shipment",
+    "tracking_url": "/v1/trackers/canadapost/123456789012",
+    "shipper": {
+        "id": ANY,
+        "postal_code": "E1C4Z8",
+        "city": "Moncton",
+        "federal_tax_id": None,
+        "state_tax_id": None,
+        "person_name": "John Poop",
+        "company_name": "A corp.",
+        "country_code": "CA",
+        "email": None,
+        "phone_number": "514 000 0000",
+        "state_code": "NB",
+        "street_number": None,
+        "residential": False,
+        "address_line1": "125 Church St",
+        "address_line2": None,
+        "validate_location": False,
+        "object_type": "address",
+        "validation": None,
+    },
+    "recipient": {
+        "id": ANY,
+        "postal_code": "V6M2V9",
+        "city": "Vancouver",
+        "federal_tax_id": None,
+        "state_tax_id": None,
+        "person_name": "Jane Doe",
+        "company_name": "B corp.",
+        "country_code": "CA",
+        "email": None,
+        "phone_number": "514 000 9999",
+        "state_code": "BC",
+        "street_number": None,
+        "residential": False,
+        "address_line1": "5840 Oak St",
+        "address_line2": None,
+        "validate_location": False,
+        "object_type": "address",
+        "validation": None,
+    },
+    "parcels": [
+        {
+            "id": ANY,
+            "weight": 1.0,
+            "width": None,
+            "height": None,
+            "length": None,
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
+            "description": None,
+            "content": None,
+            "is_document": False,
+            "weight_unit": "KG",
+            "dimension_unit": None,
+            "items": [],
+            "freight_class": None,
+            "reference_number": ANY,
+            "object_type": "parcel",
+            "options": {},
+        }
+    ],
+    "services": [],
+    "options": {"has_alternative_services": True, "shipping_date": ANY, "shipment_date": ANY},
+    "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
+    "return_address": None,
+    "billing_address": None,
+    "customs": None,
+    "rates": [
+        {
+            "id": ANY,
+            "object_type": "rate",
+            "carrier_name": "canadapost",
+            "carrier_id": "canadapost",
+            "currency": "CAD",
+            "estimated_delivery": ANY,
+            "service": "canadapost_regular_parcel",
+            "total_charge": 50.00,
+            "transit_days": 5,
+            "extra_charges": [
+                {"name": "Base charge", "amount": 50.00, "currency": "CAD", "id": None},
+            ],
+            "meta": {
+                "service_name": "CANADAPOST REGULAR PARCEL",
+                "rate_provider": "canadapost",
+                "carrier_connection_id": ANY,
+            },
+            "test_mode": True,
+        }
+    ],
+    "reference": None,
+    "label_type": "PDF",
+    "carrier_ids": [],
+    "tracker_id": ANY,
+    "created_at": ANY,
+    "metadata": {},
+    "messages": [],
+    "status": "purchased",
+    "carrier_name": "canadapost",
+    "carrier_id": "canadapost",
+    "tracking_number": "123456789012",
+    "shipment_identifier": "123456789012",
+    "selected_rate": {
+        "id": ANY,
+        "object_type": "rate",
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "currency": "CAD",
+        "estimated_delivery": ANY,
+        "service": "canadapost_priority",
+        "total_charge": 50.00,
+        "transit_days": 5,
+        "extra_charges": [
+            {"name": "Base charge", "amount": 50.00, "currency": "CAD", "id": None},
+        ],
+        "meta": {
+            "ext": "canadapost",
+            "carrier": "canadapost",
+            "service_name": "CANADAPOST REGULAR PARCEL",
+            "rate_provider": "canadapost",
+            "carrier_connection_id": ANY,
+            "has_alternative_services": True,
+        },
+        "test_mode": True,
+    },
+    "meta": {
+        "ext": "canadapost",
+        "carrier": "canadapost",
+        "rate_provider": "canadapost",
+        "service_name": "CANADAPOST PRIORITY",
+    },
+    "service": "canadapost_priority",
+    "selected_rate_id": ANY,
+    "test_mode": True,
+    "label_url": ANY,
+    "invoice_url": None,
+}

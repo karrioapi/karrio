@@ -32,7 +32,7 @@ class TestWebhookDetails(APITestCase):
         super().setUp()
         self.webhook: Webhook = Webhook.objects.create(
             **{
-                "url": "http://localhost:8080",
+                "url": "https://api.karrio.io",
                 "description": "Testing Hook",
                 "enabled_events": ["all"],
                 "test_mode": True,
@@ -84,14 +84,14 @@ class TestWebhookDetails(APITestCase):
 
 
 WEBHOOK_DATA = {
-    "url": "http://localhost:8080",
+    "url": "https://api.karrio.io",
     "description": "Testing Hook",
     "enabled_events": ["all"],
     "test_mode": True,
 }
 
 WEBHOOK_RESPONSE = {
-    "url": "http://localhost:8080",
+    "url": "https://api.karrio.io",
     "description": "Testing Hook",
     "enabled_events": ["all"],
     "test_mode": True,
@@ -108,7 +108,7 @@ WEBHOOK_UPDATE_DATA = {
 }
 
 WEBHOOK_UPDATED_RESPONSE = {
-    "url": "http://localhost:8080",
+    "url": "https://api.karrio.io",
     "description": "Testing Hook Updated",
     "enabled_events": ["shipment_purchased", "shipment_cancelled"],
     "test_mode": True,
@@ -120,7 +120,7 @@ WEBHOOK_UPDATED_RESPONSE = {
 }
 
 WEBHOOK_NOTIFIED_RESPONSE = {
-    "url": "http://localhost:8080",
+    "url": "https://api.karrio.io",
     "description": "Testing Hook",
     "enabled_events": ["all"],
     "test_mode": True,

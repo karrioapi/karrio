@@ -29,6 +29,102 @@ def identity(value: Union[Any, Callable]) -> Any:
     return value() if callable(value) else value
 
 
+def execute_gateway_operation(
+    operation_name: str,
+    callable: Callable[[], T],
+    carrier: Any = None,
+    context: Any = None,
+) -> T:
+    """Execute a gateway operation with telemetry instrumentation.
+
+    This function wraps SDK gateway calls (rates, shipments, tracking, etc.)
+    with telemetry spans for observability when Sentry is configured.
+
+    Args:
+        operation_name: Name of the operation (e.g., "rates_fetch", "shipment_create")
+        callable: The callable that performs the SDK operation
+        carrier: Optional carrier instance for context
+        context: Optional request context for accessing the tracer
+
+    Returns:
+        The result of the callable
+
+    Example:
+        result = execute_gateway_operation(
+            "rates_fetch",
+            lambda: karrio.Rating.fetch(request).from_(carrier.gateway).parse(),
+            carrier=carrier,
+            context=context,
+        )
+    """
+    tracer = _get_tracer_from_context(context)
+
+    # Build span attributes
+    attributes = {}
+    if carrier:
+        attributes["carrier_name"] = getattr(carrier, "carrier_code", None)
+        attributes["carrier_id"] = getattr(carrier, "carrier_id", None)
+        attributes["test_mode"] = getattr(carrier, "test_mode", None)
+
+    span_name = f"karrio_{operation_name}"
+
+    with tracer.start_span(span_name, attributes=attributes) as span:
+        try:
+            result = callable()
+            span.set_status("ok")
+
+            # Record success metric
+            tracer.record_metric(
+                f"karrio_{operation_name}_success",
+                1,
+                tags={
+                    "carrier": attributes.get("carrier_name", "unknown"),
+                    "test_mode": str(attributes.get("test_mode", False)).lower(),
+                },
+            )
+
+            return result
+
+        except Exception as e:
+            span.set_status("error", str(e))
+            span.record_exception(e)
+
+            # Record failure metric
+            tracer.record_metric(
+                f"karrio_{operation_name}_error",
+                1,
+                tags={
+                    "carrier": attributes.get("carrier_name", "unknown"),
+                    "error_type": type(e).__name__,
+                },
+            )
+
+            raise
+
+
+def _get_tracer_from_context(context: Any) -> lib.Tracer:
+    """Get the tracer from request context or return a default one."""
+    if context is None:
+        # Try to get from current request via middleware
+        try:
+            from karrio.server.core.middleware import SessionContext
+            request = SessionContext.get_current_request()
+            if request and hasattr(request, "tracer"):
+                return request.tracer
+        except Exception:
+            pass
+
+    # Try to get from context object
+    if hasattr(context, "tracer"):
+        return context.tracer
+
+    if hasattr(context, "request") and hasattr(context.request, "tracer"):
+        return context.request.tracer
+
+    # Return a default tracer (with NoOpTelemetry)
+    return lib.Tracer()
+
+
 def failsafe(callable: Callable[[], T], warning: str = None) -> T:
     """This higher order function wraps a callable in a try..except
     scope to capture any exception raised.
@@ -75,6 +171,81 @@ def async_wrapper(func):
         return run_async(_run)
 
     return wrapper
+
+
+def with_telemetry(operation_name: str = None):
+    """Decorator that adds telemetry instrumentation to gateway methods.
+
+    This decorator wraps gateway methods with telemetry spans for observability.
+    When Sentry is configured, it creates spans for each operation with relevant
+    context (carrier info, operation type, etc.).
+
+    Args:
+        operation_name: Optional custom operation name. If not provided,
+                       the function name is used.
+
+    Usage:
+        class Shipments:
+            @staticmethod
+            @with_telemetry("shipment_create")
+            def create(payload: dict, carrier: Carrier = None, **kwargs):
+                ...
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            op_name = operation_name or func.__name__
+
+            # Extract carrier and context from kwargs if available
+            carrier = kwargs.get("carrier")
+            context = kwargs.get("context")
+
+            # Get tracer from context
+            tracer = _get_tracer_from_context(context)
+
+            # Build span attributes
+            attributes = {"operation": op_name}
+            if carrier:
+                attributes["carrier_name"] = getattr(carrier, "carrier_code", None)
+                attributes["carrier_id"] = getattr(carrier, "carrier_id", None)
+                attributes["test_mode"] = getattr(carrier, "test_mode", None)
+
+            span_name = f"karrio_{op_name}"
+
+            with tracer.start_span(span_name, attributes=attributes) as span:
+                try:
+                    result = func(*args, **kwargs)
+                    span.set_status("ok")
+
+                    # Record success metric
+                    tracer.record_metric(
+                        f"karrio_{op_name}_success",
+                        1,
+                        tags={
+                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
+                        },
+                    )
+
+                    return result
+
+                except Exception as e:
+                    span.set_status("error", str(e))
+                    span.record_exception(e)
+
+                    # Record error metric
+                    tracer.record_metric(
+                        f"karrio_{op_name}_error",
+                        1,
+                        tags={
+                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
+                            "error_type": type(e).__name__,
+                        },
+                    )
+
+                    raise
+
+        return wrapper
+    return decorator
 
 
 def tenant_aware(func):
@@ -264,14 +435,15 @@ def filter_rate_carrier_compatible_gateways(
     This function filters the carriers based on the capability to "rating"
     and if no explicit carrier list is provided, it will filter out any
     carrier that does not support the shipper's country code.
+    Carriers with no account_country_code set are always included.
     """
     _gateways = [
         carrier.gateway
         for carrier in carriers
         if (
-            # If no carrier list is provided, and gateway has "rating" capability.
+            # If explicit carrier list is provided and gateway has "rating" capability.
             ("rating" in carrier.gateway.capabilities and len(carrier_ids) > 0)
-            # If a carrier list is provided, and gateway is in the list.
+            # If no carrier list is provided, and gateway is in the list.
             or (
                 # the gateway has "rating" capability.
                 "rating" in carrier.gateway.capabilities
@@ -280,9 +452,10 @@ def filter_rate_carrier_compatible_gateways(
                 # and the shipper country code is provided.
                 and shipper_country_code is not None
                 and (
-                    carrier.gateway.settings.account_country_code
+                    # Carriers with no account_country_code work across countries
+                    not carrier.gateway.settings.account_country_code
+                    or carrier.gateway.settings.account_country_code
                     == shipper_country_code
-                    or carrier.gateway.settings.account_country_code is None
                 )
             )
         )
@@ -332,6 +505,250 @@ class ConfirmationToken(jwt.Token):
             token[k] = v
 
         return token
+
+
+class ResourceAccessToken(jwt.Token):
+    """JWT token for limited resource access (documents, exports, etc.)."""
+
+    token_type = "resource_access"
+    lifetime = timedelta(minutes=5)
+
+    @classmethod
+    def for_resource(
+        cls,
+        user,
+        resource_type: str,
+        resource_ids: List[str],
+        access: List[str],
+        format: Optional[str] = None,
+        org_id: Optional[str] = None,
+        test_mode: Optional[bool] = None,
+        expires_in: Optional[int] = None,
+    ) -> "ResourceAccessToken":
+        """Generate a resource access token.
+
+        Args:
+            user: The authenticated user
+            resource_type: Type of resource (shipment, manifest, template, document)
+            resource_ids: List of resource IDs to grant access to
+            access: List of access permissions (label, invoice, manifest, render, etc.)
+            format: Document format (pdf, png, zpl)
+            org_id: Organization ID for multi-tenant environments
+            test_mode: Whether this is test mode
+            expires_in: Custom expiration time in seconds
+
+        Returns:
+            ResourceAccessToken instance
+        """
+        token = cls()
+        token["user_id"] = user.id if hasattr(user, "id") else user
+        token["resource_type"] = resource_type
+        token["resource_ids"] = resource_ids
+        token["access"] = access
+
+        if format:
+            token["format"] = format
+        if org_id:
+            token["org_id"] = org_id
+        if test_mode is not None:
+            token["test_mode"] = test_mode
+        if expires_in:
+            token.set_exp(lifetime=timedelta(seconds=expires_in))
+
+        return token
+
+    @classmethod
+    def decode(cls, token_string: str) -> dict:
+        """Decode and validate a resource access token.
+
+        Args:
+            token_string: The JWT token string
+
+        Returns:
+            Dictionary with token claims
+
+        Raises:
+            rest_framework_simplejwt.exceptions.TokenError: If token is invalid
+        """
+        token = cls(token_string)
+        return {
+            "user_id": token.get("user_id"),
+            "resource_type": token.get("resource_type"),
+            "resource_ids": token.get("resource_ids", []),
+            "access": token.get("access", []),
+            "format": token.get("format"),
+            "org_id": token.get("org_id"),
+            "test_mode": token.get("test_mode"),
+        }
+
+    @classmethod
+    def validate_access(
+        cls,
+        token_string: str,
+        resource_type: str,
+        resource_id: str,
+        access: str,
+    ) -> dict:
+        """Validate token grants access to specific resource and action.
+
+        Args:
+            token_string: The JWT token string
+            resource_type: Expected resource type
+            resource_id: Resource ID to check access for
+            access: Access permission to check
+
+        Returns:
+            Token claims if valid
+
+        Raises:
+            rest_framework_simplejwt.exceptions.TokenError: If token is invalid
+            PermissionError: If access is not granted
+        """
+        claims = cls.decode(token_string)
+
+        if claims["resource_type"] != resource_type:
+            raise PermissionError(
+                f"Token not valid for resource type: {resource_type}"
+            )
+
+        if resource_id not in claims["resource_ids"]:
+            raise PermissionError(
+                f"Token not valid for resource: {resource_id}"
+            )
+
+        if access not in claims["access"]:
+            raise PermissionError(
+                f"Token does not grant access: {access}"
+            )
+
+        return claims
+
+    @classmethod
+    def validate_batch_access(
+        cls,
+        token_string: str,
+        resource_type: str,
+        resource_ids: List[str],
+        access: str,
+    ) -> dict:
+        """Validate token grants access to multiple resources.
+
+        Args:
+            token_string: The JWT token string
+            resource_type: Expected resource type
+            resource_ids: List of resource IDs to check access for
+            access: Access permission to check
+
+        Returns:
+            Token claims if valid
+
+        Raises:
+            rest_framework_simplejwt.exceptions.TokenError: If token is invalid
+            PermissionError: If access is not granted
+        """
+        claims = cls.decode(token_string)
+
+        if claims["resource_type"] != resource_type:
+            raise PermissionError(
+                f"Token not valid for resource type: {resource_type}"
+            )
+
+        if access not in claims["access"]:
+            raise PermissionError(
+                f"Token does not grant access: {access}"
+            )
+
+        token_ids = set(claims["resource_ids"])
+        request_ids = set(resource_ids)
+        if not request_ids.issubset(token_ids):
+            missing = request_ids - token_ids
+            raise PermissionError(
+                f"Token does not grant access to resources: {', '.join(missing)}"
+            )
+
+        return claims
+
+
+def validate_resource_token(
+    request,
+    resource_type: str,
+    resource_ids: List[str],
+    access: str,
+):
+    """Validate resource access token. Returns error response if invalid, None if valid.
+
+    Args:
+        request: The HTTP request object
+        resource_type: Expected resource type (shipment, manifest, template, etc.)
+        resource_ids: List of resource IDs to validate access for
+        access: Required access permission (label, invoice, manifest, render, etc.)
+
+    Returns:
+        HttpResponseForbidden if validation fails, None if valid
+
+    Example:
+        error = validate_resource_token(request, "shipment", [pk], "label")
+        if error:
+            return error
+    """
+    from django.http import HttpResponseForbidden
+
+    token = request.GET.get("token")
+
+    if not token:
+        return HttpResponseForbidden(
+            "Access token required. Use /api/tokens to generate one."
+        )
+
+    try:
+        ResourceAccessToken.validate_batch_access(
+            token_string=token,
+            resource_type=resource_type,
+            resource_ids=resource_ids,
+            access=access,
+        )
+        return None
+    except PermissionError as e:
+        return HttpResponseForbidden("You do not have permission to access these resources.")
+    except Exception as e:
+        logger.warning("Invalid resource access token: %s", str(e))
+        return HttpResponseForbidden("Invalid or expired token.")
+
+
+def require_resource_token(
+    resource_type: str,
+    access: str,
+    get_resource_ids: Callable[..., List[str]],
+):
+    """Decorator for views requiring resource access token validation.
+
+    Args:
+        resource_type: Expected resource type (shipment, manifest, template, etc.)
+        access: Required access permission (label, invoice, manifest, render, etc.)
+        get_resource_ids: Callable that extracts resource IDs from request and view kwargs.
+                         Receives (request, **kwargs), returns list of resource IDs.
+
+    Example:
+        @require_resource_token(
+            resource_type="document",
+            access="batch_labels",
+            get_resource_ids=lambda req, **kw: req.GET.get("shipments", "").split(","),
+        )
+        def get(self, request, **kwargs):
+            ...
+    """
+    def decorator(method):
+        @functools.wraps(method)
+        def wrapper(self, request, *args, **kwargs):
+            resource_ids = get_resource_ids(request, **kwargs)
+            error = validate_resource_token(request, resource_type, resource_ids, access)
+            if error:
+                return error
+            return method(self, request, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
 
 
 def app_tracking_query_params(url: str, carrier) -> str:
@@ -445,6 +862,22 @@ def process_events(
     return sorted(merged_events, key=create_sort_key, reverse=True)
 
 
+def _get_carrier_for_service(service: str, context=None) -> typing.Optional[str]:
+    """Resolve carrier name from service code using karrio references."""
+    import karrio.server.core.dataunits as dataunits
+
+    services_map = dataunits.contextual_reference(context).get("services", {})
+
+    return next(
+        (
+            carrier_name
+            for carrier_name, services in services_map.items()
+            if service in services
+        ),
+        None,
+    )
+
+
 def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
     data = kwargs.get("data") or kwargs
     get = lambda key, default=None: lib.identity(
@@ -481,6 +914,40 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
                 None,
             )
         )
+
+        # has_alternative_services fallback when no exact match found
+        has_alternative_services = options.get("has_alternative_services", False)
+
+        if (
+            kwargs.get("selected_rate") is None
+            and has_alternative_services
+            and service
+        ):
+            carrier_name = _get_carrier_for_service(service, ctx)
+            fallback_rate = lib.identity(
+                next(
+                    (r for r in rates if r.get("carrier_name") == carrier_name),
+                    None,
+                )
+                if carrier_name
+                else None
+            )
+
+            kwargs.update(
+                selected_rate=lib.identity(
+                    {
+                        **fallback_rate,
+                        "service": service,
+                        "meta": {
+                            **(fallback_rate.get("meta") or {}),
+                            "has_alternative_services": True,
+                        },
+                    }
+                    if fallback_rate
+                    else None
+                )
+            )
+
         return kwargs
 
     # Apply shipping rules if enabled and no selected rate is provided

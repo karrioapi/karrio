@@ -15,7 +15,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return super().get_rates(request)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        query = urllib.parse.urlencode(request.ctx)
+        query = urllib.parse.urlencode(lib.to_dict(request.ctx))
         response = lib.request(
             url=f"{self.settings.server_url}/v2/orders?{query}",
             data=lib.to_json(request.serialize()),

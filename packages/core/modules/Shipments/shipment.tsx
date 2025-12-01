@@ -629,11 +629,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
 
     if (!id) return <></>;
 
-    return (
-      <>
-        <ShipmentComponent shipmentId={id} />
-      </>
-    );
+    return <ShipmentComponent shipmentId={id} />;
   };
 
   return <Component />;

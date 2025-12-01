@@ -1156,6 +1156,7 @@ class ShippingOption(utils.Enum):
     )
     shipper_instructions = utils.OptionEnum("shipper_instructions")
     recipient_instructions = utils.OptionEnum("recipient_instructions")
+    shipping_charges = utils.OptionEnum("shipping_charges", float)
 
     """TODO: dreprecate these"""
     shipment_date = utils.OptionEnum("shipment_date")

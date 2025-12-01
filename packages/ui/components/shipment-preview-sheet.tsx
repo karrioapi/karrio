@@ -1,9 +1,9 @@
 "use client";
 import { ShipmentComponent } from "@karrio/core/modules/Shipments/shipment";
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
   SheetTitle,
   SheetDescription,
   SheetClose
@@ -51,8 +51,8 @@ export const ShipmentPreviewSheet = ({ children }: ShipmentPreviewSheetComponent
       </ShipmentPreviewSheetContext.Provider>
 
       <Sheet open={isActive} onOpenChange={(open) => !open && dismiss()}>
-        <SheetContent 
-          className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none" 
+        <SheetContent
+          className="w-full sm:w-[800px] sm:max-w-[800px] p-0 shadow-none"
           side="right"
         >
           <div className="h-full flex flex-col">
@@ -67,12 +67,12 @@ export const ShipmentPreviewSheet = ({ children }: ShipmentPreviewSheetComponent
                 </SheetClose>
               </div>
             </SheetHeader>
-            
+
             <div className="flex-1 overflow-y-auto px-4 py-4">
               {isActive && shipmentId && (
-                <ShipmentComponent 
+                <ShipmentComponent
                   key={key}
-                  shipmentId={shipmentId} 
+                  shipmentId={shipmentId}
                   isPreview={true}
                   isSheet={true}
                 />

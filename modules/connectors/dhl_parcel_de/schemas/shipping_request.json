@@ -18,7 +18,9 @@
         "city": "Bonn",
         "country": "DEU",
         "contactName": "Max Mustermann",
-        "email": "max@mustermann.de"
+        "phone": "+49 123456789",
+        "email": "max@mustermann.de",
+        "shipperRef": "Shipper Reference 123"
       },
       "consignee": {
         "name1": "Joe Black",

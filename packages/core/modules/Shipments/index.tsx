@@ -5,11 +5,9 @@ import {
   formatDateTime,
   formatRef,
   getURLSearchParams,
-  isListEqual,
   isNone,
   isNoneOrEmpty,
   formatCarrierSlug,
-  url$,
   preventPropagation,
 } from "@karrio/lib";
 import {
@@ -19,23 +17,25 @@ import {
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { useDocumentPrinter, FormatType } from "@karrio/hooks/resource-token";
 import { ShipmentsFilter } from "@karrio/ui/components/shipments-filter";
 import { AddressType, RateType, ShipmentType } from "@karrio/types";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { ListPagination } from "@karrio/ui/components/list-pagination";
 import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell 
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
 } from "@karrio/ui/components/ui/table";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { Skeleton } from "@karrio/ui/components/ui/skeleton";
+import { Loader2 } from "lucide-react";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -57,6 +57,7 @@ export default function Page(pageProps: any) {
     const { previewShipment } = useContext(ShipmentPreviewSheetContext);
     const { user_connections } = useCarrierConnections();
     const { system_connections } = useSystemConnections();
+    const documentPrinter = useDocumentPrinter();
     const context = useShipments({
       status: [
         "purchased",
@@ -283,50 +284,46 @@ export default function Page(pageProps: any) {
                     <TableHead className="p-2" colSpan={6}>
                       <div className="flex items-center gap-2 flex-wrap">
                         <Button
-                          asChild
                           variant="outline"
                           size="sm"
-                          disabled={!compatibleTypeSelection(selection)}
+                          disabled={!compatibleTypeSelection(selection) || documentPrinter.isLoading}
                           className="px-3"
+                          onClick={() => documentPrinter.openBatchLabels(
+                            selection,
+                            { format: (computeDocFormat(selection) || "pdf")?.toLowerCase() as FormatType, doc: "label" }
+                          )}
                         >
-                          <a
-                            href={url$`${references.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(",")}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Print Labels
-                          </a>
+                          {documentPrinter.isLoading && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
+                          Print Labels
                         </Button>
                         <Button
-                          asChild
                           variant="outline"
                           size="sm"
+                          disabled={documentPrinter.isLoading}
                           className="px-3"
+                          onClick={() => documentPrinter.openBatchLabels(
+                            selection,
+                            { format: "pdf", doc: "invoice" }
+                          )}
                         >
-                          <a
-                            href={url$`${references.HOST}/documents/shipments/invoice.pdf?shipments=${selection.join(",")}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Print Invoices
-                          </a>
+                          {documentPrinter.isLoading && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
+                          Print Invoices
                         </Button>
                         {(document_templates?.edges || []).map(
                           ({ node: template }) => (
                             <Button
                               key={template.id}
-                              asChild
                               variant="outline"
                               size="sm"
+                              disabled={documentPrinter.isLoading}
                               className="px-3"
+                              onClick={() => documentPrinter.openTemplate(
+                                template.id,
+                                { shipments: selection.join(",") }
+                              )}
                             >
-                              <a
-                                href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${selection.join(",")}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Print {template.name}
-                              </a>
+                              {documentPrinter.isLoading && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
+                              Print {template.name}
                             </Button>
                           ),
                         )}
@@ -526,10 +523,8 @@ export default function Page(pageProps: any) {
   };
 
   return (
-    <>
-      <ShipmentPreviewSheet>
-        <Component />
-      </ShipmentPreviewSheet>
-    </>
+    <ShipmentPreviewSheet>
+      <Component />
+    </ShipmentPreviewSheet>
   );
 }

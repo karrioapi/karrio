@@ -10,6 +10,24 @@ class FieldErrorCode(enum.Enum):
     exceeds = dict(code="exceeds", message="This field exceeds the max value")
 
 
+def format_item_field(
+    field_name: str,
+    index: int,
+    list_name: str = "items",
+) -> str:
+    """Format field name with item index for list validation errors.
+
+    Args:
+        field_name: The field name within the item
+        index: The zero-based index of the item in the list
+        list_name: The name of the list (default: "items")
+
+    Returns:
+        Formatted string like "items[0].field_name" or "parcels[1].weight"
+    """
+    return f"{list_name}[{index}].{field_name}"
+
+
 class ShippingSDKError(Exception):
     """Base class for other exceptions."""
 

@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2025.5rc36`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2025.5`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2025.5rc36
+ * The version of the OpenAPI document: 2025.5
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2259,7 +2259,7 @@ export interface DhlParcelDe {
     'password': string;
     'client_id': string;
     'client_secret': string;
-    'customer_number'?: string | null;
+    'billing_number'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface DhlPoland {
@@ -4932,6 +4932,72 @@ export interface RateResponse {
      */
     'rates': Array<Rate>;
 }
+export interface ResourceTokenRequest {
+    /**
+     * The type of resource to grant access to.
+     */
+    'resource_type': ResourceTokenRequestResourceTypeEnum;
+    /**
+     * List of resource IDs to grant access to.
+     */
+    'resource_ids': Array<string>;
+    /**
+     * List of access permissions to grant.
+     */
+    'access': Array<ResourceTokenRequestAccessEnum>;
+    /**
+     * Document format (optional).
+     */
+    'format'?: ResourceTokenRequestFormatEnum | null;
+    /**
+     * Token expiration time in seconds (60-3600, default: 300).
+     */
+    'expires_in'?: number;
+}
+
+export const ResourceTokenRequestResourceTypeEnum = {
+    Shipment: 'shipment',
+    Manifest: 'manifest',
+    Order: 'order',
+    Template: 'template',
+    Document: 'document'
+} as const;
+
+export type ResourceTokenRequestResourceTypeEnum = typeof ResourceTokenRequestResourceTypeEnum[keyof typeof ResourceTokenRequestResourceTypeEnum];
+export const ResourceTokenRequestAccessEnum = {
+    Label: 'label',
+    Invoice: 'invoice',
+    Manifest: 'manifest',
+    Render: 'render',
+    BatchLabels: 'batch_labels',
+    BatchInvoices: 'batch_invoices',
+    BatchManifests: 'batch_manifests'
+} as const;
+
+export type ResourceTokenRequestAccessEnum = typeof ResourceTokenRequestAccessEnum[keyof typeof ResourceTokenRequestAccessEnum];
+export const ResourceTokenRequestFormatEnum = {
+    Pdf: 'pdf',
+    Png: 'png',
+    Zpl: 'zpl',
+    Gif: 'gif'
+} as const;
+
+export type ResourceTokenRequestFormatEnum = typeof ResourceTokenRequestFormatEnum[keyof typeof ResourceTokenRequestFormatEnum];
+
+export interface ResourceTokenResponse {
+    /**
+     * The JWT access token.
+     */
+    'token': string;
+    /**
+     * Token expiration timestamp.
+     */
+    'expires_at': string;
+    /**
+     * Map of resource IDs to their access URLs with token.
+     */
+    'resource_urls': { [key: string]: string; };
+}
 export interface Roadie {
     'api_key': string;
     'account_country_code'?: string | null;
@@ -5290,7 +5356,11 @@ export interface ShipmentPurchaseData {
     /**
      * The shipment selected rate.
      */
-    'selected_rate_id': string;
+    'selected_rate_id'?: string | null;
+    /**
+     * The carrier service to use for the shipment (alternative to selected_rate_id).
+     */
+    'service'?: string | null;
     /**
      * The shipment label file type.
      */
@@ -6834,6 +6904,56 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+         * @summary Generate resource access token
+         * @param {ResourceTokenRequest} resourceTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateResourceToken: async (resourceTokenRequest: ResourceTokenRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resourceTokenRequest' is not null or undefined
+            assertParamExists('generateResourceToken', 'resourceTokenRequest', resourceTokenRequest)
+            const localVarPath = `/api/tokens`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(resourceTokenRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * @summary Get verified JWT token
          * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
@@ -6964,6 +7084,19 @@ export const AuthApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+         * @summary Generate resource access token
+         * @param {ResourceTokenRequest} resourceTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async generateResourceToken(resourceTokenRequest: ResourceTokenRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ResourceTokenResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.generateResourceToken(resourceTokenRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuthApi.generateResourceToken']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * @summary Get verified JWT token
          * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
@@ -7022,6 +7155,16 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.authenticate(requestParameters.tokenObtainPair, options).then((request) => request(axios, basePath));
         },
         /**
+         *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+         * @summary Generate resource access token
+         * @param {AuthApiGenerateResourceTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateResourceToken(requestParameters: AuthApiGenerateResourceTokenRequest, options?: AxiosRequestConfig): AxiosPromise<ResourceTokenResponse> {
+            return localVarFp.generateResourceToken(requestParameters.resourceTokenRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get a verified JWT token pair by submitting a Two-Factor authentication code.
          * @summary Get verified JWT token
          * @param {AuthApiGetVerifiedTokenRequest} requestParameters Request parameters.
@@ -7062,6 +7205,13 @@ export interface AuthApiAuthenticateRequest {
 }
 
 /**
+ * Request parameters for generateResourceToken operation in AuthApi.
+ */
+export interface AuthApiGenerateResourceTokenRequest {
+    readonly resourceTokenRequest: ResourceTokenRequest
+}
+
+/**
  * Request parameters for getVerifiedToken operation in AuthApi.
  */
 export interface AuthApiGetVerifiedTokenRequest {
@@ -7095,6 +7245,17 @@ export class AuthApi extends BaseAPI {
      */
     public authenticate(requestParameters: AuthApiAuthenticateRequest, options?: AxiosRequestConfig) {
         return AuthApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *  Generate a short-lived JWT token for accessing specific resources.  This endpoint is used to create secure, time-limited access tokens for resources like shipment labels, manifests, and document templates.  **Use cases:** - Generate a token to allow document preview in a new browser window - Create shareable links for documents with automatic expiration - Enable secure document downloads without exposing API keys  **Token lifetime:** Default 5 minutes, configurable up to 1 hour.         
+     * @summary Generate resource access token
+     * @param {AuthApiGenerateResourceTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public generateResourceToken(requestParameters: AuthApiGenerateResourceTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).generateResourceToken(requestParameters.resourceTokenRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -12807,15 +12968,13 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * Select your preferred rates to buy a shipment label.
          * @summary Buy a shipment label
          * @param {string} id 
-         * @param {ShipmentPurchaseData} shipmentPurchaseData 
+         * @param {ShipmentPurchaseData} [shipmentPurchaseData] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        purchase: async (id: string, shipmentPurchaseData: ShipmentPurchaseData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        purchase: async (id: string, shipmentPurchaseData?: ShipmentPurchaseData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('purchase', 'id', id)
-            // verify required parameter 'shipmentPurchaseData' is not null or undefined
-            assertParamExists('purchase', 'shipmentPurchaseData', shipmentPurchaseData)
             const localVarPath = `/v1/shipments/{id}/purchase`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -13078,11 +13237,11 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * Select your preferred rates to buy a shipment label.
          * @summary Buy a shipment label
          * @param {string} id 
-         * @param {ShipmentPurchaseData} shipmentPurchaseData 
+         * @param {ShipmentPurchaseData} [shipmentPurchaseData] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async purchase(id: string, shipmentPurchaseData: ShipmentPurchaseData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async purchase(id: string, shipmentPurchaseData?: ShipmentPurchaseData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.purchase(id, shipmentPurchaseData, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ShipmentsApi.purchase']?.[localVarOperationServerIndex]?.url;
@@ -13278,7 +13437,7 @@ export interface ShipmentsApiListRequest {
 export interface ShipmentsApiPurchaseRequest {
     readonly id: string
 
-    readonly shipmentPurchaseData: ShipmentPurchaseData
+    readonly shipmentPurchaseData?: ShipmentPurchaseData
 }
 
 /**

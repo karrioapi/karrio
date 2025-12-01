@@ -1,3 +1,4 @@
+import re
 import typing
 from rest_framework.response import Response
 from rest_framework import status, exceptions
@@ -50,6 +51,10 @@ def custom_exception_handler(exc, context):
     request_details = _get_request_details(context)
     _log_exception(exc, request_details, debug=getattr(settings, "DEBUG", False))
 
+    # Capture exception to telemetry (Sentry/OTEL/Datadog)
+    # This ensures handled exceptions are still tracked in APM
+    _capture_exception_to_telemetry(exc, request_details, context)
+
     response = exception_handler(exc, context)
     detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
@@ -59,11 +64,13 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, exceptions.ValidationError) or isinstance(
         exc, sdk.ValidationError
     ):
+        formatted_errors = _format_validation_errors(detail) if detail else None
         return Response(
             messages
             or dict(
                 errors=lib.to_dict(
-                    [
+                    formatted_errors
+                    or [
                         Error(
                             code=code or "validation",
                             message=detail if isinstance(detail, str) else None,
@@ -77,13 +84,17 @@ def custom_exception_handler(exc, context):
         )
 
     if isinstance(exc, ObjectDoesNotExist):
+        resource_name = _get_resource_name(exc)
+        message = f"{resource_name} not found" if resource_name else (
+            detail if isinstance(detail, str) else "Resource not found"
+        )
         return Response(
             dict(
                 errors=lib.to_dict(
                     [
                         Error(
                             code=code or "not_found",
-                            message=detail if isinstance(detail, str) else None,
+                            message=message,
                             details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
@@ -218,6 +229,61 @@ def _get_request_details(context: dict) -> dict:
     }
 
 
+def _capture_exception_to_telemetry(exc: Exception, request_details: dict, context: dict):
+    """Capture exception to APM telemetry (Sentry/OTEL/Datadog).
+
+    This ensures that handled exceptions (which return proper HTTP responses)
+    are still tracked in external APM tools for visibility and alerting.
+    """
+    from karrio.server.core.utils import failsafe
+
+    def _capture():
+        from karrio.server.core.telemetry import get_telemetry_for_request
+
+        telemetry = get_telemetry_for_request()
+        status_code = getattr(exc, "status_code", 500)
+
+        # Build context for the exception
+        exc_context = {
+            "exception_type": type(exc).__name__,
+            "status_code": status_code,
+            **{k: str(v) if isinstance(v, (dict, list)) else v for k, v in request_details.items()},
+        }
+
+        # Add carrier info if available in exception detail
+        detail = getattr(exc, "detail", None)
+        if isinstance(detail, list) and len(detail) > 0:
+            first = detail[0]
+            if hasattr(first, "carrier_name"):
+                exc_context["carrier_name"] = first.carrier_name
+            if hasattr(first, "carrier_id"):
+                exc_context["carrier_id"] = first.carrier_id
+
+        # Build tags
+        tags = {
+            "error_type": type(exc).__name__,
+            "status_code": str(status_code),
+            "error_class": "client" if status_code < 500 else "server",
+        }
+
+        # Capture to telemetry
+        telemetry.capture_exception(exc, context=exc_context, tags=tags)
+
+        # Record error metric
+        telemetry.record_metric(
+            "karrio.api.exception",
+            1,
+            tags={
+                "exception_type": type(exc).__name__,
+                "status_code": str(status_code),
+                "path": request_details.get("path", "unknown"),
+            },
+            metric_type="counter",
+        )
+
+    failsafe(_capture)
+
+
 def _log_exception(exc: Exception, request_details: dict, debug: bool = False):
     """Log exception with appropriate detail level based on environment."""
     exc_type = type(exc).__name__
@@ -253,3 +319,86 @@ def _log_exception(exc: Exception, request_details: dict, debug: bool = False):
             exc_type,
             **context,
         )
+
+
+def _get_resource_name(exc: ObjectDoesNotExist) -> typing.Optional[str]:
+    """Extract resource name from ObjectDoesNotExist exception."""
+    exc_class_name = type(exc).__name__
+
+    # Handle Model.DoesNotExist pattern (e.g., Address.DoesNotExist -> Address)
+    if exc_class_name == "DoesNotExist" and hasattr(exc, "args") and exc.args:
+        match = re.search(r"(\w+) matching query", str(exc.args[0]))
+        if match:
+            return match.group(1)
+
+    # Handle ObjectDoesNotExist with model info in class hierarchy
+    for cls in type(exc).__mro__:
+        if cls.__name__ not in ("DoesNotExist", "ObjectDoesNotExist", "Exception", "BaseException", "object"):
+            return cls.__name__
+
+    return None
+
+
+def _format_validation_errors(
+    detail: typing.Any,
+    prefix: str = "",
+) -> typing.Optional[typing.List[Error]]:
+    """Format validation errors with items[index].field pattern for list errors."""
+    if detail is None:
+        return None
+
+    if isinstance(detail, str):
+        return [Error(code="validation", message=detail)]
+
+    def _build_path(base: str, key: str) -> str:
+        return f"{base}.{key}" if base else key
+
+    def _build_index_path(base: str, index: int, field: str = None) -> str:
+        index_part = f"{base}[{index}]" if base else f"items[{index}]"
+        return f"{index_part}.{field}" if field else index_part
+
+    def _flatten_errors(data: typing.Any, path: str = "") -> typing.List[Error]:
+        if data is None:
+            return []
+
+        if isinstance(data, str):
+            message = f"{path}: {data}" if path else data
+            return [Error(code="validation", message=message)]
+
+        if isinstance(data, dict):
+            return [
+                err
+                for key, value in data.items()
+                for err in _flatten_errors(value, _build_path(path, key))
+            ]
+
+        if isinstance(data, list):
+            has_indexed_items = any(isinstance(item, dict) for item in data)
+            if has_indexed_items:
+                return [
+                    err
+                    for index, item in enumerate(data)
+                    if item  # skip empty dicts for list rows without errors
+                    for err in (
+                        [
+                            nested_err
+                            for field, field_errors in item.items()
+                            for nested_err in _flatten_errors(
+                                field_errors, _build_index_path(path, index, field)
+                            )
+                        ]
+                        if isinstance(item, dict)
+                        else _flatten_errors(item, _build_index_path(path, index))
+                    )
+                ]
+            return [
+                Error(code="validation", message=f"{path}: {item}" if path else str(item))
+                for item in data
+                if item
+            ]
+
+        message = f"{path}: {data}" if path else str(data)
+        return [Error(code="validation", message=message)]
+
+    errors = _flatten_errors(detail, prefix)
+    return errors if errors else None

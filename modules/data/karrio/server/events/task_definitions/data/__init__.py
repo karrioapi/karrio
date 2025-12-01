@@ -7,6 +7,7 @@ from huey.contrib.djhuey import db_task
 import karrio.server.core.utils as utils
 import karrio.server.data.models as models
 import karrio.server.data.serializers as serializers
+from karrio.server.core.telemetry import with_task_telemetry
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 @db_task()
 @utils.error_wrapper
 @utils.tenant_aware
+@with_task_telemetry("queue_batch_import")
 def queue_batch_import(*args, **kwargs):
     from karrio.server.events.task_definitions.data import batch
 
@@ -23,6 +25,7 @@ def queue_batch_import(*args, **kwargs):
 @db_task()
 @utils.error_wrapper
 @utils.tenant_aware
+@with_task_telemetry("save_batch_resources")
 def save_batch_resources(*args, **kwargs):
     from karrio.server.events.task_definitions.data import batch
 
@@ -31,6 +34,7 @@ def save_batch_resources(*args, **kwargs):
 
 @db_task()
 @utils.tenant_aware
+@with_task_telemetry("process_batch_resources")
 def process_batch_resources(batch_id, **kwargs):
     logger.info(f"> start batch ({batch_id}) resources processing...")
     try:

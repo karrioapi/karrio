@@ -162,6 +162,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "DHL Poland Premium",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
             },
             "service": "dhl_poland_premium",
             "total_charge": 0.0,
@@ -179,6 +181,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "DHL Poland Polska",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
             },
             "service": "dhl_poland_polska",
             "total_charge": 0.0,
@@ -196,6 +200,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "DHL Poland 09",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
             },
             "service": "dhl_poland_09",
             "total_charge": 0.0,
@@ -213,6 +219,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "DHL Poland 12",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
             },
             "service": "dhl_poland_12",
             "total_charge": 0.0,

@@ -48,6 +48,7 @@ from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
+
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="shipping")
 
 
@@ -288,7 +289,16 @@ class ShipmentSerializer(ShipmentData):
 
 
 class ShipmentPurchaseData(Serializer):
-    selected_rate_id = CharField(required=True, help_text="The shipment selected rate.")
+    selected_rate_id = CharField(
+        required=False,
+        allow_null=True,
+        help_text="The shipment selected rate.",
+    )
+    service = CharField(
+        required=False,
+        allow_null=True,
+        help_text="The carrier service to use for the shipment (alternative to selected_rate_id).",
+    )
     label_type = ChoiceField(
         required=False,
         choices=LABEL_TYPES,
@@ -305,6 +315,15 @@ class ShipmentPurchaseData(Serializer):
     metadata = PlainDictField(
         required=False, help_text="User metadata for the shipment"
     )
+
+    def validate(self, data):
+        if not data.get("selected_rate_id") and not data.get("service"):
+            raise exceptions.APIException(
+                "Either 'selected_rate_id' or 'service' must be provided.",
+                code="validation_error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+        return data
 
 
 class ShipmentUpdateData(validators.OptionDefaultSerializer):
@@ -792,9 +811,15 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
             )
             tracker.save()
             link_org(tracker, context)
-            logger.info("Successfully added a tracker to the shipment", shipment_id=shipment.id)
+            logger.info(
+                "Successfully added a tracker to the shipment", shipment_id=shipment.id
+            )
         except Exception as e:
-            logger.exception("Failed to create new label tracker", error=str(e), shipment_id=shipment.id)
+            logger.exception(
+                "Failed to create new label tracker",
+                error=str(e),
+                shipment_id=shipment.id,
+            )
 
         # Update shipment tracking url if different from the current one
         try:
@@ -815,7 +840,12 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 shipment.tracking_url = tracking_url
                 shipment.save(update_fields=["tracking_url"])
         except Exception as e:
-            logger.exception("Failed to update shipment tracking url", error=str(e), shipment_id=shipment.id, tracking_number=shipment.tracking_number)
+            logger.exception(
+                "Failed to update shipment tracking url",
+                error=str(e),
+                shipment_id=shipment.id,
+                tracking_number=shipment.tracking_number,
+            )
 
 
 def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
@@ -843,7 +873,11 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
         shipment.invoice = document["doc_file"]
         shipment.save(update_fields=["invoice"])
 
-    logger.info("Custom document successfully generated", shipment_id=shipment.id, template=template)
+    logger.info(
+        "Custom document successfully generated",
+        shipment_id=shipment.id,
+        template=template,
+    )
 
     return document
 

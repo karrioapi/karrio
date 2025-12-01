@@ -20,7 +20,7 @@ gateway = karrio.gateway["dhl_parcel_de"].create(
         password="password",
         client_id=client_id,
         client_secret=client_secret,
-        customer_number="33333333330102",
+        billing_number="33333333330102",
         config={
             "label_type": "ZPL2_910_300_700_oz",
         },
