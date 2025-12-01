@@ -228,7 +228,7 @@ const { status, data } = await apiInstance.list(
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **purchase**
-> Shipment purchase(shipmentPurchaseData)
+> Shipment purchase()
 
 Select your preferred rates to buy a shipment label.
 
@@ -245,7 +245,7 @@ const configuration = new Configuration();
 const apiInstance = new ShipmentsApi(configuration);
 
 let id: string; // (default to undefined)
-let shipmentPurchaseData: ShipmentPurchaseData; //
+let shipmentPurchaseData: ShipmentPurchaseData; // (optional)
 
 const { status, data } = await apiInstance.purchase(
     id,

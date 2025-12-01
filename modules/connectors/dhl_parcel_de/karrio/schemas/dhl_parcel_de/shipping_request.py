@@ -141,7 +141,9 @@ class ShipperType:
     city: typing.Optional[str] = None
     country: typing.Optional[str] = None
     contactName: typing.Optional[str] = None
+    phone: typing.Optional[str] = None
     email: typing.Optional[str] = None
+    shipperRef: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)

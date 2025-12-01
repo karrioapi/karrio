@@ -12,7 +12,7 @@ class Settings(core.Settings):
     password: str
     client_id: str
     client_secret: str
-    customer_number: str = None
+    billing_number: str = None
 
     account_country_code: str = "DE"
 

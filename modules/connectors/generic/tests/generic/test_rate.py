@@ -156,6 +156,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "Standard Service",
+                "shipping_charges": 100.0,
+                "shipping_currency": "USD",
             },
             "service": "standard_service",
             "total_charge": 100.0,

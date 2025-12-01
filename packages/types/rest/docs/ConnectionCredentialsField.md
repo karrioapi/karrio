@@ -23,6 +23,7 @@ Name | Type | Description | Notes
 **site_id** | **string** |  | [default to undefined]
 **client_id** | **string** |  | [default to undefined]
 **client_secret** | **string** |  | [default to undefined]
+**billing_number** | **string** |  | [optional] [default to undefined]
 **consumer_key** | **string** |  | [default to undefined]
 **consumer_secret** | **string** |  | [default to undefined]
 **billing_account** | **string** |  | [optional] [default to undefined]
@@ -86,6 +87,7 @@ const instance: ConnectionCredentialsField = {
     site_id,
     client_id,
     client_secret,
+    billing_number,
     consumer_key,
     consumer_secret,
     billing_account,

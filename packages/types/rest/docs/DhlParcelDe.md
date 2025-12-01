@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **password** | **string** |  | [default to undefined]
 **client_id** | **string** |  | [default to undefined]
 **client_secret** | **string** |  | [default to undefined]
-**customer_number** | **string** |  | [optional] [default to undefined]
+**billing_number** | **string** |  | [optional] [default to undefined]
 **account_country_code** | **string** |  | [optional] [default to 'DE']
 
 ## Example
@@ -22,7 +22,7 @@ const instance: DhlParcelDe = {
     password,
     client_id,
     client_secret,
-    customer_number,
+    billing_number,
     account_country_code,
 };
 ```

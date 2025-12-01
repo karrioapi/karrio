@@ -40,7 +40,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v2/orders?docFormat=ZPL2&printFormat=910-300-700-oz&combine=true",
+                f"{gateway.settings.server_url}/v2/orders?combine=true&docFormat=ZPL2&printFormat=910-300-700-oz",
             )
 
     def test_cancel_shipment(self):
@@ -107,6 +107,17 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
                 ParsedMultipleValidationMessagesErrorResponse,
             )
 
+    def test_parse_shipment_response_with_customs_doc(self):
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
+            mock.return_value = ShipmentResponseWithCustomsDoc
+            parsed_response = (
+                karrio.Shipment.create(self.IntlShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedShipmentResponseWithCustomsDoc
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -117,7 +128,8 @@ ShipmentPayload = {
     "reference": "Order No. 1234",
     "shipper": {
         "company_name": "My Online Shop GmbH",
-        "address_line1": "Sträßchensweg 10",
+        "address_line1": "Sträßchensweg",
+        "street_number": "10",
         "postal_code": "53113",
         "city": "Bonn",
         "country_code": "DE",
@@ -253,7 +265,7 @@ ShipmentRequest = {
         {
             "billingNumber": "33333333330102",
             "consignee": {
-                "addressHouse": "20",
+                "addressHouse": "Apartment 107",
                 "addressStreet": "Kurt-Schumacher-Str. 20",
                 "city": "Bonn",
                 "country": "DEU",
@@ -269,10 +281,11 @@ ShipmentRequest = {
             },
             "product": "V01PAK",
             "refNo": "Order No. 1234",
+            "services": {"endorsement": "RETURN"},
             "shipDate": ANY,
             "shipper": {
                 "addressHouse": "10",
-                "addressStreet": "Sträßchensweg 10",
+                "addressStreet": "Sträßchensweg",
                 "city": "Bonn",
                 "country": "DEU",
                 "email": "max@mustermann.de",
@@ -289,7 +302,6 @@ IntlShipmentRequest = {
         {
             "billingNumber": "33333333330102",
             "consignee": {
-                "addressHouse": "10",
                 "addressStreet": "10 Downing Street",
                 "city": "London",
                 "country": "GBR",
@@ -300,6 +312,7 @@ IntlShipmentRequest = {
                 "postalCode": "SW1A 1AA",
             },
             "customs": {
+                "exportDescription": "Other",
                 "exportType": "COMMERCIAL_GOODS",
                 "items": [
                     {
@@ -312,7 +325,6 @@ IntlShipmentRequest = {
                     }
                 ],
                 "officeOfOrigin": "DEU",
-                "postalCharges": {"currency": "EUR", "value": 1},
                 "shippingConditions": "DDP",
             },
             "details": {
@@ -321,15 +333,16 @@ IntlShipmentRequest = {
             },
             "product": "V54EPAK",
             "refNo": "Order No. 1234",
+            "services": {"endorsement": "RETURN"},
             "shipDate": ANY,
             "shipper": {
-                "addressHouse": "10",
                 "addressStreet": "Sträßchensweg 10",
                 "city": "Bonn",
                 "country": "DEU",
                 "email": "max@mustermann.de",
                 "name1": "My Online Shop GmbH",
                 "postalCode": "53113",
+                "addressHouse": "2. Etage",
             },
         }
     ],
@@ -543,4 +556,55 @@ ParsedMultipleValidationMessagesErrorResponse = [
             "message": "details.weight: Weight exceeds maximum limit",
         },
     ],
+]
+
+ShipmentResponseWithCustomsDoc = """{
+    "status": {
+        "title": "OK",
+        "status": 200,
+        "detail": "1 of 1 shipment successfully printed.",
+        "statusCode": 200
+    },
+    "items": [
+        {
+            "shipmentNo": "CD530123554DE",
+            "sstatus": {
+                "title": "OK",
+                "status": 200,
+                "statusCode": 200
+            },
+            "shipmentRefNo": "Order No. 1234",
+            "routingCode": "403826SW1A1AA+67000000",
+            "label": {
+                "b64": "JVBERi0xLjUK",
+                "fileFormat": "PDF",
+                "printFormat": "910-300-710"
+            },
+            "customsDoc": {
+                "b64": "JVBERi0xLjUKCustomsDoc",
+                "fileFormat": "PDF",
+                "printFormat": "A4-PT"
+            },
+            "validationMessages": []
+        }
+    ]
+}"""
+
+ParsedShipmentResponseWithCustomsDoc = [
+    {
+        "carrier_id": "dhl_parcel_de",
+        "carrier_name": "dhl_parcel_de",
+        "docs": {"invoice": "JVBERi0xLjUKCustomsDoc", "label": "JVBERi0xLjUK"},
+        "label_type": "PDF",
+        "meta": {
+            "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=CD530123554DE",
+            "shipmentNo": "CD530123554DE",
+            "shipmentRefNo": "Order No. 1234",
+            "shipment_identifiers": ["CD530123554DE"],
+            "tracking_numbers": ["CD530123554DE"],
+        },
+        "shipment_identifier": "CD530123554DE",
+        "tracking_number": "CD530123554DE",
+    },
+    [],
 ]

@@ -18,7 +18,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     password: str
     client_id: str
     client_secret: str
-    customer_number: str = None
+    billing_number: str = None
 
     # generic properties
     id: str = None

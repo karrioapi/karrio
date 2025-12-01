@@ -183,9 +183,19 @@ class Shipments:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
+        payload = {
+            **lib.to_dict(payload),
+            "options": {
+                **(selected_rate.meta or {}),
+                **(payload.get("options") or {}),
+            },
+        }
         request = lib.to_object(
             datatypes.ShipmentRequest,
-            {**lib.to_dict(payload), "service": selected_rate.service},
+            {
+                **lib.to_dict(payload),
+                "service": selected_rate.service,
+            },
         )
 
         # The request is wrapped in utils.identity to simplify mocking in tests.

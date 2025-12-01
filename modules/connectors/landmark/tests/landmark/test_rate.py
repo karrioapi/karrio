@@ -371,6 +371,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "MaxiPak Scan DDP",
+                "shipping_charges": 8.78,
+                "shipping_currency": "GBP",
             },
             "service": "landmark_maxipak_scan_ddp",
             "total_charge": 8.78,
@@ -389,6 +391,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "MaxiPak Scan DDU",
+                "shipping_charges": 8.78,
+                "shipping_currency": "GBP",
             },
             "service": "landmark_maxipak_scan_ddu",
             "total_charge": 8.78,
@@ -407,6 +411,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "MaxiPak Scan Postal DDP",
+                "shipping_charges": 3.75,
+                "shipping_currency": "GBP",
             },
             "service": "landmark_maxipak_scan_pddp",
             "total_charge": 3.75,

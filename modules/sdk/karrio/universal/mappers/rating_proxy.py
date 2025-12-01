@@ -290,9 +290,15 @@ def get_available_rates(
         package_height = None
         package_width = None
         if service.dimension_unit is not None:
-            package_length = package.length[dimension_unit] if package.length is not None else None
-            package_height = package.height[dimension_unit] if package.height is not None else None
-            package_width = package.width[dimension_unit] if package.width is not None else None
+            package_length = (
+                package.length[dimension_unit] if package.length is not None else None
+            )
+            package_height = (
+                package.height[dimension_unit] if package.height is not None else None
+            )
+            package_width = (
+                package.width[dimension_unit] if package.width is not None else None
+            )
 
         # Safely get package weight only if service specifies weight unit
         package_weight = None
@@ -309,7 +315,8 @@ def get_available_rates(
             or package_length is None  # No dimension provided = assume valid
             or (
                 service.dimension_unit is not None
-                and package_length <= units.Dimension(service.max_length, dimension_unit).value
+                and package_length
+                <= units.Dimension(service.max_length, dimension_unit).value
             )
         )
         match_height_requirements = (
@@ -317,7 +324,8 @@ def get_available_rates(
             or package_height is None  # No dimension provided = assume valid
             or (
                 service.dimension_unit is not None
-                and package_height <= units.Dimension(service.max_height, dimension_unit).value
+                and package_height
+                <= units.Dimension(service.max_height, dimension_unit).value
             )
         )
         match_width_requirements = (
@@ -325,7 +333,8 @@ def get_available_rates(
             or package_width is None  # No dimension provided = assume valid
             or (
                 service.dimension_unit is not None
-                and package_width <= units.Dimension(service.max_width, dimension_unit).value
+                and package_width
+                <= units.Dimension(service.max_width, dimension_unit).value
             )
         )
         match_min_weight_requirements = (
@@ -333,7 +342,8 @@ def get_available_rates(
             or package_weight is None  # No weight provided = assume valid
             or (
                 service.weight_unit is not None
-                and package_weight >= units.Weight(service.min_weight, weight_unit).value
+                and package_weight
+                >= units.Weight(service.min_weight, weight_unit).value
             )
         )
         match_max_weight_requirements = (
@@ -341,7 +351,8 @@ def get_available_rates(
             or package_weight is None  # No weight provided = assume valid
             or (
                 service.weight_unit is not None
-                and package_weight <= units.Weight(service.max_weight, weight_unit).value
+                and package_weight
+                <= units.Weight(service.max_weight, weight_unit).value
             )
         )
 
@@ -462,6 +473,8 @@ def get_available_rates(
                         dict(
                             carrier_service_code=service.carrier_service_code,
                             service_name=service.service_name,
+                            shipping_charges=selected_zone.rate,
+                            shipping_currency=service.currency,
                         )
                     ),
                 )

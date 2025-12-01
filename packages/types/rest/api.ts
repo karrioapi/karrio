@@ -2259,7 +2259,7 @@ export interface DhlParcelDe {
     'password': string;
     'client_id': string;
     'client_secret': string;
-    'customer_number'?: string | null;
+    'billing_number'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface DhlPoland {
@@ -5356,7 +5356,11 @@ export interface ShipmentPurchaseData {
     /**
      * The shipment selected rate.
      */
-    'selected_rate_id': string;
+    'selected_rate_id'?: string | null;
+    /**
+     * The carrier service to use for the shipment (alternative to selected_rate_id).
+     */
+    'service'?: string | null;
     /**
      * The shipment label file type.
      */
@@ -12964,15 +12968,13 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * Select your preferred rates to buy a shipment label.
          * @summary Buy a shipment label
          * @param {string} id 
-         * @param {ShipmentPurchaseData} shipmentPurchaseData 
+         * @param {ShipmentPurchaseData} [shipmentPurchaseData] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        purchase: async (id: string, shipmentPurchaseData: ShipmentPurchaseData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        purchase: async (id: string, shipmentPurchaseData?: ShipmentPurchaseData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('purchase', 'id', id)
-            // verify required parameter 'shipmentPurchaseData' is not null or undefined
-            assertParamExists('purchase', 'shipmentPurchaseData', shipmentPurchaseData)
             const localVarPath = `/v1/shipments/{id}/purchase`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -13235,11 +13237,11 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * Select your preferred rates to buy a shipment label.
          * @summary Buy a shipment label
          * @param {string} id 
-         * @param {ShipmentPurchaseData} shipmentPurchaseData 
+         * @param {ShipmentPurchaseData} [shipmentPurchaseData] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async purchase(id: string, shipmentPurchaseData: ShipmentPurchaseData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async purchase(id: string, shipmentPurchaseData?: ShipmentPurchaseData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.purchase(id, shipmentPurchaseData, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ShipmentsApi.purchase']?.[localVarOperationServerIndex]?.url;
@@ -13435,7 +13437,7 @@ export interface ShipmentsApiListRequest {
 export interface ShipmentsApiPurchaseRequest {
     readonly id: string
 
-    readonly shipmentPurchaseData: ShipmentPurchaseData
+    readonly shipmentPurchaseData?: ShipmentPurchaseData
 }
 
 /**

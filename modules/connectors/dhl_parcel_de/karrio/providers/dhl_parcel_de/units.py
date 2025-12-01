@@ -3,7 +3,6 @@ import pathlib
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
-from typing import Dict, Set
 
 
 class PackagingType(lib.StrEnum):
@@ -126,47 +125,26 @@ class ShippingOption(lib.Enum):
     dhl_parcel_de_closest_drop_point = lib.OptionEnum("closestDropPoint", bool)
     dhl_parcel_de_parcel_outlet_routing = lib.OptionEnum("parcelOutletRouting")
     dhl_parcel_de_postal_delivery_duty_paid = lib.OptionEnum("postalDeliveryDutyPaid", bool)
+    dhl_parcel_de_postal_charges = lib.OptionEnum("postalCharges", float)
+    dhl_parcel_de_dhl_retoure = lib.OptionEnum("dhlRetoure", bool)
+    dhl_parcel_de_locker_id = lib.OptionEnum("lockerID")
+    dhl_parcel_de_post_number = lib.OptionEnum("postNumber")
+    dhl_parcel_de_retail_id = lib.OptionEnum("retailID")
+    dhl_parcel_de_po_box_id = lib.OptionEnum("poBoxID")
+    dhl_parcel_de_shipper_customs_ref = lib.OptionEnum("shipperCustomsRef")
+    dhl_parcel_de_consignee_customs_ref = lib.OptionEnum("consigneeCustomsRef")
+    dhl_parcel_de_permit_no = lib.OptionEnum("permitNo")
+    dhl_parcel_de_attestation_no = lib.OptionEnum("attestationNo")
+    dhl_parcel_de_has_electronic_export_notification = lib.OptionEnum("hasElectronicExportNotification")
+    dhl_parcel_de_MRN = lib.OptionEnum("MRN")
 
     """ Unified Option type mapping """
-    insurance = dhl_parcel_de_additional_insurance
+    signature_confirmation = dhl_parcel_de_signed_for_by_recipient
+    hold_at_location = dhl_parcel_de_closest_drop_point
     cash_on_delivery = dhl_parcel_de_cash_on_delivery
+    shipping_charges = dhl_parcel_de_postal_charges
+    insurance = dhl_parcel_de_additional_insurance
     # fmt: on
-
-
-# Service to Options compatibility matrix
-# Based on https://developer.dhl.com/sites/default/files/inline-images/Verf%C3%BCgbare%20Services_en_0.png
-SERVICE_OPTION_COMPATIBILITY: Dict[str, Set[ShippingOption]] = {
-    ShippingService.dhl_parcel_de_paket.value: {  # V01PAK - DHL Paket (National)
-        ShippingOption.dhl_parcel_de_preferred_neighbour,
-        ShippingOption.dhl_parcel_de_preferred_location,
-        ShippingOption.dhl_parcel_de_visual_check_of_age,
-        ShippingOption.dhl_parcel_de_named_person_only,
-        ShippingOption.dhl_parcel_de_signed_for_by_recipient,
-        ShippingOption.dhl_parcel_de_preferred_day,
-        ShippingOption.dhl_parcel_de_no_neighbour_delivery,
-        ShippingOption.dhl_parcel_de_additional_insurance,
-        ShippingOption.dhl_parcel_de_bulky_goods,
-        ShippingOption.dhl_parcel_de_cash_on_delivery,
-        ShippingOption.dhl_parcel_de_individual_sender_requirement,
-        ShippingOption.dhl_parcel_de_premium,
-        ShippingOption.dhl_parcel_de_closest_drop_point,
-        ShippingOption.dhl_parcel_de_parcel_outlet_routing,
-    },
-    ShippingService.dhl_parcel_de_europaket.value: {  # V54EPAK - DHL EuroPaket (International Europe)
-        ShippingOption.dhl_parcel_de_additional_insurance,
-        ShippingOption.dhl_parcel_de_bulky_goods,
-        ShippingOption.dhl_parcel_de_cash_on_delivery,
-        ShippingOption.dhl_parcel_de_individual_sender_requirement,
-        ShippingOption.dhl_parcel_de_premium,
-        ShippingOption.dhl_parcel_de_endorsement,
-    },
-    ShippingService.dhl_parcel_de_kleinpaket.value: {  # V62KP - DHL Kleinpaket (National)
-        # Kleinpaket (formerly Warenpost) typically has no additional services
-    },
-    ShippingService.dhl_parcel_de_warenpost_international.value: {  # V66WPI - DHL Warenpost International
-        ShippingOption.dhl_parcel_de_endorsement,
-    },
-}
 
 
 def shipping_options_initializer(
@@ -181,7 +159,7 @@ def shipping_options_initializer(
         options.update(package_options.content)
 
     def items_filter(key: str) -> bool:
-        return key in ShippingOption  # type: ignore
+        return key in ShippingOption or key in units.ShippingOption  # type: ignore
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
@@ -281,7 +259,9 @@ def load_services_from_csv() -> list:
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
+    return [
+        models.ServiceLevel(**service_data) for service_data in services_dict.values()
+    ]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

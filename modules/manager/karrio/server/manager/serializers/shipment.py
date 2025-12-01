@@ -48,6 +48,7 @@ from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
+
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="shipping")
 
 
@@ -810,9 +811,15 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
             )
             tracker.save()
             link_org(tracker, context)
-            logger.info("Successfully added a tracker to the shipment", shipment_id=shipment.id)
+            logger.info(
+                "Successfully added a tracker to the shipment", shipment_id=shipment.id
+            )
         except Exception as e:
-            logger.exception("Failed to create new label tracker", error=str(e), shipment_id=shipment.id)
+            logger.exception(
+                "Failed to create new label tracker",
+                error=str(e),
+                shipment_id=shipment.id,
+            )
 
         # Update shipment tracking url if different from the current one
         try:
@@ -833,7 +840,12 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 shipment.tracking_url = tracking_url
                 shipment.save(update_fields=["tracking_url"])
         except Exception as e:
-            logger.exception("Failed to update shipment tracking url", error=str(e), shipment_id=shipment.id, tracking_number=shipment.tracking_number)
+            logger.exception(
+                "Failed to update shipment tracking url",
+                error=str(e),
+                shipment_id=shipment.id,
+                tracking_number=shipment.tracking_number,
+            )
 
 
 def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
@@ -861,7 +873,11 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
         shipment.invoice = document["doc_file"]
         shipment.save(update_fields=["invoice"])
 
-    logger.info("Custom document successfully generated", shipment_id=shipment.id, template=template)
+    logger.info(
+        "Custom document successfully generated",
+        shipment_id=shipment.id,
+        template=template,
+    )
 
     return document
 

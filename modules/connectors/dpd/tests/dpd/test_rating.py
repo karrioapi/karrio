@@ -64,7 +64,11 @@ ParsedRateResponse = [
             "carrier_id": "dpd",
             "carrier_name": "dpd",
             "currency": "EUR",
-            "meta": {"service_name": "DPD Express 10h"},
+            "meta": {
+                "service_name": "DPD Express 10h",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
+            },
             "service": "dpd_express_10h",
             "total_charge": 0.0,
             "extra_charges": [
@@ -75,7 +79,11 @@ ParsedRateResponse = [
             "carrier_id": "dpd",
             "carrier_name": "dpd",
             "currency": "EUR",
-            "meta": {"service_name": "DPD Express 12h"},
+            "meta": {
+                "service_name": "DPD Express 12h",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
+            },
             "service": "dpd_express_12h",
             "total_charge": 0.0,
             "extra_charges": [
@@ -86,7 +94,11 @@ ParsedRateResponse = [
             "carrier_id": "dpd",
             "carrier_name": "dpd",
             "currency": "EUR",
-            "meta": {"service_name": "DPD Express 18h Guarantee"},
+            "meta": {
+                "service_name": "DPD Express 18h Guarantee",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
+            },
             "service": "dpd_express_18h_guarantee",
             "total_charge": 0.0,
             "extra_charges": [
@@ -97,7 +109,11 @@ ParsedRateResponse = [
             "carrier_id": "dpd",
             "carrier_name": "dpd",
             "currency": "EUR",
-            "meta": {"service_name": "DPD B2B MSG option"},
+            "meta": {
+                "service_name": "DPD B2B MSG option",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
+            },
             "service": "dpd_express_b2b_predict",
             "total_charge": 0.0,
             "extra_charges": [
@@ -108,7 +124,11 @@ ParsedRateResponse = [
             "carrier_id": "dpd",
             "carrier_name": "dpd",
             "currency": "EUR",
-            "meta": {"service_name": "CL"},
+            "meta": {
+                "service_name": "CL",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
+            },
             "service": "dpd_cl",
             "total_charge": 0.0,
             "extra_charges": [

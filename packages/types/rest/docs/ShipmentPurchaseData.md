@@ -5,7 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**selected_rate_id** | **string** | The shipment selected rate. | [default to undefined]
+**selected_rate_id** | **string** | The shipment selected rate. | [optional] [default to undefined]
+**service** | **string** | The carrier service to use for the shipment (alternative to selected_rate_id). | [optional] [default to undefined]
 **label_type** | **string** | The shipment label file type. | [optional] [default to LabelTypeEnum_Pdf]
 **payment** | [**Payment**](Payment.md) | The payment details | [optional] [default to undefined]
 **reference** | **string** | The shipment reference | [optional] [default to undefined]
@@ -18,6 +19,7 @@ import { ShipmentPurchaseData } from './api';
 
 const instance: ShipmentPurchaseData = {
     selected_rate_id,
+    service,
     label_type,
     payment,
     reference,

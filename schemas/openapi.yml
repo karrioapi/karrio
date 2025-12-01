@@ -3654,7 +3654,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ShipmentPurchaseData'
-        required: true
       security:
       - TokenBasic: []
       - Token: []
@@ -10070,7 +10069,13 @@ components:
       properties:
         selected_rate_id:
           type: string
+          nullable: true
           description: The shipment selected rate.
+        service:
+          type: string
+          nullable: true
+          description: The carrier service to use for the shipment (alternative to
+            selected_rate_id).
         label_type:
           enum:
           - PDF
@@ -10092,8 +10097,6 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
-      required:
-      - selected_rate_id
     ShipmentRateData:
       type: object
       properties:
@@ -11319,7 +11322,7 @@ components:
           type: string
         client_secret:
           type: string
-        customer_number:
+        billing_number:
           type: string
           nullable: true
         account_country_code:

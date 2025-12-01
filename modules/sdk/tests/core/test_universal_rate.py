@@ -381,7 +381,11 @@ ParsedRateResponseWithoutSelection = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Standard"},
+            "meta": {
+                "service_name": "Standard",
+                "shipping_charges": 10.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_standard",
             "total_charge": 10.0,
             "extra_charges": [
@@ -391,7 +395,11 @@ ParsedRateResponseWithoutSelection = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Premium"},
+            "meta": {
+                "service_name": "Premium",
+                "shipping_charges": 15.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_premium",
             "total_charge": 15.0,
             "extra_charges": [
@@ -407,7 +415,11 @@ ParsedRateResponseStandardService = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Standard"},
+            "meta": {
+                "service_name": "Standard",
+                "shipping_charges": 10.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_standard",
             "total_charge": 10.0,
             "extra_charges": [
@@ -423,7 +435,11 @@ ParsedRateResponseHighWeightService = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Premium"},
+            "meta": {
+                "service_name": "Premium",
+                "shipping_charges": 15.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_premium",
             "total_charge": 15.0,
             "extra_charges": [
@@ -445,7 +461,11 @@ ParsedInternationalRateResponseService = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "International Parcel"},
+            "meta": {
+                "service_name": "International Parcel",
+                "shipping_charges": 25.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_interational_parcel",
             "total_charge": 25.0,
             "extra_charges": [
@@ -475,7 +495,11 @@ ParsedMultiPieceRateResponse = [
             "extra_charges": [
                 {"amount": 20.0, "currency": "USD", "name": "Base Charge"}
             ],
-            "meta": {"service_name": "Standard"},
+            "meta": {
+                "service_name": "Standard",
+                "shipping_charges": 10.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_standard",
             "total_charge": 20.0,
         },
@@ -485,7 +509,11 @@ ParsedMultiPieceRateResponse = [
             "extra_charges": [
                 {"amount": 30.0, "currency": "USD", "name": "Base Charge"}
             ],
-            "meta": {"service_name": "Premium"},
+            "meta": {
+                "service_name": "Premium",
+                "shipping_charges": 15.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_premium",
             "total_charge": 30.0,
         },
@@ -536,7 +564,11 @@ ParsedWeightTierLightPackage = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Weight Tiered Service"},
+            "meta": {
+                "service_name": "Weight Tiered Service",
+                "shipping_charges": 5.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_weight_tiered",
             "total_charge": 5.0,  # Tier 1: 0-0.5kg
             "extra_charges": [
@@ -552,7 +584,11 @@ ParsedWeightTierMediumPackage = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Weight Tiered Service"},
+            "meta": {
+                "service_name": "Weight Tiered Service",
+                "shipping_charges": 8.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg
             "extra_charges": [
@@ -568,7 +604,11 @@ ParsedWeightTierHeavyPackage = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Weight Tiered Service"},
+            "meta": {
+                "service_name": "Weight Tiered Service",
+                "shipping_charges": 12.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_weight_tiered",
             "total_charge": 12.0,  # Tier 3: 1.0-2.0kg
             "extra_charges": [
@@ -584,7 +624,11 @@ ParsedWeightTierBoundaryPackage = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Weight Tiered Service"},
+            "meta": {
+                "service_name": "Weight Tiered Service",
+                "shipping_charges": 8.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg (0.5 is inclusive min of tier 2)
             "extra_charges": [
@@ -633,7 +677,11 @@ ParsedZoneSpecificityCityMatch = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Zone Specific Service"},
+            "meta": {
+                "service_name": "Zone Specific Service",
+                "shipping_charges": 12.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_zone_specific",
             "total_charge": 12.0,  # City-specific rate, not country rate
             "extra_charges": [
@@ -670,7 +718,11 @@ ParsedRateResponseWeightOnly = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "meta": {"service_name": "Dimensional Service"},
+            "meta": {
+                "service_name": "Dimensional Service",
+                "shipping_charges": 18.0,
+                "shipping_currency": "USD",
+            },
             "service": "carrier_dimensional",
             "total_charge": 18.0,
             "extra_charges": [

@@ -214,6 +214,8 @@ ParsedRateResponse = [
             ],
             "meta": {
                 "service_name": "DHL Paket",
+                "shipping_charges": 0.0,
+                "shipping_currency": "EUR",
             },
             "service": "dhl_parcel_de_paket",
             "total_charge": 0.0,
