@@ -1,8 +1,16 @@
+# Karrio 2025.5.1
+
+## Changes
+
+### Fix
+
+- hotfix: regression or legacy soap request parser utility library
+
+---
+
 # Karrio 2025.5
 
 > **Release Date:** Dec 1st, 2025
->
-> **Full Changelog:** https://github.com/karrioapi/karrio/releases/tag/v2025.5
 >
 > **Blog Post:** https://karrio.io/blog/karrio-2025-5-sustainability
 

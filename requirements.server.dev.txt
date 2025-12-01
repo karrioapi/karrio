@@ -3,6 +3,7 @@ django-debug-toolbar
 djangorestframework-stubs
 
 # Karrio dev packages
+-e ./modules/soap
 -e ./modules/sdk
 -e ./modules/cli[dev]
 
