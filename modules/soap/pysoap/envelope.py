@@ -1262,9 +1262,7 @@ class Header(GeneratedsSuper):
             eol_ = ''
         if not fromsubclass_:
             for obj_ in self.anytypeobjs_:
-                showIndent(outfile, level, pretty_print)
-                outfile.write(obj_)
-                outfile.write('\n')
+                obj_.export(outfile, level, namespaceprefix_, pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1393,9 +1391,7 @@ class Body(GeneratedsSuper):
             eol_ = ''
         if not fromsubclass_:
             for obj_ in self.anytypeobjs_:
-                showIndent(outfile, level, pretty_print)
-                outfile.write(obj_)
-                outfile.write('\n')
+                obj_.export(outfile, level, namespaceprefix_, pretty_print=pretty_print)
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:

@@ -1,4 +1,5 @@
 # Karrio Tools packages
+-e ./modules/soap
 -e ./modules/sdk
 -e ./modules/cli[dev]
 

@@ -1,5 +1,6 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/?sourceBuild
 
+-e ./modules/soap
 -e ./modules/sdk
 
 # Shipping Plugins
