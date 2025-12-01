@@ -1,8 +1,8 @@
 # Karrio 2025.5
 
-> **Release Date:** November 30, 2025
+> **Release Date:** Dec 1st, 2025
 >
-> **Full Changelog:** https://github.com/karrioapi/karrio/compare/2025.4...2025.5
+> **Full Changelog:** https://github.com/karrioapi/karrio/releases/tag/v2025.5
 >
 > **Blog Post:** https://karrio.io/blog/karrio-2025-5-sustainability
 
@@ -21,7 +21,8 @@ This follows the proven models of Odoo and n8n—enabling a thriving open-source
 
 ### Discontinuation of Karrio Insiders
 
-The Karrio Insiders program is discontinued in favor of a focused **Karrio Enterprise License** for embedding and white-labeling needs. Existing Insiders subscriptions transition to Enterprise licenses with all features preserved.
+The Karrio Insiders program is discontinued in favor of a focused **Karrio Enterprise License** for embedding and white-labeling needs.
+Existing Insiders donations and subscriptions will end December 31st.
 
 ## What's New
 
@@ -78,6 +79,12 @@ flowchart TB
 | **Webhook**    | Carrier webhook management                 | Real-time tracking updates, event subscriptions  |
 | **Auth Proxy** | Standardized OAuth/authentication          | Carrier OAuth flows, token management            |
 
+### New Carrier Integrations
+
+- **Teleship** - Full integration with OAuth, webhooks, and duties engine support
+- **Landmark Global** - Cross-border e-commerce shipping (enhanced)
+- **DTDC** - Indian courier and logistics integration
+
 ### Dashboard & UI
 
 - Migrated to shadcn/ui with Tailwind CSS
@@ -86,6 +93,10 @@ flowchart TB
 - Improved carrier connection management
 - Enhanced settings and organization management
 - Document template editor improvements
+- Bulk print and shipment CSV export
+- App Store for managing shipping apps (beta)
+- Swagger API playground (replaced Redoc)
+- Shippers addons management page
 
 ### Performance & Reliability
 
@@ -96,16 +107,27 @@ flowchart TB
 - Optimized archiving queries with batch processing
 - Database indexes for date-based filters
 
+### Automation & Workflows
+
+- Shipping Rules API and dashboard panels
+- Workflows management for automated shipping logic
+- `has_alternative_services` flag for carrier connections
+
 ### Developer Experience
 
 - Plugin development guide documentation
-- OpenTelemetry integration
+- Telemetry abstraction (Sentry, DataDog, OpenTelemetry)
 - Loguru logging improvements
 - AGENTS.md for AI-assisted development
 - Improved error parsing and notifications
+- Karrio CLI (kcli) with plugin management and carrier details
+- SDK plugins loader with entrypoint support
+- Docker-Compose plugins mount point (`./plugins` dir)
+- `x-tenant-id` and `x-request-id` headers support
 
 ### Security & Enterprise
 
+- Limited scope API tokens for secure document downloads
 - SSO metadata fields for organizations
 - Secure Redis connection handling
 - Admin session cookie customization
@@ -113,9 +135,13 @@ flowchart TB
 
 ## Breaking Changes
 
+- **Python SDK import**: Changed from `import karrio` to `import karrio.sdk as karrio`
+- **Dashboard port**: Default changed from `3000` to `3002`
+- **Python version**: Now requires `>=3.11`
 - Deprecated carrier connections and custom models removed
 - GraphQL query/mutation changes (see integration tests)
 - Dashboard component refactor (shadcn migration)
+- Headless UI removed in favor of shadcn/ui components
 
 ## Bug Fixes
 
@@ -139,7 +165,10 @@ flowchart TB
 
 1. Review the new [LICENSE](https://github.com/karrioapi/karrio/blob/main/LICENSE) file
 2. Insiders users: contact hello@karrio.io for license transition
-3. Check GraphQL queries and Shipping REST APIs for breaking changes
+3. Update Python SDK imports: `import karrio` → `import karrio.sdk as karrio`
+4. Update dashboard port references from `3000` to `3002`
+5. Ensure Python `>=3.11` is installed
+6. Check GraphQL queries and Shipping REST APIs for breaking changes
 
 ## Contributors
 

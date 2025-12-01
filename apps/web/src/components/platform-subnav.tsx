@@ -14,7 +14,7 @@ export function PlatformSubnav() {
     { label: "LSPs", href: "/platform/use-cases/logistics-providers" },
     { label: "Platforms", href: "/platform/use-cases/platforms" },
     { label: "Enterprises", href: "/platform/use-cases/enterprise-solutions" },
-    { label: "Embed", href: "/platform/embed" },
+    // { label: "Embed", href: "/platform/embed" },
     // { label: "Pricing", href: "/platform/#pricing" },
   ];
 
