@@ -17,8 +17,8 @@
 
 The open-source shipping platform for modern logistics
 
-[![License](https://img.shields.io/badge/License-LGPL_3.0-blue.svg)](./LICENSE)
-[![Enterprise](https://img.shields.io/badge/Enterprise-Karrio_EE-orange.svg)](./ee/LICENSE)
+[![Karrio OSS](https://img.shields.io/badge/License-LGPL_3.0-blue.svg)](./LICENSE)
+[![Karrio Enterprise](https://img.shields.io/badge/Enterprise-Karrio_EE-orange.svg)](./ee/LICENSE)
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![karrio-build](https://github.com/karrioapi/karrio/actions/workflows/build.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
