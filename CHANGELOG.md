@@ -1,3 +1,17 @@
+# Karrio 2025.5.2
+
+## Changes
+
+### Feat
+
+- feat: consolidate apply_shipping_rules with support for single call label generation
+
+### Fix
+
+- fix: server perf affected by sentry + fix permission issues caused by carriers permission update
+
+---
+
 # Karrio 2025.5.1
 
 ## Changes
