@@ -1,3 +1,4 @@
+import uuid
 import typing
 import rest_framework.status as status
 import django.db.transaction as transaction
@@ -129,20 +130,33 @@ class ShipmentSerializer(ShipmentData):
     def create(
         self, validated_data: dict, context: Context, **kwargs
     ) -> models.Shipment:
+        # fmt: off
         service = validated_data.get("service")
         carrier_ids = validated_data.get("carrier_ids") or []
         fetch_rates = validated_data.get("fetch_rates") is not False
         services = [service] if service is not None else validated_data.get("services")
+        options = validated_data.get("options") or {}
+
+        # Check if we should skip rate fetching for has_alternative_services
+        skip_rate_fetching, resolved_carrier_name, _ = (
+            resolve_alternative_service_carrier(
+                service=service,
+                carrier_ids=carrier_ids,
+                carriers=[],  # Pre-check before loading carriers
+                options=options,
+                context=context,
+            )
+        )
+
         carriers = gateway.Carriers.list(
             context=context,
             carrier_ids=carrier_ids,
-            **({"services": services} if any(services) else {}),
+            **({"carrier_name": resolved_carrier_name} if resolved_carrier_name else {}),
+            **({"services": services} if any(services) and not skip_rate_fetching else {}),
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER},
         )
         payment = validated_data.get("payment") or lib.to_dict(
-            datatypes.Payment(
-                currency=(validated_data.get("options") or {}).get("currency")
-            )
+            datatypes.Payment(currency=options.get("currency"))
         )
         rating_data = {
             **validated_data,
@@ -152,11 +166,11 @@ class ShipmentSerializer(ShipmentData):
         messages = validated_data.get("messages") or []
         apply_shipping_rules = lib.identity(
             getattr(conf.settings, "SHIPPING_RULES", False)
-            and (validated_data.get("options") or {}).get("apply_shipping_rules", False)
+            and options.get("apply_shipping_rules", False)
         )
 
-        # Get live rates.
-        if fetch_rates or apply_shipping_rules:
+        # Get live rates (skip if has_alternative_services is enabled)
+        if (fetch_rates or apply_shipping_rules) and not skip_rate_fetching:
             rate_response: datatypes.RateResponse = (
                 RateSerializer.map(data=rating_data, context=context)
                 .save(carriers=carriers)
@@ -164,6 +178,16 @@ class ShipmentSerializer(ShipmentData):
             )
             rates = lib.to_dict(rate_response.rates)
             messages = lib.to_dict(rate_response.messages)
+
+        # Create synthetic rate when skipping rate fetching
+        if skip_rate_fetching:
+            _, _, rates = resolve_alternative_service_carrier(
+                service=service,
+                carrier_ids=carrier_ids,
+                carriers=carriers,
+                options=options,
+                context=context,
+            )
 
         shipment = models.Shipment.objects.create(
             **{
@@ -220,14 +244,14 @@ class ShipmentSerializer(ShipmentData):
             context=context,
         )
 
-        # Buy label if preferred service is selected or shipping rules should applied.
-        if (service and fetch_rates) or apply_shipping_rules:
+        # Buy label if preferred service is selected, shipping rules applied, or skip rate fetching
+        if (service and fetch_rates) or apply_shipping_rules or skip_rate_fetching:
             return buy_shipment_label(
                 shipment,
                 context=context,
                 service=service,
             )
-
+        # fmt: on
         return shipment
 
     @transaction.atomic
@@ -896,3 +920,81 @@ def upload_customs_forms(shipment: models.Shipment, document: dict, context=None
         .save(shipment=shipment)
         .instance
     )
+
+
+def resolve_alternative_service_carrier(
+    service: str,
+    carrier_ids: list,
+    carriers: list,
+    options: dict,
+    context: Context,
+) -> typing.Tuple[bool, typing.Optional[str], typing.List[dict]]:
+    """
+    Resolve carrier and create synthetic rate for has_alternative_services flow.
+
+    When has_alternative_services=True and a service is specified, this function:
+    1. Determines if rate fetching should be skipped
+    2. Resolves the carrier from the service name
+    3. Creates a synthetic rate for direct label purchase
+
+    Returns:
+        Tuple of (skip_rate_fetching, resolved_carrier_name, synthetic_rates)
+    """
+    has_alternative_services = options.get("has_alternative_services", False)
+    skip_rate_fetching = service is not None and has_alternative_services
+
+    if not skip_rate_fetching:
+        return False, None, []
+
+    # Resolve carrier from service when no explicit carrier_ids provided
+    resolved_carrier_name = None
+    if not any(carrier_ids):
+        resolved_carrier_name = utils._get_carrier_for_service(service, context=context)
+        if resolved_carrier_name is None:
+            raise exceptions.APIException(
+                f"Could not resolve carrier for service '{service}'",
+                code="validation_error",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+    if len(carriers) == 0:
+        return skip_rate_fetching, resolved_carrier_name, []
+
+    # Find carrier connection matching the service's carrier
+    carrier_name = resolved_carrier_name or utils._get_carrier_for_service(
+        service, context=context
+    )
+    carrier = lib.identity(
+        next(
+            (c for c in carriers if c.carrier_name == carrier_name),
+            carriers[0] if carrier_name is None else None,
+        )
+    )
+
+    if carrier is None:
+        raise exceptions.APIException(
+            f"No carrier connection found for service '{service}'",
+            code="validation_error",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Create synthetic rate for direct label purchase
+    synthetic_rates = [
+        {
+            "id": f"rat_{uuid.uuid4().hex}",
+            "carrier_id": carrier.carrier_id,
+            "carrier_name": carrier.carrier_name,
+            "service": service,
+            "currency": options.get("currency") or "USD",
+            "total_charge": 0,
+            "meta": {
+                "carrier_connection_id": carrier.pk,
+                "has_alternative_services": True,
+                "rate_provider": carrier.carrier_name,
+                "service_name": service.upper().replace("_", " "),
+            },
+            "test_mode": context.test_mode,
+        }
+    ]
+
+    return skip_rate_fetching, resolved_carrier_name, synthetic_rates

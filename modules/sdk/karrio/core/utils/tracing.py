@@ -21,6 +21,24 @@ import concurrent.futures as futures
 
 Trace = typing.Callable[[typing.Any, str], typing.Any]
 
+# Shared thread pool executor for trace recording
+# Using a single executor avoids the overhead of creating new thread pools per trace
+_trace_executor: typing.Optional[futures.ThreadPoolExecutor] = None
+_trace_executor_lock = __import__("threading").Lock()
+
+
+def _get_trace_executor() -> futures.ThreadPoolExecutor:
+    """Get or create the shared trace executor (lazy initialization, thread-safe)."""
+    global _trace_executor
+    if _trace_executor is None:
+        with _trace_executor_lock:
+            if _trace_executor is None:
+                _trace_executor = futures.ThreadPoolExecutor(
+                    max_workers=4,
+                    thread_name_prefix="karrio_trace",
+                )
+    return _trace_executor
+
 
 # =============================================================================
 # Telemetry Abstraction Layer
@@ -380,8 +398,9 @@ class Tracer:
                 metadata=metadata,
             )
 
-        promise = futures.ThreadPoolExecutor(max_workers=1)
-        self.inner_recordings.update({promise.submit(_save): data})
+        # Use shared executor to avoid creating new thread pools per trace
+        executor = _get_trace_executor()
+        self.inner_recordings.update({executor.submit(_save): data})
 
         # Add telemetry breadcrumb for APM context
         self._telemetry.add_breadcrumb(

@@ -64,8 +64,9 @@ sentry_sdk.utils.MAX_STRING_LENGTH = 4096
 SENTRY_DSN = config("SENTRY_DSN", default=None)
 SENTRY_ENVIRONMENT = config("SENTRY_ENVIRONMENT", default=config("ENV", default="production"))
 SENTRY_RELEASE = config("SENTRY_RELEASE", default=config("VERSION", default=None))
-SENTRY_TRACES_SAMPLE_RATE = config("SENTRY_TRACES_SAMPLE_RATE", default=1.0, cast=float)
-SENTRY_PROFILES_SAMPLE_RATE = config("SENTRY_PROFILES_SAMPLE_RATE", default=1.0, cast=float)
+# Lower default sample rates for better performance (was 1.0/100%)
+SENTRY_TRACES_SAMPLE_RATE = config("SENTRY_TRACES_SAMPLE_RATE", default=0.1, cast=float)  # 10% of transactions
+SENTRY_PROFILES_SAMPLE_RATE = config("SENTRY_PROFILES_SAMPLE_RATE", default=0.0, cast=float)  # Disabled by default
 SENTRY_SEND_PII = config("SENTRY_SEND_PII", default=True, cast=bool)
 SENTRY_DEBUG = config("SENTRY_DEBUG", default=False, cast=bool)
 
@@ -136,8 +137,8 @@ if SENTRY_DSN:
     integrations = [
         DjangoIntegration(
             transaction_style="url",  # Use URL patterns for transaction names
-            middleware_spans=True,    # Create spans for middleware
-            signals_spans=True,       # Create spans for Django signals
+            middleware_spans=False,   # Disabled for performance (was True)
+            signals_spans=False,      # Disabled for performance (was True)
         ),
     ]
 
@@ -182,10 +183,10 @@ if SENTRY_DSN:
         environment=SENTRY_ENVIRONMENT,
         release=SENTRY_RELEASE,
 
-        # Performance monitoring
+        # Performance monitoring (lower sample rates for better performance)
         traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,
-        profile_session_sample_rate=SENTRY_PROFILES_SAMPLE_RATE,
-        profile_lifecycle="trace",
+        # Only enable profiling if explicitly configured (disabled by default)
+        **({"profile_session_sample_rate": SENTRY_PROFILES_SAMPLE_RATE, "profile_lifecycle": "trace"} if SENTRY_PROFILES_SAMPLE_RATE > 0 else {}),
 
         # Privacy settings
         send_default_pii=SENTRY_SEND_PII,
@@ -200,16 +201,11 @@ if SENTRY_DSN:
         before_send=_sentry_before_send,
         before_send_transaction=_sentry_before_send_transaction,
 
-        # Additional options
-        max_breadcrumbs=50,  # Keep last 50 breadcrumbs for context
+        # Additional options (reduced for performance)
+        max_breadcrumbs=25,  # Reduced from 50 for lower memory usage
         attach_stacktrace=True,  # Attach stack traces to messages
-        include_source_context=True,  # Include source code in stack traces
-        include_local_variables=True,  # Include local variables in stack traces
-
-        # Set custom tags
-        _experiments={
-            "record_sql_params": True,  # Record SQL query parameters
-        },
+        include_source_context=False,  # Disabled for performance (was True)
+        include_local_variables=False,  # Disabled for performance (was True)
     )
 
     # Set default tags that will be applied to all events

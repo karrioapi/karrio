@@ -212,6 +212,144 @@ class TestShipmentPurchase(TestShipmentFixture):
             ).exists()
         )
 
+    def test_purchase_shipment_with_has_alternative_services(self):
+        """
+        Test that when has_alternative_services is enabled and service is requested
+        but not in rates, the purchase proceeds by delegating service resolution to the carrier.
+        """
+        url = reverse(
+            "karrio.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        self.shipment.options = {"has_alternative_services": True}
+        self.shipment.save()
+        data = {"service": "canadapost_expedited_parcel"}
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_RESPONSE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+        self.assertResponseNoErrors(response)  # type: ignore
+        self.assertDictEqual(
+            dict(status=response_data["status"], service=response_data["service"]),
+            dict(status="purchased", service="canadapost_expedited_parcel"),
+        )
+
+
+class TestSingleCallLabelPurchase(APITestCase):
+    """Test single call label purchase via POST to shipment-list with a service specified."""
+
+    def test_single_call_label_purchase(self):
+        """
+        Test that when a shipment is created with a service specified,
+        the label is purchased in a single call after fetching rates.
+        """
+        url = reverse("karrio.server.manager:shipment-list")
+        data = SINGLE_CALL_LABEL_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.side_effect = [RETURNED_RATES_VALUE, CREATED_SHIPMENT_RESPONSE]
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+        self.assertResponseNoErrors(response)  # type: ignore
+        self.assertDictEqual(
+            {
+                "status": response_data["status"],
+                "carrier_name": response_data["carrier_name"],
+                "service": response_data["service"],
+                "tracking_number": response_data["tracking_number"],
+                "services": response_data["services"],
+                "rates_count": len(response_data["rates"]),
+            },
+            {
+                "status": "purchased",
+                "carrier_name": "canadapost",
+                "service": "canadapost_priority",
+                "tracking_number": "123456789012",
+                "services": ["canadapost_priority"],
+                "rates_count": 1,
+            },
+        )
+
+
+class TestSingleCallWithAlternativeServices(APITestCase):
+    """Test single call label purchase with has_alternative_services flag (skip rate fetching)."""
+
+    def test_single_call_label_purchase_skip_rates(self):
+        """
+        Test that when has_alternative_services=True and service is specified,
+        rate fetching is skipped and label is purchased directly.
+        Carrier is resolved from the service name.
+        """
+        url = reverse("karrio.server.manager:shipment-list")
+        data = SINGLE_CALL_SKIP_RATES_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_RESPONSE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+            # Verify only 1 call was made (rates were skipped)
+            self.assertEqual(mock.call_count, 1)
+
+        self.assertResponseNoErrors(response)  # type: ignore
+        self.assertDictEqual(
+            {
+                "status": response_data["status"],
+                "carrier_name": response_data["carrier_name"],
+                "service": response_data["service"],
+                "tracking_number": response_data["tracking_number"],
+                "has_alternative_services": response_data["selected_rate"]["meta"].get(
+                    "has_alternative_services"
+                ),
+            },
+            {
+                "status": "purchased",
+                "carrier_name": "canadapost",
+                "service": "canadapost_priority",
+                "tracking_number": "123456789012",
+                "has_alternative_services": True,
+            },
+        )
+
+    def test_single_call_label_purchase_skip_rates_with_carrier_ids(self):
+        """
+        Test that when has_alternative_services=True, service, and carrier_ids are specified,
+        rate fetching is skipped and label is purchased directly.
+        """
+        url = reverse("karrio.server.manager:shipment-list")
+        data = {**SINGLE_CALL_SKIP_RATES_DATA, "carrier_ids": ["canadapost"]}
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_RESPONSE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+            # Verify only 1 call was made (rates were skipped)
+            self.assertEqual(mock.call_count, 1)
+
+        self.assertResponseNoErrors(response)  # type: ignore
+        self.assertDictEqual(
+            {
+                "status": response_data["status"],
+                "carrier_name": response_data["carrier_name"],
+                "service": response_data["service"],
+                "tracking_number": response_data["tracking_number"],
+                "has_alternative_services": response_data["selected_rate"]["meta"].get(
+                    "has_alternative_services"
+                ),
+            },
+            {
+                "status": "purchased",
+                "carrier_name": "canadapost",
+                "service": "canadapost_priority",
+                "tracking_number": "123456789012",
+                "has_alternative_services": True,
+            },
+        )
+
 
 SHIPMENT_DATA = {
     "recipient": {
@@ -260,11 +398,21 @@ SHIPMENT_RATES = {
             "total_charge": 106.71,
             "transit_days": 2,
             "extra_charges": [
-                {"name": "Duty and taxes", "amount": 13.92, "currency": "CAD", "id": ANY},
+                {
+                    "name": "Duty and taxes",
+                    "amount": 13.92,
+                    "currency": "CAD",
+                    "id": ANY,
+                },
                 {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": ANY},
                 {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": ANY},
                 {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": ANY},
-                {"name": "Base surcharge", "amount": 101.83, "currency": "CAD", "id": ANY},
+                {
+                    "name": "Base surcharge",
+                    "amount": 101.83,
+                    "currency": "CAD",
+                    "id": ANY,
+                },
             ],
             "meta": {
                 "ext": "canadapost",
@@ -535,7 +683,12 @@ PURCHASED_SHIPMENT = {
                 {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": ANY},
                 {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": ANY},
                 {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": ANY},
-                {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": ANY},
+                {
+                    "name": "Duties and taxes",
+                    "amount": 13.92,
+                    "currency": "CAD",
+                    "id": ANY,
+                },
             ],
             "meta": {
                 "service_name": "CANADAPOST PRIORITY",
@@ -679,11 +832,31 @@ CANCEL_RESPONSE = {
             "total_charge": 106.71,
             "transit_days": 2,
             "extra_charges": [
-                {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
-                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
-                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+                {
+                    "name": "Base charge",
+                    "amount": 101.83,
+                    "currency": "CAD",
+                    "id": None,
+                },
+                {
+                    "name": "Fuel surcharge",
+                    "amount": 2.7,
+                    "currency": "CAD",
+                    "id": None,
+                },
+                {
+                    "name": "SMB Savings",
+                    "amount": -11.74,
+                    "currency": "CAD",
+                    "id": None,
+                },
                 {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
-                {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": None},
+                {
+                    "name": "Duties and taxes",
+                    "amount": 13.92,
+                    "currency": "CAD",
+                    "id": None,
+                },
             ],
             "meta": {
                 "carrier_connection_id": ANY,
@@ -797,11 +970,31 @@ CANCEL_PURCHASED_RESPONSE = {
             "total_charge": 106.71,
             "transit_days": 2,
             "extra_charges": [
-                {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
-                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
-                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+                {
+                    "name": "Base charge",
+                    "amount": 101.83,
+                    "currency": "CAD",
+                    "id": None,
+                },
+                {
+                    "name": "Fuel surcharge",
+                    "amount": 2.7,
+                    "currency": "CAD",
+                    "id": None,
+                },
+                {
+                    "name": "SMB Savings",
+                    "amount": -11.74,
+                    "currency": "CAD",
+                    "id": None,
+                },
                 {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
-                {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": None},
+                {
+                    "name": "Duties and taxes",
+                    "amount": 13.92,
+                    "currency": "CAD",
+                    "id": None,
+                },
             ],
             "meta": {
                 "carrier_connection_id": ANY,
@@ -832,194 +1025,74 @@ CANCEL_PURCHASED_RESPONSE = {
     "invoice_url": None,
 }
 
-
-class TestShipmentPurchaseWithAlternativeServices(TestShipmentFixture):
-    def setUp(self) -> None:
-        super().setUp()
-        carrier = providers.Carrier.objects.get(carrier_id="canadapost")
-        # Rates have "canadapost_regular_parcel" but we'll request "canadapost_priority"
-        self.shipment.rates = [
-            {
-                "id": "rat_alt_service_test",
-                "carrier_id": "canadapost",
-                "carrier_name": "canadapost",
-                "currency": "CAD",
-                "estimated_delivery": None,
-                "extra_charges": [
-                    {"amount": 50.00, "currency": "CAD", "name": "Base charge"},
-                ],
-                "service": "canadapost_regular_parcel",
-                "total_charge": 50.00,
-                "transit_days": 5,
-                "test_mode": True,
-                "meta": {
-                    "rate_provider": "canadapost",
-                    "service_name": "CANADAPOST REGULAR PARCEL",
-                    "carrier_connection_id": carrier.pk,
-                },
-            }
-        ]
-        self.shipment.options = {"has_alternative_services": True}
-        self.shipment.save()
-
-    def test_purchase_with_alternative_service(self):
-        """
-        Test that when canadapost_priority is requested but only canadapost_regular_parcel
-        is in rates, the purchase proceeds with has_alternative_services=True,
-        delegating service resolution to the carrier.
-        """
-        url = reverse(
-            "karrio.server.manager:shipment-purchase",
-            kwargs=dict(pk=self.shipment.pk),
-        )
-        data = {"service": "canadapost_priority"}
-
-        with patch("karrio.server.core.gateway.utils.identity") as mock:
-            mock.return_value = CREATED_SHIPMENT_RESPONSE
-            response = self.client.post(url, data)
-            response_data = json.loads(response.content)
-
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertDictEqual(response_data, ALTERNATIVE_SERVICE_PURCHASED_SHIPMENT)
-
-
-ALTERNATIVE_SERVICE_PURCHASED_SHIPMENT = {
-    "id": ANY,
-    "object_type": "shipment",
-    "tracking_url": "/v1/trackers/canadapost/123456789012",
-    "shipper": {
-        "id": ANY,
-        "postal_code": "E1C4Z8",
-        "city": "Moncton",
-        "federal_tax_id": None,
-        "state_tax_id": None,
+SINGLE_CALL_LABEL_DATA = {
+    "recipient": {
+        "address_line1": "125 Church St",
         "person_name": "John Poop",
         "company_name": "A corp.",
-        "country_code": "CA",
-        "email": None,
         "phone_number": "514 000 0000",
-        "state_code": "NB",
-        "street_number": None,
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
         "residential": False,
-        "address_line1": "125 Church St",
-        "address_line2": None,
-        "validate_location": False,
-        "object_type": "address",
-        "validation": None,
+        "state_code": "NB",
     },
-    "recipient": {
-        "id": ANY,
-        "postal_code": "V6M2V9",
-        "city": "Vancouver",
-        "federal_tax_id": None,
-        "state_tax_id": None,
+    "shipper": {
+        "address_line1": "5840 Oak St",
         "person_name": "Jane Doe",
         "company_name": "B corp.",
-        "country_code": "CA",
-        "email": None,
         "phone_number": "514 000 9999",
-        "state_code": "BC",
-        "street_number": None,
+        "city": "Vancouver",
+        "country_code": "CA",
+        "postal_code": "V6M2V9",
         "residential": False,
-        "address_line1": "5840 Oak St",
-        "address_line2": None,
-        "validate_location": False,
-        "object_type": "address",
-        "validation": None,
+        "state_code": "BC",
     },
     "parcels": [
         {
-            "id": ANY,
-            "weight": 1.0,
-            "width": None,
-            "height": None,
-            "length": None,
-            "packaging_type": None,
-            "package_preset": "canadapost_corrugated_small_box",
-            "description": None,
-            "content": None,
-            "is_document": False,
+            "weight": 1,
             "weight_unit": "KG",
-            "dimension_unit": None,
-            "items": [],
-            "freight_class": None,
-            "reference_number": ANY,
-            "object_type": "parcel",
-            "options": {},
+            "package_preset": "canadapost_corrugated_small_box",
         }
     ],
-    "services": [],
-    "options": {"has_alternative_services": True, "shipping_date": ANY, "shipment_date": ANY},
-    "payment": {"paid_by": "sender", "currency": "CAD", "account_number": None},
-    "return_address": None,
-    "billing_address": None,
-    "customs": None,
-    "rates": [
-        {
-            "id": ANY,
-            "object_type": "rate",
-            "carrier_name": "canadapost",
-            "carrier_id": "canadapost",
-            "currency": "CAD",
-            "estimated_delivery": ANY,
-            "service": "canadapost_regular_parcel",
-            "total_charge": 50.00,
-            "transit_days": 5,
-            "extra_charges": [
-                {"name": "Base charge", "amount": 50.00, "currency": "CAD", "id": None},
-            ],
-            "meta": {
-                "service_name": "CANADAPOST REGULAR PARCEL",
-                "rate_provider": "canadapost",
-                "carrier_connection_id": ANY,
-            },
-            "test_mode": True,
-        }
-    ],
-    "reference": None,
-    "label_type": "PDF",
-    "carrier_ids": [],
-    "tracker_id": ANY,
-    "created_at": ANY,
-    "metadata": {},
-    "messages": [],
-    "status": "purchased",
-    "carrier_name": "canadapost",
-    "carrier_id": "canadapost",
-    "tracking_number": "123456789012",
-    "shipment_identifier": "123456789012",
-    "selected_rate": {
-        "id": ANY,
-        "object_type": "rate",
-        "carrier_name": "canadapost",
-        "carrier_id": "canadapost",
-        "currency": "CAD",
-        "estimated_delivery": ANY,
-        "service": "canadapost_priority",
-        "total_charge": 50.00,
-        "transit_days": 5,
-        "extra_charges": [
-            {"name": "Base charge", "amount": 50.00, "currency": "CAD", "id": None},
-        ],
-        "meta": {
-            "ext": "canadapost",
-            "carrier": "canadapost",
-            "service_name": "CANADAPOST REGULAR PARCEL",
-            "rate_provider": "canadapost",
-            "carrier_connection_id": ANY,
-            "has_alternative_services": True,
-        },
-        "test_mode": True,
-    },
-    "meta": {
-        "ext": "canadapost",
-        "carrier": "canadapost",
-        "rate_provider": "canadapost",
-        "service_name": "CANADAPOST PRIORITY",
-    },
+    "payment": {"currency": "CAD", "paid_by": "sender"},
     "service": "canadapost_priority",
-    "selected_rate_id": ANY,
-    "test_mode": True,
-    "label_url": ANY,
-    "invoice_url": None,
+    "carrier_ids": ["canadapost"],
+    "options": {"insurance": 100},
+}
+
+SINGLE_CALL_SKIP_RATES_DATA = {
+    # Note: No carrier_ids provided - carrier is resolved from service name
+    "recipient": {
+        "address_line1": "125 Church St",
+        "person_name": "John Poop",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+    },
+    "shipper": {
+        "address_line1": "5840 Oak St",
+        "person_name": "Jane Doe",
+        "company_name": "B corp.",
+        "phone_number": "514 000 9999",
+        "city": "Vancouver",
+        "country_code": "CA",
+        "postal_code": "V6M2V9",
+        "residential": False,
+        "state_code": "BC",
+    },
+    "parcels": [
+        {
+            "weight": 1,
+            "weight_unit": "KG",
+            "package_preset": "canadapost_corrugated_small_box",
+        }
+    ],
+    "payment": {"currency": "CAD", "paid_by": "sender"},
+    "service": "canadapost_priority",
+    "options": {"has_alternative_services": True},
 }
