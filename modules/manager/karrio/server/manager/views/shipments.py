@@ -165,6 +165,7 @@ class ShipmentCancel(APIView):
         request=None,
         responses={
             200: Shipment(),
+            202: Shipment(),
             404: ErrorResponse(),
             400: ErrorResponse(),
             409: ErrorResponse(),
@@ -177,6 +178,11 @@ class ShipmentCancel(APIView):
         Void a shipment with the associated label.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
+
+        # Return 202 if already cancelled (idempotent)
+        if shipment.status == models.ShipmentStatus.cancelled.value:
+            return Response(Shipment(shipment).data, status=status.HTTP_202_ACCEPTED)
+
         can_mutate_shipment(shipment, delete=True)
 
         update = ShipmentCancelSerializer.map(shipment, context=request).save().instance
