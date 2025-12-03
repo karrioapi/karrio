@@ -17,6 +17,7 @@ import karrio.server.core.filters as filters
 import karrio.server.manager.models as models
 import karrio.server.manager.router as router
 import karrio.server.manager.serializers as serializers
+from karrio.server.core.serializers import ShippingDocument
 
 ENDPOINT_ID = "$$$$&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Manifests = serializers.PaginatedResult("ManifestList", serializers.Manifest)
@@ -115,7 +116,14 @@ class ManifestDoc(django_downloadview.VirtualDownloadView):
 
         query_params = req.GET.dict()
 
-        self.manifest = models.Manifest.objects.get(pk=pk, manifest__isnull=False)
+        self.manifest = models.Manifest.objects.filter(pk=pk, manifest__isnull=False).first()
+
+        if self.manifest is None:
+            return response.Response(
+                {"errors": [{"message": f"Manifest '{pk}' not found or has no document"}]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         self.document = getattr(self.manifest, doc, None)
         self.name = f"{doc}_{self.manifest.id}.{format}"
 
@@ -134,6 +142,47 @@ class ManifestDoc(django_downloadview.VirtualDownloadView):
         return base.ContentFile(buffer.getvalue(), name=self.name)
 
 
+class ManifestDocumentDownload(api.APIView):
+
+    @openapi.extend_schema(
+        tags=["Manifests"],
+        operation_id=f"{ENDPOINT_ID}document",
+        extensions={"x-operationId": "retrieveManifestDocument"},
+        summary="Retrieve a manifest document",
+        request=None,
+        responses={
+            200: ShippingDocument(),
+            404: serializers.ErrorResponse(),
+            500: serializers.ErrorResponse(),
+        },
+    )
+    def post(self, req: request.Request, pk: str):
+        """
+        Retrieve a manifest document as base64 encoded content.
+        """
+        manifest = models.Manifest.access_by(req).filter(pk=pk, manifest__isnull=False).first()
+
+        if manifest is None:
+            return response.Response(
+                {"errors": [{"message": f"Manifest '{pk}' not found or has no document"}]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Build the GET URL for the document
+        doc_url = f"/v1/manifests/{pk}/manifest.pdf"
+
+        return response.Response(
+            ShippingDocument(
+                {
+                    "category": "manifest",
+                    "format": "PDF",
+                    "base64": manifest.manifest,
+                    "url": doc_url,
+                }
+            ).data
+        )
+
+
 router.router.urls.append(
     urls.path(
         "manifests",
@@ -149,8 +198,15 @@ router.router.urls.append(
     )
 )
 router.router.urls.append(
+    urls.path(
+        "manifests/<str:pk>/document",
+        ManifestDocumentDownload.as_view(),
+        name="manifest-document-download",
+    )
+)
+router.router.urls.append(
     urls.re_path(
-        r"^manifests/(?P<pk>\w+)/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        r"^manifests/(?P<pk>\w+)/(?P<doc>[a-z0-9]+)\.(?P<format>[a-z0-9]+)",
         ManifestDoc.as_view(),
         name="manifest-docs",
     )

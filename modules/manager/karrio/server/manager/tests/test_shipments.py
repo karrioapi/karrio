@@ -1096,3 +1096,104 @@ SINGLE_CALL_SKIP_RATES_DATA = {
     "service": "canadapost_priority",
     "options": {"has_alternative_services": True},
 }
+
+
+class TestShipmentDocumentDownload(APITestCase):
+    """Test shipment document download POST API."""
+
+    def create_purchased_shipment(self):
+        """Create and purchase a shipment via API."""
+        url = reverse("karrio.server.manager:shipment-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.side_effect = [RETURNED_RATES_VALUE, CREATED_SHIPMENT_RESPONSE]
+            response = self.client.post(url, SINGLE_CALL_LABEL_DATA)
+            return json.loads(response.content)
+
+    def test_download_label_document(self):
+        shipment = self.create_purchased_shipment()
+
+        url = reverse(
+            "karrio.server.manager:shipment-document-download",
+            kwargs=dict(pk=shipment["id"], doc="label"),
+        )
+        response = self.client.post(url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(
+            response_data,
+            LABEL_DOCUMENT_RESPONSE,
+        )
+
+    def test_download_document_not_found(self):
+        # Create a draft shipment (no label)
+        url = reverse("karrio.server.manager:shipment-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, SHIPMENT_DATA)
+            shipment = json.loads(response.content)
+
+        url = reverse(
+            "karrio.server.manager:shipment-document-download",
+            kwargs=dict(pk=shipment["id"], doc="label"),
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_download_invalid_document_type(self):
+        shipment = self.create_purchased_shipment()
+
+        url = reverse(
+            "karrio.server.manager:shipment-document-download",
+            kwargs=dict(pk=shipment["id"], doc="invalid"),
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_download_shipment_not_found(self):
+        url = reverse(
+            "karrio.server.manager:shipment-document-download",
+            kwargs=dict(pk="shp_non_existent_id", doc="label"),
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestShipmentCancelIdempotent(APITestCase):
+    """Test shipment cancel idempotency."""
+
+    def test_cancel_already_cancelled_shipment_returns_202(self):
+        # Create a shipment via API
+        url = reverse("karrio.server.manager:shipment-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, SHIPMENT_DATA)
+            shipment = json.loads(response.content)
+
+        # Cancel the shipment first time
+        cancel_url = reverse(
+            "karrio.server.manager:shipment-cancel",
+            kwargs=dict(pk=shipment["id"]),
+        )
+        self.client.post(cancel_url)
+
+        # Cancel again - should return 202
+        response = self.client.post(cancel_url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(response_data["status"], "cancelled")
+
+
+LABEL_DOCUMENT_RESPONSE = {
+    "category": "label",
+    "format": "PDF",
+    "base64": "==apodifjoefr",
+    "url": ANY,
+}

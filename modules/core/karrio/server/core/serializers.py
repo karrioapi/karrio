@@ -1969,3 +1969,28 @@ class ErrorMessages(serializers.Serializer):
 
 class ErrorResponse(serializers.Serializer):
     errors = APIError(many=True, required=False, help_text="The list of API errors")
+
+
+class ShippingDocument(serializers.Serializer):
+    """Serializer for shipping document download response."""
+
+    category = serializers.CharField(
+        required=True,
+        help_text="The document category (e.g., 'label', 'invoice', 'manifest')",
+    )
+    format = serializers.CharField(
+        required=True,
+        help_text="The document format (e.g., 'PDF', 'ZPL')",
+    )
+    base64 = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The document content encoded in base64",
+    )
+    url = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The URL to download the document via GET request",
+    )
