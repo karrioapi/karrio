@@ -132,6 +132,15 @@ FEATURE_FLAGS_CONFIG = {
         if importlib.util.find_spec("karrio.server.automation") is not None
         else None
     ),
+    "SHIPPING_METHODS": (
+        (
+            base.SHIPPING_METHODS,
+            "Shipping methods",
+            bool,
+        )
+        if importlib.util.find_spec("karrio.server.shipping") is not None
+        else None
+    ),
     "ADVANCED_ANALYTICS": (
         (
             base.ADVANCED_ANALYTICS,

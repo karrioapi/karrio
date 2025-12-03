@@ -878,7 +878,78 @@ def _get_carrier_for_service(service: str, context=None) -> typing.Optional[str]
     )
 
 
+def load_and_apply_shipping_method(
+    validated_data: dict,
+    shipping_method_id: str,
+    context: typing.Any,
+) -> dict:
+    """
+    Load a shipping method and apply its configuration to shipment data.
+
+    This function loads a ShippingMethod by ID and applies its configuration
+    to the validated_data dictionary using the shared apply_shipping_method_to_data
+    helper from the shipping module.
+
+    Args:
+        validated_data: The shipment data dictionary
+        shipping_method_id: The ID of the shipping method to load
+        context: The request context for access control
+
+    Returns:
+        dict: Modified validated_data with shipping method configuration applied
+
+    Raises:
+        APIException: If shipping method not found, inactive, or module not installed
+    """
+    try:
+        from karrio.server.shipping.models import ShippingMethod
+        from karrio.server.shipping.serializers import apply_shipping_method_to_data
+    except ImportError:
+        raise exceptions.APIException(
+            "Shipping methods module is not installed.",
+            code="module_not_installed",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Load the shipping method with access control
+    try:
+        method = ShippingMethod.access_by(context).get(
+            id=shipping_method_id,
+            is_active=True,
+        )
+    except ShippingMethod.DoesNotExist:
+        raise exceptions.APIException(
+            f"Shipping method '{shipping_method_id}' not found or inactive.",
+            code="shipping_method_not_found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    # Apply shipping method configuration using shared helper
+    result_data = apply_shipping_method_to_data(validated_data, method, context)
+
+    logger.info(
+        "Applied shipping method to shipment",
+        shipping_method_id=method.id,
+        shipping_method_name=method.name,
+        carrier_service=method.carrier_service,
+    )
+
+    return result_data
+
+
 def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
+    """
+    Select the appropriate rate based on the following priority hierarchy:
+
+    1. selected_rate (already provided) - highest priority
+    2. rate_id or service - try to find matching rate
+    3. has_alternative_services fallback - try carrier-based fallback
+    4. apply_shipping_rules - FALLBACK when no rate found from above
+
+    Shipping rules act as a fallback when:
+    - No service/rate_id provided, OR
+    - service/rate_id provided but no matching rate found
+    """
     data = kwargs.get("data") or kwargs
     get = lambda key, default=None: lib.identity(
         payload.get(key, data.get(key, default))
