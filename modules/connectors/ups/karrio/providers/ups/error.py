@@ -10,51 +10,61 @@ def parse_error_response(
     details: dict = None,
 ) -> typing.List[models.Message]:
     results = responses if isinstance(responses, list) else [responses]
-    errors: typing.List[dict] = sum(
-        [
-            [
-                *(  # get errors from the response object returned by UPS
-                    result["response"].get("errors", []) if "response" in result else []
-                ),
-                *(  # get warnings from the trackResponse object returned by UPS
-                    result["trackResponse"]["shipment"][0].get("warnings", [])
-                    if "trackResponse" in result
-                    else []
-                ),
-                *(  # get warnings from the trackResponse object returned by UPS
-                    result["UploadResponse"]["FormsHistoryDocumentID"].get(
-                        "warnings", []
-                    )
-                    if "UploadResponse" in result
-                    else []
-                ),
-                *(  # get errors from the API Fault
-                    [
-                        result["Fault"]["detail"]["Errors"]["ErrorDetail"][
-                            "PrimaryErrorCode"
-                        ]
-                    ]
-                    if result.get("Fault", {})
-                    .get("detail", {})
-                    .get("Errors", {})
-                    .get("ErrorDetail", {})
-                    .get("PrimaryErrorCode")
-                    is not None
-                    else []
-                ),
-            ]
-            for result in results
-        ],
-        [],
-    )
+    # Separate errors from warnings to set appropriate levels
+    errors: typing.List[dict] = []
+    warnings: typing.List[dict] = []
+
+    for result in results:
+        # get errors from the response object returned by UPS
+        if "response" in result:
+            errors.extend(result["response"].get("errors", []))
+
+        # get warnings from the trackResponse object returned by UPS
+        if "trackResponse" in result:
+            warnings.extend(
+                result["trackResponse"]["shipment"][0].get("warnings", [])
+            )
+
+        # get warnings from the UploadResponse object returned by UPS
+        if "UploadResponse" in result:
+            warnings.extend(
+                result["UploadResponse"]["FormsHistoryDocumentID"].get("warnings", [])
+            )
+
+        # get errors from the API Fault
+        if (
+            result.get("Fault", {})
+            .get("detail", {})
+            .get("Errors", {})
+            .get("ErrorDetail", {})
+            .get("PrimaryErrorCode")
+            is not None
+        ):
+            errors.append(
+                result["Fault"]["detail"]["Errors"]["ErrorDetail"]["PrimaryErrorCode"]
+            )
 
     return [
-        models.Message(
-            carrier_name=settings.carrier_name,
-            carrier_id=settings.carrier_id,
-            code=error.get("code") or error.get("Code"),
-            message=error.get("message") or error.get("Description"),
-            details=details,
-        )
-        for error in errors
+        *[
+            models.Message(
+                carrier_name=settings.carrier_name,
+                carrier_id=settings.carrier_id,
+                code=error.get("code") or error.get("Code"),
+                message=error.get("message") or error.get("Description"),
+                level="error",
+                details=details,
+            )
+            for error in errors
+        ],
+        *[
+            models.Message(
+                carrier_name=settings.carrier_name,
+                carrier_id=settings.carrier_id,
+                code=warning.get("code") or warning.get("Code"),
+                message=warning.get("message") or warning.get("Description"),
+                level="warning",
+                details=details,
+            )
+            for warning in warnings
+        ],
     ]

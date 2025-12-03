@@ -5,6 +5,7 @@ All URIs are relative to *http://localhost*
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
 |[**create**](#create) | **POST** /v1/manifests | Create a manifest|
+|[**document**](#document) | **POST** /v1/manifests/{id}/document | Retrieve a manifest document|
 |[**list**](#list) | **GET** /v1/manifests | List manifests|
 |[**retrieve**](#retrieve) | **GET** /v1/manifests/{id} | Retrieve a manifest|
 
@@ -59,6 +60,59 @@ const { status, data } = await apiInstance.create(
 |**201** |  |  -  |
 |**400** |  |  -  |
 |**424** |  |  -  |
+|**500** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **document**
+> ShippingDocument document()
+
+Retrieve a manifest document as base64 encoded content.
+
+### Example
+
+```typescript
+import {
+    ManifestsApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new ManifestsApi(configuration);
+
+let id: string; // (default to undefined)
+
+const { status, data } = await apiInstance.document(
+    id
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **id** | [**string**] |  | defaults to undefined|
+
+
+### Return type
+
+**ShippingDocument**
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [JWT](../README.md#JWT), [TokenBasic](../README.md#TokenBasic), [Token](../README.md#Token)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+|**404** |  |  -  |
 |**500** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

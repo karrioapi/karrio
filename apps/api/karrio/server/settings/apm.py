@@ -57,6 +57,7 @@ if POSTHOG_KEY:
 #   SENTRY_PROFILES_SAMPLE_RATE - Profile sampling rate 0.0-1.0 (default: 1.0)
 #   SENTRY_SEND_PII             - Send personally identifiable information (default: true)
 #   SENTRY_DEBUG                - Enable Sentry debug mode (default: false)
+#   SENTRY_TRACE_PROPAGATION_TARGETS - Regex patterns for distributed tracing (default: localhost)
 #
 # =============================================================================
 
@@ -69,6 +70,13 @@ SENTRY_TRACES_SAMPLE_RATE = config("SENTRY_TRACES_SAMPLE_RATE", default=0.1, cas
 SENTRY_PROFILES_SAMPLE_RATE = config("SENTRY_PROFILES_SAMPLE_RATE", default=0.0, cast=float)  # Disabled by default
 SENTRY_SEND_PII = config("SENTRY_SEND_PII", default=True, cast=bool)
 SENTRY_DEBUG = config("SENTRY_DEBUG", default=False, cast=bool)
+# Trace propagation targets for distributed tracing (internal services only)
+# Comma-separated list of regex patterns; headers are NOT sent to carrier APIs
+# Configure via env var for your domains (e.g., ".*\.yourdomain\.com,localhost")
+SENTRY_TRACE_PROPAGATION_TARGETS = config(
+    "SENTRY_TRACE_PROPAGATION_TARGETS",
+    default=r"localhost",
+)
 
 
 def _sentry_before_send(event, hint):
@@ -175,6 +183,13 @@ if SENTRY_DSN:
     except Exception:
         pass  # strawberry integration may not be available
 
+    # Parse trace propagation targets (comma-separated regex patterns)
+    trace_targets = [
+        pattern.strip()
+        for pattern in SENTRY_TRACE_PROPAGATION_TARGETS.split(",")
+        if pattern.strip()
+    ]
+
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=integrations,
@@ -187,6 +202,10 @@ if SENTRY_DSN:
         traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,
         # Only enable profiling if explicitly configured (disabled by default)
         **({"profile_session_sample_rate": SENTRY_PROFILES_SAMPLE_RATE, "profile_lifecycle": "trace"} if SENTRY_PROFILES_SAMPLE_RATE > 0 else {}),
+
+        # Distributed tracing - propagate trace headers to internal services
+        # Note: Headers are NOT sent to carrier APIs (they wouldn't understand them)
+        trace_propagation_targets=trace_targets,
 
         # Privacy settings
         send_default_pii=SENTRY_SEND_PII,

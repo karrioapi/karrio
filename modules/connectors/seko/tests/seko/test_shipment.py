@@ -220,6 +220,7 @@ ParsedShipmentResponse = [
                 "Key": "CountryCode",
                 "Property": "Destination.Address.CountryCode",
             },
+            "level": "error",
             "message": "CountryCode is required",
         }
     ],
@@ -240,6 +241,7 @@ ParsedCancelShipmentResponse = [
             "details": {
                 "ConsignmentId": "SSPOT014114",
             },
+            "level": "error",
             "message": "Cannot be deleted. Already deleted.",
         }
     ],

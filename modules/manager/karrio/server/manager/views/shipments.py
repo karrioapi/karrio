@@ -25,6 +25,7 @@ from karrio.server.manager.serializers import (
     ErrorMessages,
     Shipment,
     ShipmentData,
+    ShipmentStatus,
     buy_shipment_label,
     can_mutate_shipment,
     ShipmentSerializer,
@@ -32,6 +33,7 @@ from karrio.server.manager.serializers import (
     ShipmentUpdateData,
     ShipmentPurchaseData,
     ShipmentCancelSerializer,
+    ShippingDocument,
 )
 
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -165,6 +167,7 @@ class ShipmentCancel(APIView):
         request=None,
         responses={
             200: Shipment(),
+            202: Shipment(),
             404: ErrorResponse(),
             400: ErrorResponse(),
             409: ErrorResponse(),
@@ -177,6 +180,11 @@ class ShipmentCancel(APIView):
         Void a shipment with the associated label.
         """
         shipment = models.Shipment.access_by(request).get(pk=pk)
+
+        # Return 202 if already cancelled (idempotent)
+        if shipment.status == ShipmentStatus.cancelled.value:
+            return Response(Shipment(shipment).data, status=status.HTTP_202_ACCEPTED)
+
         can_mutate_shipment(shipment, delete=True)
 
         update = ShipmentCancelSerializer.map(shipment, context=request).save().instance
@@ -275,7 +283,14 @@ class ShipmentDocs(VirtualDownloadView):
 
         query_params = request.GET.dict()
 
-        self.shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
+        self.shipment = models.Shipment.objects.filter(pk=pk, label__isnull=False).first()
+
+        if self.shipment is None:
+            return Response(
+                {"errors": [{"message": f"Shipment '{pk}' not found or has no label"}]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         self.document = getattr(self.shipment, doc, None)
         self.name = f"{doc}_{self.shipment.tracking_number}.{format}"
 
@@ -314,6 +329,64 @@ class ShipmentDocs(VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
 
+class ShipmentDocumentDownload(APIView):
+    throttle_scope = "carrier_request"
+
+    @openapi.extend_schema(
+        tags=["Shipments"],
+        operation_id=f"{ENDPOINT_ID}document",
+        extensions={"x-operationId": "retrieveShipmentDocument"},
+        summary="Retrieve a shipment document",
+        request=None,
+        responses={
+            200: ShippingDocument(),
+            404: ErrorResponse(),
+            500: ErrorResponse(),
+        },
+    )
+    def post(self, request: Request, pk: str, doc: str = "label"):
+        """
+        Retrieve a shipment document (label or invoice) as base64 encoded content.
+        """
+        if doc not in ["label", "invoice"]:
+            return Response(
+                {"errors": [{"message": f"Invalid document type: {doc}"}]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Build filter based on document type
+        filter_kwargs = {"pk": pk, f"{doc}__isnull": False}
+        shipment = models.Shipment.access_by(request).filter(**filter_kwargs).first()
+
+        if shipment is None:
+            return Response(
+                {"errors": [{"message": f"Shipment '{pk}' not found or has no {doc}"}]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        document = getattr(shipment, doc)
+
+        # Determine format based on label_type for label, always PDF for invoice
+        if doc == "label":
+            doc_format = shipment.label_type or "PDF"
+        else:
+            doc_format = "PDF"
+
+        # Build the GET URL for the document
+        doc_url = f"/v1/shipments/{pk}/{doc}.{doc_format.lower()}"
+
+        return Response(
+            ShippingDocument(
+                {
+                    "category": doc,
+                    "format": doc_format,
+                    "base64": document,
+                    "url": doc_url,
+                }
+            ).data
+        )
+
+
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
 router.urls.append(
     path("shipments/<str:pk>", ShipmentDetails.as_view(), name="shipment-details")
@@ -332,8 +405,15 @@ router.urls.append(
     )
 )
 router.urls.append(
+    path(
+        "shipments/<str:pk>/documents/<str:doc>",
+        ShipmentDocumentDownload.as_view(),
+        name="shipment-document-download",
+    )
+)
+router.urls.append(
     re_path(
-        r"^shipments/(?P<pk>\w+)/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        r"^shipments/(?P<pk>\w+)/(?P<doc>[a-z0-9]+)\.(?P<format>[a-z0-9]+)",
         ShipmentDocs.as_view(),
         name="shipment-docs",
     )

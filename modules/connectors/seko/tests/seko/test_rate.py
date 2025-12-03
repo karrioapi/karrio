@@ -127,6 +127,7 @@ ParsedRateResponse = [
                 "Key": "CountryCode",
                 "Property": "Destination.Address.CountryCode",
             },
+            "level": "error",
             "message": "CountryCode is required",
         }
     ],

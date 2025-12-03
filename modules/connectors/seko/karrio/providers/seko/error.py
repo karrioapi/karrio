@@ -23,14 +23,27 @@ def parse_error_response(
                         "message": validation_errors.get(
                             "Message", next(iter(validation_errors.values()))
                         ),
+                        "level": (validation_errors.get("Severity") or "error").lower(),
                         **{
-                            k: v for k, v in validation_errors.items() if k != "Message"
+                            k: v for k, v in validation_errors.items() if k not in ["Message", "Severity"]
                         },
                     }
                 )
+            elif isinstance(validation_errors, list):
+                for ve in validation_errors:
+                    errors.append(
+                        {
+                            "code": ve.get("ErrorCode") or "ValidationError",
+                            "message": ve.get("Message"),
+                            "level": (ve.get("Severity") or "error").lower(),
+                            **{
+                                k: v for k, v in ve.items() if k not in ["Message", "Severity", "ErrorCode"]
+                            },
+                        }
+                    )
             else:
                 errors.append(
-                    {"code": "ValidationError", "message": str(validation_errors)}
+                    {"code": "ValidationError", "message": str(validation_errors), "level": "error"}
                 )
             break
 
@@ -40,6 +53,7 @@ def parse_error_response(
                 {
                     "code": "Rejected",
                     "message": error.get("Reason"),
+                    "level": "error",
                     **{k: v for k, v in error.items() if k != "Reason"},
                 }
             )
@@ -53,10 +67,25 @@ def parse_error_response(
                 {
                     "code": "Error",
                     "message": error.get("Message"),
-                    **{k: v for k, v in error.items() if k != "Message"},
+                    "level": (error.get("Severity") or "error").lower(),
+                    **{k: v for k, v in error.items() if k not in ["Message", "Severity"]},
                 }
             )
             break
+
+        # Handle Warnings array
+        if warnings := response_item.get("Warnings", []):
+            for warning in warnings:
+                errors.append(
+                    {
+                        "code": warning.get("WarningCode") or warning.get("ErrorCode") or "Warning",
+                        "message": warning.get("Message"),
+                        "level": (warning.get("Severity") or "warning").lower(),
+                        **{
+                            k: v for k, v in warning.items() if k not in ["Message", "Severity", "WarningCode", "ErrorCode"]
+                        },
+                    }
+                )
 
     return [
         models.Message(
@@ -64,9 +93,10 @@ def parse_error_response(
             carrier_name=settings.carrier_name,
             code=error["code"],
             message=error["message"],
+            level=error.get("level"),
             details={
                 **kwargs,
-                **{k: v for k, v in error.items() if k not in ["code", "message"]},
+                **{k: v for k, v in error.items() if k not in ["code", "message", "level"]},
             },
         )
         for error in errors

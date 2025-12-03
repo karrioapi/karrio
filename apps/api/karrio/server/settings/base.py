@@ -62,6 +62,9 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-org-id",
     "x-tenant-id",
     "x-request-id",
+    # Sentry distributed tracing headers
+    "sentry-trace",
+    "baggage",
 ]
 
 # HTTPS configuration
@@ -203,6 +206,9 @@ WORKFLOW_MANAGEMENT = (
 SHIPPING_RULES = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
 )
+SHIPPING_METHODS = (
+    importlib.util.find_spec("karrio.server.shipping") is not None  # type:ignore
+)
 ADVANCED_ANALYTICS = (
     importlib.util.find_spec("karrio.server.analytics") is not None  # type:ignore
 ) and config("ADVANCED_ANALYTICS", default=(True if DEBUG else False), cast=bool)
@@ -223,6 +229,7 @@ FEATURE_FLAGS = [
     ("PERSIST_SDK_TRACING", bool),
     ("WORKFLOW_MANAGEMENT", bool),
     ("SHIPPING_RULES", bool),
+    ("SHIPPING_METHODS", bool),
     ("ADVANCED_ANALYTICS", bool),
 ]
 

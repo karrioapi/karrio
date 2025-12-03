@@ -131,11 +131,16 @@ class ShipmentSerializer(ShipmentData):
         self, validated_data: dict, context: Context, **kwargs
     ) -> models.Shipment:
         # fmt: off
+        # Apply shipping method if specified (HIGHEST PRIORITY - supersedes service)
+        apply_shipping_method_flag, validated_data = resolve_shipping_method(
+            validated_data, context
+        )
+        options = validated_data.get("options") or {}
+
         service = validated_data.get("service")
         carrier_ids = validated_data.get("carrier_ids") or []
         fetch_rates = validated_data.get("fetch_rates") is not False
         services = [service] if service is not None else validated_data.get("services")
-        options = validated_data.get("options") or {}
 
         # Check if we should skip rate fetching for has_alternative_services
         skip_rate_fetching, resolved_carrier_name, _ = (
@@ -244,8 +249,8 @@ class ShipmentSerializer(ShipmentData):
             context=context,
         )
 
-        # Buy label if preferred service is selected, shipping rules applied, or skip rate fetching
-        if (service and fetch_rates) or apply_shipping_rules or skip_rate_fetching:
+        # Buy label if preferred service is selected, shipping method applied, shipping rules applied, or skip rate fetching
+        if (service and fetch_rates) or apply_shipping_method_flag or apply_shipping_rules or skip_rate_fetching:
             return buy_shipment_label(
                 shipment,
                 context=context,
@@ -673,16 +678,23 @@ def buy_shipment_label(
         docs={**lib.to_dict(response.docs), **invoice},
     )
 
-    # Update shipment state
+    # Update shipment state - preserve original meta and merge with response meta
+    response_details = ShipmentDetails(response).data
+    merged_meta = {
+        **(shipment.meta or {}),
+        **(response_details.get("meta") or {}),
+        **({"rule_activity": kwargs.get("rule_activity")} if kwargs.get("rule_activity") else {}),
+    }
+
     purchased_shipment = lib.identity(
         ShipmentSerializer.map(
             shipment,
             context=context,
             data={
                 **payload,
-                **ShipmentDetails(response).data,
+                **response_details,
                 **extra,
-                # "meta": {**(response.meta or {}), "rule_activity": kwargs.get("rule_activity", None)},
+                "meta": merged_meta,
             },
         )
         .save()
@@ -998,3 +1010,43 @@ def resolve_alternative_service_carrier(
     ]
 
     return skip_rate_fetching, resolved_carrier_name, synthetic_rates
+
+
+def resolve_shipping_method(
+    validated_data: dict,
+    context: Context,
+) -> typing.Tuple[bool, dict]:
+    """
+    Resolve and apply shipping method configuration if specified.
+
+    When options.shipping_method is provided, this function:
+    1. Validates the SHIPPING_METHODS feature is enabled
+    2. Loads and applies the shipping method configuration
+
+    Returns:
+        Tuple of (apply_shipping_method_flag, modified_validated_data)
+    """
+    if not getattr(conf.settings, "SHIPPING_METHODS", False):
+        options = validated_data.get("options") or {}
+        shipping_method_id = options.get("shipping_method")
+
+        if shipping_method_id is not None:
+            raise exceptions.APIException(
+                "Shipping methods feature is not enabled.",
+                code="feature_disabled",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return False, validated_data
+
+    options = validated_data.get("options") or {}
+    shipping_method_id = options.get("shipping_method")
+
+    if shipping_method_id is None:
+        return False, validated_data
+
+    modified_data = utils.load_and_apply_shipping_method(
+        validated_data, shipping_method_id, context
+    )
+
+    return True, modified_data

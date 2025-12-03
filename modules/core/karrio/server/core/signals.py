@@ -9,47 +9,43 @@ from karrio.server.core.logging import logger
 
 def register_signals():
     config_updated.connect(constance_updated)
-    # Defer config initialization until after Django is fully loaded
     request_started.connect(initialize_settings)
 
     logger.info("Signal registration complete", module="karrio.core")
 
 
-def initialize_settings(sender=None, **kwargs):
-    # Only run once
-    if not getattr(initialize_settings, "has_run", False):
-        try:
-            update_settings(config)
-            initialize_settings.has_run = True
-        except Exception as e:
-            logger.error("Failed to initialize settings", error=str(e))
+def initialize_settings(_sender=None, **_kwargs):
+    """Initialize Django settings from constance on first request."""
+    if getattr(initialize_settings, "has_run", False):
+        return
+
+    try:
+        update_settings(config)
+        initialize_settings.has_run = True
+    except Exception as e:
+        logger.error("Failed to initialize settings", error=str(e))
 
 
 @receiver(config_updated)
-def constance_updated(sender, key, old_value, new_value, **kwargs):
+def constance_updated(sender, **_kwargs):
     update_settings(sender)
 
 
 def update_settings(current):
-    CONSTANCE_CONFIG_KEYS = [
-        key for key in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, key)
-    ]
+    """Sync constance values to Django settings."""
+    keys = [k for k in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, k)]
 
-    for key in CONSTANCE_CONFIG_KEYS:
+    for key in keys:
         try:
             setattr(settings, key, getattr(current, key))
-        except Exception as e:
-            logger.error("Failed to update setting", setting_key=key, error=str(e))
+        except Exception:
+            pass  # Ignore errors during test/initialization when constance table may not exist
 
-    # Check EMAIL_ENABLED after all settings are updated
+    # Update EMAIL_ENABLED based on email config
     try:
         settings.EMAIL_ENABLED = all(
-            cfg is not None and cfg != ""
-            for cfg in [
-                current.EMAIL_HOST,
-                current.EMAIL_HOST_USER,
-            ]
+            cfg not in (None, "")
+            for cfg in [current.EMAIL_HOST, current.EMAIL_HOST_USER]
         )
-    except Exception as e:
-        logger.error("Failed to set EMAIL_ENABLED", error=str(e))
+    except Exception:
         settings.EMAIL_ENABLED = False

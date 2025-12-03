@@ -868,7 +868,6 @@ class CreateCarrierConnectionMutation(utils.BaseMutation):
     @staticmethod
     @utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["write_carriers"])
     def mutate(info: Info, **input) -> "CreateCarrierConnectionMutation":
         data = input.copy()
 
@@ -893,7 +892,6 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
     @staticmethod
     @utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["write_carriers"])
     def mutate(info: Info, **input) -> "UpdateCarrierConnectionMutation":
         data = input.copy()
         id = data.get("id")

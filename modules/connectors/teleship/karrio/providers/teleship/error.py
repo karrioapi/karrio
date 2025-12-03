@@ -30,6 +30,7 @@ def parse_error_response(
                 carrier_name=settings.carrier_name,
                 code=str(error.get("code", "")),
                 message=error.get("message", ""),
+                level=error.get("level"),
                 details=lib.to_dict(
                     {
                         **kwargs,

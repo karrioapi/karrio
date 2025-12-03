@@ -102,6 +102,7 @@ ParsedRateResponse = [
             "carrier_name": "fedex",
             "code": "SHIPMENT.CHARGES.NOTE",
             "details": {},
+            "level": "info",
             "message": "Shipment level charges have been added to first package.",
         }
     ],
@@ -246,6 +247,7 @@ IntlParsedRateResponse = [
             "carrier_name": "fedex",
             "code": "MONEYBACKGUARANTEE.NOT.ELIGIBLE",
             "details": {},
+            "level": "info",
             "message": "We are unable to process this request. Please try again later or contact FedEx Customer Service.",
         },
         {
@@ -253,6 +255,7 @@ IntlParsedRateResponse = [
             "carrier_name": "fedex",
             "code": "SHIPMENT.CHARGES.NOTE",
             "details": {},
+            "level": "info",
             "message": "Shipment level charges have been added to first package.",
         },
     ],

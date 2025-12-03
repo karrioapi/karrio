@@ -1,3 +1,25 @@
+# Karrio 2025.5.3
+
+## Changes
+
+### Feat
+
+- feat: make shipment cancellation idempotent
+- feat: Implement POST requests for shipping documents downloads
+- feat: map error/message levels in carrier integrations and karrio server
+- feat: add support for shipping method purchase on /v1/shipments for EE edition
+
+### Fix
+
+- fix: regression on constance signal
+- fix: constance N+1 issue
+
+### Chore
+
+- chore: apply sentry setup fix + permissions unstable migrations
+
+---
+
 # Karrio 2025.5.2
 
 ## Changes

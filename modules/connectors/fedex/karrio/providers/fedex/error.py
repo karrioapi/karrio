@@ -55,6 +55,7 @@ def parse_error_response(
             carrier_id=settings.carrier_id,
             code=error.get("code"),
             message=error.get("message"),
+            level=_get_level(error.get("alertType")),
             details=lib.to_dict(
                 {
                     **details,
@@ -64,3 +65,21 @@ def parse_error_response(
         )
         for error in errors
     ]
+
+
+def _get_level(alert_type: typing.Optional[str]) -> typing.Optional[str]:
+    """Map FedEx alertType to standardized level.
+
+    For actual errors (no alertType), defaults to "error".
+    For alerts with alertType, maps: NOTE -> info, WARNING -> warning, ERROR -> error.
+    """
+    if alert_type is None:
+        return "error"  # Default to error for actual errors without alertType
+    alert_type_lower = alert_type.lower()
+    if alert_type_lower == "note":
+        return "info"
+    elif alert_type_lower == "warning":
+        return "warning"
+    elif alert_type_lower == "error":
+        return "error"
+    return alert_type_lower

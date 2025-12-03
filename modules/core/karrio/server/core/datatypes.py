@@ -391,4 +391,5 @@ class InsuranceResponse:
 class Error:
     code: str = None
     message: str = None
+    level: str = None
     details: typing.Dict = None
