@@ -4,6 +4,7 @@
 source "bin/activate-env" >/dev/null 2>&1
 
 echo 'run server tests...'
+karrio test --failfast karrio.server.core.tests || exit 1
 karrio test --failfast karrio.server.providers.tests || exit 1
 karrio test --failfast karrio.server.proxy.tests || exit 1
 karrio test --failfast karrio.server.pricing.tests || exit 1

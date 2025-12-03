@@ -129,6 +129,7 @@ class APIError(serializers.Serializer):
         required=False, help_text="The error or warning message"
     )
     code = serializers.CharField(required=False, help_text="The message code")
+    level = serializers.CharField(required=False, help_text="The message level")
     details = serializers.DictField(required=False, help_text="any additional details")
 
 

@@ -16,22 +16,71 @@ class ValidationError(exceptions.ValidationError, sdk.ValidationError):
     pass
 
 
+# Default error levels based on HTTP status codes
+# These can be overridden by setting the `level` attribute on exceptions
+ERROR_LEVEL_DEFAULTS = {
+    # 4xx Client Errors
+    400: "error",      # Bad Request
+    401: "error",      # Unauthorized
+    403: "error",      # Forbidden
+    404: "warning",    # Not Found - often informational
+    405: "error",      # Method Not Allowed
+    409: "error",      # Conflict
+    422: "error",      # Unprocessable Entity
+    429: "warning",    # Too Many Requests - rate limiting
+    # 5xx Server Errors
+    500: "error",      # Internal Server Error
+    502: "error",      # Bad Gateway
+    503: "warning",    # Service Unavailable - temporary
+    504: "error",      # Gateway Timeout
+}
+
+
+def get_default_level(status_code: int, exc: typing.Optional[Exception] = None) -> str:
+    """Get the default error level based on status code.
+
+    Priority:
+    1. Exception's explicit `level` attribute (if set)
+    2. Status code mapping from ERROR_LEVEL_DEFAULTS
+    3. Default to "error" for 4xx/5xx, "info" for others
+    """
+    # Check if exception has an explicit level set
+    if exc is not None and hasattr(exc, "level") and exc.level is not None:
+        return exc.level
+
+    # Use status code mapping
+    if status_code in ERROR_LEVEL_DEFAULTS:
+        return ERROR_LEVEL_DEFAULTS[status_code]
+
+    # Default based on status code range
+    if 400 <= status_code < 500:
+        return "error"
+    elif status_code >= 500:
+        return "error"
+
+    return "info"
+
+
 class APIException(exceptions.APIException):
     default_status_code = status.HTTP_400_BAD_REQUEST
     default_detail = _("Invalid input.")
     default_code = "failure"
+    default_level = None  # None means use status code default
 
-    def __init__(self, detail=None, code=None, status_code=None):
+    def __init__(self, detail=None, code=None, status_code=None, level=None):
         if detail is None:
             detail = self.default_detail
         if code is None:
             code = self.default_code
         if status_code is None:
             status_code = self.default_status_code
+        if level is None:
+            level = self.default_level
 
         self.status_code = status_code
         self.code = code
         self.detail = detail
+        self.level = level
 
 
 class IndexedAPIException(APIException):
@@ -58,13 +107,14 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
     detail = getattr(exc, "detail", None)
     messages = message_handler(exc)
-    status_code = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
     code = get_code(exc)
 
     if isinstance(exc, exceptions.ValidationError) or isinstance(
         exc, sdk.ValidationError
     ):
-        formatted_errors = _format_validation_errors(detail) if detail else None
+        response_status = status.HTTP_400_BAD_REQUEST
+        level = get_default_level(response_status, exc)
+        formatted_errors = _format_validation_errors(detail, level=level) if detail else None
         return Response(
             messages
             or dict(
@@ -74,16 +124,19 @@ def custom_exception_handler(exc, context):
                         Error(
                             code=code or "validation",
                             message=detail if isinstance(detail, str) else None,
+                            level=level,
                             details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
                 )
             ),
-            status=status.HTTP_400_BAD_REQUEST,
+            status=response_status,
             headers=getattr(response, "headers", None),
         )
 
     if isinstance(exc, ObjectDoesNotExist):
+        response_status = status.HTTP_404_NOT_FOUND
+        level = get_default_level(response_status, exc)
         resource_name = _get_resource_name(exc)
         message = f"{resource_name} not found" if resource_name else (
             detail if isinstance(detail, str) else "Resource not found"
@@ -95,25 +148,30 @@ def custom_exception_handler(exc, context):
                         Error(
                             code=code or "not_found",
                             message=message,
+                            level=level,
                             details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
                 )
             ),
-            status=status.HTTP_404_NOT_FOUND,
+            status=response_status,
             headers=getattr(response, "headers", None),
         )
 
     if isinstance(exc, APIExceptions):
-        errors = error_handler(exc)
+        response_status = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        level = get_default_level(response_status, exc)
+        errors = error_handler(exc, level=level)
         if errors is not None:
             return Response(
                 lib.to_dict(errors),
-                status=status_code,
+                status=response_status,
                 headers=getattr(response, "headers", None),
             )
 
     if isinstance(exc, APIException) or isinstance(exc, exceptions.APIException):
+        response_status = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        level = get_default_level(response_status, exc)
         return Response(
             messages
             or dict(
@@ -122,20 +180,23 @@ def custom_exception_handler(exc, context):
                         Error(
                             code=code,
                             message=detail if isinstance(detail, str) else None,
+                            level=level,
                             details=(detail if not isinstance(detail, str) else None),
                         )
                     ]
                 )
             ),
-            status=status_code,
+            status=response_status,
             headers=getattr(response, "headers", None),
         )
 
     elif isinstance(exc, Exception):
+        response_status = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
+        level = get_default_level(response_status, exc)
         message, *_ = list(exc.args)
         return Response(
-            dict(errors=lib.to_dict([Error(code=code, message=message)])),
-            status=status_code,
+            dict(errors=lib.to_dict([Error(code=code, message=message, level=level)])),
+            status=response_status,
             headers=getattr(response, "headers", None),
         )
 
@@ -155,6 +216,7 @@ def message_handler(exc) -> typing.Optional[dict]:
                     dict(
                         code=msg.code,
                         message=msg.message,
+                        level=msg.level,
                         details=msg.details,
                         carrier_id=msg.carrier_id,
                         carrier_name=msg.carrier_name,
@@ -167,7 +229,7 @@ def message_handler(exc) -> typing.Optional[dict]:
     return None
 
 
-def error_handler(exc) -> typing.Optional[dict]:
+def error_handler(exc, level: str = "error") -> typing.Optional[dict]:
     if (
         hasattr(exc, "detail")
         and isinstance(exc.detail, list)
@@ -181,6 +243,8 @@ def error_handler(exc) -> typing.Optional[dict]:
             detail = getattr(error, "detail", None)
             index = getattr(error, "index", None)
             code = get_code(error) or "error"
+            # Allow individual errors to override the level
+            error_level = getattr(error, "level", None) or level
             errors.append(
                 dict(
                     index=index,
@@ -190,6 +254,7 @@ def error_handler(exc) -> typing.Optional[dict]:
                         if detail
                         else message
                     ),
+                    level=error_level,
                     details=(detail if not isinstance(detail, str) else None),
                 )
             )
@@ -342,13 +407,14 @@ def _get_resource_name(exc: ObjectDoesNotExist) -> typing.Optional[str]:
 def _format_validation_errors(
     detail: typing.Any,
     prefix: str = "",
+    level: str = "error",
 ) -> typing.Optional[typing.List[Error]]:
     """Format validation errors with items[index].field pattern for list errors."""
     if detail is None:
         return None
 
     if isinstance(detail, str):
-        return [Error(code="validation", message=detail)]
+        return [Error(code="validation", message=detail, level=level)]
 
     def _build_path(base: str, key: str) -> str:
         return f"{base}.{key}" if base else key
@@ -363,7 +429,7 @@ def _format_validation_errors(
 
         if isinstance(data, str):
             message = f"{path}: {data}" if path else data
-            return [Error(code="validation", message=message)]
+            return [Error(code="validation", message=message, level=level)]
 
         if isinstance(data, dict):
             return [
@@ -392,13 +458,13 @@ def _format_validation_errors(
                     )
                 ]
             return [
-                Error(code="validation", message=f"{path}: {item}" if path else str(item))
+                Error(code="validation", message=f"{path}: {item}" if path else str(item), level=level)
                 for item in data
                 if item
             ]
 
         message = f"{path}: {data}" if path else str(data)
-        return [Error(code="validation", message=message)]
+        return [Error(code="validation", message=message, level=level)]
 
     errors = _flatten_errors(detail, prefix)
     return errors if errors else None

@@ -6,6 +6,7 @@ All URIs are relative to *http://localhost*
 |------------- | ------------- | -------------|
 |[**cancel**](#cancel) | **POST** /v1/shipments/{id}/cancel | Cancel a shipment|
 |[**create**](#create) | **POST** /v1/shipments | Create a shipment|
+|[**document**](#document) | **POST** /v1/shipments/{id}/documents/{doc} | Retrieve a shipment document|
 |[**list**](#list) | **GET** /v1/shipments | List all shipments|
 |[**purchase**](#purchase) | **POST** /v1/shipments/{id}/purchase | Buy a shipment label|
 |[**rates**](#rates) | **POST** /v1/shipments/{id}/rates | Fetch new shipment rates|
@@ -60,6 +61,7 @@ const { status, data } = await apiInstance.cancel(
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** |  |  -  |
+|**202** |  |  -  |
 |**404** |  |  -  |
 |**400** |  |  -  |
 |**409** |  |  -  |
@@ -119,6 +121,62 @@ const { status, data } = await apiInstance.create(
 |**201** |  |  -  |
 |**400** |  |  -  |
 |**424** |  |  -  |
+|**500** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **document**
+> ShippingDocument document()
+
+Retrieve a shipment document (label or invoice) as base64 encoded content.
+
+### Example
+
+```typescript
+import {
+    ShipmentsApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new ShipmentsApi(configuration);
+
+let doc: string; // (default to undefined)
+let id: string; // (default to undefined)
+
+const { status, data } = await apiInstance.document(
+    doc,
+    id
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **doc** | [**string**] |  | defaults to undefined|
+| **id** | [**string**] |  | defaults to undefined|
+
+
+### Return type
+
+**ShippingDocument**
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [JWT](../README.md#JWT), [TokenBasic](../README.md#TokenBasic), [Token](../README.md#Token)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+|**404** |  |  -  |
 |**500** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

@@ -1919,6 +1919,44 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: retrieveManifest
+  /v1/manifests/{id}/document:
+    post:
+      operationId: $$$$&&document
+      description: Retrieve a manifest document as base64 encoded content.
+      summary: Retrieve a manifest document
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Manifests
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingDocument'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: retrieveManifestDocument
   /v1/orders:
     get:
       operationId: '&&&&list'
@@ -3605,6 +3643,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Shipment'
           description: ''
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
         '404':
           content:
             application/json:
@@ -3636,6 +3680,50 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: cancelShipment
+  /v1/shipments/{id}/documents/{doc}:
+    post:
+      operationId: $$$$$document
+      description: Retrieve a shipment document (label or invoice) as base64 encoded
+        content.
+      summary: Retrieve a shipment document
+      parameters:
+      - in: path
+        name: doc
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Shipments
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingDocument'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: retrieveShipmentDocument
   /v1/shipments/{id}/purchase:
     post:
       operationId: $$$$$purchase
@@ -4356,6 +4444,9 @@ components:
         code:
           type: string
           description: The message code
+        level:
+          type: string
+          description: The message level
         details:
           type: object
           additionalProperties: {}
@@ -7856,6 +7947,9 @@ components:
         code:
           type: string
           description: The message code
+        level:
+          type: string
+          description: The message level
         details:
           type: object
           additionalProperties: {}
@@ -10193,6 +10287,27 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
+    ShippingDocument:
+      type: object
+      description: Serializer for shipping document download response.
+      properties:
+        category:
+          type: string
+          description: The document category (e.g., 'label', 'invoice', 'manifest')
+        format:
+          type: string
+          description: The document format (e.g., 'PDF', 'ZPL')
+        base64:
+          type: string
+          nullable: true
+          description: The document content encoded in base64
+        url:
+          type: string
+          nullable: true
+          description: The URL to download the document via GET request
+      required:
+      - category
+      - format
     ShippingRequest:
       type: object
       properties:

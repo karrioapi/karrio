@@ -156,6 +156,7 @@ ParsedPickupResponse = [
             "carrier_name": "fedex",
             "code": "SHIP.RECIPIENT.POSTALCITY.MISMATCH",
             "details": {},
+            "level": "info",
             "message": "Recipient Postal-City Mismatch.",
         }
     ],
@@ -174,6 +175,7 @@ ParsedCancelPickupResponse = [
             "carrier_name": "fedex",
             "code": "SHIP.RECIPIENT.POSTALCITY.MISMATCH",
             "details": {},
+            "level": "info",
             "message": "Recipient Postal-City Mismatch.",
         }
     ],

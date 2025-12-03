@@ -78,6 +78,7 @@ ParsedAuthError = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "250003",
+            "level": "error",
             "message": "Invalid Access License number",
         }
     ],
@@ -118,6 +119,7 @@ ParsedTrackingResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "string",
+            "level": "warning",
             "message": "string",
         }
     ],
@@ -130,6 +132,7 @@ ParsedTrackingNumberNotFound = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "TW0001",
+            "level": "warning",
             "message": "Tracking Information Not Found",
         }
     ],
@@ -142,6 +145,7 @@ ParsedInvalidTrackingNumberResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "TV1002",
+            "level": "error",
             "message": "Invalid inquiry number",
         }
     ],

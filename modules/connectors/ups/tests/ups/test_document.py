@@ -95,6 +95,7 @@ ParsedDocumentUploadErrorResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "9590018",
+            "level": "error",
             "message": "Your UPS Account number is not authorized for user generated forms functionality.",
         }
     ],

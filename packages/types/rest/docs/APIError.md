@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **message** | **string** | The error or warning message | [optional] [default to undefined]
 **code** | **string** | The message code | [optional] [default to undefined]
+**level** | **string** | The message level | [optional] [default to undefined]
 **details** | **{ [key: string]: any; }** | any additional details | [optional] [default to undefined]
 
 ## Example
@@ -17,6 +18,7 @@ import { APIError } from './api';
 const instance: APIError = {
     message,
     code,
+    level,
     details,
 };
 ```

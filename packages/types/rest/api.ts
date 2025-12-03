@@ -33,6 +33,10 @@ export interface APIError {
      */
     'code'?: string;
     /**
+     * The message level
+     */
+    'level'?: string;
+    /**
      * any additional details
      */
     'details'?: { [key: string]: any; };
@@ -3463,6 +3467,10 @@ export interface Message {
      */
     'code'?: string;
     /**
+     * The message level
+     */
+    'level'?: string;
+    /**
      * any additional details
      */
     'details'?: { [key: string]: any; };
@@ -5440,6 +5448,27 @@ export const ShipmentUpdateDataLabelTypeEnum = {
 
 export type ShipmentUpdateDataLabelTypeEnum = typeof ShipmentUpdateDataLabelTypeEnum[keyof typeof ShipmentUpdateDataLabelTypeEnum];
 
+/**
+ * Serializer for shipping document download response.
+ */
+export interface ShippingDocument {
+    /**
+     * The document category (e.g., \'label\', \'invoice\', \'manifest\')
+     */
+    'category': string;
+    /**
+     * The document format (e.g., \'PDF\', \'ZPL\')
+     */
+    'format': string;
+    /**
+     * The document content encoded in base64
+     */
+    'base64'?: string | null;
+    /**
+     * The URL to download the document via GET request
+     */
+    'url'?: string | null;
+}
 export interface ShippingRequest {
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
@@ -9791,6 +9820,54 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
+         * Retrieve a manifest document as base64 encoded content.
+         * @summary Retrieve a manifest document
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        document: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('document', 'id', id)
+            const localVarPath = `/v1/manifests/{id}/document`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Retrieve all manifests.
          * @summary List manifests
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
@@ -9924,6 +10001,19 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Retrieve a manifest document as base64 encoded content.
+         * @summary Retrieve a manifest document
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async document(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShippingDocument>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.document(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ManifestsApi.document']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Retrieve all manifests.
          * @summary List manifests
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;hay_post&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
@@ -9971,6 +10061,16 @@ export const ManifestsApiFactory = function (configuration?: Configuration, base
             return localVarFp.create(requestParameters.manifestData, options).then((request) => request(axios, basePath));
         },
         /**
+         * Retrieve a manifest document as base64 encoded content.
+         * @summary Retrieve a manifest document
+         * @param {ManifestsApiDocumentRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        document(requestParameters: ManifestsApiDocumentRequest, options?: AxiosRequestConfig): AxiosPromise<ShippingDocument> {
+            return localVarFp.document(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Retrieve all manifests.
          * @summary List manifests
          * @param {ManifestsApiListRequest} requestParameters Request parameters.
@@ -9998,6 +10098,13 @@ export const ManifestsApiFactory = function (configuration?: Configuration, base
  */
 export interface ManifestsApiCreateRequest {
     readonly manifestData: ManifestData
+}
+
+/**
+ * Request parameters for document operation in ManifestsApi.
+ */
+export interface ManifestsApiDocumentRequest {
+    readonly id: string
 }
 
 /**
@@ -10034,6 +10141,17 @@ export class ManifestsApi extends BaseAPI {
      */
     public create(requestParameters: ManifestsApiCreateRequest, options?: AxiosRequestConfig) {
         return ManifestsApiFp(this.configuration).create(requestParameters.manifestData, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve a manifest document as base64 encoded content.
+     * @summary Retrieve a manifest document
+     * @param {ManifestsApiDocumentRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public document(requestParameters: ManifestsApiDocumentRequest, options?: AxiosRequestConfig) {
+        return ManifestsApiFp(this.configuration).document(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -12827,6 +12945,58 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
+         * Retrieve a shipment document (label or invoice) as base64 encoded content.
+         * @summary Retrieve a shipment document
+         * @param {string} doc 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        document: async (doc: string, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'doc' is not null or undefined
+            assertParamExists('document', 'doc', doc)
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('document', 'id', id)
+            const localVarPath = `/v1/shipments/{id}/documents/{doc}`
+                .replace(`{${"doc"}}`, encodeURIComponent(String(doc)))
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
@@ -13204,6 +13374,20 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Retrieve a shipment document (label or invoice) as base64 encoded content.
+         * @summary Retrieve a shipment document
+         * @param {string} doc 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async document(doc: string, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShippingDocument>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.document(doc, id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ShipmentsApi.document']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
@@ -13318,6 +13502,16 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, base
             return localVarFp.create(requestParameters.shipmentData, options).then((request) => request(axios, basePath));
         },
         /**
+         * Retrieve a shipment document (label or invoice) as base64 encoded content.
+         * @summary Retrieve a shipment document
+         * @param {ShipmentsApiDocumentRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        document(requestParameters: ShipmentsApiDocumentRequest, options?: AxiosRequestConfig): AxiosPromise<ShippingDocument> {
+            return localVarFp.document(requestParameters.doc, requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {ShipmentsApiListRequest} requestParameters Request parameters.
@@ -13382,6 +13576,15 @@ export interface ShipmentsApiCancelRequest {
  */
 export interface ShipmentsApiCreateRequest {
     readonly shipmentData: ShipmentData
+}
+
+/**
+ * Request parameters for document operation in ShipmentsApi.
+ */
+export interface ShipmentsApiDocumentRequest {
+    readonly doc: string
+
+    readonly id: string
 }
 
 /**
@@ -13489,6 +13692,17 @@ export class ShipmentsApi extends BaseAPI {
      */
     public create(requestParameters: ShipmentsApiCreateRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).create(requestParameters.shipmentData, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve a shipment document (label or invoice) as base64 encoded content.
+     * @summary Retrieve a shipment document
+     * @param {ShipmentsApiDocumentRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public document(requestParameters: ShipmentsApiDocumentRequest, options?: AxiosRequestConfig) {
+        return ShipmentsApiFp(this.configuration).document(requestParameters.doc, requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

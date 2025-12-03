@@ -16,7 +16,7 @@ class TestNotFoundErrors(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertDictEqual(
             response_data,
-            {"errors": [{"code": "not_found", "message": "Address not found"}]},
+            {"errors": [{"code": "not_found", "message": "Address not found", "level": "warning"}]},
         )
 
     def test_parcel_not_found_returns_resource_name(self):
@@ -30,7 +30,7 @@ class TestNotFoundErrors(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertDictEqual(
             response_data,
-            {"errors": [{"code": "not_found", "message": "Parcel not found"}]},
+            {"errors": [{"code": "not_found", "message": "Parcel not found", "level": "warning"}]},
         )
 
     def test_shipment_not_found_returns_resource_name(self):
@@ -44,7 +44,7 @@ class TestNotFoundErrors(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertDictEqual(
             response_data,
-            {"errors": [{"code": "not_found", "message": "Shipment not found"}]},
+            {"errors": [{"code": "not_found", "message": "Shipment not found", "level": "warning"}]},
         )
 
     def test_customs_not_found_returns_resource_name(self):
@@ -58,7 +58,7 @@ class TestNotFoundErrors(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertDictEqual(
             response_data,
-            {"errors": [{"code": "not_found", "message": "Customs not found"}]},
+            {"errors": [{"code": "not_found", "message": "Customs not found", "level": "warning"}]},
         )
 
 
@@ -76,6 +76,9 @@ class TestValidationErrors(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("errors", response_data)
         self.assertTrue(len(response_data["errors"]) > 0)
+        # Validation errors should have level="error"
+        for error in response_data["errors"]:
+            self.assertEqual(error.get("level"), "error")
 
     def test_address_validation_error_format(self):
         url = reverse("karrio.server.manager:address-list")
@@ -86,3 +89,6 @@ class TestValidationErrors(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("errors", response_data)
         self.assertTrue(len(response_data["errors"]) > 0)
+        # Validation errors should have level="error"
+        for error in response_data["errors"]:
+            self.assertEqual(error.get("level"), "error")

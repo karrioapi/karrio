@@ -266,6 +266,7 @@ ParsedShipmentResponse = [
             "carrier_name": "fedex",
             "code": "SHIP.RECIPIENT.POSTALCITY.MISMATCH",
             "details": {},
+            "level": "info",
             "message": "Recipient Postal-City Mismatch.",
         }
     ],
@@ -301,6 +302,7 @@ ParsedCancelShipmentResponse = [
             "carrier_name": "fedex",
             "code": "SHIP.RECIPIENT.POSTALCITY.MISMATCH",
             "details": {},
+            "level": "info",
             "message": "Recipient Postal-City Mismatch.",
         }
     ],

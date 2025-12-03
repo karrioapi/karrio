@@ -315,9 +315,10 @@ class Message:
 
     carrier_name: str
     carrier_id: str
+
     message: Union[str, Any] = None
-    code: str = None
     level: str = None
+    code: str = None
     details: Dict = None
 
 

@@ -119,6 +119,7 @@ ParsedTrackingResponse = [
             "carrier_name": "fedex",
             "code": "TRACKING.TRACKINGNUMBER.EMPTY",
             "details": {"tracking_number": "128667043726"},
+            "level": "error",
             "message": "Please provide tracking number.",
         },
         {
@@ -126,6 +127,7 @@ ParsedTrackingResponse = [
             "carrier_name": "fedex",
             "code": "TRACKING.TRACKINGNUMBER.NOTFOUND",
             "details": {"tracking_number": "39936862321"},
+            "level": "error",
             "message": "Tracking number cannot be found. Please correct the tracking "
             "number and try again.",
         },
@@ -140,6 +142,7 @@ ParsedErrorResponse = [
             "carrier_name": "fedex",
             "code": "TRACKING.TRACKINGNUMBER.EMPTY",
             "details": {},
+            "level": "error",
             "message": "Please provide tracking number.",
         }
     ],
