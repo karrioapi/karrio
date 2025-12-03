@@ -87,6 +87,9 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
         }
     }
 
+    # Cache constance values to avoid N+1 queries on each config access
+    CONSTANCE_DATABASE_CACHE_BACKEND = "default"
+
     # Django cache health check uses the cache backend directly
     # Only add Redis health check if REDIS_URL environment variable is set
     # When using granular params, the cache check is sufficient
