@@ -62,6 +62,9 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-org-id",
     "x-tenant-id",
     "x-request-id",
+    # Sentry distributed tracing headers
+    "sentry-trace",
+    "baggage",
 ]
 
 # HTTPS configuration
