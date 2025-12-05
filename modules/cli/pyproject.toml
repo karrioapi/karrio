@@ -27,6 +27,9 @@ dependencies = [
     "generateDS",
     "tabulate",
     "Jinja2",
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
 ]
 
 [project.optional-dependencies]
@@ -48,7 +51,7 @@ where = ["."]
 include = ["karrio_cli", "karrio_cli.*"]
 
 [tool.setuptools.package-data]
-"karrio_cli" = ["templates/**/*"]
+"karrio_cli" = ["templates/**/*", "studio_ui/**/*"]
 "*" = ["*.py", "*.txt", "*.md", "*.json"]
 
 [project.urls]

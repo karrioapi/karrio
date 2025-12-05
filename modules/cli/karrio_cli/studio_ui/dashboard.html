@@ -1,0 +1,48 @@
+<div data-title="Dashboard" class="space-y-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="glass rounded-3xl p-6 shadow-xl shadow-black/40 border border-slate-800">
+            <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Total Extensions</p>
+            <p class="text-5xl font-semibold text-white mt-4">{{ extensions|length }}</p>
+        </div>
+        <div class="glass rounded-3xl p-6 shadow-xl shadow-blue-900/40 border border-blue-900/40">
+            <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Connectors</p>
+            <p class="text-5xl font-semibold text-blue-400 mt-4">{{ connectors_count }}</p>
+        </div>
+        <div class="glass rounded-3xl p-6 shadow-xl shadow-purple-900/50 border border-purple-900/40">
+            <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Community Plugins</p>
+            <p class="text-5xl font-semibold text-purple-400 mt-4">{{ plugins_count }}</p>
+        </div>
+    </div>
+
+    <div class="glass rounded-3xl shadow-xl shadow-black/40">
+        <div class="px-8 py-5 border-b border-slate-800 flex items-center justify-between">
+            <div>
+                <p class="text-sm uppercase tracking-[0.4em] text-slate-500">Recent Extensions</p>
+                <p class="text-xs text-slate-500 mt-1">Alphabetical snapshot</p>
+            </div>
+        </div>
+        <div class="divide-y divide-slate-800/80 overflow-x-auto">
+            {% for ext in extensions[:10] %}
+            <div class="px-8 py-5 flex items-center justify-between hover:bg-slate-900/60 transition cursor-pointer"
+                 hx-get="/partials/extension/{{ ext.id }}" hx-target="#main-content">
+                <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-3xl bg-slate-900 flex items-center justify-center text-lg font-semibold text-white uppercase">
+                        {{ ext.id[:2] }}
+                    </div>
+                    <div>
+                        <p class="font-semibold text-white">{{ ext.name }}</p>
+                        <p class="text-xs text-slate-500">{{ ext.path }}</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    {% for feature in ext.features[:3] %}
+                    <span class="px-3 py-1 rounded-full bg-slate-900 text-blue-300 text-xs font-medium capitalize border border-blue-500/30">{{ feature }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="px-6 py-12 text-center text-slate-500 text-sm">No extensions yet. Use "New Extension" to get started.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

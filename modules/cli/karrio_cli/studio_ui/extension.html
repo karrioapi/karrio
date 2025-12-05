@@ -1,0 +1,265 @@
+<div data-title="{{ extension.name }}" class="space-y-8">
+    <!-- Overview -->
+    <div class="glass rounded-3xl p-8 shadow-2xl shadow-black/40 border border-slate-800 flex flex-col xl:flex-row gap-8">
+        <div class="flex-1 space-y-4">
+            <div class="flex items-center gap-4">
+                <div class="h-16 w-16 rounded-3xl bg-slate-900 flex items-center justify-center text-2xl font-semibold text-white uppercase">
+                    {{ extension.id[:2] }}
+                </div>
+                <div>
+                    <p class="text-xs uppercase tracking-[0.4em] text-slate-500">{{ extension.type }}</p>
+                    <h2 class="text-4xl font-semibold">{{ extension.name }}</h2>
+                </div>
+            </div>
+            <p class="text-slate-400 text-sm">{{ extension.path }}</p>
+            <div class="flex flex-wrap gap-2">
+                {% for feature in extension.features %}
+                <span class="px-3 py-1 rounded-full bg-slate-900 text-blue-300 text-xs font-semibold capitalize border border-blue-500/30">{{ feature }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-4 items-center">
+            <button
+                class="w-full sm:w-auto px-6 py-3 rounded-2xl border border-slate-700 text-slate-200 font-semibold flex items-center gap-3 justify-center hover:border-blue-500"
+                hx-post="/api/extensions/{{ extension.id }}/generate"
+                hx-target="#action-log"
+                hx-swap="outerHTML"
+                hx-indicator="#action-loading">
+                <span class="text-lg">⟳</span>
+                Regenerate Schemas
+            </button>
+            <button
+                class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-blue-500 text-white font-semibold flex items-center gap-3 justify-center shadow-lg shadow-blue-600/30"
+                hx-post="/api/extensions/{{ extension.id }}/tests"
+                hx-target="#action-log"
+                hx-swap="outerHTML"
+                hx-indicator="#action-loading">
+                <span class="text-lg">▶</span>
+                Run Tests
+            </button>
+        </div>
+    </div>
+
+    <!-- Focused Layout -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div class="xl:col-span-2 space-y-6">
+            <div class="glass rounded-3xl border border-emerald-500/20 shadow-xl shadow-black/40">
+                <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Activity Log</p>
+                        <p class="text-sm text-slate-400">Generation · Tests · Scripts · AI</p>
+                    </div>
+                    <div id="action-loading" class="htmx-indicator text-xs text-slate-500">Processing...</div>
+                </div>
+                <div id="action-log" class="p-6 text-sm text-slate-300 bg-slate-950 rounded-b-3xl border-t border-slate-900">
+                    Trigger an action to see live output.
+                </div>
+            </div>
+
+            <div class="glass rounded-3xl border border-slate-800 shadow-xl shadow-black/40">
+                <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Script Console</p>
+                        <p class="text-sm text-slate-400">Common integration commands</p>
+                    </div>
+                </div>
+                <div class="p-6 space-y-4">
+                    {% for script in scripts %}
+                    <form class="glass border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                          hx-post="/api/scripts"
+                          hx-target="#action-log"
+                          hx-swap="outerHTML"
+                          hx-indicator="#action-loading">
+                        <input type="hidden" name="extension_id" value="{{ extension.id }}">
+                        <input type="hidden" name="script_id" value="{{ script.id }}">
+                        <div>
+                            <p class="font-semibold text-white">{{ script.label }}</p>
+                            <p class="text-xs text-slate-500">{{ script.description }}</p>
+                        </div>
+                        <button type="submit" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-200 text-xs uppercase tracking-[0.3em] w-full sm:w-auto text-center">Run</button>
+                    </form>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="space-y-6">
+            <div class="glass rounded-3xl border border-slate-800 p-6 shadow-xl shadow-black/40">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Integration Progress</p>
+                            <p class="text-sm text-slate-400">{{ progress.passed }} / {{ progress.total }} criteria</p>
+                        </div>
+                        <div class="text-3xl font-semibold text-emerald-400">{{ progress.score }}%</div>
+                    </div>
+                    <div class="max-h-64 overflow-y-auto pr-2 space-y-3">
+                        {% for item in progress_items %}
+                        <div class="flex items-start gap-3">
+                            <span class="mt-1 h-2.5 w-2.5 rounded-full {{ 'bg-emerald-400' if item.status else 'bg-amber-400' }}"></span>
+                            <div>
+                                <p class="text-sm text-white">{{ item.label }}</p>
+                                <p class="text-xs text-slate-500">{{ item.detail }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="glass rounded-3xl border border-slate-800">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.4em] text-slate-500">API Schemas</p>
+                    <p class="text-[11px] text-slate-500">Source JSON/XSD</p>
+                </div>
+            </div>
+            <div class="max-h-80 overflow-y-auto divide-y divide-slate-900">
+                {% for schema in schemas %}
+                <div class="px-6 py-3 text-sm flex items-center justify-between">
+                    <span>{{ schema }}</span>
+                    <span class="text-xs text-slate-500">schemas/{{ schema }}</span>
+                </div>
+                {% else %}
+                <div class="px-6 py-10 text-center text-slate-500 text-sm">No schema files detected yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="glass rounded-3xl border border-slate-800 p-6">
+            <p class="text-xs uppercase tracking-[0.4em] text-slate-500 mb-3">Studio Guidance</p>
+            <ul class="text-sm text-slate-400 space-y-2">
+                <li>Capture carrier samples inside <code class="px-1 bg-slate-900 rounded">schemas/</code> before running generation.</li>
+                <li>Run <code class="px-1 bg-slate-900 rounded">./bin/run-generate-on {{ extension.path }}</code> after every schema change.</li>
+                <li>Keep provider logic inside <code class="px-1 bg-slate-900 rounded">karrio/providers/{{ extension.id }}</code>; never edit generated schemas.</li>
+                <li>Follow the carrier test template exactly from <code class="px-1 bg-slate-900 rounded">tests/{{ extension.id }}</code>.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="ai-sheet-container" class="fixed inset-0 z-50 pointer-events-none">
+    <div id="ai-sheet-backdrop" class="hidden absolute inset-0 bg-slate-950/40 backdrop-blur-sm pointer-events-auto"></div>
+    <div id="ai-sheet" class="pointer-events-auto fixed top-0 right-0 h-full w-full sm:w-[420px] translate-x-full transition-transform duration-300 ease-in-out glass border-l border-slate-800 shadow-2xl shadow-black/50 flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+            <div>
+                <p class="text-xs uppercase tracking-[0.4em] text-slate-500">AI Copilot</p>
+                <p class="text-sm text-slate-400">Prompt presets</p>
+            </div>
+            <button id="close-ai-sheet" class="px-3 py-1 rounded-xl border border-slate-700 text-xs uppercase tracking-[0.3em]">Close</button>
+        </div>
+        <div class="p-6 overflow-auto space-y-4 flex-1">
+                <div class="flex flex-col gap-2">
+                    <input id="prompt-filter" type="text" placeholder="Filter prompts..." class="w-full rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-2 text-sm">
+                    <div class="flex flex-wrap gap-2 text-xs text-slate-400">
+                        <span>AI tools available:</span>
+                        {% for tool in ai_tools %}
+                        <span class="px-2 py-1 rounded-xl border border-slate-700 text-slate-200">{{ tool.label }}{% if tool.preferred %} (default){% endif %}</span>
+                        {% else %}
+                        <span class="text-rose-400">None detected</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            <div id="prompt-list" class="space-y-3">
+                {% for prompt in ai_prompts %}
+                <div data-ai-card data-keywords="{{ prompt.label|lower }} {{ prompt.tags|lower }} {{ prompt.description|lower }}"
+                     class="border border-slate-800 rounded-2xl p-4 bg-slate-950/60 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <p class="font-semibold text-white">{{ prompt.label }}</p>
+                            <p class="text-xs text-slate-500">{{ prompt.description }}</p>
+                            <p class="text-[11px] text-slate-600 mt-1 uppercase tracking-[0.3em]">{{ prompt.tags }}</p>
+                        </div>
+                        <div class="flex w-full sm:w-auto gap-2 justify-end">
+                            <button type="button" data-copy-prompt="{{ prompt.body | e }}"
+                                    class="px-4 py-2 rounded-xl border border-slate-700 text-slate-200 text-xs uppercase tracking-[0.3em]">
+                                Copy
+                            </button>
+                            <form class="w-auto" hx-post="/api/ai/execute" hx-target="#action-log" hx-swap="outerHTML" hx-indicator="#action-loading">
+                                <input type="hidden" name="extension_id" value="{{ extension.id }}">
+                                <input type="hidden" name="prompt_id" value="{{ prompt.id }}">
+                                <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-blue-500 text-white text-xs uppercase tracking-[0.3em] text-center">Execute</button>
+                            </form>
+                        </div>
+                    </div>
+                    <textarea class="w-full bg-slate-900/60 border border-slate-800 rounded-2xl p-3 text-xs text-slate-300" readonly rows="4">{{ prompt.body }}</textarea>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function bindPromptInteractions() {
+        const filterInput = document.getElementById('prompt-filter');
+        const promptCards = () => document.querySelectorAll('[data-ai-card]');
+        if (filterInput) {
+            filterInput.oninput = function () {
+                const term = this.value.toLowerCase();
+                promptCards().forEach(card => {
+                    const keywords = card.dataset.keywords || '';
+                    card.classList.toggle('hidden', term && !keywords.includes(term));
+                });
+            };
+        }
+
+        document.querySelectorAll('[data-copy-prompt]').forEach(button => {
+            button.onclick = async () => {
+                const text = button.getAttribute('data-copy-prompt');
+                try {
+                    await navigator.clipboard.writeText(text);
+                    button.textContent = 'Copied';
+                    setTimeout(() => (button.textContent = 'Copy'), 2000);
+                } catch (err) {
+                    console.error('Copy failed', err);
+                    button.textContent = 'Failed';
+                    setTimeout(() => (button.textContent = 'Copy'), 2000);
+                }
+            };
+        });
+    }
+
+    function bindCopilotSheet() {
+        const aiSheetContainer = document.getElementById('ai-sheet-container');
+        const aiSheet = document.getElementById('ai-sheet');
+        const closeAiSheetBtn = document.getElementById('close-ai-sheet');
+        const aiSheetBackdrop = document.getElementById('ai-sheet-backdrop');
+        if (!aiSheetContainer || !aiSheet) return;
+
+        const openSheet = () => {
+            aiSheet.classList.remove('translate-x-full');
+            aiSheetBackdrop?.classList.remove('hidden');
+            aiSheetContainer.classList.remove('pointer-events-none');
+            aiSheetContainer.classList.add('pointer-events-auto');
+        };
+
+        const closeSheet = () => {
+            aiSheet.classList.add('translate-x-full');
+            aiSheetBackdrop?.classList.add('hidden');
+            aiSheetContainer.classList.add('pointer-events-none');
+            aiSheetContainer.classList.remove('pointer-events-auto');
+        };
+
+        if (window.__karrioOpenAiHandler) {
+            document.removeEventListener('studio:open-ai', window.__karrioOpenAiHandler);
+        }
+        window.__karrioOpenAiHandler = openSheet;
+        document.addEventListener('studio:open-ai', openSheet);
+
+        closeAiSheetBtn && (closeAiSheetBtn.onclick = closeSheet);
+        aiSheetBackdrop && (aiSheetBackdrop.onclick = closeSheet);
+    }
+
+    bindPromptInteractions();
+    bindCopilotSheet();
+
+    document.body.addEventListener('htmx:afterSwap', (event) => {
+        if (event.detail.target.id === 'main-content') {
+            bindPromptInteractions();
+            bindCopilotSheet();
+        }
+    });
+</script>
