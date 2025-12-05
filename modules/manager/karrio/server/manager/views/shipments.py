@@ -170,7 +170,7 @@ class ShipmentCancel(APIView):
         request=None,
         responses={
             200: Shipment(),
-            202: Shipment(),
+            304: Shipment(),
             404: ErrorResponse(),
             400: ErrorResponse(),
             409: ErrorResponse(),
