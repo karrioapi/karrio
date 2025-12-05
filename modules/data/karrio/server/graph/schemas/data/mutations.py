@@ -15,7 +15,6 @@ class CreateDataTemplateMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["DATA_IMPORT_EXPORT"])
     def mutate(
         info: Info, **input: inputs.CreateDataTemplateMutationInput
     ) -> "CreateDataTemplateMutation":
@@ -34,7 +33,6 @@ class UpdateDataTemplateMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["DATA_IMPORT_EXPORT"])
     def mutate(
         info: Info, **input: inputs.UpdateDataTemplateMutationInput
     ) -> "UpdateDataTemplateMutation":

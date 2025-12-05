@@ -8,6 +8,11 @@ class OrdersConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
 
     def ready(self):
+        from karrio.server.core import utils
         from karrio.server.orders import signals
 
-        signals.register_signals()
+        @utils.skip_on_commands()
+        def _init():
+            signals.register_signals()
+
+        _init()

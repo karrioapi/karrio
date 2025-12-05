@@ -1043,13 +1043,11 @@ class ManifestType:
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_shipments"])
     def resolve(info, id: str) -> typing.Optional["ManifestType"]:
         return manager.Manifest.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_shipments"])
     def resolve_list(
         info,
         filter: typing.Optional[inputs.ManifestFilter] = strawberry.UNSET,
@@ -1134,13 +1132,11 @@ class ShipmentType:
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_shipments"])
     def resolve(info, id: str) -> typing.Optional["ShipmentType"]:
         return manager.Shipment.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_shipments"])
     def resolve_list(
         info,
         filter: typing.Optional[inputs.ShipmentFilter] = strawberry.UNSET,
@@ -1352,7 +1348,6 @@ class CarrierConnectionType:
     @staticmethod
     @utils.utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def resolve_list_legacy(
         info,
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,

@@ -15,7 +15,6 @@ class CreateDocumentTemplateMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["DOCUMENTS_MANAGEMENT", "manage_data"])
     def mutate(
         info: Info, **input: inputs.CreateDocumentTemplateMutationInput
     ) -> "CreateDocumentTemplateMutation":
@@ -34,11 +33,12 @@ class UpdateDocumentTemplateMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["DOCUMENTS_MANAGEMENT", "manage_data"])
     def mutate(
         info: Info, **input: inputs.UpdateDocumentTemplateMutationInput
     ) -> "UpdateDocumentTemplateMutation":
-        instance = models.DocumentTemplate.access_by(info.context.request).get(id=input["id"])
+        instance = models.DocumentTemplate.access_by(info.context.request).get(
+            id=input["id"]
+        )
 
         serializer = serializers.DocumentTemplateModelSerializer(
             instance,

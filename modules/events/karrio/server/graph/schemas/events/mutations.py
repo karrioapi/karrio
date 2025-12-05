@@ -15,7 +15,6 @@ class CreateWebhookMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_webhooks"])
     def mutate(
         info: Info, **input: inputs.CreateWebhookMutationInput
     ) -> "CreateWebhookMutation":
@@ -34,7 +33,6 @@ class UpdateWebhookMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_webhooks"])
     def mutate(
         info: Info, **input: inputs.UpdateWebhookMutationInput
     ) -> "UpdateWebhookMutation":

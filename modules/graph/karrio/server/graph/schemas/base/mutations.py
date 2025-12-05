@@ -42,7 +42,6 @@ class UserUpdateMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(info: Info, **input: inputs.UpdateUserInput) -> "UserUpdateMutation":
         instance = types.User.objects.get(id=info.context.request.user.id)
 
@@ -64,7 +63,6 @@ class WorkspaceConfigMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_team"])
     def mutate(
         info: Info, **input: inputs.WorkspaceConfigMutationInput
     ) -> "WorkspaceConfigMutation":
@@ -91,7 +89,6 @@ class TokenMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info,
         key: str = None,
@@ -129,7 +126,6 @@ class CreateAPIKeyMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required()
     @utils.password_required
     def mutate(
         info: Info, password: str, **input: inputs.CreateAPIKeyMutationInput
@@ -169,7 +165,6 @@ class DeleteAPIKeyMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     @utils.password_required
     def mutate(
         info: Info, password: str, **input: inputs.DeleteAPIKeyMutationInput
@@ -187,7 +182,6 @@ class RequestEmailChangeMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     @utils.password_required
     def mutate(
         info: Info, email: str, password: str, redirect_url: str
@@ -222,7 +216,6 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(info: Info, token: str) -> "ConfirmEmailChangeMutation":
         validated_token = ConfirmationToken(token)
         user = info.context.request.user
@@ -295,7 +288,6 @@ class ChangePasswordMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info, **input: inputs.ChangePasswordMutationInput
     ) -> "ChangePasswordMutation":
@@ -364,7 +356,6 @@ class EnableMultiFactorMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info, **input: inputs.EnableMultiFactorMutationInput
     ) -> "EnableMultiFactorMutation":
@@ -394,7 +385,6 @@ class ConfirmMultiFactorMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info, **input: inputs.ConfirmMultiFactorMutationInput
     ) -> "ConfirmMultiFactorMutation":
@@ -429,7 +419,6 @@ class DisableMultiFactorMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info, **input: inputs.DisableMultiFactorMutationInput
     ) -> "DisableMultiFactorMutation":
@@ -452,7 +441,6 @@ class MetadataMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info,
         id: str,
@@ -479,7 +467,6 @@ class DeleteMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info,
         model,
@@ -513,7 +500,6 @@ class CreateRateSheetMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info, **input: inputs.CreateRateSheetMutationInput
     ) -> "CreateRateSheetMutation":
@@ -557,7 +543,6 @@ class UpdateRateSheetMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info, **input: inputs.UpdateRateSheetMutationInput
     ) -> "UpdateRateSheetMutation":
@@ -619,7 +604,6 @@ class UpdateRateSheetZoneCellMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info, **input: inputs.UpdateRateSheetZoneCellMutationInput
     ) -> "UpdateRateSheetZoneCellMutation":
@@ -646,7 +630,6 @@ class BatchUpdateRateSheetCellsMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info, **input: inputs.BatchUpdateRateSheetCellsMutationInput
     ) -> "BatchUpdateRateSheetCellsMutation":
@@ -711,7 +694,6 @@ class DeleteRateSheetServiceMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info, **input: inputs.DeleteRateSheetServiceMutationInput
     ) -> "DeleteRateSheetServiceMutation":
@@ -733,7 +715,6 @@ class PartialShipmentMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_shipments"])
     def mutate(
         info: Info, **input: inputs.PartialShipmentMutationInput
     ) -> "PartialShipmentMutation":
@@ -765,7 +746,6 @@ class ChangeShipmentStatusMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["manage_shipments"])
     def mutate(
         info: Info, **input: inputs.ChangeShipmentStatusMutationInput
     ) -> "ChangeShipmentStatusMutation":
@@ -805,7 +785,6 @@ def create_template_mutation(name: str, template_type: str) -> typing.Type:
 
         @staticmethod
         @utils.authentication_required
-        @utils.authorization_required()
         @transaction.atomic
         def mutate(info: Info, **input) -> name:  # type:ignore
             data = input.copy()
@@ -918,7 +897,6 @@ class SystemCarrierMutation(utils.BaseMutation):
     @staticmethod
     @utils.error_wrapper
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info, **input: inputs.SystemCarrierMutationInput
     ) -> "SystemCarrierMutation":
@@ -963,7 +941,6 @@ class UpdateServiceZoneMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required(["manage_carriers"])
     def mutate(
         info: Info, **input: inputs.UpdateServiceZoneMutationInput
     ) -> "UpdateServiceZoneMutation":
@@ -987,7 +964,6 @@ class CreateMetafieldMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info, **input: inputs.CreateMetafieldInput
     ) -> "CreateMetafieldMutation":
@@ -1011,7 +987,6 @@ class UpdateMetafieldMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required()
     def mutate(
         info: Info, **input: inputs.UpdateMetafieldInput
     ) -> "UpdateMetafieldMutation":
