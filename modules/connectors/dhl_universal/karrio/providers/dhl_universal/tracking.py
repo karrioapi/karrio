@@ -68,6 +68,7 @@ def _extract_detail(
                 time=lib.flocaltime(
                     shorten_date(event.timestamp), try_formats=date_formats
                 ),
+                reason=lib.text(event.remark),
             )
             for event in shipment.events or []
         ],

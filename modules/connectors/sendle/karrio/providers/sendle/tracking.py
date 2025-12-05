@@ -80,6 +80,7 @@ def _extract_details(
                     try_formats=["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"],
                     output_format="%H:%M %p",
                 ),
+                reason=lib.text(event.reason),
             )
             for event in events
         ],

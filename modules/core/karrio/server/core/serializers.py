@@ -1069,11 +1069,11 @@ class TrackingEvent(serializers.Serializer):
     date = serializers.CharField(
         required=False, help_text="The tracking event's date. Format: `YYYY-MM-DD`"
     )
-    description = serializers.CharField(
-        required=False, help_text="The tracking event's description"
-    )
-    location = serializers.CharField(
-        required=False, help_text="The tracking event's location"
+    time = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The tracking event's time. Format: `HH:MM AM/PM`",
     )
     code = serializers.CharField(
         required=False,
@@ -1081,11 +1081,17 @@ class TrackingEvent(serializers.Serializer):
         allow_null=True,
         help_text="The tracking event's code",
     )
-    time = serializers.CharField(
+    reason = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="The tracking event's time. Format: `HH:MM AM/PM`",
+        help_text="The tracking event's reason",
+    )
+    description = serializers.CharField(
+        required=False, help_text="The tracking event's description"
+    )
+    location = serializers.CharField(
+        required=False, help_text="The tracking event's location"
     )
     latitude = serializers.FloatField(
         required=False,

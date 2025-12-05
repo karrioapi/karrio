@@ -98,6 +98,7 @@ def _extract_details(
                     else e.locationType
                 ),
                 description=(lib.text(e.exceptionDescription) or e.eventDescription),
+                reason=lib.text(e.exceptionDescription),
             )
             for e in detail.scanEvents
         ],

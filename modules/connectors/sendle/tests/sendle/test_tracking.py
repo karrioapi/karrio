@@ -123,6 +123,7 @@ ParsedTrackingResponse = [
                     "date": "2023-04-03",
                     "description": "We attempted to pick up the parcel but were "
                     "unsuccessful",
+                    "reason": "Parcel not ready",
                     "time": "08:20 AM",
                 },
             ],
