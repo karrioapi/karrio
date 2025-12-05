@@ -207,6 +207,84 @@ class PresetSerializer(serializers.Serializer):
         return data
 
 
+def shipment_documents_accessor(cls=None, *, include_base64: bool = False):
+    """
+    Class decorator that computes shipping_documents for Shipment serializers.
+
+    When applied to a serializer class, this decorator overrides to_representation()
+    to dynamically build the shipping_documents list based on the shipment's
+    label and invoice fields.
+
+    Args:
+        include_base64: If True, includes base64 content in shipping_documents.
+                       If False (default), only includes URLs.
+
+    Usage:
+        @shipment_documents_accessor
+        class Shipment(Serializer):
+            ...  # shipping_documents will have URLs only
+
+        @shipment_documents_accessor(include_base64=True)
+        class PurchasedShipment(Shipment):
+            ...  # shipping_documents will include base64 content
+    """
+
+    def decorator(klass):
+        # Store the flag on the class for reference
+        klass._include_base64_documents = include_base64
+
+        # Store original to_representation
+        original_to_representation = klass.to_representation
+
+        def to_representation(self, instance):
+            # Get the original serialized data
+            data = original_to_representation(self, instance)
+
+            # Build shipping_documents dynamically
+            documents = []
+
+            # Add label document if exists
+            label = getattr(instance, "label", None)
+            if label:
+                label_format = getattr(instance, "label_type", None) or "PDF"
+                documents.append(
+                    {
+                        "category": "label",
+                        "format": label_format,
+                        "url": getattr(instance, "label_url", None),
+                        "base64": label if include_base64 else None,
+                    }
+                )
+
+            # Add invoice document if exists
+            invoice = getattr(instance, "invoice", None)
+            if invoice:
+                documents.append(
+                    {
+                        "category": "invoice",
+                        "format": "PDF",
+                        "url": getattr(instance, "invoice_url", None),
+                        "base64": invoice if include_base64 else None,
+                    }
+                )
+
+            # Update the data with computed shipping_documents
+            data["shipping_documents"] = documents
+
+            return data
+
+        klass.to_representation = to_representation
+        return klass
+
+    # Handle both @shipment_documents_accessor and @shipment_documents_accessor(...)
+    if cls is not None:
+        # Called as @shipment_documents_accessor without parentheses
+        return decorator(cls)
+    else:
+        # Called as @shipment_documents_accessor(...) with arguments
+        return decorator
+
+
 class AugmentedAddressSerializer(serializers.Serializer):
     def validate(self, data):
         # Format and validate Postal Code

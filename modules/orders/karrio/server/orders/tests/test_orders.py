@@ -668,6 +668,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "test_mode": True,
             "label_url": None,
             "invoice_url": None,
+            "shipping_documents": [],
         }
     ],
     "test_mode": True,
@@ -935,6 +936,7 @@ FULFILLED_ORDER_RESPONSE = {
             "test_mode": True,
             "label_url": None,
             "invoice_url": None,
+            "shipping_documents": [],
         }
     ],
     "test_mode": True,
@@ -1182,6 +1184,7 @@ PARTIAL_ORDER_RESPONSE = {
             "test_mode": True,
             "label_url": None,
             "invoice_url": None,
+            "shipping_documents": [],
         }
     ],
     "test_mode": True,

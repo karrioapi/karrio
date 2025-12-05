@@ -34,6 +34,7 @@ from karrio.server.manager.serializers import (
     ShipmentPurchaseData,
     ShipmentCancelSerializer,
     ShippingDocument,
+    PurchasedShipment,
 )
 
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -92,7 +93,9 @@ class ShipmentList(GenericAPIView):
             ShipmentSerializer.map(data=request.data, context=request).save().instance
         )
 
-        return Response(Shipment(shipment).data, status=status.HTTP_201_CREATED)
+        return Response(
+            PurchasedShipment(shipment).data, status=status.HTTP_201_CREATED
+        )
 
 
 class ShipmentDetails(APIView):
@@ -261,7 +264,7 @@ class ShipmentPurchase(APIView):
             data=process_dictionaries_mutations(["metadata"], payload, shipment),
         )
 
-        return Response(Shipment(update).data)
+        return Response(PurchasedShipment(update).data)
 
 
 class ShipmentDocs(VirtualDownloadView):
@@ -283,7 +286,9 @@ class ShipmentDocs(VirtualDownloadView):
 
         query_params = request.GET.dict()
 
-        self.shipment = models.Shipment.objects.filter(pk=pk, label__isnull=False).first()
+        self.shipment = models.Shipment.objects.filter(
+            pk=pk, label__isnull=False
+        ).first()
 
         if self.shipment is None:
             return Response(

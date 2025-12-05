@@ -33,6 +33,7 @@ from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
     LABEL_TYPES,
     ShipmentCancelRequest,
+    ShippingDocument,
     ShipmentDetails,
     ShipmentStatus,
     TrackerStatus,
@@ -575,6 +576,16 @@ class ShipmentCancelSerializer(Shipment):
         return instance
 
 
+@validators.shipment_documents_accessor(include_base64=True)
+class PurchasedShipment(Shipment):
+    shipping_documents = ShippingDocument(
+        required=False,
+        many=True,
+        default=[],
+        help_text="The list of shipping documents",
+    )
+
+
 def fetch_shipment_rates(
     shipment: models.Shipment,
     context: typing.Any,
@@ -683,7 +694,11 @@ def buy_shipment_label(
     merged_meta = {
         **(shipment.meta or {}),
         **(response_details.get("meta") or {}),
-        **({"rule_activity": kwargs.get("rule_activity")} if kwargs.get("rule_activity") else {}),
+        **(
+            {"rule_activity": kwargs.get("rule_activity")}
+            if kwargs.get("rule_activity")
+            else {}
+        ),
     }
 
     purchased_shipment = lib.identity(

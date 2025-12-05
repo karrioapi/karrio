@@ -395,7 +395,8 @@ curl -X POST "$KARRIO_API_URL/v1/shipments/ship_a1b2c3d4e5f6/purchase" \
   "tracking_number": "123456789012",
   "shipment_identifier": "123456789012",
   "tracking_url": "/v1/trackers/canadapost/123456789012",
-  "label_url": "/v1/shipments/ship_a1b2c3d4e5f6/label",
+  "label_url": "/v1/shipments/ship_a1b2c3d4e5f6/label.pdf",
+  "invoice_url": null,
   "label_type": "PDF",
   "service": "canadapost_priority",
   "selected_rate": {
@@ -405,6 +406,14 @@ curl -X POST "$KARRIO_API_URL/v1/shipments/ship_a1b2c3d4e5f6/purchase" \
     "currency": "CAD",
     "carrier_name": "canadapost"
   },
+  "shipping_documents": [
+    {
+      "category": "label",
+      "format": "PDF",
+      "url": "/v1/shipments/ship_a1b2c3d4e5f6/label.pdf",
+      "base64": "JVBERi0xLjQKJeLjz9MKNSAwIG9iago8PC9..."
+    }
+  ],
   "meta": {
     "service_name": "CANADAPOST PRIORITY",
     "rate_provider": "canadapost"
@@ -414,7 +423,7 @@ curl -X POST "$KARRIO_API_URL/v1/shipments/ship_a1b2c3d4e5f6/purchase" \
 }
 ```
 
-The shipment transitions to `purchased` status. You now have a `tracking_number` for monitoring and a `label_url` for document retrieval.
+The shipment transitions to `purchased` status. The `shipping_documents` array contains the label with base64-encoded content, allowing immediate rendering without a second API call. You now have a `tracking_number` for monitoring and a `label_url` for document retrieval.
 
 ### Single-Call Purchase Flow
 
@@ -443,13 +452,22 @@ curl -X POST "$KARRIO_API_URL/v1/shipments" \
   "status": "purchased",
   "carrier_name": "canadapost",
   "tracking_number": "123456789012",
-  "label_url": "/v1/shipments/ship_b2c3d4e5f6g7/label",
+  "label_url": "/v1/shipments/ship_b2c3d4e5f6g7/label.pdf",
+  "invoice_url": null,
   "service": "canadapost_priority",
-  "reference": "ORDER-5002"
+  "reference": "ORDER-5002",
+  "shipping_documents": [
+    {
+      "category": "label",
+      "format": "PDF",
+      "url": "/v1/shipments/ship_b2c3d4e5f6g7/label.pdf",
+      "base64": "JVBERi0xLjQKJeLjz9MKNSAwIG9iago8PC9..."
+    }
+  ]
 }
 ```
 
-Karrio fetches rates internally, selects the matching service, and purchases the label in one transaction. This reduces round trips and simplifies automation for high-volume workflows.
+Karrio fetches rates internally, selects the matching service, and purchases the label in one transaction. The response includes `shipping_documents` with the base64-encoded label for immediate use. This reduces round trips and simplifies automation for high-volume workflows.
 
 ### Purchase Flow Comparison
 
@@ -473,7 +491,57 @@ graph TB
 
 ## Document Management
 
-Shipping labels and commercial invoices are sensitive documents. Karrio uses a token-based access system that generates short-lived URLs for secure document retrieval.
+Shipping labels and commercial invoices are critical documents in shipping workflows. Karrio provides two access patterns: immediate base64 access during label purchase, and URL-based retrieval for subsequent access.
+
+### Shipping Documents Access Patterns
+
+When you purchase a label (via `POST /v1/shipments` with a service or `POST /v1/shipments/{id}/purchase`), the response includes a `shipping_documents` array with base64-encoded content:
+
+```json
+{
+  "shipping_documents": [
+    {
+      "category": "label",
+      "format": "PDF",
+      "url": "/v1/shipments/ship_xxxxx/label.pdf",
+      "base64": "JVBERi0xLjQKJeLjz9MKNSAwIG9iago8PC9..."
+    },
+    {
+      "category": "invoice",
+      "format": "PDF",
+      "url": "/v1/shipments/ship_xxxxx/invoice.pdf",
+      "base64": "JVBERi0xLjQKMCAwIG9iag..."
+    }
+  ]
+}
+```
+
+This design enables:
+
+- **Immediate rendering**: Print labels directly from the purchase response without additional API calls
+- **Reduced latency**: No need to wait for a second request to download the document
+- **Simplified workflows**: Handle label creation and display in a single operation
+
+For subsequent retrievals (list shipments, get shipment), `base64` is `null` to reduce payload size:
+
+```json
+{
+  "shipping_documents": [
+    {
+      "category": "label",
+      "format": "PDF",
+      "url": "/v1/shipments/ship_xxxxx/label.pdf",
+      "base64": null
+    }
+  ]
+}
+```
+
+Use the `url` field to download documents when base64 is not available.
+
+### Token-Based Document Access
+
+For secure document retrieval, Karrio provides a token-based access system that generates short-lived URLs.
 
 ### Use Case: Batch Label Printing
 

@@ -122,6 +122,7 @@ paths:
                     PERSIST_SDK_TRACING: true
                     WORKFLOW_MANAGEMENT: true
                     SHIPPING_RULES: true
+                    SHIPPING_METHODS: true
                     ADVANCED_ANALYTICS: true
           description: ''
   /api/token:
@@ -3337,6 +3338,7 @@ paths:
                     PERSIST_SDK_TRACING: true
                     WORKFLOW_MANAGEMENT: true
                     SHIPPING_RULES: true
+                    SHIPPING_METHODS: true
                     ADVANCED_ANALYTICS: true
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
@@ -9901,6 +9903,12 @@ components:
           format: uri
           nullable: true
           description: The shipment invoice URL
+        shipping_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingDocument'
+          default: []
+          description: The list of shipping documents
       required:
       - created_at
       - parcels
@@ -10297,14 +10305,14 @@ components:
         format:
           type: string
           description: The document format (e.g., 'PDF', 'ZPL')
+        url:
+          type: string
+          nullable: true
+          description: The document URL
         base64:
           type: string
           nullable: true
           description: The document content encoded in base64
-        url:
-          type: string
-          nullable: true
-          description: The URL to download the document via GET request
       required:
       - category
       - format
@@ -10860,20 +10868,24 @@ components:
         date:
           type: string
           description: 'The tracking event''s date. Format: `YYYY-MM-DD`'
+        time:
+          type: string
+          nullable: true
+          description: 'The tracking event''s time. Format: `HH:MM AM/PM`'
+        code:
+          type: string
+          nullable: true
+          description: The tracking event's code
+        reason:
+          type: string
+          nullable: true
+          description: The tracking event's reason
         description:
           type: string
           description: The tracking event's description
         location:
           type: string
           description: The tracking event's location
-        code:
-          type: string
-          nullable: true
-          description: The tracking event's code
-        time:
-          type: string
-          nullable: true
-          description: 'The tracking event''s time. Format: `HH:MM AM/PM`'
         latitude:
           type: number
           format: double

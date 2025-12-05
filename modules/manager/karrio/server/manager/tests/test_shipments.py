@@ -517,6 +517,7 @@ SHIPMENT_RESPONSE = {
     "created_at": ANY,
     "test_mode": True,
     "messages": [],
+    "shipping_documents": [],
 }
 
 SHIPMENT_OPTIONS = {
@@ -747,6 +748,14 @@ PURCHASED_SHIPMENT = {
     "test_mode": True,
     "label_url": ANY,
     "invoice_url": None,
+    "shipping_documents": [
+        {
+            "category": "label",
+            "format": "PDF",
+            "url": ANY,
+            "base64": "==apodifjoefr",
+        }
+    ],
 }
 
 CANCEL_RESPONSE = {
@@ -885,6 +894,7 @@ CANCEL_RESPONSE = {
     "test_mode": True,
     "label_url": None,
     "invoice_url": None,
+    "shipping_documents": [],
 }
 
 CANCEL_PURCHASED_RESPONSE = {
@@ -1023,6 +1033,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "test_mode": True,
     "label_url": None,
     "invoice_url": None,
+    "shipping_documents": [],
 }
 
 SINGLE_CALL_LABEL_DATA = {
