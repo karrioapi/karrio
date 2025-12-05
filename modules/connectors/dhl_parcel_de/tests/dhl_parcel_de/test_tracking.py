@@ -64,6 +64,7 @@ ParsedTrackingResponse = [
                     "date": "2018-03-02",
                     "description": "JESSICA",
                     "location": "Oderweg 2, AMSTERDAM",
+                    "reason": "The shipment is pending completion of customs inspection.",
                     "time": "07:53 AM",
                 }
             ],

@@ -17,6 +17,12 @@ try:
 except ImportError:
     has_sdk_dep = False
 
+try:
+    import karrio_cli.commands.studio as studio
+    has_studio_dep = True
+except ImportError:
+    has_studio_dep = False
+
 app = typer.Typer()
 
 # Add login commands directly to the main app
@@ -85,6 +91,13 @@ if has_sdk_dep:
         plugins.app,
         name="plugins",
         help="Manage plugins.",
+    )
+
+if has_studio_dep:
+    app.add_typer(
+        studio.app,
+        name="studio",
+        help="Launch Karrio Studio (Developer UI).",
     )
 
 if __name__ == "__main__":

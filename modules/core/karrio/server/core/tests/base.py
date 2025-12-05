@@ -4,10 +4,7 @@ from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 from karrio.server.core.logging import logger
 
 from karrio.server.user.models import Token
-import karrio.server.iam.permissions as iam
 import karrio.server.providers.models as providers
-
-iam.setup_groups()
 
 
 class APITestCase(BaseAPITestCase):

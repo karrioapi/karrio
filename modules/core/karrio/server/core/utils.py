@@ -2,7 +2,6 @@ import sys
 import typing
 import inspect
 import functools
-from string import Template
 from concurrent import futures
 from datetime import timedelta, datetime
 from typing import TypeVar, Union, Callable, Any, List, Optional
@@ -108,6 +107,7 @@ def _get_tracer_from_context(context: Any) -> lib.Tracer:
         # Try to get from current request via middleware
         try:
             from karrio.server.core.middleware import SessionContext
+
             request = SessionContext.get_current_request()
             if request and hasattr(request, "tracer"):
                 return request.tracer
@@ -191,6 +191,7 @@ def with_telemetry(operation_name: str = None):
             def create(payload: dict, carrier: Carrier = None, **kwargs):
                 ...
     """
+
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -222,7 +223,8 @@ def with_telemetry(operation_name: str = None):
                         f"karrio_{op_name}_success",
                         1,
                         tags={
-                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
+                            "carrier": attributes.get("carrier_name", "unknown")
+                            or "unknown",
                         },
                     )
 
@@ -237,7 +239,8 @@ def with_telemetry(operation_name: str = None):
                         f"karrio_{op_name}_error",
                         1,
                         tags={
-                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
+                            "carrier": attributes.get("carrier_name", "unknown")
+                            or "unknown",
                             "error_type": type(e).__name__,
                         },
                     )
@@ -245,6 +248,7 @@ def with_telemetry(operation_name: str = None):
                     raise
 
         return wrapper
+
     return decorator
 
 
@@ -395,7 +399,9 @@ def batch_get_constance_values(keys: List[str]) -> dict:
         # mget returns a generator of (key, value) tuples
         return dict(config._backend.mget(keys))
     except Exception as e:
-        logger.warning("Failed to batch fetch constance values, returning empty dict", error=str(e))
+        logger.warning(
+            "Failed to batch fetch constance values, returning empty dict", error=str(e)
+        )
         return {}
 
 
@@ -607,19 +613,13 @@ class ResourceAccessToken(jwt.Token):
         claims = cls.decode(token_string)
 
         if claims["resource_type"] != resource_type:
-            raise PermissionError(
-                f"Token not valid for resource type: {resource_type}"
-            )
+            raise PermissionError(f"Token not valid for resource type: {resource_type}")
 
         if resource_id not in claims["resource_ids"]:
-            raise PermissionError(
-                f"Token not valid for resource: {resource_id}"
-            )
+            raise PermissionError(f"Token not valid for resource: {resource_id}")
 
         if access not in claims["access"]:
-            raise PermissionError(
-                f"Token does not grant access: {access}"
-            )
+            raise PermissionError(f"Token does not grant access: {access}")
 
         return claims
 
@@ -649,14 +649,10 @@ class ResourceAccessToken(jwt.Token):
         claims = cls.decode(token_string)
 
         if claims["resource_type"] != resource_type:
-            raise PermissionError(
-                f"Token not valid for resource type: {resource_type}"
-            )
+            raise PermissionError(f"Token not valid for resource type: {resource_type}")
 
         if access not in claims["access"]:
-            raise PermissionError(
-                f"Token does not grant access: {access}"
-            )
+            raise PermissionError(f"Token does not grant access: {access}")
 
         token_ids = set(claims["resource_ids"])
         request_ids = set(resource_ids)
@@ -709,7 +705,9 @@ def validate_resource_token(
         )
         return None
     except PermissionError as e:
-        return HttpResponseForbidden("You do not have permission to access these resources.")
+        return HttpResponseForbidden(
+            "You do not have permission to access these resources."
+        )
     except Exception as e:
         logger.warning("Invalid resource access token: %s", str(e))
         return HttpResponseForbidden("Invalid or expired token.")
@@ -737,11 +735,14 @@ def require_resource_token(
         def get(self, request, **kwargs):
             ...
     """
+
     def decorator(method):
         @functools.wraps(method)
         def wrapper(self, request, *args, **kwargs):
             resource_ids = get_resource_ids(request, **kwargs)
-            error = validate_resource_token(request, resource_type, resource_ids, access)
+            error = validate_resource_token(
+                request, resource_type, resource_ids, access
+            )
             if error:
                 return error
             return method(self, request, *args, **kwargs)
@@ -989,11 +990,7 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
         # has_alternative_services fallback when no exact match found
         has_alternative_services = options.get("has_alternative_services", False)
 
-        if (
-            kwargs.get("selected_rate") is None
-            and has_alternative_services
-            and service
-        ):
+        if kwargs.get("selected_rate") is None and has_alternative_services and service:
             carrier_name = _get_carrier_for_service(service, ctx)
             fallback_rate = lib.identity(
                 next(

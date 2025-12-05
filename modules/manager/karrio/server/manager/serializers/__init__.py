@@ -26,6 +26,7 @@ from karrio.server.manager.serializers.tracking import (
 )
 from karrio.server.manager.serializers.shipment import (
     ShipmentRateData,
+    PurchasedShipment,
     ShipmentSerializer,
     ShipmentUpdateData,
     ShipmentPurchaseData,

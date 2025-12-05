@@ -95,6 +95,7 @@ ParsedTrackingResponse = [
                     "date": "2018-02-02",
                     "description": "Package available for clearance",
                     "location": "SEATTLE, WA, 98101, US",
+                    "reason": "Package available for clearance",
                     "time": "12:01 PM",
                 }
             ],
@@ -187,6 +188,7 @@ ParsedDuplicateTrackingResponse = [
                     "date": "2024-04-25",
                     "description": "Tendered at FedEx Facility",
                     "location": "CLOVIS, CA, 93612, US",
+                    "reason": "Tendered at FedEx Facility",
                     "time": "13:26 PM",
                 },
                 {
@@ -194,6 +196,7 @@ ParsedDuplicateTrackingResponse = [
                     "date": "2024-04-25",
                     "description": "FedEx redirected your package to a nearby FedEx location",
                     "location": "CLOVIS, CA, 93612, US",
+                    "reason": "FedEx redirected your package to a nearby FedEx location",
                     "time": "11:28 AM",
                 },
                 {
@@ -201,6 +204,7 @@ ParsedDuplicateTrackingResponse = [
                     "date": "2024-04-25",
                     "description": "Customer not available or business closed",
                     "location": "CLOVIS, CA, 93612, US",
+                    "reason": "Customer not available or business closed",
                     "time": "11:26 AM",
                 },
                 {

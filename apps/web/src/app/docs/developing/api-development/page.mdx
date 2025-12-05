@@ -305,10 +305,24 @@ curl -X POST $KARRIO_API_URL/v1/shipments \
   "carrier_name": "generic",
   "service": "standard_service",
   "tracking_number": "TEST123456789",
-  "label_url": "/v1/shipments/ship_xxxxx/label",
+  "label_url": "/v1/shipments/ship_xxxxx/label.pdf",
+  "invoice_url": null,
+  "shipping_documents": [
+    {
+      "category": "label",
+      "format": "PDF",
+      "url": "/v1/shipments/ship_xxxxx/label.pdf",
+      "base64": "JVBERi0xLjQKJeLjz9..."
+    }
+  ],
   ...
 }
 ```
+
+> [!TIP]
+> **Immediate Label Access**
+>
+> When creating a shipment with a service (single-call purchase) or purchasing a label, the `shipping_documents` array includes the `base64` encoded document content. This allows you to immediately render or print the label without making a second API call. For subsequent retrievals (list, get operations), `base64` will be `null` and you should use the `url` field to download the document.
 
 **Save the shipment details:**
 

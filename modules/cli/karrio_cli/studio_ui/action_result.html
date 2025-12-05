@@ -1,0 +1,26 @@
+<div id="action-log" class="space-y-4">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <span class="text-base font-semibold">{{ title }}</span>
+            {% if result.success %}
+            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded-full border border-emerald-500/40">Success</span>
+            {% else %}
+            <span class="px-3 py-1 bg-rose-500/20 text-rose-300 text-xs rounded-full border border-rose-500/40">Failed</span>
+            {% endif %}
+        </div>
+        <code class="text-[10px] uppercase tracking-[0.4em] text-slate-500">{{ result.command }}</code>
+    </div>
+
+    {% if has_output %}
+    <pre class="bg-slate-950 text-slate-200 rounded-2xl p-4 text-xs overflow-auto max-h-72 border border-slate-800">{{ primary_output }}</pre>
+    {% else %}
+    <p class="text-xs text-slate-500">No output.</p>
+    {% endif %}
+
+    {% if stderr_detail %}
+    <details class="text-xs text-rose-300">
+        <summary class="cursor-pointer mb-2">Detailed stderr</summary>
+        <pre class="bg-rose-950/50 text-rose-200 rounded-2xl p-4 overflow-auto max-h-64 border border-rose-900/50">{{ stderr_detail }}</pre>
+    </details>
+    {% endif %}
+</div>

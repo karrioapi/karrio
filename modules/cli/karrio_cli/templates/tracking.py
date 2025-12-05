@@ -78,7 +78,8 @@ def _extract_details(
                 "time": event.time if hasattr(event, 'time') else "",
                 "code": event.code if hasattr(event, 'code') else "",
                 "description": event.description if hasattr(event, 'description') else "",
-                "location": event.location if hasattr(event, 'location') else ""
+                "location": event.location if hasattr(event, 'location') else "",
+                "reason": event.reason if hasattr(event, 'reason') else ""
             })
     {% else %}
     # For JSON APIs, convert dict to proper response object
@@ -98,7 +99,8 @@ def _extract_details(
                 "time": event.time if hasattr(event, 'time') else "",
                 "code": event.code if hasattr(event, 'code') else "",
                 "description": event.description if hasattr(event, 'description') else "",
-                "location": event.location if hasattr(event, 'location') else ""
+                "location": event.location if hasattr(event, 'location') else "",
+                "reason": event.reason if hasattr(event, 'reason') else ""
             })
     {% endif %}
 
@@ -123,6 +125,7 @@ def _extract_details(
                 code=event["code"],
                 time=lib.flocaltime(event["time"]),
                 location=event["location"],
+                reason=lib.text(event["reason"]) if event.get("reason") else None,
             )
             for event in events
         ],

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karrio Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; }
+        .htmx-indicator { opacity: 0; transition: opacity 200ms ease-in; }
+        .htmx-request .htmx-indicator { opacity: 1; }
+        .htmx-request.htmx-indicator { opacity: 1; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(148, 163, 184, 0.08); }
+    </style>
+</head>
+<body class="min-h-full text-slate-100">
+    <div class="min-h-full flex flex-col lg:flex-row">
+        <!-- Sidebar -->
+        <aside class="hidden lg:flex lg:w-80 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white flex-col border-r border-slate-900/60">
+            <div class="px-6 py-6 border-b border-slate-800 flex items-center gap-3">
+                <div class="h-12 w-12 bg-blue-600 rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg shadow-blue-600/40">
+                    K
+                </div>
+                <div>
+                    <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Developer Studio</p>
+                    <h1 class="text-xl font-semibold">Karrio Studio</h1>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-b border-slate-800">
+                <button
+                    hx-get="/partials/new-extension"
+                    hx-target="#main-content"
+                    class="w-full bg-blue-500/90 hover:bg-blue-400 transition text-white font-semibold rounded-2xl py-3 flex items-center justify-center gap-3 text-sm shadow-lg shadow-blue-600/30">
+                    <span class="text-lg">＋</span>
+                    New Extension
+                </button>
+                <button
+                    id="sidebar-ai-button"
+                    type="button"
+                    class="w-full mt-3 border border-slate-700 hover:border-blue-400 transition text-white font-semibold rounded-2xl py-3 flex items-center justify-center gap-3 text-sm">
+                    <span class="text-lg">⚡</span>
+                    AI Copilot
+                </button>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto px-4 pb-6" id="extensions-nav">
+                <p class="px-3 pt-6 pb-3 text-[11px] uppercase tracking-[0.4em] text-slate-500">Extensions</p>
+                <div id="extensions-list" hx-get="/api/extensions" hx-trigger="load"></div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col bg-slate-950 min-h-screen">
+            <header class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between px-6 lg:px-10 py-6 border-b border-slate-900/60 bg-slate-950">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Command Center</p>
+                        <h2 class="text-3xl font-semibold text-white" id="page-title">Dashboard</h2>
+                    </div>
+                    <button id="mobile-nav-toggle" class="lg:hidden px-3 py-2 rounded-xl border border-slate-800 text-xs uppercase tracking-[0.3em]">
+                        Extensions
+                    </button>
+                </div>
+                <div class="flex items-center justify-between gap-4 text-sm text-slate-300">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        Studio Connected
+                    </span>
+                    <button
+                        hx-get="/partials/new-extension"
+                        hx-target="#main-content"
+                        class="lg:hidden bg-blue-500 text-white px-4 py-2 rounded-2xl text-xs uppercase tracking-[0.3em]">
+                        New Extension
+                    </button>
+                </div>
+            </header>
+
+            <section id="mobile-nav" class="lg:hidden hidden p-4 border-b border-slate-900/60 bg-slate-950">
+                <div class="glass rounded-2xl p-4 max-h-72 overflow-y-auto">
+                    <p class="text-xs uppercase tracking-[0.4em] text-slate-500 mb-3">Extensions</p>
+                    <div id="mobile-extensions-list" hx-get="/api/extensions" hx-trigger="load" hx-target="#mobile-extensions-list"></div>
+                </div>
+            </section>
+
+            <section id="main-content" class="flex-1 overflow-auto px-4 py-8 lg:p-10 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900"
+                     hx-get="/partials/dashboard" hx-trigger="load" hx-target="#main-content">
+                <div class="h-full flex items-center justify-center text-slate-500">
+                    <div class="text-center space-y-4">
+                        <div class="animate-spin h-12 w-12 border-2 border-slate-800 border-t-blue-500 rounded-full mx-auto"></div>
+                        <p class="tracking-widest text-xs uppercase">Loading Studio...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-6 right-6 space-y-3 z-50"></div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = type === 'success'
+                ? 'border-emerald-500/40 bg-slate-900 text-emerald-300'
+                : 'border-rose-500/40 bg-slate-900 text-rose-300';
+            toast.className = `glass shadow-xl border ${colors} px-5 py-3 rounded-2xl text-sm flex items-center gap-3 translate-y-4 opacity-0 transition-all`;
+            toast.innerHTML = `
+                <span class="font-semibold uppercase tracking-wide text-xs">${type === 'success' ? 'Success' : 'Error'}</span>
+                <span class="text-slate-300">${message}</span>
+            `;
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.remove('translate-y-4', 'opacity-0'));
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 250);
+            }, 3200);
+        }
+
+        document.body.addEventListener('notify', (event) => {
+            const detail = event.detail || {};
+            showToast(detail.message || 'Done', detail.type || 'success');
+        });
+
+        document.body.addEventListener('refreshExtensions', () => {
+            htmx.ajax('GET', '/api/extensions', '#extensions-list');
+            htmx.ajax('GET', '/api/extensions', '#mobile-extensions-list');
+        });
+
+        document.body.addEventListener('htmx:afterSwap', (event) => {
+            if (event.detail.target.id === 'main-content') {
+                const titleEl = event.detail.target.querySelector('[data-title]');
+                if (titleEl) {
+                    document.getElementById('page-title').textContent = titleEl.dataset.title;
+                }
+            }
+        });
+
+        document.body.addEventListener('htmx:beforeRequest', (event) => {
+            const target = event.detail.elt?.getAttribute('hx-target');
+            if (target === '#action-log') {
+                const log = document.querySelector('#action-log');
+                if (log) {
+                    log.innerHTML = `
+                        <div class="flex flex-col items-center justify-center py-10 space-y-4 text-slate-500">
+                            <div class="animate-spin h-10 w-10 border-2 border-slate-800 border-t-blue-500 rounded-full"></div>
+                            <p class="text-xs uppercase tracking-[0.4em]">Running...</p>
+                        </div>
+                    `;
+                }
+            }
+        });
+
+        const mobileToggle = document.getElementById('mobile-nav-toggle');
+        const mobileNav = document.getElementById('mobile-nav');
+        if (mobileToggle && mobileNav) {
+            mobileToggle.addEventListener('click', () => {
+                mobileNav.classList.toggle('hidden');
+            });
+        }
+
+        const sidebarAIButton = document.getElementById('sidebar-ai-button');
+        sidebarAIButton?.addEventListener('click', () => {
+            document.dispatchEvent(new CustomEvent('studio:open-ai'));
+        });
+    </script>
+</body>
+</html>

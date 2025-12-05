@@ -78,6 +78,7 @@ def _extract_details(
                     event.eventCountry,
                     separator=", ",
                 ),
+                reason=lib.text(event.reasonCode),
             )
             for event in details.trackingEvents
         ],

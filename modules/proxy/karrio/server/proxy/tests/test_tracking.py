@@ -78,6 +78,7 @@ TRACKING_RESPONSE = {
                 "time": "10:39",
                 "latitude": None,
                 "longitude": None,
+                "reason": None,
             }
         ],
         "delivered": None,

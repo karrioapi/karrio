@@ -4,6 +4,31 @@
 
 ### Feat
 
+- feat(WIP): introduce karrio studio to enhance dev experience and assist integration and development
+- feat: introduce shipping_documents field on shipment object that returns a more structured list of shipping documents details and include base64 documents version from purchasing APIs
+- feat: add audit log Model settings required by django-auditlog==3.4.0
+- feat: introduce `reason` field to karrio unified tracking event data
+
+### Fix
+
+- fix: idempotent API response for shipment cancellation when called twice on a shipment that was successfully cancelled return HTTP code 304
+
+### Docs
+
+- docs: karrio Shipping integration quick start with key APIs
+
+### Chore
+
+- chore: remove poorly implemented permissions layer
+
+---
+
+# Karrio 2025.5.3
+
+## Changes
+
+### Feat
+
 - feat: make shipment cancellation idempotent
 - feat: Implement POST requests for shipping documents downloads
 - feat: map error/message levels in carrier integrations and karrio server

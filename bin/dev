@@ -27,6 +27,7 @@ MAILDEV_PID=""
 SERVER_PID=""
 DASHBOARD_PID=""
 DOCS_PID=""
+STUDIO_PID=""
 
 # Resolve directories
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -238,6 +239,13 @@ run_down() {
   lsof -ti:3005 | xargs kill -9 2>/dev/null || true
   print_success "Docs stopped (if it was running)"
 
+  # Stop Studio
+  print_step "Stopping Studio..."
+  pgrep -f "kcli studio start" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 1
+  lsof -ti:4002 | xargs kill -9 2>/dev/null || true
+  print_success "Studio stopped (if it was running)"
+
   # Stop Maildev
   if is_maildev_running; then
     print_step "Stopping Maildev SMTP capture..."
@@ -262,6 +270,7 @@ run_up() {
   local START_API=true
   local START_DASHBOARD=true
   local START_DOCS=true
+  local START_STUDIO=true
   local WAIT_AT_END=true
   local DASHBOARD_USE_ENV=false
 
@@ -283,13 +292,17 @@ run_up() {
         START_DASHBOARD=false; shift ;;
       --no-docs)
         START_DOCS=false; shift ;;
+      --studio-only)
+        START_API=false; START_DASHBOARD=false; START_DOCS=false; START_STUDIO=true; shift ;;
+      --no-studio)
+        START_STUDIO=false; shift ;;
       --dashboard-use-env)
         DASHBOARD_USE_ENV=true; shift ;;
       --no-wait|--detach)
         WAIT_AT_END=false; shift ;;
       -h|--help)
         SHOW_HELP=true; shift ;;
-      api|dashboard|docs|all)
+      api|dashboard|docs|studio|all)
         COMPONENTS+=("$1"); shift ;;
       *)
         print_error "Unknown option: $1"; exit 1 ;;
@@ -308,28 +321,31 @@ run_up() {
     echo "  --no-api             Skip starting the API server"
     echo "  --no-dashboard       Skip starting the Dashboard"
     echo "  --no-docs            Skip starting the Docs"
+    echo "  --studio-only        Start only the Studio UI"
+    echo "  --no-studio          Skip starting the Studio UI"
     echo "  -h, --help           Show this help message"
     echo ""
-    echo "COMPONENTS: api | dashboard | docs | all"
+    echo "COMPONENTS: api | dashboard | docs | studio | all"
     return 0
   fi
 
   if [[ ${#COMPONENTS[@]} -gt 0 ]]; then
-    START_API=false; START_DASHBOARD=false; START_DOCS=false
+    START_API=false; START_DASHBOARD=false; START_DOCS=false; START_STUDIO=false
     for component in "${COMPONENTS[@]}"; do
       case $(echo "$component" | tr '[:upper:]' '[:lower:]') in
         api) START_API=true ;;
         dashboard) START_DASHBOARD=true ;;
         docs) START_DOCS=true ;;
-        all) START_API=true; START_DASHBOARD=true; START_DOCS=true ;;
+        studio) START_STUDIO=true ;;
+        all) START_API=true; START_DASHBOARD=true; START_DOCS=true; START_STUDIO=true ;;
         *) print_error "Unknown component '$component'"; return 1 ;;
       esac
     done
   fi
 
-  if ! $START_API && ! $START_DASHBOARD && ! $START_DOCS; then
+  if ! $START_API && ! $START_DASHBOARD && ! $START_DOCS && ! $START_STUDIO; then
     print_warning "No components selected. Starting all components."
-    START_API=true; START_DASHBOARD=true; START_DOCS=true
+    START_API=true; START_DASHBOARD=true; START_DOCS=true; START_STUDIO=true
   fi
 
   # SKIP_CADDY logic (inverse)
@@ -442,7 +458,7 @@ run_up() {
   cleanup_trap() {
     echo ""
     echo "Shutting down development environment..."
-    for pid in "$SERVER_PID" "$DASHBOARD_PID" "$DOCS_PID"; do
+    for pid in "$SERVER_PID" "$DASHBOARD_PID" "$DOCS_PID" "$STUDIO_PID"; do
       if [[ -n "$pid" ]]; then
         kill "$pid" 2>/dev/null || true
         wait "$pid" 2>/dev/null || true
@@ -643,6 +659,26 @@ run_up() {
     sleep 3
   fi
 
+  if $START_STUDIO; then
+    if command_exists kcli; then
+      print_step "Starting Karrio Studio..."
+      STUDIO_LOG=/tmp/karrio-studio.log
+      rm -f "$STUDIO_LOG"
+      (kcli studio start --host 127.0.0.1 --port 4002 >"$STUDIO_LOG" 2>&1) &
+      STUDIO_PID=$!
+      sleep 2
+      if ps -p "$STUDIO_PID" >/dev/null 2>&1; then
+        print_success "Studio running at http://127.0.0.1:4002 (log: $STUDIO_LOG)"
+      else
+        print_warning "Studio failed to start. See $STUDIO_LOG for details."
+        STUDIO_PID=""
+      fi
+    else
+      print_warning "kcli not found; skipping Studio startup."
+      START_STUDIO=false
+    fi
+  fi
+
   if $START_API; then
     print_step "Starting Maildev (SMTP capture)..."
     if is_maildev_running; then
@@ -672,6 +708,7 @@ run_up() {
   $START_API && enabled+=("API")
   $START_DASHBOARD && enabled+=("Dashboard")
   $START_DOCS && enabled+=("Docs")
+  $START_STUDIO && enabled+=("Studio")
   if [[ ${#enabled[@]} -gt 0 ]]; then
     echo "Components: ${enabled[*]}"
     echo ""
@@ -699,6 +736,9 @@ run_up() {
     else
       echo "   → Docs: http://localhost:3005"
     fi
+  fi
+  if $START_STUDIO; then
+    echo "   → Studio: http://127.0.0.1:4002"
   fi
   if [[ -n "$MAILDEV_PID" ]]; then
     echo "   → Maildev: http://localhost:1080"

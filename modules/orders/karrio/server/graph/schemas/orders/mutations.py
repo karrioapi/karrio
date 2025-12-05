@@ -21,7 +21,6 @@ class CreateOrderMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["ORDERS_MANAGEMENT", "manage_orders"])
     def mutate(
         info: Info, **input: inputs.CreateOrderMutationInput
     ) -> "CreateOrderMutation":
@@ -70,7 +69,6 @@ class UpdateOrderMutation(utils.BaseMutation):
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    @utils.authorization_required(["ORDERS_MANAGEMENT", "manage_orders"])
     def mutate(
         info: Info,
         line_items: typing.Optional[
@@ -116,7 +114,6 @@ class DeleteOrderMutation(utils.BaseMutation):
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["ORDERS_MANAGEMENT", "manage_orders"])
     def mutate(
         info: Info, **input: inputs.DeleteOrderMutationInput
     ) -> "DeleteOrderMutation":

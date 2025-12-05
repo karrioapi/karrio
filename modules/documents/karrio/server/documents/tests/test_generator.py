@@ -46,12 +46,6 @@ class TestDocumentGenerator(APITestCase):
         response = self.client.post(url, data)
         response_data = json.loads(response.content)
 
-        # Debug information if test fails
-        if response.status_code != status.HTTP_201_CREATED:
-            print(f"Response status: {response.status_code}")
-            print(f"Response content: {response.content}")
-            print(f"Response data: {response_data}")
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("doc_file", response_data)
         self.assertEqual(response_data["doc_name"], "test_invoice.pdf")
@@ -62,7 +56,7 @@ class TestDocumentGenerator(APITestCase):
             decoded_pdf = base64.b64decode(response_data["doc_file"])
             self.assertGreater(len(decoded_pdf), 0)
             # Basic PDF header check
-            self.assertTrue(decoded_pdf.startswith(b'%PDF'))
+            self.assertTrue(decoded_pdf.startswith(b"%PDF"))
         except Exception as e:
             self.fail(f"Invalid base64 PDF content: {e}")
 
@@ -84,12 +78,6 @@ class TestDocumentGenerator(APITestCase):
         response = self.client.post(url, data)
         response_data = json.loads(response.content)
 
-        # Debug information if test fails
-        if response.status_code != status.HTTP_201_CREATED:
-            print(f"Response status: {response.status_code}")
-            print(f"Response content: {response.content}")
-            print(f"Response data: {response_data}")
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("doc_file", response_data)
         self.assertEqual(response_data["doc_name"], "inline_test.pdf")
@@ -99,7 +87,7 @@ class TestDocumentGenerator(APITestCase):
             decoded_pdf = base64.b64decode(response_data["doc_file"])
             self.assertGreater(len(decoded_pdf), 0)
             # Basic PDF header check
-            self.assertTrue(decoded_pdf.startswith(b'%PDF'))
+            self.assertTrue(decoded_pdf.startswith(b"%PDF"))
         except Exception as e:
             self.fail(f"Invalid base64 PDF content: {e}")
 
@@ -136,12 +124,6 @@ class TestDocumentGenerator(APITestCase):
         response = self.client.post(url, data)
         response_data = json.loads(response.content)
 
-        # Debug information if test fails
-        if response.status_code != status.HTTP_201_CREATED:
-            print(f"Response status: {response.status_code}")
-            print(f"Response content: {response.content}")
-            print(f"Response data: {response_data}")
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("doc_file", response_data)
 
@@ -150,7 +132,7 @@ class TestDocumentGenerator(APITestCase):
             decoded_pdf = base64.b64decode(response_data["doc_file"])
             self.assertGreater(len(decoded_pdf), 0)
             # Basic PDF header check
-            self.assertTrue(decoded_pdf.startswith(b'%PDF'))
+            self.assertTrue(decoded_pdf.startswith(b"%PDF"))
         except Exception as e:
             self.fail(f"Invalid base64 PDF content: {e}")
 
@@ -182,21 +164,16 @@ class TestDocumentPrinters(APITestCase):
         url = f"/documents/templates/{self.template.id}.{self.template.slug}"
         response = self.client.get(url, {"title": "Printed Document", "token": token})
 
-        # Debug information if test fails
-        if response.status_code != status.HTTP_200_OK:
-            print(f"Response status: {response.status_code}")
-            print(f"Response content: {response.content}")
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response["Content-Type"].startswith("application/pdf"))
 
         # Verify we got a valid PDF - handle streaming content
-        if hasattr(response, 'streaming_content'):
-            content = b''.join(response.streaming_content)
+        if hasattr(response, "streaming_content"):
+            content = b"".join(response.streaming_content)
         else:
             content = response.content
         self.assertGreater(len(content), 0)
-        self.assertTrue(content.startswith(b'%PDF'))
+        self.assertTrue(content.startswith(b"%PDF"))
 
     def test_template_docs_printer_with_download(self):
         """Test template document printing with download flag"""
@@ -213,22 +190,16 @@ class TestDocumentPrinters(APITestCase):
             url, {"download": "true", "title": "Download Test", "token": token}
         )
 
-        # Debug information if test fails
-        if response.status_code != status.HTTP_200_OK:
-            print(f"Response status: {response.status_code}")
-            if hasattr(response, 'content'):
-                print(f"Response content: {response.content}")
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("attachment", response.get("Content-Disposition", ""))
 
         # Verify we got a valid PDF - handle streaming content
-        if hasattr(response, 'streaming_content'):
-            content = b''.join(response.streaming_content)
+        if hasattr(response, "streaming_content"):
+            content = b"".join(response.streaming_content)
         else:
             content = response.content
         self.assertGreater(len(content), 0)
-        self.assertTrue(content.startswith(b'%PDF'))
+        self.assertTrue(content.startswith(b"%PDF"))
 
 
 class TestDocumentGeneratorIntegration(APITestCase):
@@ -309,12 +280,6 @@ class TestDocumentGeneratorIntegration(APITestCase):
         response = self.client.post(url, data)
         response_data = json.loads(response.content)
 
-        # Debug information if test fails
-        if response.status_code != status.HTTP_201_CREATED:
-            print(f"Response status: {response.status_code}")
-            print(f"Response content: {response.content}")
-            print(f"Response data: {response_data}")
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("doc_file", response_data)
         self.assertEqual(response_data["doc_name"], "shipment_invoice.pdf")
@@ -324,7 +289,7 @@ class TestDocumentGeneratorIntegration(APITestCase):
             decoded_pdf = base64.b64decode(response_data["doc_file"])
             self.assertGreater(len(decoded_pdf), 0)
             # Basic PDF header check
-            self.assertTrue(decoded_pdf.startswith(b'%PDF'))
+            self.assertTrue(decoded_pdf.startswith(b"%PDF"))
         except Exception as e:
             self.fail(f"Invalid base64 PDF content: {e}")
 

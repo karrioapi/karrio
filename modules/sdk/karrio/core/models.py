@@ -340,6 +340,7 @@ class TrackingEvent:
     description: str
     code: str = None
     time: str = None
+    reason: str = None
     location: str = None
 
     # Geolocation

@@ -1069,11 +1069,11 @@ class TrackingEvent(serializers.Serializer):
     date = serializers.CharField(
         required=False, help_text="The tracking event's date. Format: `YYYY-MM-DD`"
     )
-    description = serializers.CharField(
-        required=False, help_text="The tracking event's description"
-    )
-    location = serializers.CharField(
-        required=False, help_text="The tracking event's location"
+    time = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The tracking event's time. Format: `HH:MM AM/PM`",
     )
     code = serializers.CharField(
         required=False,
@@ -1081,11 +1081,17 @@ class TrackingEvent(serializers.Serializer):
         allow_null=True,
         help_text="The tracking event's code",
     )
-    time = serializers.CharField(
+    reason = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="The tracking event's time. Format: `HH:MM AM/PM`",
+        help_text="The tracking event's reason",
+    )
+    description = serializers.CharField(
+        required=False, help_text="The tracking event's description"
+    )
+    location = serializers.CharField(
+        required=False, help_text="The tracking event's location"
     )
     latitude = serializers.FloatField(
         required=False,
@@ -1177,6 +1183,31 @@ class TrackingStatus(TrackerDetails):
         allow_blank=True,
         allow_null=True,
         help_text="The shipment invoice URL",
+    )
+
+
+class ShippingDocument(serializers.Serializer):
+    """Serializer for shipping document download response."""
+
+    category = serializers.CharField(
+        required=True,
+        help_text="The document category (e.g., 'label', 'invoice', 'manifest')",
+    )
+    format = serializers.CharField(
+        required=True,
+        help_text="The document format (e.g., 'PDF', 'ZPL')",
+    )
+    url = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The document URL",
+    )
+    base64 = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The document content encoded in base64",
     )
 
 
@@ -1612,6 +1643,7 @@ class ShipmentContent(serializers.Serializer):
     )
 
 
+@validators.shipment_documents_accessor
 class Shipment(serializers.EntitySerializer, ShipmentContent, ShipmentDetails):
     docs = None
     label_url = serializers.URLField(
@@ -1625,6 +1657,12 @@ class Shipment(serializers.EntitySerializer, ShipmentContent, ShipmentDetails):
         allow_blank=True,
         allow_null=True,
         help_text="The shipment invoice URL",
+    )
+    shipping_documents = ShippingDocument(
+        required=False,
+        many=True,
+        default=[],
+        help_text="The list of shipping documents",
     )
 
 
@@ -1970,28 +2008,3 @@ class ErrorMessages(serializers.Serializer):
 
 class ErrorResponse(serializers.Serializer):
     errors = APIError(many=True, required=False, help_text="The list of API errors")
-
-
-class ShippingDocument(serializers.Serializer):
-    """Serializer for shipping document download response."""
-
-    category = serializers.CharField(
-        required=True,
-        help_text="The document category (e.g., 'label', 'invoice', 'manifest')",
-    )
-    format = serializers.CharField(
-        required=True,
-        help_text="The document format (e.g., 'PDF', 'ZPL')",
-    )
-    base64 = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The document content encoded in base64",
-    )
-    url = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The URL to download the document via GET request",
-    )

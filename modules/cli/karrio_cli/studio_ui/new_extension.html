@@ -1,0 +1,96 @@
+<div data-title="New Extension" class="max-w-4xl mx-auto space-y-6">
+    <div class="glass rounded-3xl border border-slate-800 shadow-2xl shadow-black/40">
+        <div class="px-10 py-8 border-b border-slate-800 flex items-center justify-between">
+            <div>
+                <p class="text-xs uppercase tracking-[0.4em] text-slate-500">Bootstrap</p>
+                <h3 class="text-2xl font-semibold text-white mt-2">Create a Carrier Extension</h3>
+            </div>
+        </div>
+        <form class="px-10 py-10 space-y-8" hx-post="/api/extensions" hx-target="#main-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <label class="space-y-2">
+                    <span class="text-sm uppercase tracking-[0.3em] text-slate-500">Display Name</span>
+                    <input type="text" name="display_name" required placeholder="DHL Express" class="w-full rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </label>
+                <label class="space-y-2">
+                    <span class="text-sm uppercase tracking-[0.3em] text-slate-500">Carrier Slug</span>
+                    <input type="text" name="carrier_slug" required placeholder="dhl_express" class="w-full rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </label>
+            </div>
+
+            <label class="space-y-2 block">
+                <span class="text-sm uppercase tracking-[0.3em] text-slate-500">Extension Type</span>
+                <select name="type" class="w-full rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="connector">Direct Carrier (modules/connectors)</option>
+                    <option value="plugin">Hub Carrier (community/plugins)</option>
+                </select>
+            </label>
+
+            <div>
+                <p class="text-sm uppercase tracking-[0.3em] text-slate-500 mb-3">Features</p>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {% set feature_options = [
+                        ('rating', 'Rating'),
+                        ('shipping', 'Shipping'),
+                        ('tracking', 'Tracking'),
+                        ('pickup', 'Pickup'),
+                        ('manifest', 'Manifest'),
+                        ('address', 'Address Validation')
+                    ] %}
+                    {% for value, label in feature_options %}
+                    <label class="flex items-center gap-3 px-4 py-3 border border-slate-800 rounded-2xl bg-slate-900/60 hover:border-blue-500 cursor-pointer text-sm font-medium text-slate-200">
+                        <input type="checkbox" name="features" value="{{ value }}" class="rounded text-blue-600 bg-slate-900 border-slate-700" {% if value in ['rating','shipping','tracking'] %}checked{% endif %}>
+                        {{ label }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <label class="inline-flex items-center gap-3 text-sm text-slate-400">
+                <input type="checkbox" name="is_xml_api" class="rounded text-blue-600 bg-slate-900 border-slate-700">
+                XML / SOAP API
+            </label>
+
+            <div class="space-y-3">
+                <label class="inline-flex items-center gap-3 text-sm text-slate-400">
+                    <input type="checkbox" id="agent-request-toggle" class="rounded text-blue-600 bg-slate-900 border-slate-700">
+                    Ask AI agent to build this integration
+                </label>
+                <div id="agent-request-panel" class="hidden space-y-2">
+                    <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Initial prompt</p>
+                    <textarea name="agent_prompt" rows="6"
+                              class="w-full rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+Strictly follow https://github.com/karrioapi/karrio/raw/refs/heads/main/CARRIER_INTEGRATION_GUIDE.md to build a new integration.
+- Carrier display name: <DISPLAY_NAME>
+- Carrier slug: <CARRIER_SLUG>
+- Location: modules/connectors/<CARRIER_SLUG> (adjust for plugins)
+- Features to implement: <FEATURES>
+- API docs/reference: <PASTE LINKS>
+
+Deliverables:
+1. Schema samples + generate script setup.
+2. Provider settings, units, proxy, feature modules using generated types.
+3. Tests (4-method template with prints) plus fixtures similar to landmark.
+4. Plugin metadata, pip install -e, ./bin/run-generate-on, ./bin/cli plugins show validation.
+5. Summary of success-criteria verification steps.
+                    </textarea>
+                    <p class="text-xs text-slate-500">Customize the prompt with doc links or extra instructions before copying to your agent.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" hx-get="/partials/dashboard" hx-target="#main-content" class="px-6 py-3 rounded-2xl border border-slate-800 text-slate-300 hover:border-slate-600">Cancel</button>
+                <button type="submit" class="px-6 py-3 rounded-2xl bg-blue-500 text-white font-semibold shadow-lg shadow-blue-600/30">Create Extension</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const agentToggle = document.getElementById('agent-request-toggle');
+    const agentPanel = document.getElementById('agent-request-panel');
+    agentToggle?.addEventListener('change', () => {
+        if (!agentPanel) return;
+        agentPanel.classList.toggle('hidden', !agentToggle.checked);
+    });
+</script>

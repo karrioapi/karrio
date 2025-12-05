@@ -9,13 +9,10 @@ class IamConfig(AppConfig):
 
     def ready(self):
         from karrio.server.core import utils
-        from karrio.server.iam import signals, permissions
+        from karrio.server.iam import signals
 
         @utils.skip_on_commands()
         def _init():
             signals.register_all()
-
-            # Setup default permission groups and apply to existing orgs on start up
-            utils.run_on_all_tenants(permissions.setup_groups)()
 
         _init()

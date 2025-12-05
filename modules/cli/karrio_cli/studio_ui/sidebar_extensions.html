@@ -1,0 +1,23 @@
+<div class="space-y-2">
+    {% for ext in extensions %}
+    <button
+        class="w-full text-left px-4 py-3 rounded-2xl flex items-center justify-between text-sm text-slate-300 hover:bg-slate-800/60 hover:text-white transition"
+        hx-get="/partials/extension/{{ ext.id }}"
+        hx-target="#main-content">
+        <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-2xl bg-slate-800 flex items-center justify-center text-xs font-semibold uppercase text-slate-200">
+                {{ ext.id[:2] }}
+            </div>
+            <div>
+                <p class="font-medium text-sm">{{ ext.name }}</p>
+                <p class="text-[10px] uppercase tracking-[0.3em] text-slate-500">{{ ext.type }}</p>
+            </div>
+        </div>
+        <span class="text-[10px] uppercase tracking-[0.6em] text-slate-600">{{ 'C' if ext.type == 'connector' else 'P' }}</span>
+    </button>
+    {% else %}
+    <div class="px-4 py-6 text-slate-500 text-sm">
+        No extensions detected yet.
+    </div>
+    {% endfor %}
+</div>

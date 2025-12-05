@@ -60,13 +60,11 @@ class BatchOperationType:
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["DATA_IMPORT_EXPORT"])
     def resolve(info, id: str) -> typing.Optional["BatchOperationType"]:
         return models.BatchOperation.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
-    @utils.authorization_required(["DATA_IMPORT_EXPORT"])
     def resolve_list(
         info,
         filter: typing.Optional[inputs.BatchOperationFilter] = strawberry.UNSET,
