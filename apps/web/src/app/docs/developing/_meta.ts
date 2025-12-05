@@ -35,6 +35,10 @@ export default {
     title: 'API Development',
     type: 'page'
   },
+  "shipping-integration": {
+    title: 'Shipping Integration',
+    type: 'page'
+  },
   "dashboard-guide": {
     title: 'Dashboard Guide',
     type: 'page'
