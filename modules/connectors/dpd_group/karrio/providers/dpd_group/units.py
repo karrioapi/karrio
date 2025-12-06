@@ -4,6 +4,18 @@ import karrio.lib as lib
 import karrio.core.units as units
 
 
+class WeightUnit(lib.StrEnum):
+    """DPD Group weight units"""
+    KG = "KG"
+    LB = "LB"
+
+
+class DimensionUnit(lib.StrEnum):
+    """DPD Group dimension units"""
+    CM = "CM"
+    IN = "IN"
+
+
 class PackagingType(lib.StrEnum):
     """DPD Group packaging types"""
     dpd_group_package = "PACKAGE"
