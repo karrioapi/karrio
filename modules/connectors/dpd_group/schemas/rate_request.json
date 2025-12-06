@@ -1,0 +1,21 @@
+{
+  "shipperAddress": {
+    "postalCode": "12345",
+    "city": "Berlin",
+    "country": "DE"
+  },
+  "receiverAddress": {
+    "postalCode": "54321",
+    "city": "Munich",
+    "country": "DE"
+  },
+  "parcels": [
+    {
+      "weight": 5.0,
+      "length": 30,
+      "width": 20,
+      "height": 15
+    }
+  ],
+  "productCodes": ["CL", "E10", "E12"]
+}
