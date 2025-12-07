@@ -15,6 +15,7 @@ class TestDPDGroupShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -52,6 +53,32 @@ class TestDPDGroupShipment(unittest.TestCase):
             )
             print(f"Error response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+
+    def test_create_shipment_cancel_request(self):
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        print(f"Generated cancel request: {request.serialize()}")
+        self.assertEqual(request.serialize(), ShipmentCancelRequest)
+
+    def test_cancel_shipment(self):
+        with patch("karrio.mappers.dpd_group.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+            print(f"Called URL: {mock.call_args[1]['url']}")
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/shipments/SHIP123456789"
+            )
+
+    def test_parse_shipment_cancel_response(self):
+        with patch("karrio.mappers.dpd_group.proxy.lib.request") as mock:
+            mock.return_value = ShipmentCancelResponse
+            parsed_response = (
+                karrio.Shipment.cancel(self.ShipmentCancelRequest)
+                .from_(gateway)
+                .parse()
+            )
+            print(f"Parsed cancel response: {lib.to_dict(parsed_response)}")
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
 
 if __name__ == "__main__":
@@ -211,4 +238,28 @@ ParsedErrorResponse = [
             }
         }
     ]
+]
+
+# Cancel Shipment Test Data
+
+ShipmentCancelPayload = {
+    "shipment_identifier": "SHIP123456789",
+}
+
+ShipmentCancelRequest = "SHIP123456789"
+
+ShipmentCancelResponse = """{
+  "success": true,
+  "message": "Shipment cancelled successfully",
+  "shipmentId": "SHIP123456789"
+}"""
+
+ParsedShipmentCancelResponse = [
+    {
+        "carrier_id": "dpd_group",
+        "carrier_name": "dpd_group",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    []
 ]
