@@ -191,14 +191,18 @@ ParsedErrorResponse = [
             "carrier_name": "dpd_group",
             "code": "VALIDATION_ERROR",
             "message": "Invalid postal code",
-            "details": {
-                "details": [
-                    {
-                        "field": "shipper.postalCode",
-                        "message": "Postal code format is invalid"
-                    }
-                ]
-            }
+            "details": [
+                {
+                    "field": "shipper.postalCode",
+                    "message": "Postal code format is invalid"
+                }
+            ]
+        },
+        {
+            "carrier_id": "dpd_group",
+            "carrier_name": "dpd_group",
+            "code": "VALIDATION_ERROR",
+            "message": "shipper.postalCode: Postal code format is invalid"
         }
     ]
 ]
