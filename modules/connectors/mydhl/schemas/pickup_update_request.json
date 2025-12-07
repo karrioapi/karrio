@@ -1,0 +1,30 @@
+{
+  "plannedPickupDateAndTime": "2024-11-06T11:00:00 GMT+00:00",
+  "closeTime": "18:00",
+  "location": "loading dock",
+  "locationType": "business",
+  "specialInstructions": [
+    {
+      "value": "Use loading dock entrance",
+      "typeCode": "TBD"
+    }
+  ],
+  "remark": "Updated pickup location",
+  "customerDetails": {
+    "shipperDetails": {
+      "postalAddress": {
+        "postalCode": "14800-AA",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "addressLine1": "V Parku 2308/10"
+      },
+      "contactInformation": {
+        "email": "shipper@example.com",
+        "phone": "+1234567890",
+        "mobilePhone": "+1234567890",
+        "companyName": "Acme Corp",
+        "fullName": "John Doe"
+      }
+    }
+  }
+}

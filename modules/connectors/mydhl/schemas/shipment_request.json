@@ -1,0 +1,106 @@
+{
+  "plannedShippingDateAndTime": "2024-11-05T14:00:00 GMT+00:00",
+  "pickup": {
+    "isRequested": false
+  },
+  "productCode": "P",
+  "localProductCode": "P",
+  "getRateEstimates": false,
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "ACC123456789"
+    }
+  ],
+  "outputImageProperties": {
+    "printerDPI": 300,
+    "encodingFormat": "pdf",
+    "imageOptions": [
+      {
+        "typeCode": "label",
+        "templateName": "ECOM26_84_001",
+        "isRequested": true
+      }
+    ]
+  },
+  "customerDetails": {
+    "shipperDetails": {
+      "postalAddress": {
+        "postalCode": "14800-AA",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "addressLine1": "V Parku 2308/10"
+      },
+      "contactInformation": {
+        "email": "shipper@example.com",
+        "phone": "+1234567890",
+        "companyName": "Acme Corp",
+        "fullName": "John Doe"
+      },
+      "typeCode": "business"
+    },
+    "receiverDetails": {
+      "postalAddress": {
+        "postalCode": "10001-5555",
+        "cityName": "New York",
+        "countryCode": "US",
+        "addressLine1": "123 Main Street"
+      },
+      "contactInformation": {
+        "email": "receiver@example.com",
+        "phone": "+19876543210",
+        "companyName": "Customer Inc",
+        "fullName": "Jane Smith"
+      },
+      "typeCode": "business"
+    }
+  },
+  "content": {
+    "packages": [
+      {
+        "typeCode": "2BP",
+        "weight": 5.0,
+        "dimensions": {
+          "length": 15,
+          "width": 15,
+          "height": 15
+        }
+      }
+    ],
+    "isCustomsDeclarable": true,
+    "declaredValue": 100.0,
+    "declaredValueCurrency": "USD",
+    "exportDeclaration": {
+      "lineItems": [
+        {
+          "number": 1,
+          "description": "Product description",
+          "price": 100,
+          "quantity": {
+            "value": 1,
+            "unitOfMeasurement": "PCS"
+          },
+          "commodityCodes": [
+            {
+              "typeCode": "outbound",
+              "value": "12345678"
+            }
+          ],
+          "exportReasonType": "permanent",
+          "manufacturerCountry": "CZ",
+          "weight": {
+            "netValue": 5.0,
+            "grossValue": 5.0
+          }
+        }
+      ],
+      "invoice": {
+        "number": "INV-001",
+        "date": "2024-11-05"
+      }
+    },
+    "description": "Sample shipment",
+    "incoterm": "DAP",
+    "unitOfMeasurement": "metric"
+  }
+}

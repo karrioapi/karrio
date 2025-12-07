@@ -1,0 +1,87 @@
+{
+  "products": [
+    {
+      "productName": "EXPRESS WORLDWIDE",
+      "productCode": "P",
+      "localProductCode": "P",
+      "localProductCountryCode": "CZ",
+      "networkTypeCode": "TD",
+      "isCustomerAgreement": false,
+      "weight": {
+        "volumetric": 3.38,
+        "provided": 5.0,
+        "unitOfMeasurement": "metric"
+      },
+      "totalPrice": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "price": 89.25
+        }
+      ],
+      "totalPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "priceBreakdown": [
+            {
+              "typeCode": "SDRATE",
+              "price": 65.5
+            },
+            {
+              "typeCode": "FUEL",
+              "price": 23.75
+            }
+          ]
+        }
+      ],
+      "detailedPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "breakdown": [
+            {
+              "name": "Base Rate",
+              "serviceCode": "SDRATE",
+              "localServiceCode": "SDRATE",
+              "serviceTypeCode": "SCH",
+              "price": 65.5,
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "priceBreakdown": [
+                {
+                  "priceType": "TAX",
+                  "typeCode": "All Bu",
+                  "price": 0,
+                  "rate": 0,
+                  "basePrice": 65.5
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "pickupCapabilities": {
+        "nextBusinessDay": true,
+        "localCutoffDateAndTime": "2024-11-05T16:00:00",
+        "GMTCutoffTime": "18:30:00",
+        "pickupEarliest": "10:00:00",
+        "pickupLatest": "18:30:00",
+        "originServiceAreaCode": "BER",
+        "originFacilityAreaCode": "BER",
+        "pickupAdditionalDays": 0,
+        "pickupDayOfWeek": 5
+      },
+      "deliveryCapabilities": {
+        "deliveryTypeCode": "QDDC",
+        "estimatedDeliveryDateAndTime": "2024-11-07T18:00:00",
+        "destinationServiceAreaCode": "NYC",
+        "destinationFacilityAreaCode": "NYC",
+        "deliveryAdditionalDays": 0,
+        "deliveryDayOfWeek": 2,
+        "totalTransitDays": 4
+      },
+      "pricingDate": "2025-11-21"
+    }
+  ]
+}

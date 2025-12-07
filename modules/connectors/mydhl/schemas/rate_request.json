@@ -1,0 +1,36 @@
+{
+  "customerDetails": {
+    "shipperDetails": {
+      "postalCode": "14800-AA",
+      "cityName": "Prague",
+      "countryCode": "CZ"
+    },
+    "receiverDetails": {
+      "postalCode": "10001-5555",
+      "cityName": "New York",
+      "countryCode": "US"
+    }
+  },
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "ACC123456789"
+    }
+  ],
+  "productCode": "P",
+  "localProductCode": "P",
+  "plannedShippingDateAndTime": "2024-11-05T14:00:00 GMT+00:00",
+  "unitOfMeasurement": "metric",
+  "isCustomsDeclarable": true,
+  "packages": [
+    {
+      "typeCode": "2BP",
+      "weight": 5.0,
+      "dimensions": {
+        "length": 15,
+        "width": 15,
+        "height": 15
+      }
+    }
+  ]
+}

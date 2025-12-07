@@ -15,6 +15,7 @@
 -e ./modules/connectors/generic
 -e ./modules/connectors/landmark
 -e ./modules/connectors/laposte
+-e ./modules/connectors/mydhl
 -e ./modules/connectors/purolator
 -e ./modules/connectors/seko
 -e ./modules/connectors/sendle

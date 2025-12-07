@@ -1,0 +1,17 @@
+{
+  "warnings": [],
+  "address": [
+    {
+      "postalCode": "10001-5555",
+      "cityName": "NEW YORK",
+      "countryCode": "US",
+      "countyName": "NEW YORK",
+      "serviceArea": {
+        "code": "NYC",
+        "description": "NEW YORK",
+        "facilityCode": "NYC",
+        "inboundSortCode": "NYC"
+      }
+    }
+  ]
+}

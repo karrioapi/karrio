@@ -1,0 +1,76 @@
+{
+  "plannedPickupDateAndTime": "2024-11-06T10:00:00 GMT+00:00",
+  "closeTime": "18:00",
+  "location": "reception",
+  "locationType": "business",
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "ACC123456789"
+    }
+  ],
+  "specialInstructions": [
+    {
+      "value": "Please ring doorbell",
+      "typeCode": "TBD"
+    }
+  ],
+  "remark": "Two packages ready for pickup",
+  "customerDetails": {
+    "shipperDetails": {
+      "postalAddress": {
+        "postalCode": "14800-AA",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "addressLine1": "V Parku 2308/10"
+      },
+      "contactInformation": {
+        "email": "shipper@example.com",
+        "phone": "+1234567890",
+        "mobilePhone": "+1234567890",
+        "companyName": "Acme Corp",
+        "fullName": "John Doe"
+      }
+    },
+    "receiverDetails": {
+      "postalAddress": {
+        "postalCode": "10001-5555",
+        "cityName": "New York",
+        "countryCode": "US",
+        "addressLine1": "123 Main Street"
+      },
+      "contactInformation": {
+        "email": "receiver@example.com",
+        "phone": "+19876543210",
+        "mobilePhone": "+19876543210",
+        "companyName": "Customer Inc",
+        "fullName": "Jane Smith"
+      }
+    }
+  },
+  "shipmentDetails": [
+    {
+      "productCode": "P",
+      "localProductCode": "P",
+      "accounts": [
+        {
+          "typeCode": "shipper",
+          "number": "ACC123456789"
+        }
+      ],
+      "packages": [
+        {
+          "typeCode": "2BP",
+          "weight": 5.0,
+          "dimensions": {
+            "length": 15,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ],
+      "isCustomsDeclarable": false,
+      "unitOfMeasurement": "metric"
+    }
+  ]
+}

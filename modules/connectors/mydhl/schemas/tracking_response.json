@@ -1,0 +1,108 @@
+{
+  "shipments": [
+    {
+      "shipmentTrackingNumber": "1234567890",
+      "status": "delivered",
+      "shipmentTimestamp": "2024-11-05T10:00:00",
+      "productCode": "P",
+      "description": "EXPRESS WORLDWIDE",
+      "origin": {
+        "address": {
+          "addressLocality": "Prague",
+          "postalCode": "14800-AA",
+          "addressCountry": "CZ"
+        },
+        "servicePoint": {
+          "url": "https://www.dhl.com",
+          "label": "DHL Service Point"
+        }
+      },
+      "destination": {
+        "address": {
+          "addressLocality": "New York",
+          "postalCode": "10001-5555",
+          "addressCountry": "US"
+        },
+        "servicePoint": {
+          "url": "https://www.dhl.com",
+          "label": "DHL Service Point"
+        }
+      },
+      "estimatedTimeOfDelivery": "2024-11-07T18:00:00",
+      "events": [
+        {
+          "date": "2024-11-07",
+          "time": "18:00:00",
+          "typeCode": "PU",
+          "description": "Shipment picked up",
+          "serviceArea": [
+            {
+              "code": "PRG",
+              "description": "Prague"
+            }
+          ]
+        },
+        {
+          "date": "2024-11-07",
+          "time": "12:00:00",
+          "typeCode": "PL",
+          "description": "Processed at DHL facility",
+          "serviceArea": [
+            {
+              "code": "NYC",
+              "description": "New York"
+            }
+          ]
+        },
+        {
+          "date": "2024-11-07",
+          "time": "18:00:00",
+          "typeCode": "OK",
+          "description": "Delivered",
+          "serviceArea": [
+            {
+              "code": "NYC",
+              "description": "New York"
+            }
+          ]
+        }
+      ],
+      "pieces": [
+        {
+          "number": 1,
+          "typeCode": "2BP",
+          "shipmentTrackingNumber": "JD014600001234567890",
+          "trackingNumber": "JD014600001234567890",
+          "description": "Piece 1",
+          "weight": 5.0,
+          "dimensionalWeight": 3.38,
+          "actualWeight": 5.0,
+          "dimensions": {
+            "length": 15,
+            "width": 15,
+            "height": 15
+          },
+          "actualDimensions": {
+            "length": 15,
+            "width": 15,
+            "height": 15
+          },
+          "events": [
+            {
+              "date": "2024-11-07",
+              "time": "18:00:00",
+              "typeCode": "OK",
+              "description": "Delivered",
+              "serviceArea": [
+                {
+                  "code": "NYC",
+                  "description": "New York"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
