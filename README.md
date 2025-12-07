@@ -56,7 +56,10 @@ docker compose up
 Default Login: `admin@example.com` | `demo`
 
 <p align="center">
-  <img alt="Karrio Dashboard" src="screenshots/dashboard.png" width="800" style="max-width: 100%;" />
+  <img alt="Shipments Overview" src="screenshots/shipments-overview.png" width="800" style="max-width: 100%;" />
+</p>
+<p align="center">
+  <img alt="Developer Tools" src="screenshots/developer-tools.png" width="800" style="max-width: 100%;" />
 </p>
 
 ## Get started
