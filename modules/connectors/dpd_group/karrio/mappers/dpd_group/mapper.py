@@ -11,20 +11,38 @@ import karrio.mappers.dpd_group.settings as provider_settings
 class Mapper(mapper.Mapper):
     settings: provider_settings.Settings
 
+    def create_rate_request(self, payload: models.RateRequest) -> lib.Serializable:
+        return provider.rate_request(payload, self.settings)
+
+    def parse_rate_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+        return provider.parse_rate_response(response, self.settings)
+
     def create_shipment_request(
         self, payload: models.ShipmentRequest
     ) -> lib.Serializable:
         return provider.shipment_request(payload, self.settings)
 
-    def create_tracking_request(
-        self, payload: models.TrackingRequest
-    ) -> lib.Serializable:
-        return provider.tracking_request(payload, self.settings)
-
     def parse_shipment_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
         return provider.parse_shipment_response(response, self.settings)
+
+    def create_cancel_shipment_request(
+        self, payload: models.ShipmentCancelRequest
+    ) -> lib.Serializable:
+        return provider.shipment_cancel_request(payload, self.settings)
+
+    def parse_cancel_shipment_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+        return provider.parse_shipment_cancel_response(response, self.settings)
+
+    def create_tracking_request(
+        self, payload: models.TrackingRequest
+    ) -> lib.Serializable:
+        return provider.tracking_request(payload, self.settings)
 
     def parse_tracking_response(
         self, response: lib.Deserializable[str]
