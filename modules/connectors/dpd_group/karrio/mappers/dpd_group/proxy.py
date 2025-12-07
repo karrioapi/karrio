@@ -23,6 +23,21 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Get rates from DPD Group."""
+        response = lib.request(
+            url=f"{self.settings.server_url}/rates",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.api_key}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         """Get tracking information from DPD Group."""
         def _get_tracking(tracking_number: str):
@@ -45,3 +60,15 @@ class Proxy(proxy.Proxy):
                 (num, lib.to_dict(track)) for num, track in res if any(track.strip())
             ],
         )
+
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Cancel a shipment with DPD Group."""
+        shipment_id = request.serialize()
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipments/{shipment_id}",
+            trace=self.trace_as("json"),
+            method="DELETE",
+            headers={"Authorization": f"Bearer {self.settings.api_key}"},
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
