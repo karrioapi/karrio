@@ -30,8 +30,8 @@ class ReceiverType:
     name2: typing.Optional[str] = None
     name3: typing.Optional[str] = None
     street: typing.Optional[str] = None
-    houseNumber: typing.Optional[int] = None
-    zipCode: typing.Optional[int] = None
+    houseNumber: typing.Optional[str] = None
+    zipCode: typing.Optional[str] = None
     city: typing.Optional[str] = None
     country: typing.Optional[str] = None
     contactPerson: typing.Optional[str] = None
