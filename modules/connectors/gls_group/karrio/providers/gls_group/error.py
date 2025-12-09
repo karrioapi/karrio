@@ -13,19 +13,23 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     """Parse GLS Group error response."""
-    errors = response.get("errors", []) if isinstance(response, dict) else []
+    if not isinstance(response, dict):
+        return []
+    
+    # Convert to typed object using generated schema
+    error_response = lib.to_object(gls_error.ErrorResponseType, response)
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code=lib.text(error.get("code", "")),
-            message=lib.text(error.get("message", "")),
+            code=lib.text(error.code or ""),
+            message=lib.text(error.message or ""),
             details={
                 **kwargs,
-                "field": error.get("field"),
-                "details": error.get("details"),
+                "field": error.field,
+                "details": error.details,
             },
         )
-        for error in errors
+        for error in (error_response.errors or [])
     ]
