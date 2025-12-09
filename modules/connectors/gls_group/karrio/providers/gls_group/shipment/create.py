@@ -33,7 +33,7 @@ def _extract_details(
     ctx: dict = None,
 ) -> models.ShipmentDetails:
     """Extract shipment details from GLS Group response."""
-    shipment = lib.to_object(gls_response.ShipmentType, data)
+    shipment = lib.to_object(gls_response.ShipmentResponseType, data)
 
     # Get the first label data if available
     label_data = None
