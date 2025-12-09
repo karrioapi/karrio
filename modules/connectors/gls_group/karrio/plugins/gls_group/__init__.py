@@ -4,7 +4,8 @@ import karrio.providers.gls_group.units as units
 import karrio.providers.gls_group.utils as utils
 
 
-METADATA = metadata.Metadata(
+METADATA = metadata.PluginMetadata(
+    status="development",
     id="gls_group",
     label="GLS Group",
     # Integrations
@@ -15,4 +16,8 @@ METADATA = metadata.Metadata(
     is_hub=False,
     options=units.ShippingOption,
     services=units.ShippingService,
+    connection_configs=utils.ConnectionConfig,
+    # Extra info
+    website="https://www.gls-group.net",
+    description="GLS Group shipping services",
 )
