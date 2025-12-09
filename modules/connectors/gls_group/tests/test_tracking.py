@@ -105,6 +105,7 @@ ParsedTrackingResponse = [
             "carrier_id": "gls_group",
             "carrier_name": "gls_group",
             "tracking_number": "12345678901234567890",
+            "status": "in_transit",
             "estimated_delivery": "2025-01-17",
             "events": [
                 {

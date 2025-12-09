@@ -61,11 +61,21 @@ def _extract_details(
         for event in (tracking.events or [])
     ]
 
+    # Map GLS status codes to Karrio standard statuses
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if tracking.status in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
+
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking.trackingNumber or tracking_number,
-        status=provider_units.TrackingStatus.map(tracking.status or "").value,
+        status=status,
         events=events,
         estimated_delivery=lib.fdate(tracking.estimatedDelivery) if hasattr(tracking, "estimatedDelivery") and tracking.estimatedDelivery else None,
         meta=dict(
