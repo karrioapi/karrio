@@ -133,3 +133,48 @@ ErrorResponse = """{
     }
   ]
 }"""
+
+# Parsed shipment response
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "gls_group",
+        "carrier_name": "gls_group",
+        "tracking_number": "12345678901234567890",
+        "shipment_identifier": "GLS123456789",
+        "label_type": "PDF",
+        "docs": {
+            "label": "JVBERi0xLjQKJeLjz9MK"
+        },
+        "meta": {
+            "shipment_id": "GLS123456789",
+            "tracking_numbers": ["12345678901234567890"],
+            "created_at": "2025-01-15T10:30:00Z",
+            "shipping_date": "2025-01-16",
+            "status": "CREATED",
+            "parcels": [
+                {
+                    "parcel_id": "P001",
+                    "tracking_number": "12345678901234567890",
+                    "weight": 5.5
+                }
+            ]
+        }
+    },
+    []
+]
+
+# Parsed error response
+ParsedShipmentErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "gls_group",
+            "carrier_name": "gls_group",
+            "code": "VALIDATION_ERROR",
+            "message": "Invalid request parameters",
+            "details": {
+                "field": "shipment.recipient.postalCode"
+            }
+        }
+    ]
+]
