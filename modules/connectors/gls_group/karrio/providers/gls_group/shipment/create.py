@@ -92,19 +92,17 @@ def shipment_request(
     # Get label format from options or use default
     label_format = payload.label_type or "PDF"
 
-    # Build services array from options
-    services = []
-    for key, value in options.items():
-        if value and key != "insurance":
-            services.append({"type": key, "details": {}})
+    # Build services array from options (functional style)
+    services = [
+        gls_request.ServiceType(type=key, details=gls_request.DetailsType())
+        for key, value in options.items()
+        if value and key != "insurance"
+    ]
 
-    # Build parcel references
-    references = []
-    if payload.reference:
-        references.append({
-            "type": "CUSTOMER_REFERENCE",
-            "value": payload.reference,
-        })
+    # Build parcel references (functional style)
+    references = [
+        gls_request.ReferenceType(type="CUSTOMER_REFERENCE", value=payload.reference)
+    ] if payload.reference else []
 
     # Create the shipment request
     request = gls_request.ShipmentRequestType(
@@ -151,15 +149,9 @@ def shipment_request(
                 )
                 for idx, package in enumerate(packages)
             ],
-            services=[
-                gls_request.ServiceType(type=svc["type"], details=gls_request.DetailsType())
-                for svc in services
-            ] if services else None,
+            services=services if services else None,
             shippingDate=lib.fdate(getattr(payload, 'shipment_date', None)) if getattr(payload, 'shipment_date', None) else None,
-            references=[
-                gls_request.ReferenceType(type=ref["type"], value=ref["value"])
-                for ref in references
-            ] if references else None,
+            references=references if references else None,
             labelFormat=label_format,
             printingOptions=gls_request.PrintingOptionsType(
                 templateName=settings.connection_config.template_name.state or "STANDARD",
