@@ -38,8 +38,7 @@ class TestGLSGroupTracking(unittest.TestCase):
                 .parse()
             )
             print(f"Parsed response: {lib.to_dict(parsed_response)}")
-            self.assertTrue(len(parsed_response[0]) > 0)
-            self.assertIsInstance(parsed_response[0][0], models.TrackingDetails)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.gls_group.proxy.lib.request") as mock:
@@ -50,7 +49,7 @@ class TestGLSGroupTracking(unittest.TestCase):
                 .parse()
             )
             print(f"Error response: {lib.to_dict(parsed_response)}")
-            self.assertTrue(len(parsed_response[1]) > 0)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingErrorResponse)
 
 
 if __name__ == "__main__":
