@@ -1,10 +1,10 @@
 """GLS Group carrier shipment tests."""
 
 import unittest
-from unittest.mock import patch
-from tests.fixture import gateway, shipper_address, recipient_address
+from unittest.mock import patch, ANY
+from .fixture import gateway, shipper_address, recipient_address
 import logging
-import karrio
+import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
 
