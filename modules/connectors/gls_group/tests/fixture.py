@@ -1,15 +1,31 @@
 """Test fixtures for GLS Group integration."""
 
 import karrio.sdk as karrio
+import karrio.lib as lib
+import datetime
 from karrio.core.models import Address
+
+# Pre-populate OAuth cache to avoid real API calls during tests
+expiry = datetime.datetime.now() + datetime.timedelta(days=1)
+client_id = "test_client_id"
+client_secret = "test_client_secret"
+cached_auth = {
+    f"gls_group|{client_id}|{client_secret}": dict(
+        access_token="fake_access_token_for_testing",
+        token_type="Bearer",
+        expires_in="3600",
+        expiry=expiry.strftime("%Y-%m-%d %H:%M:%S"),
+    )
+}
 
 # Create gateway for testing
 gateway = karrio.gateway["gls_group"].create(
     {
-        "client_id": "test_client_id",
-        "client_secret": "test_client_secret",
+        "client_id": client_id,
+        "client_secret": client_secret,
         "test_mode": True,
-    }
+    },
+    cache=lib.Cache(**cached_auth),
 )
 
 # Sample addresses
