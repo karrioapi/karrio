@@ -98,3 +98,52 @@ ErrorResponse = """{
     }
   ]
 }"""
+
+# Parsed tracking response
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "gls_group",
+            "carrier_name": "gls_group",
+            "tracking_number": "12345678901234567890",
+            "status": "in_transit",
+            "events": [
+                {
+                    "date": "2025-01-15",
+                    "description": "Shipment accepted at depot",
+                    "location": "Berlin, DE",
+                    "code": "ACCEPTED",
+                    "time": "10:30:00"
+                },
+                {
+                    "date": "2025-01-15",
+                    "description": "Shipment in transit",
+                    "location": "Leipzig, DE",
+                    "code": "IN_TRANSIT",
+                    "time": "15:45:00"
+                }
+            ],
+            "estimated_delivery": "2025-01-17",
+            "meta": {
+                "shipment_id": "GLS123456789",
+                "product": "PARCEL",
+                "weight": 5.5
+            }
+        }
+    ],
+    []
+]
+
+# Parsed error response
+ParsedTrackingErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "gls_group",
+            "carrier_name": "gls_group",
+            "code": "NOT_FOUND",
+            "message": "Tracking number not found",
+            "details": {}
+        }
+    ]
+]
