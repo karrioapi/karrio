@@ -1,6 +1,6 @@
 """Test fixtures for GLS Group integration."""
 
-import karrio
+import karrio.sdk as karrio
 from karrio.core.models import Address
 
 # Create gateway for testing
