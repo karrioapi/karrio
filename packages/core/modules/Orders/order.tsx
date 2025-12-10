@@ -59,7 +59,12 @@ export const OrderComponent = ({
           {/* Header section */}
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-2 flex-1">
-              <div className="text-sm font-semibold text-gray-600 tracking-wide">ORDER</div>
+              <AppLink
+                href="/orders"
+                className="text-sm font-semibold text-blue-600 tracking-wide hover:text-blue-800 transition-colors duration-150 flex items-center gap-1"
+              >
+                Orders <i className="fas fa-chevron-right text-xs"></i>
+              </AppLink>
               <div className="flex items-center gap-2">
                 <span className="text-3xl font-bold">{order?.order_id}</span>
                 <ShipmentsStatusBadge status={order?.status} />
