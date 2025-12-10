@@ -18,21 +18,28 @@ import { OrderMenu } from "@karrio/ui/core/components/order-menu";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Spinner } from "@karrio/ui/core/components/spinner";
-import { MetadataObjectTypeEnum } from "@karrio/types";
+import { MetadataObjectTypeEnum, NotificationType } from "@karrio/types";
 import { useEvents } from "@karrio/hooks/event";
 import { useOrder } from "@karrio/hooks/order";
 import { useLogs } from "@karrio/hooks/log";
+import { useMetadataMutation } from "@karrio/hooks/metadata";
+import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@karrio/ui/components/ui/table";
+import { Button } from "@karrio/ui/components/ui/button";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import React from "react";
 
 
 type OrderComponentProps = {
   orderId: string;
   isPreview?: boolean;
+  isSheet?: boolean;
 };
 
 export const OrderComponent = ({
   orderId,
   isPreview,
+  isSheet,
 }: OrderComponentProps): JSX.Element => {
   const { setLoading } = useLoader();
   const entity_id = orderId;
