@@ -98,31 +98,23 @@ export const OrderComponent = ({
           </div>
 
           {/* Reference and highlights section */}
-          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+          <div className="border-t border-gray-200 my-4"></div>
 
-          <div className="columns mb-4">
-            <div className="p-4 mr-4">
-              <span className="subtitle is-size-7 my-4">Date</span>
-              <br />
-              <span className="subtitle is-size-7 mt-1 has-text-weight-semibold">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="space-y-1">
+              <div className="text-xs text-gray-600 font-semibold">Date</div>
+              <div className="text-sm font-semibold text-gray-900">
                 {formatDateTime(order?.created_at)}
-              </span>
+              </div>
             </div>
 
             {!isNone(order?.source) && (
-              <>
-                <div
-                  className="my-2"
-                  style={{ width: "1px", backgroundColor: "#ddd" }}
-                ></div>
-                <div className="p-4 mr-4">
-                  <span className="subtitle is-size-7 my-4">Source</span>
-                  <br />
-                  <span className="subtitle is-size-7 has-text-weight-semibold">
-                    {order?.source}
-                  </span>
+              <div className="space-y-1">
+                <div className="text-xs text-gray-600 font-semibold">Source</div>
+                <div className="text-sm font-semibold text-gray-900">
+                  {order?.source}
                 </div>
-              </>
+              </div>
             )}
           </div>
 
