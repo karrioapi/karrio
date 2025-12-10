@@ -118,59 +118,40 @@ export const OrderComponent = ({
             )}
           </div>
 
-          <h2 className="title is-5 my-5">Order Details</h2>
-          <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+          <h2 className="text-xl font-semibold my-4">Order Details</h2>
+          <div className="border-t border-gray-200 mt-1 mb-2"></div>
 
           <div className="mt-3 mb-6">
             {/* address and line items section */}
-            <div className="columns my-0 is-multiline">
+            <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 my-0`}>
               {/* Shipping Address section */}
-              <div className="column is-6 is-size-6 py-1">
-                <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                  ADDRESS
-                </p>
-
-                <p className="is-size-6 my-1">
-                  {order?.shipping_to.person_name}
-                </p>
-                <p className="is-size-6 my-1">
-                  {order?.shipping_to.company_name}
-                </p>
-                <p className="is-size-6 my-1 has-text-info">
-                  {order?.shipping_to.email}
-                </p>
-                <p className="is-size-6 my-1 has-text-info">
-                  {order?.shipping_to.phone_number}
-                </p>
-                <p className="is-size-6 my-1">
-                  <span>{order?.shipping_to.address_line1}</span>
-                  {!isNone(order?.shipping_to.address_line2) && (
-                    <span>{order?.shipping_to.address_line2}</span>
-                  )}
-                </p>
-                <p className="is-size-6 my-1">
-                  {formatAddressLocation(order?.shipping_to)}
-                </p>
+              <div className="text-base py-1">
+                <p className="text-base font-semibold tracking-wide my-2">SHIP TO</p>
+                <div className="space-y-1">
+                  <p className="text-base my-1">{order?.shipping_to.person_name}</p>
+                  <p className="text-base my-1">{order?.shipping_to.company_name}</p>
+                  <p className="text-base my-1 text-blue-600">{order?.shipping_to.email}</p>
+                  <p className="text-base my-1 text-blue-600">{order?.shipping_to.phone_number}</p>
+                  <p className="text-base my-1">
+                    <span>{order?.shipping_to.address_line1}</span>
+                    {!isNone(order?.shipping_to.address_line2) && (
+                      <span> {order?.shipping_to.address_line2}</span>
+                    )}
+                  </p>
+                  <p className="text-base my-1">{formatAddressLocation(order?.shipping_to)}</p>
+                </div>
               </div>
 
               {/* Line Items section */}
-              <div className="column is-6 is-size-6 py-1">
-                <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                  LINE ITEMS (
-                  {order?.line_items.reduce(
-                    (_, { quantity }) => _ + (quantity || 1),
-                    0,
-                  )}
-                  )
+              <div className="text-base py-1">
+                <p className="text-base font-semibold tracking-wide my-2">
+                  LINE ITEMS ({order?.line_items.reduce((_, { quantity }) => _ + (quantity || 1), 0)})
                 </p>
 
-                <div
-                  className="menu-list py-2 pr-1"
-                  style={{ maxHeight: "40em", overflow: "auto" }}
-                >
+                <div className="py-2 pr-1 max-h-[40rem] overflow-auto">
                   {order?.line_items.map((item, index) => (
                     <React.Fragment key={index + "parcel-info"}>
-                      <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+                      <div className="border-t border-gray-200 mt-1 mb-2"></div>
                       <CommodityDescription commodity={item} />
                     </React.Fragment>
                   ))}
