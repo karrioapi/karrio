@@ -1,17 +1,5 @@
 """Karrio DPD Group shipment API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract shipment details from the response
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., ShipmentRequestType),
-# while XML schema types don't have this suffix (e.g., ShipmentRequest).
-
-import karrio.schemas.dpd_group.shipment_request as dpd_group_req
-import karrio.schemas.dpd_group.shipment_response as dpd_group_res
-
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -19,6 +7,8 @@ import karrio.core.models as models
 import karrio.providers.dpd_group.error as error
 import karrio.providers.dpd_group.utils as provider_utils
 import karrio.providers.dpd_group.units as provider_units
+import karrio.schemas.dpd_group.shipment_request as dpd_req
+import karrio.schemas.dpd_group.shipment_response as dpd_res
 
 
 def parse_shipment_response(
@@ -29,11 +19,9 @@ def parse_shipment_response(
     messages = error.parse_error_response(response, settings)
 
     # Check if we have valid shipment data
-    
-    has_shipment = "shipment" in response if hasattr(response, 'get') else False
-    
+    has_shipment = "shipmentId" in response if isinstance(response, dict) else False
 
-    shipment = _extract_details(response, settings) if has_shipment else None
+    shipment = _extract_details(response, settings) if has_shipment and not any(messages) else None
 
     return shipment, messages
 
@@ -42,64 +30,30 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    """
-    Extract shipment details from carrier response data
+    """Extract shipment details from DPD META-API response."""
+    shipment = lib.to_object(dpd_res.ShipmentResponseType, data)
 
-    data: The carrier-specific shipment data structure
-    settings: The carrier connection settings
+    # Extract tracking number from parcelIds
+    tracking_number = shipment.parcelIds[0] if shipment.parcelIds else ""
 
-    Returns a ShipmentDetails object with extracted shipment information
-    """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    response_obj = lib.to_object(dpd_group_res.ShipmentResponseType, data)
+    # Extract label data
+    label_data = shipment.label.base64Data if shipment.label else None
 
-    # Access the shipment data
-    shipment = response_obj.shipment if hasattr(response_obj, 'shipment') else None
-
-    if shipment:
-        # Extract tracking info
-        tracking_number = shipment.trackingNumber if hasattr(shipment, 'trackingNumber') else ""
-        shipment_id = shipment.shipmentId if hasattr(shipment, 'shipmentId') else ""
-
-        # Extract label info
-        label_data = shipment.labelData if hasattr(shipment, 'labelData') else None
-        label_format = label_data.format if label_data and hasattr(label_data, 'format') else "PDF"
-        label_base64 = label_data.image if label_data and hasattr(label_data, 'image') else ""
-
-        # Extract optional invoice
-        invoice_base64 = shipment.invoiceImage if hasattr(shipment, 'invoiceImage') else ""
-
-        # Extract service code for metadata
-        service_code = shipment.serviceCode if hasattr(shipment, 'serviceCode') else ""
-    else:
-        tracking_number = ""
-        shipment_id = ""
-        label_format = "PDF"
-        label_base64 = ""
-        invoice_base64 = ""
-        service_code = ""
-    
-
-    documents = models.Documents(
-        label=label_base64,
-    )
-
-    # Add invoice if present
-    if invoice_base64:
-        documents.invoice = invoice_base64
+    # Build tracking URL
+    tracking_url = settings.tracking_url.format(tracking_number) if tracking_number else None
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_identifier=shipment_id,
-        label_type=label_format,
-        docs=documents,
+        shipment_identifier=shipment.shipmentId,
+        label_type="PDF",  # DPD returns PDF by default
+        docs=models.Documents(label=label_data),
         meta=dict(
-            service_code=service_code,
-            # Add any other relevant metadata from the carrier's response
+            network_shipment_id=shipment.networkShipmentId,
+            network_parcel_ids=shipment.networkParcelIds,
+            parcel_barcodes=lib.to_dict(shipment.parcelBarcodes) if shipment.parcelBarcodes else [],
+            tracking_url=tracking_url,
         ),
     )
 
@@ -108,74 +62,89 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """
-    Create a shipment request for the carrier API
-
-    payload: The standardized ShipmentRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
+    """Create a DPD META-API shipment request."""
     # Convert karrio models to carrier-specific format
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    service = provider_units.ShippingService.map(payload.service).value_or_key
+    service = lib.to_services(payload.service, provider_units.ShippingService).first
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Create the carrier-specific request object
-    
-    # For JSON API request
-    request = dpd_group_req.ShipmentRequestType(
-        # Map shipper details
-        shipper={
-            "addressLine1": shipper.address_line1,
-            "city": shipper.city,
-            "postalCode": shipper.postal_code,
-            "countryCode": shipper.country_code,
-            "stateCode": shipper.state_code,
-            "personName": shipper.person_name,
-            "companyName": shipper.company_name,
-            "phoneNumber": shipper.phone_number,
-            "email": shipper.email,
-        },
-        # Map recipient details
-        recipient={
-            "addressLine1": recipient.address_line1,
-            "city": recipient.city,
-            "postalCode": recipient.postal_code,
-            "countryCode": recipient.country_code,
-            "stateCode": recipient.state_code,
-            "personName": recipient.person_name,
-            "companyName": recipient.company_name,
-            "phoneNumber": recipient.phone_number,
-            "email": recipient.email,
-        },
-        # Map package details
-        packages=[
-            {
-                "weight": package.weight.value,
-                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
-                "length": package.length.value if package.length else None,
-                "width": package.width.value if package.width else None,
-                "height": package.height.value if package.height else None,
-                "dimensionUnit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
-                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
-            }
-            for package in packages
+    # Get total weight in grams
+    total_weight = sum(pkg.weight.value for pkg in packages)
+    weight_in_grams = int(total_weight * 1000) if packages[0].weight.unit == "KG" else int(total_weight * 453.592)
+
+    # Get first package dimensions
+    first_package = packages[0]
+    dimensions = None
+    if first_package.length and first_package.width and first_package.height:
+        dimensions = dpd_req.DimensionsType(
+            length=int(first_package.length.value),
+            width=int(first_package.width.value),
+            height=int(first_package.height.value),
+        )
+
+    # Build shipment request
+    request = dpd_req.ShipmentRequestType(
+        numberOfParcels=str(len(packages)),
+        shipmentInfos=dpd_req.ShipmentInfosType(
+            productCode=service.value_or_key if service else "101",
+            shipmentId=payload.reference or "",
+            weight=str(weight_in_grams),
+            dimensions=dimensions,
+        ),
+        sender=dpd_req.SenderType(
+            customerInfos=dpd_req.CustomerInfosType(
+                customerID=settings.account_number or "",
+                customerAccountNumber=settings.customer_account_number or settings.account_number or "",
+            ),
+            address=dpd_req.AddressType(
+                companyName=shipper.company_name or "",
+                name1=shipper.person_name or "",
+                street=shipper.street_name or shipper.address_line1 or "",
+                houseNumber=shipper.street_number or "",
+                zipCode=shipper.postal_code,
+                city=shipper.city,
+                country=shipper.country_code,
+            ),
+            contact=dpd_req.ContactType(
+                phone1=shipper.phone_number or "",
+                email=shipper.email or "",
+            ),
+        ),
+        receiver=dpd_req.ReceiverType(
+            address=dpd_req.AddressType(
+                name1=recipient.person_name or "",
+                companyName=recipient.company_name or "",
+                street=recipient.street_name or recipient.address_line1 or "",
+                houseNumber=recipient.street_number or "",
+                zipCode=recipient.postal_code,
+                city=recipient.city,
+                country=recipient.country_code,
+            ),
+            contact=dpd_req.ContactType(
+                phone1=recipient.phone_number or "",
+                email=recipient.email or "",
+            ),
+        ),
+        parcel=[
+            dpd_req.ParcelType(
+                parcelInfos=dpd_req.ParcelInfosType(
+                    weight=int(pkg.weight.value * 1000) if pkg.weight.unit == "KG" else int(pkg.weight.value * 453.592),
+                    dimensions=dpd_req.DimensionsType(
+                        length=int(pkg.length.value),
+                        width=int(pkg.width.value),
+                        height=int(pkg.height.value),
+                    ) if pkg.length and pkg.width and pkg.height else None,
+                ),
+                parcelContent=pkg.description or payload.reference or "Goods",
+            )
+            for pkg in packages
         ],
-        # Add service code
-        serviceCode=service,
-        # Add account information
-        customerNumber=settings.customer_number,
-        # Add label details
-        labelFormat=payload.label_type or "PDF",
-        # Add any other required fields for this carrier's API
     )
-    
 
     return lib.Serializable(request, lib.to_dict)
