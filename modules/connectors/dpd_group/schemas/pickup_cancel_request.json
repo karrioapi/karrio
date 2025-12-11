@@ -1,0 +1,8 @@
+{
+  "pickupCancelRequest": {
+    "confirmationNumber": "PICKUP123456",
+    "accountNumber": "123456",
+    "pickupDate": "2023-06-01",
+    "reason": "No longer needed"
+  }
+}
