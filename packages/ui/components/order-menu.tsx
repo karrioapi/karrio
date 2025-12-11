@@ -47,11 +47,13 @@ export const OrderMenu = ({
     onConfirm: () => Promise<any>;
   } | null>(null);
   const {
-    query: { data: { document_templates } = {} },
+    query: { data: { document_templates } = {}, isLoading: templatesLoading },
   } = useDocumentTemplates({
     related_object: "order",
     active: true,
   } as any);
+
+  const templates = document_templates?.edges || [];
 
   const displayDetails = (_: React.MouseEvent) => {
     toast({
@@ -126,19 +128,19 @@ export const OrderMenu = ({
             </DropdownMenuItem>
           )}
 
-          {order.shipments.filter(
+          {(order.shipments || []).filter(
             (s) => !["cancelled", "draft"].includes(s.status),
           ).length > 0 && (
             <DropdownMenuItem
               onClick={() => {
-                const format = order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status))[0].label_type?.toLowerCase() || "pdf";
+                const format = (order.shipments || []).filter((s) => !["cancelled", "draft"].includes(s.status))[0].label_type?.toLowerCase() || "pdf";
                 documentPrinter.openOrderLabels([order.id], { format: format as any });
               }}
               disabled={documentPrinter.isLoading}
               className="cursor-pointer"
             >
               <span>{`Print Label${
-                order.shipments.filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""
+                (order.shipments || []).filter((s) => !["cancelled", "draft"].includes(s.status)).length > 1 ? "s" : ""
               }`}</span>
             </DropdownMenuItem>
           )}
@@ -190,12 +192,12 @@ export const OrderMenu = ({
             </DropdownMenuItem>
           )}
 
-          {(document_templates?.edges || []).length > 0 &&
+          {templates.length > 0 &&
             !["fulfilled", "partial", "delivered", "cancelled"].includes(
-              order?.status,
+              order?.status || "",
             ) && <DropdownMenuSeparator />}
 
-          {(document_templates?.edges || []).map(({ node: template }) => (
+          {templates.map(({ node: template }) => (
             <DropdownMenuItem
               key={template.id}
               onClick={() => documentPrinter.openTemplate(template.id, { orders: order.id })}
