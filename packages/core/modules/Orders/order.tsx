@@ -52,9 +52,9 @@ export const OrderComponent = ({
 
   return (
     <>
-      {!query.isFetched && query.isFetching && <Spinner />}
+      {(!order || !order.order_id) && <Spinner />}
 
-      {order && (
+      {order && order.order_id && (
         <>
           {/* Header section */}
           <div className="flex justify-between items-start gap-4">
