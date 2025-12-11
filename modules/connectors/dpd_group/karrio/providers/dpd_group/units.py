@@ -8,14 +8,32 @@ class ConnectionConfig(lib.Enum):
 
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
-    label_type = lib.OptionEnum("label_type", str, "PDF")  # Example of label type config with PDF default
+    label_type = lib.OptionEnum("label_type", str, "PDF")
+    label_format = lib.OptionEnum("label_format", str, "PDF")
+
+
+class LabelFormat(lib.StrEnum):
+    """DPD label format options."""
+    PDF = "PDF"
+    EPL = "EPL"
+    ZPL = "ZPL"
+    TIFF = "TIFF"
+    PNG = "PNG"
+
+
+class LabelPaperFormat(lib.StrEnum):
+    """DPD label paper size options."""
+    A4 = "A4"
+    A5 = "A5"
+    A6 = "A6"
+    A7 = "A7"
 
 
 class PackagingType(lib.StrEnum):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
     PACKAGE = "PACKAGE"
 
-    """ Unified Packaging type mapping """
+    """Unified Packaging type mapping"""
     envelope = PACKAGE
     pak = PACKAGE
     tube = PACKAGE
@@ -26,18 +44,24 @@ class PackagingType(lib.StrEnum):
 
 
 class ShippingService(lib.StrEnum):
-    """ Carrier specific services """
-    dpd_group_standard_service = "DPD Group Standard Service"
+    """DPD META-API product codes"""
+    dpd_group_classic = "101"
+    dpd_group_express_10 = "E10"
+    dpd_group_express_12 = "E12"
+    dpd_group_express_18 = "E18"
+    dpd_group_parcel_shop = "PS"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
-    # dpd_group_option = lib.OptionEnum("code")
+    """Carrier specific options"""
+    dpd_group_saturday_delivery = lib.OptionEnum("saturday_delivery", bool)
+    dpd_group_label_format = lib.OptionEnum("label_format", str)
+    dpd_group_label_paper_format = lib.OptionEnum("label_paper_format", str)
+    dpd_group_dropoff_type = lib.OptionEnum("dropoff_type", str)
+    dpd_group_simulate = lib.OptionEnum("simulate", bool)
 
-    """ Unified Option type mapping """
-    # insurance = dpd_group_coverage  #  maps unified karrio option to carrier specific
-
-    pass
+    """Unified Option type mapping"""
+    saturday_delivery = dpd_group_saturday_delivery
 
 
 def shipping_options_initializer(

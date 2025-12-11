@@ -8,11 +8,23 @@ import karrio.providers.dpd_group.utils as provider_utils
 class Settings(provider_utils.Settings):
     """DPD Group connection settings."""
 
-    # Add carrier specific API connection properties here
-    api_key: str
-    account_number: str = None
+    # DPD META-API authentication properties
+    # Required
+    bucode: str  # Business Unit code (X-DPD-BUCODE)
 
-    # generic properties
+    # Authentication method 1: Username/Password
+    username: str = None  # X-DPD-LOGIN
+    password: str = None  # X-DPD-PASSWORD
+
+    # Authentication method 2: Client credentials
+    client_id: str = None  # X-DPD-CLIENTID
+    client_secret: str = None  # X-DPD-CLIENTSECRET
+
+    # Optional account information
+    account_number: str = None
+    customer_account_number: str = None
+
+    # generic properties (DO NOT MODIFY)
     id: str = None
     test_mode: bool = False
     carrier_id: str = "dpd_group"
