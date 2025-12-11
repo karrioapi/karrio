@@ -3,5 +3,5 @@
   "detail": "The account number is not found or invalid. Please check the account number and retry.",
   "title": "Bad request",
   "message": "Bad request",
-  "status": "400"
+  "status": 400
 }

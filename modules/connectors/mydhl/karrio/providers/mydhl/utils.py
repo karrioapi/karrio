@@ -1,4 +1,3 @@
-
 import base64
 import datetime
 import karrio.lib as lib
@@ -29,7 +28,7 @@ class Settings(core.Settings):
 
     @property
     def tracking_url(self):
-        return "https://www.dhl.com/en/express/tracking.html?AWB={}&brand=DHL"
+        return "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
 
     @property
     def authorization(self):
@@ -37,14 +36,13 @@ class Settings(core.Settings):
         pair = f"{self.username}:{self.password}"
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
-    
-
     @property
     def connection_config(self) -> lib.units.Options:
         return lib.to_connection_config(
             self.config or {},
             option_type=ConnectionConfig,
         )
+
 
 #     """uncomment the following code block to implement the oauth login."""
 #     @property
@@ -92,4 +90,32 @@ class Settings(core.Settings):
 class ConnectionConfig(lib.Enum):
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
-    label_type = lib.OptionEnum("label_type", str, "PDF")  # Example of label type config with PDF default
+    label_type = lib.OptionEnum("label_type", str, "PDF")
+
+
+def get_proof_of_delivery(tracking_number: str, settings: Settings):
+    """Fetch proof of delivery image for a delivered shipment."""
+    import karrio.providers.mydhl.error as error
+
+    response = lib.to_dict(
+        lib.request(
+            url=f"{settings.server_url}/shipments/{tracking_number}/proof-of-delivery",
+            method="GET",
+            headers={
+                "Authorization": f"Basic {settings.authorization}",
+            },
+        )
+    )
+
+    messages = error.parse_error_response(response, settings)
+
+    if any(messages):
+        return None
+
+    documents = response.get("documents") or []
+    contents = [doc.get("content") for doc in documents if doc.get("content")]
+
+    if not contents:
+        return None
+
+    return lib.failsafe(lambda: lib.bundle_base64(contents, format="PDF"))

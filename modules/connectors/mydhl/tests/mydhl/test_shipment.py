@@ -13,18 +13,15 @@ class TestMyDHLShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
-        self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
+        self.assertEqual(lib.to_dict(request.serialize())["shipment"], ShipmentRequest)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}/shipments"
@@ -36,29 +33,7 @@ class TestMyDHLShipment(unittest.TestCase):
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
-
-    def test_create_shipment_cancel_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
-        print(f"Generated cancel request: {lib.to_dict(request.serialize())}")
-        self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
-
-    def test_cancel_shipment(self):
-        with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            print(f"Called cancel method")
-            # MyDHL doesn't support shipment cancellation via API, so no URL call is made
-
-    def test_parse_shipment_cancel_response(self):
-        with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
-            mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
-            )
-            print(f"Cancel response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
@@ -66,7 +41,6 @@ class TestMyDHLShipment(unittest.TestCase):
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -104,55 +78,75 @@ ShipmentPayload = {
         "length": 25.0,
         "weight_unit": "KG",
         "dimension_unit": "CM",
-        "packaging_type": "BOX"
     }],
-    "service": "express_worldwide"
-}
-
-ShipmentCancelPayload = {
-    "shipment_identifier": "9356579890"
+    "service": "mydhl_express_worldwide"
 }
 
 ShipmentRequest = {
-    "shipper": {
-        "addressLine1": "123 Main Street",
-        "city": "Los Angeles",
-        "postalCode": "90001",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "John Doe",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "shipper@example.com"
+    "plannedShippingDateAndTime": ANY,
+    "pickup": {"isRequested": False},
+    "productCode": "P",
+    "localProductCode": "P",
+    "getRateEstimates": True,
+    "accounts": [{"typeCode": "shipper", "number": "123456789"}],
+    "outputImageProperties": {
+        "printerDPI": 300,
+        "encodingFormat": "pdf",
+        "imageOptions": [
+            {"typeCode": "label", "templateName": "ECOM26_84_001", "isRequested": True}
+        ]
     },
-    "recipient": {
-        "addressLine1": "456 Broadway",
-        "city": "New York",
-        "postalCode": "10001",
-        "countryCode": "US",
-        "stateCode": "NY",
-        "personName": "Jane Smith",
-        "companyName": "Recipient Corp",
-        "phoneNumber": "0987654321",
-        "email": "recipient@example.com"
-    },
-    "packages": [
-        {
-            "weight": 5.0,
-            "weightUnit": "kg",
-            "length": 25.0,
-            "width": 20.0,
-            "height": 15.0,
-            "dimensionUnit": "cm",
-            "packagingType": ANY
+    "customerDetails": {
+        "shipperDetails": {
+            "postalAddress": {
+                "postalCode": "90001",
+                "cityName": "Los Angeles",
+                "countryCode": "US",
+                "provinceCode": "CA",
+                "addressLine1": "123 Main Street",
+                "countryName": "United States"
+            },
+            "contactInformation": {
+                "email": "shipper@example.com",
+                "phone": "1234567890",
+                "mobilePhone": "1234567890",
+                "companyName": "Test Company",
+                "fullName": "John Doe"
+            },
+            "typeCode": "business"
+        },
+        "receiverDetails": {
+            "postalAddress": {
+                "postalCode": "10001",
+                "cityName": "New York",
+                "countryCode": "US",
+                "provinceCode": "NY",
+                "addressLine1": "456 Broadway",
+                "countryName": "United States"
+            },
+            "contactInformation": {
+                "email": "recipient@example.com",
+                "phone": "0987654321",
+                "mobilePhone": "0987654321",
+                "companyName": "Recipient Corp",
+                "fullName": "Jane Smith"
+            },
+            "typeCode": "business"
         }
-    ],
-    "serviceCode": ANY,
-    "customerNumber": "123456789",
-    "labelFormat": "PDF"
+    },
+    "content": {
+        "packages": [
+            {
+                "typeCode": "YP",
+                "weight": 5.0,
+                "dimensions": {"length": 25, "width": 20, "height": 15}
+            }
+        ],
+        "isCustomsDeclarable": False,
+        "description": "Shipment",
+        "unitOfMeasurement": "metric"
+    }
 }
-
-ShipmentCancelRequest = "9356579890"
 
 ShipmentResponse = """{
   "shipmentTrackingNumber": 9356579890,
@@ -170,13 +164,6 @@ ShipmentResponse = """{
       "content": "JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoKMiAwIG9iago8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PgplbmRvYmoKMyAwIG9iago8PC9UeXBlL1BhZ2UvTWVkaWFCb3hbMCAwIDYxMiA3OTJdL1BhcmVudCAyIDAgUi9SZXNvdXJjZXM8PC9Gb250PDw+Pj4+Pj4KZW5kb2JqCnRyYWlsZXIKPDwvUm9vdCAxIDAgUj4+Cg=="
     }
   ]
-}"""
-
-ShipmentCancelResponse = """{
-  "status": 400,
-  "title": "Not Supported",
-  "detail": "MyDHL does not support shipment cancellation via API. Please contact DHL customer service to cancel a shipment.",
-  "instance": "/shipments"
 }"""
 
 ErrorResponse = """{
@@ -202,22 +189,6 @@ ParsedShipmentResponse = [
         }
     },
     []
-]
-
-ParsedShipmentCancelResponse = [
-    None,
-    [
-        {
-            "carrier_id": "mydhl",
-            "carrier_name": "mydhl",
-            "code": "400",
-            "message": "MyDHL does not support shipment cancellation via API. Please contact DHL customer service to cancel a shipment.",
-            "details": {
-                "instance": "/shipments",
-                "title": "Not Supported"
-            }
-        }
-    ]
 ]
 
 ParsedErrorResponse = [

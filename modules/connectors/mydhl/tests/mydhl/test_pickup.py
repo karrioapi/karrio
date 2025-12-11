@@ -18,14 +18,12 @@ class TestMyDHLPickup(unittest.TestCase):
 
     def test_create_pickup_request(self):
         request = gateway.mapper.create_pickup_request(self.PickupRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
         self.assertEqual(lib.to_dict(request.serialize()), PickupRequest)
 
     def test_schedule_pickup(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}/pickups"
@@ -35,7 +33,6 @@ class TestMyDHLPickup(unittest.TestCase):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}/pickups"
@@ -45,7 +42,6 @@ class TestMyDHLPickup(unittest.TestCase):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}/pickups/PRG999123456"
@@ -57,7 +53,6 @@ class TestMyDHLPickup(unittest.TestCase):
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_error_response(self):
@@ -66,7 +61,6 @@ class TestMyDHLPickup(unittest.TestCase):
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -114,20 +108,38 @@ PickupCancelPayload = {
 }
 
 PickupRequest = {
-    "pickupDate": "2024-01-15",
-    "readyTime": "09:00",
-    "closingTime": "17:00",
-    "address": {
-        "addressLine1": "123 Main Street",
-        "city": "Los Angeles",
-        "postalCode": "90001",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "John Doe",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "pickup@example.com"
-    }
+    "accounts": [{"number": "123456789", "typeCode": "shipper"}],
+    "closeTime": "17:00",
+    "customerDetails": {
+        "shipperDetails": {
+            "contactInformation": {
+                "companyName": "Test Company",
+                "email": "pickup@example.com",
+                "fullName": "John Doe",
+                "mobilePhone": "1234567890",
+                "phone": "1234567890"
+            },
+            "postalAddress": {
+                "addressLine1": "123 Main Street",
+                "cityName": "Los Angeles",
+                "countryCode": "US",
+                "countryName": "United States",
+                "postalCode": "90001",
+                "provinceCode": "CA"
+            }
+        }
+    },
+    "location": "reception",
+    "locationType": "business",
+    "plannedPickupDateAndTime": ANY,
+    "shipmentDetails": [
+        {
+            "isCustomsDeclarable": False,
+            "packages": [{"weight": 1.0}],
+            "productCode": "P",
+            "unitOfMeasurement": "metric"
+        }
+    ]
 }
 
 PickupResponse = """{
@@ -161,12 +173,11 @@ ParsedPickupResponse = [
         "carrier_id": "mydhl",
         "carrier_name": "mydhl",
         "confirmation_number": "PRG999123456",
-        "pickup_date": "2024-01-15",
-        "ready_time": "09:00",
         "meta": {
-            "confirmation_numbers": ["PRG999123456", "PRG999123457"],
-            "warnings": []
-        }
+            "confirmation_numbers": ["PRG999123456", "PRG999123457"]
+        },
+        "pickup_date": "2024-01-15",
+        "ready_time": "09:00"
     },
     []
 ]

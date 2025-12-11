@@ -1,5 +1,6 @@
 """Karrio MyDHL rate API implementation."""
 
+import datetime
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -16,19 +17,17 @@ def parse_rate_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-
     messages = error.parse_error_response(response, settings)
 
-    # Convert response to typed object
-    rate_response = lib.to_object(mydhl_res.RateResponseType, response)
-
-    # Extract products from the response
-    products = rate_response.products or []
-    rates = [
-        _extract_details(product, settings)
-        for product in products
-        if product.totalPrice and len(product.totalPrice) > 0
-    ]
+    rates = lib.identity(
+        [
+            _extract_details(product, settings)
+            for product in lib.to_object(mydhl_res.RateResponseType, response).products or []
+            if product.totalPrice and len(product.totalPrice) > 0
+        ]
+        if response.get("status") is None and response.get("products") is not None
+        else []
+    )
 
     return rates, messages
 
@@ -55,54 +54,22 @@ def _extract_details(
     currency = total_price.priceCurrency if total_price else "USD"
     total_charge = float(total_price.price) if total_price and total_price.price else 0.0
 
-    # Calculate transit days from delivery date
-    transit_days = None
-    if product.deliveryCapabilities and product.deliveryCapabilities.estimatedDeliveryDateAndTime:
-        try:
-            delivery_date = lib.to_date(
-                product.deliveryCapabilities.estimatedDeliveryDateAndTime,
-                "%Y-%m-%dT%H:%M:%S"
-            )
-            if delivery_date:
-                # Calculate days from now
-                from datetime import datetime
-                transit_days = (delivery_date.date() - datetime.now().date()).days
-        except:
-            pass
+    # Get transit days from deliveryCapabilities (more reliable than calculating from date)
+    transit_days = (
+        product.deliveryCapabilities.totalTransitDays
+        if product.deliveryCapabilities
+        else None
+    )
 
-    # Extract extra charges from price breakdown
-    extra_charges = []
-    if product.totalPriceBreakdown:
-        for breakdown in product.totalPriceBreakdown:
-            if breakdown.priceBreakdown:
-                for charge in breakdown.priceBreakdown:
-                    if charge.typeCode and charge.price:
-                        extra_charges.append(
-                            models.ChargeDetails(
-                                name=charge.typeCode,
-                                amount=lib.to_decimal(charge.price),
-                                currency=breakdown.priceCurrency or currency,
-                            )
-                        )
+    # Extract charges from price breakdown
+    charges = [
+        (charge.typeCode, lib.to_decimal(charge.price), breakdown.priceCurrency)
+        for breakdown in (product.totalPriceBreakdown or [])
+        for charge in (breakdown.priceBreakdown or [])
+    ]
 
-    # Map product code to service enum name for proper service identification
-    # Follow guide pattern: use product code directly, with display name in meta
-    service_map = {
-        "Q": "mydhl_medical_express",
-        "P": "mydhl_express_worldwide",
-        "8": "mydhl_express_easy",
-        "T": "mydhl_express_12_00",
-        "N": "mydhl_express_domestic",
-        "J": "mydhl_jetline",
-        "R": "mydhl_sprintline",
-        "Y": "mydhl_express_9_00",
-        "W": "mydhl_economy_select",
-        "X": "mydhl_express_10_30",
-        "G": "mydhl_globalmail",
-        "S": "mydhl_same_day",
-    }
-
-    service_code = service_map.get(product.productCode, f"mydhl_{product.productCode.lower()}")
+    # Map product code to service enum name
+    service_code = provider_units.ShippingService.map(product.productCode).name_or_key
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
@@ -111,12 +78,25 @@ def _extract_details(
         total_charge=lib.to_money(total_charge),
         currency=currency,
         transit_days=transit_days,
-        extra_charges=extra_charges if extra_charges else None,
+        extra_charges=[
+            models.ChargeDetails(
+                name=name,
+                amount=amount,
+                currency=charge_currency or currency,
+            )
+            for name, amount, charge_currency in charges
+            if name and amount
+        ],
         meta=dict(
             service_name=product.productName or "",
             product_code=product.productCode,
             network_type_code=product.networkTypeCode,
             local_product_code=product.localProductCode,
+            estimated_delivery=(
+                product.deliveryCapabilities.estimatedDeliveryDateAndTime
+                if product.deliveryCapabilities
+                else None
+            ),
         ),
     )
 
@@ -154,43 +134,47 @@ def rate_request(
         if packages.weight_unit == units.WeightUnit.LB
         else provider_units.MeasurementUnit.metric.value
     )
+    planned_date = lib.fdatetime(
+        options.shipment_date.state or datetime.datetime.now(),
+        output_format="%Y-%m-%dT%H:%M:%S GMT+00:00",
+    )
 
-    # Get planned shipping date and time
-    import datetime
-    planned_date = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SGMT%z")
-
-    # Create the MyDHL rate request
+    # Create the MyDHL rate request with complete address fields
     request = mydhl_req.RateRequestType(
         customerDetails=mydhl_req.CustomerDetailsType(
             shipperDetails=mydhl_req.ErDetailsType(
-                postalCode=shipper.postal_code or "",
-                cityName=shipper.city or "",
+                postalCode=shipper.postal_code,
+                cityName=shipper.city,
                 countryCode=shipper.country_code,
+                provinceCode=shipper.state_code,
+                addressLine1=shipper.address_line1,
+                addressLine2=shipper.address_line2,
+                countyName=shipper.suburb,
             ),
             receiverDetails=mydhl_req.ErDetailsType(
-                postalCode=recipient.postal_code or "",
-                cityName=recipient.city or "",
+                postalCode=recipient.postal_code,
+                cityName=recipient.city,
                 countryCode=recipient.country_code,
+                provinceCode=recipient.state_code,
+                addressLine1=recipient.address_line1,
+                addressLine2=recipient.address_line2,
+                countyName=recipient.suburb,
             ),
         ),
-        accounts=(
-            [
-                mydhl_req.AccountType(
-                    typeCode="shipper",
-                    number=settings.account_number,
-                )
-            ]
-            if settings.account_number
-            else None
-        ),
-        productCode=services.first.value if services.first else None,
+        accounts=[
+            mydhl_req.AccountType(
+                typeCode="shipper",
+                number=settings.account_number,
+            )
+        ],
+        productCode=getattr(services.first, "value", None),
         plannedShippingDateAndTime=planned_date,
         unitOfMeasurement=unit_of_measurement,
         isCustomsDeclarable=is_dutiable,
         packages=[
             mydhl_req.PackageType(
-                typeCode=(
-                    provider_units.PackagingType[package.packaging_type or "your_packaging"].value
+                typeCode=lib.identity(
+                    provider_units.PackagingType.map(package.packaging_type).value
                     if package.packaging_type
                     else None
                 ),

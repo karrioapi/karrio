@@ -8,4 +8,4 @@ class PickupCreateResponseType:
     dispatchConfirmationNumbers: typing.Optional[typing.List[str]] = None
     readyByTime: typing.Optional[str] = None
     nextPickupDate: typing.Optional[str] = None
-    warnings: typing.Optional[typing.List[typing.Any]] = None
+    warnings: typing.Optional[typing.List[str]] = None

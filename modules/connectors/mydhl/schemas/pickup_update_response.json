@@ -1,6 +1,8 @@
 {
-  "dispatchConfirmationNumber": "PRG999999999999",
-  "readyByTime": "11:00",
-  "nextPickupDate": "2024-11-06",
+  "dispatchConfirmationNumbers": [
+    "PRG201220123456"
+  ],
+  "readyByTime": "10:00",
+  "nextPickupDate": "2024-11-07",
   "warnings": []
 }

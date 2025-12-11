@@ -1,14 +1,24 @@
 {
   "customerDetails": {
     "shipperDetails": {
-      "postalCode": "14800-AA",
+      "postalCode": "14800",
       "cityName": "Prague",
-      "countryCode": "CZ"
+      "countryCode": "CZ",
+      "provinceCode": "CZ",
+      "addressLine1": "V Parku 2308/10",
+      "addressLine2": "Floor 2",
+      "addressLine3": "Suite 100",
+      "countyName": "Central Bohemia"
     },
     "receiverDetails": {
-      "postalCode": "10001-5555",
+      "postalCode": "10001",
       "cityName": "New York",
-      "countryCode": "US"
+      "countryCode": "US",
+      "provinceCode": "NY",
+      "addressLine1": "123 Main Street",
+      "addressLine2": "Floor 5",
+      "addressLine3": "Apt 501",
+      "countyName": "Manhattan"
     }
   },
   "accounts": [
@@ -19,9 +29,50 @@
   ],
   "productCode": "P",
   "localProductCode": "P",
+  "valueAddedServices": [
+    {
+      "serviceCode": "II",
+      "value": 100.00,
+      "currency": "USD"
+    }
+  ],
+  "productsAndServices": [
+    {
+      "productCode": "P",
+      "localProductCode": "P",
+      "valueAddedServices": [
+        {
+          "serviceCode": "II",
+          "value": 100.00,
+          "currency": "USD"
+        }
+      ]
+    }
+  ],
+  "payerCountryCode": "US",
   "plannedShippingDateAndTime": "2024-11-05T14:00:00 GMT+00:00",
   "unitOfMeasurement": "metric",
   "isCustomsDeclarable": true,
+  "monetaryAmount": [
+    {
+      "typeCode": "declaredValue",
+      "value": 100.00,
+      "currency": "USD"
+    }
+  ],
+  "requestAllValueAddedServices": false,
+  "estimatedDeliveryDate": {
+    "isRequested": true,
+    "typeCode": "QDDC"
+  },
+  "getAdditionalInformation": [
+    {
+      "typeCode": "allValueAddedServices",
+      "isRequested": true
+    }
+  ],
+  "returnStandardProductsOnly": false,
+  "nextBusinessDay": false,
   "packages": [
     {
       "typeCode": "2BP",

@@ -1,10 +1,13 @@
 """Karrio MyDHL pickup API implementation."""
 
+import datetime
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.mydhl.error as error
 import karrio.providers.mydhl.utils as provider_utils
+import karrio.providers.mydhl.units as provider_units
+import karrio.schemas.mydhl.pickup_create_request as pickup_req
 import karrio.schemas.mydhl.pickup_create_response as pickup_res
 
 
@@ -23,8 +26,15 @@ def parse_pickup_response(
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    pickup_response = lib.to_object(pickup_res.PickupCreateResponseType, response)
-    pickup = _extract_details(pickup_response, settings)
+    pickup = lib.identity(
+        _extract_details(
+            lib.to_object(pickup_res.PickupCreateResponseType, response),
+            settings,
+        )
+        if response.get("status") is None
+        and response.get("dispatchConfirmationNumbers") is not None
+        else None
+    )
 
     return pickup, messages
 
@@ -51,11 +61,11 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         confirmation_number=confirmation_number,
-        pickup_date=lib.fdate(pickup.nextPickupDate) if pickup.nextPickupDate else None,
-        ready_time=pickup.readyByTime if pickup.readyByTime else None,
+        pickup_date=lib.fdate(pickup.nextPickupDate),
+        ready_time=lib.ftime(pickup.readyByTime, try_formats=["%H:%M:%S", "%H:%M"]),
         meta=dict(
-            confirmation_numbers=pickup.dispatchConfirmationNumbers or [],
-            warnings=pickup.warnings or [],
+            confirmation_numbers=pickup.dispatchConfirmationNumbers,
+            warnings=pickup.warnings,
         ),
     )
 
@@ -74,28 +84,86 @@ def pickup_request(
     """
     # Extract pickup details
     address = lib.to_address(payload.address)
-    pickup_date = payload.pickup_date or lib.today_str()
-    ready_time = payload.ready_time or "09:00"
-    closing_time = payload.closing_time or "17:00"
+    packages = lib.to_packages(payload.parcels)
+    options = lib.to_shipping_options(payload.options)
+    service = provider_units.ShippingService.map(
+        payload.options.get("service") or "P"
+    ).value_or_key
 
-    
-    # Example implementation for JSON request:
-    request = {
-        "pickupDate": pickup_date,
-        "readyTime": ready_time,
-        "closingTime": closing_time,
-        "address": {
-            "addressLine1": address.address_line1,
-            "city": address.city,
-            "postalCode": address.postal_code,
-            "countryCode": address.country_code,
-            "stateCode": address.state_code,
-            "personName": address.person_name,
-            "companyName": address.company_name,
-            "phoneNumber": address.phone_number,
-            "email": address.email,
-        }
-    }
+    # Build planned pickup date time in DHL format
+    pickup_datetime = lib.fdatetime(
+        f"{payload.pickup_date}T{payload.ready_time}:00",
+        "%Y-%m-%dT%H:%M:%S",
+        output_format="%Y-%m-%dT%H:%M:%S GMT+00:00",
+    )
+
+    # Create pickup request using generated schema types
+    request = pickup_req.PickupCreateRequestType(
+        plannedPickupDateAndTime=pickup_datetime,
+        closeTime=payload.closing_time,
+        location=options.pickup_location.state or "reception",
+        locationType="residence" if address.residential else "business",
+        accounts=[
+            pickup_req.AccountType(
+                typeCode="shipper",
+                number=settings.account_number,
+            )
+        ],
+        specialInstructions=lib.identity(
+            [
+                pickup_req.SpecialInstructionType(
+                    value=payload.instruction,
+                )
+            ]
+            if payload.instruction
+            else []
+        ),
+        remark=payload.instruction,
+        customerDetails=pickup_req.CustomerDetailsType(
+            shipperDetails=pickup_req.ErDetailsType(
+                postalAddress=pickup_req.ReceiverDetailsPostalAddressType(
+                    postalCode=address.postal_code,
+                    cityName=address.city,
+                    countryCode=address.country_code,
+                    provinceCode=address.state_code,
+                    addressLine1=address.address_line1,
+                    addressLine2=address.address_line2,
+                    countyName=address.suburb,
+                    provinceName=address.state_name,
+                    countryName=address.country_name,
+                ),
+                contactInformation=pickup_req.ContactInformationType(
+                    email=address.email,
+                    phone=address.phone_number,
+                    mobilePhone=address.phone_number,
+                    companyName=address.company_name,
+                    fullName=address.person_name,
+                ),
+            ),
+        ),
+        shipmentDetails=[
+            pickup_req.ShipmentDetailType(
+                productCode=service,
+                isCustomsDeclarable=False,
+                unitOfMeasurement="metric",
+                packages=[
+                    pickup_req.PackageType(
+                        typeCode=provider_units.PackagingType.map(package.packaging_type or "your_packaging").value,
+                        weight=package.weight.value,
+                        dimensions=pickup_req.DimensionsType(
+                            length=package.length.value,
+                            width=package.width.value,
+                            height=package.height.value,
+                        ) 
+                        if package.length.value and package.width.value and package.height.value 
+                        else None,
+                    )
+                    for package in packages
+                ] 
+                if packages 
+                else [pickup_req.PackageType(weight=1.0)],
+            )
+        ],
+    )
 
     return lib.Serializable(request, lib.to_dict)
-    

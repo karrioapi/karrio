@@ -5,4 +5,4 @@ import typing
 
 @attr.s(auto_attribs=True)
 class TrackingRequestType:
-    shipmentTrackingNumber: typing.Optional[int] = None
+    shipmentTrackingNumber: typing.Optional[typing.List[str]] = None

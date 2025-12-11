@@ -1,7 +1,37 @@
 {
   "plannedShippingDateAndTime": "2024-11-05T14:00:00 GMT+00:00",
   "pickup": {
-    "isRequested": false
+    "isRequested": false,
+    "closeTime": "18:00",
+    "location": "reception",
+    "specialInstructions": [
+      {
+        "value": "please ring door bell",
+        "typeCode": "TBD"
+      }
+    ],
+    "pickupDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "Floor 2",
+        "addressLine3": "Suite 100",
+        "countyName": "Central Bohemia",
+        "provinceName": "Central Bohemia",
+        "countryName": "Czech Republic"
+      },
+      "contactInformation": {
+        "email": "pickup@example.com",
+        "phone": "+1234567890",
+        "mobilePhone": "+1234567891",
+        "companyName": "Pickup Corp",
+        "fullName": "Pickup Person"
+      },
+      "typeCode": "business"
+    }
   },
   "productCode": "P",
   "localProductCode": "P",
@@ -12,13 +42,43 @@
       "number": "ACC123456789"
     }
   ],
+  "valueAddedServices": [
+    {
+      "serviceCode": "II",
+      "value": 100.00,
+      "currency": "USD"
+    }
+  ],
   "outputImageProperties": {
     "printerDPI": 300,
+    "customerBarcodes": [
+      {
+        "content": "barcode content",
+        "textBelowBarcode": "text below barcode",
+        "symbologyCode": "93"
+      }
+    ],
+    "customerLogos": [
+      {
+        "fileFormat": "PNG",
+        "content": "base64 encoded image"
+      }
+    ],
     "encodingFormat": "pdf",
     "imageOptions": [
       {
         "typeCode": "label",
         "templateName": "ECOM26_84_001",
+        "isRequested": true
+      },
+      {
+        "typeCode": "waybillDoc",
+        "templateName": "ARCH_8X4",
+        "isRequested": false
+      },
+      {
+        "typeCode": "invoice",
+        "templateName": "COMMERCIAL_INVOICE_P_10",
         "isRequested": true
       }
     ]
@@ -26,14 +86,21 @@
   "customerDetails": {
     "shipperDetails": {
       "postalAddress": {
-        "postalCode": "14800-AA",
+        "postalCode": "14800",
         "cityName": "Prague",
         "countryCode": "CZ",
-        "addressLine1": "V Parku 2308/10"
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "Floor 2",
+        "addressLine3": "Suite 100",
+        "countyName": "Central Bohemia",
+        "provinceName": "Central Bohemia",
+        "countryName": "Czech Republic"
       },
       "contactInformation": {
         "email": "shipper@example.com",
         "phone": "+1234567890",
+        "mobilePhone": "+1234567891",
         "companyName": "Acme Corp",
         "fullName": "John Doe"
       },
@@ -41,16 +108,89 @@
     },
     "receiverDetails": {
       "postalAddress": {
-        "postalCode": "10001-5555",
+        "postalCode": "10001",
         "cityName": "New York",
         "countryCode": "US",
-        "addressLine1": "123 Main Street"
+        "provinceCode": "NY",
+        "addressLine1": "123 Main Street",
+        "addressLine2": "Floor 5",
+        "addressLine3": "Apt 501",
+        "countyName": "Manhattan",
+        "provinceName": "New York",
+        "countryName": "United States"
       },
       "contactInformation": {
         "email": "receiver@example.com",
         "phone": "+19876543210",
+        "mobilePhone": "+19876543211",
         "companyName": "Customer Inc",
         "fullName": "Jane Smith"
+      },
+      "typeCode": "business"
+    },
+    "buyerDetails": {
+      "postalAddress": {
+        "postalCode": "10001",
+        "cityName": "New York",
+        "countryCode": "US",
+        "provinceCode": "NY",
+        "addressLine1": "456 Buyer Street",
+        "addressLine2": "Floor 3",
+        "addressLine3": "Apt 301",
+        "countyName": "Manhattan",
+        "provinceName": "New York",
+        "countryName": "United States"
+      },
+      "contactInformation": {
+        "email": "buyer@example.com",
+        "phone": "+19876543212",
+        "mobilePhone": "+19876543213",
+        "companyName": "Buyer Inc",
+        "fullName": "Bob Buyer"
+      },
+      "typeCode": "business"
+    },
+    "importerDetails": {
+      "postalAddress": {
+        "postalCode": "10001",
+        "cityName": "New York",
+        "countryCode": "US",
+        "provinceCode": "NY",
+        "addressLine1": "789 Importer Ave",
+        "addressLine2": "Floor 1",
+        "addressLine3": "Unit A",
+        "countyName": "Manhattan",
+        "provinceName": "New York",
+        "countryName": "United States"
+      },
+      "contactInformation": {
+        "email": "importer@example.com",
+        "phone": "+19876543214",
+        "mobilePhone": "+19876543215",
+        "companyName": "Importer Inc",
+        "fullName": "Irene Importer"
+      },
+      "typeCode": "business"
+    },
+    "exporterDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "123 Exporter Blvd",
+        "addressLine2": "Building A",
+        "addressLine3": "Unit 1",
+        "countyName": "Central Bohemia",
+        "provinceName": "Central Bohemia",
+        "countryName": "Czech Republic"
+      },
+      "contactInformation": {
+        "email": "exporter@example.com",
+        "phone": "+420123456789",
+        "mobilePhone": "+420123456780",
+        "companyName": "Exporter Corp",
+        "fullName": "Eric Exporter"
       },
       "typeCode": "business"
     }
@@ -64,7 +204,15 @@
           "length": 15,
           "width": 15,
           "height": 15
-        }
+        },
+        "customerReferences": [
+          {
+            "value": "REF-001",
+            "typeCode": "CU"
+          }
+        ],
+        "description": "Package 1",
+        "labelDescription": "Label for Package 1"
       }
     ],
     "isCustomsDeclarable": true,
@@ -97,10 +245,99 @@
       "invoice": {
         "number": "INV-001",
         "date": "2024-11-05"
-      }
+      },
+      "remarks": [
+        {
+          "value": "Handle with care"
+        }
+      ],
+      "additionalCharges": [
+        {
+          "value": 10.0,
+          "caption": "Handling fee",
+          "typeCode": "freight"
+        }
+      ],
+      "destinationPortName": "JFK",
+      "placeOfIncoterm": "New York",
+      "payerVATNumber": "VAT123456",
+      "recipientReference": "RECREF-001",
+      "exporter": {
+        "id": "EXP-001",
+        "code": "EXPCODE"
+      },
+      "packageMarks": "FRAGILE",
+      "declarationNotes": [
+        {
+          "value": "Declaration note text"
+        }
+      ],
+      "exportReference": "EXPREF-001",
+      "exportReason": "Sale",
+      "exportReasonType": "permanent",
+      "licenses": [
+        {
+          "typeCode": "export",
+          "value": "LIC-001"
+        }
+      ],
+      "shipmentType": "commercial"
     },
     "description": "Sample shipment",
+    "USFilingTypeValue": "NOEEI30.37A",
     "incoterm": "DAP",
     "unitOfMeasurement": "metric"
+  },
+  "documentImages": [
+    {
+      "typeCode": "INV",
+      "imageFormat": "PDF",
+      "content": "base64 encoded content"
+    }
+  ],
+  "onDemandDelivery": {
+    "deliveryOption": "servicepoint",
+    "location": "reception",
+    "specialInstructions": "Leave at door",
+    "gateCode": "1234",
+    "whereToLeave": "front door",
+    "neighbourName": "John",
+    "neighbourHouseNumber": "123",
+    "authorizerName": "Jane",
+    "servicePointId": "SP-001",
+    "requestedDeliveryDate": "2024-11-06"
+  },
+  "requestOndemandDeliveryURL": false,
+  "shipmentNotification": [
+    {
+      "typeCode": "email",
+      "receiverId": "recipient@example.com",
+      "languageCode": "eng",
+      "languageCountryCode": "US",
+      "bespokeMessage": "Your shipment is on its way"
+    }
+  ],
+  "prepaidCharges": [
+    {
+      "typeCode": "freight",
+      "currency": "USD",
+      "value": 50.0,
+      "method": "cash"
+    }
+  ],
+  "getTransliteratedResponse": false,
+  "estimatedDeliveryDate": {
+    "isRequested": true,
+    "typeCode": "QDDC"
+  },
+  "getAdditionalInformation": [
+    {
+      "typeCode": "pickupDetails",
+      "isRequested": true
+    }
+  ],
+  "parentShipment": {
+    "productCode": "P",
+    "packagesCount": 1
   }
 }

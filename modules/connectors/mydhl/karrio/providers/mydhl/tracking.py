@@ -2,7 +2,6 @@
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.mydhl.error as error
 import karrio.providers.mydhl.utils as provider_utils
@@ -11,22 +10,15 @@ import karrio.schemas.mydhl.tracking_response as mydhl_res
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    responses = _response.deserialize()
-
-    messages: typing.List[models.Message] = sum(
-        [
-            error.parse_error_response(response, settings, tracking_number=tracking_number)
-            for tracking_number, response in responses
-        ],
-        start=[],
-    )
+    response = _response.deserialize()
+    messages = error.parse_error_response(response, settings)
 
     tracking_details = [
-        _extract_details(details, settings, tracking_number)
-        for tracking_number, details in responses
+        _extract_details(shipment, settings)
+        for shipment in (response.get("shipments") or [])
     ]
 
     return tracking_details, messages
@@ -35,88 +27,82 @@ def parse_tracking_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
-    tracking_number: str = None,
 ) -> models.TrackingDetails:
-    """
-    Extract tracking details from MyDHL tracking response
-
-    data: The MyDHL tracking response data
-    settings: The carrier connection settings
-    tracking_number: The tracking number being tracked
-
-    Returns a TrackingDetails object with extracted tracking information
-    """
-    # Convert to typed object using generated schema
-    tracking_response = lib.to_object(mydhl_res.TrackingResponseType, data)
-
-    # Get the first shipment (MyDHL returns array of shipments)
-    shipment = next(
-        (s for s in (tracking_response.shipments or []) if s),
-        None
+    shipment = lib.to_object(mydhl_res.ShipmentType, data)
+    # Events are ordered from most recent to oldest
+    latest_event = shipment.events[0] if shipment.events else None
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if latest_event and getattr(latest_event, "typeCode", None) in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
+    delivered = status == "delivered"
+    estimated_delivery = lib.fdate(
+        shipment.estimatedTimeOfDelivery, "%Y-%m-%dT%H:%M:%S"
+    )
+    signature_image = lib.failsafe(
+        lambda: (
+            provider_utils.get_proof_of_delivery(
+                str(shipment.shipmentTrackingNumber), settings
+            )
+            if delivered
+            else None
+        )
     )
 
-    if not shipment:
-        return models.TrackingDetails(
-            carrier_id=settings.carrier_id,
-            carrier_name=settings.carrier_name,
-            tracking_number=tracking_number,
-            events=[],
-        )
-
-    # Extract events using functional pattern
-    events = [
-        models.TrackingEvent(
-            date=lib.fdate(event.date) if event.date else None,
-            description=event.description or "",
-            code=event.typeCode or "",
-            time=lib.flocaltime(event.time) if event.time else None,
-            location=(
-                event.serviceArea[0].description
-                if event.serviceArea and len(event.serviceArea) > 0
-                else None
-            ),
-        )
-        for event in (shipment.events or [])
-    ]
-
-    # Map MyDHL status to Karrio standard status
-    status = provider_units.TrackingStatus.map(
-        shipment.status or "in_transit"
-    ).name
-
+    # fmt: off
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=tracking_number or str(shipment.shipmentTrackingNumber),
-        events=events,
-        estimated_delivery=(
-            lib.fdate(shipment.estimatedTimeOfDelivery)
-            if shipment.estimatedTimeOfDelivery
-            else None
-        ),
-        delivered=(status == "delivered"),
+        tracking_number=str(shipment.shipmentTrackingNumber),
+        events=[
+            models.TrackingEvent(
+                date=lib.fdate(event.date),
+                description=event.description,
+                code=event.typeCode,
+                time=lib.ftime(event.time, try_formats=["%H:%M:%S", "%H:%M"]),
+                location=next((e.description for e in event.serviceArea or []), None),
+            )
+            for event in (shipment.events or [])
+        ],
+        estimated_delivery=estimated_delivery,
+        delivered=delivered,
         status=status,
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(shipment.shipmentTrackingNumber),
+            shipment_service=provider_units.ShippingService.map(shipment.productCode).name_or_key,
+            shipment_origin_country=lib.failsafe(lambda: shipment.shipperDetails.postalAddress.countryCode),
+            shipment_origin_postal_code=lib.failsafe(lambda: shipment.shipperDetails.postalAddress.postalCode),
+            shipment_destination_country=lib.failsafe(lambda: shipment.receiverDetails.postalAddress.countryCode),
+            shipment_destination_postal_code=lib.failsafe(lambda: shipment.receiverDetails.postalAddress.postalCode),
+            shipping_date=lib.fdate(shipment.shipmentTimestamp, "%Y-%m-%dT%H:%M:%S"),
+            signed_by=getattr(latest_event, "signedBy", None),
+            package_weight=lib.to_decimal(shipment.totalWeight),
+            package_weight_unit=lib.failsafe(lambda: provider_units.WeightUnit.map(shipment.weightUnit).name),
+            shipment_package_count=lib.to_int(shipment.numberOfPieces),
+            expected_delivery=estimated_delivery,
+        ),
+        images=models.Images(signature_image=signature_image),
         meta=dict(
             product_code=shipment.productCode,
+            description=shipment.description,
             shipment_timestamp=shipment.shipmentTimestamp,
         ),
     )
+    # fmt: on
 
 
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """
-    Create a tracking request for MyDHL API
-
-    MyDHL uses GET with path parameters, so we just return the tracking numbers.
-
-    payload: The standardized TrackingRequest from karrio
-    settings: The carrier connection settings
-
-    Returns tracking numbers as a serializable list
-    """
-    # MyDHL tracking uses GET /shipments/{trackingNumber}/tracking
-    # So we just return the list of tracking numbers
-    return lib.Serializable(payload.tracking_numbers)
+    request = payload.tracking_numbers
+    return lib.Serializable(
+        request,
+        lambda tracking_numbers: "&".join(
+            f"shipmentTrackingNumber={num}" for num in tracking_numbers
+        ),
+    )

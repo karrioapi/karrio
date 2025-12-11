@@ -13,22 +13,58 @@ class AccountType:
 class ContactInformationType:
     email: typing.Optional[str] = None
     phone: typing.Optional[str] = None
-    mobilePhone: typing.Optional[str] = None
     companyName: typing.Optional[str] = None
     fullName: typing.Optional[str] = None
+    mobilePhone: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
-class PostalAddressType:
-    postalCode: typing.Optional[str] = None
+class BookingRequestorDetailsPostalAddressType:
+    postalCode: typing.Optional[int] = None
     cityName: typing.Optional[str] = None
     countryCode: typing.Optional[str] = None
     addressLine1: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
+class BookingRequestorDetailsType:
+    postalAddress: typing.Optional[BookingRequestorDetailsPostalAddressType] = jstruct.JStruct[BookingRequestorDetailsPostalAddressType]
+    contactInformation: typing.Optional[ContactInformationType] = jstruct.JStruct[ContactInformationType]
+
+
+@attr.s(auto_attribs=True)
+class PickupDetailsPostalAddressType:
+    postalCode: typing.Optional[int] = None
+    cityName: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    provinceCode: typing.Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    addressLine2: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class PickupDetailsType:
+    postalAddress: typing.Optional[PickupDetailsPostalAddressType] = jstruct.JStruct[PickupDetailsPostalAddressType]
+    contactInformation: typing.Optional[ContactInformationType] = jstruct.JStruct[ContactInformationType]
+
+
+@attr.s(auto_attribs=True)
+class ReceiverDetailsPostalAddressType:
+    postalCode: typing.Optional[int] = None
+    cityName: typing.Optional[str] = None
+    countryCode: typing.Optional[str] = None
+    provinceCode: typing.Optional[str] = None
+    addressLine1: typing.Optional[str] = None
+    addressLine2: typing.Optional[str] = None
+    addressLine3: typing.Optional[str] = None
+    countyName: typing.Optional[str] = None
+    provinceName: typing.Optional[str] = None
+    countryName: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class ErDetailsType:
-    postalAddress: typing.Optional[PostalAddressType] = jstruct.JStruct[PostalAddressType]
+    postalAddress: typing.Optional[ReceiverDetailsPostalAddressType] = jstruct.JStruct[ReceiverDetailsPostalAddressType]
     contactInformation: typing.Optional[ContactInformationType] = jstruct.JStruct[ContactInformationType]
 
 
@@ -36,6 +72,8 @@ class ErDetailsType:
 class CustomerDetailsType:
     shipperDetails: typing.Optional[ErDetailsType] = jstruct.JStruct[ErDetailsType]
     receiverDetails: typing.Optional[ErDetailsType] = jstruct.JStruct[ErDetailsType]
+    bookingRequestorDetails: typing.Optional[BookingRequestorDetailsType] = jstruct.JStruct[BookingRequestorDetailsType]
+    pickupDetails: typing.Optional[PickupDetailsType] = jstruct.JStruct[PickupDetailsType]
 
 
 @attr.s(auto_attribs=True)
@@ -53,13 +91,24 @@ class PackageType:
 
 
 @attr.s(auto_attribs=True)
+class ValueAddedServiceType:
+    serviceCode: typing.Optional[str] = None
+    value: typing.Optional[float] = None
+    currency: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class ShipmentDetailType:
     productCode: typing.Optional[str] = None
     localProductCode: typing.Optional[str] = None
     accounts: typing.Optional[typing.List[AccountType]] = jstruct.JList[AccountType]
-    packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
+    valueAddedServices: typing.Optional[typing.List[ValueAddedServiceType]] = jstruct.JList[ValueAddedServiceType]
     isCustomsDeclarable: typing.Optional[bool] = None
+    declaredValue: typing.Optional[float] = None
+    declaredValueCurrency: typing.Optional[str] = None
     unitOfMeasurement: typing.Optional[str] = None
+    shipmentTrackingNumber: typing.Optional[int] = None
+    packages: typing.Optional[typing.List[PackageType]] = jstruct.JList[PackageType]
 
 
 @attr.s(auto_attribs=True)

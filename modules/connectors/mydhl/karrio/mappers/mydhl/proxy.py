@@ -27,11 +27,15 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
+        payload = request.serialize()
+        is_paperless = request.ctx.get("is_paperless", False)
+
+        # Create shipment
+        shipment_response = lib.request(
             url=f"{self.settings.server_url}/shipments",
-            data=lib.to_json(request.serialize()),
+            data=lib.to_json(payload["shipment"]),
             trace=self.trace_as("json"),
             method="POST",
             headers={
@@ -40,42 +44,46 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        # Extract tracking number from response
+        shipment_data = lib.to_dict(shipment_response)
+        tracking_number = shipment_data.get("shipmentTrackingNumber")
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        # MyDHL does not support shipment cancellation via API
-        # Once a shipment is created, it cannot be deleted
-        # Only pickups can be cancelled
-        response = lib.to_json({
-            "status": 400,
-            "title": "Not Supported",
-            "detail": "MyDHL does not support shipment cancellation via API. Please contact DHL customer service to cancel a shipment.",
-            "instance": "/shipments"
-        })
-
-        return lib.Deserializable(response, lib.to_dict)
-    
-    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        def _get_tracking(tracking_number: str):
-            return tracking_number, lib.request(
-                url=f"{self.settings.server_url}/shipments/{tracking_number}/tracking",
+        # Upload paperless trade documents if applicable
+        paperless_response = lib.identity(
+            lib.request(
+                url=f"{self.settings.server_url}/shipments/{tracking_number}/upload-image",
+                data=lib.to_json(payload["paperless"]),
                 trace=self.trace_as("json"),
-                method="GET",
+                method="PATCH",
                 headers={
+                    "Content-Type": "application/json",
                     "Authorization": f"Basic {self.settings.authorization}",
                 },
+                on_ok=lambda response: dict(ok=True),
             )
-
-        # Use concurrent requests for multiple tracking numbers
-        responses = lib.run_concurently(_get_tracking, request.serialize())
+            if is_paperless and tracking_number and payload.get("paperless")
+            else None
+        )
 
         return lib.Deserializable(
-            responses,
-            lambda res: [
-                (num, lib.to_dict(track)) for num, track in res if any(track.strip())
-            ],
+            shipment_response,
+            lib.to_dict,
+            dict(paperless_response=paperless_response),
         )
-    
+
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        query_string = request.serialize()
+        response = lib.request(
+            url=f"{self.settings.server_url}/tracking?{query_string}",
+            trace=self.trace_as("json"),
+            method="GET",
+            headers={
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/pickups",
@@ -89,7 +97,7 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/pickups",
@@ -103,10 +111,14 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         pickup_data = request.serialize()
-        confirmation_number = pickup_data if isinstance(pickup_data, str) else pickup_data.get("confirmationNumber", "")
+        confirmation_number = (
+            pickup_data
+            if isinstance(pickup_data, str)
+            else pickup_data.get("confirmationNumber", "")
+        )
 
         response = lib.request(
             url=f"{self.settings.server_url}/pickups/{confirmation_number}",
@@ -118,18 +130,41 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def validate_address(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        query_params = request.serialize()
+        query_string = "&".join(
+            f"{key}={value}" for key, value in query_params.items() if value
+        )
         response = lib.request(
-            url=f"{self.settings.server_url}/address-validate",
-            data=lib.to_json(request.serialize()),
+            url=f"{self.settings.server_url}/address-validate?{query_string}",
             trace=self.trace_as("json"),
-            method="POST",
+            method="GET",
             headers={
-                "Content-Type": "application/json",
                 "Authorization": f"Basic {self.settings.authorization}",
             },
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Upload paperless trade documents using the upload-image endpoint."""
+        payload = request.serialize()
+        tracking_number = payload.pop("shipmentTrackingNumber", None)
+
+        if not tracking_number:
+            raise Exception("Tracking number is required for document upload")
+
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipments/{tracking_number}/upload-image",
+            data=lib.to_json(payload),
+            trace=self.trace_as("json"),
+            method="PATCH",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+            on_ok=lambda response: dict(ok=True),
+        )
+
+        return lib.Deserializable(response, lib.to_dict, request.ctx)

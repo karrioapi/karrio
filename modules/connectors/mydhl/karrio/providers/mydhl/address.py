@@ -28,8 +28,14 @@ def parse_address_validation_response(
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    validation_response = lib.to_object(mydhl_res.AddressValidationResponseType, response)
-    validation_details = _extract_details(validation_response, settings)
+    validation_details = lib.identity(
+        _extract_details(
+            lib.to_object(mydhl_res.AddressValidationResponseType, response),
+            settings,
+        )
+        if response.get("status") is None and response.get("address") is not None
+        else None
+    )
 
     return validation_details, messages
 
@@ -59,15 +65,15 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         success=success,
-        complete_address=lib.to_address(
-            postal_code=str(validated_address.postalCode) if validated_address and validated_address.postalCode else None,
-            city=validated_address.cityName if validated_address else None,
-            country_code=validated_address.countryCode if validated_address else None,
-            state_code=validated_address.countyName if validated_address else None,
-        ) if validated_address else None,
-        meta=dict(
-            warnings=validation.warnings or [],
-            service_area=lib.to_dict(validated_address.serviceArea) if validated_address and validated_address.serviceArea else None,
+        complete_address=lib.identity(
+            models.Address(
+                postal_code=lib.text(str(validated_address.postalCode)),
+                city=validated_address.cityName,
+                country_code=validated_address.countryCode,
+                state_code=validated_address.countyName,
+            )
+            if validated_address
+            else None
         ),
     )
 
@@ -77,25 +83,29 @@ def address_validation_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     """
-    Create an address validation request for the carrier API
+    Create an address validation request for the carrier API.
+
+    The DHL address-validate endpoint uses GET with query parameters:
+    - type: 'delivery' or 'pickup'
+    - countryCode: ISO 2-letter country code
+    - postalCode: postal/zip code
+    - cityName: city name
 
     payload: The standardized AddressValidationRequest from karrio
     settings: The carrier connection settings
 
-    Returns a Serializable object that can be sent to the carrier API
+    Returns a Serializable object with query parameters for the GET request
     """
-    # Extract the address from payload
     address = lib.to_address(payload.address)
 
-    
-    # For JSON API request - Using camelCase attribute names to match schema definition
+    # Build query parameters for GET request (not POST body)
     request = mydhl_req.AddressValidationRequestType(
-        streetAddress=address.address_line1,
-        cityLocality=address.city,
-        postalCode=address.postal_code,
+        type="delivery",
         countryCode=address.country_code,
-        stateProvince=address.state_code,
+        postalCode=address.postal_code,
+        cityName=address.city,
+        countyName=address.suburb,
+        strictValidation=True,
     )
-    
 
     return lib.Serializable(request, lib.to_dict)

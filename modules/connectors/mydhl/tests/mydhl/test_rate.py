@@ -18,14 +18,12 @@ class TestMyDHLRating(unittest.TestCase):
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
         self.assertEqual(lib.to_dict(request.serialize()), RateRequest)
 
     def test_get_rates(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Rating.fetch(self.RateRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}/rates"
@@ -39,7 +37,6 @@ class TestMyDHLRating(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
@@ -50,7 +47,6 @@ class TestMyDHLRating(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -88,7 +84,6 @@ RatePayload = {
         "length": 10.0,
         "weight_unit": "KG",
         "dimension_unit": "CM",
-        "packaging_type": "BOX"
     }]
 }
 
@@ -97,12 +92,16 @@ RateRequest = {
         "shipperDetails": {
             "postalCode": "12345",
             "cityName": "Test City",
-            "countryCode": "US"
+            "countryCode": "US",
+            "provinceCode": "CA",
+            "addressLine1": "123 Test Street"
         },
         "receiverDetails": {
             "postalCode": "12345",
             "cityName": "Test City",
-            "countryCode": "US"
+            "countryCode": "US",
+            "provinceCode": "CA",
+            "addressLine1": "123 Test Street"
         }
     },
     "accounts": [
@@ -111,13 +110,11 @@ RateRequest = {
             "number": "123456789"
         }
     ],
-    "productCode": None,
     "plannedShippingDateAndTime": ANY,
     "unitOfMeasurement": "metric",
     "isCustomsDeclarable": False,
     "packages": [
         {
-            "typeCode": None,
             "weight": 10.0,
             "dimensions": {
                 "length": 10,
@@ -192,35 +189,36 @@ ParsedRateResponse = [
         {
             "carrier_id": "mydhl",
             "carrier_name": "mydhl",
-            "service": "P",
+            "service": "mydhl_express_worldwide",
             "currency": "USD",
-            "total_charge": "25.99",
-            "transit_days": ANY,
+            "total_charge": 25.99,
             "extra_charges": [
                 {
                     "name": "SPRQT",
-                    "amount": "23.50",
+                    "amount": 23.5,
                     "currency": "USD"
                 }
             ],
             "meta": {
                 "service_name": "EXPRESS WORLDWIDE",
+                "product_code": "P",
                 "network_type_code": "TD",
-                "local_product_code": "P"
+                "local_product_code": "P",
+                "estimated_delivery": "2024-01-15T17:00:00"
             }
         },
         {
             "carrier_id": "mydhl",
             "carrier_name": "mydhl",
-            "service": "Y",
+            "service": "mydhl_express_9_00",
             "currency": "USD",
-            "total_charge": "35.99",
-            "transit_days": ANY,
-            "extra_charges": None,
+            "total_charge": 35.99,
             "meta": {
                 "service_name": "EXPRESS 12:00",
+                "product_code": "Y",
                 "network_type_code": "TD",
-                "local_product_code": "Y"
+                "local_product_code": "Y",
+                "estimated_delivery": "2024-01-14T12:00:00"
             }
         }
     ],

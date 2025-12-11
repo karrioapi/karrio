@@ -41,11 +41,6 @@ class Mapper(mapper.Mapper):
     ) -> lib.Serializable:
         return provider.pickup_cancel_request(payload, self.settings)
     
-    def create_cancel_shipment_request(
-        self, payload: models.ShipmentCancelRequest
-    ) -> lib.Serializable[str]:
-        return provider.shipment_cancel_request(payload, self.settings)
-    
     def create_address_validation_request(
         self, payload: models.AddressValidationRequest
     ) -> lib.Serializable:
@@ -56,11 +51,6 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
         return provider.parse_pickup_cancel_response(response, self.settings)
-    
-    def parse_cancel_shipment_response(
-        self, response: lib.Deserializable[str]
-    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return provider.parse_shipment_cancel_response(response, self.settings)
     
     def parse_pickup_response(
         self, response: lib.Deserializable[str]
@@ -91,4 +81,13 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.AddressValidationDetails], typing.List[models.Message]]:
         return provider.parse_address_validation_response(response, self.settings)
-    
+
+    def create_document_upload_request(
+        self, payload: models.DocumentUploadRequest
+    ) -> lib.Serializable:
+        return provider.document_upload_request(payload, self.settings)
+
+    def parse_document_upload_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+        return provider.parse_document_upload_response(response, self.settings)

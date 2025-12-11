@@ -1,16 +1,19 @@
 {
-  "warnings": [],
+  "warnings": [
+    "Address has been corrected"
+  ],
   "address": [
     {
-      "postalCode": "10001-5555",
-      "cityName": "NEW YORK",
       "countryCode": "US",
+      "postalCode": "10001",
+      "cityName": "NEW YORK",
       "countyName": "NEW YORK",
       "serviceArea": {
         "code": "NYC",
         "description": "NEW YORK",
-        "facilityCode": "NYC",
-        "inboundSortCode": "NYC"
+        "GMTOffset": "-05:00",
+        "facilityCode": "JFK",
+        "inboundSortCode": "NYC01"
       }
     }
   ]

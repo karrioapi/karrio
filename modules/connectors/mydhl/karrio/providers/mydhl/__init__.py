@@ -1,13 +1,11 @@
-"""Karrio MyDHL provider imports."""
+"""Karrio MyDHL Express provider imports."""
 from karrio.providers.mydhl.utils import Settings
 from karrio.providers.mydhl.rate import (
     parse_rate_response,
     rate_request,
 )
 from karrio.providers.mydhl.shipment import (
-    parse_shipment_cancel_response,
     parse_shipment_response,
-    shipment_cancel_request,
     shipment_request,
 )
 from karrio.providers.mydhl.pickup import (
@@ -25,4 +23,8 @@ from karrio.providers.mydhl.tracking import (
 from karrio.providers.mydhl.address import (
     parse_address_validation_response,
     address_validation_request,
+)
+from karrio.providers.mydhl.document import (
+    parse_document_upload_response,
+    document_upload_request,
 )

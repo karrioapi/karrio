@@ -6,45 +6,71 @@
       "shipmentTimestamp": "2024-11-05T10:00:00",
       "productCode": "P",
       "description": "EXPRESS WORLDWIDE",
-      "origin": {
-        "address": {
-          "addressLocality": "Prague",
-          "postalCode": "14800-AA",
-          "addressCountry": "CZ"
+      "shipperDetails": {
+        "name": "Shipper Name",
+        "postalAddress": {
+          "cityName": "Prague",
+          "countyName": "Central Bohemia",
+          "postalCode": "14800",
+          "provinceCode": "CZ",
+          "countryCode": "CZ"
         },
-        "servicePoint": {
-          "url": "https://www.dhl.com",
-          "label": "DHL Service Point"
-        }
+        "serviceArea": [
+          {
+            "code": "PRG",
+            "description": "Prague",
+            "outboundSortCode": "PRG01"
+          }
+        ]
       },
-      "destination": {
-        "address": {
-          "addressLocality": "New York",
-          "postalCode": "10001-5555",
-          "addressCountry": "US"
+      "receiverDetails": {
+        "name": "Receiver Name",
+        "postalAddress": {
+          "cityName": "New York",
+          "countyName": "Manhattan",
+          "postalCode": "10001",
+          "provinceCode": "NY",
+          "countryCode": "US"
         },
-        "servicePoint": {
-          "url": "https://www.dhl.com",
-          "label": "DHL Service Point"
-        }
+        "serviceArea": [
+          {
+            "code": "NYC",
+            "description": "New York",
+            "facilityCode": "JFK",
+            "inboundSortCode": "NYC01"
+          }
+        ]
       },
+      "totalWeight": 5.0,
+      "unitOfMeasurements": "metric",
+      "shipperReferences": [
+        {
+          "value": "REF-001",
+          "typeCode": "CU"
+        }
+      ],
       "estimatedTimeOfDelivery": "2024-11-07T18:00:00",
+      "estimatedTimeOfDeliveryRemark": "Estimated delivery by end of business",
+      "numberOfPieces": 1,
       "events": [
         {
           "date": "2024-11-07",
           "time": "18:00:00",
-          "typeCode": "PU",
-          "description": "Shipment picked up",
+          "GMTOffset": "+00:00",
+          "typeCode": "OK",
+          "description": "Delivered",
           "serviceArea": [
             {
-              "code": "PRG",
-              "description": "Prague"
+              "code": "NYC",
+              "description": "New York"
             }
-          ]
+          ],
+          "signedBy": "J. Smith"
         },
         {
           "date": "2024-11-07",
           "time": "12:00:00",
+          "GMTOffset": "+00:00",
           "typeCode": "PL",
           "description": "Processed at DHL facility",
           "serviceArea": [
@@ -55,14 +81,15 @@
           ]
         },
         {
-          "date": "2024-11-07",
-          "time": "18:00:00",
-          "typeCode": "OK",
-          "description": "Delivered",
+          "date": "2024-11-05",
+          "time": "10:00:00",
+          "GMTOffset": "+01:00",
+          "typeCode": "PU",
+          "description": "Shipment picked up",
           "serviceArea": [
             {
-              "code": "NYC",
-              "description": "New York"
+              "code": "PRG",
+              "description": "Prague"
             }
           ]
         }
@@ -71,7 +98,7 @@
         {
           "number": 1,
           "typeCode": "2BP",
-          "shipmentTrackingNumber": "JD014600001234567890",
+          "shipmentTrackingNumber": "1234567890",
           "trackingNumber": "JD014600001234567890",
           "description": "Piece 1",
           "weight": 5.0,
@@ -87,10 +114,12 @@
             "width": 15,
             "height": 15
           },
+          "shippedQuantity": 1,
           "events": [
             {
               "date": "2024-11-07",
               "time": "18:00:00",
+              "GMTOffset": "+00:00",
               "typeCode": "OK",
               "description": "Delivered",
               "serviceArea": [
@@ -98,7 +127,8 @@
                   "code": "NYC",
                   "description": "New York"
                 }
-              ]
+              ],
+              "signedBy": "J. Smith"
             }
           ]
         }
