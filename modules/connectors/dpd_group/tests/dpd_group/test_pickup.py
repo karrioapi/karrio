@@ -23,34 +23,14 @@ class TestPickup(unittest.TestCase):
             karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups"
-            )
-
-    def test_update_pickup(self):
-        with patch("karrio.mappers.dpd_group.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Pickup.update(self.PickupRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups/123/update"
-            )
-
-    def test_cancel_pickup(self):
-        with patch("karrio.mappers.dpd_group.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Pickup.cancel(self.PickupRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups/123/cancel"
+                f"{gateway.settings.server_url}/pickupscheduling",
             )
 
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.dpd_group.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
             parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
@@ -58,9 +38,7 @@ class TestPickup(unittest.TestCase):
         with patch("karrio.mappers.dpd_group.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
             parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
@@ -71,78 +49,77 @@ if __name__ == "__main__":
 
 PickupPayload = {
     "address": {
-        "address_line1": "123 Test Street",
-        "city": "Test City",
-        "postal_code": "12345",
-        "country_code": "US",
-        "state_code": "CA",
-        "person_name": "Test Person",
-        "company_name": "Test Company",
-        "phone_number": "1234567890",
-        "email": "test@example.com"
+        "address_line1": "Main Street",
+        "street_number": "42",
+        "city": "Berlin",
+        "postal_code": "10115",
+        "country_code": "DE",
+        "person_name": "John Smith",
+        "company_name": "ABC Logistics",
+        "phone_number": "+4930123456",
+        "email": "pickup@abclogistics.com",
     },
-    "pickup_date": "2024-01-01",
+    "pickup_date": "2025-12-01",
     "ready_time": "09:00",
     "closing_time": "17:00",
-    "confirmation_number": "123"
+    "instruction": "Ground floor delivery preferred",
+    "parcels": [{"weight": 5.0, "weight_unit": "KG"}],
 }
 
 PickupRequest = {
-    "address": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
+    "customerInfos": {
+        "customerAccountNumber": "ACC123456",
+        "customerSubAccountNumber": None,
+        "customerID": "123456789",
     },
-    "pickupDate": "2024-01-01",
-    "readyTime": "09:00",
-    "closingTime": "17:00"
+    "shipmentNumbers": [],
+    "parcelNumbers": [],
+    "pickup": {"date": "2025-12-01", "fromTime": "09:00", "toTime": "17:00"},
+    "numberOfParcels": 1,
+    "pickupAddress": {
+        "companyName": "ABC Logistics",
+        "name1": "John Smith",
+        "street": "Main Street",
+        "houseNumber": "42",
+        "city": "Berlin",
+        "zipCode": "10115",
+        "country": "DE",
+    },
+    "pickupContact": {
+        "contactPerson": "John Smith",
+        "phone1": "+4930123456",
+        "email": "pickup@abclogistics.com",
+    },
+    "comment": "Ground floor delivery preferred",
 }
 
 PickupResponse = """{
-  "confirmationNumber": "PICKUP123",
-  "pickupDate": "2024-01-01",
-  "readyTime": "09:00",
-  "closingTime": "17:00",
-  "status": "scheduled"
-}"""
-
-PickupUpdateResponse = """{
-  "confirmationNumber": "PICKUP123",
-  "pickupDate": "2024-01-02",
-  "readyTime": "10:00",
-  "closingTime": "18:00",
-  "status": "updated"
-}"""
-
-PickupCancelResponse = """{
-  "success": true,
-  "message": "Pickup successfully cancelled"
+  "scheduledPickupResponse": [
+    {
+      "pickupreference": "PU20251201001",
+      "statusCode": "SUCCESS",
+      "statusDescription": "Pickup scheduled successfully"
+    }
+  ]
 }"""
 
 ErrorResponse = """{
-  "error": {
-    "code": "pickup_error",
-    "message": "Unable to schedule pickup",
-    "details": "Invalid pickup date provided"
-  }
+  "errorCode": "ERR002",
+  "errorMessage": "Invalid pickup request",
+  "errorOrigin": "META-API"
 }"""
 
 ParsedPickupResponse = [
     {
         "carrier_id": "dpd_group",
         "carrier_name": "dpd_group",
-        "confirmation_number": "PICKUP123",
-        "pickup_date": "2024-01-01",
-        "ready_time": "09:00",
-        "closing_time": "17:00",
+        "confirmation_number": "PU20251201001",
+        "meta": {
+            "status_code": "SUCCESS",
+            "status_description": "Pickup scheduled successfully",
+        },
     },
-    []
+    [],
 ]
 
 ParsedErrorResponse = [
@@ -151,11 +128,9 @@ ParsedErrorResponse = [
         {
             "carrier_id": "dpd_group",
             "carrier_name": "dpd_group",
-            "code": "pickup_error",
-            "message": "Unable to schedule pickup",
-            "details": {
-                "details": "Invalid pickup date provided"
-            }
+            "code": "ERR002",
+            "message": "Invalid pickup request",
+            "details": {"errorOrigin": "META-API"},
         }
-    ]
+    ],
 ]

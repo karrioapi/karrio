@@ -5,10 +5,13 @@ import karrio.sdk as karrio
 
 gateway = karrio.gateway["dpd_group"].create(
     dict(
-        id="123456789",
+        id="dpd_group_test",
         test_mode=True,
         carrier_id="dpd_group",
+        bucode="TEST_BUCODE",
+        username="TEST_USERNAME",
+        password="TEST_PASSWORD",
         account_number="123456789",
-        api_key="TEST_API_KEY",
+        customer_account_number="ACC123456",
     )
 )
