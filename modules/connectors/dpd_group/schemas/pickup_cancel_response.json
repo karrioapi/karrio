@@ -1,7 +1,0 @@
-{
-  "pickupCancelResponse": {
-    "status": "cancelled",
-    "confirmationNumber": "PICKUP123456",
-    "statusMessage": "Pickup successfully cancelled"
-  }
-}
