@@ -1,43 +1,60 @@
 {
-  "shipmentRequest": {
-    "shipper": {
-      "addressLine1": "123 Main St",
-      "city": "Anytown",
-      "postalCode": "12345",
-      "countryCode": "US",
-      "stateCode": "CA",
-      "personName": "John Doe",
-      "companyName": "ACME Corp",
-      "phoneNumber": "555-123-4567",
-      "email": "john@example.com"
+  "numberOfParcels": "1",
+  "shipmentInfos": {
+    "productCode": "101",
+    "shipmentId": "SHIP123456",
+    "weight": "3000",
+    "dimensions": {
+      "length": 30,
+      "width": 20,
+      "height": 15
+    }
+  },
+  "sender": {
+    "customerInfos": {
+      "customerID": "CUST001",
+      "customerAccountNumber": "ACC123"
     },
-    "recipient": {
-      "addressLine1": "456 Oak St",
-      "city": "Somewhere",
-      "postalCode": "67890",
-      "countryCode": "US",
-      "stateCode": "NY",
-      "personName": "Jane Smith",
-      "companyName": "XYZ Inc",
-      "phoneNumber": "555-987-6543",
-      "email": "jane@example.com"
+    "address": {
+      "companyName": "Sender Corp",
+      "name1": "John Sender",
+      "street": "Main Street",
+      "houseNumber": "42",
+      "zipCode": "10115",
+      "city": "Berlin",
+      "country": "DE"
     },
-    "packages": [
-      {
-        "weight": 10.5,
-        "weightUnit": "KG",
-        "length": 20.0,
-        "width": 15.0,
-        "height": 10.0,
-        "dimensionUnit": "CM",
-        "packagingType": "BOX"
-      }
-    ],
-    "service": "EXPRESS",
-    "options": {
-      "insurance": true,
-      "signature_required": false
+    "contact": {
+      "phone1": "+49301234567",
+      "email": "sender@example.com"
+    }
+  },
+  "receiver": {
+    "address": {
+      "name1": "Jane Receiver",
+      "companyName": "Receiver Inc",
+      "street": "Secondary Road",
+      "houseNumber": "88",
+      "zipCode": "75001",
+      "city": "Paris",
+      "country": "FR"
     },
-    "labelType": "PDF"
-  }
+    "contact": {
+      "phone1": "+33123456789",
+      "email": "receiver@example.com"
+    }
+  },
+  "parcel": [
+    {
+      "parcelInfos": {
+        "weight": "3000",
+        "dimensions": {
+          "length": 30,
+          "width": 20,
+          "height": 15
+        }
+      },
+      "parcelContent": "Electronic equipment"
+    }
+  ]
 }

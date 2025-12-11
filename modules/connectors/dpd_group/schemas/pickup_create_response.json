@@ -1,10 +1,16 @@
 {
-  "pickupResponse": {
-    "confirmationNumber": "PICKUP123456",
-    "pickupDate": "2023-06-01",
-    "readyTime": "09:00",
-    "closingTime": "17:00",
-    "status": "scheduled",
-    "requestId": "REQ123456"
-  }
+  "scheduledPickupResponse": [
+    {
+      "pickupreference": "PU20251201001",
+      "statusCode": "SUCCESS",
+      "statusDescription": "Pickup scheduled successfully"
+    }
+  ],
+  "debugList": [
+    {
+      "methodName": "schedulePickup",
+      "request": "...",
+      "response": "..."
+    }
+  ]
 }
