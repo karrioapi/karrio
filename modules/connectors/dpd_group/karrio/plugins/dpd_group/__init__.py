@@ -20,10 +20,10 @@ METADATA = PluginMetadata(
     Settings=Settings,
     # Data Units
     is_hub=False,
-    # options=units.ShippingOption,
-    # services=units.ShippingService,
+    options=units.ShippingOption,
+    services=units.ShippingService,
     connection_configs=units.ConnectionConfig,
     # Extra info
-    website="",
-    documentation="",
+    website="https://www.dpdgroup.com",
+    documentation="https://api-preprod.dpsin.dpdgroup.com:8443/shipping/v1/meta-api-docs",
 )
