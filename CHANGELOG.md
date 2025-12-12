@@ -1,4 +1,24 @@
-# Karrio 2025.5.3
+# Karrio 2025.5.5
+
+## Changes
+
+### Feat
+
+- feat: implement full features for mydhl express integration + vendor assets updates
+- feat(mydhl): implement complete shipment creation with customs support
+
+
+### Docs
+
+- docs: update README with recent app screenshots
+
+### Chore
+
+- chore(deps): bump next from 15.0.3 to 15.4.7 on all apps
+
+---
+
+# Karrio 2025.5.4
 
 ## Changes
 

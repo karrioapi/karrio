@@ -4,7 +4,7 @@
 -   Documentation: [https://karrio.io/docs](https://karrio.io/docs)
 -   Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
 -   Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
--   Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
+-   Issues: [Issue Tracker](https://github.com/orgs/karrioapi/discussions/categories/q-a)
 -   Blog: [Blog](https://karrio.io/blog)
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=e72dd847-dc7f-4f81-bce4-88eeb20d807f" />
@@ -19,7 +19,7 @@ The open-source shipping platform for modern logistics
 
 [![Karrio OSS](https://img.shields.io/badge/License-LGPL_3.0-blue.svg)](./LICENSE)
 [![Karrio Enterprise](https://img.shields.io/badge/Enterprise-Karrio_EE-orange.svg)](./ee/LICENSE)
-[![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
+[![karrio-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![karrio-build](https://github.com/karrioapi/karrio/actions/workflows/build.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 [![Discord](https://img.shields.io/static/v1?label=Discord&message=chat&color=738adb&logo=discord)](https://discord.gg/gS88uE7sEx)
