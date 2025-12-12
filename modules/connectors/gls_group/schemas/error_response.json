@@ -1,0 +1,13 @@
+{
+  "errors": [
+    {
+      "code": "VALIDATION_ERROR",
+      "message": "Invalid request parameters",
+      "field": "shipment.recipient.postalCode",
+      "details": "Postal code is required"
+    }
+  ],
+  "timestamp": "2025-01-15T10:30:00Z",
+  "path": "/rs/shipments",
+  "status": 400
+}

@@ -1,0 +1,63 @@
+{
+  "shipment": {
+    "product": "PARCEL",
+    "sender": {
+      "name1": "Sender Company",
+      "name2": "Department",
+      "name3": "Contact Person",
+      "street": "Main Street",
+      "houseNumber": "123A",
+      "zipCode": "12345-0000",
+      "city": "Berlin",
+      "country": "DE",
+      "contactPerson": "John Doe",
+      "phone": "+49301234567",
+      "email": "sender@example.com"
+    },
+    "receiver": {
+      "name1": "Receiver Company",
+      "name2": "Department",
+      "name3": "Contact Person",
+      "street": "Market Street",
+      "houseNumber": "456B",
+      "zipCode": "54321-0000",
+      "city": "Munich",
+      "country": "DE",
+      "contactPerson": "Jane Smith",
+      "phone": "+49891234567",
+      "email": "receiver@example.com"
+    },
+    "parcels": [
+      {
+        "weight": 5.5,
+        "length": 30,
+        "width": 20,
+        "height": 15,
+        "references": [
+          {
+            "type": "CUSTOMER_REFERENCE",
+            "value": "REF123456"
+          }
+        ]
+      }
+    ],
+    "services": [
+      {
+        "type": "GUARANTEED24",
+        "details": {}
+      }
+    ],
+    "shippingDate": "2025-01-16",
+    "references": [
+      {
+        "type": "CUSTOMER_REFERENCE",
+        "value": "ORDER123"
+      }
+    ],
+    "labelFormat": "PDF",
+    "printingOptions": {
+      "templateName": "STANDARD",
+      "printerLanguage": "PDF"
+    }
+  }
+}
