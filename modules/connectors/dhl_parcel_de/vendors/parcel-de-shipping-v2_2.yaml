@@ -1,0 +1,2273 @@
+openapi: 3.0.1
+info:
+  title: Parcel DE Shipping API (Post & Parcel Germany)
+  description: >
+    Note: This is the specification of the DPDHL Group Parcel DE Shipping API for Post & Parcel Germany. This REST web service allows business customers to create shipping labels on demand.
+  version: 2.1.13
+servers:
+  - url: https://api-eu.dhl.com/parcel/de/shipping/v2
+    description: Productive Server
+  - url: https://api-sandbox.dhl.com/parcel/de/shipping/v2
+    description: Sandbox Server
+
+tags:
+  - name: General
+    description: Get API version info
+  - name: Shipments and Labels
+    description: Order and retrieve shipment labels
+  - name: Manifests
+    description: Manifest shipments and retrieve daily manifest lists
+paths:
+  /: 
+    get:
+      tags:
+        - General
+      summary: Return API version
+      description: >
+        Returns the current version of the API as major.minor.patch. Furthermore, it will also return more details (semantic version number, revision, environment) of the API layer.
+      operationId: rootGet
+      security: []   # No auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceInformation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+  /labels:
+    get:
+      tags:
+        - Shipments and Labels
+      summary: Download PDF document
+      description: >
+          Public download URL for shipment labels and documents. The URL is provided in the response of the POST /orders or GET /orders resources. The document is identified via the token query parameter. There is no additional authorization, the resource URL can be shared. Please protect the URL as needed. The call returns a PDF label.
+      operationId: getLabel
+      security: []   # No auth
+      parameters:
+        - name: token
+          in: query
+          description: Identifies PDF document and requested print settings for download.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /manifests:
+    get:
+      tags:
+        - Manifests
+      summary: Retrieve daily manifest document
+      description: Return the manifest document for the specific date (abbreviated ISO8601 format YYYY-MM-DD). If no date is provided, the manifest for today will be returned. The manifest PDF document will list the shipments for your EKP, separated by billing numbers. Potentially, the document is large and response time will reflect this. <br />Additionally, the response contains a mapping of billing numbers to sheet numbers of the manifest and a mapping of shipment numbers to sheet numbers.<br />The call can be repeated as often as needed. Should a date be provided which is too old or lies within the future, HTTP 400 is returned.
+      operationId: getManifests 
+      parameters:
+        - name: billingNumber
+          in: query
+          description: Customer billingNumber number.
+          required: false
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+        - name: includeDocs
+          in: query
+          description: |-
+            Legacy name **labelResponseType**. Shipping labels and further shipment documents can be:
+             * __include__: included as base64 encoded data in the response (default)
+             * __URL__: provided as URL reference.
+             Default is include the base64 encoded labels.
+          schema:
+            type: string
+            enum:
+              - include
+              - URL
+            default: include
+        - name: Accept-Language
+          in: header
+          description: Control the APIs response language via locale abbreviation. English (en-US) and german (de-DE) are supported. If not specified, the default is english.
+          schema:
+            type: string
+          example: de-DE
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleManifestResponse'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SingleManifestResponse'
+        '400':
+            $ref: '#/components/responses/BadRequest'
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+        '404':
+            $ref: '#/components/responses/NotFound'
+        '429':
+            $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Manifests
+      summary: Mark shipments as being ready for shipping
+      description: |-
+        Shipments are normally ''closed out'' at a fixed time of the day (such as 6 pm, configured by EKP/account) for the date provided as shipDate in the create call. 
+        <br />This call allows forcing the closeout for sets of shipments earlier. This will also override the original shipDate. Afterwards, the shipment cannot be changed and the shipment labels cannot be queried anymore (however they may remain cached for limited duration). 
+        Once a shipment has been closed, then calling closeout for the same shipment will result in a warning. The same warning will also be returned if the automatic closeout happened prior to the call. It is however possible to add new shipments, they will be manifested as well and be part of the day's manifest. 
+        <br />Note on billing: The manifesting step has billing implications. Some products (Parcel International partially) are billed based on the shipment data available to DHL at the end of the day. All other products (including DHL Paket Standard) are billed based on production data. For more details, please contact your account representative. 
+        
+        #### Request
+        It's changing the status of the shipment, so parameters are provided in the body or as query parameter. 
+        * ''profile'' attribute (request body parameter) - defines the user group profile. A user group is permitted to specific billing numbers. Shipments are only closed out if they belong to a billing number that the user group profile is entitled to use. This attribute is mandatory. Please use the standard user group profile ''STANDARD_GRUPPENPROFIL'' if no dedicated user group profile is available. 
+        * ''billingNumber'' attribute (query parameter) - defines the billing number for which shipments shall be closed out. If a billing number is set, then only the shipments of that billing number are closed out. In that case no list of specific shipment numbers needs to be passed. 
+        * ''shipmentNumbers'' attribute (request body parameter) - lists the specific shipping numbers of the shipments that shall be closed out. 
+        If all shipments shall be closed, the query parameter ''all'' needs to be set to ''true''. In that case neither a billing number nor a list of shipment numbers need to be passed in the request. 
+        
+        #### Response 
+        * Closing status for each shipment
+      operationId: manifestsPost
+      parameters:
+        - name: Accept-Language
+          in: header
+          description: Control the APIs response language via locale abbreviation. English (en-US) and german (de-DE) are supported. If not specified, the default is english.
+          schema:
+            type: string
+          example: de-DE
+        - name: all
+          in: query
+          description: Specify if all applicable shipments shall be marked as being ready for shipping.
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        description: Manifest request taking multiple input elements
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentManifestingRequest'
+        required: true
+      responses:
+        '207':
+          description: Response for manifesting request taking multiple input elements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleManifestResponse'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/MultipleManifestResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'          
+  /orders:
+    get:
+      tags:
+        - Shipments and Labels
+      summary: Retrieve shipment documents - labels and customs documents
+      description: |-
+        Returns documents for existing shipment(s). The call accepts multiple shipment numbers and will provide sets of documents for those. The **format (PDF,ZPL)** and **method of delivery (URL, encoded, data)** can be selected for **all** shipments and labels in that call. You cannot chose one format and delivery method for one label and different for another label within the same call. You can also specify if you want regular labels, return labels, cod labels, or customsDoc. Any combination is possible.
+ 
+        The call returns for each shipment number the status indicator and the selected labels and documents. If a label type (for example a cod label) does not exist for a shipment, it will not be returned. This is not an error. If you were sending multiple shipments, you will get an HTTP 207 response (multistatus) with detailed status for each shipment. Other standard HTTP response codes (200, 400, 401, 429, 500) are possible as well. Labels can be either provided as part of the response (base64 encoded for PDF, text for ZPL) or via URL link for view and download (PDF). Note that the format settings per query parameters apply to the shipping label. Retoure label paper type can be specified separately since a different printer may be used here. If requesting labels to be returned as URL for separate download, the URLs provided can be shared.
+      operationId: getOrder    
+      parameters:
+        - name: shipment
+          in: query
+          description: This parameter identifies shipments. The parameter can be used multiple times in one request to get the labels and/or documents for up to 30 shipments maximum. Only documents and label for shipments that are not yet closed can be retrieved.
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: Accept-Language
+          in: header
+          description: Control the APIs response language via locale abbreviation. English (en-US) and german (de-DE) are supported. If not specified, the default is english.
+          schema:
+            type: string
+          example: de-DE
+        - name: docFormat
+          in: query
+          description: '**Defines** the **printable** document format to be used for label and manifest documents.'
+          schema:
+            type: string
+            enum:
+              - ZPL2
+              - PDF
+            default: PDF
+        - name: printFormat
+          in: query
+          description: "**Defines** the print medium for the shipping label. The different option vary from standard papersizes DIN A4 and DIN A5 to specific label print formats.\_\n\nSpecific laser print formats using DIN A5 blanks are:\n\n* 910-300-600(-oz) (105 x 205mm)\n* 910-300-300(-oz) (105 x 148mm)\n\nSpecific laser print formats **not** using a DIN A5 blank:\n\n* 910-300-610 (105 x 208mm)\n* 100x70mm\n\nSpecific thermal print formats:\n\n* 910-300-600 (103 x 199mm)\n* 910-300-400 (103 x 150mm)\n* 100x70mm\n\nPlease use the different formats as follows. If you do not set the parameter the settings of DHL costumer portal account will be used as default."
+          schema:
+            type: string
+            enum:
+              - A4
+              - 910-300-600
+              - 910-300-610
+              - 910-300-700
+              - 910-300-700-oz
+              - 910-300-710
+              - 910-300-300
+              - 910-300-300-oz
+              - 910-300-400
+              - 910-300-410
+              - 100x70mm
+        - name: retourePrintFormat
+          in: query
+          description: "**Defines** the print medium for the return shipping label. This parameter is only usable, if you do not use **combined printing**. The different option vary from standard papersizes DIN A4 and DIN A5 to specific label print formats.\_\n\nSpecific laser print formats using DIN A5 blanks are:\n\n* 910-300-600(-oz) (105 x 205mm)\n* 910-300-300(-oz) (105 x 148mm)\n\nSpecific laser print formats **not** using a DIN A5 blank:\n\n* 910-300-610 (105 x 208mm)\n* 100x70mm\n\nSpecific thermal print formats:\n\n* 910-300-600 (103 x 199mm)\n* 910-300-400 (103 x 150mm)\n* 100x70mm\n\nPlease use the different formats as follows. If you do not set the parameter the settings of DHL costumer portal account will be used as default."
+          schema:
+            type: string
+            enum:
+              - A4
+              - 910-300-600
+              - 910-300-610
+              - 910-300-700
+              - 910-300-700-oz
+              - 910-300-710
+              - 910-300-300
+              - 910-300-300-oz
+              - 910-300-400
+              - 910-300-410
+              - 100x70mm
+        - name: includeDocs
+          in: query
+          description: |-
+            Legacy name **labelResponseType**. Shipping labels and further shipment documents can be:
+             * __include__: included as base64 encoded data in the response (default)
+             * __URL__: provided as URL reference.
+             Default is include the base64 encoded labels.
+          schema:
+            type: string
+            enum:
+              - include
+              - URL
+            default: include
+        - name: combine
+          in: query
+          description: If set, label and return label for one shipment will be printed as single PDF document with possibly multiple pages. Else, those two labels come as separate documents. The option does not affect customs documents and COD labels.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Success response for requests with a single shipment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+        '207':
+          description: Response for requests taking multiple input elements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Shipments and Labels
+      summary: 'Create one or more shipments and their documents. (This is the primary call of the API.)'
+      description: |- 
+        This request is used to create one or more shipments and return corresponding shipment tracking numbers, labels, and documentation. Up to 30 shipments can be created in a single call. 
+        #### Request 
+        The selected products and corresponding billing numbers, as well as the desired services and package details are required to create a shipment. Each shipment can have a dedicated shipper address. The example request body contains sample values for most services. 
+        #### Response 
+        The request will return shipment tracking numbers and the applicable labels for each shipment. If multiple shipments have been included, an HTTP 207 response (multistatus) is returned and holds detailed status for each shipment. Other standard HTTP response codes (401, 500, 400, 200, 429) are possible, too. Labels can be either provided as part of the response (base64 encoded for PDF, text for ZPL) or via URL link for view and download. Note that the format settings per query parameters apply to the shipping label. It may also apply to other labels included, depending on the configuration of your account. Label paper for return shipments can be specified separately since a different printer may be used here. If requesting labels to be provided as URL for separate download, the URLs can be shared.
+        #### Validation  
+        It is recommended to validate the request first prior to shipment creation by setting the `validate` query parameter to `true`. Especially, during development and test, it is recommended to perform this validation. This functionality supports both 
+        * JSON schema validation (against this API description). During development and test, it is recommended to do this validation. JSON schema is available for local validation 
+        * Dry run against the DHL backend
+        
+        If this succeeds, actual shipment creation will also succeed. 
+      operationId: createOrders
+      parameters:
+        - name: Accept-Language
+          in: header
+          description: Control the APIs response language via locale abbreviation. English (en-US) and german (de-DE) are supported. If not specified, the default is english.
+          schema:
+            type: string
+          example: de-DE
+        - name: validate
+          in: query
+          description: |-
+            If provided and set to `true`, the input document will be: 
+             * validated against JSON schema (/orders/ endpoint) at the API layer. In case of errors, HTTP 400 and details will be returned. 
+             * validated against the DHL backend. 
+            
+            In that case, no state changes are happening, no data is stored, shipments neither deleted nor created, no labels being returned. The call will return a status (200, 400) for each shipment element.
+          schema:
+            type: boolean
+            default: false
+        - name: mustEncode
+          in: query
+          description: Legacy name **printOnlyIfCodable**. If set to *true*, labels will only be created if an address is encodable. This is only relevant for German consignee addresses. If set to false or left out, addresses, that are not encodable will be printed even though you receive a warning.
+          schema:
+            type: boolean
+            default: false
+        - name: includeDocs
+          in: query
+          description: |-
+            Legacy name **labelResponseType**. Shipping labels and further shipment documents can be:
+             * __include__: included as base64 encoded data in the response (default)
+             * __URL__: provided as URL reference.
+          schema:
+            type: string
+            enum:
+              - include
+              - URL
+            default: include
+        - name: docFormat
+          in: query
+          description: |-
+            **Defines** the **printable** document format to be used for label and manifest documents.
+          schema:
+            type: string
+            enum:
+              - ZPL2
+              - PDF
+            default: PDF
+        - name: printFormat
+          in: query
+          description: |-
+            **Defines** the print medium for the shipping label. The different option vary from standard paper sizes DIN A4 and DIN A5 to specific label print formats.
+            
+            Specific laser print formats using DIN A5 blanks are:
+            * 910-300-600(-oz) (105 x 205mm)
+            * 910-300-300(-oz) (105 x 148mm)
+            
+            Specific laser print formats **not** using a DIN A5 blank:
+            * 910-300-610 (105 x 208mm)
+            * 100x70mm
+            
+            Specific thermal print formats:
+            * 910-300-600 (103 x 199mm)
+            * 910-300-400 (103 x 150mm)
+            * 100x70mm
+            
+            Please use the different formats as follows. If you do not set the parameter the settings of DHL costumer portal account will be used as default.
+          schema:
+            type: string
+            enum:
+              - A4
+              - 910-300-600
+              - 910-300-610
+              - 910-300-700
+              - 910-300-700-oz
+              - 910-300-710
+              - 910-300-300
+              - 910-300-300-oz
+              - 910-300-400
+              - 910-300-410
+              - 100x70mm
+        - name: retourePrintFormat
+          in: query
+          description: |-
+            **Defines** the print medium for the return shipping label. This parameter is only usable, if you do not use **combined printing**. The different option vary from standard paper sizes DIN A4 and DIN A5 to specific label print formats. 
+            
+            Specific laser print formats using DIN A5 blanks are:
+            * 910-300-600(-oz) (105 x 205mm)
+            * 910-300-300(-oz) (105 x 148mm)
+            
+            Specific laser print formats **not** using a DIN A5 blank:
+            * 910-300-610 (105 x 208mm)
+            * 100x70mm
+            
+            Specific thermal print formats:
+            * 910-300-600 (103 x 199mm)
+            * 910-300-400 (103 x 150mm)
+            * 100x70mm
+            
+            Please use the different formats as follows. If you do not set the parameter the settings of DHL costumer portal account will be used as default.
+          schema:
+            type: string
+            enum:
+              - A4
+              - 910-300-600
+              - 910-300-610
+              - 910-300-700
+              - 910-300-700-oz
+              - 910-300-710
+              - 910-300-300
+              - 910-300-300-oz
+              - 910-300-400
+              - 910-300-410
+              - 100x70mm
+        - name: combine
+          in: query
+          description: If set, label and return label for one shipment will be printed as single PDF document with possibly multiple pages. Else, those two labels come as separate documents. The option does not affect customs documents and COD labels.
+          schema:
+            type: boolean
+            default: true
+      requestBody:
+        description: Shipment order request.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShipmentOrderRequest'
+            examples:
+              DHLPaket:
+                $ref: '#/components/examples/DHLPaket'
+              DHLPaketInternational:
+                $ref: '#/components/examples/DHLPaketInternational'
+              DHLPaketInternationalWithCustoms:
+                $ref: '#/components/examples/DHLPaketInternationalWithCustoms'
+              DHLKleinpaket:
+                $ref: '#/components/examples/DHLKleinpaket'
+              WarenpostInternationalWithCustoms:
+                $ref: '#/components/examples/WarenpostInternationalWithCustoms'
+        required: true
+      responses:
+        '200':
+          description: Success response for requests with a single shipment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+        '207':
+          description: Response for requests taking multiple input elements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete: 
+      tags:
+        - Shipments and Labels
+      summary: Delete one or more shipments
+      description: 'Delete one or more shipments created earlier. Deletion of shipments is only possible prior to them being manifested (closed out, ''Tagesabschluss''). The call will return HTTP 200 (single shipment) or 207 on success, with individual status elements for each shipment. Individual status elements are HTTP 200, 400. 400 will be returned when shipment does not exist (or was already deleted).'
+      operationId: ordersAccountDelete     
+      parameters:
+        - name: Accept-Language
+          in: header
+          description: Control the APIs response language via locale abbreviation. English (en-US) and german (de-DE) are supported. If not specified, the default is english.
+          schema:
+            type: string
+          example: de-DE  
+        - name: profile
+          in: query
+          required: true
+          description: 'Defines the user group profile. A user group is permitted to specific billing numbers. Shipments are only canceled if they belong to a billing number that the user group profile is entitled to use. This attribute is mandatory. Please use the standard user group profile ''STANDARD_GRUPPENPROFIL'' if no dedicated user group profile is available.'
+          schema:
+           type: string
+          example: 'STANDARD_GRUPPENPROFIL'
+        - name: shipment
+          required: true
+          in: query
+          description: Shipment number that shall be canceled. If multiple shipments shall be canceled, the parameter must be added multiple times. Up to 30 shipments can be canceled at once.
+          schema:
+           type: string
+          example: '123456789'
+      responses:
+        '200':
+          description: Response for requests with a single element
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+        '207':
+          description: Response for requests taking multiple input elements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/LabelDataResponse'
+        '400':
+            $ref: '#/components/responses/BadRequest'
+        '401':
+            $ref: '#/components/responses/Unauthorized'
+        '429':
+            $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    ServiceInformation:
+      type: object
+      description: Response for the API version endpoint detailing version information.
+      properties:
+        amp:
+          type: object
+          properties:
+            name:
+              type: string
+              description: name of api
+              example: pp-parcel-shipping-native
+            env:
+              type: string
+              description: environment
+              example: sandbox
+            version:
+              type: string
+              description: version of api
+              example: v2.0.4
+            rev: 
+              type: string
+              description: revision
+              example: 22
+        backend:
+          type: object
+          properties:
+            env:
+              type: string
+              description: environment
+              example: sandbox
+            version:
+              type: string
+              description: version of backend 
+              example: v2.1.0
+
+    Document:
+      type: object
+      properties:
+        b64:
+          type: string
+          description: The Base64 encoded byte stream
+        zpl2:
+          type: string
+          description: The document in zpl encoding
+        url:
+          type: string
+          description: URL reference to download document
+          example: www.dhl.de/download/myobscurelink?label.png
+        fileFormat:
+          type: string
+          description: format of the encoded bytes
+          example: PDF
+          enum:
+            - ZPL2
+            - PDF
+        printFormat:
+          type: string
+          description: The print format used. Customs documents and cash on delivery documents can only be returned in format A4.
+          example: 910-300-700
+          enum:
+            - A4-PT
+            - A4
+            - 910-300-700
+            - 910-300-700-oZ/oz
+            - 910-300-300
+            - 910-300-300-oz
+            - 910-300-710
+            - 910-300-600/610
+            - 910-300-400/410
+            - 100x70mm
+      description: 'Encoded document. All types of labels and documents.'
+    RequestStatus:
+      type: object
+      description: General status description for the attached response or response item.
+      required:
+        - statusCode
+        - title
+      properties:
+        title:
+          type: string
+          example: ok
+        statusCode:
+          description: The status code of the response. Usually, but not necessarliy the HTTP status code. Same as attribut "status" but deprecated. Do not use. Will be removed in the next major version.        
+          type: integer
+          format: int32
+          example: 200
+        status:           
+          description: The status code of the response. Usually, but not necessarliy the HTTP status code.                   
+          type: integer           
+          format: int32           
+          example: 200
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.          
+        detail:
+          maxLength: 80
+          minLength: 0
+          type: string
+          example: The Webservice call ran successfully.
+    LabelDataResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/RequestStatus'
+        items:
+          type: array
+          description: If the request contains a multi element array (e.g. multiple shipments), then the order of the items in the response corresponds to the order of the items in the request. For consistency, if the request contains only one item then the response contains a single element array.
+          example:
+            - shipmentNo: 340434310428091700
+              routingCode: 40327653113+99000943058020
+              sstatus:
+                title: OK
+                status: 200
+              label:
+                url: https://api-dev.dhl.com/parcel/de/shipping/v1-feature-order-endpoint/labels?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEXhP9PQ8tAVdPeXD26RZ6JZqF5NCJlrihrAv1%2FAOzuDPqWJLRVaRq461BpT4bcbzChAAHVg%2FHUaQAkeIkaZ8NqfcxWEQzK1AYJWczpy6sv6
+                format: PDF
+          items:
+            $ref: '#/components/schemas/ResponseItem'
+    ResponseItem:
+      required:
+        - sstatus
+      type: object
+      properties:
+        shipmentNo:
+          maxLength: 50
+          minLength: 0
+          type: string
+        routingCode:
+          maxLength: 35
+          minLength: 0
+          type: string
+          description: Routing code of the consignee address
+        returnRoutingCode:           
+          maxLength: 35           
+          minLength: 0           
+          type: string           
+          description: Routing code of the return address   
+        returnShipmentNo:
+          maxLength: 50
+          minLength: 0
+          type: string
+        sstatus:
+          $ref: '#/components/schemas/RequestStatus'
+        shipmentRefNo:
+          maxLength: 50
+          minLength: 6
+          type: string
+        label:
+          $ref: '#/components/schemas/Document'
+        returnLabel:
+          $ref: '#/components/schemas/Document'
+        customsDoc:
+          $ref: '#/components/schemas/Document'
+        codLabel:
+          $ref: '#/components/schemas/Document'
+        validationMessages:
+          type: array
+          description: Optional validation messages attached to the shipment.
+          items:
+            $ref: '#/components/schemas/ValidationMessageItem'
+      description: Response for a single shipment containing status, numbers and labels
+      example:
+        - shipmentNo: 340434310428091700
+          routingCode: 40327653113+99000943058020
+          sstatus:
+            title: OK
+            status: 200
+          label:
+            url: https://api-dev.dhl.com/parcel/de/shipping/v1-feature-order-endpoint/labels?token=x5xzrHE7ctmqPqk33k%2BKkBwbvIfYP4elMQsBFM%2BJOdiT2bmoaXXzris%2Ftz9jBtdVFLY5cCENit0Jnd9aXuxoNEXhP9PQ8tAVdPeXD26RZ6JZqF5NCJlrihrAv1%2FAOzuDPqWJLRVaRq461BpT4bcbzChAAHVg%2FHUaQAkeIkaZ8NqfcxWEQzK1AYJWczpy6sv6
+            format: PDF
+    ValidationMessageItem:
+      type: object
+      properties:
+        property:
+          type: string
+          description: The property that is affected by the validation message.
+          example: dimension.weight
+        validationMessage:
+          type: string
+          description: The validation message describing the error.
+          example: The weight is too high
+        validationState:
+          type: string
+          description: The validation state resulting from the error.
+          example: Error
+      description: Representation of a validation message of a shipment container containing the most important information.
+    SingleManifestResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/RequestStatus'
+        manifestDate:
+          type: string
+        manifest:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        sheetNo:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillingNoToSheetNo'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentNoToSheetNo'
+    BillingNoToSheetNo:
+      type: object
+      properties:
+        billingNumber:
+          type: string
+        sheetNo:
+          type: string
+      description: Mapping between billing number and sheet number  
+    ShipmentNoToSheetNo:
+      type: object
+      properties:
+        shipmentNo:
+          type: string
+        sheetNo:
+          type: string
+        sstatus:
+          $ref: '#/components/schemas/RequestStatus'        
+      description: Mapping between shipment number and sheet number
+    MultipleManifestResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/RequestStatus'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShortResponseItem'
+      description: Response of the POST /manifests endpoint containing an overall request status and detailed shipment status.
+    ShortResponseItem:
+      required:
+        - sstatus
+      type: object
+      properties:
+        shipmentNo:
+          maxLength: 50
+          minLength: 0
+          type: string
+          example: '340434310428091700'
+        sstatus:
+          $ref: '#/components/schemas/RequestStatus'
+      description: Response for a single shipment element not containing labels.
+    ShipmentManifestingRequest:
+      required:
+        - profile 
+      type: object
+      properties:
+        profile:
+          maxLength: 35
+          minLength: 0
+          type: string
+        shipmentNumbers:
+          maxItems: 30
+          minItems: 1
+          type: array
+          description: List of shipment IDs for manifesting.
+          items:
+            type: string
+        billingNumber:
+           type: string
+           description: Customer billingNumber number.
+      description: List of shipments which shall be manifested.
+    BankAccount:
+      required:
+        - accountHolder
+        - iban
+      type: object
+      properties:
+        accountHolder:
+          maxLength: 80
+          minLength: 0
+          type: string
+          example: John D. Rockefeller
+        bankName:
+          maxLength: 80
+          minLength: 0
+          type: string
+          example: The Iron Bank, Braavos
+        iban:
+          pattern: '[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}'
+          type: string
+          example: DE02100100100006820101
+        bic:
+          pattern: '[a-zA-Z0-9]{8,11}'
+          type: string
+          example: DEUTDEFFXXX
+      description: Bank account data used for CoD (Cash on Delivery).
+    Commodity:
+      required:
+        - itemDescription
+        - itemValue
+        - itemWeight
+        - packagedQuantity
+      type: object
+      properties:
+        itemDescription:
+          maxLength: 256
+          minLength: 1
+          type: string
+          example: T-Shirt Boys size 164 yellow
+          description: A text that describes the commodity item. Only the first 50 characters of the description text is printed on the customs declaration form CN23.
+        countryOfOrigin:
+          $ref: '#/components/schemas/Country'
+        hsCode:
+          maxLength: 11
+          minLength: 6
+          type: string
+          description: Harmonized System Code aka Customs tariff number.
+          example: '61099090'
+        packagedQuantity:
+          type: integer
+          description: How many items of that type are in the package
+          format: int32
+          example: 1
+        itemValue:
+          $ref: '#/components/schemas/Value'
+        itemWeight:
+          $ref: '#/components/schemas/Weight'
+      description: |-
+        Commodity line item (e.g. a t-shirt) for international shipments which require individual listing of goods. Each good must contain a description of the item, the amount of the item, the net weight of one single item and the value of one single item. If you ship 5 t-shirts, you need to include the weight and value of one single shirt. The correct final weight and value will be calculated automatically.
+        The HS Code and the country of origin are optional.
+      example:
+        - itemDescription: T-Shirt
+          hscode: '61099090'
+          countryOfOrigin: DE
+          packagedQuantity: 3
+        - itemDescription: Book
+          hscode: '49019900'
+          packagedQuantity: 1
+    Consignee:
+      type: object
+      description: Consignee address information. Either a doorstep address (contact address) including contact information or a droppoint address. One of packstation (parcel locker), or post office (postfiliale/retail shop).
+      oneOf:
+        - $ref: '#/components/schemas/ContactAddress'
+        - $ref: '#/components/schemas/Locker'
+        - $ref: '#/components/schemas/PostOffice'
+        - $ref: '#/components/schemas/POBox'
+    ContactAddress:
+      required:
+        - addressStreet
+        - city
+        - country
+        - name1
+      type: object
+      properties:
+        name1:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Name1. Line 1 of name information
+          example: Blumen Krause
+        name2:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: An optional, additional line of name information
+          example: To the attention of Erna.
+        name3:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: An optional, additional line of name information
+          example: Backdrawer all the way back.
+        dispatchingInformation:
+          maxLength: 35
+          minLength: 1
+          type: string
+          description: An optional, additional line of address. It is printed on the shipping label for international shipments to the following countries only BEL, CZE, NLD. It is positioned below name3 on the label.
+          example: PO Box, bpack 24/7
+        addressStreet:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Line 1 of the street address. This is just the street name. Can also include house number.
+          example: Hauptstrasse
+        addressHouse:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Line 1 of the street address. This is just the house number. Can be added to street name instead.
+          example: 1a
+        additionalAddressInformation1:
+          maxLength: 60
+          minLength: 1
+          type: string
+          description: Additional information that is positioned either behind or below addressStreet on international shipment labels. Where exactly it is printed on the label depends on the country.
+          example: 3. Etage
+        additionalAddressInformation2:
+          maxLength: 60
+          minLength: 1
+          type: string
+          description: Additional information that is positioned either behind or below addressStreet on international shipment labels. It is printed on shipping labels to the following countries only AUT, CHN, DNK, GBR, HRV, LTU, PRT, ROU, RUS. Where exactly it is printed on the label depends on the country.
+          example: Apartment 12
+        postalCode:
+          maxLength: 10
+          minLength: 3
+          pattern: ^[0-9A-Za-z]+([ -]?[0-9A-Za-z]+)*$
+          type: string
+          description: Mandatory for all countries but Ireland that use a postal code system.
+          example: '53113'
+        city:
+          maxLength: 40
+          minLength: 1
+          type: string
+          description: city
+          example: Berlin
+        state:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: State, province or territory. For the USA please use the official regional ISO-Codes, e.g. US-AL.
+          example: NRW
+        country:
+          $ref: '#/components/schemas/Country'      
+        contactName:
+          maxLength: 80
+          minLength: 3
+          type: string
+          description: optional contact name. (this is not the primary name printed on label)
+          example: Konrad Kontaktmann
+        phone:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Please note that, in accordance with Art. 4 No. 11 GDPR, you must obtain the recipient's consent to forward their phone number to Deutsche Post DHL Group. For shipments within Germany, the phone number cannot be transmitted. In some countries the provision of a telephone number and/or e-mail address is mandatory for a delivery to a droppoint. If your recipient has objected to the disclosure of their telephone number and/or e-mail address, the shipment can only be delivered in these countries using the service Premium.
+          example: +49 170 1234567
+        email:
+          maxLength: 80
+          minLength: 3
+          type: string
+          description: "Please note that, in accordance with Art. 4 No. 11 GDPR, you must obtain the recipient's consent to forward their e-mail address to Deutsche Post DHL Group.\_For shipments within Germany, the e-mail address is used to send a DHL Parcel Notification to the recipient. The e-mail address is not mandatory for shipments within Germany. In some countries the provision of a telephone number and/or e-mail address is mandatory for a delivery to a droppoint. If your recipient has objected to the disclosure of their telephone number and/or e-mail address, the shipment can only be delivered in these countries using the service Premium."
+          example: mustermann@example.com
+      description: Combines name, address, contact information. The recommended way is to use the mandatory attribute addressStreet and submit the streetname and housenumber together â€“ alternatively addressHouse + addressStreet can be used. For many international addresses there is no house number, please do not set a period or any other sign to indicate that the address does not have a housenumber.
+    CustomsDetails:
+      required:
+        - exportType
+        - postalCharges
+        - items
+      type: object
+      properties:
+        invoiceNo:
+          maxLength: 35
+          minLength: 0
+          type: string
+          description: Invoice number
+        exportType:
+          type: string
+          description: This contains the category of goods contained in parcel.
+          enum:
+            - OTHER
+            - PRESENT
+            - COMMERCIAL_SAMPLE
+            - DOCUMENT
+            - RETURN_OF_GOODS
+            - COMMERCIAL_GOODS
+        exportDescription:
+          maxLength: 80
+          minLength: 0
+          type: string
+          description: Mandatory if exporttype is 'OTHER'
+          example: Detailed description for OTHER goods.
+        shippingConditions:
+          type: string
+          description: Aka 'Terms of Trade' aka 'Frankatur'. The attribute is exclusively used for the product Europaket (V54EPAK). DDU is deprecated (use DAP instead).
+          enum:
+            - DAP
+            - DDP
+        permitNo:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: Permit number. Very rarely needed. Mostly relevant for higher value goods. An example use case would be an item made from crocodile leather which requires dedicated license / permit identified by that number.
+        attestationNo:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: Attest or certification identified by this number. Very rarely needed. An example use case would be a medical shipment referring to an attestation that a certain amount of medicine may be imported within e.g. the current quarter of the year.
+        hasElectronicExportNotification:
+          type: boolean
+          description: flag confirming whether electronic record for export was made
+        MRN:
+          type: string
+          maxLength: 18
+          example: "abcd1234567890"
+        postalCharges:
+          allOf:
+            - $ref: '#/components/schemas/Value'
+          description: Postal charges that have been charged to the recipient. The information must match the information on the invoice. Postal charges are added to the customs value which is the basis for the calculation of import duties. Since 1.1.2021 this information is mandatory according to requirements of the Universal Postal Union. The currency of the postal charges is used throughout the customs declaration form. The currency details of the individual goods items and the currency of the postal charges must match. Otherwise no shipping label will be created.
+        officeOfOrigin:
+          maxLength: 35
+          minLength: 0
+          type: string
+          description: Deprecated (do not use anymore). Will appear on CN23.
+        shipperCustomsRef:
+          description: "Optional. The customs reference is used by customs authorities to identify economics operators an/or other persons involved. With the given reference, granted authorizations and/or relevant processes in customs clearance an/or taxation can be taken into account. Aka Zoll-Nummer or EORI-Number but dependent on destination."
+          type: string
+          maxLength: 35
+          example: "DE73282932000074"
+        consigneeCustomsRef:
+          description: "Optional. The customs reference is used by customs authorities to identify economics operators an/or other persons involved. With the given reference, granted authorizations and/or relevant processes in customs clearance an/or taxation can be taken into account. Aka Zoll-Nummer or EORI-Number but dependent on destination."
+          type: string
+          maxLength: 35
+          example: "GB73282932000074" 
+        items:
+          maxItems: 99
+          minItems: 1
+          type: array
+          description: Commodity types in that package
+          example:
+            - itemDescription: T-Shirt
+              hscode: '61099090'
+              countryOfOrigin: DE
+              packagedQuantity: 3
+            - itemDescription: Book
+              hscode: '49019900'
+              packagedQuantity: 1
+          items:
+            $ref: '#/components/schemas/Commodity'
+      description: For international shipments, this section contains information necessary for customs about the exported goods. ExportDocument can contain one or more positions as child element. This data is also transferred as electronic declaration to customs. The custom details are mandatory depending on whether the parcel will go to a country outside the European Customs Union. For DHL Parcel International (V53WPAK) CN23 will returned as a separate document, while for Warenpost International the customs information will be printed onto the shipment label (CN22).
+    Dimensions:
+      required:
+        - height
+        - length
+        - uom
+        - width
+      type: object
+      properties:
+        uom:
+          type: string
+          description: Unit of metric, applies to all dimensions contained.
+          example: cm
+          enum:
+            - cm
+            - mm
+        height:
+          type: integer
+          format: int32
+          example: 10
+        length:
+          type: integer
+          format: int32
+          example: 20
+        width:
+          type: integer
+          format: int32
+          example: 15
+      description: Physical dimensions (aka 'Gurtmass') of the parcel. If you provide the dimension information, all attributes need to be provided. You cannot provide just the height, for example. If you provide length, width, and height in millimeters, they will be rounded to full cm.
+    Locker:
+      required:
+        - city
+        - lockerID
+        - name
+        - postNumber
+        - postalCode
+      type: object
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Name
+          example: Paula Packstation
+        lockerID:
+          maximum: 999
+          minimum: 100
+          type: integer
+          description: Packstationnummer. Three digit number identifying the parcel locker in conjunction with city and postal code
+          format: int32
+          example: 118
+        postNumber:
+          pattern: ^[0-9]{6,10}$
+          type: string
+          description: postNumber (Postnummer) is the official account number a private DHL Customer gets upon registration.
+        city:
+          maxLength: 40
+          minLength: 0
+          type: string
+          description: City where the locker is located
+          example: Berlin
+        country:
+          $ref: '#/components/schemas/Country'
+        postalCode:
+          maxLength: 10
+          minLength: 3
+          pattern: ^[0-9A-Za-z]+([ -]?[0-9A-Za-z]+)*$
+          type: string
+      description: Only usable for German Packstation, international lockers cannot be addressed directly. If your customer wishes for international delivery to a droppoint, please use DHL Parcel International (V53WPAK) with the delivery type "Closest Droppoint".
+    PostOffice:
+      required:
+        - city
+        - name
+        - postalCode
+        - retailID
+      type: object
+      properties:
+        name:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Name
+          example: Fritz Filialabholer
+        retailID:
+          maximum: 999
+          minimum: 401
+          type: integer
+          description: Id or Number of Post office / Filiale / outlet / parcel shop
+          format: int32
+          example: 518
+        postNumber:
+          maxLength: 10
+          minLength: 3
+          pattern: ^[0-9]{6,10}$
+          type: string
+          description: postNumber (Postnummer) is the official account number a private DHL Customer gets upon registration. To address a post office or retail outlet directly, either the post number or e-mail address of the consignee is needed.
+        email:
+          maxLength: 80
+          minLength: 3
+          type: string
+          description: Email address of the consignee. To address a post office or retail outlet directly, either the post number or e-mail address of the consignee is needed.
+          example: mustermann@example.com
+        city:
+          maxLength: 80
+          minLength: 0
+          type: string
+          description: City where the retail location is
+          example: Berlin
+        country:
+          $ref: '#/components/schemas/Country'
+        postalCode:
+          maxLength: 10
+          minLength: 3
+          pattern: ^[0-9A-Za-z]+([ -]?[0-9A-Za-z]+)*$
+          type: string
+      description: Only usable for German post offices or retail outlets (Paketshops), international postOffices or retail outlets cannot be addressed directly. If your customer wishes for international delivery to a droppoint, please use DHL Parcel International (V53WPAK) with the delivery type "Closest Droppoint".
+    POBox:
+        required:
+            - name1
+            - poBoxID
+            - city
+            - postalCode
+        type: object
+        properties:
+          name1:
+            maxLength: 50
+            minLength: 1
+            type: string
+            description: Name1. Line 1 of name information
+            example: Joe Black
+          name2:
+            maxLength: 50
+            minLength: 1
+            type: string
+            description: An optional, additional line of name information
+            example: To the attention of Mr. Black.
+          name3:
+            maxLength: 50
+            minLength: 1
+            type: string
+            description: An optional, additional line of name information
+            example: Backdrawer all the way back.
+          poBoxID:
+            type: integer
+            format: int32
+            description: Number of P.O. Box (Postfach)
+          email:
+            maxLength: 80
+            minLength: 3
+            type: string
+            description: Email address of the consignee
+          city:
+            maxLength: 80
+            minLength: 0
+            type: string
+            description: City of the P.O. Box (Postfach) location
+            example: Berlin
+          country:
+            $ref: '#/components/schemas/Country'
+          postalCode:
+            maxLength: 10
+            minLength: 3
+            pattern: ^[0-9A-Za-z]+([ -]?[0-9A-Za-z]+)*$
+            type: string
+            description: Postal code of the P.O. Box (Postfach) location
+        description: Alternative destination - P.O. Box (Postfach)
+    Product:
+      type: string
+      description: |-
+        Determines the DHL Paket product to be used.
+ 
+        * V01PAK: DHL PAKET;
+        * V53WPAK: DHL PAKET International;
+        * V54EPAK: DHL Europaket;
+        * V62WP: Warenpost (will be replaced by DHL Kleinpaket from 1.1.2025);
+        * V62KP: DHL Kleinpaket;
+        * V66WPI: Warenpost International
+      example: V01PAK
+      enum:
+        - V01PAK
+        - V53WPAK
+        - V54EPAK
+        - V62WP
+        - V62KP
+        - V66WPI
+    Shipment:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        billingNumber:
+          pattern: \w{10}\d{2}\w{2}
+          type: string
+          description: 14 digit long number that identifies the contract the shipment is booked on. Please note that in rare cases the last to characters can be letters. Digit 11 and digit 12 must correspondent to the number of the product, e.g. 333333333301tt can only be used for the product V01PAK (DHL Paket).
+          example: 33333333330101 or 333333333362aa
+        refNo:
+          maxLength: 35
+          minLength: 8
+          type: string
+          description: A reference number that the user can assign for better association purposes. It appears on shipment labels. To use the reference number for tracking purposes, it should be at least 8 characters long and unique.
+        costCenter:
+          maxLength: 50
+          type: string
+          description: Textfield that appears on the shipment label. It cannot be used to search for the shipment.
+        creationSoftware:
+          type: string
+          description: Is only to be indicated by DHL partners.
+        shipDate:
+          type: string
+          description: 'Date the shipment is transferred to DHL. The shipment date can be the current date or a date up to a few days in the future. It must not be in the past. Iso format required: yyyy-mm-dd. On the shipment date the shipment will be automatically closed at your end of day closing time.'
+          format: date
+        shipper:
+          description: Shipper information, including contact information and address. Alternatively, a predefined shipper reference can be used.
+          oneOf:
+              - $ref: '#/components/schemas/Shipper'
+              - $ref: '#/components/schemas/ShipperReference'
+        consignee:
+          $ref: '#/components/schemas/Consignee'
+        details:
+          $ref: '#/components/schemas/ShipmentDetails'
+        services:
+          $ref: '#/components/schemas/VAS'
+        customs:
+          $ref: '#/components/schemas/CustomsDetails'
+      description: Container for all shipments. Mixed shipment products per request are supported. Each shipment has a dedicated shipper address (or shipper reference, or both).
+    ShipmentDetails:
+      required:
+        - weight
+      type: object
+      properties:
+        dim:
+          $ref: '#/components/schemas/Dimensions'
+        weight:
+          $ref: '#/components/schemas/Weight'
+      description: Details for the shipment, such as dimensions, content
+    ShipmentOrderRequest:
+      required:
+        - profile
+        - shipments
+      type: object
+      properties:
+        profile:
+          maxLength: 35
+          minLength: 0
+          type: string
+        shipments:
+          maxItems: 30
+          minItems: 1
+          type: array
+          description: Shipment array having details for each shipment.
+          items:
+            $ref: '#/components/schemas/Shipment'
+      description: Complex request structure used to create, update, and validate shipment data. Note that most elements are part of the array of shipment items.
+    Shipper:
+      type: object
+      description: Shipper information, including contact information and address.
+      required:
+        - addressStreet
+        - city
+        - country
+        - name1
+      properties:
+        name1:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Name1. Line 1 of name information
+          example: Blumen Krause
+        name2:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: An optional, additional line of name information
+          example: To the attention of Erna.
+        name3:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: An optional, additional line of name information
+          example: Backdrawer all the way back.
+        addressStreet:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Line 1 of the street address. This is just the street name. Can also include house number.
+          example: Hauptstrasse
+        addressHouse:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Line 1 of the street address. This is just the house number. Can be added to street name instead.
+          example: 1a
+        postalCode:
+          maxLength: 10
+          minLength: 3
+          pattern: ^[0-9A-Za-z]+([ -]?[0-9A-Za-z]+)*$
+          type: string
+          description: Mandatory for all countries but Ireland that use a postal code system.
+          example: '53113'
+        city:
+          maxLength: 40
+          minLength: 1
+          type: string
+          description: city
+          example: Berlin
+        country:
+          $ref: '#/components/schemas/Country'
+        contactName:
+          maxLength: 80
+          minLength: 3
+          type: string
+          description: optional contact name. (this is not the primary name printed on label)
+          example: Konrad Kontaktmann
+        email:
+          maxLength: 80
+          minLength: 3
+          type: string
+          description: Optional contact email address of the shipper
+          example: mustermann@example.com
+    ShipperReference:
+      type: object
+      description: Contains a reference to the Shipper data configured in GKP(GeschÃ¤ftskundenportal - Business Costumer Portal). Can be used instead of a detailed shipper address. The shipper reference can be used to print a company logo which is configured in GKP onto the label.
+      required:
+        - shipperRef
+      properties:
+        shipperRef:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Reference string to the shipper data configured in GKP(GeschÃ¤ftskundenportal - Business Costumer Portal).
+    VAS:
+      type: object
+      properties:
+        preferredNeighbour:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Preferred neighbour. Can be specified as text.
+          example: Please ring at Meier next door
+        preferredLocation:
+          maxLength: 100
+          minLength: 0
+          type: string
+          description: Preferred location. Can be specified as text.
+          example: Please leave in carport
+        visualCheckOfAge:
+          pattern: A16|A18
+          type: string
+          description: if used it will trigger checking the age of recipient
+          example: A18
+          enum:
+            - A16
+            - A18
+        namedPersonOnly:
+          type: boolean
+          description: Delivery can only be signed for by yourself personally.
+          example: true
+        identCheck:
+          $ref: '#/components/schemas/VASIdentCheck'
+        signedForByRecipient:
+          type: boolean
+          description: Delivery must be signed for by the recipient and not by DHL staff
+          example: true
+        endorsement:
+          type: string
+          description: Instructions and endorsement how to treat international undeliverable shipment. By default, shipments are returned if undeliverable. There are country specific rules whether the shipment is returned immediately or after a grace period.
+          example: RETURN
+          enum:
+            - RETURN
+            - ABANDON
+        preferredDay:
+          type: string
+          description: Preferred day of delivery in format YYYY-MM-DD. Shipper can request a preferred day of delivery. The preferred day should be between 2 and 6 working days after handover to DHL.
+          format: date
+        noNeighbourDelivery:
+          type: boolean
+          description: Delivery can only be signed for by yourself personally or by members of your household.
+          example: true
+        additionalInsurance:
+          $ref: '#/components/schemas/Value'
+        bulkyGoods:
+          type: boolean
+          description: Leaving this out is same as setting to false. Sperrgut.
+          example: true
+        cashOnDelivery:
+          $ref: '#/components/schemas/VASCashOnDelivery'
+        individualSenderRequirement:
+          pattern: '[a-zA-Z0-9]{2}'
+          type: string
+          description: Special instructions for delivery. 2 character code, possible values agreed in contract.
+          example: ZZ
+        premium:
+          type: boolean
+          description: 'Choice of premium vs economy parcel. Availability is country dependent and may be manipulated by DHL if choice is not available. Please review the label.'
+          example: true
+        closestDropPoint:
+          type: boolean
+          description: 'Closest Droppoint Delivery to the droppoint closest to the address of the recipient of the shipment. For this kind of delivery either the phone number and/or the e-mail address of the receiver is mandatory. For shipments using DHL Paket International it is recommended that you choose one of the three delivery types: Economy, Premium, CDP. Otherwise, the current default for the receiver country will be picked.'
+          example: true
+        parcelOutletRouting:
+          type: string
+          description: 'Undeliverable domestic shipment can be forwarded and held at retail. Notification to email (fallback: consignee email) will be used.'
+          example: max.mustermann@example.com
+        goGreenPlus:
+          type: boolean
+          description: 'GoGreen Plus enables sustainable shipping by investing in measures to reduce greenhouse gas emissions at DHL.'
+          example: true
+        dhlRetoure:
+          $ref: '#/components/schemas/VASDhlRetoure'
+        postalDeliveryDutyPaid:
+          type: boolean
+          description: 'All import duties are paid by the shipper.'
+          example: true
+      description: Value added services. Please note that services are specific to products and geographies and/or may require individual setup and billing numbers. Please test and contact your account representative in case of questions.
+    VASCashOnDelivery:
+      required:
+        - transferNote1
+      type: object
+      properties:
+        amount:
+          $ref: '#/components/schemas/Value'
+        bankAccount:
+          $ref: '#/components/schemas/BankAccount'
+        accountReference:
+          maxLength: 35
+          minLength: 0
+          type: string
+          description: Reference to bank account details. Account references are maintained in customer settings in Post & DHL business customer portal under Ship -> Settings -> Cash on delivery. Please note, that the default account reference is used if the provided account reference does not exist in your customer settings!
+        transferNote1:
+          maxLength: 35
+          minLength: 0
+          type: string
+        transferNote2:
+          maxLength: 35
+          minLength: 0
+          type: string
+      description: Cash on delivery (Nachnahme). Currency must be Euro. Either bank account information or account reference (from customer profile) must be provided. Transfernote1 + 2 are references transmitted during bank transfer. Providing account information explicitly requires elevated privileges.
+    VASDhlRetoure:
+      required:
+        - billingNumber
+      type: object
+      properties:
+        billingNumber:
+          pattern: \w{10}\d{2}\w{2}
+          type: string
+        refNo:
+          maxLength: 50
+          minLength: 6
+          type: string
+        returnAddress:
+          $ref: '#/components/schemas/ContactAddress'
+        goGreenPlus:
+          type: boolean
+          description: 'GoGreen Plus enables sustainable shipping by investing in measures to reduce greenhouse gas emissions at DHL.'
+          example: true
+      description: Requests return label (aka 'retoure') to be provided. Also requires returnAddress and return billing number. Neither weight nor dimension need to be specified for the retoure (flat rate service).
+    VASIdentCheck:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          maxLength: 35
+          minLength: 1
+          type: string
+          example: Max
+        lastName:
+          maxLength: 35
+          minLength: 1
+          type: string
+          example: Mustermann
+        dateOfBirth:
+          type: string
+          description: date of birth, used in conjunction with minimumAge and shipping date. Format yyyy-mm-dd is used.
+          format: date
+        minimumAge:
+          pattern: A16|A18
+          type: string
+          description: Checks if recipient will have reached specified age by shipping date.
+          example: A18
+          enum:
+            - A16
+            - A18
+      description: Check the identity of the recipient via name (firstname, lastname), date of birth or age. This uses firstName and lastName as separate attributes since for identity check an automatic split of a one-line name is not considered reliable enough.
+    Country:
+      type: string
+      description: A valid country code consisting of three characters according to ISO 3166-1 alpha-3.
+      enum:
+        - ABW
+        - AFG
+        - AGO
+        - AIA
+        - ALA
+        - ALB
+        - AND
+        - ARE
+        - ARG
+        - ARM
+        - ASM
+        - ATG
+        - AUS
+        - AUT
+        - AZE
+        - BDI
+        - BEL
+        - BEN
+        - BES
+        - BFA
+        - BGD
+        - BGR
+        - BHR
+        - BHS
+        - BIH
+        - BLM
+        - BLR
+        - BLZ
+        - BMU
+        - BOL
+        - BRA
+        - BRB
+        - BRN
+        - BTN
+        - BVT
+        - BWA
+        - CAF
+        - CAN
+        - CCK
+        - CHE
+        - CHL
+        - CHN
+        - CIV
+        - CMR
+        - COD
+        - COG
+        - COK
+        - COL
+        - COM
+        - CPV
+        - CRI
+        - CUB
+        - CUW
+        - CXR
+        - CYM
+        - CYP
+        - CZE
+        - DEU
+        - DJI
+        - DMA
+        - DNK
+        - DOM
+        - DZA
+        - ECU
+        - EGY
+        - ERI
+        - ESP
+        - EST
+        - ETH
+        - FIN
+        - FJI
+        - FLK
+        - FRA
+        - FRO
+        - FSM
+        - GAB
+        - GBR
+        - GEO
+        - GGY
+        - GHA
+        - GIB
+        - GIN
+        - GLP
+        - GMB
+        - GNB
+        - GNQ
+        - GRC
+        - GRD
+        - GRL
+        - GTM
+        - GUF
+        - GUM
+        - GUY
+        - HKG
+        - HMD
+        - HND
+        - HRV
+        - HTI
+        - HUN
+        - IDN
+        - IMN
+        - IND
+        - IRL
+        - IRN
+        - IRQ
+        - ISL
+        - ISR
+        - ITA
+        - JAM
+        - JEY
+        - JOR
+        - JPN
+        - KAZ
+        - KEN
+        - KGZ
+        - KHM
+        - KIR
+        - KNA
+        - KOR
+        - KWT
+        - LAO
+        - LBN
+        - LBR
+        - LBY
+        - LCA
+        - LIE
+        - LKA
+        - LSO
+        - LTU
+        - LUX
+        - LVA
+        - MAC
+        - MAF
+        - MAR
+        - MCO
+        - MDA
+        - MDG
+        - MDV
+        - MEX
+        - MHL
+        - MKD
+        - MLI
+        - MLT
+        - MMR
+        - MNE
+        - MNG
+        - MNP
+        - MOZ
+        - MRT
+        - MSR
+        - MTQ
+        - MUS
+        - MWI
+        - MYS
+        - MYT
+        - NAM
+        - NCL
+        - NER
+        - NFK
+        - NGA
+        - NIC
+        - NIU
+        - NLD
+        - NOR
+        - NPL
+        - NRU
+        - NZL
+        - OMN
+        - PAK
+        - PAN
+        - PCN
+        - PER
+        - PHL
+        - PLW
+        - PNG
+        - POL
+        - PRI
+        - PRK
+        - PRT
+        - PRY
+        - PSE
+        - PYF
+        - QAT
+        - REU
+        - ROU
+        - RUS
+        - RWA
+        - SAU
+        - SDN
+        - SEN
+        - SGP
+        - SHN
+        - SJM
+        - SLB
+        - SLE
+        - SLV
+        - SMR
+        - SOM
+        - SPM
+        - SRB
+        - SSD
+        - STP
+        - SUR
+        - SVK
+        - SVN
+        - SWE
+        - SWZ
+        - SXM
+        - SYC
+        - SYR
+        - TCA
+        - TCD
+        - TGO
+        - THA
+        - TJK
+        - TKL
+        - TKM
+        - TLS
+        - TON
+        - TTO
+        - TUN
+        - TUR
+        - TUV
+        - TWN
+        - TZA
+        - UGA
+        - UKR
+        - URY
+        - USA
+        - UZB
+        - VAT
+        - VCT
+        - VEN
+        - VGB
+        - VIR
+        - VNM
+        - VUT
+        - WLF
+        - WSM
+        - YEM
+        - ZAF
+        - ZMB
+        - ZWE
+        - UNKNOWN
+
+    Value:
+      required:
+        - currency
+        - value 
+      type: object
+      description: Currency and numeric value.
+      properties:
+        currency:
+          type: string
+          description: iso 4217 3 character currency code accepted. Recommended to use EUR where possible
+          enum:
+            - AED
+            - AFN
+            - ALL
+            - AMD
+            - ANG
+            - AOA
+            - ARS
+            - AUD
+            - AWG
+            - AZN
+            - BAM
+            - BBD
+            - BDT
+            - BGN
+            - BHD
+            - BIF
+            - BMD
+            - BND
+            - BOB
+            - BOV
+            - BRL
+            - BSD
+            - BTN
+            - BWP
+            - BYR
+            - BZD
+            - CAD
+            - CDF
+            - CHE
+            - CHF
+            - CHW
+            - CLF
+            - CLP
+            - CNY
+            - COP
+            - COU
+            - CRC
+            - CUC
+            - CUP
+            - CVE
+            - CZK
+            - DJF
+            - DKK
+            - DOP
+            - DZD
+            - EGP
+            - ERN
+            - ETB
+            - EUR
+            - FJD
+            - FKP
+            - GBP
+            - GEL
+            - GHS
+            - GIP
+            - GMD
+            - GNF
+            - GTQ
+            - GYD
+            - HKD
+            - HNL
+            - HRK
+            - HTG
+            - HUF
+            - IDR
+            - ILS
+            - INR
+            - IQD
+            - IRR
+            - ISK
+            - JMD
+            - JOD
+            - JPY
+            - KES
+            - KGS
+            - KHR
+            - KMF
+            - KPW
+            - KRW
+            - KWD
+            - KYD
+            - KZT
+            - LAK
+            - LBP
+            - LKR
+            - LRD
+            - LSL
+            - LTL
+            - LVL
+            - LYD
+            - MAD
+            - MDL
+            - MGA
+            - MKD
+            - MMK
+            - MNT
+            - MOP
+            - MRO
+            - MUR
+            - MVR
+            - MWK
+            - MXN
+            - MXV
+            - MYR
+            - MZN
+            - NAD
+            - NGN
+            - NIO
+            - NOK
+            - NPR
+            - NZD
+            - OMR
+            - PAB
+            - PEN
+            - PGK
+            - PHP
+            - PKR
+            - PLN
+            - PYG
+            - QAR
+            - RON
+            - RSD
+            - RUB
+            - RWF
+            - SAR
+            - SBD
+            - SCR
+            - SDG
+            - SEK
+            - SGD
+            - SHP
+            - SLL
+            - SOS
+            - SRD
+            - SSP
+            - STD
+            - SYP
+            - SZL
+            - THB
+            - TJS
+            - TMT
+            - TND
+            - TOP
+            - TRY
+            - TTD
+            - TWD
+            - TZS
+            - UAH
+            - UGX
+            - USD
+            - USN
+            - USS
+            - UYI
+            - UYU
+            - UZS
+            - VEF
+            - VND
+            - VUV
+            - WST
+            - XAF
+            - XAG
+            - XAU
+            - XBA
+            - XBB
+            - XBC
+            - XBD
+            - XCD
+            - XDR
+            - XFU
+            - XOF
+            - XPD
+            - XPF
+            - XPT
+            - XXX
+            - YER
+            - ZAR
+            - ZMW
+            - UNKNOWN
+        value:
+          type: number
+          description: Numeric value
+          maximum: 100000
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false         
+    Weight:
+      required:
+        - uom
+        - value
+      type: object
+      properties:
+        uom:
+          type: string
+          description: metric unit for weight
+          example: g
+          enum:
+            - g
+            - kg
+        value:
+          maximum: 31500
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+          example: 500
+      description: Weight of item or shipment. Both uom and value are required.
+  examples:
+    DHLPaket:
+      summary: DHL Paket (V01PAK) 
+      description: Order example for DHL Paket (V01PAK)
+      value:
+       profile: STANDARD_GRUPPENPROFIL
+       shipments:
+       -  product: V01PAK
+          billingNumber: "33333333330102"
+          refNo: Order No. 1234
+          shipper:
+              name1: My Online Shop GmbH
+              addressStreet: Sträßchensweg 10
+              postalCode: "53113"
+              city: Bonn
+              country: DEU
+              email: max@mustermann.de
+              phone: +49 123456789
+          consignee:
+              name1: Maria Musterfrau
+              addressStreet: Kurt-Schumacher-Str. 20
+              postalCode: "53113"
+              city: Bonn
+              country: DEU
+              email: maria@musterfrau.de
+              phone: +49 987654321
+          details:
+              dim:
+                uom: mm
+                height: 100
+                length: 200
+                width: 150
+              weight:
+                uom: g
+                value: 500
+    DHLPaketInternational:
+      summary: DHL Paket International (V53WPAK)
+      description: Order example for DHL Paket International (V53WPAK)
+      value:
+       profile: STANDARD_GRUPPENPROFIL
+       shipments:
+       -  product: V53WPAK
+          billingNumber: "33333333335301"
+          refNo: Order No. 1234
+          shipper:
+              name1: My Online Shop GmbH
+              addressStreet: Sträßchensweg 10
+              postalCode: "53113"
+              city: Bonn
+              country: DEU
+              email: max@mustermann.de
+              phone: +49 123456789
+          consignee:
+              name1: Jan Vermeer
+              addressStreet: Museumstraat
+              addressHouse: "1"
+              additionalAddressInformation1: 2. Floor
+              postalCode: "1071 AA"
+              city: Amsterdam
+              country: NLD
+              email: jan@vermeer.com
+              phone: +31 888888888
+          details:
+              dim:
+                uom: mm
+                height: 100
+                length: 200
+                width: 150
+              weight:
+                uom: g
+                value: 500
+    DHLPaketInternationalWithCustoms:
+      summary: DHL Paket International (V53WPAK) with customs
+      description: Order example for DHL Paket International (V53WPAK) with customs
+      value:
+       profile: STANDARD_GRUPPENPROFIL
+       shipments:
+       -  product: V53WPAK
+          billingNumber: "33333333335301"
+          refNo: Order No. 1234
+          shipper:
+              name1: My Online Shop GmbH
+              addressStreet: Sträßchensweg 10
+              postalCode: "53113"
+              city: Bonn
+              country: DEU
+              email: max@mustermann.de
+              phone: +49 123456789
+          consignee:
+              name1: Joe Black
+              addressStreet: 10 Downing Street
+              additionalAddressInformation1: 2. Floor
+              postalCode: "SW1A 1AA"
+              city: London
+              country: GBR
+              email: joe@black.uk
+              phone: +44 123456789
+          details:
+              dim:
+                uom: mm
+                height: 100
+                length: 200
+                width: 150
+              weight:
+                uom: g
+                value: 500
+          customs:
+            exportType: COMMERCIAL_GOODS
+            postalCharges:
+                currency: EUR
+                value: 1
+            items:
+            - itemDescription: Red T-Shirt
+              packagedQuantity: 1
+              hsCode: "123456"
+              countryOfOrigin: FRA
+              itemValue:
+                currency: EUR
+                value: 10
+              itemWeight:
+                uom: g
+                value: 400
+          services:
+            endorsement: RETURN
+    DHLKleinpaket:
+        summary: DHL Kleinpaket (V62KP)
+        description: Order example for DHL Kleinpaket (V62KP)
+        value:
+            profile: STANDARD_GRUPPENPROFIL
+            shipments:
+            - product: V62KP
+              billingNumber: "33333333336201"
+              refNo: Order No. 1234
+              shipper:
+                name1: My Online Shop GmbH
+                addressStreet: Sträßchensweg 10
+                postalCode: '53113'
+                city: Bonn
+                country: DEU
+                email: max@mustermann.de
+                phone: +49 123456789
+              consignee:
+                name1: Maria Musterfrau
+                addressStreet: Kurt-Schumacher-Str. 20
+                postalCode: "53113"
+                city: Bonn
+                country: DEU
+                email: maria@musterfrau.de
+                phone: +49 987654321
+              details:
+                dim:
+                  uom: cm
+                  height: 1
+                  length: 10
+                  width: 15
+                weight:
+                  uom: g
+                  value: 500
+    WarenpostInternationalWithCustoms:
+        summary: Warenpost International (V66WPI) with customs
+        description: Order example for Warenpost International (V66WPI) with customs
+        value: 
+            profile: STANDARD_GRUPPENPROFIL
+            shipments:
+            - product: V66WPI
+              billingNumber: "33333333336601"
+              refNo: Order No. 1234
+              shipper:
+                name1: My Online Shop GmbH
+                addressStreet: Sträßchensweg 10
+                postalCode: "53113"
+                city: Bonn
+                country: DEU
+                email: max@mustermann.de
+                phone: "+49 123456789"
+              consignee:
+                name1: Joe Black
+                addressStreet: 42 Street
+                additionalAddressInformation1: 2. Floor
+                postalCode: SW1A 1AA
+                city: London
+                country: GBR
+                email: joe@black.uk
+                phone: +44 123456789
+              details:
+                dim:
+                  uom: cm
+                  height: 1
+                  length: 10
+                  width: 15
+                weight:
+                  uom: g
+                  value: 500
+              customs:
+                exportType: PRESENT
+                postalCharges:
+                  currency: EUR
+                  value: 1
+                items:
+                - itemDescription: Item 1
+                  packagedQuantity: 1
+                  hsCode: 123456
+                  countryOfOrigin: FRA
+                  itemValue:
+                    currency: EUR
+                    value: 10
+                  itemWeight:
+                    uom: g
+                    value: 300
+              services:
+                endorsement: RETURN
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: Credentials provided here are username and password  of the partner system.
+    ApiKey:
+      type: apiKey
+      description: API key to authorize requests. API key can be obtained at [DHL's development
+        portal](https://developer.dhl.com).
+      name: dhl-api-key
+      in: header
+    OAuth2:
+      type: oauth2
+      description: See https://developer.dhl.com/api-reference/authentication-api-post-parcel-germany. For the POST call to get a token, provide all parameters in the request body. Refer to the above link for details, or to the RFC describing OAuth2 Password Grant. After having obtained the access token, use this as Bearer token in the HTTP authorization header. 
+      flows: 
+        password: 
+          tokenUrl: /parcel/de/account/auth/ropc/v1/token
+          scopes: {}
+  responses:
+      BadRequest:
+        description: Bad Request
+        content:
+          application/problem+json:
+            schema:
+              $ref: '#/components/schemas/LabelDataResponse'            
+      Unauthorized:        
+        description: Unauthorized        
+        content:
+          application/problem+json:
+            schema:
+              $ref: '#/components/schemas/RequestStatus'
+      NotFound:        
+        description: Not Found
+        content:
+          application/problem+json:
+            schema:
+              $ref: '#/components/schemas/RequestStatus'                                                 
+      TooManyRequests:
+        description: Too Many Requests
+        content:
+          application/problem+json:
+            schema:
+              $ref: '#/components/schemas/RequestStatus'
+      InternalServerError:
+        description: Internal Server Error
+        content:
+          application/problem+json:
+            schema:
+              $ref: '#/components/schemas/RequestStatus'
+security:
+    - ApiKey: []
+    - BasicAuth: []
+    - OAuth2: []

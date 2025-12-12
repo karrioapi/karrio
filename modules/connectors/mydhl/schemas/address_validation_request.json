@@ -1,0 +1,8 @@
+{
+  "type": "delivery",
+  "countryCode": "US",
+  "postalCode": "10001",
+  "cityName": "New York",
+  "countyName": "Manhattan",
+  "strictValidation": true
+}

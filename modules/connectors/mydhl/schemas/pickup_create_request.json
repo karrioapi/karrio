@@ -1,0 +1,128 @@
+{
+  "plannedPickupDateAndTime": "2024-11-06T10:00:00 GMT+00:00",
+  "closeTime": "18:00",
+  "location": "reception",
+  "locationType": "business",
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "ACC123456789"
+    }
+  ],
+  "specialInstructions": [
+    {
+      "value": "Please ring doorbell",
+      "typeCode": "TBD"
+    }
+  ],
+  "remark": "Two packages ready for pickup",
+  "customerDetails": {
+    "shipperDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "Floor 2",
+        "addressLine3": "Suite 100",
+        "countyName": "Central Bohemia",
+        "provinceName": "Central Bohemia",
+        "countryName": "Czech Republic"
+      },
+      "contactInformation": {
+        "email": "shipper@example.com",
+        "phone": "+1234567890",
+        "mobilePhone": "+1234567891",
+        "companyName": "Acme Corp",
+        "fullName": "John Doe"
+      }
+    },
+    "receiverDetails": {
+      "postalAddress": {
+        "postalCode": "10001",
+        "cityName": "New York",
+        "countryCode": "US",
+        "provinceCode": "NY",
+        "addressLine1": "123 Main Street",
+        "addressLine2": "Floor 5",
+        "addressLine3": "Apt 501",
+        "countyName": "Manhattan",
+        "provinceName": "New York",
+        "countryName": "United States"
+      },
+      "contactInformation": {
+        "email": "receiver@example.com",
+        "phone": "+19876543210",
+        "mobilePhone": "+19876543211",
+        "companyName": "Customer Inc",
+        "fullName": "Jane Smith"
+      }
+    },
+    "bookingRequestorDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "addressLine1": "V Parku 2308/10"
+      },
+      "contactInformation": {
+        "email": "requestor@example.com",
+        "phone": "+1234567890",
+        "companyName": "Acme Corp",
+        "fullName": "Requestor Name"
+      }
+    },
+    "pickupDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "Floor 2"
+      },
+      "contactInformation": {
+        "email": "pickup@example.com",
+        "phone": "+1234567890",
+        "companyName": "Acme Corp",
+        "fullName": "Pickup Person"
+      }
+    }
+  },
+  "shipmentDetails": [
+    {
+      "productCode": "P",
+      "localProductCode": "P",
+      "accounts": [
+        {
+          "typeCode": "shipper",
+          "number": "ACC123456789"
+        }
+      ],
+      "valueAddedServices": [
+        {
+          "serviceCode": "II",
+          "value": 100.00,
+          "currency": "USD"
+        }
+      ],
+      "isCustomsDeclarable": true,
+      "declaredValue": 100.00,
+      "declaredValueCurrency": "USD",
+      "unitOfMeasurement": "metric",
+      "shipmentTrackingNumber": "1234567890",
+      "packages": [
+        {
+          "typeCode": "2BP",
+          "weight": 5.0,
+          "dimensions": {
+            "length": 15,
+            "width": 15,
+            "height": 15
+          }
+        }
+      ]
+    }
+  ]
+}

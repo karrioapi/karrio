@@ -1,0 +1,138 @@
+{
+  "shipments": [
+    {
+      "shipmentTrackingNumber": "1234567890",
+      "status": "delivered",
+      "shipmentTimestamp": "2024-11-05T10:00:00",
+      "productCode": "P",
+      "description": "EXPRESS WORLDWIDE",
+      "shipperDetails": {
+        "name": "Shipper Name",
+        "postalAddress": {
+          "cityName": "Prague",
+          "countyName": "Central Bohemia",
+          "postalCode": "14800",
+          "provinceCode": "CZ",
+          "countryCode": "CZ"
+        },
+        "serviceArea": [
+          {
+            "code": "PRG",
+            "description": "Prague",
+            "outboundSortCode": "PRG01"
+          }
+        ]
+      },
+      "receiverDetails": {
+        "name": "Receiver Name",
+        "postalAddress": {
+          "cityName": "New York",
+          "countyName": "Manhattan",
+          "postalCode": "10001",
+          "provinceCode": "NY",
+          "countryCode": "US"
+        },
+        "serviceArea": [
+          {
+            "code": "NYC",
+            "description": "New York",
+            "facilityCode": "JFK",
+            "inboundSortCode": "NYC01"
+          }
+        ]
+      },
+      "totalWeight": 5.0,
+      "unitOfMeasurements": "metric",
+      "shipperReferences": [
+        {
+          "value": "REF-001",
+          "typeCode": "CU"
+        }
+      ],
+      "estimatedTimeOfDelivery": "2024-11-07T18:00:00",
+      "estimatedTimeOfDeliveryRemark": "Estimated delivery by end of business",
+      "numberOfPieces": 1,
+      "events": [
+        {
+          "date": "2024-11-07",
+          "time": "18:00:00",
+          "GMTOffset": "+00:00",
+          "typeCode": "OK",
+          "description": "Delivered",
+          "serviceArea": [
+            {
+              "code": "NYC",
+              "description": "New York"
+            }
+          ],
+          "signedBy": "J. Smith"
+        },
+        {
+          "date": "2024-11-07",
+          "time": "12:00:00",
+          "GMTOffset": "+00:00",
+          "typeCode": "PL",
+          "description": "Processed at DHL facility",
+          "serviceArea": [
+            {
+              "code": "NYC",
+              "description": "New York"
+            }
+          ]
+        },
+        {
+          "date": "2024-11-05",
+          "time": "10:00:00",
+          "GMTOffset": "+01:00",
+          "typeCode": "PU",
+          "description": "Shipment picked up",
+          "serviceArea": [
+            {
+              "code": "PRG",
+              "description": "Prague"
+            }
+          ]
+        }
+      ],
+      "pieces": [
+        {
+          "number": 1,
+          "typeCode": "2BP",
+          "shipmentTrackingNumber": "1234567890",
+          "trackingNumber": "JD014600001234567890",
+          "description": "Piece 1",
+          "weight": 5.0,
+          "dimensionalWeight": 3.38,
+          "actualWeight": 5.0,
+          "dimensions": {
+            "length": 15,
+            "width": 15,
+            "height": 15
+          },
+          "actualDimensions": {
+            "length": 15,
+            "width": 15,
+            "height": 15
+          },
+          "shippedQuantity": 1,
+          "events": [
+            {
+              "date": "2024-11-07",
+              "time": "18:00:00",
+              "GMTOffset": "+00:00",
+              "typeCode": "OK",
+              "description": "Delivered",
+              "serviceArea": [
+                {
+                  "code": "NYC",
+                  "description": "New York"
+                }
+              ],
+              "signedBy": "J. Smith"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

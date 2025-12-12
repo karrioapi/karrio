@@ -194,7 +194,6 @@ class PickupRequest:
     package_location: str = None
     instruction: str = None
     options: Dict = {}
-
     metadata: Dict = {}
 
 

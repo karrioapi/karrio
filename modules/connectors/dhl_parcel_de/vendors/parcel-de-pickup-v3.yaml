@@ -1,0 +1,1184 @@
+openapi: 3.0.0
+info:
+  version: 3.0.0
+  title: DHL Parcel DE Pickup API
+  description: >
+    Note:
+      This is the specification of the DP-DHL Group Parcel DE Pickup API. This web service allows business customers to order, cancel and get the status of their pick up orders (Einzelabholung, Bedarfsabholung und Einmalige Abholung).
+      The online documentation can be found at: https://developer.dhl.com/api-reference/parcel-de-pickup-post-parcel-germany
+servers:
+  - description: Sandbox Environment (Customer Testing)
+    url: https://api-sandbox.dhl.com/parcel/de/transportation/pickup/v3
+  - description: Production Environment
+    url: https://api-eu.dhl.com/parcel/de/transportation/pickup/v3
+tags:
+  - name: General
+  - name: Orders
+  - name: Locations
+paths:
+  /:
+    summary: general functionality
+    
+    get:
+     description: Returns the current version of the API as major.minor.patch. Supports content negotiation (json and html) and does __not__ require authentication.
+     operationId: getVersion
+     summary: Return API version
+     tags:
+      - General
+    
+     responses:
+        '200':
+          description: Major, minor, and build number being returned as x.y.z
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amp:
+                    type: object
+                    properties: 
+                      name: 
+                        type: string 
+                        example: pp-parcel-pickup
+                      version:
+                        type: string
+                        description: "Sandbox version is >= Prod version"
+                        pattern: '^v\d{1,2}.\d{1,2}[.\d{1,5}]$'
+                        example: 'v1.0.0'
+                      rev: 
+                        type: string
+                        example: '13'
+                      env: 
+                        type: string
+                        example: prod
+        '429':
+          $ref: '#/components/responses/429'
+  /orders:
+    post:
+      operationId: orderPickup
+      summary: Places a parcel pick up order for a number of parcels.
+      description: The root ressource to placing orders.
+      tags:
+        - Orders           
+      requestBody:
+        description: The object containing details about the pick up to be ordered.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupOrder'
+            examples:
+              einzelEtikett:
+                $ref: '#/components/examples/EinzelabholungEtikett'
+              einzel:
+                $ref: '#/components/examples/Einzelabholung'
+              einzelMix:
+                $ref: '#/components/examples/EinzelabholungMix'
+              bedarfFixed:
+                $ref: '#/components/examples/BedarfsabholungFixedDate'
+              bedarfASAP:
+                $ref: '#/components/examples/BedarfsabholungASAP'
+              bedarfIdASAP:
+                $ref: '#/components/examples/BedarfsabholungIdASAP'
+              sonder:
+                $ref: '#/components/examples/Sonderabholung'
+              sonderSperrgut:
+                $ref: '#/components/examples/SonderabholungSperrgut'
+      parameters:
+        - in: query
+          name: validate
+          required: false
+          description: Use this paramter to validate a order request. If the parameter 'validate' is set 'true', the request will be validated and no data will be saved.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          description: Validation failed
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Error'
+                minItems: 1
+                maxItems: 1000
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+    delete:
+      operationId: deleteOrders
+      summary: Cancels pickup order(s).
+      description: This operation cancels one (or several) pickup order(s).
+      tags:
+        - Orders           
+      parameters:
+        - in: query
+          name: orderID
+          description: The orderID (array) of one (or several) pickup order(s).
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OrderID'
+            minItems: 1
+            maxItems: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/CancelResult'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+    get:
+      operationId: getOrders
+      summary: Get order details and status.
+      description: Retrieve data for specific pick up orders.
+      tags:
+        - Orders
+      parameters:
+        - in: query
+          name: orderID
+          required: false
+          description: The uuid of a pickup-order without hyphens (e.g. 123e4567e89b12d3a456426614174000). If this parameter is not used, the query parameter 'pickupDate' is required (e.g. 2022-01-02).
+          schema:
+            $ref: '#/components/schemas/OrderID'
+        - in: query
+          name: pickupDate
+          required: false
+          description: The pickup date (e.g. 2022-01-02). If the parameter 'orderID' is not used, this parameter is required.
+          schema:
+            $ref: '#/components/schemas/SimpleDate'
+        - in: query
+          name: pickupName1
+          required: false
+          schema:
+            $ref: '#/components/schemas/Name'
+        - in: query
+          name: pickupAddressStreet
+          required: false
+          schema:
+            $ref: '#/components/schemas/AddressStreet'
+        - in: query
+          name: pickupAddressHouse
+          required: false
+          schema:
+            $ref: '#/components/schemas/AddressHouse'
+        - in: query
+          name: pickupPostalCode
+          required: false
+          schema:
+            $ref: '#/components/schemas/PostalCode'
+        - in: query
+          name: pickupCity
+          required: false
+          schema:
+            $ref: '#/components/schemas/City'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PickupOrderStatus'
+                minItems: 0
+                maxItems: 5000
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+  /locations:
+    get:
+      operationId: getPickupLocationIds
+      summary: Get pickup location ids and addresses.
+      description: Retrieve data for specific pickup locations.
+      parameters:
+        - in: query
+          name: postalCode
+          required: false
+          schema:
+            $ref: '#/components/schemas/PostalCode'
+      tags:
+        - Locations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PickupLocationId'
+                minItems: 0
+                maxItems: 8000
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+components:
+  schemas:
+    PickupOrder:
+      type: object
+      properties:
+        customerDetails:
+          $ref: '#/components/schemas/CustomerDetails'
+        pickupLocation:
+          oneOf:
+            - $ref: '#/components/schemas/PickupLocationIdType'
+            - $ref: '#/components/schemas/PickupAddressType'
+          discriminator:
+            propertyName: type
+            mapping:
+              Id: '#/components/schemas/PickupLocationIdType'
+              Address: '#/components/schemas/PickupAddressType'
+        businessHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeFrame'
+          minItems: 0
+          maxItems: 3
+        contactPerson:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          minItems: 0
+          maxItems: 2
+        pickupDetails:
+          $ref: '#/components/schemas/PickupDetails'
+        shipmentDetails:
+          $ref: '#/components/schemas/ShipmentDetails'
+      required:
+        - pickupLocation
+        - pickupDetails
+        - shipmentDetails
+    CustomerDetails:
+      type: object
+      properties:
+        accountNumber:
+          $ref: '#/components/schemas/AccountNumber'
+        billingNumber:
+          $ref: '#/components/schemas/BillingNumber'
+      required:
+        - billingNumber
+    ContactPerson:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+        phone:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          maxLength: 250
+        emailNotification:
+          $ref: '#/components/schemas/EmailNotification'
+    EmailNotification:
+      type: object
+      properties:
+        sendPickupConfirmationEmail:
+          type: boolean
+        sendPickupTimeWindowEmail:
+          type: boolean
+    PickupDetails:
+      type: object
+      properties:
+        pickupDate:
+          oneOf:
+            - $ref: '#/components/schemas/FixedDate'
+            - $ref: '#/components/schemas/PickupASAP'
+          discriminator:
+            propertyName: type
+            mapping:
+              Date: '#/components/schemas/FixedDate'
+              ASAP: '#/components/schemas/PickupASAP'
+        totalWeight:
+          $ref: '#/components/schemas/Weight'
+        comment:
+          type: string
+          maxLength: 100
+      required:
+        - pickupDate
+    FixedDate:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/SimpleDate'
+        type:
+          type: string
+      required:
+        - type
+        - value
+    PickupASAP:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    ShipmentDetails:
+      properties:
+        shipments:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Shipment'
+    PickupOrderStatus:
+      type: object
+      properties:
+        orderDetails:
+          $ref: '#/components/schemas/OrderDetails'
+        customerDetails:
+          $ref: '#/components/schemas/CustomerDetails'
+        pickupLocation:
+          $ref: '#/components/schemas/PickupLocationId'
+        businessHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeFrame'
+          minItems: 0
+          maxItems: 3
+        contactPerson:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          minItems: 0
+          maxItems: 2
+        pickupDetails:
+          $ref: '#/components/schemas/PickupDetails'
+        shipmentDetails:
+          $ref: '#/components/schemas/ShipmentDetailsWithState'
+        feedback:
+          type: string
+      required:
+        - orderDetails
+        - customerDetails
+        - pickupLocation
+        - pickupDetails
+        - shipmentDetails
+    OrderDetails:
+      type: object
+      properties:
+        orderID:
+          $ref: '#/components/schemas/OrderID'
+        orderState:
+          description: 'Mögliche Rückgabewerte: ANGENOMMEN, STORNIERT, ABGELEHNT, ABGEHOLT, TEILABHOLUNG, NICHT_ABGEHOLT, IN_DURCHFUEHRUNG, IN_PRUEFUNG, FREIGABE, TEILBESTAETIGT'
+          type: string
+      required:
+        - orderID
+        - orderState
+    ShipmentDetailsWithState:
+      type: object
+      properties:
+        shipments:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ShipmentWithState'
+    ShipmentWithState:
+      type: object
+      properties:
+        shipment:
+          $ref: '#/components/schemas/Shipment'
+        shipmentState:
+          $ref: '#/components/schemas/ShipmentState'
+        orderDate:
+          $ref: '#/components/schemas/SimpleDateTime'
+      description: Contains information about a shipment and its state. The order date contains the time, the shipment was ordered.
+      required:
+        - shipment
+        - orderDate
+    ShipmentState:
+      type: object
+      properties:
+        state:
+          type: string
+        responseTime:
+          $ref: '#/components/schemas/SimpleDateTime'
+        actualPickupDate:
+          $ref: '#/components/schemas/SimpleDate'
+      required:
+        - state
+    TimeFrame:
+      type: object
+      properties:
+        timeFrom:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+        timeUntil:
+          type: string
+          pattern: '^\d{2}:\d{2}$'
+    Shipment:
+      type: object
+      properties:
+        transportationType:
+          $ref: '#/components/schemas/TransportationType'
+        replacement:
+          type: boolean
+        shipmentNo:
+          type: string
+        size:
+          type: string
+          enum: [ S, M, L ]
+          description: mandatory if customerDetails.billingNumber is not set
+        pickupServices:
+          $ref: '#/components/schemas/PickupServices'
+        customerReference:
+          type: string
+          maxLength: 20
+      required:
+        - transportationType
+    PickupServices:
+      type: object
+      properties:
+        bulkyGood:
+          $ref: '#/components/schemas/BulkService'
+        printLabel:
+          $ref: '#/components/schemas/LabelService'
+    BulkService:
+      type: object
+      properties:
+        comment:
+          type: string
+          maxLength: 50
+      required:
+        - comment
+    LabelService:
+      type: object
+      properties:
+        consignee:
+          $ref: '#/components/schemas/ConsigneeAddress'
+      required:
+        - consignee
+    PickupAddressType:
+      type: object
+      properties:
+        type:
+          type: string
+        pickupAddress:
+          $ref: '#/components/schemas/PickupAddress'
+      required:
+        - type
+        - pickupAddress
+    PickupLocationIdType:
+      type: object
+      properties:
+        type:
+          type: string
+        asId:
+          $ref: '#/components/schemas/AsId'
+      required:
+        - type
+        - asId
+    PickupAddress:
+      type: object
+      properties:
+        name1:
+          $ref: '#/components/schemas/Name'
+        name2:
+          $ref: '#/components/schemas/Name'
+        addressStreet:
+          $ref: '#/components/schemas/AddressStreet'
+        addressHouse:
+          $ref: '#/components/schemas/AddressHouse'
+        postalCode:
+          $ref: '#/components/schemas/PostalCode'
+        city:
+          $ref: '#/components/schemas/City'
+        country:
+          $ref: '#/components/schemas/Country'
+        state:
+          $ref: '#/components/schemas/State'
+      required:
+        - name1
+        - addressStreet
+        - addressHouse
+        - postalCode
+        - city
+    ConsigneeAddress:
+      type: object
+      properties:
+        name1:
+          $ref: '#/components/schemas/Name'
+        name2:
+          $ref: '#/components/schemas/Name'
+        addressStreet:
+          $ref: '#/components/schemas/AddressStreet'
+        addressHouse:
+          $ref: '#/components/schemas/AddressHouse'
+        postalCode:
+          $ref: '#/components/schemas/PostalCode'
+        city:
+          $ref: '#/components/schemas/City'
+        country:
+          $ref: '#/components/schemas/Country'
+        state:
+          $ref: '#/components/schemas/State'
+      required:
+        - name1
+        - postalCode
+        - city
+    PickupConfirmation:
+      type: object
+      properties:
+        orderID:
+          $ref: '#/components/schemas/OrderID'
+        pickupDate:
+          $ref: '#/components/schemas/SimpleDate'
+        freeOfCharge:
+          type: boolean
+        pickupType:
+          type: string
+          enum: [ BDA, EZA, EMA ]
+          description: TBD
+        confirmedShipments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfirmedShipment'
+      required:
+        - orderID
+        - pickupDate
+        - freeOfCharge
+        - pickupType
+        - confirmedShipments
+    ConfirmedShipment:
+      type: object
+      properties:
+        transportationType:
+          $ref: '#/components/schemas/TransportationType'
+        shipmentNo:
+          type: string
+        orderDate:
+          $ref: '#/components/schemas/SimpleDateTime'
+      required:
+        - transportationType
+        - orderDate
+    ValidationConfirmation:
+      type: object
+      properties:
+        pickupDate:
+          $ref: '#/components/schemas/SimpleDate'
+        freeOfCharge:
+          type: boolean
+        pickupType:
+          type: string
+          enum: [ BDA, EZA, EMA ]
+      required:
+        - pickupDate
+        - freeOfCharge
+        - pickupType
+    TransportationType:
+      type: string
+      enum:
+        - PAKET
+        - ROLLBEHAELTER
+        - WECHSELBEHAELTER
+        - PALETTEN
+        - SPERRGUT
+      description: TBD documentation
+    CancelResult:
+      type: object
+      properties:
+        confirmedCancellations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfirmedCancellation'
+        failedCancellations:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailedCancellation'
+    OrderResponse:
+      type: object
+      properties:
+        confirmation:
+          oneOf:
+            - $ref: '#/components/schemas/OrderPickupResponse'
+            - $ref: '#/components/schemas/ValideOrderResponse'
+          discriminator:
+            propertyName: type
+            mapping:
+              ORDERPICKUP: '#/components/schemas/OrderPickupResponse'
+              VALIDATION: '#/components/schemas/ValideOrderResponse'
+    OrderPickupResponse:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/PickupConfirmation'
+        type:
+          type: string
+      required:
+        - value
+        - type
+    ValideOrderResponse:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/ValidationConfirmation'
+        type:
+          type: string
+      required:
+        - value
+        - type
+    ConfirmedCancellation:
+      type: object
+      properties:
+        orderID:
+          $ref: '#/components/schemas/OrderID'
+        orderState:
+          type: string
+        message:
+          type: string
+      required:
+        - orderID
+        - orderState
+        - message
+    FailedCancellation:
+      type: object
+      properties:
+        orderID:
+          $ref: '#/components/schemas/OrderID'
+        orderState:
+          type: string
+        message:
+          type: string
+      required:
+        - orderID
+        - message
+    PickupLocationId:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/AsId'
+        pickupAddress:
+          $ref: '#/components/schemas/PickupAddress'
+    Weight:
+      type: object
+      properties:
+        uom:
+          description: metric unit for weight
+          type: string
+          enum: [g,kg]
+          default: "g"
+        value:
+          type: number
+      required:
+        - uom
+        - value
+    ## Address-Fields
+    Name:
+      type: string
+      maxLength: 50
+    AddressStreet:
+      type: string
+      maxLength: 70
+    AddressHouse:
+      type: string
+      maxLength: 10
+    PostalCode:
+      type: string
+      maxLength: 7
+    City:
+      type: string
+      maxLength: 35
+    Country:
+      type: string
+      minLength: 2
+      maxLength: 2
+    State:
+      type: string
+      maxLength: 35
+    ## Order-ID
+    OrderID:
+      type: string
+      minLength: 32
+      maxLength: 32
+    ## Pickup location ID
+    AsId:
+      type: "string"
+      description: The pickup location id
+      maxLength: 12
+      minLength: 12
+      pattern: "^AS[0-9]{10}$"
+      example: "AS3254120698"
+    ## Contract-Data
+    AccountNumber:
+      type: string
+      pattern: '\d{10}'
+    BillingNumber:
+      type: string
+      pattern: '\d{10}\d{2}\w{2}'
+    ## Dates
+    SimpleDate:
+      type: string
+      pattern: '^\d{4}-\d{2}-\d{2}$'
+    SimpleDateTime:
+      type: string
+      pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$'
+      description: The date time (Central European Time [CET])
+    Error:
+      type: object
+      description: Error information.
+      properties:
+        errorCode:
+          type: integer
+          description: The business-level error code.
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem.
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+      required:
+        - errorCode
+        - title
+      example:
+        code: 456
+        title: 'Unknown billingnumber'
+        instance: 'customerDetails.billingNumber'
+        detail: '22222222225301'
+  examples:
+    EinzelabholungEtikett:
+      summary: Einzelabholung mit Etikett
+      value:
+        customerDetails:
+          billingNumber: "22222222220801"
+        pickupLocation:
+          type: "Address"
+          pickupAddress:
+            name1: "Deutsche Post DHL Group"
+            name2: "Lieferanteneingang"
+            addressStreet: "Charles-de-Gaulle-Straße"
+            addressHouse: "20"
+            postalCode: "53113"
+            city: "Bonn"
+            country: "DE"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          - name: "Max Mustermann"
+            phone: "09999 100111820"
+            email: "max@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+          - name: "Maxi Mustermann"
+            phone: "0888 10111223"
+            email: "maxi@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "Date"
+            value: "2099-04-21"
+        shipmentDetails:
+          shipments:
+            - transportationType: "PAKET"
+              size: "M"
+              pickupServices:
+                printLabel:
+                  consignee:
+                    name1: "Max Mustermann"
+                    name2: "z. Hd. Frau Mustermann"
+                    addressStreet: "Platz der Deutschen Post"
+                    addressHouse: 1
+                    postalCode: "53113"
+                    city: "Bonn"
+                    country: "DE"
+              customerReference: "987654321"
+    Einzelabholung:
+      summary: Einzelabholung ohne Etikett (mit Sperrgut)
+      value:
+        customerDetails:
+          billingNumber: "2222222222080"
+        pickupLocation:
+          type: "Address"
+          pickupAddress:
+            name1: "Deutsche Post DHL Group"
+            name2: "Lieferanteneingang"
+            addressStreet: "Charles-de-Gaulle-Straße"
+            addressHouse: "20"
+            postalCode: "53113"
+            city: "Bonn"
+            country: "DE"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          - name: "Max Mustermann"
+            phone: "09999 100111820"
+            email: "max@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+          - name: "Maxi Mustermann"
+            phone: "0888 10111223"
+            email: "maxi@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "Date"
+            value: "2099-04-21"
+        shipmentDetails:
+          shipments:
+            - transportationType: "PAKET"
+              size: "L"
+              pickupServices:
+                bulkyGood:
+                  comment: "Fahrrad"
+              customerReference: "987654321"
+    EinzelabholungMix:
+      summary: Einzelabholung mit und ohne Etikett (gemischt)
+      value:
+        customerDetails:
+          billingNumber: "22222222220801"
+        pickupLocation:
+          type: "Address"
+          pickupAddress:
+            name1: "Deutsche Post DHL Group"
+            name2: "Lieferanteneingang"
+            addressStreet: "Charles-de-Gaulle-Straße"
+            addressHouse: "20"
+            postalCode: "53113"
+            city: "Bonn"
+            country: "DE"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          - name: "Max Mustermann"
+            phone: "09999 100111820"
+            email: "max@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+          - name: "Maxi Mustermann"
+            phone: "0888 10111223"
+            email: "maxi@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "Date"
+            value: "2099-04-21"
+        shipmentDetails:
+          shipments:
+            - transportationType: "PAKET"
+              size: "M"
+              pickupServices:
+                printLabel:
+                  consignee:
+                    name1: "Max Mustermann"
+                    name2: "z. Hd. Frau Mustermann"
+                    addressStreet: "Platz der Deutschen Post"
+                    addressHouse: 1
+                    postalCode: "53113"
+                    city: "Bonn"
+                    country: "DE"
+            - transportationType: "PAKET"
+              size: "M"
+    BedarfsabholungFixedDate:
+      summary: Bedarfsabholung mit 5 Sendungung an einem vorgegebenen Datum
+      value:
+        pickupLocation:
+          type: "Address"
+          pickupAddress:
+            name1: "Deutsche Post DHL Group"
+            name2: "Lieferanteneingang"
+            addressStreet: "Charles-de-Gaulle-Straße"
+            addressHouse: "20"
+            postalCode: "53113"
+            city: "Bonn"
+            country: "DE"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          - name: "Max Mustermann"
+            phone: "09999 100111820"
+            email: "max@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+          - name: "Maxi Mustermann"
+            phone: "0888 10111223"
+            email: "maxi@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "Date"
+            value: "2099-04-21"
+        shipmentDetails:
+          shipments:
+            - transportationType: "PAKET"
+              size: "M"
+              customerReference: "987654421"
+            - transportationType: "PAKET"
+              size: "M"
+              customerReference: "987654521"
+            - transportationType: "PAKET"
+              size: "M"
+              customerReference: "987654621"
+            - transportationType: "PAKET"
+              size: "M"
+              customerReference: "987654721"
+            - transportationType: "PAKET"
+              size: "M"
+              customerReference: "987654821"
+    BedarfsabholungASAP:
+      summary: Bedarfsabholung mit 5 Sendungung zum nächstmöglichen Datum
+      value:
+        pickupLocation:
+          type: "Address"
+          pickupAddress:
+            name1: "Deutsche Post DHL Group"
+            name2: "Lieferanteneingang"
+            addressStreet: "Charles-de-Gaulle-Straße"
+            addressHouse: "20"
+            postalCode: "53113"
+            city: "Bonn"
+            country: "DE"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          - name: "Max Mustermann"
+            phone: "09999 100111820"
+            email: "max@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+          - name: "Maxi Mustermann"
+            phone: "0888 10111223"
+            email: "maxi@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "ASAP"
+        shipmentDetails:
+          shipments:
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+    BedarfsabholungIdASAP:
+      summary: Bedarfsabholung mit 5 Sendungung zum nächstmöglichen Datum. Beauftragung mit Abholstellen-Id
+      value:
+        pickupLocation:
+          type: "Id"
+          asId: "AS3254120698"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          contactPerson:
+            - name: "Max Mustermann"
+              phone: "09999 100111820"
+              email: "max@post.de"
+              emailNotification:
+                sendPickupConfirmationEmail: true
+                sendPickupTimeWindowEmail: true
+            - name: "Maxi Mustermann"
+              phone: "0888 10111223"
+              email: "maxi@post.de"
+              emailNotification:
+                sendPickupConfirmationEmail: true
+                sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "ASAP"
+        shipmentDetails:
+          shipments:
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "M"
+    Sonderabholung:
+      summary: Abholung von drei Paketen, einem Rollbehaelter und einem Rollbehaelter im Austausch.
+      value:
+        pickupLocation:
+          type: "Address"
+          pickupAddress:
+            name1: "Deutsche Post DHL Group"
+            name2: "Lieferanteneingang"
+            addressStreet: "Charles-de-Gaulle-Straße"
+            addressHouse: "20"
+            postalCode: "53113"
+            city: "Bonn"
+            country: "DE"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          - name: "Max Mustermann"
+            phone: "09999 100111820"
+            email: "max@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+          - name: "Maxi Mustermann"
+            phone: "0888 10111223"
+            email: "maxi@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "Date"
+            value: "2099-04-21"
+          totalWeight:
+            uom: "g"
+            value: "5000"
+          comment: "Bitte 3 einzelne Pakete und einen Rollbehälter abholen. Einen Rollbehälter im Austausch liefern."
+        shipmentDetails:
+          shipments:
+            - transportationType: "PAKET"
+              size: "S"
+            - transportationType: "PAKET"
+              size: "M"
+            - transportationType: "PAKET"
+              size: "L"
+            - transportationType: "ROLLBEHAELTER"
+            - transportationType: "ROLLBEHAELTER"
+              replacement: true
+    SonderabholungSperrgut:
+      summary: Einmalige Abholung mit 3 Sperrguetern
+      value:
+        pickupLocation:
+          type: "Address"
+          pickupAddress:
+            name1: "Deutsche Post DHL Group"
+            name2: "Lieferanteneingang"
+            addressStreet: "Charles-de-Gaulle-Straße"
+            addressHouse: "20"
+            postalCode: "53113"
+            city: "Bonn"
+            country: "DE"
+          businessHours:
+            - timeFrom: "09:00"
+              timeUntil: "12:00"
+            - timeFrom: "13:30"
+              timeUntil: "17:30"
+        contactPerson:
+          - name: "Max Mustermann"
+            phone: "09999 100111820"
+            email: "max@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+          - name: "Maxi Mustermann"
+            phone: "0888 10111223"
+            email: "maxi@post.de"
+            emailNotification:
+              sendPickupConfirmationEmail: true
+              sendPickupTimeWindowEmail: true
+        pickupDetails:
+          pickupDate:
+            type: "Date"
+            value: "2099-04-21"
+        shipmentDetails:
+          shipments:
+            - transportationType: "SPERRGUT"
+              size: "L"
+            - transportationType: "SPERRGUT"
+              size: "L"
+            - transportationType: "SPERRGUT"
+              size: "L"
+  responses:
+    '400':
+      description: >
+        Bad Request - The request could not be understood by the server due to
+        malformed syntax.
+    '401':
+      description: >
+        Unauthorized - The client could not be authenticated since the request
+        lacks the required HTTP headers or the credentials are just wrong.
+    '403':
+      description: >
+        Forbidden - The client has successfully been authenticated but could not
+        be authorized for the particular request.
+    '429':
+      description: |
+        Too Many Requests - The caller has exceeded its request quota.
+    '500':
+      description: |
+        Internal Server Error
+    '503':
+      description: |
+        Service Unavailable
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: The user token returned https://api-eu.dhl.com/parcel/de/account/auth/ropc/v1/token call
+security:
+    - BearerAuth: []

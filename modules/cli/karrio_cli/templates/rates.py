@@ -63,32 +63,26 @@ def _extract_details(
     rate = lib.to_object({{id}}_res.Rate, data)
 
     # Now access data through the object attributes
-    service = rate.service_code
-    service_name = rate.service_name
-    total = float(rate.total_charge) if hasattr(rate, 'total_charge') and rate.total_charge else 0.0
+    service = providers.ShippingService.map(rate.service_code)
     currency = rate.currency or "USD"
-    transit_days = int(rate.transit_days) if hasattr(rate, 'transit_days') and rate.transit_days else 0
     {% else %}
     # For JSON APIs, convert dict to proper response object
     rate = lib.to_object({{id}}_res.RateResponseType, data)
 
     # Now access data through the object attributes
-    service = rate.serviceCode if hasattr(rate, 'serviceCode') else ""
-    service_name = rate.serviceName if hasattr(rate, 'serviceName') else ""
-    total = float(rate.totalCharge) if hasattr(rate, 'totalCharge') and rate.totalCharge else 0.0
+    service = providers.ShippingService.map(rate.serviceCode)
     currency = rate.currency if hasattr(rate, 'currency') else "USD"
-    transit_days = int(rate.transitDays) if hasattr(rate, 'transitDays') and rate.transitDays else 0
     {% endif %}
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=service,
-        total_charge=lib.to_money(total, currency),
+        total_charge=lib.to_money(rate.total_charge, currency),
         currency=currency,
-        transit_days=transit_days,
+        transit_days=rate.transit_days,
         meta=dict(
-            service_name=service_name,
+            service_name=service.name_or_key,
             # Add any other useful metadata from the carrier response
         ),
     )

@@ -1,0 +1,130 @@
+{
+  "url": "https://express.api.dhl.com/mydhlapi/shipments",
+  "shipmentTrackingNumber": "1234567890",
+  "cancelPickupUrl": "https://express.api.dhl.com/mydhlapi/shipment-pickups/PRG200227000256",
+  "trackingUrl": "https://express.api.dhl.com/mydhlapi/shipments/1234567890/tracking",
+  "dispatchConfirmationNumber": "PRG200227000256",
+  "packages": [
+    {
+      "referenceNumber": 1,
+      "trackingNumber": "JD014600001234567890",
+      "trackingUrl": "https://express.api.dhl.com/mydhlapi/shipments/1234567890/tracking?pieceTrackingNumber=JD014600001234567890",
+      "volumetricWeight": 3.38,
+      "documents": [
+        {
+          "imageFormat": "PNG",
+          "content": "base64 encoded qr code",
+          "typeCode": "qr-code"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MK...",
+      "typeCode": "label",
+      "packageReferenceNumber": 1
+    },
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MK...",
+      "typeCode": "waybillDoc",
+      "packageReferenceNumber": 1
+    },
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MK...",
+      "typeCode": "invoice",
+      "packageReferenceNumber": 1
+    }
+  ],
+  "onDemandDeliveryURL": "https://odd-test.dhl.com/odd-online/US/wH24aaaaa1",
+  "shipmentDetails": [
+    {
+      "serviceHandlingFeatureCodes": ["C", "P"],
+      "volumetricWeight": 3.38,
+      "billingCode": "IMP",
+      "serviceContentCode": "WPX",
+      "customerDetails": {
+        "shipperDetails": {
+          "postalAddress": {
+            "postalCode": "14800",
+            "cityName": "Prague",
+            "countryCode": "CZ",
+            "provinceCode": "CZ",
+            "addressLine1": "V Parku 2308/10",
+            "addressLine2": "Floor 2",
+            "addressLine3": "Suite 100",
+            "countyName": "Central Bohemia",
+            "provinceName": "Central Bohemia",
+            "countryName": "Czech Republic"
+          },
+          "contactInformation": {
+            "email": "shipper@example.com",
+            "phone": "+1234567890",
+            "mobilePhone": "+1234567891",
+            "companyName": "Acme Corp",
+            "fullName": "John Doe"
+          }
+        },
+        "receiverDetails": {
+          "postalAddress": {
+            "postalCode": "10001",
+            "cityName": "New York",
+            "countryCode": "US",
+            "provinceCode": "NY",
+            "addressLine1": "123 Main Street",
+            "addressLine2": "Floor 5",
+            "addressLine3": "Apt 501",
+            "countyName": "Manhattan",
+            "provinceName": "New York",
+            "countryName": "United States"
+          },
+          "contactInformation": {
+            "email": "receiver@example.com",
+            "phone": "+19876543210",
+            "mobilePhone": "+19876543211",
+            "companyName": "Customer Inc",
+            "fullName": "Jane Smith"
+          }
+        }
+      },
+      "originServiceArea": {
+        "facilityCode": "PRG",
+        "serviceAreaCode": "PRG",
+        "outboundSortCode": "PRG01"
+      },
+      "destinationServiceArea": {
+        "facilityCode": "JFK",
+        "serviceAreaCode": "NYC",
+        "inboundSortCode": "NYC01"
+      },
+      "splitShipmentEnabled": false,
+      "packagesCount": 1,
+      "dhlRoutingCode": "CZ>CZ>PRG+51000001 ECXDWW+ D999999C",
+      "dhlRoutingDataId": "1Z",
+      "distributionFacility": "PRG01"
+    }
+  ],
+  "shipmentCharges": [
+    {
+      "currencyType": "BILLC",
+      "priceCurrency": "USD",
+      "price": 147.50,
+      "serviceBreakdown": [
+        {
+          "name": "EXPRESS WORLDWIDE",
+          "price": 135.00,
+          "typeCode": "FF"
+        },
+        {
+          "name": "FUEL SURCHARGE",
+          "price": 12.50,
+          "typeCode": "FF"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

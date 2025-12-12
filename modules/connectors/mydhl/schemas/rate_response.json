@@ -1,0 +1,174 @@
+{
+  "products": [
+    {
+      "productName": "EXPRESS WORLDWIDE",
+      "productCode": "P",
+      "localProductCode": "P",
+      "localProductCountryCode": "CZ",
+      "networkTypeCode": "TD",
+      "isCustomerAgreement": false,
+      "weight": {
+        "volumetric": 3.38,
+        "provided": 5.0,
+        "unitOfMeasurement": "metric"
+      },
+      "totalPrice": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "price": 89.25
+        },
+        {
+          "currencyType": "PULCL",
+          "priceCurrency": "CZK",
+          "price": 2450.00
+        },
+        {
+          "currencyType": "BASEC",
+          "priceCurrency": "USD",
+          "price": 95.50
+        }
+      ],
+      "totalPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "priceBreakdown": [
+            {
+              "typeCode": "SPRQT",
+              "price": 65.5
+            },
+            {
+              "typeCode": "STTXA",
+              "price": 10.0
+            },
+            {
+              "typeCode": "FUEL",
+              "price": 13.75
+            }
+          ]
+        }
+      ],
+      "detailedPriceBreakdown": [
+        {
+          "currencyType": "BILLC",
+          "priceCurrency": "EUR",
+          "breakdown": [
+            {
+              "name": "EXPRESS WORLDWIDE",
+              "serviceCode": "SDRATE",
+              "localServiceCode": "SDRATE",
+              "typeCode": "EXPRESS WORLDWIDE",
+              "serviceTypeCode": "SCH",
+              "price": 65.5,
+              "priceCurrency": "EUR",
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "isBillingServiceIndicator": false,
+              "priceBreakdown": [
+                {
+                  "priceType": "TAX",
+                  "typeCode": "VAT",
+                  "price": 10.0,
+                  "rate": 21.0,
+                  "basePrice": 65.5
+                }
+              ]
+            },
+            {
+              "name": "FUEL SURCHARGE",
+              "serviceCode": "FF",
+              "localServiceCode": "FF",
+              "serviceTypeCode": "SCH",
+              "price": 13.75,
+              "priceCurrency": "EUR",
+              "isCustomerAgreement": false,
+              "isMarketedService": false,
+              "isBillingServiceIndicator": false
+            }
+          ]
+        }
+      ],
+      "serviceCodeMutuallyExclusiveGroups": [
+        {
+          "serviceCodeRuleName": "Exclusive Billing Services",
+          "description": "Mutually exclusive Billing Services",
+          "serviceCodes": [
+            {
+              "serviceCode": "PZ"
+            }
+          ]
+        }
+      ],
+      "serviceCodeDependencyRuleGroups": [
+        {
+          "dependentServiceCode": "WY",
+          "dependencyRuleGroup": [
+            {
+              "dependencyRuleName": "Labelfree and PLT rule",
+              "dependencyDescription": "Labelfree requires Paperless Trade",
+              "dependencyCondition": "Must provide requiredServiceCode",
+              "requiredServiceCodes": [
+                {
+                  "serviceCode": "WY"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "pickupCapabilities": {
+        "nextBusinessDay": true,
+        "localCutoffDateAndTime": "2024-11-05T16:00:00",
+        "GMTCutoffTime": "18:30:00",
+        "pickupEarliest": "10:00:00",
+        "pickupLatest": "18:30:00",
+        "pickupCutoffSameDayOutboundProcessing": "16:00:00",
+        "originServiceAreaCode": "BER",
+        "originFacilityAreaCode": "BER",
+        "pickupAdditionalDays": 0,
+        "pickupDayOfWeek": 5
+      },
+      "deliveryCapabilities": {
+        "deliveryTypeCode": "QDDC",
+        "estimatedDeliveryDateAndTime": "2024-11-07T18:00:00",
+        "destinationServiceAreaCode": "NYC",
+        "destinationFacilityAreaCode": "NYC",
+        "deliveryAdditionalDays": 0,
+        "deliveryDayOfWeek": 2,
+        "totalTransitDays": 4
+      },
+      "items": [
+        {
+          "number": 1,
+          "breakdown": [
+            {
+              "name": "Weight Charge",
+              "price": 50.0,
+              "priceBreakdown": [
+                {
+                  "priceType": "TAX",
+                  "typeCode": "VAT",
+                  "price": 10.5,
+                  "rate": 21.0,
+                  "basePrice": 50.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "pricingDate": "2024-11-05"
+    }
+  ],
+  "exchangeRates": [
+    {
+      "currentExchangeRate": 1.08,
+      "currency": "EUR",
+      "baseCurrency": "USD"
+    }
+  ],
+  "warnings": [
+    "Rate is estimated"
+  ]
+}

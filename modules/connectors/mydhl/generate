@@ -1,0 +1,39 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/mydhl
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generate_schema() {
+    echo "Generating $1..."
+    "${ROOT}/bin/cli" codegen generate "$1" "$2" --no-nice-property-names
+}
+
+# Error response (always required)
+generate_schema "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py"
+
+# Rating schemas
+generate_schema "${SCHEMAS}/rate_request.json" "${LIB_MODULES}/rate_request.py"
+generate_schema "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py"
+
+# Shipment schemas
+generate_schema "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py"
+generate_schema "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py"
+generate_schema "${SCHEMAS}/shipment_cancel_request.json" "${LIB_MODULES}/shipment_cancel_request.py"
+generate_schema "${SCHEMAS}/shipment_cancel_response.json" "${LIB_MODULES}/shipment_cancel_response.py"
+
+# Tracking schemas
+generate_schema "${SCHEMAS}/tracking_request.json" "${LIB_MODULES}/tracking_request.py"
+generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+
+# Pickup schemas
+generate_schema "${SCHEMAS}/pickup_create_request.json" "${LIB_MODULES}/pickup_create_request.py"
+generate_schema "${SCHEMAS}/pickup_create_response.json" "${LIB_MODULES}/pickup_create_response.py"
+generate_schema "${SCHEMAS}/pickup_update_request.json" "${LIB_MODULES}/pickup_update_request.py"
+generate_schema "${SCHEMAS}/pickup_update_response.json" "${LIB_MODULES}/pickup_update_response.py"
+generate_schema "${SCHEMAS}/pickup_cancel_request.json" "${LIB_MODULES}/pickup_cancel_request.py"
+generate_schema "${SCHEMAS}/pickup_cancel_response.json" "${LIB_MODULES}/pickup_cancel_response.py"
+
+# Address validation schemas
+generate_schema "${SCHEMAS}/address_validation_request.json" "${LIB_MODULES}/address_validation_request.py"
+generate_schema "${SCHEMAS}/address_validation_response.json" "${LIB_MODULES}/address_validation_response.py"
+
