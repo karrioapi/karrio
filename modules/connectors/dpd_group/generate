@@ -1,0 +1,12 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/dpd_group
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+# DPD META-API uses camelCase fields, so we use --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/pickup_create_request.json" "${LIB_MODULES}/pickup_create_request.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/pickup_create_response.json" "${LIB_MODULES}/pickup_create_response.py" --no-nice-property-names
+

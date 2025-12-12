@@ -1,0 +1,5 @@
+{
+  "errorCode": "ERR001",
+  "errorMessage": "Invalid shipment data",
+  "errorOrigin": "META-API"
+}

@@ -1,0 +1,16 @@
+{
+  "scheduledPickupResponse": [
+    {
+      "pickupreference": "PU20251201001",
+      "statusCode": "SUCCESS",
+      "statusDescription": "Pickup scheduled successfully"
+    }
+  ],
+  "debugList": [
+    {
+      "methodName": "schedulePickup",
+      "request": "...",
+      "response": "..."
+    }
+  ]
+}
