@@ -14,11 +14,12 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def _get_auth_headers(self) -> dict:
         """Build authentication headers for DPD META-API."""
-        token_data = self.settings.access_token
+        # access_token property returns the token string directly
+        token = self.settings.access_token
         
         return {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {token_data.get('access_token')}",
+            "Authorization": f"Bearer {token}",
         }
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:

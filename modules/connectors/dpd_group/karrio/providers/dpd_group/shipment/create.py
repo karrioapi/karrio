@@ -7,6 +7,7 @@ import karrio.core.models as models
 import karrio.providers.dpd_group.error as error
 import karrio.providers.dpd_group.utils as provider_utils
 import karrio.providers.dpd_group.units as provider_units
+import karrio.core.errors as errors
 import karrio.schemas.dpd_group.shipment_request as dpd_req
 import karrio.schemas.dpd_group.shipment_response as dpd_res
 
@@ -63,6 +64,18 @@ def shipment_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     """Create a DPD META-API shipment request."""
+    # DPD META-API requires sender.customerInfos identifiers (Swagger: sender.customerInfos.customerID/customerAccountNumber).
+    # If we don't have these, DPD responds with errors like:
+    # - COMMON_7 generalShipmentData.sender.customerNumber
+    customer_id = (settings.account_number or "").strip()
+    customer_account = (settings.customer_account_number or "").strip() or customer_id
+
+    if not any(customer_id):
+        raise errors.ShippingSDKError(
+            "DPD shipment creation requires a sender customer number (customerInfos.customerID). "
+            "Please set the DPD connection 'account_number' (and optionally 'customer_account_number')."
+        )
+
     # Convert karrio models to carrier-specific format
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
@@ -99,8 +112,8 @@ def shipment_request(
         ),
         sender=dpd_req.SenderType(
             customerInfos=dpd_req.CustomerInfosType(
-                customerID=settings.account_number or "",
-                customerAccountNumber=settings.customer_account_number or settings.account_number or "",
+                customerID=customer_id,
+                customerAccountNumber=customer_account,
             ),
             address=dpd_req.AddressType(
                 companyName=shipper.company_name or "",
@@ -147,4 +160,6 @@ def shipment_request(
         ],
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    # DPD META-API /shipment expects an array at the root (even for a single shipment).
+    # See: validation error "Instance type (object) ... allowed: ['array']"
+    return lib.Serializable([request], lib.to_dict)

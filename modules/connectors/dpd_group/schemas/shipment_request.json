@@ -1,60 +1,62 @@
-{
-  "numberOfParcels": "1",
-  "shipmentInfos": {
-    "productCode": "101",
-    "shipmentId": "SHIP123456",
-    "weight": "3000",
-    "dimensions": {
-      "length": 30,
-      "width": 20,
-      "height": 15
-    }
-  },
-  "sender": {
-    "customerInfos": {
-      "customerID": "CUST001",
-      "customerAccountNumber": "ACC123"
+[
+  {
+    "numberOfParcels": "1",
+    "shipmentInfos": {
+      "productCode": "101",
+      "shipmentId": "SHIP123456",
+      "weight": "3000",
+      "dimensions": {
+        "length": 30,
+        "width": 20,
+        "height": 15
+      }
     },
-    "address": {
-      "companyName": "Sender Corp",
-      "name1": "John Sender",
-      "street": "Main Street",
-      "houseNumber": "42",
-      "zipCode": "10115",
-      "city": "Berlin",
-      "country": "DE"
-    },
-    "contact": {
-      "phone1": "+49301234567",
-      "email": "sender@example.com"
-    }
-  },
-  "receiver": {
-    "address": {
-      "name1": "Jane Receiver",
-      "companyName": "Receiver Inc",
-      "street": "Secondary Road",
-      "houseNumber": "88",
-      "zipCode": "75001",
-      "city": "Paris",
-      "country": "FR"
-    },
-    "contact": {
-      "phone1": "+33123456789",
-      "email": "receiver@example.com"
-    }
-  },
-  "parcel": [
-    {
-      "parcelInfos": {
-        "weight": "3000",
-        "dimensions": {
-          "length": 30,
-          "width": 20,
-          "height": 15
-        }
+    "sender": {
+      "customerInfos": {
+        "customerID": "CUST001",
+        "customerAccountNumber": "ACC123"
       },
-      "parcelContent": "Electronic equipment"
-    }
-  ]
-}
+      "address": {
+        "companyName": "Sender Corp",
+        "name1": "John Sender",
+        "street": "Main Street",
+        "houseNumber": "42",
+        "zipCode": "10115",
+        "city": "Berlin",
+        "country": "DE"
+      },
+      "contact": {
+        "phone1": "+49301234567",
+        "email": "sender@example.com"
+      }
+    },
+    "receiver": {
+      "address": {
+        "name1": "Jane Receiver",
+        "companyName": "Receiver Inc",
+        "street": "Secondary Road",
+        "houseNumber": "88",
+        "zipCode": "75001",
+        "city": "Paris",
+        "country": "FR"
+      },
+      "contact": {
+        "phone1": "+33123456789",
+        "email": "receiver@example.com"
+      }
+    },
+    "parcel": [
+      {
+        "parcelInfos": {
+          "weight": "3000",
+          "dimensions": {
+            "length": 30,
+            "width": 20,
+            "height": 15
+          }
+        },
+        "parcelContent": "Electronic equipment"
+      }
+    ]
+  }
+]

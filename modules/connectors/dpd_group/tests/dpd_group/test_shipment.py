@@ -18,7 +18,7 @@ class TestDPDGroupShipment(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
+        self.assertEqual(lib.to_dict(request.serialize()), [ShipmentRequest])
 
     def test_create_shipment(self):
         with patch("karrio.mappers.dpd_group.proxy.lib.request") as mock:
@@ -26,7 +26,7 @@ class TestDPDGroupShipment(unittest.TestCase):
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipment",
+                f"{gateway.settings.server_url}/shipment?LabelPrintFormat=PDF",
             )
 
     def test_parse_shipment_response(self):
