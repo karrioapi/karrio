@@ -50,3 +50,57 @@ class Settings(core.Settings):
             self.config or {},
             option_type=ConnectionConfig,
         )
+
+    @property
+    def access_token(self):
+        """
+        Retrieve the access_token using login credentials or from cache.
+        Token is valid for 24 hours.
+        """
+        cache_key = f"{self.carrier_name}|{self.username}|{self.bucode}"
+
+        return self.connection_cache.thread_safe(
+            refresh_func=lambda: login(self),
+            cache_key=cache_key,
+            buffer_minutes=30,  # Refresh 30 mins before expiry (token valid for 24h)
+        ).get_state()
+
+
+def login(settings: Settings):
+    """Login to DPD META-API and get access token."""
+    import karrio.providers.dpd_group.error as error
+
+    result = lib.request(
+        url=f"{settings.server_url}/login",
+        trace=settings.trace_as("json"),
+        method="POST",
+        headers={
+            "Content-Type": "application/json",
+            "X-DPD-LOGIN": settings.username,
+            "X-DPD-PASSWORD": settings.password,
+            "X-DPD-BUCODE": settings.bucode,
+        },
+    )
+
+    # Extract token from response headers
+    token = result.headers.get("X-DPD-TOKEN") or result.headers.get("x-dpd-token")
+
+    if not token:
+        # Check if there's an error in the response body
+        response = lib.to_dict(result)
+        messages = error.parse_error_response(response, settings)
+        
+        if any(messages):
+            raise errors.ParsedMessagesError(messages=messages)
+        
+        raise errors.ShippingSDKError("Failed to obtain DPD access token from login response")
+
+    # Token is valid for 24 hours
+    expiry = datetime.datetime.now() + datetime.timedelta(hours=24)
+    
+    return {
+        "access_token": token,
+        "token_type": "Bearer",
+        "expires_in": 86400,  # 24 hours in seconds
+        "expiry": lib.fdatetime(expiry),
+    }

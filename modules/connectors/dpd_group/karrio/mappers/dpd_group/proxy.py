@@ -14,22 +14,12 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def _get_auth_headers(self) -> dict:
         """Build authentication headers for DPD META-API."""
-        headers = {
+        token_data = self.settings.access_token
+        
+        return {
             "Content-Type": "application/json",
-            "X-DPD-BUCODE": self.settings.bucode,
+            "Authorization": f"Bearer {token_data.get('access_token')}",
         }
-
-        # Add authentication method 1: Username/Password
-        if self.settings.username and self.settings.password:
-            headers["X-DPD-LOGIN"] = self.settings.username
-            headers["X-DPD-PASSWORD"] = self.settings.password
-
-        # Add authentication method 2: Client credentials
-        elif self.settings.client_id and self.settings.client_secret:
-            headers["X-DPD-CLIENTID"] = self.settings.client_id
-            headers["X-DPD-CLIENTSECRET"] = self.settings.client_secret
-
-        return headers
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         """
@@ -40,12 +30,11 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         label_format = getattr(request, "label_format", "PDF") or "PDF"
 
         response = lib.request(
-            url=f"{self.settings.server_url}/shipment",
+            url=f"{self.settings.server_url}/shipment?LabelPrintFormat={label_format}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
             headers=self._get_auth_headers(),
-            params={"LabelPrintFormat": label_format},
         )
 
         return lib.Deserializable(response, lib.to_dict)
