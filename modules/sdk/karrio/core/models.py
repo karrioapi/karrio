@@ -413,6 +413,17 @@ class TrackingDetails:
 
 
 @attr.s(auto_attribs=True)
+class ShippingDocument:
+    """Karrio unified shipping document data type."""
+
+    category: str
+    format: str = "PDF"
+    print_format: str = None
+    base64: str = None
+    url: str = None
+
+
+@attr.s(auto_attribs=True)
 class Documents:
     """Karrio unified shipment documents details data type."""
 
@@ -421,6 +432,7 @@ class Documents:
     invoice: str = None
     zpl_label: str = None
     pdf_label: str = None
+    extra_documents: List[ShippingDocument] = JList[ShippingDocument]
 
 
 @attr.s(auto_attribs=True)
@@ -563,13 +575,23 @@ class RequestPayload:
     headers: dict = {}
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED ZONE (Rate Sheet Level - for optimized structure)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
 @attr.s(auto_attribs=True)
 class ServiceZone:
-    """Karrio unified service zone."""
+    """Karrio unified service zone.
+
+    Represents a geographic zone with specific rate and delivery parameters.
+    Used by the rating proxy for rate calculations.
+    """
 
     id: str = None
     label: str = None
-    rate: float = None
+    rate: float = None  # Sell price for this zone
+    cost: float = None  # COGS - Cost of Goods Sold for this zone
 
     # Weight restrictions
     min_weight: float = None
@@ -584,15 +606,115 @@ class ServiceZone:
     latitude: float = None
     longitude: float = None
 
-    # Location
+    # Location matching
     cities: List[str] = []
     postal_codes: List[str] = []
     country_codes: List[str] = []
 
 
 @attr.s(auto_attribs=True)
+class Surcharge:
+    """Karrio unified surcharge data type.
+
+    Represents a surcharge that can be applied to shipping rates.
+    Used by the rating proxy for rate calculations.
+    """
+
+    id: str = None
+    name: str = None
+    amount: float = None  # Sell price (shown to customer)
+    surcharge_type: str = "fixed"  # "fixed" or "percentage"
+    cost: float = None  # COGS - Cost of Goods Sold
+    active: bool = True
+
+
+@attr.s(auto_attribs=True)
+class SharedZone:
+    """Shared zone definition at the RateSheet level.
+
+    Zones are defined once at the rate sheet level and referenced by ID
+    from ServiceLevel.zone_ids. This eliminates duplication when multiple
+    services share the same geographic zones.
+    """
+
+    id: str
+    label: str = None
+
+    # Location matching
+    country_codes: List[str] = []
+    postal_codes: List[str] = []
+    cities: List[str] = []
+
+    # Default transit times (can be overridden in service_rates)
+    transit_days: int = None
+    transit_time: float = None
+
+    # Geolocation (for radius-based matching)
+    radius: float = None
+    latitude: float = None
+    longitude: float = None
+
+    metadata: Dict = {}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED SURCHARGE (Rate Sheet Level - for optimized structure)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@attr.s(auto_attribs=True)
+class SharedSurcharge:
+    """Shared surcharge definition at the RateSheet level.
+
+    Surcharges are defined once at the rate sheet level and referenced by ID
+    from ServiceLevel.surcharge_ids. This allows updating a surcharge
+    (e.g., fuel percentage) in one place to affect all services.
+    """
+
+    id: str
+    name: str
+    amount: float = 0  # Sell price (shown to customer)
+    surcharge_type: str = "fixed"  # "fixed" or "percentage"
+    cost: float = None  # COGS - Cost of Goods Sold
+    active: bool = True
+    metadata: Dict = {}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SERVICE RATE (Service-Zone Rate Mapping)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@attr.s(auto_attribs=True)
+class ServiceRate:
+    """Rate for a specific service-zone combination.
+
+    Stored in RateSheet.service_rates to map services to zones with
+    specific rates and weight constraints.
+    """
+
+    service_id: str
+    zone_id: str
+    rate: float = 0  # Sell price
+    cost: float = None  # COGS
+
+    # Weight constraints (override zone defaults)
+    min_weight: float = None
+    max_weight: float = None
+
+    # Transit time overrides
+    transit_days: int = None
+    transit_time: float = None
+
+
+@attr.s(auto_attribs=True)
 class ServiceLevel:
-    """Karrio unified service level data type."""
+    """Karrio unified service level data type.
+
+    Represents a shipping service with rate definitions and restrictions.
+    For rate calculation, zones and surcharges are populated at runtime
+    from the rate sheet data.
+    """
 
     service_name: str
     service_code: str
@@ -603,7 +725,19 @@ class ServiceLevel:
 
     # Rate definitions
     currency: str = None
+
+    # Zone data for rate calculation (populated at runtime from rate sheet)
     zones: List[ServiceZone] = JList[ServiceZone]
+
+    # Surcharge data for rate calculation (populated at runtime from rate sheet)
+    surcharges: List[Surcharge] = JList[Surcharge]
+
+    # References to shared zones/surcharges at RateSheet level (for storage)
+    zone_ids: List[str] = []
+    surcharge_ids: List[str] = []
+
+    # Cost tracking (internal - not shown to customer)
+    cost: float = None  # Base COGS - Cost of Goods Sold
 
     # Weight restrictions
     min_weight: float = None
@@ -616,6 +750,9 @@ class ServiceLevel:
     max_length: float = None
     dimension_unit: str = None
 
+    # Volumetric weight
+    max_volume: float = None  # Maximum volume in liters
+
     # Destination supports
     domicile: bool = None
     international: bool = None
@@ -623,6 +760,38 @@ class ServiceLevel:
     # Estimated delivery
     transit_days: int = None
     transit_time: float = None
+
+    metadata: Dict = {}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RATE SHEET (Complete rate configuration)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@attr.s(auto_attribs=True)
+class RateSheet:
+    """Karrio unified rate sheet data type.
+
+    A complete rate configuration with shared zones, surcharges, and services.
+    Uses the optimized structure where zones and surcharges are defined once
+    and referenced by ID.
+    """
+
+    id: str
+    name: str
+    carrier_name: str
+    slug: str = None
+
+    # Shared definitions (referenced by ID from services)
+    zones: List[SharedZone] = JList[SharedZone]
+    surcharges: List[SharedSurcharge] = JList[SharedSurcharge]
+
+    # Service-zone rate mappings
+    service_rates: List[ServiceRate] = JList[ServiceRate]
+
+    # Service definitions
+    services: List[ServiceLevel] = JList[ServiceLevel]
 
     metadata: Dict = {}
 

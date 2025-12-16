@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **username** | **string** |  | [default to undefined]
 **password** | **string** |  | [default to undefined]
-**account_number** | **string** |  | [default to undefined]
+**account_number** | **string** |  | [optional] [default to undefined]
 **account_country_code** | **string** |  | [optional] [default to undefined]
 
 ## Example

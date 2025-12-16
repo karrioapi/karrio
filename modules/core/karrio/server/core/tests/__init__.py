@@ -18,6 +18,7 @@ from karrio.server.core.tests.test_exception_level import (
 from karrio.server.core.tests.test_resource_token import (
     TestResourceAccessTokenUnit,
     TestResourceTokenAPI,
+    TestDocumentDownloadWithAPIToken,
 )
 
 # Import our custom APITestCase (must be last to avoid being overridden)

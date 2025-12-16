@@ -1205,6 +1205,7 @@ class TestShipmentCancelIdempotent(APITestCase):
 LABEL_DOCUMENT_RESPONSE = {
     "category": "label",
     "format": "PDF",
+    "print_format": None,
     "base64": "==apodifjoefr",
     "url": ANY,
 }

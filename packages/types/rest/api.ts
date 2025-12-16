@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2025.5.5`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2025.5.6`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2025.5.5
+ * The version of the OpenAPI document: 2025.5.6
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -3486,7 +3486,7 @@ export interface Message {
 export interface Mydhl {
     'username': string;
     'password': string;
-    'account_number': string;
+    'account_number'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface Nationex {
@@ -4918,7 +4918,7 @@ export interface RateRequest {
      */
     'services'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"insured_by\": \"carrier\",             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -5180,6 +5180,10 @@ export interface Shipment {
      * The shipment invoice URL
      */
     'invoice_url'?: string | null;
+    /**
+     * The list of shipping documents
+     */
+    'shipping_documents'?: Array<ShippingDocument>;
 }
 
 export const ShipmentLabelTypeEnum = {
@@ -5405,7 +5409,7 @@ export interface ShipmentRateData {
      */
     'carrier_ids'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"insured_by\": \"carrier\",             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"locker_id\": \"123456789\",             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipping_charges\": 10.00,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -5427,7 +5431,7 @@ export interface ShipmentUpdateData {
      */
     'payment'?: Payment;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipping_charges\": 10.00,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -5461,13 +5465,17 @@ export interface ShippingDocument {
      */
     'format': string;
     /**
+     * The document print format (e.g., \'A4\', \'6x4\', \'8.5x11\')
+     */
+    'print_format'?: string | null;
+    /**
+     * The document URL
+     */
+    'url'?: string | null;
+    /**
      * The document content encoded in base64
      */
     'base64'?: string | null;
-    /**
-     * The URL to download the document via GET request
-     */
-    'url'?: string | null;
 }
 export interface ShippingRequest {
     /**
@@ -5887,6 +5895,18 @@ export interface TrackingEvent {
      */
     'date'?: string;
     /**
+     * The tracking event\'s time. Format: `HH:MM AM/PM`
+     */
+    'time'?: string | null;
+    /**
+     * The tracking event\'s code
+     */
+    'code'?: string | null;
+    /**
+     * The tracking event\'s reason
+     */
+    'reason'?: string | null;
+    /**
      * The tracking event\'s description
      */
     'description'?: string;
@@ -5894,14 +5914,6 @@ export interface TrackingEvent {
      * The tracking event\'s location
      */
     'location'?: string;
-    /**
-     * The tracking event\'s code
-     */
-    'code'?: string | null;
-    /**
-     * The tracking event\'s time. Format: `HH:MM AM/PM`
-     */
-    'time'?: string | null;
     /**
      * The tracking event\'s latitude.
      */

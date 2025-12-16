@@ -11,11 +11,13 @@
       "returnShipmentNo": "340434310428091700",
       "sstatus": {
         "title": "OK",
+        "status": 200,
         "statusCode": 200,
         "instance": "string",
         "detail": "The Webservice call ran successfully."
       },
       "shipmentRefNo": "340434310428091700",
+      "routingCode": "403826SW1A1AA+67000000",
       "label": {
         "b64": "string",
         "zpl2": "string",

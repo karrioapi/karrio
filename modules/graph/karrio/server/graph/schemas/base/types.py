@@ -1148,15 +1148,18 @@ class ShipmentType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
-class ServiceZoneType:
-    object_type: str
-    id: typing.Optional[str] = None
-    label: typing.Optional[str] = None
-    rate: typing.Optional[float] = None
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED ZONE TYPE (Rate Sheet Level)
+# ─────────────────────────────────────────────────────────────────────────────
 
-    min_weight: typing.Optional[float] = None
-    max_weight: typing.Optional[float] = None
+
+@strawberry.type
+class SharedZoneType:
+    """Shared zone definition at the RateSheet level."""
+
+    object_type: str
+    id: str
+    label: typing.Optional[str] = None
 
     transit_days: typing.Optional[int] = None
     transit_time: typing.Optional[float] = None
@@ -1167,24 +1170,98 @@ class ServiceZoneType:
 
     cities: typing.Optional[typing.List[str]] = None
     postal_codes: typing.Optional[typing.List[str]] = None
-    country_codes: typing.Optional[typing.List[utils.CountryCodeEnum]] = None
+    country_codes: typing.Optional[typing.List[str]] = None
 
     @staticmethod
     def parse(zone: dict):
-        return ServiceZoneType(
-            **{
-                "object_type": "zone",
-                **{
-                    k: v
-                    for k, v in zone.items()
-                    if k in ServiceZoneType.__annotations__
-                },
-            }
+        return SharedZoneType(
+            object_type="shared_zone",
+            id=zone.get("id", ""),
+            label=zone.get("label"),
+            transit_days=zone.get("transit_days"),
+            transit_time=zone.get("transit_time"),
+            radius=zone.get("radius"),
+            latitude=zone.get("latitude"),
+            longitude=zone.get("longitude"),
+            cities=zone.get("cities"),
+            postal_codes=zone.get("postal_codes"),
+            country_codes=zone.get("country_codes"),
+        )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED SURCHARGE TYPE (Rate Sheet Level)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class SharedSurchargeType:
+    """Shared surcharge definition at the RateSheet level."""
+
+    object_type: str
+    id: str
+    name: str
+    amount: float
+    surcharge_type: str
+    cost: typing.Optional[float] = None
+    active: bool = True
+
+    @staticmethod
+    def parse(surcharge: dict):
+        return SharedSurchargeType(
+            object_type="shared_surcharge",
+            id=surcharge.get("id", ""),
+            name=surcharge.get("name", ""),
+            amount=float(surcharge.get("amount", 0)),
+            surcharge_type=surcharge.get("surcharge_type", "fixed"),
+            cost=surcharge.get("cost"),
+            active=surcharge.get("active", True),
+        )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SERVICE RATE TYPE (Service-Zone Rate Mapping)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class ServiceRateType:
+    """Service-zone rate mapping."""
+
+    object_type: str
+    service_id: str
+    zone_id: str
+    rate: float
+    cost: typing.Optional[float] = None
+    min_weight: typing.Optional[float] = None
+    max_weight: typing.Optional[float] = None
+    transit_days: typing.Optional[int] = None
+    transit_time: typing.Optional[float] = None
+
+    @staticmethod
+    def parse(rate: dict):
+        return ServiceRateType(
+            object_type="service_rate",
+            service_id=rate.get("service_id", ""),
+            zone_id=rate.get("zone_id", ""),
+            rate=float(rate.get("rate", 0)),
+            cost=rate.get("cost"),
+            min_weight=rate.get("min_weight"),
+            max_weight=rate.get("max_weight"),
+            transit_days=rate.get("transit_days"),
+            transit_time=rate.get("transit_time"),
         )
 
 
 @strawberry.type
 class ServiceLevelType:
+    """
+    Service level definition for rate sheet-based shipping.
+
+    Services reference shared zones and surcharges defined at the RateSheet level
+    via zone_ids and surcharge_ids. Rate values are stored in RateSheet.service_rates.
+    """
+
     id: str
     object_type: str
     service_name: typing.Optional[str]
@@ -1202,23 +1279,32 @@ class ServiceLevelType:
     max_length: typing.Optional[float]
     dimension_unit: typing.Optional[utils.DimensionUnitEnum]
 
+    min_weight: typing.Optional[float]
     max_weight: typing.Optional[float]
     weight_unit: typing.Optional[utils.WeightUnitEnum]
+
+    max_volume: typing.Optional[float]
+    cost: typing.Optional[float]
 
     domicile: typing.Optional[bool]
     international: typing.Optional[bool]
 
     @strawberry.field
-    def zones(self: providers.ServiceLevel) -> typing.List[ServiceZoneType]:
-        # Use computed_zones for backward compatibility with optimized structure
-        return [ServiceZoneType.parse(zone) for zone in self.computed_zones]
-
-    @strawberry.field
-    def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+    def metadata(self: providers.ServiceLevel) -> typing.Optional[utils.JSON]:
         try:
             return lib.to_dict(self.metadata)
         except:
             return self.metadata
+
+    @strawberry.field
+    def zone_ids(self: providers.ServiceLevel) -> typing.List[str]:
+        """List of zone IDs this service applies to (references RateSheet.zones)."""
+        return self.zone_ids or []
+
+    @strawberry.field
+    def surcharge_ids(self: providers.ServiceLevel) -> typing.List[str]:
+        """List of surcharge IDs to apply (references RateSheet.surcharges)."""
+        return self.surcharge_ids or []
 
 
 @strawberry.type
@@ -1255,6 +1341,37 @@ class RateSheetType:
     @strawberry.field
     def services(self: providers.RateSheet) -> typing.List[ServiceLevelType]:
         return self.services.all()
+
+    # ─────────────────────────────────────────────────────────────────
+    # NEW: Shared zones at RateSheet level
+    # ─────────────────────────────────────────────────────────────────
+    @strawberry.field
+    def zones(self: providers.RateSheet) -> typing.Optional[typing.List[SharedZoneType]]:
+        """Shared zone definitions for this rate sheet."""
+        zones_data = self.zones or []
+        return [SharedZoneType.parse(zone) for zone in zones_data]
+
+    # ─────────────────────────────────────────────────────────────────
+    # NEW: Shared surcharges at RateSheet level
+    # ─────────────────────────────────────────────────────────────────
+    @strawberry.field
+    def surcharges(
+        self: providers.RateSheet,
+    ) -> typing.Optional[typing.List[SharedSurchargeType]]:
+        """Shared surcharge definitions for this rate sheet."""
+        surcharges_data = self.surcharges or []
+        return [SharedSurchargeType.parse(surcharge) for surcharge in surcharges_data]
+
+    # ─────────────────────────────────────────────────────────────────
+    # NEW: Service-zone rate mappings
+    # ─────────────────────────────────────────────────────────────────
+    @strawberry.field
+    def service_rates(
+        self: providers.RateSheet,
+    ) -> typing.Optional[typing.List[ServiceRateType]]:
+        """Service-zone rate mappings for this rate sheet."""
+        rates_data = self.service_rates or []
+        return [ServiceRateType.parse(rate) for rate in rates_data]
 
     @staticmethod
     @utils.authentication_required

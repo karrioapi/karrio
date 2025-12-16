@@ -248,6 +248,7 @@ IMPORT_SHIPMENT_REQUEST_XML = """<ImportRequest>
     <ItemsCurrency>USD</ItemsCurrency>
     <IsCommercialShipment>0</IsCommercialShipment>
     <ProduceLabel>false</ProduceLabel>
+    <LabelFormat>PDF</LabelFormat>
     <LabelEncoding>BASE64</LabelEncoding>
     <VendorInformation>
         <VendorName>Acme Retail Inc</VendorName>
@@ -324,6 +325,7 @@ SHIPMENT_REQUEST_XML = """<ShipRequest>
     <ShipMethod>LGINTSTD</ShipMethod>
     <OrderTotal>187.98</OrderTotal>
     <IsCommercialShipment>0</IsCommercialShipment>
+    <LabelFormat>PDF</LabelFormat>
     <LabelEncoding>BASE64</LabelEncoding>
     <VendorInformation>
         <VendorName>Acme Corporation</VendorName>

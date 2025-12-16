@@ -220,7 +220,26 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "dhl_parcel_de",
         "carrier_name": "dhl_parcel_de",
-        "docs": {"invoice": "string", "label": "string"},
+        "docs": {
+            "extra_documents": [
+                {
+                    "base64": ANY,
+                    "category": "retrunLabel",
+                    "format": "PDF",
+                    "print_format": "A4",
+                    "url": ANY,
+                },
+                {
+                    "base64": ANY,
+                    "category": "codLabel",
+                    "format": "PDF",
+                    "print_format": "A4",
+                    "url": ANY,
+                },
+            ],
+            "invoice": ANY,
+            "label": ANY,
+        },
         "label_type": "PDF",
         "meta": {
             "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=340434310428091700",

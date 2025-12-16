@@ -244,6 +244,13 @@ def ensure_unique_default_related_data(
 
 @serializers.owned_model_serializer
 class ServiceLevelModelSerializer(serializers.ModelSerializer):
+    """
+    Serializer for ServiceLevel model.
+
+    Services reference shared zones and surcharges at the RateSheet level
+    via zone_ids and surcharge_ids.
+    """
+
     dimension_unit = serializers.CharField(
         required=False, allow_null=True, allow_blank=True
     )
@@ -256,46 +263,6 @@ class ServiceLevelModelSerializer(serializers.ModelSerializer):
         model = providers.ServiceLevel
         exclude = ["created_at", "updated_at", "created_by"]
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
-
-    def update_zone(self, zone_index: int, zone_data: dict) -> None:
-        """Update a specific zone in the service level."""
-        if zone_index >= len(self.instance.zones):
-            raise exceptions.ValidationError(
-                _(f"Zone index {zone_index} is out of range"),
-                code="invalid_zone_index",
-            )
-
-        self.instance.zones[zone_index].update(
-            {k: v for k, v in zone_data.items() if v != strawberry.UNSET}
-        )
-        self.instance.save(update_fields=["zones"])
-
-    def update(self, instance, validated_data, context=None, **kwargs):
-        """Handle partial updates of service level data including zones."""
-        zones_data = validated_data.pop("zones", None)
-        instance = super().update(instance, validated_data, context=context)
-
-        if zones_data is not None:
-            # Handle zone updates if provided
-            existing_zones = instance.zones or []
-            updated_zones = []
-
-            for idx, zone_data in enumerate(zones_data):
-                if idx < len(existing_zones):
-                    # Update existing zone
-                    zone = existing_zones[idx].copy()
-                    zone.update(
-                        {k: v for k, v in zone_data.items() if v != strawberry.UNSET}
-                    )
-                    updated_zones.append(zone)
-                else:
-                    # Add new zone
-                    updated_zones.append(zone_data)
-
-            instance.zones = updated_zones
-            instance.save(update_fields=["zones"])
-
-        return instance
 
 
 @serializers.owned_model_serializer
@@ -367,14 +334,110 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
                 carrier.rate_sheet = self.instance if carrier.id in carriers else None
                 carrier.save(update_fields=["rate_sheet"])
 
+    def process_zones(self, zones_data: list, remove_missing: bool = False) -> None:
+        """Process zones for the rate sheet.
+
+        Args:
+            zones_data: List of zone dicts with id, label, country_codes, etc.
+            remove_missing: If True, remove zones not present in zones_data.
+        """
+        existing_zone_ids = {z["id"] for z in (self.instance.zones or [])}
+        incoming_zone_ids = set()
+
+        for zone_data in zones_data:
+            zone_dict = {k: v for k, v in zone_data.items() if v is not None}
+            zone_id = zone_dict.get("id")
+
+            if zone_id:
+                incoming_zone_ids.add(zone_id)
+
+            if zone_id and zone_id in existing_zone_ids:
+                self.instance.update_zone(zone_id, zone_dict)
+            else:
+                self.instance.add_zone(zone_dict)
+
+        # Remove zones not in incoming data
+        if remove_missing:
+            zones_to_remove = existing_zone_ids - incoming_zone_ids
+            for zone_id in zones_to_remove:
+                self.instance.remove_zone(zone_id)
+
+    def process_surcharges(self, surcharges_data: list, remove_missing: bool = False) -> None:
+        """Process surcharges for the rate sheet.
+
+        Args:
+            surcharges_data: List of surcharge dicts with id, name, amount, etc.
+            remove_missing: If True, remove surcharges not present in surcharges_data.
+        """
+        existing_surcharge_ids = {s["id"] for s in (self.instance.surcharges or [])}
+        incoming_surcharge_ids = set()
+
+        for surcharge_data in surcharges_data:
+            surcharge_dict = {k: v for k, v in surcharge_data.items() if v is not None}
+            surcharge_id = surcharge_dict.get("id")
+
+            if surcharge_id:
+                incoming_surcharge_ids.add(surcharge_id)
+
+            if surcharge_id and surcharge_id in existing_surcharge_ids:
+                self.instance.update_surcharge(surcharge_id, surcharge_dict)
+            else:
+                self.instance.add_surcharge(surcharge_dict)
+
+        # Remove surcharges not in incoming data
+        if remove_missing:
+            surcharges_to_remove = existing_surcharge_ids - incoming_surcharge_ids
+            for surcharge_id in surcharges_to_remove:
+                self.instance.remove_surcharge(surcharge_id)
+
+    def process_service_rates(
+        self, service_rates_data: list, temp_to_real_id_map: dict = None
+    ) -> None:
+        """Process service rates for the rate sheet.
+
+        Args:
+            service_rates_data: List of service rate dicts with service_id, zone_id, rate, etc.
+            temp_to_real_id_map: Optional mapping of temp-{idx} IDs to real service IDs.
+        """
+        temp_to_real_id_map = temp_to_real_id_map or {}
+
+        for rate_data in service_rates_data:
+            rate_dict = {k: v for k, v in rate_data.items() if v is not None}
+            service_id = rate_dict.pop("service_id", None)
+            zone_id = rate_dict.pop("zone_id", None)
+
+            # Map temp service ID to real ID if needed
+            if service_id and str(service_id).startswith("temp-"):
+                service_id = temp_to_real_id_map.get(service_id, service_id)
+
+            if service_id and zone_id:
+                self.instance.update_service_rate(service_id, zone_id, rate_dict)
+
+    def build_temp_to_real_service_map(self, services_data: list) -> dict:
+        """Build mapping from temp-{idx} IDs to real service IDs by service_code."""
+        created_services = {s.service_code: s.id for s in self.instance.services.all()}
+
+        return {
+            f"temp-{idx}": created_services[svc.get("service_code")]
+            for idx, svc in enumerate(services_data)
+            if svc.get("service_code") in created_services
+        }
+
     def update(self, instance, validated_data, **kwargs):
-        """Handle updates of rate sheet data including services and carriers."""
+        """Handle updates of rate sheet data including services and carriers.
+
+        When zones or surcharges data is provided, it's treated as a full replacement -
+        zones/surcharges not in the incoming data will be removed.
+        """
         services_data = validated_data.pop("services", None)
         carriers = (
             validated_data.pop("carriers", None)
             if "carriers" in validated_data
             else None
         )
+        zones_data = validated_data.pop("zones", None)
+        surcharges_data = validated_data.pop("surcharges", None)
+        service_rates_data = validated_data.pop("service_rates", None)
         remove_missing_services = validated_data.pop("remove_missing_services", False)
 
         instance = super().update(instance, validated_data)
@@ -384,5 +447,16 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
 
         if carriers is not None:
             self.update_carriers(carriers)
+
+        if zones_data:
+            # Full update: remove zones not present in incoming data
+            self.process_zones(zones_data, remove_missing=True)
+
+        if surcharges_data:
+            # Full update: remove surcharges not present in incoming data
+            self.process_surcharges(surcharges_data, remove_missing=True)
+
+        if service_rates_data:
+            self.process_service_rates(service_rates_data)
 
         return instance

@@ -1094,12 +1094,29 @@ class Options:
 
         self._raw_options = options
         self._options = option_values
+        self._option_type = option_type
+        self._base_option_type = base_option_type
         self._option_list = self._filter(
             option_values, (items_filter or utils.identity)
         )
 
     def __getitem__(self, item):
-        return self._options.get(item) or utils.OptionEnum("")
+        if item in self._options:
+            return self._options[item]
+
+        # Check if the option has a default value in the option_type enum
+        if self._option_type is not None and item in self._option_type:
+            option_enum = self._option_type[item].value
+            if option_enum.default is not None:
+                return option_enum(None)  # This applies the default
+
+        # Check base_option_type for defaults as well
+        if self._base_option_type is not None and item in self._base_option_type:
+            option_enum = self._base_option_type[item].value
+            if option_enum.default is not None:
+                return option_enum(None)
+
+        return utils.OptionEnum("")
 
     def __getattr__(self, item):
         return self[item]
@@ -1134,8 +1151,8 @@ class ShippingOption(utils.Enum):
     """universal shipment options (special services)"""
 
     currency = utils.OptionEnum("currency")
+    locker_id = utils.OptionEnum("locker_id")
     is_return = utils.OptionEnum("is_return", bool)
-    insurance = utils.OptionEnum("insurance", float)
     cash_on_delivery = utils.OptionEnum("COD", float)
     shipment_note = utils.OptionEnum("shipment_note")
     dangerous_good = utils.OptionEnum("dangerous_good", bool)
@@ -1147,25 +1164,30 @@ class ShippingOption(utils.Enum):
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
     saturday_delivery = utils.OptionEnum("saturday_delivery", bool)
     sunday_delivery = utils.OptionEnum("sunday_delivery", bool)
+    shipper_instructions = utils.OptionEnum("shipper_instructions")
+    recipient_instructions = utils.OptionEnum("recipient_instructions")
+    shipping_charges = utils.OptionEnum("shipping_charges", float)
+
+    invoice_date = utils.OptionEnum("invoice_date")
+    invoice_number = utils.OptionEnum("invoice_number")
+
+    insurance = utils.OptionEnum("insurance", float)
+    insured_by = utils.OptionEnum("insured_by", str, default="carrier")
+
     doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
     doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict)
+
     hold_at_location = utils.OptionEnum("hold_at_location", bool)
     hold_at_location_address = utils.OptionEnum(
         "hold_at_location_address",
         functools.partial(utils.DP.to_object, models.Address),
     )
-    shipper_instructions = utils.OptionEnum("shipper_instructions")
-    recipient_instructions = utils.OptionEnum("recipient_instructions")
-    shipping_charges = utils.OptionEnum("shipping_charges", float)
 
     """TODO: dreprecate these"""
     shipment_date = utils.OptionEnum("shipment_date")
 
     """TODO: standardize to these"""
     shipping_date = utils.OptionEnum("shipping_date")  # format: %Y-%m-%dT%H:%M
-
-    invoice_number = utils.OptionEnum("invoice_number")
-    invoice_date = utils.OptionEnum("invoice_date")
 
 
 class ShippingOptions(Options):

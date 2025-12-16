@@ -15,6 +15,7 @@ class CodLabelType:
 @attr.s(auto_attribs=True)
 class StatusType:
     title: typing.Optional[str] = None
+    status: typing.Optional[int] = None
     statusCode: typing.Optional[int] = None
     instance: typing.Optional[str] = None
     detail: typing.Optional[str] = None
@@ -33,6 +34,7 @@ class ItemType:
     returnShipmentNo: typing.Optional[str] = None
     sstatus: typing.Optional[StatusType] = jstruct.JStruct[StatusType]
     shipmentRefNo: typing.Optional[str] = None
+    routingCode: typing.Optional[str] = None
     label: typing.Optional[CodLabelType] = jstruct.JStruct[CodLabelType]
     returnLabel: typing.Optional[CodLabelType] = jstruct.JStruct[CodLabelType]
     customsDoc: typing.Optional[CodLabelType] = jstruct.JStruct[CodLabelType]

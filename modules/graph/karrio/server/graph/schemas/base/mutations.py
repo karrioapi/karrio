@@ -204,7 +204,11 @@ class RequestEmailChangeMutation(utils.BaseMutation):
                 expiry=(datetime.datetime.now() + datetime.timedelta(hours=2)),
             )
         except Exception as e:
-            logger.exception("Email change request failed", user_id=info.context.request.user.id, error=str(e))
+            logger.exception(
+                "Email change request failed",
+                user_id=info.context.request.user.id,
+                error=str(e),
+            )
             raise e
 
         return RequestEmailChangeMutation(user=info.context.request.user)  # type:ignore
@@ -263,7 +267,9 @@ class RegisterUserMutation(utils.BaseMutation):
 
             return RegisterUserMutation(user=user)  # type:ignore
         except Exception as e:
-            logger.exception("User registration failed", email=input.get('email'), error=str(e))
+            logger.exception(
+                "User registration failed", email=input.get("email"), error=str(e)
+            )
             raise e
 
 
@@ -505,16 +511,24 @@ class CreateRateSheetMutation(utils.BaseMutation):
     ) -> "CreateRateSheetMutation":
         data = input.copy()
         carriers = data.pop("carriers", [])
+        zones_data = data.pop("zones", [])
+        surcharges_data = data.pop("surcharges", [])
+        service_rates_data = data.pop("service_rates", [])
+        services_data = [
+            (svc.copy() if isinstance(svc, dict) else dict(svc))
+            for svc in data.get("services", [])
+        ]
+
         slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
         serializer = serializers.RateSheetModelSerializer(
             data={**data, "slug": slug},
             context=info.context.request,
         )
-
         serializer.is_valid(raise_exception=True)
         rate_sheet = serializer.save()
 
-        if "services" in data:
+        # Create services and build temp-to-real ID mapping
+        if services_data:
             save_many_to_many_data(
                 "services",
                 serializers.ServiceLevelModelSerializer,
@@ -522,16 +536,24 @@ class CreateRateSheetMutation(utils.BaseMutation):
                 payload=data,
                 context=info.context.request,
             )
+            rate_sheet.refresh_from_db()
 
+        temp_to_real_id = serializer.build_temp_to_real_service_map(services_data)
+
+        # Link carriers
         if any(carriers):
-            (
-                providers.Carrier.access_by(info.context.request)
-                .filter(
-                    carrier_code=rate_sheet.carrier_name,
-                    id__in=carriers,
-                )
-                .update(rate_sheet=rate_sheet)
-            )
+            providers.Carrier.access_by(info.context.request).filter(
+                carrier_code=rate_sheet.carrier_name,
+                id__in=carriers,
+            ).update(rate_sheet=rate_sheet)
+
+        # Process zones, surcharges, and service_rates via serializer
+        if zones_data:
+            serializer.process_zones(zones_data)
+        if surcharges_data:
+            serializer.process_surcharges(surcharges_data)
+        if service_rates_data:
+            serializer.process_service_rates(service_rates_data, temp_to_real_id)
 
         return CreateRateSheetMutation(rate_sheet=rate_sheet)
 
@@ -551,17 +573,17 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         )
         data = input.copy()
         carriers = data.pop("carriers", [])
+
         serializer = serializers.RateSheetModelSerializer(
             instance,
             data=data,
             context=info.context.request,
             partial=True,
         )
-
         serializer.is_valid(raise_exception=True)
         rate_sheet = serializer.save()
 
-        # Handle services updates like in CreateRateSheetMutation
+        # Handle services updates
         if "services" in data:
             save_many_to_many_data(
                 "services",
@@ -571,120 +593,19 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 context=info.context.request,
             )
 
+        # Link/unlink carriers
         if any(carriers):
-            # Link listed carriers to rate sheet
-            (
-                providers.Carrier.access_by(info.context.request)
-                .filter(
-                    carrier_code=rate_sheet.carrier_name,
-                    id__in=carriers,
-                )
-                .update(rate_sheet=rate_sheet)
+            carrier_qs = providers.Carrier.access_by(info.context.request).filter(
+                carrier_code=rate_sheet.carrier_name
             )
-            # Unlink missing carriers from rate sheet
-            (
-                providers.Carrier.access_by(info.context.request)
-                .filter(
-                    carrier_code=rate_sheet.carrier_name,
-                    rate_sheet=rate_sheet,
-                )
-                .exclude(id__in=carriers)
-                .update(rate_sheet=None)
+            carrier_qs.filter(id__in=carriers).update(rate_sheet=rate_sheet)
+            carrier_qs.filter(rate_sheet=rate_sheet).exclude(id__in=carriers).update(
+                rate_sheet=None
             )
 
         return UpdateRateSheetMutation(
             rate_sheet=providers.RateSheet.objects.get(id=input["id"])
         )
-
-
-@strawberry.type
-class UpdateRateSheetZoneCellMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
-
-    @staticmethod
-    @transaction.atomic
-    @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateRateSheetZoneCellMutationInput
-    ) -> "UpdateRateSheetZoneCellMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["id"]
-        )
-        service = rate_sheet.services.get(id=input["service_id"])
-
-        try:
-            service.update_zone_cell(
-                zone_id=input["zone_id"], field=input["field"], value=input["value"]
-            )
-        except ValueError as e:
-            logger.error("Invalid zone ID", zone_id=input["zone_id"], error=str(e))
-            raise exceptions.ValidationError({"zone_id": "invalid zone id"})
-
-        return UpdateRateSheetZoneCellMutation(rate_sheet=rate_sheet)
-
-
-@strawberry.type
-class BatchUpdateRateSheetCellsMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
-
-    @staticmethod
-    @transaction.atomic
-    @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.BatchUpdateRateSheetCellsMutationInput
-    ) -> "BatchUpdateRateSheetCellsMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["id"]
-        )
-
-        # Group updates by service_id for efficient processing
-        service_updates = {}
-        for update in input["updates"]:
-            service_id = update["service_id"]
-            if service_id not in service_updates:
-                service_updates[service_id] = []
-            service_updates[service_id].append(
-                {
-                    "zone_id": update["zone_id"],
-                    "field": update["field"],
-                    "value": update["value"],
-                }
-            )
-
-        # Use optimized structure if available, otherwise fall back to legacy
-        if rate_sheet.zones is not None and rate_sheet.service_rates is not None:
-            # Use optimized batch update on rate sheet
-            all_updates = []
-            for service_id, updates in service_updates.items():
-                for update in updates:
-                    all_updates.append(
-                        {
-                            "service_id": service_id,
-                            "zone_id": update["zone_id"],
-                            "field": update["field"],
-                            "value": update["value"],
-                        }
-                    )
-            try:
-                rate_sheet.batch_update_service_rates(all_updates)
-            except Exception as e:
-                logger.error("Failed to batch update rate sheet", rate_sheet_id=input["id"], error=str(e))
-                raise exceptions.ValidationError(
-                    {"rate_sheet": "failed to update rate sheet"}
-                )
-        else:
-            # Fall back to legacy per-service updates
-            for service_id, updates in service_updates.items():
-                try:
-                    service = rate_sheet.services.get(id=service_id)
-                    service.batch_update_cells(updates)
-                except ValueError as e:
-                    logger.error("Failed to update service", service_id=service_id, error=str(e))
-                    raise exceptions.ValidationError(
-                        {"service_id": "failed to update service"}
-                    )
-
-        return BatchUpdateRateSheetCellsMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
@@ -707,6 +628,298 @@ class DeleteRateSheetServiceMutation(utils.BaseMutation):
         service.delete()
 
         return DeleteRateSheetServiceMutation(rate_sheet=rate_sheet)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED ZONE MUTATIONS (Rate Sheet Level)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class AddSharedZoneMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.AddSharedZoneMutationInput
+    ) -> "AddSharedZoneMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+        zone_data = input["zone"]
+        zone_dict = {k: v for k, v in zone_data.items() if not utils.is_unset(v)}
+
+        try:
+            rate_sheet.add_zone(zone_dict)
+        except ValueError as e:
+            raise exceptions.ValidationError({"zone": str(e)})
+
+        return AddSharedZoneMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class UpdateSharedZoneMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.UpdateSharedZoneMutationInput
+    ) -> "UpdateSharedZoneMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+        zone_data = input["zone"]
+        zone_dict = {k: v for k, v in zone_data.items() if not utils.is_unset(v)}
+
+        try:
+            rate_sheet.update_zone(input["zone_id"], zone_dict)
+        except ValueError as e:
+            raise exceptions.ValidationError({"zone_id": str(e)})
+
+        return UpdateSharedZoneMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class DeleteSharedZoneMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.DeleteSharedZoneMutationInput
+    ) -> "DeleteSharedZoneMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+
+        try:
+            rate_sheet.remove_zone(input["zone_id"])
+        except ValueError as e:
+            raise exceptions.ValidationError({"zone_id": str(e)})
+
+        return DeleteSharedZoneMutation(rate_sheet=rate_sheet)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED SURCHARGE MUTATIONS (Rate Sheet Level)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class AddSharedSurchargeMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.AddSharedSurchargeMutationInput
+    ) -> "AddSharedSurchargeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+        surcharge_data = input["surcharge"]
+        surcharge_dict = {k: v for k, v in surcharge_data.items() if not utils.is_unset(v)}
+
+        try:
+            rate_sheet.add_surcharge(surcharge_dict)
+        except ValueError as e:
+            raise exceptions.ValidationError({"surcharge": str(e)})
+
+        return AddSharedSurchargeMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class UpdateSharedSurchargeMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.UpdateSharedSurchargeMutationInput
+    ) -> "UpdateSharedSurchargeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+        surcharge_data = input["surcharge"]
+        surcharge_dict = {k: v for k, v in surcharge_data.items() if not utils.is_unset(v)}
+
+        try:
+            rate_sheet.update_surcharge(input["surcharge_id"], surcharge_dict)
+        except ValueError as e:
+            raise exceptions.ValidationError({"surcharge_id": str(e)})
+
+        return UpdateSharedSurchargeMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class DeleteSharedSurchargeMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.DeleteSharedSurchargeMutationInput
+    ) -> "DeleteSharedSurchargeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+
+        try:
+            rate_sheet.remove_surcharge(input["surcharge_id"])
+        except ValueError as e:
+            raise exceptions.ValidationError({"surcharge_id": str(e)})
+
+        return DeleteSharedSurchargeMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class BatchUpdateSurchargesMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.BatchUpdateSurchargesMutationInput
+    ) -> "BatchUpdateSurchargesMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+        surcharges = [
+            {k: v for k, v in s.items() if not utils.is_unset(v)}
+            for s in input["surcharges"]
+        ]
+
+        try:
+            rate_sheet.batch_update_surcharges(surcharges)
+        except ValueError as e:
+            raise exceptions.ValidationError({"surcharges": str(e)})
+
+        return BatchUpdateSurchargesMutation(rate_sheet=rate_sheet)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SERVICE RATE MUTATIONS (Service-Zone Rate Mapping)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class UpdateServiceRateMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.UpdateServiceRateMutationInput
+    ) -> "UpdateServiceRateMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+
+        # Build the rate update dict from input fields
+        rate_data = {}
+        rate_fields = ["rate", "cost", "min_weight", "max_weight", "transit_days", "transit_time"]
+        for field in rate_fields:
+            if field in input and not utils.is_unset(input[field]):
+                rate_data[field] = input[field]
+
+        # Update or create the service-zone rate mapping
+        try:
+            rate_sheet.update_service_rate(
+                service_id=input["service_id"],
+                zone_id=input["zone_id"],
+                rate_data=rate_data
+            )
+        except ValueError as e:
+            raise exceptions.ValidationError({"rate": str(e)})
+
+        return UpdateServiceRateMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class BatchUpdateServiceRatesMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.BatchUpdateServiceRatesMutationInput
+    ) -> "BatchUpdateServiceRatesMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+
+        # Convert rates to the format expected by batch_update_service_rates
+        # Format: [{'service_id': str, 'zone_id': str, 'rate': float, 'cost': float, ...}]
+        updates = []
+
+        for rate in input["rates"]:
+            rate_dict = {k: v for k, v in rate.items() if not utils.is_unset(v)}
+            updates.append(rate_dict)
+
+        try:
+            rate_sheet.batch_update_service_rates(updates)
+        except ValueError as e:
+            raise exceptions.ValidationError({"rates": str(e)})
+
+        return BatchUpdateServiceRatesMutation(rate_sheet=rate_sheet)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SERVICE ZONE/SURCHARGE ASSIGNMENT MUTATIONS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class UpdateServiceZoneIdsMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.UpdateServiceZoneIdsMutationInput
+    ) -> "UpdateServiceZoneIdsMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+        service = rate_sheet.services.get(id=input["service_id"])
+
+        service.zone_ids = input["zone_ids"]
+        service.save(update_fields=["zone_ids"])
+
+        return UpdateServiceZoneIdsMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class UpdateServiceSurchargeIdsMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.UpdateServiceSurchargeIdsMutationInput
+    ) -> "UpdateServiceSurchargeIdsMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+        service = rate_sheet.services.get(id=input["service_id"])
+
+        service.surcharge_ids = input["surcharge_ids"]
+        service.save(update_fields=["surcharge_ids"])
+
+        return UpdateServiceSurchargeIdsMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
@@ -736,7 +949,9 @@ class PartialShipmentMutation(utils.BaseMutation):
 
             return PartialShipmentMutation(errors=None, shipment=update)  # type:ignore
         except Exception as e:
-            logger.exception("Shipment mutation failed", shipment_id=input.get("id"), error=str(e))
+            logger.exception(
+                "Shipment mutation failed", shipment_id=input.get("id"), error=str(e)
+            )
             raise e
 
 
@@ -932,30 +1147,6 @@ class SystemCarrierMutation(utils.BaseMutation):
         return SystemCarrierMutation(
             carrier=providers.Carrier.system_carriers.get(pk=pk)
         )  # type: ignore
-
-
-@strawberry.type
-class UpdateServiceZoneMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
-
-    @staticmethod
-    @transaction.atomic
-    @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateServiceZoneMutationInput
-    ) -> "UpdateServiceZoneMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["id"]
-        )
-        service = rate_sheet.services.get(id=input["service_id"])
-
-        serializer = serializers.ServiceLevelModelSerializer(
-            service,
-            context=info.context.request,
-        )
-        serializer.update_zone(input["zone_index"], input["zone"])
-
-        return UpdateServiceZoneMutation(rate_sheet=rate_sheet)  # type:ignore
 
 
 @strawberry.type

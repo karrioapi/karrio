@@ -331,7 +331,32 @@ export interface References {
   package_presets: Collection<Collection>;
   packaging_types: Collection<Collection>;
   carrier_capabilities: Collection<string[]>;
-  service_levels: Collection<ServiceLevelType[]>;
+  // ratesheets - carrier default rate sheet configurations with shared zones format
+  ratesheets: Collection<{
+    zones: Array<{
+      id: string;
+      label?: string;
+      country_codes?: string[];
+      postal_codes?: string[];
+      cities?: string[];
+      transit_days?: number;
+      transit_time?: number;
+      radius?: number;
+      latitude?: number;
+      longitude?: number;
+    }>;
+    services: Array<ServiceLevelType & { zone_ids: string[]; surcharge_ids: string[] }>;
+    service_rates: Array<{
+      service_id: string;
+      zone_id: string;
+      rate: number;
+      cost?: number;
+      min_weight?: number;
+      max_weight?: number;
+      transit_days?: number;
+      transit_time?: number;
+    }>;
+  }>;
   connection_configs: Collection<
     Collection<{
       name: string;

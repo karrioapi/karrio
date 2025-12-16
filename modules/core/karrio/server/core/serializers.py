@@ -687,6 +687,7 @@ class RateRequest(validators.OptionDefaultSerializer):
         {
             "currency": "USD",
             "insurance": 100.00,
+            "insured_by": "carrier",
             "cash_on_delivery": 30.00,
             "dangerous_good": true,
             "declared_value": 150.00,
@@ -1196,6 +1197,37 @@ class ShippingDocument(serializers.Serializer):
     format = serializers.CharField(
         required=True,
         help_text="The document format (e.g., 'PDF', 'ZPL')",
+    )
+    url = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The document URL",
+    )
+    base64 = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The document content encoded in base64",
+    )
+
+
+class ShippingDocument(serializers.Serializer):
+    """Serializer for shipping document download response."""
+
+    category = serializers.CharField(
+        required=True,
+        help_text="The document category (e.g., 'label', 'invoice', 'manifest')",
+    )
+    format = serializers.CharField(
+        required=True,
+        help_text="The document format (e.g., 'PDF', 'ZPL')",
+    )
+    print_format = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The document print format (e.g., 'A4', '6x4', '8.5x11')",
     )
     url = serializers.CharField(
         required=False,

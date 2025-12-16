@@ -414,59 +414,12 @@ class LabelTemplateInput(utils.BaseInput):
 
 
 @strawberry.input
-class ServiceZoneInput(utils.BaseInput):
-    rate: float
-    label: typing.Optional[str] = strawberry.UNSET
-
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
-
-    transit_days: typing.Optional[int] = strawberry.UNSET
-    transit_time: typing.Optional[float] = strawberry.UNSET
-
-    radius: typing.Optional[float] = strawberry.UNSET
-    latitude: typing.Optional[float] = strawberry.UNSET
-    longitude: typing.Optional[float] = strawberry.UNSET
-
-    cities: typing.Optional[typing.List[str]] = strawberry.UNSET
-    postal_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
-    country_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateServiceZoneInput(utils.BaseInput):
-    rate: typing.Optional[float] = strawberry.UNSET
-    label: typing.Optional[str] = strawberry.UNSET
-
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
-
-    transit_days: typing.Optional[int] = strawberry.UNSET
-    transit_time: typing.Optional[float] = strawberry.UNSET
-
-    radius: typing.Optional[float] = strawberry.UNSET
-    latitude: typing.Optional[float] = strawberry.UNSET
-    longitude: typing.Optional[float] = strawberry.UNSET
-
-    cities: typing.Optional[typing.List[str]] = strawberry.UNSET
-    postal_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
-    country_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateServiceZoneMutationInput(utils.BaseInput):
-    id: str
-    service_id: str
-    zone_index: int
-    zone: UpdateServiceZoneInput
-
-
-@strawberry.input
 class CreateServiceLevelInput(utils.BaseInput):
+    """Input for creating a new service level."""
+
     service_name: str
     service_code: str
     currency: utils.CurrencyCodeEnum
-    zones: typing.List[ServiceZoneInput]
 
     carrier_service_code: typing.Optional[str] = strawberry.UNSET
     description: typing.Optional[str] = strawberry.UNSET
@@ -483,20 +436,52 @@ class CreateServiceLevelInput(utils.BaseInput):
     min_weight: typing.Optional[float] = strawberry.UNSET
     max_weight: typing.Optional[float] = strawberry.UNSET
     weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    max_volume: typing.Optional[float] = strawberry.UNSET
+    cost: typing.Optional[float] = strawberry.UNSET
 
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
+
+    zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+    surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
 
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
-class UpdateServiceLevelInput(CreateServiceLevelInput):
+class UpdateServiceLevelInput(utils.BaseInput):
+    """Input for updating a service level."""
+
     id: typing.Optional[str] = strawberry.UNSET
     service_name: typing.Optional[str] = strawberry.UNSET
     service_code: typing.Optional[str] = strawberry.UNSET
     currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
-    zones: typing.Optional[typing.List[UpdateServiceZoneInput]] = strawberry.UNSET
+
+    carrier_service_code: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    active: typing.Optional[bool] = strawberry.UNSET
+
+    transit_days: typing.Optional[int] = strawberry.UNSET
+    transit_time: typing.Optional[float] = strawberry.UNSET
+
+    max_width: typing.Optional[float] = strawberry.UNSET
+    max_height: typing.Optional[float] = strawberry.UNSET
+    max_length: typing.Optional[float] = strawberry.UNSET
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+
+    min_weight: typing.Optional[float] = strawberry.UNSET
+    max_weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    max_volume: typing.Optional[float] = strawberry.UNSET
+    cost: typing.Optional[float] = strawberry.UNSET
+
+    domicile: typing.Optional[bool] = strawberry.UNSET
+    international: typing.Optional[bool] = strawberry.UNSET
+
+    zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+    surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -504,6 +489,9 @@ class CreateRateSheetMutationInput(utils.BaseInput):
     name: str
     carrier_name: utils.CarrierNameEnum
     services: typing.Optional[typing.List[CreateServiceLevelInput]] = strawberry.UNSET
+    zones: typing.Optional[typing.List["SharedZoneInput"]] = strawberry.UNSET
+    surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
+    service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
@@ -513,32 +501,12 @@ class UpdateRateSheetMutationInput(utils.BaseInput):
     id: str
     name: typing.Optional[str] = strawberry.UNSET
     services: typing.Optional[typing.List[UpdateServiceLevelInput]] = strawberry.UNSET
+    zones: typing.Optional[typing.List["SharedZoneInput"]] = strawberry.UNSET
+    surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
+    service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
     remove_missing_services: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateRateSheetZoneCellMutationInput(utils.BaseInput):
-    id: str  # Rate sheet ID
-    service_id: str  # Service level ID
-    zone_id: str  # Zone ID
-    field: str  # Field name to update
-    value: utils.JSON  # New value
-
-
-@strawberry.input
-class CellUpdate(utils.BaseInput):
-    service_id: str
-    zone_id: str
-    field: str
-    value: utils.JSON
-
-
-@strawberry.input
-class BatchUpdateRateSheetCellsMutationInput(utils.BaseInput):
-    id: str  # Rate sheet ID
-    updates: typing.List[CellUpdate]
 
 
 @strawberry.input
@@ -610,3 +578,164 @@ class MetafieldFilter(utils.Paginated):
     key: typing.Optional[str] = strawberry.UNSET
     type: typing.Optional[utils.MetafieldTypeEnum] = strawberry.UNSET
     is_required: typing.Optional[bool] = strawberry.UNSET
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED ZONE INPUTS (Rate Sheet Level)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class SharedZoneInput(utils.BaseInput):
+    """Input for creating/updating a shared zone at the RateSheet level."""
+
+    label: str
+    id: typing.Optional[str] = strawberry.UNSET
+    country_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
+    postal_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
+    cities: typing.Optional[typing.List[str]] = strawberry.UNSET
+    transit_days: typing.Optional[int] = strawberry.UNSET
+    transit_time: typing.Optional[float] = strawberry.UNSET
+    radius: typing.Optional[float] = strawberry.UNSET
+    latitude: typing.Optional[float] = strawberry.UNSET
+    longitude: typing.Optional[float] = strawberry.UNSET
+
+
+@strawberry.input
+class AddSharedZoneMutationInput(utils.BaseInput):
+    """Add a new shared zone to a rate sheet."""
+
+    rate_sheet_id: str
+    zone: SharedZoneInput
+
+
+@strawberry.input
+class UpdateSharedZoneMutationInput(utils.BaseInput):
+    """Update a shared zone in a rate sheet."""
+
+    rate_sheet_id: str
+    zone_id: str
+    zone: SharedZoneInput
+
+
+@strawberry.input
+class DeleteSharedZoneMutationInput(utils.BaseInput):
+    """Delete a shared zone from a rate sheet."""
+
+    rate_sheet_id: str
+    zone_id: str
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHARED SURCHARGE INPUTS (Rate Sheet Level)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class SharedSurchargeInput(utils.BaseInput):
+    """Input for creating/updating a shared surcharge at the RateSheet level."""
+
+    name: str
+    amount: float
+    id: typing.Optional[str] = strawberry.UNSET
+    surcharge_type: typing.Optional[str] = "fixed"  # "fixed" or "percentage"
+    cost: typing.Optional[float] = strawberry.UNSET  # COGS
+    active: typing.Optional[bool] = True
+
+
+@strawberry.input
+class AddSharedSurchargeMutationInput(utils.BaseInput):
+    """Add a new shared surcharge to a rate sheet."""
+
+    rate_sheet_id: str
+    surcharge: SharedSurchargeInput
+
+
+@strawberry.input
+class UpdateSharedSurchargeMutationInput(utils.BaseInput):
+    """Update a shared surcharge in a rate sheet."""
+
+    rate_sheet_id: str
+    surcharge_id: str
+    surcharge: SharedSurchargeInput
+
+
+@strawberry.input
+class DeleteSharedSurchargeMutationInput(utils.BaseInput):
+    """Delete a shared surcharge from a rate sheet."""
+
+    rate_sheet_id: str
+    surcharge_id: str
+
+
+@strawberry.input
+class BatchUpdateSurchargesMutationInput(utils.BaseInput):
+    """Batch update multiple surcharges in a rate sheet."""
+
+    rate_sheet_id: str
+    surcharges: typing.List[SharedSurchargeInput]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SERVICE RATE INPUTS (Service-Zone Rate Mapping)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class ServiceRateInput(utils.BaseInput):
+    """Input for a service-zone rate mapping."""
+
+    service_id: str
+    zone_id: str
+    rate: float
+    cost: typing.Optional[float] = strawberry.UNSET  # COGS
+    min_weight: typing.Optional[float] = strawberry.UNSET
+    max_weight: typing.Optional[float] = strawberry.UNSET
+    transit_days: typing.Optional[int] = strawberry.UNSET
+    transit_time: typing.Optional[float] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateServiceRateMutationInput(utils.BaseInput):
+    """Update a single service-zone rate."""
+
+    rate_sheet_id: str
+    service_id: str
+    zone_id: str
+    rate: float
+    cost: typing.Optional[float] = strawberry.UNSET
+    min_weight: typing.Optional[float] = strawberry.UNSET
+    max_weight: typing.Optional[float] = strawberry.UNSET
+    transit_days: typing.Optional[int] = strawberry.UNSET
+    transit_time: typing.Optional[float] = strawberry.UNSET
+
+
+@strawberry.input
+class BatchUpdateServiceRatesMutationInput(utils.BaseInput):
+    """Batch update multiple service-zone rates."""
+
+    rate_sheet_id: str
+    rates: typing.List[ServiceRateInput]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SERVICE ZONE/SURCHARGE ASSIGNMENT INPUTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class UpdateServiceZoneIdsMutationInput(utils.BaseInput):
+    """Update zone_ids for a service level."""
+
+    rate_sheet_id: str
+    service_id: str
+    zone_ids: typing.List[str]
+
+
+@strawberry.input
+class UpdateServiceSurchargeIdsMutationInput(utils.BaseInput):
+    """Update surcharge_ids for a service level."""
+
+    rate_sheet_id: str
+    service_id: str
+    surcharge_ids: typing.List[str]

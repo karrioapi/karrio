@@ -1,3 +1,18 @@
+# Karrio 2025.5.6
+
+## Changes
+
+### Feat
+
+- feat: ratesheet datastructure upgrade + support for surcharges
+- feat: improve UX with document download to support all authentication methods available to the API
+
+### Chores
+
+- chore(deps): bump next from 15.4.8 to 15.4.10 in /packages/core
+
+---
+
 # Karrio 2025.5.5
 
 ## Changes
@@ -19,6 +34,31 @@
 ---
 
 # Karrio 2025.5.4
+
+## Changes
+
+### Feat
+
+- feat(WIP): introduce karrio studio to enhance dev experience and assist integration and development
+- feat: introduce shipping_documents field on shipment object that returns a more structured list of shipping documents details and include base64 documents version from purchasing APIs
+- feat: add audit log Model settings required by django-auditlog==3.4.0
+- feat: introduce `reason` field to karrio unified tracking event data
+
+### Fix
+
+- fix: idempotent API response for shipment cancellation when called twice on a shipment that was successfully cancelled return HTTP code 304
+
+### Docs
+
+- docs: karrio Shipping integration quick start with key APIs
+
+### Chore
+
+- chore: remove poorly implemented permissions layer
+
+---
+
+# Karrio 2025.5.3
 
 ## Changes
 

@@ -82,7 +82,7 @@ export const RateSheetModalEditor = ({
     const { loading } = useLoader();
     const editor = React.useRef<ReactCodeMirrorRef>(null);
     const {
-      references: { service_levels },
+      references: { ratesheets },
     } = useAPIMetadata();
     const [key, setKey] = React.useState<string>(`sheet-${Date.now()}`);
     const [sheet, dispatch] = React.useReducer(
@@ -103,9 +103,11 @@ export const RateSheetModalEditor = ({
       dispatch({ name, value });
     };
     const computeDefaultCurrency = (
-      defaultValue: ServiceLevelType[],
+      defaultValue: { services?: ServiceLevelType[] } | ServiceLevelType[],
     ): CurrencyCodeEnum => {
-      const svc = (defaultValue || []).find((svc) => !isNone(svc.currency));
+      // Handle both new format (object with services) and legacy format (array)
+      const services = Array.isArray(defaultValue) ? defaultValue : (defaultValue?.services || []);
+      const svc = services.find((svc) => !isNone(svc.currency));
       return (svc?.currency || CurrencyCodeEnum.USD) as CurrencyCodeEnum;
     };
     const computeRates = (services: RateSheetDataType["services"]) => {
@@ -207,7 +209,7 @@ export const RateSheetModalEditor = ({
                   required
                   disabled={!!sheet.id}
                 >
-                  {Object.keys(service_levels || {}).map((unit) => (
+                  {Object.keys(ratesheets || {}).map((unit) => (
                     <option key={unit} value={unit}>
                       {unit}
                     </option>
@@ -231,7 +233,7 @@ export const RateSheetModalEditor = ({
                   value={
                     (sheet?.services || [])[0]?.currency ||
                     computeDefaultCurrency(
-                      service_levels?.[sheet.carrier_name] || [],
+                      ratesheets?.[sheet.carrier_name] || [],
                     )
                   }
                   className="is-small is-fullwidth"
@@ -527,7 +529,7 @@ export const RateSheetModalEditor = ({
                         extensions={[jsonLanguage]}
                         value={failsafe(() =>
                           JSON.stringify(
-                            service_levels?.[sheet.carrier_name] || [],
+                            ratesheets?.[sheet.carrier_name] || [],
                             null,
                             2,
                           ),

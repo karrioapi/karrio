@@ -272,7 +272,14 @@ class Carrier(core.OwnedEntity):
 
         if any(self.services or []):
             _computed_data.update(
-                services=[forms.model_to_dict(s) for s in self.services]
+                services=[
+                    {
+                        **forms.model_to_dict(s),
+                        "zones": s.zones,  # Include computed zones property
+                        "surcharges": s.surcharges,  # Include computed surcharges property
+                    }
+                    for s in self.services
+                ]
             )
 
         # override the config with the system config

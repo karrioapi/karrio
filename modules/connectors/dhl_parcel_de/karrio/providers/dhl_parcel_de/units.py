@@ -4,6 +4,8 @@ import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
 
+import karrio.schemas.dhl_parcel_de.shipping_request as ship_req
+
 
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
@@ -111,10 +113,8 @@ class ShippingOption(lib.Enum):
     # fmt: off
     dhl_parcel_de_preferred_neighbour = lib.OptionEnum("preferredNeighbour")
     dhl_parcel_de_preferred_location = lib.OptionEnum("preferredLocation")
-    dhl_parcel_de_visual_check_of_age = lib.OptionEnum("visualCheckOfAge")
     dhl_parcel_de_named_person_only = lib.OptionEnum("namedPersonOnly", bool)
     dhl_parcel_de_signed_for_by_recipient = lib.OptionEnum("signedForByRecipient", bool)
-    dhl_parcel_de_endorsement = lib.OptionEnum("endorsement")
     dhl_parcel_de_preferred_day = lib.OptionEnum("preferredDay")
     dhl_parcel_de_no_neighbour_delivery = lib.OptionEnum("noNeighbourDelivery", bool)
     dhl_parcel_de_additional_insurance = lib.OptionEnum("additionalInsurance", float)
@@ -126,8 +126,6 @@ class ShippingOption(lib.Enum):
     dhl_parcel_de_parcel_outlet_routing = lib.OptionEnum("parcelOutletRouting")
     dhl_parcel_de_postal_delivery_duty_paid = lib.OptionEnum("postalDeliveryDutyPaid", bool)
     dhl_parcel_de_postal_charges = lib.OptionEnum("postalCharges", float)
-    dhl_parcel_de_dhl_retoure = lib.OptionEnum("dhlRetoure", bool)
-    dhl_parcel_de_locker_id = lib.OptionEnum("lockerID")
     dhl_parcel_de_post_number = lib.OptionEnum("postNumber")
     dhl_parcel_de_retail_id = lib.OptionEnum("retailID")
     dhl_parcel_de_po_box_id = lib.OptionEnum("poBoxID")
@@ -137,6 +135,19 @@ class ShippingOption(lib.Enum):
     dhl_parcel_de_attestation_no = lib.OptionEnum("attestationNo")
     dhl_parcel_de_has_electronic_export_notification = lib.OptionEnum("hasElectronicExportNotification")
     dhl_parcel_de_MRN = lib.OptionEnum("MRN")
+    dhl_parcel_de_locker_id = lib.OptionEnum("lockerID", lib.to_int)
+
+    dhl_parcel_de_ident_check = lib.OptionEnum("identCheck", ship_req.IdentCheckType)
+    dhl_parcel_de_dhl_retoure = lib.OptionEnum("dhlRetoure", ship_req.DhlRetoureType)
+    dhl_parcel_de_visual_check_of_age = lib.OptionEnum(
+        "visualCheckOfAge",
+        lib.units.create_enum("VisualCheckOfAge", ["A16", "A18"])  # type: ignore
+    )
+    dhl_parcel_de_endorsement = lib.OptionEnum(
+        "endorsement",
+        lib.units.create_enum("endorsement", ["RETURN", "SIGNATURE"]),  # type: ignore
+        default="RETURN"
+    )
 
     """ Unified Option type mapping """
     signature_confirmation = dhl_parcel_de_signed_for_by_recipient
@@ -144,6 +155,7 @@ class ShippingOption(lib.Enum):
     cash_on_delivery = dhl_parcel_de_cash_on_delivery
     shipping_charges = dhl_parcel_de_postal_charges
     insurance = dhl_parcel_de_additional_insurance
+    locker_id = dhl_parcel_de_locker_id
     # fmt: on
 
 

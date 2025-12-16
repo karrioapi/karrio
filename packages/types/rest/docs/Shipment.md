@@ -37,6 +37,7 @@ Name | Type | Description | Notes
 **test_mode** | **boolean** | Specified whether it was created with a carrier in test mode | [default to undefined]
 **label_url** | **string** | The shipment label URL | [optional] [default to undefined]
 **invoice_url** | **string** | The shipment invoice URL | [optional] [default to undefined]
+**shipping_documents** | [**Array&lt;ShippingDocument&gt;**](ShippingDocument.md) | The list of shipping documents | [optional] [default to undefined]
 
 ## Example
 
@@ -76,6 +77,7 @@ const instance: Shipment = {
     test_mode,
     label_url,
     invoice_url,
+    shipping_documents,
 };
 ```
 

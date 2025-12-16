@@ -11,6 +11,7 @@ import rest_framework.throttling as throttling
 import django_filters.rest_framework as django_filters
 
 from karrio.server.core.utils import validate_resource_token
+from karrio.server.core.authentication import AccessMixin
 import karrio.server.openapi as openapi
 import karrio.server.core.views.api as api
 import karrio.server.core.filters as filters
@@ -106,7 +107,7 @@ class ManifestDetails(api.APIView):
         return response.Response(serializers.Manifest(manifest).data)
 
 
-class ManifestDoc(django_downloadview.VirtualDownloadView):
+class ManifestDoc(AccessMixin, django_downloadview.VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
     def get(self, req: request.Request, pk: str, doc: str = "manifest", format: str = "pdf", **kwargs):
         """Retrieve a manifest file."""
