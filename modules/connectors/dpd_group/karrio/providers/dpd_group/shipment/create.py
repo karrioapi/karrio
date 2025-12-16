@@ -35,13 +35,13 @@ def _extract_details(
     shipment = lib.to_object(dpd_res.ShipmentResponseType, data)
 
     # Extract tracking number from parcelIds
-    tracking_number = shipment.parcelIds[0] if shipment.parcelIds else ""
+    tracking_number = shipment.parcelIds[0]
 
     # Extract label data
-    label_data = shipment.label.base64Data if shipment.label else None
+    label_data = shipment.label.base64Data
 
     # Build tracking URL
-    tracking_url = settings.tracking_url.format(tracking_number) if tracking_number else None
+    tracking_url = settings.tracking_url.format(tracking_number)
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
