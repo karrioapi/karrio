@@ -66,7 +66,7 @@ export const RateSheetEditModalProvider = ({
   const editor = React.useRef<ReactCodeMirrorRef>(null);
   const { loading, setLoading } = useLoader();
   const {
-    references: { service_levels },
+    references: { ratesheets },
   } = useAPIMetadata();
   const [isActive, setIsActive] = React.useState<boolean>(false);
   const [key, setKey] = React.useState<string>(`rates-${Date.now()}`);
@@ -495,7 +495,7 @@ export const RateSheetEditModalProvider = ({
                           extensions={[jsonLanguage]}
                           value={failsafe(() =>
                             JSON.stringify(
-                              service_levels[
+                              ratesheets[
                                 operation!.connection.carrier_name
                               ],
                               null,

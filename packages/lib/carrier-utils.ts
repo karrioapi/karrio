@@ -34,13 +34,13 @@ export function getRateSheetCarrierName(connection: any): string {
  */
 export function normalizeCarrierEnumName(name: string, references?: References): string {
   if (!references) return name;
-  const known = references.service_levels?.[name] || (references as any).carriers?.[name];
+  const known = references.ratesheets?.[name] || (references as any).carriers?.[name];
   return known ? name : "generic";
 }
 
 /**
  * Check if a carrier connection supports rate sheets
- * Uses both service_levels and custom_carriers from references
+ * Uses both ratesheets and custom_carriers from references
  */
 export function supportsRateSheets(connection: any, references?: References): boolean {
   if (!references) return false;
@@ -48,8 +48,8 @@ export function supportsRateSheets(connection: any, references?: References): bo
   const carrierName = getRateSheetCarrierName(connection);
   const effectiveCarrierName = getEffectiveCarrierName(connection);
 
-  // Check if it's a known carrier with service levels
-  if (references.service_levels?.[carrierName]) {
+  // Check if it's a known carrier with ratesheets
+  if (references.ratesheets?.[carrierName]) {
     return true;
   }
 
@@ -68,29 +68,67 @@ export function supportsRateSheets(connection: any, references?: References): bo
 }
 
 /**
- * Get service defaults for a carrier connection
- * Checks both service_levels and custom_carriers
+ * Rate sheet defaults structure with shared zones format
  */
-export function getCarrierServiceDefaults(connection: any, references?: References): any[] {
-  if (!references) return [];
+export interface RateSheetDefaults {
+  zones: Array<{
+    id: string;
+    label?: string;
+    country_codes?: string[];
+    postal_codes?: string[];
+    cities?: string[];
+    transit_days?: number;
+    transit_time?: number;
+    radius?: number;
+    latitude?: number;
+    longitude?: number;
+  }>;
+  services: Array<any & { zone_ids: string[]; surcharge_ids: string[] }>;
+  service_rates: Array<{
+    service_id: string;
+    zone_id: string;
+    rate: number;
+    cost?: number;
+    min_weight?: number;
+    max_weight?: number;
+    transit_days?: number;
+    transit_time?: number;
+  }>;
+}
+
+/**
+ * Get rate sheet defaults for a carrier connection
+ * Returns the new shared zones format (zones, services, service_rates)
+ */
+export function getCarrierRateSheetDefaults(connection: any, references?: References): RateSheetDefaults | null {
+  if (!references) return null;
 
   const carrierName = getRateSheetCarrierName(connection);
   const effectiveCarrierName = getEffectiveCarrierName(connection);
 
-  // First check service_levels for the main carrier name
-  if (references.service_levels?.[carrierName]) {
-    return references.service_levels[carrierName];
+  // First check ratesheets for the main carrier name
+  if (references.ratesheets?.[carrierName]) {
+    return references.ratesheets[carrierName] as unknown as RateSheetDefaults;
   }
 
   // For generic/custom carriers, check custom_carriers
   if (isGenericCarrier(connection) && effectiveCarrierName !== "generic") {
-    if ((references.custom_carriers?.[effectiveCarrierName] as any)?.services) {
-      return (references.custom_carriers[effectiveCarrierName] as any).services;
+    if (references.custom_carriers?.[effectiveCarrierName]) {
+      return references.custom_carriers[effectiveCarrierName] as unknown as RateSheetDefaults;
     }
   }
 
-  // Return empty array if no defaults found
-  return [];
+  // Return null if no defaults found
+  return null;
+}
+
+/**
+ * Get service defaults for a carrier connection (legacy - returns services array)
+ * @deprecated Use getCarrierRateSheetDefaults instead for the full rate sheet format
+ */
+export function getCarrierServiceDefaults(connection: any, references?: References): any[] {
+  const defaults = getCarrierRateSheetDefaults(connection, references);
+  return defaults?.services || [];
 }
 
 /**

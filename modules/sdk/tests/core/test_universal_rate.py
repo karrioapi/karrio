@@ -318,6 +318,80 @@ class TestUniversalRating(unittest.TestCase):
             ParsedRateResponseWeightOnly,
         )
 
+    def test_rate_with_fixed_surcharges(self):
+        """Test that fixed surcharges are correctly applied to base rate."""
+        settings_with_surcharges = RatingMixinSettings(**settings_with_fixed_surcharges)
+        proxy = RatingMixinProxy(settings_with_surcharges)
+
+        request = Serializable(RateRequest(**rate_request_data))
+        response_data = proxy.get_rates(request)
+        rates = parse_rate_response(response_data, settings_with_surcharges)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedRateResponseFixedSurcharges,
+        )
+
+    def test_rate_with_percentage_surcharges(self):
+        """Test that percentage surcharges are correctly calculated from base rate."""
+        settings_with_surcharges = RatingMixinSettings(**settings_with_percentage_surcharges)
+        proxy = RatingMixinProxy(settings_with_surcharges)
+
+        request = Serializable(RateRequest(**rate_request_data))
+        response_data = proxy.get_rates(request)
+        rates = parse_rate_response(response_data, settings_with_surcharges)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedRateResponsePercentageSurcharges,
+        )
+
+    def test_rate_with_mixed_surcharges(self):
+        """Test that mixed fixed and percentage surcharges are correctly applied."""
+        settings_with_surcharges = RatingMixinSettings(**settings_with_mixed_surcharges)
+        proxy = RatingMixinProxy(settings_with_surcharges)
+
+        request = Serializable(RateRequest(**rate_request_data))
+        response_data = proxy.get_rates(request)
+        rates = parse_rate_response(response_data, settings_with_surcharges)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedRateResponseMixedSurcharges,
+        )
+
+    def test_rate_with_no_surcharges(self):
+        """Test that rates work correctly when service has no surcharges defined."""
+        # Using standard settings_data which has no surcharges
+        settings_no_surcharges = RatingMixinSettings(**settings_data)
+        proxy = RatingMixinProxy(settings_no_surcharges)
+
+        request = Serializable(
+            RateRequest(**{**rate_request_data, "services": ["carrier_standard"]})
+        )
+        response_data = proxy.get_rates(request)
+        rates = parse_rate_response(response_data, settings_no_surcharges)
+
+        # Should return rate without any surcharges
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedRateResponseStandardService,
+        )
+
+    def test_rate_with_multiple_services_different_surcharges(self):
+        """Test that different services can have different surcharge configurations."""
+        settings_multiple = RatingMixinSettings(**settings_multiple_services_surcharges)
+        proxy = RatingMixinProxy(settings_multiple)
+
+        request = Serializable(RateRequest(**rate_request_data))
+        response_data = proxy.get_rates(request)
+        rates = parse_rate_response(response_data, settings_multiple)
+
+        self.assertListEqual(
+            DP.to_dict(rates),
+            ParsedRateResponseMultipleServicesSurcharges,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -729,6 +803,220 @@ ParsedRateResponseWeightOnly = [
                 {"amount": 18.0, "currency": "USD", "name": "Base Charge"}
             ],
         }
+    ],
+    [],
+]
+
+
+# =============================================================================
+# SURCHARGE TEST DATA
+# =============================================================================
+
+# Settings with fixed surcharges
+settings_with_fixed_surcharges = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Standard with Fixed Surcharges",
+            "service_code": "carrier_fixed_surcharge",
+            "currency": "USD",
+            "max_weight": 5.0,
+            "weight_unit": "LB",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 10.00}],
+            "surcharges": [
+                {"name": "Fuel Surcharge", "amount": 2.50, "surcharge_type": "fixed"},
+                {"name": "Handling Fee", "amount": 1.50, "surcharge_type": "fixed"},
+            ],
+        },
+    ],
+}
+
+# Expected: base $10 + fuel $2.50 + handling $1.50 = $14.00
+ParsedRateResponseFixedSurcharges = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {
+                "service_name": "Standard with Fixed Surcharges",
+                "shipping_charges": 10.0,
+                "shipping_currency": "USD",
+            },
+            "service": "carrier_fixed_surcharge",
+            "total_charge": 14.0,
+            "extra_charges": [
+                {"amount": 10.0, "currency": "USD", "name": "Base Charge"},
+                {"amount": 2.5, "currency": "USD", "name": "Fuel Surcharge"},
+                {"amount": 1.5, "currency": "USD", "name": "Handling Fee"},
+            ],
+        }
+    ],
+    [],
+]
+
+
+# Settings with percentage surcharges
+settings_with_percentage_surcharges = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Standard with Percentage Surcharges",
+            "service_code": "carrier_pct_surcharge",
+            "currency": "USD",
+            "max_weight": 5.0,
+            "weight_unit": "LB",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 20.00}],
+            "surcharges": [
+                {"name": "Fuel Surcharge", "amount": 15, "surcharge_type": "percentage"},
+            ],
+        },
+    ],
+}
+
+# Expected: base $20 + fuel 15% ($3) = $23.00
+ParsedRateResponsePercentageSurcharges = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {
+                "service_name": "Standard with Percentage Surcharges",
+                "shipping_charges": 20.0,
+                "shipping_currency": "USD",
+            },
+            "service": "carrier_pct_surcharge",
+            "total_charge": 23.0,
+            "extra_charges": [
+                {"amount": 20.0, "currency": "USD", "name": "Base Charge"},
+                {"amount": 3.0, "currency": "USD", "name": "Fuel Surcharge"},
+            ],
+        }
+    ],
+    [],
+]
+
+
+# Settings with mixed surcharges
+settings_with_mixed_surcharges = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Standard with Mixed Surcharges",
+            "service_code": "carrier_mixed_surcharge",
+            "currency": "USD",
+            "max_weight": 5.0,
+            "weight_unit": "LB",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 100.00}],
+            "surcharges": [
+                {"name": "Fuel Surcharge", "amount": 10, "surcharge_type": "percentage"},
+                {"name": "Residential Fee", "amount": 3.50, "surcharge_type": "fixed"},
+                {"name": "Peak Season", "amount": 5, "surcharge_type": "percentage"},
+            ],
+        },
+    ],
+}
+
+# Expected: base $100 + fuel 10% ($10) + residential $3.50 + peak 5% ($5) = $118.50
+ParsedRateResponseMixedSurcharges = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {
+                "service_name": "Standard with Mixed Surcharges",
+                "shipping_charges": 100.0,
+                "shipping_currency": "USD",
+            },
+            "service": "carrier_mixed_surcharge",
+            "total_charge": 118.5,
+            "extra_charges": [
+                {"amount": 100.0, "currency": "USD", "name": "Base Charge"},
+                {"amount": 10.0, "currency": "USD", "name": "Fuel Surcharge"},
+                {"amount": 3.5, "currency": "USD", "name": "Residential Fee"},
+                {"amount": 5.0, "currency": "USD", "name": "Peak Season"},
+            ],
+        }
+    ],
+    [],
+]
+
+
+# Settings with multiple services having different surcharges
+settings_multiple_services_surcharges = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Economy",
+            "service_code": "carrier_economy",
+            "currency": "USD",
+            "max_weight": 5.0,
+            "weight_unit": "LB",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 8.00}],
+            "surcharges": [
+                {"name": "Fuel Surcharge", "amount": 1.00, "surcharge_type": "fixed"},
+            ],
+        },
+        {
+            "service_name": "Express",
+            "service_code": "carrier_express",
+            "currency": "USD",
+            "max_weight": 5.0,
+            "weight_unit": "LB",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 15.00}],
+            "surcharges": [
+                {"name": "Fuel Surcharge", "amount": 12.5, "surcharge_type": "percentage"},
+                {"name": "Priority Handling", "amount": 2.00, "surcharge_type": "fixed"},
+            ],
+        },
+    ],
+}
+
+# Expected:
+# - Economy: $8 + fuel $1 = $9
+# - Express: $15 + fuel 12.5% ($1.88) + handling $2 = $18.88
+ParsedRateResponseMultipleServicesSurcharges = [
+    [
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {
+                "service_name": "Economy",
+                "shipping_charges": 8.0,
+                "shipping_currency": "USD",
+            },
+            "service": "carrier_economy",
+            "total_charge": 9.0,
+            "extra_charges": [
+                {"amount": 8.0, "currency": "USD", "name": "Base Charge"},
+                {"amount": 1.0, "currency": "USD", "name": "Fuel Surcharge"},
+            ],
+        },
+        {
+            "carrier_id": "universal",
+            "currency": "USD",
+            "meta": {
+                "service_name": "Express",
+                "shipping_charges": 15.0,
+                "shipping_currency": "USD",
+            },
+            "service": "carrier_express",
+            "total_charge": 18.88,
+            "extra_charges": [
+                {"amount": 15.0, "currency": "USD", "name": "Base Charge"},
+                {"amount": 1.88, "currency": "USD", "name": "Fuel Surcharge"},
+                {"amount": 2.0, "currency": "USD", "name": "Priority Handling"},
+            ],
+        },
     ],
     [],
 ]

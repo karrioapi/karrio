@@ -9579,11 +9579,11 @@ components:
           default: {}
           description: "<details>\n        <summary>The options available for the
             shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
+            \           \"insurance\": 100.00,\n            \"insured_by\": \"carrier\",\n
+            \           \"cash_on_delivery\": 30.00,\n            \"dangerous_good\":
+            true,\n            \"declared_value\": 150.00,\n            \"sms_notification\":
+            true,\n            \"email_notification\": true,\n            \"email_notification_to\":
+            \"shipper@mail.com\",\n            \"hold_at_location\": true,\n            \"paperless_trade\":
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
@@ -10225,22 +10225,24 @@ components:
           default: {}
           description: "<details>\n        <summary>The options available for the
             shipment.</summary>\n\n        {\n            \"currency\": \"USD\",\n
-            \           \"insurance\": 100.00,\n            \"cash_on_delivery\":
-            30.00,\n            \"dangerous_good\": true,\n            \"declared_value\":
-            150.00,\n            \"sms_notification\": true,\n            \"email_notification\":
-            true,\n            \"email_notification_to\": \"shipper@mail.com\",\n
-            \           \"hold_at_location\": true,\n            \"paperless_trade\":
-            true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
-            \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
+            \           \"insurance\": 100.00,\n            \"insured_by\": \"carrier\",\n
+            \           \"cash_on_delivery\": 30.00,\n            \"dangerous_good\":
+            true,\n            \"declared_value\": 150.00,\n            \"sms_notification\":
+            true,\n            \"email_notification\": true,\n            \"email_notification_to\":
+            \"shipper@mail.com\",\n            \"hold_at_location\": true,\n            \"locker_id\":
+            \"123456789\",\n            \"paperless_trade\": true,\n            \"preferred_service\":
+            \"fedex_express_saver\",\n            \"shipment_date\": \"2020-01-01\",
+            \ # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+            true,\n            \"saturday_delivery\": true,\n            \"shipping_charges\":
+            10.00,\n            \"is_return\": true,\n            \"doc_files\": [\n
+            \               {\n                    \"doc_type\": \"commercial_invoice\",\n
+            \                   \"doc_file\": \"base64 encoded file\",\n                    \"doc_name\":
+            \"commercial_invoice.pdf\",\n                    \"doc_format\": \"pdf\",\n
+            \               }\n            ],\n            \"doc_references\": [\n
+            \               {\n                    \"doc_id\": \"123456789\",\n                    \"doc_type\":
+            \"commercial_invoice\",\n                }\n            ],\n        }\n
+            \       </details>\n        "
         reference:
           type: string
           nullable: true
@@ -10279,14 +10281,15 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
-            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
-            \           \"doc_references\": [\n                {\n                    \"doc_id\":
-            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
-            \               }\n            ],\n        }\n        </details>\n        "
+            true,\n            \"saturday_delivery\": true,\n            \"shipping_charges\":
+            10.00,\n            \"is_return\": true,\n            \"doc_files\": [\n
+            \               {\n                    \"doc_type\": \"commercial_invoice\",\n
+            \                   \"doc_file\": \"base64 encoded file\",\n                    \"doc_name\":
+            \"commercial_invoice.pdf\",\n                    \"doc_format\": \"pdf\",\n
+            \               }\n            ],\n            \"doc_references\": [\n
+            \               {\n                    \"doc_id\": \"123456789\",\n                    \"doc_type\":
+            \"commercial_invoice\",\n                }\n            ],\n        }\n
+            \       </details>\n        "
         reference:
           type: string
           nullable: true
@@ -10305,6 +10308,10 @@ components:
         format:
           type: string
           description: The document format (e.g., 'PDF', 'ZPL')
+        print_format:
+          type: string
+          nullable: true
+          description: The document print format (e.g., 'A4', '6x4', '8.5x11')
         url:
           type: string
           nullable: true
@@ -11745,11 +11752,11 @@ components:
           type: string
         account_number:
           type: string
+          nullable: true
         account_country_code:
           type: string
           nullable: true
       required:
-      - account_number
       - password
       - username
     nationex:
@@ -12194,7 +12201,7 @@ tags:
     | landmark | Landmark Global |
     | laposte | La Poste |
     | locate2u | Locate2u |
-    | mydhl | MyDHL |
+    | mydhl | MyDHL Express |
     | nationex | Nationex |
     | purolator | Purolator |
     | roadie | Roadie |
@@ -13524,17 +13531,31 @@ tags:
     | ------------ | ------------ |
     | locate2u_local_delivery | Locate2u Local Delivery |
 
-    ### MyDHL
+    ### MyDHL Express
     | Code         | Service Name |
     | ------------ | ------------ |
-    | dhl_express_worldwide | U |
-    | dhl_express_12_00 | T |
-    | dhl_express_10_30 | K |
-    | dhl_express_09_00 | Y |
-    | dhl_express_envelope | D |
-    | dhl_economy_select | W |
-    | dhl_break_bulk_express | B |
-    | dhl_medical_express | M |
+    | mydhl_express_worldwide | P |
+    | mydhl_express_12_00 | T |
+    | mydhl_express_9_00 | Y |
+    | mydhl_express_10_30 | K |
+    | mydhl_express_easy | 8 |
+    | mydhl_medical_express | Q |
+    | mydhl_jetline | J |
+    | mydhl_sprintline | R |
+    | mydhl_globalmail | G |
+    | mydhl_globalmail_business | M |
+    | mydhl_express_domestic | N |
+    | mydhl_express_domestic_12_00 | 1 |
+    | mydhl_express_domestic_9_00 | I |
+    | mydhl_same_day | S |
+    | mydhl_economy_select | W |
+    | mydhl_europack | H |
+    | mydhl_breakbulk_express | E |
+    | mydhl_express_freight | F |
+    | mydhl_express_worldwide_doc | D |
+    | mydhl_express_envelope | X |
+    | mydhl_express_worldwide_b2c | 7 |
+    | mydhl_express_easy_b2c | 6 |
 
     ### Purolator
     | Code         | Service Name |
@@ -13997,13 +14018,6 @@ tags:
     | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
     | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
     | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
-
-    ### MyDHL
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | mydhl_box_2 | 25 x 15 x 30 cm |
-    | mydhl_box_5 | 30 x 20 x 35 cm |
-    | mydhl_box_10 | 35 x 25 x 40 cm |
 
     ### Purolator
     | Code         | Dimensions   |

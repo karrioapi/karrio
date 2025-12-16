@@ -16,6 +16,7 @@ import karrio.core.units as units
 import karrio.core.plugins as plugins
 import karrio.core.metadata as metadata
 from karrio.core.utils.logger import logger
+from karrio.core.utils.transformer import transform_to_shared_zones_format
 
 # Configure logger with a higher default level to reduce noise
 ENABLE_ALL_PLUGINS_BY_DEFAULT = bool(
@@ -24,14 +25,18 @@ ENABLE_ALL_PLUGINS_BY_DEFAULT = bool(
 
 # Global references
 PROVIDERS: typing.Dict[str, metadata.PluginMetadata] = {}  # Shipping carriers only
-LSP_PLUGINS: typing.Dict[str, metadata.PluginMetadata] = {}  # Logistics Service Providers
+LSP_PLUGINS: typing.Dict[str, metadata.PluginMetadata] = (
+    {}
+)  # Logistics Service Providers
 MAPPERS: typing.Dict[str, typing.Any] = {}
 HOOKS: typing.Dict[str, typing.Any] = {}
 SCHEMAS: typing.Dict[str, typing.Any] = {}
 FAILED_IMPORTS: typing.Dict[str, typing.Any] = {}
 PLUGIN_METADATA: typing.Dict[str, metadata.PluginMetadata] = {}
 REFERENCES: typing.Dict[str, typing.Any] = {}
-SYSTEM_CONFIGS: typing.Dict[str, typing.Tuple[typing.Any, str, type]] = {}  # Plugin system configs
+SYSTEM_CONFIGS: typing.Dict[str, typing.Tuple[typing.Any, str, type]] = (
+    {}
+)  # Plugin system configs
 
 
 def import_extensions() -> None:
@@ -70,7 +75,9 @@ def import_extensions() -> None:
     # STEP 1: Load from entrypoints (highest priority - most explicit)
     # =========================================================================
     entrypoint_plugins = plugins.discover_entrypoint_plugins()
-    entrypoint_metadata, entrypoint_failed = plugins.collect_plugin_metadata(entrypoint_plugins)
+    entrypoint_metadata, entrypoint_failed = plugins.collect_plugin_metadata(
+        entrypoint_plugins
+    )
     PLUGIN_METADATA.update(entrypoint_metadata)
 
     # Only record failures for plugins not already loaded
@@ -84,21 +91,26 @@ def import_extensions() -> None:
     # =========================================================================
     try:
         import karrio.plugins as karrio_plugins_module
+
         for _, name, ispkg in pkgutil.iter_modules(karrio_plugins_module.__path__):
-            if name.startswith('_'):
+            if name.startswith("_"):
                 continue
             # Skip if already loaded from entrypoints
             if name in PLUGIN_METADATA:
                 continue
             try:
                 module = __import__(f"karrio.plugins.{name}", fromlist=[name])
-                metadata_obj = getattr(module, 'METADATA', None)
+                metadata_obj = getattr(module, "METADATA", None)
                 if metadata_obj and isinstance(metadata_obj, metadata.PluginMetadata):
                     PLUGIN_METADATA[name] = metadata_obj
             except (AttributeError, ImportError) as e:
                 # Only log error if not already loaded
                 if name not in PLUGIN_METADATA:
-                    logger.error("Failed to import plugin from karrio.plugins", plugin_name=name, error=str(e))
+                    logger.error(
+                        "Failed to import plugin from karrio.plugins",
+                        plugin_name=name,
+                        error=str(e),
+                    )
     except ImportError:
         pass  # karrio.plugins module may not exist
 
@@ -107,21 +119,26 @@ def import_extensions() -> None:
     # =========================================================================
     try:
         import karrio.mappers as karrio_mappers_module
+
         for _, name, ispkg in pkgutil.iter_modules(karrio_mappers_module.__path__):
-            if name.startswith('_'):
+            if name.startswith("_"):
                 continue
             # Skip if already loaded from higher priority sources
             if name in PLUGIN_METADATA:
                 continue
             try:
                 module = __import__(f"karrio.mappers.{name}", fromlist=[name])
-                metadata_obj = getattr(module, 'METADATA', None)
+                metadata_obj = getattr(module, "METADATA", None)
                 if metadata_obj and isinstance(metadata_obj, metadata.PluginMetadata):
                     PLUGIN_METADATA[name] = metadata_obj
             except (AttributeError, ImportError) as e:
                 # Only log error if not already loaded
                 if name not in PLUGIN_METADATA:
-                    logger.error("Failed to import mapper from karrio.mappers", mapper_name=name, error=str(e))
+                    logger.error(
+                        "Failed to import mapper from karrio.mappers",
+                        mapper_name=name,
+                        error=str(e),
+                    )
     except ImportError:
         pass  # karrio.mappers module may not exist
 
@@ -153,7 +170,10 @@ def import_extensions() -> None:
     # =========================================================================
     for plugin_name, metadata_obj in PLUGIN_METADATA.items():
         if not isinstance(metadata_obj, metadata.PluginMetadata):
-            logger.error("Invalid metadata type, expected PluginMetadata", plugin_name=plugin_name)
+            logger.error(
+                "Invalid metadata type, expected PluginMetadata",
+                plugin_name=plugin_name,
+            )
             continue
 
         # Process the plugin based on its service_type
@@ -192,7 +212,7 @@ def _register_carrier(metadata_obj: metadata.PluginMetadata, carrier_name: str) 
         logger.error("Carrier metadata missing ID", carrier_name=carrier_name)
         return
 
-    if not hasattr(metadata_obj, 'Mapper') or not metadata_obj.Mapper:
+    if not hasattr(metadata_obj, "Mapper") or not metadata_obj.Mapper:
         logger.error("Carrier has no Mapper defined", carrier_id=carrier_id)
         return
 
@@ -203,11 +223,11 @@ def _register_carrier(metadata_obj: metadata.PluginMetadata, carrier_name: str) 
     MAPPERS[carrier_id] = metadata_obj.Mapper
 
     # Register hooks if available
-    if hasattr(metadata_obj, 'Hooks') and metadata_obj.Hooks:
+    if hasattr(metadata_obj, "Hooks") and metadata_obj.Hooks:
         HOOKS[carrier_id] = metadata_obj.Hooks
 
     # Register schemas if available
-    if hasattr(metadata_obj, 'Settings') and metadata_obj.Settings:
+    if hasattr(metadata_obj, "Settings") and metadata_obj.Settings:
         SCHEMAS[carrier_id] = metadata_obj.Settings
 
 
@@ -227,7 +247,7 @@ def _register_lsp(metadata_obj: metadata.PluginMetadata, plugin_name: str) -> No
         logger.error("LSP plugin metadata missing ID", plugin_name=plugin_name)
         return
 
-    if not hasattr(metadata_obj, 'Mapper') or not metadata_obj.Mapper:
+    if not hasattr(metadata_obj, "Mapper") or not metadata_obj.Mapper:
         logger.error("LSP plugin has no Mapper defined", plugin_id=plugin_id)
         return
 
@@ -238,11 +258,11 @@ def _register_lsp(metadata_obj: metadata.PluginMetadata, plugin_name: str) -> No
     MAPPERS[plugin_id] = metadata_obj.Mapper
 
     # Register hooks if available
-    if hasattr(metadata_obj, 'Hooks') and metadata_obj.Hooks:
+    if hasattr(metadata_obj, "Hooks") and metadata_obj.Hooks:
         HOOKS[plugin_id] = metadata_obj.Hooks
 
     # Register schemas if available
-    if hasattr(metadata_obj, 'Settings') and metadata_obj.Settings:
+    if hasattr(metadata_obj, "Settings") and metadata_obj.Settings:
         SCHEMAS[plugin_id] = metadata_obj.Settings
 
 
@@ -362,8 +382,7 @@ def collect_providers_data() -> typing.Dict[str, metadata.PluginMetadata]:
         import_extensions()
 
     return {
-        carrier_name: metadata_obj
-        for carrier_name, metadata_obj in PROVIDERS.items()
+        carrier_name: metadata_obj for carrier_name, metadata_obj in PROVIDERS.items()
     }
 
 
@@ -399,8 +418,7 @@ def detect_capabilities(
     """
     all_methods = proxy_methods + (hooks_methods or [])
     capabilities = [
-        units.CarrierCapabilities.map_capability(prop)
-        for prop in all_methods
+        units.CarrierCapabilities.map_capability(prop) for prop in all_methods
     ]
     # Filter out None values from unmapped methods
     return list(set(cap for cap in capabilities if cap is not None))
@@ -441,7 +459,7 @@ def detect_hooks_methods(hooks_type: object) -> typing.List[str]:
 
 
 # Fields to exclude when collecting connection fields
-COMMON_FIELDS = ["id", "carrier_id", "test_mode", "carrier_name"]
+COMMON_FIELDS = ["id", "carrier_id", "test_mode", "carrier_name", "services"]
 
 
 def collect_references(
@@ -469,14 +487,22 @@ def collect_references(
 
     # Determine enabled carriers
     enabled_carrier_ids = set(
-        carrier_id for carrier_id in PROVIDERS.keys()
-        if registry.get(f"{carrier_id.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"))
+        carrier_id
+        for carrier_id in PROVIDERS.keys()
+        if registry.get(
+            f"{carrier_id.upper()}_ENABLED",
+            registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"),
+        )
     )
 
     # Determine enabled LSP plugins
     enabled_lsp_ids = set(
-        plugin_id for plugin_id in LSP_PLUGINS.keys()
-        if registry.get(f"{plugin_id.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"))
+        plugin_id
+        for plugin_id in LSP_PLUGINS.keys()
+        if registry.get(
+            f"{plugin_id.upper()}_ENABLED",
+            registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"),
+        )
     )
 
     services = {
@@ -485,7 +511,23 @@ def collect_references(
         if key in enabled_carrier_ids and mapper.get("services") is not None
     }
     options = {
-        key: {c.name: dict(code=c.value.code, type=parse_type(c.value.type), default=c.value.default) for c in list(mapper.get("options", []))}
+        key: {
+            c.name: lib.to_dict(
+                dict(
+                    code=c.value.code,
+                    type=parse_type(c.value.type),
+                    default=c.value.default,
+                    help=c.value.help,
+                    enum=lib.identity(
+                        None
+                        if "enum" not in str(c.value.type).lower()
+                        else [e.name for e in c.value.type]
+                    ),
+                    fields=extract_nested_fields(c.value.type),
+                )
+            )
+            for c in list(mapper.get("options", []))
+        }
         for key, mapper in PROVIDERS.items()
         if key in enabled_carrier_ids and mapper.get("options") is not None
     }
@@ -513,28 +555,35 @@ def collect_references(
 
     # Build connection_fields with proper attrs class checking
     connection_fields = {
-        key: {
-            _.name: lib.to_dict(
-                dict(
-                    name=_.name,
-                    type=parse_type(_.type),
-                    required="NOTHING" in str(_.default),
-                    default=lib.identity(
-                        lib.to_dict(lib.to_json(_.default))
-                        if ("NOTHING" not in str(_.default))
-                        else None
-                    ),
-                    enum=lib.identity(
-                        None
-                        if "enum" not in str(_.type).lower()
-                        else [c.name for c in _.type]
-                    ),
+        key: (
+            {
+                _.name: lib.to_dict(
+                    dict(
+                        name=_.name,
+                        type=parse_type(_.type),
+                        required="NOTHING" in str(_.default),
+                        default=lib.identity(
+                            lib.to_dict(lib.to_json(_.default))
+                            if ("NOTHING" not in str(_.default))
+                            else None
+                        ),
+                        enum=lib.identity(
+                            None
+                            if "enum" not in str(_.type).lower()
+                            else [c.name for c in _.type]
+                        ),
+                    )
                 )
-            )
-            for _ in getattr(mapper.get("Settings"), "__attrs_attrs__", [])
-            if (_.name not in COMMON_FIELDS)
-            or (mapper.get("has_intl_accounts") and _.name == "account_country_code")
-        } if mapper.get("Settings") is not None and hasattr(mapper.get("Settings"), "__attrs_attrs__") else {}
+                for _ in getattr(mapper.get("Settings"), "__attrs_attrs__", [])
+                if (_.name not in COMMON_FIELDS)
+                or (
+                    mapper.get("has_intl_accounts") and _.name == "account_country_code"
+                )
+            }
+            if mapper.get("Settings") is not None
+            and hasattr(mapper.get("Settings"), "__attrs_attrs__")
+            else {}
+        )
         for key, mapper in PROVIDERS.items()
         if key in enabled_carrier_ids
     }
@@ -554,7 +603,9 @@ def collect_references(
         },
         "incoterms": {c.name: c.value for c in list(units.Incoterm)},  # type: ignore
         "carriers": {
-            carrier_id: metadata_obj.label for carrier_id, metadata_obj in PROVIDERS.items() if carrier_id in enabled_carrier_ids
+            carrier_id: metadata_obj.label
+            for carrier_id, metadata_obj in PROVIDERS.items()
+            if carrier_id in enabled_carrier_ids
         },
         "carrier_hubs": {
             carrier_id: metadata_obj.label
@@ -571,16 +622,32 @@ def collect_references(
         "connection_configs": connection_configs,
         "carrier_capabilities": {
             key: detect_capabilities(
-                detect_proxy_methods(mapper.get("Proxy")) if mapper.get("Proxy") else [],
-                detect_hooks_methods(mapper.get("Hooks")) if mapper.get("Hooks") else [],
+                (
+                    detect_proxy_methods(mapper.get("Proxy"))
+                    if mapper.get("Proxy")
+                    else []
+                ),
+                (
+                    detect_hooks_methods(mapper.get("Hooks"))
+                    if mapper.get("Hooks")
+                    else []
+                ),
             )
             for key, mapper in PROVIDERS.items()
             if key in enabled_carrier_ids and mapper.get("Proxy") is not None
         },
         "lsp_capabilities": {
             key: detect_capabilities(
-                detect_proxy_methods(mapper.get("Proxy")) if mapper.get("Proxy") else [],
-                detect_hooks_methods(mapper.get("Hooks")) if mapper.get("Hooks") else [],
+                (
+                    detect_proxy_methods(mapper.get("Proxy"))
+                    if mapper.get("Proxy")
+                    else []
+                ),
+                (
+                    detect_hooks_methods(mapper.get("Hooks"))
+                    if mapper.get("Hooks")
+                    else []
+                ),
             )
             for key, mapper in LSP_PLUGINS.items()
             if key in enabled_lsp_ids and mapper.get("Proxy") is not None
@@ -591,7 +658,10 @@ def collect_references(
             if key in enabled_carrier_ids and mapper.get("packaging_types") is not None
         },
         "package_presets": {
-            key: {c.name: lib.to_dict(c.value) for c in list(mapper.get("package_presets", []))}
+            key: {
+                c.name: lib.to_dict(c.value)
+                for c in list(mapper.get("package_presets", []))
+            }
             for key, mapper in PROVIDERS.items()
             if key in enabled_carrier_ids and mapper.get("package_presets") is not None
         },
@@ -603,13 +673,17 @@ def collect_references(
             name: {key: key.upper().replace("_", " ") for key, _ in value.items()}
             for name, value in services.items()
         },
-        "service_levels": {
-            key: lib.to_dict(mapper.get("service_levels"))
+        # ratesheets - carrier default rate sheet configurations
+        # Contains shared zones, services with zone_ids, and service_rates mappings
+        "ratesheets": {
+            key: transform_to_shared_zones_format(mapper.get("service_levels") or [])
             for key, mapper in PROVIDERS.items()
             if key in enabled_carrier_ids and mapper.get("service_levels") is not None
         },
         "integration_status": {
-            carrier_id: metadata_obj.status for carrier_id, metadata_obj in PROVIDERS.items() if carrier_id in enabled_carrier_ids
+            carrier_id: metadata_obj.status
+            for carrier_id, metadata_obj in PROVIDERS.items()
+            if carrier_id in enabled_carrier_ids
         },
         "lsp_plugin_details": {
             plugin_id: {
@@ -694,8 +768,69 @@ def parse_type(_type: type) -> str:
         return "list"
     if _name is not None and ("dict" in _name or "Dict" in _name):
         return "object"
+    # Check if it's a nested object type (attrs class)
+    if hasattr(_type, "__attrs_attrs__"):
+        return "object"
 
     return str(_type)
+
+
+def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    """
+    Extract nested field definitions from an attrs class type.
+
+    Args:
+        _type: A type that may be an attrs class with __attrs_attrs__
+
+    Returns:
+        Dictionary of field definitions or None if not an attrs class
+    """
+    if not hasattr(_type, "__attrs_attrs__"):
+        return None
+
+    fields = {}
+    for attr_field in _type.__attrs_attrs__:
+        field_type = attr_field.type
+        # Handle Optional types
+        field_type_str = str(field_type)
+        actual_type = field_type
+
+        # Extract the inner type from Optional[X] or typing.Optional[X]
+        if "Optional" in field_type_str:
+            # Try to get the actual type from __args__
+            if hasattr(field_type, "__args__") and field_type.__args__:
+                actual_type = field_type.__args__[0]
+
+        # Check for nested object types recursively
+        nested_fields = None
+        if hasattr(actual_type, "__attrs_attrs__"):
+            nested_fields = extract_nested_fields(actual_type)
+
+        # Extract enum values if the type is an enum
+        enum_values = None
+        if "enum" in str(actual_type).lower():
+            try:
+                enum_values = [e.name for e in actual_type]
+            except Exception:
+                pass
+
+        field_def = lib.to_dict(
+            dict(
+                name=attr_field.name,
+                type=parse_type(actual_type),
+                required="NOTHING" in str(attr_field.default),
+                default=lib.identity(
+                    lib.to_dict(lib.to_json(attr_field.default))
+                    if "NOTHING" not in str(attr_field.default)
+                    else None
+                ),
+                enum=enum_values,
+                fields=nested_fields,
+            )
+        )
+        fields[attr_field.name] = field_def
+
+    return fields if fields else None
 
 
 def get_carrier_details(
@@ -725,7 +860,10 @@ def get_carrier_details(
         website=getattr(metadata_obj, "website", ""),
         description=getattr(metadata_obj, "description", ""),
         documentation=getattr(metadata_obj, "documentation", ""),
-        is_enabled=registry.get(f"{plugin_code.upper()}_ENABLED", registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT")),
+        is_enabled=registry.get(
+            f"{plugin_code.upper()}_ENABLED",
+            registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"),
+        ),
         capabilities=references["carrier_capabilities"].get(plugin_code, {}),
         connection_fields=references["connection_fields"].get(plugin_code, {}),
         config_fields=references["connection_configs"].get(plugin_code, {}),
@@ -774,6 +912,7 @@ class Registry(dict):
         if not self._config_loaded and self.registry is None:
             try:
                 from constance import config
+
                 # Don't access config.ENABLE_ALL_PLUGINS_BY_DEFAULT here
                 # Just store the config object
                 self.registry = config

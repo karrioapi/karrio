@@ -9,7 +9,18 @@ import {
   UPDATE_RATE_SHEET_ZONE_CELL,
   BATCH_UPDATE_RATE_SHEET_CELLS,
   DELETE_RATE_SHEET_SERVICE,
-  DELETE_RATE_SHEET
+  DELETE_RATE_SHEET,
+  ADD_SHARED_ZONE,
+  UPDATE_SHARED_ZONE,
+  DELETE_SHARED_ZONE,
+  ADD_SHARED_SURCHARGE,
+  UPDATE_SHARED_SURCHARGE,
+  DELETE_SHARED_SURCHARGE,
+  BATCH_UPDATE_SURCHARGES,
+  UPDATE_SERVICE_RATE,
+  BATCH_UPDATE_SERVICE_RATES,
+  UPDATE_SERVICE_ZONE_IDS,
+  UPDATE_SERVICE_SURCHARGE_IDS,
 } from "@karrio/types/graphql/admin/queries";
 import {
   GetRateSheets,
@@ -125,10 +136,101 @@ export function useRateSheetMutation() {
     onSuccess: invalidateCache,
   });
 
-
   const deleteRateSheet = useAuthenticatedMutation({
     mutationFn: (input: DeleteRateSheetVariables["input"]) => karrio.admin.request<DeleteRateSheet>(
       gqlstr(DELETE_RATE_SHEET),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  // Shared Zone Mutations
+  const addSharedZone = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(ADD_SHARED_ZONE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const updateSharedZone = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(UPDATE_SHARED_ZONE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const deleteSharedZone = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(DELETE_SHARED_ZONE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  // Shared Surcharge Mutations
+  const addSharedSurcharge = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(ADD_SHARED_SURCHARGE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const updateSharedSurcharge = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(UPDATE_SHARED_SURCHARGE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const deleteSharedSurcharge = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(DELETE_SHARED_SURCHARGE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const batchUpdateSurcharges = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(BATCH_UPDATE_SURCHARGES),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  // Service Rate Mutations
+  const updateServiceRate = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(UPDATE_SERVICE_RATE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const batchUpdateServiceRates = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(BATCH_UPDATE_SERVICE_RATES),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  // Service Zone/Surcharge Assignment Mutations
+  const updateServiceZoneIds = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(UPDATE_SERVICE_ZONE_IDS),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const updateServiceSurchargeIds = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(UPDATE_SERVICE_SURCHARGE_IDS),
       { variables: { input } }
     ),
     onSuccess: invalidateCache,
@@ -141,5 +243,20 @@ export function useRateSheetMutation() {
     batchUpdateRateSheetCells,
     deleteRateSheetService,
     deleteRateSheet,
+    // Shared Zone mutations
+    addSharedZone,
+    updateSharedZone,
+    deleteSharedZone,
+    // Shared Surcharge mutations
+    addSharedSurcharge,
+    updateSharedSurcharge,
+    deleteSharedSurcharge,
+    batchUpdateSurcharges,
+    // Service Rate mutations
+    updateServiceRate,
+    batchUpdateServiceRates,
+    // Service assignment mutations
+    updateServiceZoneIds,
+    updateServiceSurchargeIds,
   };
 }

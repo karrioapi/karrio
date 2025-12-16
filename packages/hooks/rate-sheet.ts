@@ -1,4 +1,33 @@
-import { RateSheetFilter, GetRateSheets, GET_RATE_SHEETS, GetRateSheet, GET_RATE_SHEET, CreateRateSheet, UpdateRateSheet, UpdateRateSheetMutationInput, CreateRateSheetMutationInput, DELETE_RATE_SHEET, UPDATE_RATE_SHEET, CREATE_RATE_SHEET, UPDATE_RATE_SHEET_ZONE_CELL, BATCH_UPDATE_RATE_SHEET_CELLS, DELETE_RATE_SHEET_SERVICE, DeleteMutationInput, GetRateSheets_rate_sheets_edges_node } from "@karrio/types/graphql";
+import {
+  RateSheetFilter,
+  GetRateSheets,
+  GET_RATE_SHEETS,
+  GetRateSheet,
+  GET_RATE_SHEET,
+  CreateRateSheet,
+  UpdateRateSheet,
+  UpdateRateSheetMutationInput,
+  CreateRateSheetMutationInput,
+  DELETE_RATE_SHEET,
+  UPDATE_RATE_SHEET,
+  CREATE_RATE_SHEET,
+  UPDATE_RATE_SHEET_ZONE_CELL,
+  BATCH_UPDATE_RATE_SHEET_CELLS,
+  DELETE_RATE_SHEET_SERVICE,
+  ADD_SHARED_ZONE,
+  UPDATE_SHARED_ZONE,
+  DELETE_SHARED_ZONE,
+  ADD_SHARED_SURCHARGE,
+  UPDATE_SHARED_SURCHARGE,
+  DELETE_SHARED_SURCHARGE,
+  BATCH_UPDATE_SURCHARGES,
+  UPDATE_SERVICE_RATE,
+  BATCH_UPDATE_SERVICE_RATES,
+  UPDATE_SERVICE_ZONE_IDS,
+  UPDATE_SERVICE_SURCHARGE_IDS,
+  DeleteMutationInput,
+  GetRateSheets_rate_sheets_edges_node,
+} from "@karrio/types/graphql";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useAuthenticatedQuery, useKarrio } from "./karrio";
@@ -129,11 +158,107 @@ export function useRateSheetMutation() {
     { onSuccess: invalidateCache, onError }
   );
 
+  // Shared Zone Mutations
+  const addSharedZone = useMutation(
+    (data: { rate_sheet_id: string; label?: string; country_codes?: string[]; postal_codes?: string[]; cities?: string[]; transit_days?: number; transit_time?: number }) => karrio.graphql.request<any>(
+      gqlstr(ADD_SHARED_ZONE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const updateSharedZone = useMutation(
+    (data: { rate_sheet_id: string; zone_id: string; label?: string; country_codes?: string[]; postal_codes?: string[]; cities?: string[]; transit_days?: number; transit_time?: number }) => karrio.graphql.request<any>(
+      gqlstr(UPDATE_SHARED_ZONE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const deleteSharedZone = useMutation(
+    (data: { rate_sheet_id: string; zone_id: string }) => karrio.graphql.request<any>(
+      gqlstr(DELETE_SHARED_ZONE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  // Shared Surcharge Mutations
+  const addSharedSurcharge = useMutation(
+    (data: { rate_sheet_id: string; name: string; amount: number; surcharge_type?: string; cost?: number; active?: boolean }) => karrio.graphql.request<any>(
+      gqlstr(ADD_SHARED_SURCHARGE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const updateSharedSurcharge = useMutation(
+    (data: { rate_sheet_id: string; surcharge_id: string; name?: string; amount?: number; surcharge_type?: string; cost?: number; active?: boolean }) => karrio.graphql.request<any>(
+      gqlstr(UPDATE_SHARED_SURCHARGE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const deleteSharedSurcharge = useMutation(
+    (data: { rate_sheet_id: string; surcharge_id: string }) => karrio.graphql.request<any>(
+      gqlstr(DELETE_SHARED_SURCHARGE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const batchUpdateSurcharges = useMutation(
+    (data: { rate_sheet_id: string; surcharges: any[] }) => karrio.graphql.request<any>(
+      gqlstr(BATCH_UPDATE_SURCHARGES), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  // Service Rate Mutations
+  const updateServiceRate = useMutation(
+    (data: { rate_sheet_id: string; service_id: string; zone_id: string; rate?: number; cost?: number; min_weight?: number; max_weight?: number }) => karrio.graphql.request<any>(
+      gqlstr(UPDATE_SERVICE_RATE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const batchUpdateServiceRates = useMutation(
+    (data: { rate_sheet_id: string; service_rates: any[] }) => karrio.graphql.request<any>(
+      gqlstr(BATCH_UPDATE_SERVICE_RATES), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  // Service Zone/Surcharge Assignment Mutations
+  const updateServiceZoneIds = useMutation(
+    (data: { rate_sheet_id: string; service_id: string; zone_ids: string[] }) => karrio.graphql.request<any>(
+      gqlstr(UPDATE_SERVICE_ZONE_IDS), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const updateServiceSurchargeIds = useMutation(
+    (data: { rate_sheet_id: string; service_id: string; surcharge_ids: string[] }) => karrio.graphql.request<any>(
+      gqlstr(UPDATE_SERVICE_SURCHARGE_IDS), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
   return {
     createRateSheet,
     updateRateSheet,
     deleteRateSheet,
     deleteRateSheetService,
+    // Shared Zone mutations
+    addSharedZone,
+    updateSharedZone,
+    deleteSharedZone,
+    // Shared Surcharge mutations
+    addSharedSurcharge,
+    updateSharedSurcharge,
+    deleteSharedSurcharge,
+    batchUpdateSurcharges,
+    // Service Rate mutations
+    updateServiceRate,
+    batchUpdateServiceRates,
+    // Service assignment mutations
+    updateServiceZoneIds,
+    updateServiceSurchargeIds,
   };
 }
 

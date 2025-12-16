@@ -105,17 +105,26 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                                 {visibleBadges.map((v) => (
                                     <Badge key={v} variant="secondary" className="px-2 py-0.5 flex items-center gap-1">
                                         {valueToLabel(v)}
-                                        <button
-                                            type="button"
+                                        <span
+                                            role="button"
+                                            tabIndex={0}
                                             aria-label={`Remove ${valueToLabel(v)}`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
+                                                e.preventDefault();
                                                 onValueChange(value.filter((x) => x !== v));
                                             }}
-                                            className="hover:text-foreground text-muted-foreground"
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" || e.key === " ") {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                    onValueChange(value.filter((x) => x !== v));
+                                                }
+                                            }}
+                                            className="hover:text-foreground text-muted-foreground cursor-pointer"
                                         >
                                             <X className="h-3 w-3" />
-                                        </button>
+                                        </span>
                                     </Badge>
                                 ))}
                                 {extraCount > 0 && (
@@ -126,10 +135,19 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                     </div>
                     <div className="flex items-center gap-2">
                         {value.length > 0 && (
-                            <X
-                                className="h-4 w-4 text-muted-foreground hover:text-foreground"
+                            <span
+                                role="button"
+                                tabIndex={0}
                                 onClick={clear}
-                            />
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        clear(e as any);
+                                    }
+                                }}
+                                className="cursor-pointer"
+                            >
+                                <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </span>
                         )}
                         <ChevronDown className="h-4 w-4 opacity-60" />
                     </div>

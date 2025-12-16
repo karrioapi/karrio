@@ -1,421 +1,426 @@
 "use client";
 
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRateSheetCellMutation } from "@karrio/hooks/rate-sheet";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
-import { PlusIcon, TrashIcon } from "@radix-ui/react-icons";
-import { debounce } from "@karrio/lib";
-import React from "react";
+import { PlusIcon, Cross2Icon, MinusIcon } from "@radix-ui/react-icons";
 import { cn } from "@karrio/ui/lib/utils";
+import type {
+  ServiceLevelWithZones,
+  EmbeddedZone,
+} from "@karrio/ui/components/rate-sheet-editor";
+
+// Generate a unique ID for new zones
+const generateId = (prefix: string = "zone") =>
+  `${prefix}-${crypto.randomUUID()}`;
 
 interface RateSheetTableProps {
-  rateSheetId: string;
-  services: any[];
-  editable?: boolean;
-  onAddZone?: (serviceId: string) => void;
-  onRemoveZone?: (serviceId: string, zoneIndex: number) => void;
-  onAddService?: () => void;
-  onRemoveService?: (serviceId: string) => void;
-  onCellChange?: (serviceId: string, zoneId: string, field: string, value: any) => void;
-  onBatchUpdate?: (data: { id: string; updates: any[] }) => Promise<any>;
+  services: ServiceLevelWithZones[];
+  // Shared zones from parent state (zones that may not be linked to any service)
+  sharedZonesFromParent?: EmbeddedZone[];
+  onUpdateService: (index: number, service: ServiceLevelWithZones) => void;
+  onAddZone: () => void;
+  onRemoveZone: (zoneLabel: string) => void;
+  // Optional: Callback to link/unlink zone to service
+  onToggleZoneService?: (
+    serviceIndex: number,
+    zoneId: string,
+    linked: boolean,
+    zoneLabel: string
+  ) => void;
 }
 
-const EditableCell = React.memo(({
-  value,
-  onSave,
-  disabled,
-  isPending,
-  cellKey,
-  type = 'number',
-  displayAsNumber = true
-}: {
-  value: number | string;
-  onSave: (value: string) => void;
-  disabled: boolean;
-  isPending: boolean;
-  cellKey: string;
-  type?: 'number' | 'text';
-  displayAsNumber?: boolean;
-}) => {
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [editValue, setEditValue] = React.useState(value?.toString() || '');
-  const [localValue, setLocalValue] = React.useState(value?.toString() || '');
-  const inputRef = React.useRef<HTMLInputElement>(null);
+// Cell for editing rate values
+const EditableCell = React.memo(
+  ({
+    value,
+    onSave,
+    disabled = false,
+    type = "number",
+    isLinked = true,
+    onLink,
+    onUnlink,
+  }: {
+    value: number | null | undefined;
+    onSave: (value: string) => void;
+    disabled?: boolean;
+    type?: "number" | "text";
+    isLinked?: boolean;
+    onLink?: () => void;
+    onUnlink?: () => void;
+  }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editValue, setEditValue] = useState(value?.toString() || "");
+    const [localValue, setLocalValue] = useState(value?.toString() || "");
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  // Update local value when prop value changes (from successful save)
-  React.useEffect(() => {
-    setLocalValue(value?.toString() || '');
-    if (!isEditing) {
-      setEditValue(value?.toString() || '');
-    }
-  }, [value, isEditing]);
+    // Update local value when prop value changes
+    useEffect(() => {
+      setLocalValue(value?.toString() || "");
+      if (!isEditing) {
+        setEditValue(value?.toString() || "");
+      }
+    }, [value, isEditing]);
 
-  React.useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
+    useEffect(() => {
+      if (isEditing && inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
+      }
+    }, [isEditing]);
 
-  const handleSave = () => {
-    if (editValue !== localValue) {
-      onSave(editValue);
-      setLocalValue(editValue); // Optimistically update local value
-    }
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSave();
-    } else if (e.key === 'Escape') {
-      setEditValue(localValue);
+    const handleSave = () => {
+      if (editValue !== localValue) {
+        onSave(editValue);
+        setLocalValue(editValue); // Optimistically update
+      }
       setIsEditing(false);
-    }
-  };
+    };
 
-  if (isEditing) {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleSave();
+      } else if (e.key === "Escape") {
+        setEditValue(localValue);
+        setIsEditing(false);
+      }
+    };
+
+    // Handle unlinked cell - show plus button to link
+    if (!isLinked && onLink) {
+      return (
+        <div
+          className="w-full h-full px-2 py-2 text-center flex items-center justify-center group"
+          title="Click to add rate for this zone"
+        >
+          <button
+            onClick={onLink}
+            className="p-1 text-muted-foreground/50 hover:text-primary hover:bg-accent rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <PlusIcon className="h-4 w-4" />
+          </button>
+        </div>
+      );
+    }
+
+    if (isEditing) {
+      return (
+        <input
+          ref={inputRef}
+          type={type}
+          step={type === "number" ? "any" : undefined}
+          min="0"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={handleSave}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+          className="w-full h-full p-0 border-none outline-none ring-0 text-center text-sm text-foreground relative z-20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary bg-background"
+        />
+      );
+    }
+
     return (
-      <Input
-        ref={inputRef}
-        type={type}
-        step={type === 'number' ? "0.01" : undefined}
-        value={editValue}
-        onChange={(e) => setEditValue(e.target.value)}
-        onBlur={handleSave}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-        className="h-8 text-center w-full border-blue-500 bg-blue-50"
-      />
+      <div
+        className={cn(
+          "w-full h-full px-2 py-2 text-center text-sm text-muted-foreground cursor-pointer hover:bg-accent flex items-center justify-center group relative",
+          disabled && "cursor-not-allowed opacity-50"
+        )}
+        onClick={() => !disabled && setIsEditing(true)}
+        title={disabled ? "Read only" : "Click to edit"}
+      >
+        <span>
+          {value != null && !isNaN(Number(localValue))
+            ? Number(localValue).toFixed(2)
+            : "-"}
+        </span>
+        {/* Unlink button - shows on hover */}
+        {onUnlink && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onUnlink();
+            }}
+            className="absolute right-1 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Remove zone from this service"
+          >
+            <MinusIcon className="h-3 w-3" />
+          </button>
+        )}
+      </div>
     );
   }
+);
 
-  return (
-    <div
-      className={cn(
-        "h-8 w-full flex items-center justify-center cursor-pointer rounded px-2",
-        "hover:bg-gray-100 transition-colors",
-        isPending && "bg-yellow-50 border border-yellow-200",
-        disabled && "cursor-not-allowed opacity-50"
-      )}
-      onClick={() => !disabled && setIsEditing(true)}
-      title={disabled ? "Read only" : "Click to edit"}
-    >
-      <span className="text-sm font-mono">
-        {localValue !== '' && localValue !== undefined
-          ? (displayAsNumber && !isNaN(Number(localValue)) ? Number(localValue).toFixed(2) : localValue)
-          : ''}
-      </span>
-    </div>
-  );
-});
+EditableCell.displayName = "EditableCell";
 
-EditableCell.displayName = 'EditableCell';
-
-const ServiceRow = React.memo(({
-  service,
-  maxZones,
-  editable,
-  onCellChange,
+export function RateSheetTable({
+  services,
+  sharedZonesFromParent = [],
+  onUpdateService,
   onAddZone,
   onRemoveZone,
-  onRemoveService,
-  pendingUpdates,
-  style
-}: {
-  service: any;
-  maxZones: number;
-  editable: boolean;
-  onCellChange: (serviceId: string, zoneId: string, field: string, value: any) => void;
-  onAddZone?: (serviceId: string) => void;
-  onRemoveZone?: (serviceId: string, zoneIndex: number) => void;
-  onRemoveService?: (serviceId: string) => void;
-  pendingUpdates: any[];
-  style?: React.CSSProperties;
-}) => {
-  return (
-    <div
-      className="flex border-b hover:bg-gray-50/50 min-h-[48px]"
-      style={style}
-    >
-      {/* Service Column (sticky left) */}
-      <div
-        className="sticky left-0 z-20 bg-white border-r flex items-center"
-        style={{
-          minWidth: '200px',
-          maxWidth: '200px',
-          position: 'sticky',
-          left: 0
-        }}
-      >
-        <div className="flex items-center justify-between p-2 w-full">
-          <div className="min-w-0 flex-1">
-            <div className="font-semibold text-sm truncate">{service.service_name}</div>
-            <div className="text-xs text-muted-foreground truncate">{service.service_code}</div>
-          </div>
-          {editable && onRemoveService && (
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onRemoveService(service.id)}
-              title="Remove service"
-              className="h-6 w-6 p-0 ml-2"
-            >
-              <TrashIcon className="h-3 w-3" />
-            </Button>
-          )}
-        </div>
-      </div>
+  onToggleZoneService,
+}: RateSheetTableProps) {
+  const parentRef = useRef<HTMLDivElement>(null);
 
-      {/* Zone Cells (rate only) */}
-      {Array.from({ length: maxZones }, (_, zoneIndex) => {
-        const zone = service.zones?.[zoneIndex];
-        const zoneId = zone?.id || zoneIndex.toString();
-        const baseKey = `${service.id}-${zoneId}`;
-        const isFieldPending = (field: string) => pendingUpdates.some(u => (
-          u.service_id === service.id && u.zone_id === zoneId && u.field === field
-        ));
-
-        return (
-          <div
-            key={zoneIndex}
-            className="border-r flex items-stretch p-1 group"
-            style={{
-              minWidth: '120px',
-              maxWidth: '120px',
-              position: 'relative'
-            }}
-          >
-            {zone ? (
-              <>
-                <div className="flex-1 flex items-center justify-center">
-                  <EditableCell
-                    value={zone.rate}
-                    onSave={(value) => onCellChange(service.id, zoneId, 'rate', value)}
-                    disabled={!editable}
-                    isPending={isFieldPending('rate')}
-                    cellKey={`${baseKey}-rate`}
-                  />
-                </div>
-                {editable && onRemoveZone && service.zones.length > 1 && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => onRemoveZone(service.id, zoneIndex)}
-                    title={`Remove zone ${zoneIndex + 1}`}
-                    className="h-5 w-5 p-0 absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <TrashIcon className="h-3 w-3" />
-                  </Button>
-                )}
-              </>
-            ) : (
-              <div className="h-8 bg-gray-100 rounded w-full" />
-            )}
-          </div>
-        );
-      })}
-
-      {/* Action Column */}
-      {editable && (
-        <div
-          className="flex items-center justify-center p-1"
-          style={{
-            minWidth: '100px',
-            maxWidth: '100px'
-          }}
-        >
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onAddZone?.(service.id)}
-            title="Add zone to this service"
-            className="h-6 w-6 p-0"
-          >
-            <PlusIcon className="h-3 w-3" />
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-});
-
-ServiceRow.displayName = 'ServiceRow';
-
-export const RateSheetTable = ({
-  rateSheetId,
-  services = [],
-  editable = true,
-  onAddZone,
-  onRemoveZone,
-  onAddService,
-  onRemoveService,
-  onCellChange: parentOnCellChange,
-  onBatchUpdate
-}: RateSheetTableProps) => {
-  const { batchUpdateRateSheetCells } = useRateSheetCellMutation();
-  const [pendingUpdates, setPendingUpdates] = React.useState<any[]>([]);
-
-  const parentRef = React.useRef<HTMLDivElement>(null);
-
-  // Virtual row virtualizer for services
+  // Virtualizer for rows (services)
   const rowVirtualizer = useVirtualizer({
     count: services.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 48,
+    estimateSize: () => 48, // Extra room for service code line
     overscan: 5,
   });
 
-  // Debounced batch update
-  const debouncedUpdate = React.useMemo(
-    () => debounce((updates: any[]) => {
-      if (updates.length === 0 || rateSheetId === 'new') return;
+  // Build shared zones list combining zones from services first, then unlinked zones from parent (deduped by label)
+  // Maintains insertion order - new zones appear at the end (rightmost column)
+  const sharedZones = useMemo((): EmbeddedZone[] => {
+    const zoneMap = new Map<string, EmbeddedZone>();
+    const orderedZones: EmbeddedZone[] = [];
 
-      const exec = onBatchUpdate
-        ? onBatchUpdate({ id: rateSheetId, updates })
-        : batchUpdateRateSheetCells.mutateAsync({ id: rateSheetId, updates });
-
-      Promise.resolve(exec).then(() => {
-        setPendingUpdates([]);
-      }).catch(() => {
-        // Keep pending updates on error for retry
+    // Add linked zones from services first (maintains their order)
+    services
+      .flatMap((s) => s.zones || [])
+      .forEach((zone) => {
+        const key = zone.label || zone.id;
+        if (!zoneMap.has(key)) {
+          zoneMap.set(key, zone);
+          orderedZones.push(zone);
+        }
       });
-    }, 800),
-    [rateSheetId, batchUpdateRateSheetCells, onBatchUpdate]
-  );
 
-  const handleCellChange = React.useCallback((serviceId: string, zoneId: string, field: string, value: any) => {
-    const numericFields = ['rate', 'min_weight', 'max_weight', 'transit_days', 'transit_time'];
-    const processedValue = numericFields.includes(field)
-      ? (value === '' || value === undefined || value === null ? null : (isNaN(parseFloat(value)) ? null : parseFloat(value)))
-      : (value === '' ? null : value);
+    // Then add unlinked zones from parent (these are newly added zones - appear at end)
+    sharedZonesFromParent.forEach((zone) => {
+      const key = zone.label || zone.id;
+      if (!zoneMap.has(key)) {
+        zoneMap.set(key, zone);
+        orderedZones.push(zone);
+      }
+    });
 
-    // Notify parent component if callback provided
-    if (parentOnCellChange) {
-      parentOnCellChange(serviceId, zoneId, field, processedValue);
+    return orderedZones;
+  }, [services, sharedZonesFromParent]);
+
+  // Build a map to quickly find a service's zone by zone label
+  const getServiceZone = (
+    service: ServiceLevelWithZones,
+    zoneLabel: string
+  ): EmbeddedZone | null => {
+    return (service.zones || []).find((z) => z.label === zoneLabel) || null;
+  };
+
+  // Handle cell save - update rate for specific zone in a service
+  const handleCellSave = (
+    serviceIndex: number,
+    zoneLabel: string,
+    newValue: string
+  ) => {
+    const service = services[serviceIndex];
+    const newRate = parseFloat(newValue);
+
+    if (!isNaN(newRate) && service.zones) {
+      const updatedZones = service.zones.map((zone) => {
+        if (zone.label === zoneLabel) {
+          return { ...zone, rate: newRate };
+        }
+        return zone;
+      });
+      onUpdateService(serviceIndex, {
+        ...service,
+        zones: updatedZones,
+      });
     }
+  };
 
-    const updates = [
-      ...pendingUpdates.filter(u => !(u.service_id === serviceId && u.zone_id === zoneId && u.field === field)),
-      { service_id: serviceId, zone_id: zoneId, field, value: processedValue }
-    ];
-    setPendingUpdates(updates);
-    debouncedUpdate(updates);
-  }, [pendingUpdates, debouncedUpdate, parentOnCellChange]);
+  // Handle linking a zone to a service (add zone with default rate)
+  const handleLinkZone = (serviceIndex: number, zone: EmbeddedZone) => {
+    const service = services[serviceIndex];
+    // Add the zone to this service's zones array
+    const newZone: EmbeddedZone = {
+      ...zone,
+      id: generateId("zone"),
+      rate: 0, // Default rate
+    };
+    const updatedZones = [...(service.zones || []), newZone];
+    onUpdateService(serviceIndex, {
+      ...service,
+      zones: updatedZones,
+    });
+    // Also call the callback if provided
+    if (onToggleZoneService) {
+      onToggleZoneService(serviceIndex, zone.id, true, zone.label);
+    }
+  };
 
-  // Calculate max zones across all services
-  const maxZones = React.useMemo(() =>
-    services.length > 0 ? Math.max(...services.map(s => (s.zones || []).length), 0) : 0,
-    [services]
-  );
+  // Handle unlinking a zone from a service (remove zone)
+  const handleUnlinkZone = (serviceIndex: number, zoneLabel: string) => {
+    const service = services[serviceIndex];
+    const zoneToRemove = getServiceZone(service, zoneLabel);
+    if (!zoneToRemove) return;
+
+    const updatedZones = (service.zones || []).filter(
+      (z) => z.label !== zoneLabel
+    );
+    onUpdateService(serviceIndex, {
+      ...service,
+      zones: updatedZones,
+    });
+    // Also call the callback if provided
+    if (onToggleZoneService) {
+      onToggleZoneService(serviceIndex, zoneToRemove.id, false, zoneLabel);
+    }
+  };
+
+  // Calculate total table width for proper scrolling
+  const tableWidth = 192 + sharedZones.length * 128; // service col + zones
 
   if (services.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-500 bg-gray-50 rounded border-2 border-dashed">
+      <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/50 rounded border-2 border-dashed">
         <div className="text-center p-8">
           <p className="text-lg mb-2">No services configured</p>
-          <p className="text-sm mb-4">Go to the Services tab to add services first</p>
+          <p className="text-sm mb-4">
+            Go to the Services tab to add services first
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
-      {/* Scroll container (both X and Y). Header is inside so it scrolls on X */}
-      <div
-        ref={parentRef}
-        className="flex-1 overflow-auto bg-white"
-        style={{ height: '100%', contain: 'strict' }}
-      >
-        <div style={{ minWidth: `${200 + (maxZones * 120) + (editable ? 100 : 0)}px` }}>
-          {/* Header row: sticky only on Y; Service header sticky on X */}
-          <div
-            className="border-b bg-white shadow-sm flex sticky top-0 z-30"
-            style={{ height: '48px' }}
-          >
-            <div className="sticky left-0 z-40 bg-white border-r font-semibold text-center flex items-center justify-center" style={{ minWidth: '200px', maxWidth: '200px', position: 'sticky', left: 0 }}>
-              <div className="w-full px-2 text-xs uppercase text-gray-500 text-center"><span className="text-sm text-black">Service</span></div>
+    <div className="h-full flex flex-col">
+      {/* Table container with border */}
+      <div className="flex-1 flex flex-col border border-border rounded-md bg-background overflow-hidden">
+        {/* Single scroll container for both header and body */}
+        <div ref={parentRef} className="flex-1 overflow-auto">
+          {/* Table with minimum width to enable horizontal scroll */}
+          <div style={{ minWidth: `${tableWidth}px` }}>
+            {/* Table Header - Sticky top */}
+            <div className="flex border-b border-border bg-muted font-medium text-sm text-foreground sticky top-0 z-30 shadow-sm">
+              {/* Service Name Column Header - Sticky left + top (corner cell) */}
+              <div className="w-48 p-3 border-r border-border flex-shrink-0 bg-muted sticky left-0 z-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                Service Level
+              </div>
+
+              {/* Zone Headers - shows all shared zones */}
+              {sharedZones.map((zone, index) => (
+                <div
+                  key={zone.label || zone.id || index}
+                  className="w-32 p-3 border-r border-border flex-shrink-0 flex items-center justify-between group relative bg-muted"
+                >
+                  <span
+                    className="truncate"
+                    title={zone.label || `Zone ${index + 1}`}
+                  >
+                    {zone.label || `Zone ${index + 1}`}
+                  </span>
+                  <button
+                    onClick={() => onRemoveZone(zone.label || zone.id)}
+                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-accent rounded text-muted-foreground hover:text-destructive transition-opacity"
+                    title="Remove Zone"
+                  >
+                    <Cross2Icon className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
             </div>
-            {Array.from({ length: maxZones }, (_, i) => (
-              <div
-                key={i}
-                className="text-center bg-white font-semibold border-r flex items-center px-2"
-                style={{ minWidth: '120px', maxWidth: '120px' }}
-              >
-                {(() => {
-                  const label = services.find(s => (s.zones || [])[i])?.zones?.[i]?.label;
-                  return (
-                    <div className="w-full text-left">{label || `Zone ${i + 1}`}</div>
-                  );
-                })()}
-              </div>
-            ))}
-            {editable && (
-              <div className="text-center bg-white flex items-center justify-center" style={{ minWidth: '100px', maxWidth: '100px' }}>
-                <Button size="sm" variant="ghost" onClick={() => services.forEach(s => onAddZone?.(s.id))} title="Add zone to all services" className="h-6 w-6 p-0">
-                  <PlusIcon className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
 
-          {/* Rows area */}
-          <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const service = services[virtualRow.index];
+            {/* Virtualized Body */}
+            <div
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                position: "relative",
+              }}
+            >
+              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const service = services[virtualRow.index];
+                return (
+                  <div
+                    key={virtualRow.key}
+                    className="absolute top-0 left-0 w-full flex border-b border-border hover:bg-muted/50 transition-colors"
+                    style={{
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                  >
+                    {/* Service Name Column - Sticky left with shadow */}
+                    <div className="w-48 px-3 py-2 border-r border-border flex-shrink-0 bg-background sticky left-0 z-20 flex flex-col justify-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                      <div className="flex flex-col leading-tight gap-px">
+                        <span
+                          className="text-sm font-semibold text-foreground truncate"
+                          title={service.service_name || ""}
+                        >
+                          {service.service_name || "Unnamed service"}
+                        </span>
+                        {service.service_code && (
+                          <span
+                            className="text-xs text-muted-foreground truncate"
+                            title={service.service_code}
+                          >
+                            {service.service_code}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-              return (
-                <ServiceRow
-                  key={service.id}
-                  service={service}
-                  maxZones={maxZones}
-                  editable={editable}
-                  onCellChange={handleCellChange}
-                  onAddZone={onAddZone}
-                  onRemoveZone={onRemoveZone}
-                  onRemoveService={onRemoveService}
-                  pendingUpdates={pendingUpdates}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                />
-              );
-            })}
+                    {/* Rate Cells - one for each shared zone */}
+                    {sharedZones.map((sharedZone) => {
+                      const serviceZone = getServiceZone(
+                        service,
+                        sharedZone.label
+                      );
+                      const isLinked = serviceZone !== null;
+
+                      return (
+                        <div
+                          key={sharedZone.label}
+                          className="w-32 border-r border-border flex-shrink-0 relative"
+                        >
+                          <EditableCell
+                            value={serviceZone?.rate ?? null}
+                            onSave={(val) =>
+                              handleCellSave(
+                                virtualRow.index,
+                                sharedZone.label,
+                                val
+                              )
+                            }
+                            isLinked={isLinked}
+                            onLink={() =>
+                              handleLinkZone(virtualRow.index, sharedZone)
+                            }
+                            onUnlink={
+                              isLinked
+                                ? () =>
+                                    handleUnlinkZone(
+                                      virtualRow.index,
+                                      sharedZone.label
+                                    )
+                                : undefined
+                            }
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Add Zone Button */}
-      {editable && services.length > 0 && (
-        <div className="mt-4 flex justify-center bg-white p-2">
-          <Button
-            onClick={() => services.forEach(s => onAddZone?.(s.id))}
-            variant="outline"
-          >
-            <PlusIcon className="mr-2 h-4 w-4" />
+      {/* Add Zone Button at Bottom */}
+      {services.length > 0 && (
+        <div className="mt-4 flex justify-center p-2">
+          <Button onClick={onAddZone} variant="outline">
+            <PlusIcon className="h-4 w-4 mr-2" />
             Add Zone
           </Button>
         </div>
       )}
-
-      {/* Status indicator */}
-      {pendingUpdates.length > 0 && (
-        <div className="fixed bottom-4 right-4 bg-white border rounded-lg p-3 shadow-lg z-50">
-          <div className="flex items-center space-x-2">
-            <div className="h-2 w-2 bg-yellow-500 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-600">
-              Saving {pendingUpdates.length} changes...
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
-};
+}
+
+export default RateSheetTable;

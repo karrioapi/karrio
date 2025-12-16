@@ -333,18 +333,6 @@ class Mutation:
         return mutations.UpdateRateSheetMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_rate_sheet_zone_cell(
-        self, info: Info, input: inputs.UpdateRateSheetZoneCellMutationInput
-    ) -> mutations.UpdateRateSheetZoneCellMutation:
-        return mutations.UpdateRateSheetZoneCellMutation.mutate(info, **input.to_dict())
-
-    @strawberry.mutation
-    def batch_update_rate_sheet_cells(
-        self, info: Info, input: inputs.BatchUpdateRateSheetCellsMutationInput
-    ) -> mutations.BatchUpdateRateSheetCellsMutation:
-        return mutations.BatchUpdateRateSheetCellsMutation.mutate(info, **input.to_dict())
-
-    @strawberry.mutation
     def delete_rate_sheet_service(
         self, info: Info, input: inputs.DeleteRateSheetServiceMutationInput
     ) -> mutations.DeleteRateSheetServiceMutation:
@@ -357,6 +345,88 @@ class Mutation:
         return mutations.DeleteMutation.mutate(
             info, model=providers.RateSheet, **input.to_dict()
         )
+
+    # ─────────────────────────────────────────────────────────────────
+    # SHARED ZONE MUTATIONS (Rate Sheet Level)
+    # ─────────────────────────────────────────────────────────────────
+
+    @strawberry.mutation
+    def add_shared_zone(
+        self, info: Info, input: inputs.AddSharedZoneMutationInput
+    ) -> mutations.AddSharedZoneMutation:
+        return mutations.AddSharedZoneMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_shared_zone(
+        self, info: Info, input: inputs.UpdateSharedZoneMutationInput
+    ) -> mutations.UpdateSharedZoneMutation:
+        return mutations.UpdateSharedZoneMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_shared_zone(
+        self, info: Info, input: inputs.DeleteSharedZoneMutationInput
+    ) -> mutations.DeleteSharedZoneMutation:
+        return mutations.DeleteSharedZoneMutation.mutate(info, **input.to_dict())
+
+    # ─────────────────────────────────────────────────────────────────
+    # SHARED SURCHARGE MUTATIONS (Rate Sheet Level)
+    # ─────────────────────────────────────────────────────────────────
+
+    @strawberry.mutation
+    def add_shared_surcharge(
+        self, info: Info, input: inputs.AddSharedSurchargeMutationInput
+    ) -> mutations.AddSharedSurchargeMutation:
+        return mutations.AddSharedSurchargeMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_shared_surcharge(
+        self, info: Info, input: inputs.UpdateSharedSurchargeMutationInput
+    ) -> mutations.UpdateSharedSurchargeMutation:
+        return mutations.UpdateSharedSurchargeMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_shared_surcharge(
+        self, info: Info, input: inputs.DeleteSharedSurchargeMutationInput
+    ) -> mutations.DeleteSharedSurchargeMutation:
+        return mutations.DeleteSharedSurchargeMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def batch_update_surcharges(
+        self, info: Info, input: inputs.BatchUpdateSurchargesMutationInput
+    ) -> mutations.BatchUpdateSurchargesMutation:
+        return mutations.BatchUpdateSurchargesMutation.mutate(info, **input.to_dict())
+
+    # ─────────────────────────────────────────────────────────────────
+    # SERVICE RATE MUTATIONS (Service-Zone Rate Mapping)
+    # ─────────────────────────────────────────────────────────────────
+
+    @strawberry.mutation
+    def update_service_rate(
+        self, info: Info, input: inputs.UpdateServiceRateMutationInput
+    ) -> mutations.UpdateServiceRateMutation:
+        return mutations.UpdateServiceRateMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def batch_update_service_rates(
+        self, info: Info, input: inputs.BatchUpdateServiceRatesMutationInput
+    ) -> mutations.BatchUpdateServiceRatesMutation:
+        return mutations.BatchUpdateServiceRatesMutation.mutate(info, **input.to_dict())
+
+    # ─────────────────────────────────────────────────────────────────
+    # SERVICE ZONE/SURCHARGE ASSIGNMENT MUTATIONS
+    # ─────────────────────────────────────────────────────────────────
+
+    @strawberry.mutation
+    def update_service_zone_ids(
+        self, info: Info, input: inputs.UpdateServiceZoneIdsMutationInput
+    ) -> mutations.UpdateServiceZoneIdsMutation:
+        return mutations.UpdateServiceZoneIdsMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_service_surcharge_ids(
+        self, info: Info, input: inputs.UpdateServiceSurchargeIdsMutationInput
+    ) -> mutations.UpdateServiceSurchargeIdsMutation:
+        return mutations.UpdateServiceSurchargeIdsMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def create_metafield(
@@ -377,9 +447,3 @@ class Mutation:
         return mutations.DeleteMutation.mutate(
             info, model=core.Metafield, **input.to_dict()
         )
-
-    @strawberry.mutation
-    def update_service_zone(
-        self, info: Info, input: inputs.UpdateServiceZoneMutationInput
-    ) -> mutations.UpdateServiceZoneMutation:
-        return mutations.UpdateServiceZoneMutation.mutate(info, **input.to_dict())

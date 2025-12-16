@@ -454,6 +454,22 @@ def get_available_rates(
                 else selected_zone.transit_days
             )
 
+            # Calculate base rate and apply surcharges
+            base_rate = selected_zone.rate
+            total_charge, surcharge_charges = apply_surcharges(
+                base_rate, service.surcharges or [], service.currency
+            )
+
+            # Build extra charges list
+            extra_charges = [
+                models.ChargeDetails(
+                    name="Base Charge",
+                    amount=base_rate,
+                    currency=service.currency,
+                )
+            ]
+            extra_charges.extend(surcharge_charges)
+
             rates.append(
                 models.RateDetails(
                     carrier_name=carrier_name,
@@ -461,19 +477,13 @@ def get_available_rates(
                     service=service.service_code,
                     currency=service.currency,
                     transit_days=transit_days,
-                    total_charge=selected_zone.rate,
-                    extra_charges=[
-                        models.ChargeDetails(
-                            name="Base Charge",
-                            amount=selected_zone.rate,
-                            currency=service.currency,
-                        )
-                    ],
+                    total_charge=total_charge,
+                    extra_charges=extra_charges,
                     meta=lib.to_dict(  # type: ignore
                         dict(
                             carrier_service_code=service.carrier_service_code,
                             service_name=service.service_name,
-                            shipping_charges=selected_zone.rate,
+                            shipping_charges=base_rate,
                             shipping_currency=service.currency,
                         )
                     ),
@@ -481,3 +491,44 @@ def get_available_rates(
             )
 
     return rates, errors
+
+
+def apply_surcharges(
+    base_rate: float,
+    surcharges: typing.List[models.Surcharge],
+    currency: str,
+) -> typing.Tuple[float, typing.List[models.ChargeDetails]]:
+    """
+    Apply service-level surcharges to a base rate.
+
+    Args:
+        base_rate: The base shipping rate
+        surcharges: List of Surcharge objects
+        currency: Currency code for the charges
+
+    Returns:
+        Tuple of (total_charge, list of ChargeDetails for surcharges)
+    """
+    total_surcharge = 0.0
+    surcharge_charges: typing.List[models.ChargeDetails] = []
+
+    for surcharge in surcharges:
+        name = surcharge.name or "Surcharge"
+        amount = float(surcharge.amount or 0)
+        surcharge_type = surcharge.surcharge_type or "fixed"
+
+        # Calculate applied amount based on type
+        applied_amount = (
+            (base_rate * amount / 100) if surcharge_type == "percentage" else amount
+        )
+
+        total_surcharge += applied_amount
+        surcharge_charges.append(
+            models.ChargeDetails(
+                name=name,
+                amount=round(applied_amount, 2),
+                currency=currency,
+            )
+        )
+
+    return round(base_rate + total_surcharge, 2), surcharge_charges

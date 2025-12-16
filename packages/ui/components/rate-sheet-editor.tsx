@@ -1,19 +1,19 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@karrio/ui/components/ui/tabs";
-import { ServiceEditorModal } from "@karrio/ui/components/modals/service-editor-modal";
-import { CURRENCY_OPTIONS, DIMENSION_UNITS, WEIGHT_UNITS } from "@karrio/types";
-import { RateSheetTable } from "@karrio/ui/components/rate-sheet-table";
-import { Sheet, SheetContent, SheetTitle } from "@karrio/ui/components/ui/sheet";
-import { Cross2Icon, TrashIcon } from "@radix-ui/react-icons";
-import { useLoader } from "@karrio/ui/core/components/loader";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useToast } from "@karrio/ui/hooks/use-toast";
-import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
-import { MultiSelect } from "@karrio/ui/components/multi-select";
-import { Label } from "@karrio/ui/components/ui/label";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@karrio/ui/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@karrio/ui/components/ui/sheet";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -23,22 +23,107 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
   AlertDialogAction,
-  AlertDialogTrigger,
 } from "@karrio/ui/components/ui/alert-dialog";
-// import { getCarrierServiceDefaults, isGenericCarrier } from "@karrio/lib/carrier-utils";
-import { jsonLanguage } from "@codemirror/lang-json";
-import { isEqual, failsafe } from "@karrio/lib";
-import CodeMirror from "@uiw/react-codemirror";
-import React from "react";
+import { ServiceEditorModal } from "@karrio/ui/components/modals/service-editor-modal";
+import { CURRENCY_OPTIONS, DIMENSION_UNITS, WEIGHT_UNITS } from "@karrio/types";
+import { RateSheetTable } from "@karrio/ui/components/rate-sheet-table";
+import { ZonesTab } from "@karrio/ui/components/zones-tab";
+import { ServicesTab } from "@karrio/ui/components/services-tab";
+import { SurchargesTab } from "@karrio/ui/components/surcharges-tab";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useToast } from "@karrio/ui/hooks/use-toast";
+import { Button } from "@karrio/ui/components/ui/button";
+import { Input } from "@karrio/ui/components/ui/input";
+import { Label } from "@karrio/ui/components/ui/label";
+import { cn } from "@karrio/ui/lib/utils";
+import {
+  PlusIcon,
+  Pencil1Icon,
+  TrashIcon,
+  Cross2Icon,
+  HamburgerMenuIcon,
+} from "@radix-ui/react-icons";
+import { Loader2 } from "lucide-react";
+
+// Generate a unique ID for new entities
+const generateId = (prefix: string = "temp") =>
+  `${prefix}-${crypto.randomUUID()}`;
+
+// Types for the rate sheet editor
+export interface EmbeddedZone {
+  id: string;
+  label: string;
+  rate: number;
+  cost?: number | null;
+  min_weight?: number | null;
+  max_weight?: number | null;
+  transit_days?: number | null;
+  transit_time?: number | null;
+  country_codes?: string[];
+  postal_codes?: string[];
+  cities?: string[];
+}
+
+export interface SharedSurcharge {
+  id: string;
+  name: string;
+  amount: number;
+  surcharge_type?: string;
+  cost?: number | null;
+  active?: boolean;
+}
+
+export interface ServiceLevelWithZones {
+  id: string;
+  object_type?: string;
+  service_name: string;
+  service_code: string;
+  carrier_service_code?: string | null;
+  description?: string | null;
+  active?: boolean;
+  currency?: string;
+  transit_days?: number | null;
+  transit_time?: number | null;
+  max_width?: number | null;
+  max_height?: number | null;
+  max_length?: number | null;
+  dimension_unit?: string | null;
+  max_weight?: number | null;
+  weight_unit?: string | null;
+  domicile?: boolean | null;
+  international?: boolean | null;
+  zones?: EmbeddedZone[];
+  zone_ids?: string[];
+  surcharge_ids?: string[];
+}
+
+export interface RateSheetCarrier {
+  id: string;
+  active?: boolean;
+  carrier_id: string;
+  carrier_name: string;
+  display_name?: string;
+  capabilities?: string[];
+  test_mode?: boolean;
+}
 
 interface RateSheetEditorProps {
   rateSheetId: string;
   onClose: () => void;
-  preloadCarrier?: string; // For creating from carrier connections
-  linkConnectionId?: string; // explicit carrier connection id to link after create
-  isAdmin?: boolean; // Flag to use admin mutations/queries
-  useRateSheet: (args: any) => any; // Pass in the appropriate hook
-  useRateSheetMutation: () => any; // Pass in the appropriate mutation hook
+  preloadCarrier?: string;
+  linkConnectionId?: string;
+  isAdmin?: boolean;
+  useRateSheet: (args: any) => any;
+  useRateSheetMutation: () => any;
+}
+
+interface OriginalState {
+  name: string;
+  zones: Map<string, EmbeddedZone>;
+  surcharges: Map<string, SharedSurcharge>;
+  serviceRates: Map<string, { rate: number; cost?: number | null }>;
+  serviceZoneIds: Map<string, string[]>;
+  serviceSurchargeIds: Map<string, string[]>;
 }
 
 export const RateSheetEditor = ({
@@ -48,1207 +133,1437 @@ export const RateSheetEditor = ({
   linkConnectionId,
   isAdmin = false,
   useRateSheet,
-  useRateSheetMutation
+  useRateSheetMutation,
 }: RateSheetEditorProps) => {
-  const loader = useLoader();
+  const isNew = rateSheetId === "new";
+  const isEditMode = !isNew;
+
+  // Local state
+  const [carrierName, setCarrierName] = useState<string>(preloadCarrier || "");
+  const [name, setName] = useState<string>("");
+  const [services, setServices] = useState<ServiceLevelWithZones[]>([]);
+  const [surcharges, setSurcharges] = useState<SharedSurcharge[]>([]);
+  const [sharedZones, setSharedZones] = useState<EmbeddedZone[]>([]);
+
+  // Original state for change tracking
+  const originalStateRef = useRef<OriginalState | null>(null);
+
+  // Service dialog state
+  const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
+  const [selectedService, setSelectedService] =
+    useState<ServiceLevelWithZones | null>(null);
+
+  // Delete confirmation state
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] =
+    useState<ServiceLevelWithZones | null>(null);
+  const [zoneToDeleteLabel, setZoneToDeleteLabel] = useState<string | null>(
+    null
+  );
+  const [deleteZoneConfirmOpen, setDeleteZoneConfirmOpen] = useState(false);
+
+  // Loading states
+  const [isLoadingDefaults, setIsLoadingDefaults] = useState(false);
+  const [isDeletingService, setIsDeletingService] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState<
+    "rate_sheet" | "zones" | "services" | "surcharges"
+  >("rate_sheet");
+
+  // Mobile sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Text buffer state for smooth typing
+  const [zoneTextBuffers, setZoneTextBuffers] = useState<
+    Record<string, Partial<Record<"cities" | "postal_codes", string>>>
+  >({});
+
+  // Hooks
   const { references, metadata } = useAPIMetadata();
   const { toast } = useToast();
-  const isNew = rateSheetId === 'new';
+  const { query } = useRateSheet({ id: isEditMode ? rateSheetId : undefined });
+  const mutations = useRateSheetMutation();
 
-  // Fetch carrier metadata for optional fallback defaults
-  React.useEffect(() => {
-    if (metadata?.HOST) {
-      fetch(`${metadata.HOST}/v1/carriers`)
-        .then(res => res.json())
-        .then((carriers) => {
-          setCarrierMetadata(carriers);
-        })
-        .catch(console.error);
-    }
-  }, [metadata?.HOST]);
+  const existingRateSheet = query?.data?.rate_sheet;
+  const isRateSheetLoading = query?.isLoading;
 
-  // Fetch existing rate sheets when creating new ones
-  React.useEffect(() => {
-    if (isNew && metadata?.HOST) {
-      // This would ideally be a GraphQL query, but for now we'll use existing data
-      // The existing rate sheets would be fetched via the rate sheets list
-    }
-  }, [isNew, metadata?.HOST]);
-  const { query, setRateSheetId } = useRateSheet({ id: rateSheetId });
-  const { createRateSheet, updateRateSheet, deleteRateSheetService, batchUpdateRateSheetCells } = useRateSheetMutation();
-  const [serviceModalOpen, setServiceModalOpen] = React.useState(false);
-  const [editingService, setEditingService] = React.useState<any>(null);
-  const [localData, setLocalData] = React.useState<any>(null);
-  const [carrierMetadata, setCarrierMetadata] = React.useState<any[]>([]);
-  const [existingRateSheets, setExistingRateSheets] = React.useState<any[]>([]);
-  const [showExistingOptions, setShowExistingOptions] = React.useState(false);
-  const [zoneTextBuffers, setZoneTextBuffers] = React.useState<Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>>>({});
+  // Get list of carriers with ratesheet support
+  const carriers = useMemo(() => {
+    const carriersList = references?.carriers || {};
+    const ratesheets = references?.ratesheets || {};
+    return Object.entries(carriersList)
+      .filter(([id]) => ratesheets[id])
+      .map(([id, name]) => ({
+        id,
+        name: String(name),
+      }));
+  }, [references?.carriers, references?.ratesheets]);
 
-  const countryOptions = React.useMemo(() => {
+  // Get country options
+  const countryOptions = useMemo(() => {
     const countries = references?.countries || {};
-    return Object.entries(countries).map(([code, name]) => ({
-      label: String(name),
-      value: String(code).toUpperCase(),
-    }));
+    return Object.entries(countries)
+      .map(([code, name]) => ({
+        value: code.toUpperCase(),
+        label: String(name),
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
   }, [references?.countries]);
 
-  const rateSheet = query.data?.rate_sheet;
-  const services = rateSheet?.services || [];
-  const connectedCarriers = rateSheet?.carriers || [];
+  const currencyOptions = CURRENCY_OPTIONS;
+  const weightUnitOptions = WEIGHT_UNITS;
+  const dimensionUnitOptions = DIMENSION_UNITS;
 
-  // Define loadCarrierDefaults before useEffect to avoid initialization order issues
-  const loadCarrierDefaults = React.useCallback((carrierName?: string) => {
-    const targetCarrier = carrierName || localData?.carrier_name;
-    if (!targetCarrier) return;
+  const selectedCurrency = services[0]?.currency ?? "USD";
+  const selectedWeightUnit = services[0]?.weight_unit ?? "KG";
+  const selectedDimensionUnit = services[0]?.dimension_unit ?? "CM";
 
-    // Load defaults strictly from api-metadata service_levels
-    const defaultServicesList = references?.service_levels?.[targetCarrier] || [];
+  const connectedCarriers: RateSheetCarrier[] =
+    (existingRateSheet?.carriers as RateSheetCarrier[]) ?? [];
 
-    if (defaultServicesList.length > 0) {
-      const defaultServices = defaultServicesList.map((service: any, index: number) => ({
-        ...service,
-        id: `temp_${Date.now()}_${index}`,
-        zones: (service.zones || [{ label: 'Zone 1', rate: 0 }]).map((zone: any, zoneIndex: number) => ({
-          ...zone,  // Preserve all zone properties (country_codes, min_weight, max_weight, transit_days, etc.)
-          label: zone.label || `Zone ${zoneIndex + 1}`,
-          rate: zone.rate ?? 0
-        }))
-      }));
+  const isInitialLoading = isEditMode && isRateSheetLoading && !existingRateSheet;
 
-      setLocalData((prev: any) => ({
-        ...prev,
-        services: defaultServices
-      }));
-      return;
-    }
+  // Load existing rate sheet data when in edit mode
+  useEffect(() => {
+    if (existingRateSheet && isEditMode) {
+      setCarrierName(existingRateSheet.carrier_name || "");
+      setName(existingRateSheet.name || "");
 
-    console.warn(`No default services found in service_levels for ${targetCarrier}`);
-  }, [references?.service_levels, localData?.carrier_name]);
+      const existingSharedZones = existingRateSheet.zones || [];
+      const serviceRates = existingRateSheet.service_rates || [];
+      const rawServices = existingRateSheet.services || [];
 
-  React.useEffect(() => {
-    if (rateSheet && !localData) {
-      setLocalData({
-        name: rateSheet.name,
-        carrier_name: rateSheet.carrier_name,
-        services: [...(rateSheet.services || [])]
-      });
-      // Seed buffers from loaded data so fields show saved text immediately
-      const buffers = buildZoneTextBuffersFromServices(rateSheet.services || []);
-      setZoneTextBuffers(buffers);
-    } else if (isNew && !localData) {
-      // Initialize with preloaded carrier or defaults for new rate sheets
-      const initialCarrier = preloadCarrier || 'generic';
-      setLocalData({
-        name: '',
-        carrier_name: initialCarrier,
-        services: []
-      });
+      const zoneMap = new Map(existingSharedZones.map((z: any) => [z.id, z]));
+      const rateMap = new Map(
+        serviceRates.map((sr: any) => [`${sr.service_id}:${sr.zone_id}`, sr])
+      );
 
-      // Auto-load defaults if carrier is preloaded
-      if (preloadCarrier) {
-        setTimeout(() => loadCarrierDefaults(preloadCarrier), 100);
-      }
-    }
-  }, [rateSheet, localData, isNew, preloadCarrier, loadCarrierDefaults]);
+      const linkedZoneIds = new Set<string>();
 
-  // Ensure defaults are loaded when launching from a carrier once references are available
-  React.useEffect(() => {
-    if (isNew && preloadCarrier && references?.service_levels?.[preloadCarrier]) {
-      // Only load defaults if none are present yet
-      if (!localData?.services || localData.services.length === 0) {
-        loadCarrierDefaults(preloadCarrier);
-      }
-    }
-  }, [isNew, preloadCarrier, references?.service_levels, loadCarrierDefaults, localData?.services]);
+      const transformedServices = rawServices.map((service: any) => {
+        const zoneIds = service.zone_ids || [];
 
-  // Capture a target carrier to link on create when coming from a connection
-  const [linkCarrierId, setLinkCarrierId] = React.useState<string | null>(null);
-  React.useEffect(() => {
-    if (isNew && preloadCarrier && Array.isArray(carrierMetadata) && carrierMetadata.length > 0) {
-      const carrier = carrierMetadata.find(c => c.carrier_name === preloadCarrier);
-      if (carrier?.id) setLinkCarrierId(carrier.id);
-    }
-  }, [isNew, preloadCarrier, carrierMetadata]);
+        const embeddedZones = zoneIds.map((zoneId: string, index: number) => {
+          const zone = zoneMap.get(zoneId);
+          const rateEntry = rateMap.get(`${service.id}:${zoneId}`);
+          linkedZoneIds.add(zoneId);
 
-  const handleChange = (field: string, value: any) => {
-    setLocalData((prev: any) => ({ ...prev, [field]: value }));
-
-    // Auto-load defaults when carrier is selected for new rate sheets
-    if (field === 'carrier_name' && isNew && value) {
-      loadCarrierDefaults(value);
-    }
-  };
-
-  const checkForExistingRateSheets = (_carrierName: string) => {
-    // This would check for existing rate sheets with same carrier_name
-    // For now, we'll implement the basic structure
-    setShowExistingOptions(false); // Reset for now
-  };
-
-  const handleSave = async () => {
-    if (!localData) return;
-
-    loader.setLoading(true);
-    try {
-      // Merge any buffered zone text into working copy so unsaved typing is included
-      const parseList = (text: string): string[] =>
-        text
-          .split(',')
-          .map((v) => v.trim())
-          .filter((v) => v.length > 0);
-
-      const mergedServices = (localData.services || []).map((service: any) => ({
-        ...service,
-        zones: (service.zones || []).map((zone: any, i: number) => {
-          const buffer = zoneTextBuffers[i] || {};
-          const patch: any = {};
-          // Do not override country_codes from legacy text buffer anymore (MultiSelect manages arrays directly)
-          if (typeof buffer.cities === 'string') patch.cities = parseList(buffer.cities);
-          if (typeof buffer.postal_codes === 'string') patch.postal_codes = parseList(buffer.postal_codes);
-          return { ...zone, ...patch };
-        })
-      }));
-
-      // Clean data for mutation - ensure we have at least basic validation
-      if (!localData.name || !localData.name.trim()) {
-        throw new Error('Rate sheet name is required');
-      }
-
-      if (!localData.carrier_name) {
-        throw new Error('Carrier name is required');
-      }
-
-      if (!localData.services || localData.services.length === 0) {
-        throw new Error('At least one service is required');
-      }
-
-      const cleanedData = {
-        name: localData.name.trim(),
-        // Note: carrier_name is stored locally but not sent in updates
-        services: (mergedServices || []).map((service: any, index: number) => {
-          // Validate required service fields
-          if (!service.service_name || !service.service_name.trim()) {
-            throw new Error(`Service ${index + 1}: service_name is required`);
-          }
-          if (!service.service_code || !service.service_code.trim()) {
-            throw new Error(`Service ${index + 1}: service_code is required`);
-          }
-
-          // Create a new clean service object with required fields for CreateServiceLevelInput
-          const cleanService: any = {
-            service_name: service.service_name.trim(),
-            service_code: service.service_code.trim(),
-            // currency is required for CreateServiceLevelInput
-            currency: service.currency || 'USD'
+          return {
+            id: zoneId,
+            label: zone?.label || `Zone ${index + 1}`,
+            rate: rateEntry?.rate ?? 0,
+            cost: rateEntry?.cost ?? null,
+            min_weight: rateEntry?.min_weight ?? null,
+            max_weight: rateEntry?.max_weight ?? null,
+            transit_days: rateEntry?.transit_days ?? zone?.transit_days ?? null,
+            transit_time: rateEntry?.transit_time ?? zone?.transit_time ?? null,
+            country_codes: zone?.country_codes || [],
+            postal_codes: zone?.postal_codes || [],
+            cities: zone?.cities || [],
           };
+        });
 
-          // Only include id for existing services (for updates, not creates)
-          if (service.id && !service.id.startsWith('temp_')) {
-            cleanService.id = service.id;
-          }
-
-          // Include other service fields if they have values
-          if (service.carrier_service_code) cleanService.carrier_service_code = service.carrier_service_code;
-          if (service.description) cleanService.description = service.description;
-          if (service.active !== undefined) cleanService.active = service.active;
-          if (service.transit_days !== null && service.transit_days !== undefined) cleanService.transit_days = service.transit_days;
-          if (service.transit_time) cleanService.transit_time = service.transit_time;
-          if (service.max_width !== null && service.max_width !== undefined) cleanService.max_width = service.max_width;
-          if (service.max_height !== null && service.max_height !== undefined) cleanService.max_height = service.max_height;
-          if (service.max_length !== null && service.max_length !== undefined) cleanService.max_length = service.max_length;
-          if (service.dimension_unit) cleanService.dimension_unit = service.dimension_unit;
-          if (service.domicile !== undefined) cleanService.domicile = service.domicile;
-          if (service.international !== undefined) cleanService.international = service.international;
-
-          // Clean zones - zones are required for CreateServiceLevelInput
-          cleanService.zones = (service.zones && Array.isArray(service.zones) && service.zones.length > 0)
-            ? service.zones.map((zone: any) => {
-              const cleanZone: any = {
-                // rate is required for ServiceZoneInput
-                rate: Number(zone.rate) || 0
-              };
-
-              // Add optional fields if they have values
-              if (zone.label) cleanZone.label = zone.label;
-              if (zone.min_weight !== null && zone.min_weight !== undefined && zone.min_weight !== '') {
-                cleanZone.min_weight = Number(zone.min_weight);
-              }
-              if (zone.max_weight !== null && zone.max_weight !== undefined && zone.max_weight !== '') {
-                cleanZone.max_weight = Number(zone.max_weight);
-              }
-              if (zone.transit_days !== null && zone.transit_days !== undefined && zone.transit_days !== '') {
-                cleanZone.transit_days = Number(zone.transit_days);
-              }
-              if (zone.transit_time) cleanZone.transit_time = zone.transit_time;
-              if (zone.cities && zone.cities.length > 0) cleanZone.cities = zone.cities;
-              if (zone.postal_codes && zone.postal_codes.length > 0) cleanZone.postal_codes = zone.postal_codes;
-              // Include country_codes even if empty to allow clearing
-              if (zone.country_codes !== undefined) cleanZone.country_codes = zone.country_codes;
-
-              return cleanZone;
-            })
-            : [{ rate: 0 }]; // Default zone if none exist
-
-          return cleanService;
-        })
-      };
-
-      if (isNew) {
-        // For new rate sheets, include carrier_name and carriers
-        const createData: any = {
-          ...cleanedData,
-          carrier_name: localData.carrier_name,
+        return {
+          ...service,
+          zones: embeddedZones,
         };
+      });
 
-        // Add carriers array if we have connection IDs to link
-        if (linkConnectionId) {
-          createData.carriers = [linkConnectionId];
-        } else if (linkCarrierId) {
-          createData.carriers = [linkCarrierId];
-        }
+      const unlinkedZones: EmbeddedZone[] = existingSharedZones
+        .filter((z: any) => !linkedZoneIds.has(z.id))
+        .map((zone: any) => ({
+          id: zone.id,
+          label: zone.label || "",
+          rate: 0,
+          cost: null,
+          min_weight: null,
+          max_weight: null,
+          transit_days: zone.transit_days ?? null,
+          transit_time: zone.transit_time ?? null,
+          country_codes: zone.country_codes || [],
+          postal_codes: zone.postal_codes || [],
+          cities: zone.cities || [],
+        }));
 
-        console.log('Creating rate sheet with data:', JSON.stringify(createData, null, 2));
-        let res;
-        try {
-          res = await createRateSheet.mutateAsync(createData);
-          console.log('Create response:', res);
-        } catch (err: any) {
-          console.error('Create mutation failed:', err);
-          console.error('Error details:', JSON.stringify(err, null, 2));
+      setServices(transformedServices as ServiceLevelWithZones[]);
+      setSharedZones(unlinkedZones);
+      setSurcharges(existingRateSheet.surcharges || []);
 
-          // Extract more specific error message
-          let errorMessage = 'Failed to create rate sheet';
-          if (err?.response?.errors?.[0]?.message) {
-            errorMessage = err.response.errors[0].message;
-          } else if (err?.message) {
-            errorMessage = err.message;
-          }
+      // Store original state for change tracking
+      const originalZones = new Map<string, EmbeddedZone>();
+      existingSharedZones.forEach((z: any) => {
+        originalZones.set(z.id, {
+          id: z.id,
+          label: z.label || "",
+          rate: 0,
+          country_codes: z.country_codes || [],
+          postal_codes: z.postal_codes || [],
+          cities: z.cities || [],
+          transit_days: z.transit_days ?? null,
+          transit_time: z.transit_time ?? null,
+        });
+      });
 
-          throw new Error(errorMessage);
-        }
-        const newId = (res as any)?.create_rate_sheet?.rate_sheet?.id;
-        if (newId) {
-          toast({ title: `${localData?.name || 'Rate Sheet'} created!` });
-          onClose();
-          return;
+      const originalSurcharges = new Map<string, SharedSurcharge>();
+      (existingRateSheet.surcharges || []).forEach((s: any) => {
+        originalSurcharges.set(s.id, { ...s });
+      });
+
+      const originalServiceRates = new Map<
+        string,
+        { rate: number; cost?: number | null }
+      >();
+      serviceRates.forEach((sr: any) => {
+        originalServiceRates.set(`${sr.service_id}:${sr.zone_id}`, {
+          rate: sr.rate,
+          cost: sr.cost,
+        });
+      });
+
+      const originalServiceZoneIds = new Map<string, string[]>();
+      const originalServiceSurchargeIds = new Map<string, string[]>();
+      rawServices.forEach((s: any) => {
+        originalServiceZoneIds.set(s.id, [...(s.zone_ids || [])]);
+        originalServiceSurchargeIds.set(s.id, [...(s.surcharge_ids || [])]);
+      });
+
+      originalStateRef.current = {
+        name: existingRateSheet.name || "",
+        zones: originalZones,
+        surcharges: originalSurcharges,
+        serviceRates: originalServiceRates,
+        serviceZoneIds: originalServiceZoneIds,
+        serviceSurchargeIds: originalServiceSurchargeIds,
+      };
+    }
+  }, [existingRateSheet, isEditMode]);
+
+  // Reset form when creating new
+  useEffect(() => {
+    if (!isEditMode) {
+      if (preloadCarrier) {
+        setCarrierName(preloadCarrier);
+        const carrier = carriers.find((c) => c.id === preloadCarrier);
+        if (carrier) {
+          setName(`${carrier.name} - sheet`);
         }
       } else {
-        // For updates, don't send carrier_name
-        await updateRateSheet.mutateAsync({
-          id: rateSheetId,
-          ...cleanedData
-        });
-        // Refresh data to reconcile IDs and removals
-        const refreshed = await query.refetch();
-        const fresh = (refreshed.data as any)?.rate_sheet;
-        if (fresh) {
-          setLocalData({
-            name: fresh.name,
-            carrier_name: fresh.carrier_name,
-            services: [...(fresh.services || [])]
-          });
-          // Seed buffers from fresh data so text persists after save
-          setZoneTextBuffers(buildZoneTextBuffersFromServices(fresh.services || []));
-        }
-        toast({ title: "Rate Sheet Saved!" });
+        setCarrierName("");
+        setName("");
       }
-      // Do not close the editor; leave it open
-    } catch (error: any) {
-      // Surface a friendly error, avoid throwing in console overlay
-      const message = error?.response?.errors?.[0]?.message || error?.message || 'Unknown error';
-      console.warn("Failed to save rate sheet:", message);
-      toast({ title: `Rate Sheet was unable to be ${isNew ? 'created' : 'saved'}`, description: message, variant: "destructive" });
-    } finally {
-      loader.setLoading(false);
+      setServices([]);
+      setSharedZones([]);
+      setSurcharges([]);
+      originalStateRef.current = null;
+    }
+  }, [isEditMode, preloadCarrier, carriers]);
+
+  // Track previous carrier to detect changes
+  const prevCarrierRef = useRef<string>("");
+
+  // Reset services and prefill name when carrier changes in create mode
+  useEffect(() => {
+    if (!isEditMode && carrierName) {
+      const carrier = carriers.find((c) => c.id === carrierName);
+      if (carrier) {
+        setName(`${carrier.name} - sheet`);
+      }
+      if (prevCarrierRef.current && prevCarrierRef.current !== carrierName) {
+        setServices([]);
+      }
+    }
+    prevCarrierRef.current = carrierName;
+  }, [carrierName, isEditMode, carriers]);
+
+  // Handler functions
+  const handleAddService = () => {
+    setSelectedService(null);
+    setServiceDialogOpen(true);
+  };
+
+  const handleEditService = (service: ServiceLevelWithZones) => {
+    setSelectedService(service);
+    setServiceDialogOpen(true);
+  };
+
+  const handleSaveService = (serviceData: Partial<ServiceLevelWithZones>) => {
+    if (selectedService) {
+      setServices((prev) =>
+        prev.map((s) =>
+          s.service_code === selectedService.service_code
+            ? { ...s, ...serviceData }
+            : s
+        )
+      );
+    } else {
+      const newService: ServiceLevelWithZones = {
+        id: generateId("service"),
+        object_type: "service_level",
+        service_name: serviceData.service_name || "",
+        service_code: serviceData.service_code || "",
+        currency: serviceData.currency ?? "USD",
+        carrier_service_code: serviceData.carrier_service_code ?? null,
+        description: serviceData.description ?? null,
+        transit_days: serviceData.transit_days ?? null,
+        transit_time: null,
+        zones: [
+          {
+            id: generateId("zone"),
+            rate: 0,
+            label: "Zone 1",
+            min_weight: null,
+            max_weight: null,
+            transit_days: null,
+            transit_time: null,
+            cities: [],
+            postal_codes: [],
+            country_codes: [],
+          },
+        ],
+        active: serviceData.active ?? true,
+        domicile: serviceData.domicile ?? null,
+        international: serviceData.international ?? null,
+        max_weight: serviceData.max_weight ?? null,
+        weight_unit: serviceData.weight_unit ?? null,
+        max_width: serviceData.max_width ?? null,
+        max_height: serviceData.max_height ?? null,
+        max_length: serviceData.max_length ?? null,
+        dimension_unit: serviceData.dimension_unit ?? null,
+      };
+      setServices((prev) => [...prev, newService]);
+    }
+    setServiceDialogOpen(false);
+    setSelectedService(null);
+  };
+
+  const handleUpdateService = (
+    index: number,
+    updatedService: ServiceLevelWithZones
+  ) => {
+    setServices((prev) => {
+      const newServices = [...prev];
+      newServices[index] = updatedService;
+      return newServices;
+    });
+  };
+
+  const handleDeleteClick = (service: ServiceLevelWithZones) => {
+    setServiceToDelete(service);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (serviceToDelete) {
+      const isExistingService =
+        serviceToDelete.id && !serviceToDelete.id.startsWith("temp-");
+
+      if (isExistingService && rateSheetId && mutations.deleteRateSheetService) {
+        setIsDeletingService(true);
+        try {
+          await mutations.deleteRateSheetService.mutateAsync({
+            rate_sheet_id: rateSheetId,
+            service_id: serviceToDelete.id,
+          });
+          toast({
+            title: "Service deleted",
+            description: "Service has been removed from the rate sheet",
+          });
+        } catch (error) {
+          toast({
+            title: "Failed to delete service",
+            description: "An error occurred while deleting the service",
+            variant: "destructive",
+          });
+          setServiceToDelete(null);
+          setDeleteConfirmOpen(false);
+          setIsDeletingService(false);
+          return;
+        } finally {
+          setIsDeletingService(false);
+        }
+      }
+
+      setServices((prev) =>
+        prev.filter((s) => s.service_code !== serviceToDelete.service_code)
+      );
+      setServiceToDelete(null);
+      setDeleteConfirmOpen(false);
     }
   };
 
-  // Helpers to manage free-typing buffers for comma-separated fields
+  // Collect all zone labels
+  const collectAllZoneLabels = (): Set<string> => {
+    const labels = new Set<string>();
+    sharedZones.filter((z) => z.label).forEach((z) => labels.add(z.label));
+    services
+      .flatMap((s) => s.zones || [])
+      .filter((z) => z.label)
+      .forEach((z) => labels.add(z.label));
+    return labels;
+  };
+
+  // Add a new shared zone
+  const handleAddZoneAll = () => {
+    const allZoneLabels = collectAllZoneLabels();
+    let nextNum = 1;
+    while (allZoneLabels.has(`Zone ${nextNum}`)) nextNum++;
+
+    const newZone: EmbeddedZone = {
+      id: generateId("zone"),
+      rate: 0,
+      label: `Zone ${nextNum}`,
+      min_weight: null,
+      max_weight: null,
+      transit_days: null,
+      transit_time: null,
+      cities: [],
+      postal_codes: [],
+      country_codes: [],
+    };
+
+    setSharedZones((prev) => [...prev, newZone]);
+  };
+
+  // Update zone by label/key
+  const handleUpdateZone = (zoneKey: string, updates: Partial<EmbeddedZone>) => {
+    if (!zoneKey) return;
+
+    setSharedZones((prev) =>
+      prev.map((zone) => {
+        if ((zone.label || zone.id) === zoneKey) {
+          return { ...zone, ...updates };
+        }
+        return zone;
+      })
+    );
+
+    setServices((prev) =>
+      prev.map((service) => {
+        const newZones = (service.zones || []).map((zone) => {
+          if ((zone.label || zone.id) === zoneKey) {
+            return { ...zone, ...updates };
+          }
+          return zone;
+        });
+        return {
+          ...service,
+          zones: newZones,
+        };
+      })
+    );
+  };
+
+  // Remove zone from ALL services
+  const handleRemoveZoneAll = (zoneLabel: string) => {
+    setZoneToDeleteLabel(zoneLabel);
+    setDeleteZoneConfirmOpen(true);
+  };
+
+  const handleConfirmRemoveZone = () => {
+    if (zoneToDeleteLabel !== null) {
+      setSharedZones((prev) =>
+        prev.filter((zone) => (zone.label || zone.id) !== zoneToDeleteLabel)
+      );
+
+      setServices((prev) =>
+        prev.map((service) => ({
+          ...service,
+          zones: (service.zones || []).filter(
+            (zone) => (zone.label || zone.id) !== zoneToDeleteLabel
+          ),
+        }))
+      );
+
+      setZoneToDeleteLabel(null);
+      setDeleteZoneConfirmOpen(false);
+    }
+  };
+
+  // Text buffering helpers
   const getZoneTextValue = (
-    zoneIndex: number,
-    field: 'country_codes' | 'cities' | 'postal_codes',
-    currentArray: string[] | undefined,
+    zoneKey: string,
+    field: "cities" | "postal_codes",
+    currentArray: string[] | undefined | null
   ): string => {
-    const buffered = zoneTextBuffers[zoneIndex]?.[field];
-    if (typeof buffered === 'string') return buffered;
-    return Array.isArray(currentArray) ? currentArray.join(', ') : '';
+    const buffered = zoneTextBuffers[zoneKey]?.[field];
+    if (typeof buffered === "string") return buffered;
+    return Array.isArray(currentArray) ? currentArray.join(", ") : "";
   };
 
   const setZoneTextValue = (
-    zoneIndex: number,
-    field: 'country_codes' | 'cities' | 'postal_codes',
-    text: string,
+    zoneKey: string,
+    field: "cities" | "postal_codes",
+    text: string
   ) => {
     setZoneTextBuffers((prev) => ({
       ...prev,
-      [zoneIndex]: {
-        ...(prev[zoneIndex] || {}),
+      [zoneKey]: {
+        ...(prev[zoneKey] || {}),
         [field]: text,
       },
     }));
   };
 
   const persistZoneTextValue = (
-    zoneIndex: number,
-    field: 'country_codes' | 'cities' | 'postal_codes',
+    zoneKey: string,
+    field: "cities" | "postal_codes"
   ) => {
-    const text = zoneTextBuffers[zoneIndex]?.[field];
-    if (text === undefined) return; // Nothing to persist
+    const text = zoneTextBuffers[zoneKey]?.[field];
+    if (text === undefined) return;
     const values = text
-      .split(',')
+      .split(",")
       .map((v) => v.trim())
       .filter((v) => v.length > 0);
-    handleUpdateZoneFieldAll(zoneIndex, field, values);
-    // Clear buffer for this field so display falls back to normalized value
+    handleUpdateZone(zoneKey, { [field]: values });
     setZoneTextBuffers((prev) => {
-      const next = { ...prev } as typeof prev;
-      const zoneEntry = { ...(next[zoneIndex] || {}) };
+      const next = { ...prev };
+      const zoneEntry = { ...(next[zoneKey] || {}) };
       delete zoneEntry[field];
       if (Object.keys(zoneEntry).length === 0) {
-        delete next[zoneIndex];
+        delete next[zoneKey];
       } else {
-        next[zoneIndex] = zoneEntry;
+        next[zoneKey] = zoneEntry;
       }
       return next;
     });
   };
 
-  // Get first non-empty zone array across all services for display purposes
-  const getAggregatedZoneArray = React.useCallback((
-    zoneIndex: number,
-    field: 'country_codes' | 'cities' | 'postal_codes',
-  ): string[] => {
-    const servicesList = localData?.services || [];
-    for (const service of servicesList) {
-      const zone = (service.zones || [])[zoneIndex];
-      const arr = zone?.[field];
-      if (Array.isArray(arr) && arr.length > 0) return arr as string[];
-    }
-    return [];
-  }, [localData?.services]);
-
-  // Build buffers from services so inputs display saved values on load/refetch
-  const buildZoneTextBuffersFromServices = (servicesData: any[]): Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>> => {
-    const buffers: Record<number, Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>>> = {};
-    const maxZones = Math.max(0, ...servicesData.map((s: any) => (s.zones || []).length));
-    for (let i = 0; i < maxZones; i++) {
-      const entry: Partial<Record<'country_codes' | 'cities' | 'postal_codes', string>> = {};
-      // Use first non-empty across services for each field
-      const cc = (() => {
-        for (const s of servicesData) {
-          const a = s?.zones?.[i]?.country_codes;
-          if (Array.isArray(a) && a.length > 0) return a as string[];
-        }
-        return [] as string[];
-      })();
-      const ct = (() => {
-        for (const s of servicesData) {
-          const a = s?.zones?.[i]?.cities;
-          if (Array.isArray(a) && a.length > 0) return a as string[];
-        }
-        return [] as string[];
-      })();
-      const pc = (() => {
-        for (const s of servicesData) {
-          const a = s?.zones?.[i]?.postal_codes;
-          if (Array.isArray(a) && a.length > 0) return a as string[];
-        }
-        return [] as string[];
-      })();
-
-      if (cc.length > 0) entry.country_codes = cc.join(', ');
-      if (ct.length > 0) entry.cities = ct.join(', ');
-      if (pc.length > 0) entry.postal_codes = pc.join(', ');
-      if (Object.keys(entry).length > 0) buffers[i] = entry;
-    }
-    return buffers;
+  // Surcharge handlers
+  const handleAddSurcharge = () => {
+    const newSurcharge: SharedSurcharge = {
+      id: generateId("surcharge"),
+      name: "",
+      amount: 0,
+      surcharge_type: "fixed",
+      active: true,
+      cost: null,
+    };
+    setSurcharges((prev) => [...prev, newSurcharge]);
   };
 
-  const handleAddService = () => {
-    setEditingService(null);
-    setServiceModalOpen(true);
+  const handleUpdateSurcharge = (
+    surchargeId: string,
+    updates: Partial<SharedSurcharge>
+  ) => {
+    setSurcharges((prev) =>
+      prev.map((s) => (s.id === surchargeId ? { ...s, ...updates } : s))
+    );
   };
 
-  const handleEditService = (service: any) => {
-    setEditingService(service);
-    setServiceModalOpen(true);
+  const handleRemoveSurcharge = (surchargeId: string) => {
+    setSurcharges((prev) => prev.filter((s) => s.id !== surchargeId));
   };
 
-  const handleServiceSubmit = (serviceData: any) => {
-    if (!localData) return;
-
-    if (editingService?.id) {
-      // Update existing service
-      setLocalData((prev: any) => ({
-        ...prev,
-        services: prev.services.map((s: any) => {
-          if (s.id !== editingService.id) return s;
-          return {
-            ...s,
-            service_name: serviceData.service_name,
-            service_code: serviceData.service_code,
-            carrier_service_code: serviceData.carrier_service_code,
-            description: serviceData.description,
-            active: serviceData.active,
-            currency: serviceData.currency,
-            transit_days: serviceData.transit_days,
-            transit_time: serviceData.transit_time,
-            max_width: serviceData.max_width,
-            max_height: serviceData.max_height,
-            max_length: serviceData.max_length,
-            dimension_unit: serviceData.dimension_unit,
-            min_weight: serviceData.min_weight,
-            max_weight: serviceData.max_weight,
-            weight_unit: serviceData.weight_unit,
-            domicile: serviceData.domicile,
-            international: serviceData.international,
-            // Preserve zones and id as-is unless changed elsewhere
-            zones: s.zones,
-          };
-        })
-      }));
-    } else {
-      // Add new service
-      const newService = {
-        ...serviceData,
-        id: `temp_${Date.now()}`,
-        zones: [{ rate: 0 }] // No client-generated IDs - let backend assign them
-      };
-      setLocalData((prev: any) => ({
-        ...prev,
-        services: [...prev.services, newService]
-      }));
-    }
-    // Close modal after applying the update
-    setServiceModalOpen(false);
-    setEditingService(null);
+  // Toggle service-surcharge linking
+  const handleToggleServiceSurcharge = (
+    serviceId: string,
+    surchargeId: string,
+    linked: boolean
+  ) => {
+    setServices((prev) =>
+      prev.map((service) => {
+        if (service.id !== serviceId) return service;
+        const currentIds = service.surcharge_ids || [];
+        const newIds = linked
+          ? [...currentIds, surchargeId]
+          : currentIds.filter((id) => id !== surchargeId);
+        return { ...service, surcharge_ids: newIds };
+      })
+    );
   };
 
-  const handleRemoveService = async (serviceId: string) => {
-    if (!localData) return;
+  const handleLoadDefaults = async () => {
+    if (!carrierName) return;
 
-    // Check if this is an existing service (not temp)
-    const service = localData.services.find((s: any) => s.id === serviceId);
-    const isExistingService = service && !service.id.startsWith('temp_');
+    setIsLoadingDefaults(true);
+    try {
+      const rateSheetDefaults = references?.ratesheets?.[carrierName];
 
-    if (isExistingService && !isNew) {
-      // Use explicit delete API for existing services
-      try {
-        await deleteRateSheetService.mutateAsync({
-          rate_sheet_id: rateSheetId,
-          service_id: serviceId
+      if (
+        !rateSheetDefaults ||
+        !rateSheetDefaults.services ||
+        rateSheetDefaults.services.length === 0
+      ) {
+        toast({
+          title: "No defaults available",
+          description: `No default services found for ${carrierName}`,
+          variant: "destructive",
         });
-        // Refresh data from server
-        const refreshed = await query.refetch();
-        const fresh = (refreshed.data as any)?.rate_sheet;
-        if (fresh) {
-          setLocalData({
-            name: fresh.name,
-            carrier_name: fresh.carrier_name,
-            services: [...(fresh.services || [])]
-          });
-        }
-      } catch (error) {
-        console.error("Failed to delete service:", error);
+        return;
       }
-    } else {
-      // For temp services or new rate sheets, just remove from local state
-      setLocalData((prev: any) => ({
-        ...prev,
-        services: prev.services.filter((s: any) => s.id !== serviceId)
-      }));
+
+      const {
+        zones: defaultZones,
+        services: defaultServicesList,
+        service_rates: serviceRates,
+      } = rateSheetDefaults;
+
+      const zoneMap = new Map((defaultZones || []).map((z: any) => [z.id, z]));
+      const rateMap = new Map(
+        (serviceRates || []).map((sr: any) => [
+          `${sr.service_id}:${sr.zone_id}`,
+          sr,
+        ])
+      );
+
+      const defaultServices: ServiceLevelWithZones[] = defaultServicesList.map(
+        (service: any, index: number) => {
+          const serviceId = service.id || String(index);
+          const zoneIds = service.zone_ids || [];
+
+          const zones = zoneIds.map((zoneId: string, zoneIndex: number) => {
+            const zone = zoneMap.get(zoneId) || { label: `Zone ${zoneIndex + 1}` };
+            const rateEntry = rateMap.get(`${serviceId}:${zoneId}`);
+
+            return {
+              id: generateId("zone"),
+              label: zone.label || `Zone ${zoneIndex + 1}`,
+              rate: rateEntry?.rate ?? 0,
+              cost: rateEntry?.cost ?? null,
+              min_weight: rateEntry?.min_weight ?? zone.min_weight ?? null,
+              max_weight: rateEntry?.max_weight ?? zone.max_weight ?? null,
+              transit_days: rateEntry?.transit_days ?? zone.transit_days ?? null,
+              transit_time: rateEntry?.transit_time ?? zone.transit_time ?? null,
+              country_codes: zone.country_codes || [],
+              postal_codes: zone.postal_codes || [],
+              cities: zone.cities || [],
+            } as EmbeddedZone;
+          });
+
+          const finalZones =
+            zones.length > 0
+              ? zones
+              : [
+                  {
+                    id: generateId("zone"),
+                    rate: 0,
+                    label: "Zone 1",
+                    min_weight: null,
+                    max_weight: null,
+                    transit_days: null,
+                    transit_time: null,
+                    cities: [],
+                    postal_codes: [],
+                    country_codes: [],
+                  } as EmbeddedZone,
+                ];
+
+          return {
+            id: generateId("service"),
+            object_type: "service_level",
+            service_name: service.service_name || "",
+            service_code: service.service_code || "",
+            carrier_service_code: service.carrier_service_code ?? null,
+            description: service.description ?? null,
+            active: service.active ?? true,
+            currency: service.currency ?? "USD",
+            transit_days: service.transit_days ?? null,
+            transit_time: service.transit_time ?? null,
+            max_width: service.max_width ?? null,
+            max_height: service.max_height ?? null,
+            max_length: service.max_length ?? null,
+            dimension_unit: service.dimension_unit ?? null,
+            max_weight: service.max_weight ?? null,
+            weight_unit: service.weight_unit ?? null,
+            domicile: service.domicile ?? null,
+            international: service.international ?? null,
+            zones: finalZones,
+            zone_ids: zoneIds,
+            surcharge_ids: service.surcharge_ids || [],
+          } as ServiceLevelWithZones;
+        }
+      );
+
+      setServices(defaultServices);
+      toast({
+        title: "Defaults loaded",
+        description: `Loaded ${defaultServices.length} services from ${carrierName}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to load defaults",
+        description: "An error occurred while loading carrier defaults",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingDefaults(false);
     }
   };
 
-  const handleAddZone = (serviceId: string) => {
-    if (!localData) return;
+  const validateForm = (): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
 
-    setLocalData((prev: any) => ({
-      ...prev,
-      services: prev.services.map((s: any) =>
-        s.id === serviceId
-          ? {
-            ...s,
-            zones: [...(s.zones || []), { rate: 0 }] // No client-generated IDs
+    if (!name.trim()) {
+      errors.push("Rate sheet name is required");
+    }
+
+    if (!carrierName) {
+      errors.push("Carrier is required");
+    }
+
+    if (services.length === 0) {
+      errors.push("At least one service is required");
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
+  };
+
+  const handleSave = async () => {
+    const validation = validateForm();
+
+    if (!validation.isValid) {
+      toast({
+        title: "Validation Error",
+        description: validation.errors.join(", "),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      // Build unified zone map
+      const buildZoneMap = () => {
+        const zoneMap = new Map<
+          string,
+          {
+            id: string;
+            label: string;
+            country_codes: string[];
+            postal_codes: string[];
+            cities: string[];
+            transit_days: number | null;
+            transit_time: number | null;
           }
-          : s
-      )
-    }));
-  };
+        >();
 
-  const handleAddZoneAll = () => {
-    if (!localData) return;
-    setLocalData((prev: any) => ({
-      ...prev,
-      services: prev.services.map((s: any) => ({
-        ...s,
-        zones: [...(s.zones || []), { rate: 0 }]
-      }))
-    }));
-  };
+        let zoneIndex = 0;
 
-  const handleRemoveZoneAll = (zoneIndex: number) => {
-    if (!localData) return;
-    setLocalData((prev: any) => ({
-      ...prev,
-      services: prev.services.map((s: any) => ({
-        ...s,
-        zones: s.zones.filter((_: any, i: number) => i !== zoneIndex)
-      }))
-    }));
-  };
-
-  const handleUpdateZoneFieldAll = (zoneIndex: number, field: string, value: any) => {
-    setLocalData((prev: any) => ({
-      ...prev,
-      services: prev.services.map((s: any) => ({
-        ...s,
-        zones: s.zones.map((z: any, i: number) => i === zoneIndex ? { ...z, [field]: value } : z)
-      }))
-    }));
-  };
-
-  const handleRemoveZone = (serviceId: string, zoneIndex: number) => {
-    if (!localData) return;
-
-    setLocalData((prev: any) => ({
-      ...prev,
-      services: prev.services.map((s: any) =>
-        s.id === serviceId
-          ? {
-            ...s,
-            zones: s.zones.filter((_: any, i: number) => i !== zoneIndex)
+        sharedZones.forEach((zone) => {
+          const zoneLabel = zone.label || `Zone ${zoneIndex + 1}`;
+          if (!zoneMap.has(zoneLabel)) {
+            const zoneId = zone.id?.startsWith("temp-")
+              ? `zone_${zoneIndex}`
+              : zone.id || `zone_${zoneIndex}`;
+            zoneMap.set(zoneLabel, {
+              id: zoneId,
+              label: zoneLabel,
+              country_codes: zone.country_codes || [],
+              postal_codes: zone.postal_codes || [],
+              cities: zone.cities || [],
+              transit_days: zone.transit_days ?? null,
+              transit_time: zone.transit_time ?? null,
+            });
+            zoneIndex++;
           }
-          : s
-      )
-    }));
+        });
+
+        services.forEach((service) => {
+          (service.zones || []).forEach((zone) => {
+            const zoneLabel = zone.label || `Zone ${zoneIndex + 1}`;
+            if (!zoneMap.has(zoneLabel)) {
+              const zoneId = zone.id?.startsWith("temp-")
+                ? `zone_${zoneIndex}`
+                : zone.id || `zone_${zoneIndex}`;
+              zoneMap.set(zoneLabel, {
+                id: zoneId,
+                label: zoneLabel,
+                country_codes: zone.country_codes || [],
+                postal_codes: zone.postal_codes || [],
+                cities: zone.cities || [],
+                transit_days: zone.transit_days ?? null,
+                transit_time: zone.transit_time ?? null,
+              });
+              zoneIndex++;
+            }
+          });
+        });
+
+        return zoneMap;
+      };
+
+      const zoneMap = buildZoneMap();
+      const zoneLabelToId = new Map<string, string>();
+      zoneMap.forEach((zone, label) => zoneLabelToId.set(label, zone.id));
+
+      const zonesForMutation = Array.from(zoneMap.values()).map((zone) => ({
+        id: zone.id,
+        label: zone.label,
+        country_codes:
+          zone.country_codes.length > 0 ? zone.country_codes : undefined,
+        postal_codes:
+          zone.postal_codes.length > 0 ? zone.postal_codes : undefined,
+        cities: zone.cities.length > 0 ? zone.cities : undefined,
+        transit_days: zone.transit_days,
+        transit_time: zone.transit_time,
+      }));
+
+      const serviceRates: Array<{
+        service_id: string;
+        zone_id: string;
+        rate: number;
+        cost?: number | null;
+        min_weight?: number | null;
+        max_weight?: number | null;
+        transit_days?: number | null;
+        transit_time?: number | null;
+      }> = [];
+
+      const surchargeIdMap = new Map<string, string>();
+      const surchargesForMutation = surcharges.map((surcharge, index) => {
+        const newId = surcharge.id?.startsWith("temp-")
+          ? `surcharge_${index}`
+          : surcharge.id || `surcharge_${index}`;
+        surchargeIdMap.set(surcharge.id, newId);
+        return {
+          id: newId,
+          name: surcharge.name || "",
+          amount: surcharge.amount || 0,
+          surcharge_type: surcharge.surcharge_type || "fixed",
+          cost: surcharge.cost ?? null,
+          active: surcharge.active ?? true,
+        };
+      });
+
+      if (isEditMode) {
+        // Full update for edit mode
+        const updateServices = services.map((service, serviceIndex) => {
+          const serviceId = service.id?.startsWith("temp-")
+            ? `temp-${serviceIndex}`
+            : service.id;
+          const zoneIds = (service.zones || [])
+            .map((z) => zoneLabelToId.get(z.label || ""))
+            .filter(Boolean) as string[];
+
+          (service.zones || []).forEach((zone) => {
+            const zoneId = zoneLabelToId.get(zone.label || "");
+            if (zoneId) {
+              serviceRates.push({
+                service_id: serviceId,
+                zone_id: zoneId,
+                rate: zone.rate || 0,
+                cost: zone.cost ?? null,
+                min_weight: zone.min_weight ?? null,
+                max_weight: zone.max_weight ?? null,
+                transit_days: zone.transit_days ?? null,
+                transit_time: zone.transit_time ?? null,
+              });
+            }
+          });
+
+          const mappedSurchargeIds = (service.surcharge_ids || [])
+            .map((id) => surchargeIdMap.get(id) || id)
+            .filter((id) => surchargesForMutation.some((s) => s.id === id));
+
+          return {
+            id: service.id?.startsWith("temp-") ? null : service.id,
+            service_name: service.service_name || "",
+            service_code: service.service_code || "",
+            currency: service.currency || "USD",
+            carrier_service_code: service.carrier_service_code,
+            description: service.description,
+            active: service.active,
+            transit_days: service.transit_days,
+            transit_time: service.transit_time,
+            max_width: service.max_width,
+            max_height: service.max_height,
+            max_length: service.max_length,
+            dimension_unit: service.dimension_unit,
+            max_weight: service.max_weight,
+            weight_unit: service.weight_unit,
+            domicile: service.domicile,
+            international: service.international,
+            zone_ids: zoneIds,
+            surcharge_ids: mappedSurchargeIds,
+          };
+        });
+
+        await mutations.updateRateSheet.mutateAsync({
+          id: rateSheetId,
+          name,
+          services: updateServices,
+          zones: zonesForMutation,
+          surcharges: surchargesForMutation,
+          service_rates: serviceRates,
+        } as any);
+
+        toast({
+          title: "Rate sheet updated",
+          description: `"${name}" has been updated successfully`,
+        });
+      } else {
+        // Create new rate sheet
+        const createServices = services.map((service, serviceIndex) => {
+          const tempServiceId = `temp-${serviceIndex}`;
+          const zoneIds: string[] = [];
+
+          (service.zones || []).forEach((zone) => {
+            const zoneLabel = zone.label || "";
+            const zoneId = zoneLabelToId.get(zoneLabel);
+            if (zoneId) {
+              zoneIds.push(zoneId);
+              serviceRates.push({
+                service_id: tempServiceId,
+                zone_id: zoneId,
+                rate: zone.rate || 0,
+                cost: zone.cost ?? null,
+                min_weight: zone.min_weight ?? null,
+                max_weight: zone.max_weight ?? null,
+                transit_days: zone.transit_days ?? null,
+                transit_time: zone.transit_time ?? null,
+              });
+            }
+          });
+
+          const mappedSurchargeIds = (service.surcharge_ids || [])
+            .map((id) => surchargeIdMap.get(id) || id)
+            .filter((id) => surchargesForMutation.some((s) => s.id === id));
+
+          return {
+            service_name: service.service_name || "",
+            service_code: service.service_code || "",
+            currency: service.currency || "USD",
+            carrier_service_code: service.carrier_service_code,
+            description: service.description,
+            active: service.active,
+            transit_days: service.transit_days,
+            transit_time: service.transit_time,
+            max_width: service.max_width,
+            max_height: service.max_height,
+            max_length: service.max_length,
+            dimension_unit: service.dimension_unit,
+            max_weight: service.max_weight,
+            weight_unit: service.weight_unit,
+            domicile: service.domicile,
+            international: service.international,
+            zone_ids: zoneIds,
+            surcharge_ids: mappedSurchargeIds,
+          };
+        });
+
+        await mutations.createRateSheet.mutateAsync({
+          name,
+          carrier_name: carrierName,
+          services: createServices,
+          zones: zonesForMutation,
+          surcharges: surchargesForMutation,
+          service_rates: serviceRates,
+        } as any);
+
+        toast({
+          title: "Rate sheet created",
+          description: `"${name}" has been created successfully`,
+        });
+      }
+
+      onClose();
+    } catch (error: any) {
+      toast({
+        title: isEditMode
+          ? "Failed to update rate sheet"
+          : "Failed to create rate sheet",
+        description: error?.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
-
-  const handleCellChange = (serviceId: string, zoneId: string, field: string, value: any) => {
-    if (!localData) return;
-
-    setLocalData((prev: any) => ({
-      ...prev,
-      services: prev.services.map((s: any) =>
-        s.id === serviceId
-          ? {
-            ...s,
-            zones: s.zones.map((z: any, index: number) => {
-              const currentZoneId = z.id || index.toString();
-              return currentZoneId === zoneId
-                ? { ...z, [field]: value }
-                : z;
-            })
-          }
-          : s
-      )
-    }));
-  };
-
-  const hasChanges = localData && rateSheet && !isEqual(localData, {
-    name: rateSheet.name,
-    carrier_name: rateSheet.carrier_name,
-    services: rateSheet.services || []
-  });
-
-  if (!localData && !isNew) {
-    return null;
-  }
 
   return (
     <>
-      <Sheet open={true} onOpenChange={onClose}>
-        <SheetContent
-          side="right"
-          full
-          className="p-0 gap-0 overflow-hidden"
-        >
-          {/* Sticky Header */}
-          <header
-            className="flex items-center justify-between p-4 border-b bg-white"
-            style={{
-              position: "sticky",
-              zIndex: 10,
-              top: 0,
-            }}
-          >
-            <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="rounded-full mr-2"
+      <Sheet open={true} onOpenChange={() => onClose()}>
+        <SheetContent side="right" className="w-full sm:max-w-full p-0">
+          {/* Header */}
+          <SheetHeader className="px-4 sm:px-6 py-4 border-b border-border bg-background">
+            <div className="flex items-center justify-between gap-3">
+              {/* Mobile sidebar toggle */}
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md"
+                aria-label={sidebarOpen ? "Close settings" : "Open settings"}
+                disabled={isInitialLoading}
               >
-                <Cross2Icon className="h-4 w-4" />
-              </Button>
-              <SheetTitle className="text-lg font-semibold">
-                {isNew ? "Create Rate Sheet" : "Edit Rate Sheet"}
-              </SheetTitle>
-            </div>
-            <Button
-              onClick={handleSave}
-              disabled={loader.loading || (isNew ? !localData?.name : (!hasChanges || !localData?.name))}
-              size="sm"
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {loader.loading ? (isNew ? "Creating..." : "Saving...") : (isNew ? "Create and Close" : "Save")}
-            </Button>
-          </header>
-
-          {/* Main Content Area */}
-          <div
-            className="flex h-full"
-            style={{
-              height: "calc(100vh - 80px)",
-              overflow: "hidden"
-            }}
-          >
-            {/* Left Sidebar */}
-            <div
-              className="w-80 border-r bg-gray-50 overflow-y-auto"
-              style={{
-                minWidth: "320px",
-                maxWidth: "320px"
-              }}
-            >
-              <div className="p-4 space-y-6">
-                {/* Existing Rate Sheets Notice */}
-                {showExistingOptions && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-sm font-semibold text-blue-800">Existing Rate Sheets Found</h4>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setShowExistingOptions(false)}
-                        className="h-6 w-6 p-0"
-                      >
-                        ×
-                      </Button>
-                    </div>
-                    <p className="text-xs text-blue-700 mb-3">
-                      Compatible rate sheets exist for this carrier. You can connect to an existing one or create a new one.
-                    </p>
-                    <div className="space-y-2">
-                      {existingRateSheets.map((sheet: any) => (
-                        <div key={sheet.id} className="flex items-center justify-between p-2 bg-white rounded border">
-                          <div>
-                            <div className="text-sm font-medium">{sheet.name}</div>
-                            <div className="text-xs text-gray-500">{sheet.services?.length || 0} services</div>
-                          </div>
-                          <Button size="sm" variant="outline">
-                            Connect
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                {sidebarOpen ? (
+                  <Cross2Icon className="h-5 w-5" />
+                ) : (
+                  <HamburgerMenuIcon className="h-5 w-5" />
                 )}
-                <div>
-                  <Label htmlFor="carrier_name" className="text-sm font-semibold text-gray-700">Carrier</Label>
-                  <Select
-                    value={localData?.carrier_name || 'generic'}
-                    onValueChange={(value) => handleChange('carrier_name', value)}
-                    disabled={!isNew || !!preloadCarrier}
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.keys(references?.service_levels || {}).map(carrier => (
-                        <SelectItem key={carrier} value={carrier}>
-                          {references?.carriers?.[carrier] || carrier}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              </button>
+              <SheetTitle className="text-lg sm:text-xl font-semibold flex-1">
+                {isInitialLoading
+                  ? "Loading..."
+                  : isEditMode
+                    ? "Edit Rate Sheet"
+                    : "Create Rate Sheet"}
+              </SheetTitle>
+              <Button
+                onClick={handleSave}
+                disabled={isSaving || isInitialLoading}
+                className="mr-8 sm:mr-10"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <span className="hidden sm:inline">Saving...</span>
+                  </>
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </div>
+          </SheetHeader>
 
-                <div>
-                  <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Rate Sheet Name</Label>
-                  <Input
-                    id="name"
-                    value={localData?.name || ''}
-                    onChange={(e) => handleChange('name', e.target.value)}
-                    placeholder="Courier negotiated rates"
-                    className="mt-1"
-                    required
-                  />
-                </div>
+          {isInitialLoading ? (
+            <div className="flex h-[calc(100vh-73px)] flex-col items-center justify-center gap-3 text-muted-foreground">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm">Loading rate sheet...</p>
+            </div>
+          ) : (
+            <div className="flex h-[calc(100vh-73px)] overflow-hidden relative">
+              {/* Mobile sidebar overlay */}
+              {sidebarOpen && (
+                <div
+                  className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                  onClick={() => setSidebarOpen(false)}
+                />
+              )}
 
-                <div>
-                  <Label className="text-sm font-semibold text-gray-700">Services ({localData?.services?.length || 0})</Label>
-                  <div className="space-y-2 mt-2 max-h-40 overflow-y-auto">
-                    {localData?.services?.map((service: any) => (
-                      <div key={service.id} className="flex items-center justify-between p-3 border rounded bg-white">
-                        <div className="min-w-0 flex-1">
-                          <div className="font-medium text-sm truncate">{service.service_name}</div>
-                          <div className="text-xs text-gray-500 truncate">{service.service_code}</div>
-                          <div className="text-xs text-gray-500">{service.zones?.length || 0} zones</div>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEditService(service)}
-                          className="ml-2 shrink-0"
-                        >
-                          Edit
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="ml-1 shrink-0 text-red-600 hover:text-red-700"
-                              title="Delete service"
-                            >
-                              <TrashIcon className="h-3 w-3" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete service</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{service.service_name}"? This cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="h-8 px-3 text-sm">Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                className="h-8 px-3 text-sm bg-red-600 hover:bg-red-700"
-                                onClick={() => handleRemoveService(service.id)}
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+              {/* Left Sidebar */}
+              <div
+                className={cn(
+                  "fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto",
+                  "w-full lg:w-80 border-r border-border bg-background lg:bg-muted/30 overflow-y-auto",
+                  "transform transition-transform duration-200 ease-in-out lg:transform-none",
+                  "top-[73px] lg:top-0 h-[calc(100vh-73px)]",
+                  sidebarOpen
+                    ? "translate-x-0"
+                    : "-translate-x-full lg:translate-x-0"
+                )}
+              >
+                <div className="p-4 sm:p-6 space-y-6">
+                  {/* Carrier Selector */}
+                  <div>
+                    <Label className="mb-2 block">
+                      Carrier <span className="text-destructive">*</span>
+                    </Label>
+                    <Select
+                      value={carrierName}
+                      onValueChange={setCarrierName}
+                      disabled={isEditMode}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a carrier" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[100]">
+                        {carriers.length > 0 ? (
+                          carriers.map((carrier) => (
+                            <SelectItem key={carrier.id} value={carrier.id}>
+                              {carrier.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="p-2 text-sm text-muted-foreground">
+                            No carriers available
+                          </div>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Rate Sheet Name */}
+                  <div>
+                    <Label className="mb-2 block">
+                      Rate Sheet Name <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g., Standard Rates 2024"
+                    />
+                  </div>
+
+                  {/* Services Section */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-foreground">
+                          Services
+                        </h3>
+                        <span className="text-xs text-muted-foreground">
+                          ({services.length})
+                        </span>
                       </div>
-                    ))}
-                    <div className="space-y-2">
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={handleAddService}
-                        className="w-full"
+                        className="h-7 px-2"
                       >
-                        Add Service
+                        <PlusIcon className="h-3 w-3 mr-1" />
+                        Add
                       </Button>
-                      {localData?.carrier_name && (!localData?.services?.length || localData?.services?.length === 0) && (
-                        <div className="space-y-2">
+                    </div>
+
+                    {services.length > 0 ? (
+                      <div className="space-y-2 mt-2 max-h-45 overflow-y-auto pr-1">
+                        {services.map((service) => (
+                          <div
+                            key={service.service_code}
+                            className="p-3 bg-background border border-border rounded-md hover:border-primary/50 transition-colors"
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                  {service.service_name}
+                                </p>
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {service.service_code}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {service.zones?.length || 0} zones
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                  onClick={() => handleEditService(service)}
+                                >
+                                  <Pencil1Icon className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                  onClick={() => handleDeleteClick(service)}
+                                >
+                                  <TrashIcon className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-xs text-muted-foreground text-center py-4">
+                          No services added yet
+                        </p>
+                        {carrierName && (
                           <Button
                             variant="outline"
-                            size="sm"
-                            onClick={() => loadCarrierDefaults()}
                             className="w-full"
+                            onClick={handleLoadDefaults}
+                            disabled={isLoadingDefaults}
                           >
-                            Load {references?.carriers?.[localData.carrier_name] || localData.carrier_name} Defaults
+                            {isLoadingDefaults ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                Loading...
+                              </>
+                            ) : (
+                              <>
+                                Load{" "}
+                                {carriers.find((c) => c.id === carrierName)
+                                  ?.name || carrierName}{" "}
+                                Defaults
+                              </>
+                            )}
                           </Button>
-                          {isNew && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => checkForExistingRateSheets(localData.carrier_name)}
-                              className="w-full text-xs"
-                            >
-                              Check for Existing Rate Sheets
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Connected Carriers */}
-                {connectedCarriers.length > 0 && (
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700">Connected Carriers ({connectedCarriers.length})</Label>
-                    <div className="space-y-2 mt-2 max-h-32 overflow-y-auto">
-                      {connectedCarriers.map((carrier: any) => (
-                        <div key={carrier.id} className="flex items-center justify-between p-2 border rounded bg-white text-sm">
-                          <div className="min-w-0 flex-1">
-                            <div className="font-medium truncate">{carrier.display_name}</div>
-                            <div className="text-xs text-gray-500 truncate">{carrier.carrier_id}</div>
-                          </div>
-                          <div className="flex items-center space-x-2 text-xs">
-                            <span className={`px-2 py-1 rounded ${carrier.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                              {carrier.active ? 'Active' : 'Inactive'}
-                            </span>
-                            <span className={`px-2 py-1 rounded ${carrier.test_mode ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>
-                              {carrier.test_mode ? 'Test' : 'Live'}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Default Settings */}
-                <div className="space-y-3 pt-4 border-t">
-                  <Label className="text-sm font-semibold text-gray-700">Default Settings</Label>
-
-                  <div>
-                    <Label htmlFor="currency" className="text-xs text-gray-600">Currency</Label>
-                    <Select
-                      value={localData?.services?.[0]?.currency || 'USD'}
-                      onValueChange={(value) => {
-                        setLocalData((prev: any) => ({
-                          ...prev,
-                          services: prev.services.map((s: any) => ({ ...s, currency: value }))
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CURRENCY_OPTIONS.map(currency => (
-                          <SelectItem key={currency} value={currency}>
-                            {currency}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  <div>
-                    <Label htmlFor="weight_unit" className="text-xs text-gray-600">Weight Unit</Label>
-                    <Select
-                      value={localData?.services?.[0]?.weight_unit || 'KG'}
-                      onValueChange={(value) => {
-                        setLocalData((prev: any) => ({
-                          ...prev,
-                          services: prev.services.map((s: any) => ({ ...s, weight_unit: value }))
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {WEIGHT_UNITS.map(unit => (
-                          <SelectItem key={unit} value={unit}>
-                            {unit}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="dimension_unit" className="text-xs text-gray-600">Dimension Unit</Label>
-                    <Select
-                      value={localData?.services?.[0]?.dimension_unit || 'CM'}
-                      onValueChange={(value) => {
-                        setLocalData((prev: any) => ({
-                          ...prev,
-                          services: prev.services.map((s: any) => ({ ...s, dimension_unit: value }))
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {DIMENSION_UNITS.map(unit => (
-                          <SelectItem key={unit} value={unit}>
-                            {unit}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div
-              className="flex-1 bg-gray-100"
-              style={{
-                height: "100%",
-                minHeight: "600px",
-                overflow: "hidden"
-              }}
-            >
-              <div
-                className="h-full p-4"
-                style={{
-                  display: "flex",
-                  flexDirection: "column"
-                }}
-              >
-                <Tabs defaultValue="rates" className="flex flex-col h-full">
-                  <TabsList className="grid w-full grid-cols-4 mb-4">
-                    <TabsTrigger value="rates">Rate Sheet</TabsTrigger>
-                    <TabsTrigger value="zones">Zones</TabsTrigger>
-                    <TabsTrigger value="services">Services</TabsTrigger>
-                    <TabsTrigger value="json">JSON Editor</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent
-                    value="rates"
-                    className="flex-1 mt-0"
-                    style={{
-                      height: "calc(100% - 60px)",
-                      overflow: "auto"
-                    }}
-                  >
-                    <div style={{ height: "100%", overflow: "auto" }}>
-                      <RateSheetTable
-                        rateSheetId={rateSheetId}
-                        services={localData?.services || []}
-                        onAddZone={handleAddZone}
-                        onRemoveZone={handleRemoveZone}
-                        onAddService={handleAddService}
-                        onRemoveService={handleRemoveService}
-                        onCellChange={handleCellChange}
-                        onBatchUpdate={isAdmin ? async ({ id, updates }) => {
-                          try {
-                            if (batchUpdateRateSheetCells?.mutateAsync) {
-                              await batchUpdateRateSheetCells.mutateAsync({ id, updates });
-                            }
-                          } catch (e) {
-                            console.error(e);
-                            throw e;
-                          }
-                        } : undefined}
-                      />
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent
-                    value="zones"
-                    className="flex-1 mt-0"
-                    style={{
-                      height: "calc(100% - 60px)",
-                      overflowY: "auto"
-                    }}
-                  >
-                    <div className="space-y-3 pr-2">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold">Zones</h3>
-                        <div className="space-x-2">
-                          <Button size="sm" variant="outline" onClick={handleAddZoneAll}>Add Zone</Button>
-                          {(() => {
-                            const maxZones = Math.max(0, ...(localData?.services || []).map((s: any) => (s.zones || []).length));
-                            return maxZones > 0 ? (
-                              <Button size="sm" variant="ghost" onClick={() => handleRemoveZoneAll(maxZones - 1)}>Remove Last Column</Button>
-                            ) : null;
-                          })()}
+                  {/* Connected Carriers */}
+                  {isEditMode && connectedCarriers.length > 0 && (
+                    <div className="pt-4 border-t border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-semibold text-foreground">
+                            Connected Carriers
+                          </h3>
+                          <span className="text-xs text-muted-foreground">
+                            ({connectedCarriers.length})
+                          </span>
                         </div>
                       </div>
-                      {(() => {
-                        const maxZones = Math.max(0, ...(localData?.services || []).map((s: any) => (s.zones || []).length));
-                        return Array.from({ length: maxZones }, (_, i) => {
-                          const sample = localData?.services?.[0]?.zones?.[i] || {};
-                          return (
-                            <div key={i} className="border rounded p-4 bg-white">
-                              <div className="flex items-center justify-between mb-3">
-                                <h4 className="font-medium">Zone {i + 1}</h4>
-                                <Button size="sm" variant="ghost" onClick={() => handleRemoveZoneAll(i)}>Remove Column</Button>
+                      <div className="space-y-2 max-h-40 overflow-y-auto pr-1 pb-1">
+                        {connectedCarriers.map((carrier) => (
+                          <div
+                            key={carrier.id}
+                            className="p-3 bg-background border border-border rounded-md"
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                  {carrier.display_name || carrier.carrier_id}
+                                </p>
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {carrier.carrier_id}
+                                </p>
                               </div>
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <Label>Label</Label>
-                                  <Input
-                                    value={sample.label || ''}
-                                    onChange={(e) => handleUpdateZoneFieldAll(i, 'label', e.target.value)}
-                                    placeholder={`Zone ${i + 1}`}
-                                  />
-                                </div>
-                                <div>
-                                  <Label>Country Codes</Label>
-                                  <MultiSelect
-                                    options={countryOptions}
-                                    value={getAggregatedZoneArray(i, 'country_codes')}
-                                    onValueChange={(vals) => {
-                                      const unique = Array.from(new Set(vals.map((v) => v.toUpperCase())));
-                                      handleUpdateZoneFieldAll(i, 'country_codes', unique);
-                                    }}
-                                    placeholder="Select countries"
-                                  />
-                                </div>
-                                <div>
-                                  <Label>Cities (comma separated)</Label>
-                                  <Input
-                                    value={getZoneTextValue(i, 'cities', getAggregatedZoneArray(i, 'cities'))}
-                                    inputMode="text"
-                                    onKeyDown={(e) => {
-                                      // Allow comma and space input - prevent any parent/global blocking behavior
-                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
-                                        e.stopPropagation();
-                                        const nativeEvent: any = (e as any).nativeEvent;
-                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
-                                          nativeEvent.stopImmediatePropagation();
-                                        }
-                                      }
-                                    }}
-                                    onKeyDownCapture={(e) => {
-                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
-                                        e.stopPropagation();
-                                      }
-                                    }}
-                                    onChange={(e) => setZoneTextValue(i, 'cities', e.target.value)}
-                                    onBlur={() => persistZoneTextValue(i, 'cities')}
-                                    placeholder="New York, Toronto"
-                                  />
-                                </div>
-                                <div>
-                                  <Label>Postal Codes (comma separated)</Label>
-                                  <Input
-                                    value={getZoneTextValue(i, 'postal_codes', getAggregatedZoneArray(i, 'postal_codes'))}
-                                    inputMode="text"
-                                    onKeyDown={(e) => {
-                                      // Allow comma and space input - prevent any parent/global blocking behavior
-                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
-                                        e.stopPropagation();
-                                        const nativeEvent: any = (e as any).nativeEvent;
-                                        if (nativeEvent && typeof nativeEvent.stopImmediatePropagation === 'function') {
-                                          nativeEvent.stopImmediatePropagation();
-                                        }
-                                      }
-                                    }}
-                                    onKeyDownCapture={(e) => {
-                                      if (e.key === ',' || e.key === ' ' || (e as any).keyCode === 188 || (e as any).keyCode === 32) {
-                                        e.stopPropagation();
-                                      }
-                                    }}
-                                    onChange={(e) => setZoneTextValue(i, 'postal_codes', e.target.value)}
-                                    onBlur={() => persistZoneTextValue(i, 'postal_codes')}
-                                    placeholder="10001, 94105"
-                                  />
-                                </div>
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                <span
+                                  className={`px-2 py-0.5 rounded text-xs ${carrier.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                                >
+                                  {carrier.active ? "Active" : "Inactive"}
+                                </span>
+                                <span
+                                  className={`px-2 py-0.5 rounded text-xs ${carrier.test_mode ? "bg-yellow-100 text-yellow-700" : "bg-blue-100 text-blue-700"}`}
+                                >
+                                  {carrier.test_mode ? "Test" : "Live"}
+                                </span>
                               </div>
                             </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Default Settings */}
+                  <div className="space-y-3 pt-4 border-t border-border">
+                    <h3 className="text-sm font-semibold text-foreground">
+                      Default Settings
+                    </h3>
+
+                    <div>
+                      <Label className="text-xs mb-1 block">Currency</Label>
+                      <Select
+                        value={selectedCurrency}
+                        onValueChange={(value) => {
+                          setServices((prev) =>
+                            prev.map((service) => ({
+                              ...service,
+                              currency: value,
+                            }))
                           );
-                        });
-                      })()}
-                      {((localData?.services || []).every((s: any) => (s.zones || []).length === 0)) && (
-                        <div className="text-center py-8 text-gray-500 bg-white border rounded">
-                          <p>No zones yet</p>
-                          <Button className="mt-3" size="sm" variant="outline" onClick={handleAddZoneAll}>Add Zone</Button>
-                        </div>
-                      )}
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent
-                    value="services"
-                    className="flex-1 mt-0"
-                    style={{
-                      height: "calc(100% - 60px)",
-                      overflowY: "auto"
-                    }}
-                  >
-                    <div className="space-y-4 pr-2">
-                      {localData?.services?.map((service: any) => (
-                        <div key={service.id} className="border rounded p-4 bg-white">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold">{service.service_name}</h3>
-                            <div className="space-x-2">
-                              <Button size="sm" onClick={() => handleEditService(service)}>Edit</Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-red-600 border-red-200 hover:text-red-700"
-                                  >
-                                    Delete
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete service</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete "{service.service_name}"? This cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel className="h-8 px-3 text-sm">Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      className="h-8 px-3 text-sm bg-red-600 hover:bg-red-700"
-                                      onClick={() => handleRemoveService(service.id)}
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>Service Code: <code className="text-xs">{service.service_code}</code></div>
-                            <div>Currency: <code className="text-xs">{service.currency}</code></div>
-                            <div>Transit Days: <code className="text-xs">{service.transit_days || 'N/A'}</code></div>
-                            <div>Max Weight: <code className="text-xs">{service.max_weight || 'N/A'} {service.weight_unit}</code></div>
-                            <div>Zones: <code className="text-xs">{service.zones?.length || 0}</code></div>
-                            <div>Active: <code className="text-xs">{service.active ? 'Yes' : 'No'}</code></div>
-                          </div>
-                        </div>
-                      ))}
-                      {localData?.services?.length === 0 && (
-                        <div className="text-center py-8 text-gray-500">
-                          <p>No services configured yet.</p>
-                          <p className="text-sm">Click "Add Service" or "Load Defaults" to get started.</p>
-                        </div>
-                      )}
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent
-                    value="json"
-                    className="flex-1 mt-0"
-                    style={{
-                      height: "calc(100% - 60px)",
-                      overflow: "hidden"
-                    }}
-                  >
-                    <div className="h-full border rounded bg-white overflow-hidden">
-                      <CodeMirror
-                        height="100%"
-                        extensions={[jsonLanguage]}
-                        value={failsafe(() => JSON.stringify(localData?.services || [], null, 2), '')}
-                        editable={false}
-                        basicSetup={{
-                          lineNumbers: true,
-                          foldGutter: true,
-                          dropCursor: false,
-                          allowMultipleSelections: false,
-                          autocompletion: false,
-                          bracketMatching: true,
-                          highlightSelectionMatches: false,
-                          searchKeymap: false,
                         }}
-                        style={{
-                          fontSize: '14px',
-                          height: '100%',
-                          overflow: 'auto',
-                          background: '#fafafa'
-                        }}
-                      />
+                        disabled={services.length === 0}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[100] max-h-60">
+                          {currencyOptions.map((code) => (
+                            <SelectItem key={code} value={code}>
+                              {code}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </TabsContent>
-                </Tabs>
+
+                    <div>
+                      <Label className="text-xs mb-1 block">Weight Unit</Label>
+                      <Select
+                        value={selectedWeightUnit}
+                        onValueChange={(value) => {
+                          setServices((prev) =>
+                            prev.map((service) => ({
+                              ...service,
+                              weight_unit: value,
+                            }))
+                          );
+                        }}
+                        disabled={services.length === 0}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select weight unit" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[100]">
+                          {weightUnitOptions.map((unit) => (
+                            <SelectItem key={unit} value={unit}>
+                              {unit}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs mb-1 block">Dimension Unit</Label>
+                      <Select
+                        value={selectedDimensionUnit}
+                        onValueChange={(value) => {
+                          setServices((prev) =>
+                            prev.map((service) => ({
+                              ...service,
+                              dimension_unit: value,
+                            }))
+                          );
+                        }}
+                        disabled={services.length === 0}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select dimension unit" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[100]">
+                          {dimensionUnitOptions.map((unit) => (
+                            <SelectItem key={unit} value={unit}>
+                              {unit}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content Area */}
+              <div className="flex-1 flex flex-col overflow-hidden bg-background w-full lg:w-auto">
+                {/* Tab Navigation */}
+                <div className="border-b border-border px-4 sm:px-6 overflow-x-auto">
+                  <div className="flex items-center min-w-min">
+                    {(
+                      [
+                        { id: "rate_sheet", label: "Rate Sheet" },
+                        { id: "zones", label: "Zones" },
+                        { id: "services", label: "Services" },
+                        { id: "surcharges", label: "Surcharges" },
+                      ] as const
+                    ).map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                          "flex-1 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap px-2",
+                          activeTab === tab.id
+                            ? "border-primary text-primary"
+                            : "border-transparent text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tab Content */}
+                <div className="flex-1 p-4 sm:p-6 overflow-hidden">
+                  {activeTab === "rate_sheet" && (
+                    <RateSheetTable
+                      services={services}
+                      sharedZonesFromParent={sharedZones}
+                      onUpdateService={handleUpdateService}
+                      onAddZone={handleAddZoneAll}
+                      onRemoveZone={handleRemoveZoneAll}
+                    />
+                  )}
+                  {activeTab === "zones" && (
+                    <ZonesTab
+                      services={services}
+                      sharedZonesFromParent={sharedZones}
+                      onUpdateZone={handleUpdateZone}
+                      onAddZone={handleAddZoneAll}
+                      onRemoveZone={handleRemoveZoneAll}
+                      countryOptions={countryOptions}
+                      getZoneTextValue={getZoneTextValue}
+                      setZoneTextValue={setZoneTextValue}
+                      persistZoneTextValue={persistZoneTextValue}
+                    />
+                  )}
+                  {activeTab === "services" && (
+                    <ServicesTab
+                      services={services}
+                      onEditService={handleEditService}
+                      onDeleteService={handleDeleteClick}
+                    />
+                  )}
+                  {activeTab === "surcharges" && (
+                    <SurchargesTab
+                      surcharges={surcharges}
+                      services={services}
+                      onUpdateSurcharge={handleUpdateSurcharge}
+                      onAddSurcharge={handleAddSurcharge}
+                      onRemoveSurcharge={handleRemoveSurcharge}
+                      onToggleServiceSurcharge={handleToggleServiceSurcharge}
+                    />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </SheetContent>
       </Sheet>
 
       {/* Service Editor Modal */}
       <ServiceEditorModal
-        service={editingService}
-        isOpen={serviceModalOpen}
-        onClose={() => {
-          setServiceModalOpen(false);
-          setEditingService(null);
-        }}
-        onSubmit={handleServiceSubmit}
+        isOpen={serviceDialogOpen}
+        onClose={() => setServiceDialogOpen(false)}
+        service={selectedService}
+        onSubmit={handleSaveService}
+        availableSurcharges={surcharges}
       />
+
+      {/* Delete Service Confirmation Dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Service</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{serviceToDelete?.service_name}"?
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingService}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={isDeletingService}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeletingService ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Zone Confirmation Dialog */}
+      <AlertDialog
+        open={deleteZoneConfirmOpen}
+        onOpenChange={setDeleteZoneConfirmOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Zone</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{zoneToDeleteLabel}"? This will
+              remove it from all services. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmRemoveZone}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
+
+export default RateSheetEditor;

@@ -1,6 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
-import { useSyncedSession } from "./session";
+"use client";
+
+import { useAuthenticatedMutation, useKarrio } from "./karrio";
 import { useAPIMetadata } from "./api-metadata";
+import { url$ } from "@karrio/lib";
 
 export type ResourceType = "shipment" | "manifest" | "order" | "template" | "document";
 export type AccessType = "label" | "invoice" | "manifest" | "render" | "batch_labels" | "batch_invoices" | "batch_manifests";
@@ -21,31 +23,12 @@ export interface ResourceTokenResponse {
 }
 
 export function useResourceToken() {
-  const { getHost } = useAPIMetadata();
-  const { query: sessionQuery } = useSyncedSession();
-  const session = sessionQuery.data as { accessToken?: string; orgId?: string };
+  const karrio = useKarrio();
 
-  return useMutation({
+  return useAuthenticatedMutation({
     mutationFn: async (request: ResourceTokenRequest): Promise<ResourceTokenResponse> => {
-      const host = getHost?.() || "";
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        ...(session?.accessToken && { Authorization: `Bearer ${session.accessToken}` }),
-        ...(session?.orgId && { "x-org-id": session.orgId }),
-      };
-
-      const response = await fetch(`${host}/api/tokens`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(request),
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        throw new Error(error.detail || error.message || "Failed to generate token");
-      }
-
-      return response.json();
+      const response = await karrio.axios.post<ResourceTokenResponse>("/api/tokens", request);
+      return response.data;
     },
   });
 }
@@ -54,10 +37,9 @@ export function useDocumentPrinter() {
   const { getHost } = useAPIMetadata();
   const tokenMutation = useResourceToken();
 
-  // Helper to build clean URLs without double slashes
   const buildUrl = (resourceUrl: string) => {
-    const host = (getHost?.() || "").replace(/\/$/, ""); // Remove trailing slash
-    return `${host}${resourceUrl}`;
+    const host = getHost?.() || "";
+    return url$`${host}${resourceUrl}`;
   };
 
   const openShipmentLabel = async (

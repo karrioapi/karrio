@@ -2689,6 +2689,31 @@ export const UPDATE_RATE_SHEET = gql`
         id
         name
         carrier_name
+        zones {
+          id
+          label
+          country_codes
+          postal_codes
+          cities
+          transit_days
+          transit_time
+        }
+        surcharges {
+          id
+          name
+          amount
+          surcharge_type
+          cost
+          active
+        }
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+        }
         services {
           id
           service_name
@@ -2703,17 +2728,8 @@ export const UPDATE_RATE_SHEET = gql`
           max_weight
           weight_unit
           active
-          zones {
-            id
-            label
-            rate
-            min_weight
-            max_weight
-            transit_days
-            cities
-            postal_codes
-            country_codes
-          }
+          zone_ids
+          surcharge_ids
         }
       }
       errors {
@@ -2825,17 +2841,250 @@ export const DELETE_RATE_SHEET_SERVICE = gql`
           max_weight
           weight_unit
           active
-          zones {
-            id
-            label
-            rate
-            min_weight
-            max_weight
-            transit_days
-            cities
-            postal_codes
-            country_codes
-          }
+          zone_ids
+          surcharge_ids
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Shared Zone Mutations
+// -----------------------------------------------------------
+
+export const ADD_SHARED_ZONE = gql`
+  mutation AddSharedZone($data: AddSharedZoneMutationInput!) {
+    add_shared_zone(input: $data) {
+      rate_sheet {
+        id
+        zones {
+          id
+          label
+          country_codes
+          postal_codes
+          cities
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SHARED_ZONE = gql`
+  mutation UpdateSharedZone($data: UpdateSharedZoneMutationInput!) {
+    update_shared_zone(input: $data) {
+      rate_sheet {
+        id
+        zones {
+          id
+          label
+          country_codes
+          postal_codes
+          cities
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SHARED_ZONE = gql`
+  mutation DeleteSharedZone($data: DeleteSharedZoneMutationInput!) {
+    delete_shared_zone(input: $data) {
+      rate_sheet {
+        id
+        zones {
+          id
+          label
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Shared Surcharge Mutations
+// -----------------------------------------------------------
+
+export const ADD_SHARED_SURCHARGE = gql`
+  mutation AddSharedSurcharge($data: AddSharedSurchargeMutationInput!) {
+    add_shared_surcharge(input: $data) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+          amount
+          surcharge_type
+          cost
+          active
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SHARED_SURCHARGE = gql`
+  mutation UpdateSharedSurcharge($data: UpdateSharedSurchargeMutationInput!) {
+    update_shared_surcharge(input: $data) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+          amount
+          surcharge_type
+          cost
+          active
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SHARED_SURCHARGE = gql`
+  mutation DeleteSharedSurcharge($data: DeleteSharedSurchargeMutationInput!) {
+    delete_shared_surcharge(input: $data) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const BATCH_UPDATE_SURCHARGES = gql`
+  mutation BatchUpdateSurcharges($data: BatchUpdateSurchargesMutationInput!) {
+    batch_update_surcharges(input: $data) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+          amount
+          surcharge_type
+          cost
+          active
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Service Rate Mutations
+// -----------------------------------------------------------
+
+export const UPDATE_SERVICE_RATE = gql`
+  mutation UpdateServiceRate($data: UpdateServiceRateMutationInput!) {
+    update_service_rate(input: $data) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const BATCH_UPDATE_SERVICE_RATES = gql`
+  mutation BatchUpdateServiceRates($data: BatchUpdateServiceRatesMutationInput!) {
+    batch_update_service_rates(input: $data) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Service Zone/Surcharge Assignment Mutations
+// -----------------------------------------------------------
+
+export const UPDATE_SERVICE_ZONE_IDS = gql`
+  mutation UpdateServiceZoneIds($data: UpdateServiceZoneIdsMutationInput!) {
+    update_service_zone_ids(input: $data) {
+      rate_sheet {
+        id
+        services {
+          id
+          zone_ids
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SERVICE_SURCHARGE_IDS = gql`
+  mutation UpdateServiceSurchargeIds($data: UpdateServiceSurchargeIdsMutationInput!) {
+    update_service_surcharge_ids(input: $data) {
+      rate_sheet {
+        id
+        services {
+          id
+          surcharge_ids
         }
       }
       errors {
@@ -2852,6 +3101,36 @@ export const GET_RATE_SHEET = gql`
       id
       name
       carrier_name
+      zones {
+        id
+        label
+        country_codes
+        postal_codes
+        cities
+        transit_days
+        transit_time
+        radius
+        latitude
+        longitude
+      }
+      surcharges {
+        id
+        name
+        amount
+        surcharge_type
+        cost
+        active
+      }
+      service_rates {
+        service_id
+        zone_id
+        rate
+        cost
+        min_weight
+        max_weight
+        transit_days
+        transit_time
+      }
       services {
         id
         object_type
@@ -2867,20 +3146,12 @@ export const GET_RATE_SHEET = gql`
         max_height
         max_length
         dimension_unit
+        max_weight
+        weight_unit
         domicile
         international
-        zones {
-          object_type
-          id
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          cities
-          postal_codes
-          country_codes
-        }
+        zone_ids
+        surcharge_ids
       }
       carriers {
         id
@@ -2910,6 +3181,31 @@ export const GET_RATE_SHEETS = gql`
           id
           name
           carrier_name
+          zones {
+            id
+            label
+            country_codes
+            postal_codes
+            cities
+            transit_days
+            transit_time
+          }
+          surcharges {
+            id
+            name
+            amount
+            surcharge_type
+            cost
+            active
+          }
+          service_rates {
+            service_id
+            zone_id
+            rate
+            cost
+            min_weight
+            max_weight
+          }
           services {
             id
             service_name
@@ -2924,19 +3220,12 @@ export const GET_RATE_SHEETS = gql`
             max_height
             max_length
             dimension_unit
+            max_weight
+            weight_unit
             domicile
             international
-            zones {
-              id
-              label
-              rate
-              min_weight
-              max_weight
-              transit_days
-              cities
-              postal_codes
-              country_codes
-            }
+            zone_ids
+            surcharge_ids
           }
           carriers {
             id

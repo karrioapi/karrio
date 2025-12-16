@@ -219,20 +219,47 @@ export const GET_RATE_SHEETS = gql`
           slug
           carrier_name
           metadata
+          zones {
+            id
+            label
+            country_codes
+            postal_codes
+            cities
+            transit_days
+            transit_time
+          }
+          surcharges {
+            id
+            name
+            amount
+            surcharge_type
+            cost
+            active
+          }
+          service_rates {
+            service_id
+            zone_id
+            rate
+            cost
+            min_weight
+            max_weight
+          }
           services {
             id
             service_name
             service_code
-            zones {
-              label
-              rate
-              min_weight
-              max_weight
-              transit_days
-              cities
-              postal_codes
-              country_codes
-            }
+            currency
+            transit_days
+            transit_time
+            max_width
+            max_height
+            max_length
+            dimension_unit
+            max_weight
+            weight_unit
+            active
+            zone_ids
+            surcharge_ids
           }
           carriers {
             id
@@ -260,25 +287,66 @@ export const GET_RATE_SHEET = gql`
       slug
       carrier_name
       metadata
+      zones {
+        id
+        label
+        country_codes
+        postal_codes
+        cities
+        transit_days
+        transit_time
+        radius
+        latitude
+        longitude
+      }
+      surcharges {
+        id
+        name
+        amount
+        surcharge_type
+        cost
+        active
+      }
+      service_rates {
+        service_id
+        zone_id
+        rate
+        cost
+        min_weight
+        max_weight
+        transit_days
+        transit_time
+      }
       services {
         id
+        object_type
         service_name
         service_code
-        zones {
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          cities
-          postal_codes
-          country_codes
-        }
+        carrier_service_code
+        description
+        active
+        currency
+        transit_days
+        transit_time
+        max_width
+        max_height
+        max_length
+        dimension_unit
+        max_weight
+        weight_unit
+        domicile
+        international
+        zone_ids
+        surcharge_ids
       }
       carriers {
         id
         carrier_name
         active
+        carrier_id
+        display_name
+        capabilities
+        test_mode
       }
     }
   }
@@ -821,6 +889,248 @@ export const BATCH_UPDATE_RATE_SHEET_CELLS = gql`
 export const DELETE_RATE_SHEET_SERVICE = gql`
   mutation DeleteRateSheetService($input: DeleteRateSheetServiceMutationInput!) {
     delete_rate_sheet_service(input: $input) {
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Shared Zone Mutations
+// -----------------------------------------------------------
+
+export const ADD_SHARED_ZONE = gql`
+  mutation AddSharedZone($input: AddSharedZoneMutationInput!) {
+    add_shared_zone(input: $input) {
+      rate_sheet {
+        id
+        zones {
+          id
+          label
+          country_codes
+          postal_codes
+          cities
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SHARED_ZONE = gql`
+  mutation UpdateSharedZone($input: UpdateSharedZoneMutationInput!) {
+    update_shared_zone(input: $input) {
+      rate_sheet {
+        id
+        zones {
+          id
+          label
+          country_codes
+          postal_codes
+          cities
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SHARED_ZONE = gql`
+  mutation DeleteSharedZone($input: DeleteSharedZoneMutationInput!) {
+    delete_shared_zone(input: $input) {
+      rate_sheet {
+        id
+        zones {
+          id
+          label
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Shared Surcharge Mutations
+// -----------------------------------------------------------
+
+export const ADD_SHARED_SURCHARGE = gql`
+  mutation AddSharedSurcharge($input: AddSharedSurchargeMutationInput!) {
+    add_shared_surcharge(input: $input) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+          amount
+          surcharge_type
+          cost
+          active
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SHARED_SURCHARGE = gql`
+  mutation UpdateSharedSurcharge($input: UpdateSharedSurchargeMutationInput!) {
+    update_shared_surcharge(input: $input) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+          amount
+          surcharge_type
+          cost
+          active
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SHARED_SURCHARGE = gql`
+  mutation DeleteSharedSurcharge($input: DeleteSharedSurchargeMutationInput!) {
+    delete_shared_surcharge(input: $input) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const BATCH_UPDATE_SURCHARGES = gql`
+  mutation BatchUpdateSurcharges($input: BatchUpdateSurchargesMutationInput!) {
+    batch_update_surcharges(input: $input) {
+      rate_sheet {
+        id
+        surcharges {
+          id
+          name
+          amount
+          surcharge_type
+          cost
+          active
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Service Rate Mutations
+// -----------------------------------------------------------
+
+export const UPDATE_SERVICE_RATE = gql`
+  mutation UpdateServiceRate($input: UpdateServiceRateMutationInput!) {
+    update_service_rate(input: $input) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const BATCH_UPDATE_SERVICE_RATES = gql`
+  mutation BatchUpdateServiceRates($input: BatchUpdateServiceRatesMutationInput!) {
+    batch_update_service_rates(input: $input) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Service Zone/Surcharge Assignment Mutations
+// -----------------------------------------------------------
+
+export const UPDATE_SERVICE_ZONE_IDS = gql`
+  mutation UpdateServiceZoneIds($input: UpdateServiceZoneIdsMutationInput!) {
+    update_service_zone_ids(input: $input) {
+      rate_sheet {
+        id
+        services {
+          id
+          zone_ids
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_SERVICE_SURCHARGE_IDS = gql`
+  mutation UpdateServiceSurchargeIds($input: UpdateServiceSurchargeIdsMutationInput!) {
+    update_service_surcharge_ids(input: $input) {
+      rate_sheet {
+        id
+        services {
+          id
+          surcharge_ids
+        }
+      }
       errors {
         field
         messages
