@@ -46,9 +46,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         POST /shipping/v1/shipment
         """
         access_token = self.authenticate(request).deserialize()
-
-        # Get label format from request options or default to PDF
-        label_format = getattr(request, "label_format", "PDF") or "PDF"
+        label_format = request.ctx.get("label_format", "PDF")
 
         response = lib.request(
             url=f"{self.settings.server_url}/shipment?LabelPrintFormat={label_format}",

@@ -162,4 +162,8 @@ def shipment_request(
 
     # DPD META-API /shipment expects an array at the root (even for a single shipment).
     # See: validation error "Instance type (object) ... allowed: ['array']"
-    return lib.Serializable([request], lib.to_dict)
+    return lib.Serializable(
+        [request],
+        lib.to_dict,
+        dict(label_format=options.label_format.state or "PDF"),
+    )
