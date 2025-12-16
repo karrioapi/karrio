@@ -26,10 +26,10 @@ import React from "react";
 // Surcharge type for linking
 interface Surcharge {
   id: string;
-  name: string | null;
-  amount: number | null;
-  surcharge_type: string | null;
-  active: boolean | null;
+  name?: string | null;
+  amount?: number | null;
+  surcharge_type?: string | null;
+  active?: boolean | null;
 }
 
 interface ServiceEditorModalProps {

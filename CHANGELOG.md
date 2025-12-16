@@ -1,3 +1,18 @@
+# Karrio 2025.5.6
+
+## Changes
+
+### Feat
+
+- feat: ratesheet datastructure upgrade + support for surcharges
+- feat: improve UX with document download to support all authentication methods available to the API
+
+### Chores
+
+- chore(deps): bump next from 15.4.8 to 15.4.10 in /packages/core
+
+---
+
 # Karrio 2025.5.5
 
 ## Changes

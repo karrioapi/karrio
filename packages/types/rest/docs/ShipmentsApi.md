@@ -61,7 +61,7 @@ const { status, data } = await apiInstance.cancel(
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** |  |  -  |
-|**202** |  |  -  |
+|**304** |  |  -  |
 |**404** |  |  -  |
 |**400** |  |  -  |
 |**409** |  |  -  |

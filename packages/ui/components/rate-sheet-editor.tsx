@@ -246,8 +246,8 @@ export const RateSheetEditor = ({
         const zoneIds = service.zone_ids || [];
 
         const embeddedZones = zoneIds.map((zoneId: string, index: number) => {
-          const zone = zoneMap.get(zoneId);
-          const rateEntry = rateMap.get(`${service.id}:${zoneId}`);
+          const zone = zoneMap.get(zoneId) as any;
+          const rateEntry = rateMap.get(`${service.id}:${zoneId}`) as any;
           linkedZoneIds.add(zoneId);
 
           return {
