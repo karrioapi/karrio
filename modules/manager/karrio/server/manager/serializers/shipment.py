@@ -285,8 +285,14 @@ class ShipmentSerializer(ShipmentData):
         if "docs" in validated_data:
             changes.append("label")
             changes.append("invoice")
+            changes.append("extra_documents")
             instance.label = validated_data["docs"].get("label") or instance.label
             instance.invoice = validated_data["docs"].get("invoice") or instance.invoice
+            instance.extra_documents = (
+                validated_data["docs"].get("extra_documents")
+                or instance.extra_documents
+                or []
+            )
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
@@ -387,6 +393,7 @@ class ShipmentUpdateData(validators.OptionDefaultSerializer):
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
+            "shipping_charges": 10.00,
             "is_return": true,
             "doc_files": [
                 {
@@ -443,6 +450,7 @@ class ShipmentRateData(validators.OptionDefaultSerializer):
         {
             "currency": "USD",
             "insurance": 100.00,
+            "insured_by": "carrier",
             "cash_on_delivery": 30.00,
             "dangerous_good": true,
             "declared_value": 150.00,
@@ -450,6 +458,7 @@ class ShipmentRateData(validators.OptionDefaultSerializer):
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
             "hold_at_location": true,
+            "locker_id": "123456789",
             "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
             "shipment_date": "2020-01-01",  # TODO: deprecate
@@ -457,6 +466,7 @@ class ShipmentRateData(validators.OptionDefaultSerializer):
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
+            "shipping_charges": 10.00,
             "is_return": true,
             "doc_files": [
                 {
@@ -500,6 +510,7 @@ class ShipmentPurchaseSerializer(Shipment):
         {
             "currency": "USD",
             "insurance": 100.00,
+            "insured_by": "carrier",
             "cash_on_delivery": 30.00,
             "dangerous_good": true,
             "declared_value": 150.00,
@@ -507,6 +518,7 @@ class ShipmentPurchaseSerializer(Shipment):
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
             "hold_at_location": true,
+            "locker_id": "123456789",
             "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
             "shipment_date": "2020-01-01",  # TODO: deprecate
@@ -514,6 +526,7 @@ class ShipmentPurchaseSerializer(Shipment):
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
+            "shipping_charges": 10.00,
             "is_return": true,
             "doc_files": [
                 {

@@ -7,6 +7,7 @@ from rest_framework.test import APITestCase, APIClient
 
 from karrio.server.user.models import Token
 from karrio.server.core.utils import ResourceAccessToken
+from karrio.server.core.tests.base import APITestCase as KarrioAPITestCase
 
 
 class TestResourceAccessTokenUnit(TestCase):
@@ -409,3 +410,184 @@ class TestResourceTokenAPI(APITestCase):
                 "cdn_cache_control": "no-store",
             },
         )
+
+
+class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
+    """Test document download endpoints with API Token authentication.
+
+    These tests verify that document download endpoints accept API Token
+    authentication as an alternative to resource access tokens.
+    """
+
+    def setUp(self):
+        super().setUp()
+        from karrio.server.manager.models import Shipment, Address, Parcel, Manifest
+
+        # Create test addresses
+        self.shipper = Address.objects.create(
+            postal_code="E1C4Z8",
+            city="Moncton",
+            person_name="John Doe",
+            country_code="CA",
+            state_code="NB",
+            address_line1="125 Church St",
+            created_by=self.user,
+        )
+        self.recipient = Address.objects.create(
+            postal_code="V6M2V9",
+            city="Vancouver",
+            person_name="Jane Doe",
+            country_code="CA",
+            state_code="BC",
+            address_line1="5840 Oak St",
+            created_by=self.user,
+        )
+
+        # Create test parcel
+        self.parcel = Parcel.objects.create(
+            weight=1.0,
+            weight_unit="KG",
+            created_by=self.user,
+        )
+
+        # Create test shipment with label
+        self.shipment = Shipment.objects.create(
+            shipper=self.shipper,
+            recipient=self.recipient,
+            created_by=self.user,
+            test_mode=True,
+            status="purchased",
+            tracking_number="TEST123456",
+            label="JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/AFQAZQBzAHQpCj4+CmVuZG9iagoyIDAgb2JqCjw8Cj4+CmVuZG9iagozIDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA2OCAwMDAwMCBuIAowMDAwMDAwMDg5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNAo+PgpzdGFydHhyZWYKMTEwCiUlRU9GCg==",  # Base64 encoded minimal PDF
+            label_type="PDF",
+        )
+        self.shipment.parcels.set([self.parcel])
+
+        # Create address for manifest
+        self.manifest_address = Address.objects.create(
+            postal_code="E1C4Z8",
+            city="Moncton",
+            person_name="Manifest Address",
+            country_code="CA",
+            state_code="NB",
+            address_line1="125 Church St",
+            created_by=self.user,
+        )
+
+        # Create test manifest with document
+        self.manifest = Manifest.objects.create(
+            created_by=self.user,
+            test_mode=True,
+            address=self.manifest_address,
+            manifest="JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/AFQAZQBzAHQpCj4+CmVuZG9iagoyIDAgb2JqCjw8Cj4+CmVuZG9iagozIDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA2OCAwMDAwMCBuIAowMDAwMDAwMDg5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNAo+PgpzdGFydHhyZWYKMTEwCiUlRU9GCg==",  # Base64 encoded minimal PDF
+            manifest_carrier=self.carrier,
+        )
+
+    def test_shipment_label_download_with_api_token(self):
+        """Test that shipment label can be downloaded with API Token auth."""
+        # Request with API Token (no resource token needed)
+        response = self.client.get(
+            f"/v1/shipments/{self.shipment.pk}/label.pdf",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.get("Content-Type", "").startswith("application/pdf"))
+
+    def test_shipment_label_download_without_auth_fails(self):
+        """Test that shipment label download fails without any authentication."""
+        # Clear credentials
+        self.client.credentials()
+
+        response = self.client.get(
+            f"/v1/shipments/{self.shipment.pk}/label.pdf",
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_shipment_label_download_with_resource_token(self):
+        """Test that shipment label download still works with resource token."""
+        # Clear API credentials
+        self.client.credentials()
+
+        # Generate resource token first (re-authenticate for this call)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+        token_response = self.client.post(
+            "/api/tokens",
+            {
+                "resource_type": "shipment",
+                "resource_ids": [self.shipment.pk],
+                "access": ["label"],
+                "format": "pdf",
+            },
+            format="json",
+        )
+        self.assertEqual(token_response.status_code, 201)
+        resource_token = token_response.data["token"]
+
+        # Clear credentials again and use resource token
+        self.client.credentials()
+        response = self.client.get(
+            f"/v1/shipments/{self.shipment.pk}/label.pdf?token={resource_token}",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.get("Content-Type", "").startswith("application/pdf"))
+
+    def test_manifest_download_with_api_token(self):
+        """Test that manifest document can be downloaded with API Token auth."""
+        response = self.client.get(
+            f"/v1/manifests/{self.manifest.pk}/manifest.pdf",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.get("Content-Type", "").startswith("application/pdf"))
+
+    def test_manifest_download_without_auth_fails(self):
+        """Test that manifest download fails without any authentication."""
+        self.client.credentials()
+
+        response = self.client.get(
+            f"/v1/manifests/{self.manifest.pk}/manifest.pdf",
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_manifest_download_with_resource_token(self):
+        """Test that manifest download still works with resource token."""
+        # Clear API credentials
+        self.client.credentials()
+
+        # Generate resource token first
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+        token_response = self.client.post(
+            "/api/tokens",
+            {
+                "resource_type": "manifest",
+                "resource_ids": [self.manifest.pk],
+                "access": ["manifest"],
+            },
+            format="json",
+        )
+        self.assertEqual(token_response.status_code, 201)
+        resource_token = token_response.data["token"]
+
+        # Clear credentials and use resource token
+        self.client.credentials()
+        response = self.client.get(
+            f"/v1/manifests/{self.manifest.pk}/manifest.pdf?token={resource_token}",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.get("Content-Type", "").startswith("application/pdf"))
+
+    def test_batch_labels_without_auth_fails(self):
+        """Test that batch labels endpoint requires authentication."""
+        # Clear credentials to test unauthenticated access
+        self.client.credentials()
+
+        response = self.client.get(
+            f"/documents/shipments/label.pdf?shipments={self.shipment.pk}",
+        )
+
+        # Should return 403 (Forbidden) when no auth is provided
+        self.assertEqual(response.status_code, 403)

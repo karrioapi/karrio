@@ -823,6 +823,9 @@ class Shipment(core.OwnedEntity):
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
+    extra_documents = models.JSONField(
+        blank=True, null=True, default=functools.partial(utils.identity, value=[])
+    )
 
     # System Reference fields
 

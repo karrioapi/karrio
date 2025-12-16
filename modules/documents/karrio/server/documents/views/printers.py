@@ -14,9 +14,10 @@ import karrio.server.documents.models as models
 import karrio.server.documents.generator as generator
 from karrio.server.core.logging import logger
 from karrio.server.core.utils import validate_resource_token
+from karrio.server.core.authentication import AccessMixin
 
 
-class TemplateDocsPrinter(VirtualDownloadView):
+class TemplateDocsPrinter(AccessMixin, VirtualDownloadView):
     def get(self, request, pk: str, slug: str, **kwargs):
         """Generate a document from template."""
         error = validate_resource_token(request, "template", [pk], "render")
@@ -59,7 +60,7 @@ class TemplateDocsPrinter(VirtualDownloadView):
         return ContentFile(self.document.getvalue(), name=self.name)
 
 
-class ShipmentDocsPrinter(VirtualDownloadView):
+class ShipmentDocsPrinter(AccessMixin, VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
     def get(self, request, doc: str = "label", format: str = "pdf", **kwargs):
         """Retrieve batch shipment labels or invoices."""
@@ -107,7 +108,7 @@ class ShipmentDocsPrinter(VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
 
-class OrderDocsPrinter(VirtualDownloadView):
+class OrderDocsPrinter(AccessMixin, VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
     def get(self, request, doc: str = "label", format: str = "pdf", **kwargs):
         """Retrieve batch order labels or invoices."""
@@ -160,7 +161,7 @@ class OrderDocsPrinter(VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
 
-class ManifestDocsPrinter(VirtualDownloadView):
+class ManifestDocsPrinter(AccessMixin, VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
     def get(self, request, doc: str = "manifest", format: str = "pdf", **kwargs):
         """Retrieve batch manifests."""

@@ -671,7 +671,14 @@ def validate_resource_token(
     resource_ids: List[str],
     access: str,
 ):
-    """Validate resource access token. Returns error response if invalid, None if valid.
+    """Validate resource access token, skipping if user is already authenticated.
+
+    If the request has an authenticated user (via API token, JWT, etc.),
+    the resource token check is skipped. Otherwise, it validates the
+    resource access token from the query parameter.
+
+    Note: For this to work with non-DRF views, use the `APITokenAuthMixin`
+    on your view class to run DRF authentication before this function is called.
 
     Args:
         request: The HTTP request object
@@ -688,12 +695,19 @@ def validate_resource_token(
             return error
     """
     from django.http import HttpResponseForbidden
+    from django.contrib.auth.models import AnonymousUser
 
+    # Skip resource token check if user is already authenticated
+    if hasattr(request, "user") and request.user and not isinstance(request.user, AnonymousUser):
+        if request.user.is_authenticated:
+            return None
+
+    # Fall back to resource access token validation
     token = request.GET.get("token")
 
     if not token:
         return HttpResponseForbidden(
-            "Access token required. Use /api/tokens to generate one."
+            "Access token required. Use /api/tokens to generate one, or provide API token in Authorization header."
         )
 
     try:

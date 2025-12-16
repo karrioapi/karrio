@@ -15,6 +15,7 @@ import karrio.server.openapi as openapi
 import karrio.server.core.filters as filters
 import karrio.server.manager.models as models
 from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.core.authentication import AccessMixin
 from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
@@ -267,7 +268,7 @@ class ShipmentPurchase(APIView):
         return Response(PurchasedShipment(update).data)
 
 
-class ShipmentDocs(VirtualDownloadView):
+class ShipmentDocs(AccessMixin, VirtualDownloadView):
     @openapi.extend_schema(exclude=True)
     def get(
         self,
