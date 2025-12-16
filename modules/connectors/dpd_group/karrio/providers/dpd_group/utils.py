@@ -4,7 +4,6 @@ import datetime
 import karrio.lib as lib
 import karrio.core as core
 import karrio.core.errors as errors
-from karrio.core.utils.caching import ThreadSafeTokenManager
 
 
 class Settings(core.Settings):
@@ -50,29 +49,6 @@ class Settings(core.Settings):
             self.config or {},
             option_type=ConnectionConfig,
         )
-
-    @property
-    def access_token(self):
-        """
-        Retrieve the access_token using login credentials or from cache.
-        Token is valid for 24 hours.
-        """
-        # Include the credential "mode" in the cache key so we don't mix tokens.
-        # DPD supports login/password OR client_id/client_secret depending on account setup.
-        identity = (
-            f"u:{self.username}"
-            if any([self.username, self.password])
-            else f"c:{self.client_id}"
-        )
-        # Include environment in cache key so test/prod tokens never mix.
-        env = "test" if self.test_mode else "prod"
-        cache_key = f"{self.carrier_name}|{identity}|{self.bucode}|{env}"
-
-        return self.connection_cache.thread_safe(
-            refresh_func=lambda: login(self),
-            cache_key=cache_key,
-            buffer_minutes=30,  # Refresh 30 mins before expiry (token valid for 24h)
-        ).get_state()
 
 
 def login(settings: Settings):
