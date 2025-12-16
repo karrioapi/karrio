@@ -67,8 +67,8 @@ def shipment_request(
     # DPD META-API requires sender.customerInfos identifiers (Swagger: sender.customerInfos.customerID/customerAccountNumber).
     # If we don't have these, DPD responds with errors like:
     # - COMMON_7 generalShipmentData.sender.customerNumber
-    customer_id = (settings.account_number or "").strip()
-    customer_account = (settings.customer_account_number or "").strip() or customer_id
+    customer_id = settings.account_number
+    customer_account = settings.customer_account_number or customer_id
 
     if not any(customer_id):
         raise errors.ShippingSDKError(

@@ -58,13 +58,12 @@ def login(settings: Settings):
 
     url = f"{settings.server_url}/login"
 
-    # Defensive normalization: avoid invisible whitespace causing LOGIN_8.
-    bucode = (settings.bucode or "").strip()
-    username = (settings.username or "").strip()
-    password = (settings.password or "").strip()
-    client_id = (settings.client_id or "").strip()
-    client_secret = (settings.client_secret or "").strip()
-    
+    bucode = settings.bucode
+    username = settings.username
+    password = settings.password
+    client_id = settings.client_id
+    client_secret = settings.client_secret
+
     # DPD META-API login uses custom headers for authentication.
     # Depending on account setup, credentials can be provided either as:
     # - X-DPD-LOGIN + X-DPD-PASSWORD + X-DPD-BUCODE
