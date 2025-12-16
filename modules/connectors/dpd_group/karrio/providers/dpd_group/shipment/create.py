@@ -7,7 +7,6 @@ import karrio.core.models as models
 import karrio.providers.dpd_group.error as error
 import karrio.providers.dpd_group.utils as provider_utils
 import karrio.providers.dpd_group.units as provider_units
-import karrio.core.errors as errors
 import karrio.schemas.dpd_group.shipment_request as dpd_req
 import karrio.schemas.dpd_group.shipment_response as dpd_res
 
@@ -64,17 +63,9 @@ def shipment_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     """Create a DPD META-API shipment request."""
-    # DPD META-API requires sender.customerInfos identifiers (Swagger: sender.customerInfos.customerID/customerAccountNumber).
-    # If we don't have these, DPD responds with errors like:
-    # - COMMON_7 generalShipmentData.sender.customerNumber
-    customer_id = settings.account_number
+    # DPD META-API requires sender.customerInfos identifiers
+    customer_id = settings.customer_id
     customer_account = settings.customer_account_number or customer_id
-
-    if not any(customer_id):
-        raise errors.ShippingSDKError(
-            "DPD shipment creation requires a sender customer number (customerInfos.customerID). "
-            "Please set the DPD connection 'account_number' (and optionally 'customer_account_number')."
-        )
 
     # Convert karrio models to carrier-specific format
     shipper = lib.to_address(payload.shipper)

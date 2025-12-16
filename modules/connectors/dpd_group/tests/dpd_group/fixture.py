@@ -11,7 +11,7 @@ gateway = karrio.gateway["dpd_group"].create(
         bucode="TEST_BUCODE",
         username="TEST_USERNAME",
         password="TEST_PASSWORD",
-        account_number="123456789",
+        customer_id="123456789",
         customer_account_number="ACC123456",
     )
 )

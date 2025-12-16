@@ -21,9 +21,9 @@ class Settings(core.Settings):
     client_id: str = None  # X-DPD-CLIENTID
     client_secret: str = None  # X-DPD-CLIENTSECRET
 
-    # Optional account information
-    account_number: str = None
-    customer_account_number: str = None
+    # Customer information
+    customer_id: str  # Required - DPD customer ID (customerInfos.customerID)
+    customer_account_number: str = None  # Optional - DPD account number
 
     @property
     def carrier_name(self):
