@@ -93,7 +93,7 @@ def shipment_request(
         )
 
     # Build shipment request
-    request = dpd_req.ShipmentRequestType(
+    request = dpd_req.ShipmentRequestElementType(
         numberOfParcels=str(len(packages)),
         shipmentInfos=dpd_req.ShipmentInfosType(
             productCode=service.value_or_key if service else "101",
@@ -138,7 +138,7 @@ def shipment_request(
         parcel=[
             dpd_req.ParcelType(
                 parcelInfos=dpd_req.ParcelInfosType(
-                    weight=int(pkg.weight.value * 1000) if pkg.weight.unit == "KG" else int(pkg.weight.value * 453.592),
+                    weight=str(int(pkg.weight.value * 1000) if pkg.weight.unit == "KG" else int(pkg.weight.value * 453.592)),
                     dimensions=dpd_req.DimensionsType(
                         length=int(pkg.length.value),
                         width=int(pkg.width.value),

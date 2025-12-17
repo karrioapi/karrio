@@ -12,7 +12,7 @@ class DimensionsType:
 
 @attr.s(auto_attribs=True)
 class ParcelInfosType:
-    weight: typing.Optional[int] = None
+    weight: typing.Optional[str] = None
     dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
@@ -27,8 +27,8 @@ class AddressType:
     companyName: typing.Optional[str] = None
     name1: typing.Optional[str] = None
     street: typing.Optional[str] = None
-    houseNumber: typing.Optional[int] = None
-    zipCode: typing.Optional[int] = None
+    houseNumber: typing.Optional[str] = None
+    zipCode: typing.Optional[str] = None
     city: typing.Optional[str] = None
     country: typing.Optional[str] = None
 
@@ -60,15 +60,15 @@ class SenderType:
 
 @attr.s(auto_attribs=True)
 class ShipmentInfosType:
-    productCode: typing.Optional[int] = None
+    productCode: typing.Optional[str] = None
     shipmentId: typing.Optional[str] = None
-    weight: typing.Optional[int] = None
+    weight: typing.Optional[str] = None
     dimensions: typing.Optional[DimensionsType] = jstruct.JStruct[DimensionsType]
 
 
 @attr.s(auto_attribs=True)
-class ShipmentRequestType:
-    numberOfParcels: typing.Optional[int] = None
+class ShipmentRequestElementType:
+    numberOfParcels: typing.Optional[str] = None
     shipmentInfos: typing.Optional[ShipmentInfosType] = jstruct.JStruct[ShipmentInfosType]
     sender: typing.Optional[SenderType] = jstruct.JStruct[SenderType]
     receiver: typing.Optional[ReceiverType] = jstruct.JStruct[ReceiverType]

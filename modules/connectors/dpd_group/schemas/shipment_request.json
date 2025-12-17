@@ -1,10 +1,10 @@
 [
   {
-    "numberOfParcels": "1",
+    "numberOfParcels": "1a",
     "shipmentInfos": {
-      "productCode": "101",
+      "productCode": "101a",
       "shipmentId": "SHIP123456",
-      "weight": "3000",
+      "weight": "3000a",
       "dimensions": {
         "length": 30,
         "width": 20,
@@ -20,8 +20,8 @@
         "companyName": "Sender Corp",
         "name1": "John Sender",
         "street": "Main Street",
-        "houseNumber": "42",
-        "zipCode": "10115",
+        "houseNumber": "42a",
+        "zipCode": "10115a",
         "city": "Berlin",
         "country": "DE"
       },
@@ -35,8 +35,8 @@
         "name1": "Jane Receiver",
         "companyName": "Receiver Inc",
         "street": "Secondary Road",
-        "houseNumber": "88",
-        "zipCode": "75001",
+        "houseNumber": "88a",
+        "zipCode": "75001a",
         "city": "Paris",
         "country": "FR"
       },
@@ -48,7 +48,7 @@
     "parcel": [
       {
         "parcelInfos": {
-          "weight": "3000",
+          "weight": "3000a",
           "dimensions": {
             "length": 30,
             "width": 20,
