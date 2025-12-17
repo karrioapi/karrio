@@ -1,0 +1,1093 @@
+Service;Status;Description;Remark
+ecommerce;100;PICKED UP FROM SENDER;
+ecommerce;101;SHIPMENT CANCELED;
+ecommerce;104;ARRIVED AT ORIGIN PROCESSING FACILITY;
+ecommerce;106;PACKAGE SCREENED SUCCESSFULLY;
+ecommerce;107;PACKAGE SCREENING EXCEPTION - CANNOT BE SHIPPED INTERNATIONAL;
+ecommerce;108;PACKAGE SCREENING EXCEPTION - RETURNING TO SHIPPER;
+ecommerce;109;PICK UP BOOKED;
+ecommerce;110;SHIPMENT DEPARTED SELLERS ORIGIN TERMINAL;
+ecommerce;113;PARTNER EVENT - DEPARTED PARTNER FACILITY;
+ecommerce;114;PACKAGE DEPARTED SCREENING FACILITY;
+ecommerce;115;RECEIVED BY CARRIER FOR TRANSPORT;
+ecommerce;116;ARRIVAL SERVICE POINT;
+ecommerce;120;DEPARTURE DHL DISTRIBUTION CENTER;
+ecommerce;125;ARRIVAL SORT LOCATION;
+ecommerce;128;APPROACHING PICK UP LOCATION;
+ecommerce;129;OUT FOR PARCEL COLLECTION;
+ecommerce;130;PICKED UP;
+ecommerce;132;EN ROUTE TO DHL ECOMMERCE;
+ecommerce;134;UNSUCCESSFUL COLLECTION ATTEMPT;
+ecommerce;135;PICK UP RESCHEDULED;
+ecommerce;150;AVAILABLE FOR DELIVERY TO DHL DISTRIBUTION CENTER;
+ecommerce;155;ARRIVAL DHL DISTRIBUTION CENTER;
+ecommerce;156;ARRIVED AT DEPOT;
+ecommerce;161;PARCEL AUTHORIZED TO LEAVE;
+ecommerce;162;REDIRECTED TO PARCEL SHOP;
+ecommerce;163;SHIPMENT DATA UPDATED;
+ecommerce;164;THE SHIPMENT INFORMATION IS EDITED;
+ecommerce;200;PACKAGE RECEIVED AT DHL ECOMMERCE DISTRIBUTION CENTER;
+ecommerce;211;PARCEL ACCEPTED, NOT YET PROCESSED;
+ecommerce;220;ENCODED;
+ecommerce;229;PHYSICAL PACKAGE RECEIVED WITH NO ELECTRONIC DATA;
+ecommerce;235;SHIPMENT LABEL CREATED;
+ecommerce;238;LABEL CREATED;
+ecommerce;240;DUTY/TAX ASSESSED FOR PACKAGE, AWAITING PAYMENT. PLEASE CHECK YOUR EMAIL FOR PAYMENT OPTIONS.;
+ecommerce;241;DUTY/TAX PAYMENT RECEIVED;
+ecommerce;242;DUTY/TAX PAYMENT NOT COLLECTED. PACKAGE WILL BE SENT FOR PROCESSING AND CUSTOMS MAY REQUEST PAYMENT.;
+ecommerce;300;DN SEND;
+ecommerce;312;PARCEL ON HOLD;
+ecommerce;313;SUCCESSFUL CUSTOMER SERVICE RESOLUTION;
+ecommerce;350;DN RECEIVED;
+ecommerce;358;HELD IN FACILITY - AWAITING INSTRUCTIONS;
+ecommerce;359;SHIPMENT IS RELEASED FROM HOLD FOR PROCESSING;
+ecommerce;360;ARRIVED AT DESTINATION COUNTRY;
+ecommerce;361;ARRIVAL IN COUNTRY;
+ecommerce;365;PROCESSED SORT FACILITY;
+ecommerce;371;PARCEL RECOVER;
+ecommerce;399;DEPARTED FROM FACILITY;
+ecommerce;400;MANIFESTED;
+ecommerce;401;MANIFESTED FOR OUTBOUND TRANSPORTATION;
+ecommerce;402;IN TRANSIT;
+ecommerce;431;PROCESSING COMPLETED AT ORIGIN;
+ecommerce;441;ARRIVED AT CUSTOMS;
+ecommerce;442;CLEARED CUSTOMS;
+ecommerce;443;HELD AT CUSTOMS;
+ecommerce;445;ELECTRONIC SHIPPING INFO RECEIVED;
+ecommerce;447;ARRIVED AT CUSTOMS;
+ecommerce;448;CLEARANCE NOT POSSIBLE;
+ecommerce;449;CLEARED CUSTOMS;
+ecommerce;450;POSSIBLE TRANSIT DELAY;
+ecommerce;451;MANIFESTED FOR OUTBOUND TRANSPORTATION;
+ecommerce;452;PARCEL CLEARED CUSTOMS - PARTNER;
+ecommerce;453;PARCEL HELD FOR EXAM - PARTNER;
+ecommerce;454;ARRIVED AT FACILITY - PARTNER;
+ecommerce;456;SHIPMENT DEPARTED SELLER ORIGINAL TERMINAL – PARTNER ;
+ecommerce;461;PARTNER EVENT - SHIPMENT PICKED UP BY SHIPPING PARTNER;
+ecommerce;462;PARTNER EVENT - SHIPMENT HAS ARRIVED AT PARTNER FACILITY;
+ecommerce;463;PARTNER EVENT - ARRIVED AT CUSTOMS FACILITY;
+ecommerce;464;PARTNER EVENT - DEPARTED CUSTOMS FACILITY;
+ecommerce;468;ARRIVAL AT POST OFFICE;
+ecommerce;469;AWAITING COLLECTION AT DHL SERVICE POINT;
+ecommerce;470;ARRIVED AT TERMINAL LOCATION;
+ecommerce;472;ARRIVED AT TERMINAL LOCATION;
+ecommerce;473;AVAILABLE FOR DELIVERY;
+ecommerce;477;PROCESSED SORT FACILITY;
+ecommerce;478;IN TRANSIT TO DELIVERY PROVIDER;
+ecommerce;479;FORWARDED TO DELIVERY AGENT;
+ecommerce;480;FORWARDED TO LOCAL POST OFFICE;
+ecommerce;481;DEPARTED TERMINAL LOCATION;
+ecommerce;482;DEPARTED FROM FACILITY;
+ecommerce;483;PROCESSED AT EXPORT FACILITY ;
+ecommerce;494;ARRIVED AT DELIVERY FACILITY;
+ecommerce;499;ARRIVED AT USPS FACILITY;
+ecommerce;50;RECEIVED BY USPS;
+ecommerce;501;ARRIVED AT CUSTOMS;
+ecommerce;502;CLEARED CUSTOMS;
+ecommerce;503;CONSIGNEE CONTACTED FOR PAYMENT;
+ecommerce;504;DUTIES PAYMENT RECEIVED;
+ecommerce;505;SHIPMENT ACCEPTED BY USPS;
+ecommerce;506;HELD AT CUSTOMS;
+ecommerce;507;HELD AT CUSTOMS;
+ecommerce;508;CUSTOMS DELAY;
+ecommerce;509;IN CLEARANCE PROCESSING;
+ecommerce;51;ENROUTE - ONI;
+ecommerce;510;ITEM OR SACK SCANNED BY USPS;
+ecommerce;511;SHIPMENT ACCEPTED BY USPS;
+ecommerce;513;PIECE BUT NO DATA;
+ecommerce;515;ARRIVED AT EXPORT FACILITY;
+ecommerce;517;LOADED FOR TRANSPORT;
+ecommerce;518;DEPARTED FROM EXPORT FACILITY;
+ecommerce;520;ARRIVAL AT POST OFFICE;
+ecommerce;521;ARRIVED AT TERMINAL LOCATION;
+ecommerce;522;AVAILABLE FOR PICKUP AT POST OFFICE;
+ecommerce;523;HANDED OVER TO PARTNER CARRIER;
+ecommerce;524;PROCESSED THROUGH USPS SORT FACILITY;
+ecommerce;525;EN ROUTE TO DELIVERY LOCATION;
+ecommerce;526;ARRIVED USPS SORT FACILITY;
+ecommerce;528;PROCESSED AT EXPORT FACILITY;
+ecommerce;529;PROCESSED SORT FACILITY;
+ecommerce;530;FORWARDED;
+ecommerce;531;DEPARTED TERMINAL LOCATION;
+ecommerce;532;IN TRANSIT TO DESTINATION COUNTRY;
+ecommerce;533;ARRIVAL AT DESTINATION COUNTRY - TRACKING UPDATES MAY END HERE, DELIVERY SHORTLY;
+ecommerce;534;FORWARDED;
+ecommerce;535;HANDED OVER TO PARTNER CARRIER;
+ecommerce;536;SORTED THROUGH USPS FACILITY;
+ecommerce;537;SORTED LOCALLY TO 5 DIGIT DESTINATION;
+ecommerce;538;DEPART USPS SORT FACILITY;
+ecommerce;539;SORTING COMPLETE;
+ecommerce;540;PROCESSED THROUGH USPS SORT FACILITY;
+ecommerce;541;EN ROUTE TO DELIVERY LOCATION;
+ecommerce;542;ARRIVED AT DELIVERY TERMINAL;
+ecommerce;543;SHIPMENT WAS PROCESSED AT DESTINATION SORTING HUB;
+ecommerce;544;SHIPMENT WAS LOADED INTO DELIVERY VEHICLE;
+ecommerce;545;ENROUTE;
+ecommerce;546;MISROUTED;
+ecommerce;547;AVAILABLE FOR DELIVERY;
+ecommerce;548;AVAILABLE FOR DELIVERY;
+ecommerce;549;ARRIVAL IN DESTINATION COUNTRY – END OF TRACKING, DELIVERY SHORTLY;
+ecommerce;550;NOTICE LEFT;
+ecommerce;551;NO ONE HOME, CARD LEFT;
+ecommerce;552;NO ONE TO RECEIVE, CARD LEFT;
+ecommerce;553;NOTICE LEFT (RECEPTACLE FULL/ITEM OVERSIZED);
+ecommerce;554;NOTICE LEFT (NO SECURE LOCATION AVAILABLE);
+ecommerce;555;NOTICE LEFT (BUSINESS CLOSED);
+ecommerce;556;NOTICE LEFT (NO AUTHORIZED RECIPIENT AVAILABLE);
+ecommerce;557;SHIPMENT WAS PROCESSED AT DESTINATION SORTING HUB;
+ecommerce;558;RECIPIENT IS NEXT STOP ON ROUTE;
+ecommerce;560;ARRIVAL AT PICK-UP-POINT;
+ecommerce;561;SHIPMENT UPLIFT SUCCESS;
+ecommerce;562;ARRIVAL AT FACILITY;
+ecommerce;563;ATTEMPTED DELIVERY;
+ecommerce;564;NOTICE LEFT (BUSINESS CLOSED);
+ecommerce;565;ARRIVED AT PICKUP POINT;
+ecommerce;566;ARRIVED AT TRANSIT FACILITY;
+ecommerce;567;PROCESSED AT TRANSIT FACILITY;
+ecommerce;568;DEPARTED FROM TRANSIT FACILITY;
+ecommerce;570;AVAILABLE FOR PICKUP;
+ecommerce;571;"DELIVERY ATTEMPTED; RETURNED FOR RE-DELIVERY";
+ecommerce;572;PICKED UP BY CONSIGNEE FROM PICKUP LOCATION;
+ecommerce;573;CONTACT LOCAL CUSTOMER SERVICE;
+ecommerce;574;EXPECTED DELIVERY;
+ecommerce;575;ARRIVED AT LOCAL DISTRIBUTION CENTER;
+ecommerce;576;PROCESSED AT LOCAL DISTRIBUTION CENTER;
+ecommerce;577;DEPARTED FROM LOCAL DISTRIBUTION CENTER;
+ecommerce;579;PROCESSED AT DELIVERY TERMINAL;
+ecommerce;580;OUT FOR SECOND DELIVERY ATTEMPT;
+ecommerce;581;RESCHEDULED;
+ecommerce;582;CHANGE OF ADDRESS;
+ecommerce;583;FINAL DELIVERY ATTEMPT;
+ecommerce;585;AVAILABLE FOR PICKUP;
+ecommerce;588;"SHIPMENT HANDED OVER TO LOCAL CUSTOMS OFFICE; CONSIGNEE CONTACTED FOR PICKUP";
+ecommerce;589;PICKED UP BY AGENT;
+ecommerce;590;PICKED UP BY AGENT;
+ecommerce;591;COD AMOUNT COLLECTED;
+ecommerce;592;POSSIBLE DELIVERY DELAY;
+ecommerce;593;POSSIBLE DELAY;
+ecommerce;594;CONSIGNEE ON HOLIDAY;
+ecommerce;595;ATTEMPTED DELIVERY;
+ecommerce;596;ATTEMPTED DELIVERY;
+ecommerce;597;OUT FOR DELIVERY;
+ecommerce;598;OUT FOR DELIVERY;
+ecommerce;599;AVAILABLE FOR PICKUP FROM SERVICE POINT;
+ecommerce;600;DELIVERED;
+ecommerce;601;DELIVERED TO PICK-UP LOCATION – CUSTOMER NOTIFIED;
+ecommerce;602;UNDELIVERABLE - RETURNED TO SENDER;
+ecommerce;603;RETURNED TO WAREHOUSE;
+ecommerce;604;SHIPMENT RECALLED BY SENDER;
+ecommerce;605;NO ACCESS;
+ecommerce;606;DELIVERED - LEFT WITH NEIGHBOR/FRONT DESK/OTHER;
+ecommerce;607;SECOND DELIVERY ATTEMPT SUCCESSFUL;
+ecommerce;608;DUTIES AND TAX PAYMENT REFUSED BY CONSIGNEE;
+ecommerce;609;RESCHEDULED BY REQUEST FROM CONSIGNEE;
+ecommerce;610;REFUSED;
+ecommerce;611;UNDELIVERABLE - CUSTOMER REFUSED SHIPMENT;
+ecommerce;612;CLOSED ON ARRIVAL;
+ecommerce;613;NO ONE HOME;
+ecommerce;614;COD NOT READY;
+ecommerce;615;ATTEMPTED DELIVERY;
+ecommerce;616;RESCHEDULED;
+ecommerce;617;COD AMOUNT REMITTED;
+ecommerce;618;COD AMOUNT DEPOSITED;
+ecommerce;619;REJECTED AFTER OPENING;
+ecommerce;620;VISIBLE DAMAGE;
+ecommerce;621;DELIVERED - BUSINESS ADDRESS;
+ecommerce;623;VISIBLE DAMAGE;
+ecommerce;624;APPROACHING RETURN PICK UP LOCATION;
+ecommerce;625;UNDELIVERABLE;
+ecommerce;626;UNDELIVERABLE;
+ecommerce;627;UNSUCCESSFUL RETURN PICKUP;
+ecommerce;628;SUCCESSFUL RETURN PICKUP;
+ecommerce;629;REDELIVERY ATTEMPT UNSUCCESSFUL;
+ecommerce;630;UNDELIVERABLE AS ADDRESSED;
+ecommerce;631;UNDELIVERABLE - INCORRECT ADDRESS;
+ecommerce;632;CHANGE OF ADDRESS;
+ecommerce;633;UNDELIVERABLE - UNIT/SUITE NOT PROVIDED;
+ecommerce;636;UNDELIVERED - PROCESSES FOR LOCAL DISPOSAL;
+ecommerce;637;RECEIVED BACK AT DESTINATION DEPOT;
+ecommerce;638;1ST DELIVERY ATTEMPT;
+ecommerce;639;3RD DELIVERY ATTEMPT;
+ecommerce;640;MISSENT;
+ecommerce;641;MISSENT;
+ecommerce;642;DELIVERED TO AGENT FOR FINAL DELIVERY;
+ecommerce;644;PARCEL IS HOLD BY DHL;
+ecommerce;650;DEAD LETTER;
+ecommerce;651;UNABLE TO ATTEMPT DELIVERY;
+ecommerce;652;DELIVERED AT BACK DOOR;
+ecommerce;653;DELIVERED AT BUILDING FOYER/ENTRANCE;
+ecommerce;654;DELIVERED AT CAR PORT;
+ecommerce;655;DELIVERED AT ENCLOSED PORCH;
+ecommerce;656;DELIVERED AT RESIDENTIAL CONCIERGE;
+ecommerce;657;DELIVERED AT PARCEL BOX;
+ecommerce;658;DELIVERED AT OPEN PORCH;
+ecommerce;659;DELIVERED AT SAFE PLACE;
+ecommerce;665;HANDOVER TO SERVICE POINT FAILED;
+ecommerce;670;MIS-SHIPPED;
+ecommerce;671;MIS-SHIPPED;
+ecommerce;680;DELIVERY STATUS NOT UPDATED;
+ecommerce;683;INSUFFICIENT ADDRESS;
+ecommerce;686;MOVED, LEFT NO ADDRESS;
+ecommerce;689;ADDRESSEE UNKNOWN;
+ecommerce;690;PACKAGE REPORTED MISSING;
+ecommerce;691;VACANT;
+ecommerce;693;UNCLAIMED;
+ecommerce;699;DELIVERY STATUS NOT UPDATED;
+ecommerce;700;NO SUCH NUMBER;
+ecommerce;710;INSUFFICIENT ADDRESS;
+ecommerce;720;MOVED, LEFT NO ADDRESS;
+ecommerce;730;FORWARD EXPIRED;
+ecommerce;740;ADDRESSEE UNKNOWN;
+ecommerce;750;VACANT;
+ecommerce;760;UNCLAIMED;
+ecommerce;770;DECEASED;
+ecommerce;780;ABANDONED;
+ecommerce;800;RETURN TO SENDER;
+ecommerce;802;RETURNED, SERVICE NOT AVAILABLE;
+ecommerce;804;RETURNED TO SENDER (NOT PICKED UP);
+ecommerce;805;DEPARTED FROM DEPOT;
+ecommerce;806;RETURN DISPATCHED TO SERVICE POINT;
+ecommerce;807;RETURN LABEL PRINTED;
+ecommerce;808;RETURN INITIATED;
+ecommerce;809;UNDELIVERABLE;
+ecommerce;810;RETURNED TO CENTRAL HUB;
+ecommerce;811;ENROUTE TO ORIGIN RETURN FACILITY;
+ecommerce;813;ARRIVED AT ORIGIN RETURN FACILITY;
+ecommerce;815;RETURNS PROCESS STARTED;
+ecommerce;816;RETURN LOADED IN VEHICLE;
+ecommerce;817;DEPARTED RETURN FACILITY;
+ecommerce;818;RETURN PROCESSED IN FACILITY;
+ecommerce;820;OUT FOR RETURN;
+ecommerce;821;ATTEMPTED RETURN DELIVERY;
+ecommerce;825;DESTROYED;
+ecommerce;844;UNCONTACTABLE;
+ecommerce;849;RETURN PARCEL IS HOLD BY DHL;
+ecommerce;853;RETURN ARRIVED AT SERVICE POINT;
+ecommerce;854;RETURN PICKED UP;
+ecommerce;855;RETURN ENCODED;
+ecommerce;856;RETURN PROCESSED SORT FACILITY;
+ecommerce;857;RETURN SCANNED INTO SACK/CONTAINER;
+ecommerce;858;RETURN WAS PROCESSED AT DESTINATION SORTING HUB;
+ecommerce;859;RETURN DELIVERY RESCHEDULED;
+ecommerce;860;RETURNS DELIVERED;
+ecommerce;862;RETURN ARRIVED AT PICKUP POINT;
+ecommerce;863;RETURNED TO CUSTOMER;
+ecommerce;864;RETURN HANDED OUT AT SERVICE POINT;
+ecommerce;867;PAPER POD HAS BEEN SUCCESSFULLY DELIVERED;
+ecommerce;868;PAPER POD RETURN SHIPMENT WAS NOT DELIVERED;
+ecommerce;869;PAPER POD RETURN PROCESSED TO FACILITY;
+ecommerce;870;PROOF OF DELIVERY DISPATCHED TO HUB;
+ecommerce;871;PROOF OF DELIVERY DISPATCHED TO CUSTOMER;
+ecommerce;872;PROOF OF DELIVERY DELIVERED TO CUSTOMER;
+ecommerce;880;RETURN FAILED - INCORRECT ADDRESS;
+ecommerce;881;RETURN FAILED - CUSTOMER REFUSED SHIPMENT;
+ecommerce;882;RETURN DELIVERY FAILED;
+ecommerce;883;RETURN FAILED - NO ACCESS;
+ecommerce;884;RETURN FAILED - REJECTED;
+ecommerce;885;RETURN FAILED - SHIPPER MOVED;
+ecommerce;886;RETURN FAILED - NO ONE HOME;
+ecommerce;887;RETURN FAILED - CLOSED ON ARRIVAL;
+ecommerce;99;CUSTOMER ALERT RECEIVED;
+express;101;delivered;on shipment level
+express;102;transit;on shipment level
+express;103;failure;on shipment level
+express;104;pre-transit;on shipment level
+express;AD;Agreed delivery;
+express;AF;Arrived facility;
+express;AR;Arrival in delivery facility;
+express;BA;Bad address;
+express;BN;Customer broker notified;
+express;BR;Broker release;no EDD
+express;CA;Closed on arrival;no EDD
+express;CC;Awaiting cnee collection;no EDD
+express;CD;Controllable clearance delay;
+express;CM;Customer moved;
+express;CR;Clearance release;
+express;CS;Closed shipment;no EDD
+express;DD;Delivered damaged;no EDD
+express;DF;Depart facility;
+express;DS;Destroyed / disposal;no EDD
+express;FD;Forward destination (DD's expected);
+express;HP;Held for payment;
+express;IC;In clearance processing;
+express;MC;Miscode;
+express;MD;Missed delivery cycle;
+express;MS;Mis-sort;
+express;ND;Not delivered;
+express;NH;Not home;no EDD
+express;OH;On hold;
+express;OK;Delivery;no EDD
+express;PD;Partial delivery;no EDD
+express;PL;Processed at location;
+express;PU;Shipment pick up;
+express;RD;Refused delivery;no EDD
+express;RR;Response received;
+express;RT;Returned to consignor;no EDD
+express;SA;Shipment acceptance;
+express;SC;Service changed;
+express;SS;Shipment stopped;no EDD
+express;TP;Forwarded to 3rd party - no DD's;no EDD
+express;TR;Record of transfer;
+express;UD;Uncontrollable clearance delay;
+express;WC;With delivering courier;
+parcel-de;AA;Departed from … (initial scan at inbound hub or departure from intransit-hub);"Departure from a DHL location; e.g. the outbound parcel hub."
+parcel-de;AE;Pickup successful at customer site;
+parcel-de;AN;Pickup not successful at customer site;
+parcel-de;BV;Exception occured, e.g. damaged parcel or delay in delivery;
+parcel-de;DD;Data service, e.g. a delivery day was booked by receiver;
+parcel-de;EE;Arrived at … (arrival scan at delivery hub or intransit-hub);
+parcel-de;ES;First processed by DHL, e.g. handover by customer to a DHL facility;
+parcel-de;GT;Money transfer;
+parcel-de;LA;In storage, e.g. waiting for pickup by receiver;
+parcel-de;NB;Normal processing during transit;
+parcel-de;PO;In delivery process;
+parcel-de;VA;Electronic pre advise of a shipment;
+parcel-de;ZF;Delivery to agency / postal office / Packstation;
+parcel-de;ZN;Delivery attempt not successful;
+parcel-de;ZO;Customs clearance;
+parcel-de;ZU;Delivery successful;
+parcel-nl;ACCESSPOINT_FULL_REDELIVER;Delivery at post office not possible, new delivery attempt on next delivery day;
+parcel-nl;ADDRESS_CORRECTED_BY_DEPOT_MANAGER;Address details corrected;
+parcel-nl;ADDRESS_NOT_FOUND;Delivery interrupted, address not located;
+parcel-nl;ADDRESS_UNKNOWN;Address details unknown or incorrect, return to sender;
+parcel-nl;AGREED_COLLECTION;Shipment will be picked up as scheduled;
+parcel-nl;AGREED_DELIVERY;Delivery according to agreement;
+parcel-nl;ANNOUNCED_AT_PARCELSHOP;Announced at DHL ServicePoint;
+parcel-nl;ARRIVED_AT_DELIVERY_FACILITY;Arrived in your region;
+parcel-nl;ARRIVED_AT_INBOUND_GATEWAY;Arrived at inbound gateway;
+parcel-nl;ARRIVED_AT_ORIGIN_DEPOT;Arrived at depot in country of origin;
+parcel-nl;ARRIVED_AT_ORIGIN_GATEWAY;Arrived at international sorting center in country of origin;
+parcel-nl;ARRIVED_AT_ORIGIN_HUB;Arrived at sorting center in country of origin;
+parcel-nl;ARRIVED_AT_TERMINAL;Arrived at terminal;
+parcel-nl;ARRIVED_DAMAGED;Arrived at the CityHub with damage;
+parcel-nl;ARRIVED_FACILITY;Arrived at the international sorting center;
+parcel-nl;AWAITING_PAYMENT_RECEIVER_NOTIFIED;Awaiting payment, recipient has been notified;
+parcel-nl;AWAITING_RECEIVER_COLLECTION;Ready for collection at sorting center;
+parcel-nl;BACKLOG_COLLECTION_CANCELLED;Shipment(s) not picked up due to backlog, pick-up order cancelled;
+parcel-nl;BACKLOG_NOT_COLLECTED;No pick-up due to DHL backlog, new pick-up attempt next delivery day;
+parcel-nl;BACKLOG_NOT_DELIVERED;Delivery interrupted, delivery date changed;
+parcel-nl;BACKLOG_PICKUP_CANCELLED;Shipment(s) not picked up due to backlog, pick-up order cancelled;
+parcel-nl;BAD_ADDRESS;Address details unknown or incorrect, we will contact the sender for instructions;
+parcel-nl;BAD_ADDRESS_INTERNATIONAL;Incorrect address details, please contact the sender;
+parcel-nl;BAD_ADDRESS_NOT_COLLECTED;Incorrect pick-up address, pick-up order cancelled;
+parcel-nl;BONDED_LOCATION;Stored in the customs area;
+parcel-nl;BREAK_BULK_SHIPMENT_PROCESSED_BY_CUSTOMS;Break bulk shipment processed by customs;
+parcel-nl;BROKER_NOTIFIED;Broker informed;
+parcel-nl;BROKER_RELEASED;Cleared by the broker and released at customs;
+parcel-nl;CALAMITY_SYSTEM_INTERVENTION_DELIVERY_AT_PARCELSHOP;We deliver your shipment at a DHL ServicePoint.;
+parcel-nl;CLEARANCE_DELAY;Delayed during clearance at customs;
+parcel-nl;CLEARANCE_RELEASE;Released by customs;
+parcel-nl;CLOSED;Recipient is closed;
+parcel-nl;CLOSED_AWAITING_COLLECTION;We missed each other, ready for collection at sorting center on next business day;
+parcel-nl;CLOSED_ON_ARRIVAL;Recipient is not present;
+parcel-nl;CLOSED_SHIPMENT;Delivery (partially) interrupted, please contact the sender;
+parcel-nl;COD_AMOUNT_CHANGED;Cash on delivery amount changed on request of the sender;
+parcel-nl;COLLECT_AGAIN_SAME_ADDRESS;New pick-up attempt at the same address next delivery day;
+parcel-nl;COLLECTED;Shipment(s) has/have been picked up;
+parcel-nl;COLLECTED_AT_ACCESSPOINT;Collected at DHL ServicePoint by the recipient;
+parcel-nl;COLLECTED_AT_NEIGHBOUR;Picked up at neighbours by the courier;
+parcel-nl;COLLECTED_AT_PARCELSHOP;Collected at DHL ServicePoint by the recipient;
+parcel-nl;COLLECTED_AT_PARCELSTATION;Collected at DHL ServicePoint by the recipient;
+parcel-nl;COLLECTION_ADDRESS_CLOSED;Pick-up address closed;
+parcel-nl;COLLECTION_DATA_RECEIVED;Pickup order has been received by DHL;
+parcel-nl;COLLECTION_HANDED_OVER_TO_DD;Pickup order handed over to another courier;
+parcel-nl;COLLECTION_HANDED_OVER_TO_THIRD_PARTY;Pickup order handed over to another courier;
+parcel-nl;COLLECTION_IMPORT_EXPRESS;Pickup order received from Express;
+parcel-nl;COLLECTION_ORDER_HANDED_OVER_TO_DRIVER;Pickup order handed over to the courier;
+parcel-nl;COLLECTION_ORDER_OUT_FOR_DELIVERY;Courier on route for pickup order;
+parcel-nl;COLLECTION_ORDER_REFUSED;Pickup order refused by the courier;
+parcel-nl;COLLECTION_ORDER_SCANNED;Pickup order scanned by the courier;
+parcel-nl;COLLECTION_PLANNED_IN_ROUTE;Pickup planned in the route of the courier;
+parcel-nl;CONFIRM_UPLIFT;Ready for departure from the international sorting center;
+parcel-nl;CONFIRMATION_OF_CLOSING_THE_SCAN-APPLICATION_AFTER_THE_SCAN_FOR_RETURN;Sorted to send to the sorting center;
+parcel-nl;CS_ACTION_REQUIRED;Sender will contact DHL;
+parcel-nl;CUSTOMS_DATA_INCORRECT_RETURN_TO_SHIPPER;Customs data incorrect, return to shipper;
+parcel-nl;DAMAGE_RETURN;Damage found, return to sender;
+parcel-nl;DANGEROUS_GOODS_OCCURRENCE;Pending action or information;
+parcel-nl;DATA_MISSING;The shipment's data is missing;
+parcel-nl;DATA_RECEIVED_WITH_PREFIX_LABEL;Shipment not yet received or processed;
+parcel-nl;DELIVERED;Delivered;
+parcel-nl;DELIVERED_AT_ACCESSPOINT;Delivered at DHL ServicePoint;
+parcel-nl;DELIVERED_AT_DEPOT;Delivered at depot;
+parcel-nl;DELIVERED_AT_NEIGHBOURS;Delivered at the neighbours;
+parcel-nl;DELIVERED_AT_PARCELSHOP;INTERNAL EVENT - Parcel not ready for collection at DHL ServicePoint;
+parcel-nl;DELIVERED_AT_PARCELSTATION;Delivered at DHL ServicePoint, your shipment is ready for collection;
+parcel-nl;DELIVERED_AT_PREFERED_NEIGHBOURS;Delivered at the preferred neighbours;
+parcel-nl;DELIVERED_AT_SAFEPLACE;Delivered at the preferred location;
+parcel-nl;DELIVERED_AT_SHIPPER;Delivered at the sender;
+parcel-nl;DELIVERED_DAMAGED;Delivered with damage;
+parcel-nl;DELIVERED_IN_MAILBOX;Delivered in mailbox;
+parcel-nl;DELIVERED_NO_CODE_VALIDATION;Delivered;
+parcel-nl;DELIVERED_NOT_IN_TIME;Delivered;
+parcel-nl;DELIVERY_CODE_MISSING_NEW_ATTEMPT;The delivery code is missing or incorrect, new delivery attempt will follow;
+parcel-nl;DELIVERY_CODE_MISSING_PICK_UP;The delivery code is missing or incorrect, available for pick-up the next business day;
+parcel-nl;DELIVERY_CODE_MISSING_RETURN;Returned to the sender due to missing or incorrect delivery code;
+parcel-nl;DELIVERY_DATA_INCORRECT;Address details incorrect, delay due to manual address check;
+parcel-nl;DELIVERY_DATA_INCORRECT_RETURN;Incorrect address details, the shipment will return to the sender;
+parcel-nl;DELIVERY_DATE_CHANGED_BY_DEPOT_MANAGER;Delivery postponed, delivery date changed;
+parcel-nl;DELIVERY_DATE_CHANGED_BY_DEPOT_MANAGER_REASON_CLOSED;Delivery postponed, delivery date changed;
+parcel-nl;DELIVERY_PLANNED_IN_ROUTE;Delivery planned in the route of the courier;
+parcel-nl;DENIED_PARTIES;Stopped because of sanctioned countries;
+parcel-nl;DEPART_DESTINATION_GATEWAY;Departed from international sorting center in destination country;
+parcel-nl;DEPART_FACILITY;Processed at the sorting center;
+parcel-nl;DEPART_ORIGIN_GATEWAY;Departed from international sorting center in country of origin;
+parcel-nl;DEPART_SHIPPER_FACILITY;The shipment has departed the warehouse of the shipper;
+parcel-nl;DEPARTURE;Departure from the sorting center;
+parcel-nl;DEPOT_SCAN;Scanned at the sorting center;
+parcel-nl;DESTROYED;Disposed of shipment as requested by the sender;
+parcel-nl;DIFFERENT_STATUSES;Various;
+parcel-nl;DUTY_INVOICE;Duty invoice prepared;
+parcel-nl;ENTRY_SUBMITTED;Entry submitted;
+parcel-nl;EXPECTED_RETURN_DELIVERED_AT_SHIPPER_CALCULATED;Returned to the sender;
+parcel-nl;FACILITY_CHECK_IN;Arrived at the international sorting center;
+parcel-nl;FACILITY_CHECK_OUT;Ready for departure from the international sorting center;
+parcel-nl;FAILED_TO_DELIVER_REDELIVER;Delivery delayed, new delivery attempt on next delivery day;
+parcel-nl;FORCE_MAJEURE;Delivery interrupted, delivery date changed;
+parcel-nl;FORWARD_DESTINATION;Forwarded to the CityHub;
+parcel-nl;FORWARD_DESTINATION_TOO_LATE;Forwarded to the CityHub too late;
+parcel-nl;FORWARD_THIRD_PARTY;Forwarded to local carrier;
+parcel-nl;FORWARD_TO_DIFFERENT_PARCELSHOP;Selected DHL ServicePoint closed, redirected to other DHL ServicePoint;
+parcel-nl;FORWARDED_TO_DIFFERENT_ADDRESS;Will be forwarded to another address;
+parcel-nl;FOUND_AT_DEPOT;Found at the CityHub;
+parcel-nl;FOUND_DURING_INVENTORY;Found during stocktaking;
+parcel-nl;GATEWAY_ARRIVED;Arrived at international sorting center in transit country;
+parcel-nl;GATEWAY_DEPARTED;Departed from international sorting center in transit country;
+parcel-nl;HANDOVER;Handed over to local carrier;
+parcel-nl;HELD_FOR_PAYMENT;Awaiting payment;
+parcel-nl;HELD_IN_STORAGE;Held in storage;
+parcel-nl;HELD_IN_STORAGE_BACKLOG;In storage for later delivery;
+parcel-nl;HELD_IN_STORAGE_CLOSED;Held in storage, receiver location closed;
+parcel-nl;HELD_IN_STORAGE_DAMAGED;Held in storage due to damage;
+parcel-nl;HELD_IN_STORAGE_HOLIDAY;In storage because of holiday;
+parcel-nl;HELD_IN_STORAGE_INCOMPLETE;In storage because of incomplete;
+parcel-nl;HELD_IN_STORAGE_REFUSED;In storage because of refusal;
+parcel-nl;HELD_OUT_DEPOT;Taken out of storage;
+parcel-nl;ID_CHECK_UNSUCCESSFUL;Delivery unsuccessful, ID could not be verified;
+parcel-nl;IMAGE_AVAILABLE;Image available at DHL;
+parcel-nl;IN_CLEARANCE_PROCESS;In clearance at customs;
+parcel-nl;IN_ROUTE_THIRD_PARTY;On route to the CityHub;
+parcel-nl;INCORRECT/UNKNOWN_PIN;Pincode incorrect or unknown;
+parcel-nl;INFORMATION_ON_DELIVERY_TRANSMITTED;Delivery planned at the CityHub;
+parcel-nl;INSUFFICIENT_DOCUMENTATION;Incorrect or incomplete documentation;
+parcel-nl;INTERVENTION;Delivery instruction changed;
+parcel-nl;INTERVENTION_DELIVERY_ADDRESS_CHANGED_INTO_PARCELSHOP;Request by the recipient for delivery at DHL ServicePoint;
+parcel-nl;INTERVENTION_DELIVERY_ADDRESS_CHANGED_INTO_PARCELSTATION;Delivery address changed to DHL Locker;
+parcel-nl;INTERVENTION_DELIVERY_SCHEDULED_AT_ANOTHER_TIME/DATE;Delivery date changed successfully;
+parcel-nl;INTERVENTION_PROCESSED_FOR_COLLECTION_AT_PARCELSHOP;Delivery instruction changed to delivery at DHL ServicePoint;
+parcel-nl;INTERVENTION_PROCESSED_FOR_DELIVERY_AT_NEIGHBOURS;Delivery instruction changed to delivery at the neighbours;
+parcel-nl;INTERVENTION_PROCESSED_FOR_DELIVERY_AT_SAFEPLACE;We deliver your shipment at your preferred location;
+parcel-nl;INTERVENTION_RECEIVER_REQUEST_DELIVERY_CANCELLED;Returned to sender;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_ACCESSPOINT;We deliver your parcel to a post office;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_ANOTHER_TIME/DATE;We deliver your shipment at your preferred day and/or time;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_DIFFERENT_ADDRESS;Request by the recipient for delivery to a different address;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_NEIGHBOURS;We deliver your shipment at your neigbours;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_PARCELSHOP;We deliver your shipment at a DHL ServicePoint;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_PARCELSTATION;We deliver your parcel in a DHL Locker;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_PREFERRED_NEIGHBOURS;We deliver your parcel to the preferred neighbours;
+parcel-nl;INTERVENTION_RECEIVER_REQUESTS_DELIVERY_AT_SAFEPLACE;We deliver your shipment at your preferred location;
+parcel-nl;INTERVENTION_REQUEST_CANCEL_INTERVENTION;Returned to sender;
+parcel-nl;INTERVENTION_REQUEST_CANCEL_INTERVENTION_SUSPECTED_FRAUD;Returned at the sender's request;
+parcel-nl;INTERVENTION_SHIPPER_REQUEST_DELIVERY_CANCELLED;Returned at the sender's request;
+parcel-nl;INTERVENTION_SYSTEM_FAILED_DELIVERY_AT_PARCELSHOP;Your delivery preference for this parcel is not possible;
+parcel-nl;INTERVENTION_SYSTEM_FAILED_DELIVERY_AT_SAFEPLACE;Your delivery preference for this parcel is not possible;
+parcel-nl;INTERVENTION_SYSTEM_REQUESTS_DELIVERY_AT_PARCELSHOP;We'll deliver your parcel at the specified DHL ServicePoint;
+parcel-nl;INTERVENTION_SYSTEM_REQUESTS_DELIVERY_AT_SAFEPLACE;We'll deliver your parcel at the specified place near your house;
+parcel-nl;INVALID_SHIPMENT_SPECIFICATION;Shipment does not meet the conditions;
+parcel-nl;INVALID_SHIPMENT_SPECIFICATION_RETURN;Shipment does not meet the conditions, return to sender;
+parcel-nl;INVENTORY;Inventory;
+parcel-nl;LABEL_UNUSABLE;Label issue, the shipment will be relabelled and forwarded;
+parcel-nl;LEG_CREATED;Registered in network;
+parcel-nl;LEG_REFERENCE_ADDED;Reference added;
+parcel-nl;LOAD_VEHICLE;Out for delivery with the courier;
+parcel-nl;MANIFESTED;Ready for final customs check;
+parcel-nl;MIS_ROUTED;Sorted incorrectly, delayed because of resorting;
+parcel-nl;MISCODE;Address details incorrect due to wrong zip code;
+parcel-nl;MISROUTED_RETURN_TO_SHIPPER;Sorted incorrectly, return to the sender;
+parcel-nl;MISSED_DELIVERY_CYCLE;Missed delivery route;
+parcel-nl;MISSING_AFTER_ROUTE;Delivery interrupted;
+parcel-nl;MISSORT;Sorted incorrectly, delayed because of resorting;
+parcel-nl;MONEY_TRANSFERED_TO_SENDER;Payment transferred by the recipient;
+parcel-nl;NEW_COLLECTION_ATTEMPT;New pickup attempt by the courier;
+parcel-nl;NEW_DELIVERY_ATTEMPT;New delivery attempt on the next delivery day;
+parcel-nl;NO_MONEY_REDELIVER;No payment, new delivery attempt on the next delivery day;
+parcel-nl;NO_MONEY_RETURN;No payment, return to sender;
+parcel-nl;NOT_ARRIVED;Not arrived at the CityHub;
+parcel-nl;NOT_HOME;We missed each other;
+parcel-nl;NOT_HOME_NEW_DELIVERY;We missed each other, new attempt on the next delivery day;
+parcel-nl;NOT_HOME_RETURN_TO_SHIPPER;We missed each other, the parcel will return to the sender;
+parcel-nl;NOT_HOME_SYSTEM_INTERVENTION_DELIVERY_AT_PARCELSHOP;We missed each other, we will forward your parcel to a DHL ServicePoint;
+parcel-nl;NOT_HOME_TO_PARCELSHOP;We missed each other;
+parcel-nl;NOTHING_COLLECTED;Nothing picked up by the courier;
+parcel-nl;NOTHING_PICKED_UP;No shipment(s) picked up;
+parcel-nl;NOTHING_PICKED_UP_GOODS_ALREADY_COLLECTED;Nothing was picked up, shipment(s) already picked up previously;
+parcel-nl;NOTHING_PICKED_UP_GOODS_ARE_NOT_READY_YET;Nothing was picked up, no shipment(s) prepared;
+parcel-nl;NOTHING_PICKED_UP_NO_GOODS_FOR_TODAY;Nothing was picked up, no shipment(s) today;
+parcel-nl;NOTHING_PICKED_UP_NO_ORDER_GIVEN;No shipment(s) picked up, no orders submitted;
+parcel-nl;NOTHING_PICKED_UP_ORDER_CANCELLED;Nothing was picked up, order was cancelled;
+parcel-nl;NOTHING_PICKED_UP_OTHER_REASON;No shipment(s) picked up;
+parcel-nl;NOTIFICATION_FOR_PARCELSHOP_COLLECTION_HAS_BEEN_SENT;Parcel delivered at DHL ServicePoint and is ready for collection;
+parcel-nl;NOTIFICATION_FOR_PARCELSHOP_COLLECTION_HAS_FAILED;Failed to send notification for collection at DHL ServicePoint by the recipient;
+parcel-nl;NOTIFICATION_NOT_HOME_TO_PARCELSHOP;We missed you. We deliver your shipment at a DHL ServicePoint.;
+parcel-nl;NOTIFICATION_OF_DELIVERY_TIME_HAS_BEEN_SENT;Notification of delivery time frame sent to the recipient;
+parcel-nl;NOTIFICATION_OF_TIME_FRAME_HAS_BEEN_SENT;Notification of delivery time frame sent to the recipient;
+parcel-nl;ON_HOLD;Temporarily in storage;
+parcel-nl;ON_HOLD_ANNOUNCED;Temporarily in storage;
+parcel-nl;ON_HOLD_BAD_ADDRESS;Incorrect address details, pending correct details;
+parcel-nl;ON_HOLD_FOR_COLLECTION;Ready for collection at the sorting center by the recipient;
+parcel-nl;ON_ROUTE_TO_SHIPPER;On route to the sender;
+parcel-nl;OUT_FOR_DELIVERY;Out for delivery with the courier;
+parcel-nl;PACKAGING_ISSUE;The shipment's packaging is not suited for transport;
+parcel-nl;PALLET_MATERIAL_NOT_AVAILABLE;No empty pallet material available at pick-up address;
+parcel-nl;PALLET_MATERIAL_NOT_AVAILABLE_AT_PICKUP;No empty pallet material available at pick-up address;
+parcel-nl;PALLET_NOT_EMPTY;Euro-pallets at pick-up address still in use;
+parcel-nl;PALLET_NOT_EMPTY_AT_PICKUP;Euro-pallets at pick-up address still in use;
+parcel-nl;PARCEL_ALREADY_RETURNED;Already returned to the sender;
+parcel-nl;PARCEL_ARRIVED_AT_LOCAL_DEPOT;Arrived in your region;
+parcel-nl;PARCEL_COLLECTED;Picked up by the courier;
+parcel-nl;PARCEL_COLLECTED_AT_PARCELSHOP_BY_COURIER;Picked up at DHL ServicePoint by the courier;
+parcel-nl;PARCEL_COLLECTED_AT_SERVICEPOINT_BY_COURIER;Picked up at DHL ServicePoint by the courier;
+parcel-nl;PARCEL_FOUND_AT_PARCELSHOP;Pickup at DHL ServicePoint possible again;
+parcel-nl;PARCEL_HANDED_OVER_TO_COURIER;Handed over to the courier;
+parcel-nl;PARCEL_HELD_FOR_COLLECTION_AT_LOCAL_DEPOT;Ready for collection by the recipient;
+parcel-nl;PARCEL_INFORMATION_REMOVED_FROM_PARCELSHOP_APPLICATION;Removed from the application of DHL ServicePoint;
+parcel-nl;PARCEL_INTO_FALLBACK;Out for delivery with the courier;
+parcel-nl;PARCEL_MISSING;Delivery interrupted, the parcel is delayed for one or two days;
+parcel-nl;PARCEL_MISSING_AT_PARCELSHOP;Parcel missing, please contact the sender;
+parcel-nl;PARCEL_MISSING_AT_PARCELSHOP_NOTICED_AT_STOCK_CHECK;Parcel collection at DHL ServicePoint temporarily not possible;
+parcel-nl;PARCEL_MISSING_AT_PARCELSHOP_NOTICED_BY_COURIER;Pickup by the courier at DHL ServicePoint temporarily not possible;
+parcel-nl;PARCEL_MISSING_AT_PARCELSHOP_NOTICED_BY_CUSTOMER;Collection at DHL ServicePoint temporarily not possible;
+parcel-nl;PARCEL_MISSING_AT_PARCELSTATION_NOTICED_BY_COURIER;Nothing picked up, no parcel found in the DHL Locker;
+parcel-nl;PARCEL_NO_DATA;No data;
+parcel-nl;PARCEL_NOT_BROUGHT_IN;Not dropped off by the sender;
+parcel-nl;PARCEL_NOT_COLLECTED_AT_PARCELSHOP;Not collected at DHL ServicePoint;
+parcel-nl;PARCEL_NOT_SORTED_AT_HUB_NO_INFO;Received in sorting center, awaiting the data;
+parcel-nl;PARCEL_OUT_OF_TIME_FOR_DROP_OFF;Period expired for drop off at DHL ServicePoint by the sender;
+parcel-nl;PARCEL_PICKED_UP_AT_ACCESSPOINT;Picked up at post office by the courier;
+parcel-nl;PARCEL_PICKED_UP_AT_PARCELSHOP;Picked up at DHL ServicePoint by the courier;
+parcel-nl;PARCEL_PICKED_UP_AT_PARCELSTATION;Picked up from DHL Locker by the courier;
+parcel-nl;PARCEL_READY_FOR_RETURN_TO_HUB;Ready to send to the sorting center;
+parcel-nl;PARCEL_RECEIVED;Dropped off by the sender;
+parcel-nl;PARCEL_RELABELED_FOR_RETURN_TO_SHIPPER;Relabeled for return to sender;
+parcel-nl;PARCEL_RESORTED_AT_HUB;Resorted at the sorting center;
+parcel-nl;PARCEL_RETURNED_FROM_ROUTE;Returned from the route of the courier;
+parcel-nl;PARCEL_SCANNED_AT_RETURN_HUB;Returned to sender;
+parcel-nl;PARCEL_SCANNED_FOR_COLLECTION_AT_ACCESSPOINT_BY_COURIER;Picked up at DHL ServicePoint by the courier;
+parcel-nl;PARCEL_SCANNED_FOR_COLLECTION_AT_PARCELSHOP_BY_COURIER;Pickup order scanned at DHL ServicePoint by the courier;
+parcel-nl;PARCEL_SCANNED_FOR_COLLECTION_AT_PARCELSTATION_BY_COURIER;Picked up at DHL ServicePoint by the courier;
+parcel-nl;PARCEL_SCANNED_FOR_COLLECTION_AT_SERVICEPOINT_BY_COURIER;Pickup order scanned at DHL ServicePoint by the courier;
+parcel-nl;PARCEL_SCANNED_FOR_RETURN_TO_HUB;Scanned for return to sorting center;
+parcel-nl;PARCEL_SCANNED_INTO_HAND-TERMINAL;Entered into handheld device of the courier;
+parcel-nl;PARCEL_SORTED_AT_GATEWAY;Sorted at international sorting center in transit country;
+parcel-nl;PARCEL_SORTED_AT_HUB;Processed at the sorting center;
+parcel-nl;PARCEL_SORTED_TO_OVERFLOW;Sorted at the sorting center;
+parcel-nl;PARCEL_TOO_HEAVY_RETURN;The shipment is too heavy, return to the sender;
+parcel-nl;PARCEL_TOO_LARGE_RETURN;The shipment is too large, return to the sender;
+parcel-nl;PARCEL_WILL_BE_BROUGHT_IN_BY_RECEIVER;Ready for drop off by the sender;
+parcel-nl;PARCEL_WILL_BE_DELIVERED_SOON;We're almost there;
+parcel-nl;PARCELSHOP_DELIVERY_DEVIATION;The parcel has been delivered to a different DHL ServicePoint;
+parcel-nl;PARCELSHOP_FULL_REDELIVER;DHL ServicePoint full, new delivery attempt on the next delivery day;
+parcel-nl;PARCELSTATION_DELIVERY_UNSUCCESFULL_RETURN;Delivery in DHL Locker unsuccessful, return to the sender;
+parcel-nl;PARCELSTATION_NOT_AVAILABLE_REDELIVER_TO_PARCELSHOP;DHL Locker not available, new delivery attempt to DHL ServicePoint on the next delivery day;
+parcel-nl;PARTIAL_DELIVERY;Partially delivered;
+parcel-nl;PASSED_GATEWAY;Departure from the international sorting center;
+parcel-nl;PICKED_UP;Picked up by the courier;
+parcel-nl;PICKUP_DATA_RECEIVED;Pick-up data received by DHL Parcel;
+parcel-nl;PICTURE_TAKEN_OF_PARCEL;Photo taken of parcel;
+parcel-nl;PIECE_MISSING;Delivery (partially) interrupted, the parcel is delayed for one day;
+parcel-nl;PO_BOX;Delivery at post office box not possible, return to sender;
+parcel-nl;POSTAL_CODE_INCORRECT;Incorrect address details, the shipment will return to the sender;
+parcel-nl;POSTPROCESS_DELIVERED_AT_SHIPPER;Delivered to the sender by third party;
+parcel-nl;POSTPROCESS_RETURN_CONSOLIDATION;Handed over to third party for return process;
+parcel-nl;POSTPROCESS_RETURN_CONSOLIDATION_DEPART;Departed from third party for return under new shipment ID;
+parcel-nl;POSTPROCESS_RETURN_CONSOLIDATION_LOAD;Loaded into a transport container for return;
+parcel-nl;PRENOTIFICATION_RECEIVED;Shipment not yet received or processed;
+parcel-nl;PREPROCESS_DEPART_SHIPPER;The shipment has departed the warehouse of the shipper;
+parcel-nl;PREPROCESS_HANDOVER_TO_EXPORT_CUSTOMS;Handed over from third party to export customs;
+parcel-nl;PREPROCESS_HANDOVER_TO_IMPORT_CUSTOMS;Handed over from third party to import customs;
+parcel-nl;PREPROCESS_HANDOVER_TO_TRANSPORTER;Handed over to third party for transport;
+parcel-nl;PREPROCESS_SORT_BY_THIRD_PARTY;Presorted by third party;
+parcel-nl;PROCESSED_AT_LOCATION;Processed at the sorting center;
+parcel-nl;PROCESSED_AT_ORIGIN;Processed at the sorting center;
+parcel-nl;RECEIVER_CLOSED_ANNOUNCED;Recipient closed, delivery date changed;
+parcel-nl;RECEIVER_CLOSED_COLLECTION_CANCELLED;Pick-up address is closed, pick-up order cancelled;
+parcel-nl;RECEIVER_CLOSED_COLLECTION_RESCHEDULED;Pick-up address closed, new pick-up attempt next delivery day;
+parcel-nl;RECEIVER_CLOSED_ON_HOLIDAY;Recipient is closed because of holiday;
+parcel-nl;RECEIVER_CLOSED_ON_HOLIDAY_COLLECTION_CANCELLED;Pick-up address closed due to holiday, pick-up order cancelled;
+parcel-nl;RECEIVER_CLOSED_ON_HOLIDAY_COLLECTION_RESCHEDULED;Pick-up address closed due to holiday;
+parcel-nl;RECEIVER_CLOSED_ON_HOLIDAY_PICKUP_CANCELLED;Pick-up address closed due to holiday, pick-up order cancelled;
+parcel-nl;RECEIVER_CLOSED_PASSED_TO_DEPOT;Recipient is closed, will be forwarded to sorting center;
+parcel-nl;RECEIVER_CLOSED_PASSED_TO_PARCELSHOP;Recipient is closed, will be forwarded to DHL ServicePoint;
+parcel-nl;RECEIVER_CLOSED_PICKUP_CANCELLED;Pick-up address is closed, pick-up order cancelled;
+parcel-nl;RECEIVER_MOVED_OR_UNKNOWN;Recipient moved or unknown, we will contact sender for instructions;
+parcel-nl;RECEIVER_MOVED_OR_UNKNOWN_NOT_COLLECTED;Pick-up address unknown;
+parcel-nl;RECEIVER_ON_HOLIDAY_ANNOUNCED;Recipient on holiday, delivery date changed;
+parcel-nl;RECEIVER_RETURN;Parcel is returned;
+parcel-nl;RECEIVER_UNKNOWN_RETURN;Recipient moved or unknown, return to sender;
+parcel-nl;RECORD_OF_TRANSIT;On route to the international sorting center;
+parcel-nl;REDELIVER;New delivery attempt on the next delivery day;
+parcel-nl;REDELIVER_AT_PARCELSHOP;New delivery attempt at DHL ServicePoint on the next delivery day;
+parcel-nl;REDELIVER_DIFFERENT_ADDRESS;New delivery attempt on another address the next delivery day;
+parcel-nl;REDELIVER_SAME_ADDRESS;New delivery attempt on the same address next delivery day;
+parcel-nl;REFUSED;Delivery interrupted;
+parcel-nl;REFUSED_2ND_KIB;Not collected by recipient, we will contact sender for instructions;
+parcel-nl;REFUSED_AT_PARCELSHOP;Refused at DHL ServicePoint by the recipient;
+parcel-nl;REFUSED_BY_RECEIVER;Refused by the recipient;
+parcel-nl;REFUSED_DAMAGED;Damage found, we will contact sender for instructions;
+parcel-nl;REFUSED_INCOMPLETE;Refused because of incomplete;
+parcel-nl;REFUSED_INVENTORY;Refused because of inventory;
+parcel-nl;REFUSED_NO_MONEY;Refused because of no money;
+parcel-nl;REFUSED_NO_RECAP;Refused because of missing delivery note;
+parcel-nl;REFUSED_NOT_COLLECTED;Not collected by the recipient, return to sender;
+parcel-nl;REFUSED_NOT_ORDERED;Refused by the recipient because of not ordered;
+parcel-nl;REFUSED_NOT_ORDERED_CORONA;Refused: not ordered OR Closed due to Coronavirus;
+parcel-nl;REFUSED_NOT_SIGNED;Refused, receiver refuses to sign;
+parcel-nl;REFUSED_OTHER_REASON;Not delivered because of other reason;
+parcel-nl;REFUSED_REQUESTS_WAYBILL;Refused, receiver requests waybill;
+parcel-nl;REFUSED_RETURN;Delivery interrupted, return to sender;
+parcel-nl;REFUSED_RETURN_TO_DD;Refused and return to sorting center;
+parcel-nl;REFUSED_TOO_LATE;Refused because of delivery too late;
+parcel-nl;REFUSED_WILL_NOT_PAY;Not delivered because of no payment by the recipient;
+parcel-nl;RELABELED;Relabeled;
+parcel-nl;REMINDER_FOR_COLLECTION_SENT_EMAIL;The recipient has received a reminder via e-mail that the package is available for collection;
+parcel-nl;REMINDER_FOR_COLLECTION_SENT_LETTER;The recipient has received a reminder by post that the package is available for collection;
+parcel-nl;REMINDER_FOR_COLLECTION_SENT_SMS;The recipient has received a reminder via SMS that the package is available for collection;
+parcel-nl;REPACKED_DELIVERY_DAMAGED;Repackaged due to damage;
+parcel-nl;RESPONSE_RECEIVED;Response received;
+parcel-nl;RETURN_DELIVERED_AT_SHIPPER_CALCULATED;Return delivered at the sender;
+parcel-nl;RETURN_ORDER_CANCELLED;Return order cancelled at DHL ServicePoint;
+parcel-nl;RETURNED_NOT_COLLECTED;Not collected at DHL ServicePoint by the recipient, return to sender;
+parcel-nl;RETURNED_TO_SHIPPER;Returned to the sender;
+parcel-nl;REWEIGH;Weighed and measured at the sorting center;
+parcel-nl;ROUTE_IN_SCAN;Vehicle in scan;
+parcel-nl;SAFEPLACE_DELIVERY_FAILED;Your shipment couldn't be delivered at your preferred location;
+parcel-nl;SCAN_OK_GATEWAY;Departure from the international sorting center;
+parcel-nl;SCHEDULED_FOR_MOVEMENT;Delivery instruction changed to delivery at another day or time;
+parcel-nl;SERVICE_CHANGED;Service changed;
+parcel-nl;SHIPMENT_ACCEPTANCE;Dropped off at DHL by the sender;
+parcel-nl;SHIPMENT_ACCEPTANCE_DEPOT;Dropped off at depot by the sender;
+parcel-nl;SHIPMENT_ACCEPTANCE_PARCELSHOP;Dropped off at DHL ServicePoint by the sender;
+parcel-nl;SHIPMENT_ACCEPTANCE_PARCELSTATION;Dropped off in DHL Locker by the sender;
+parcel-nl;SHIPMENT_COLLECTED;Collected by the recipient;
+parcel-nl;SHIPMENT_INSPECTION;Inspection by customs;
+parcel-nl;SHIPMENT_INSPECTION_ON_HOLD;Shipment is being screened, a delay may occur;
+parcel-nl;SHIPMENT_INSPECTION_REJECTED;Shipment blocked, please contact the sender;
+parcel-nl;SHIPMENT_INSPECTION_RELEASED;Screening process is completed, the shipment continues towards the destination;
+parcel-nl;SHIPMENT_INTERCEPT;Interception by customs;
+parcel-nl;SHIPMENT_STOPPED;Shipment seized;
+parcel-nl;SHIPMENT_TOO_LARGE_FOR_ACCESSPOINT;Too big for DHL ServicePoint delivery;
+parcel-nl;SHIPMENT_TOO_LARGE_FOR_PARCELSHOP;To large for delivery at DHL ServicePoint, forwarded to CityHub;
+parcel-nl;SHIPMENT_TOO_LARGE_FOR_PARCELSTATION;To large for delivery at DHL Locker, forwarded to depot;
+parcel-nl;SIGNATURE_RECORDED;Signature received upon receipt;
+parcel-nl;SORTED_AT_DESTINATION_DEPOT;Sorted at depot in destination country;
+parcel-nl;SORTED_AT_DESTINATION_GATEWAY;Sorted at international sorting center in destination country;
+parcel-nl;SORTED_AT_DESTINATION_HUB;Sorted at sorting center in destination country;
+parcel-nl;SORTED_AT_ORIGIN_DEPOT;Sorted at depot in country of origin;
+parcel-nl;SORTED_AT_ORIGIN_GATEWAY;Sorted at international sorting center in country of origin;
+parcel-nl;SORTED_AT_ORIGIN_HUB;Sorted at sorting center in country of origin;
+parcel-nl;SPECIAL_HANDLING;Special handling, more information soon;
+parcel-nl;SPONTANEOUS_RETURN;Unannounced return given to the courier;
+parcel-nl;STORAGE_PERIOD_ENDED_AT_ACCESSPOINT;Not collected at DHL ServicePoint by the recipient, return to sender;
+parcel-nl;STORAGE_PERIOD_ENDED_AT_PARCELSHOP;Not collected at DHL ServicePoint by the recipient, return to sender;
+parcel-nl;STORAGE_PERIOD_ENDED_AT_PARCELSTATION;Not collected from DHL Locker, return to the sender;
+parcel-nl;TRACE_INITIATED;Customer service of DHL initiates action;
+parcel-nl;TRACE_TERMINATED;Customer service of DHL terminates action;
+parcel-nl;TRANSPORT_DELAY;Delayed during transport;
+parcel-nl;UNCONTROLLABLE_CLEARANCE_DELAY;Uncontrollable delay at customs;
+parcel-nl;UNJUSTIFIED_SPONTANEOUS_RETURN;Unjustified return given to the courier;
+parcel-nl;UNLOAD_VEHICLE;Vehicle is being unloaded;
+parcel-nl;VAT_AND_DUTY_PAYMENT_RECEIVED_BY_RECEIVER;Payment received;
+parcel-nl;WILL_BE_COLLECTED;Shipment(s) will be picked up;
+parcel-nl;WILL_BE_TRANSFERRED_TO_THIRD_PARTY;will be transferred to third party;
+parcel-pl;AN;Invalid address for delivery. Please contact DHL Parcel Customer Service Department at 42 6 345 345.;
+parcel-pl;AN_BO;Pick-up refused – incorrect address of recipient;
+parcel-pl;AN_RA;Invalid or incomplete address for delivery;
+parcel-pl;AN_SAS;Invalid address for alternative recipient (neighbour) was entered.It is incomplete or not in the direct neighbourhood of the recipient.;
+parcel-pl;AWI;Delivery failed.Recipient was absent upon delivery.;
+parcel-pl;AWI_CZAS;Shipment returned to sender – waiting time for delivery;
+parcel-pl;AWI_DP2;DHL courier did not find the recipient under the entered delivery address.Delivery at the time agreed with recipient;
+parcel-pl;AWI_NSP;We will attempt another delivery today or within the next two business days.;
+parcel-pl;AWI_ONU;Authorised recipient was absent upon delivery;
+parcel-pl;AWI_OZ;No access to the premises or housing estate closed;
+parcel-pl;AWI_ROD;No supporting document provided for ROD;
+parcel-pl;AWI_SAS;DHL courier did not find alternative recipient (neighbour) under the entered delivery address;
+parcel-pl;AWI_SPCAP;Shipment directed to another SP due to original overflow;
+parcel-pl;BCZ;Shipment ready to be delivered on the next working day;
+parcel-pl;BRG;Delivery was suspended until fees are paid by recipient;
+parcel-pl;BRG_SAS;Alternative recipient (neighbour) did not pay for transport and/or goods;
+parcel-pl;CC;There occurred difficulties in shipment processing.To get detailed information;
+parcel-pl;DOR;Shipment was delivered to recipient;
+parcel-pl;DOR_LOK;Shipment was delivered to entered location;
+parcel-pl;DOR_OTH;Shipment was delivered to another person;
+parcel-pl;DOR_OWL;Shipment picked up by Recipient in person in Sorting Depot/Customer Service Point;
+parcel-pl;DOR_POC;Shipment was delivered to post office;
+parcel-pl;DOR_RDZ;Shipment was delivered to family member;
+parcel-pl;DOR_SAS;Shipment was delivered to the entered alternative recipient (neighbour);
+parcel-pl;DOR_SP;Shipment arrived to DHL POP;
+parcel-pl;DWP;Shipment accepted at DHL shipping terminal;
+parcel-pl;EDB;Shipment accepted for customs clearance in the country of delivery;
+parcel-pl;EDC;Shipment has been cleared at customs;
+parcel-pl;EDWP;DHL received electronic shipment data. Information will be updated after Sender hands out shipment for transport;
+parcel-pl;EXA;Shipment entered customs clearance;
+parcel-pl;EXC;Shipment released from customs;
+parcel-pl;KWC;Shipment ready for delivery today;
+parcel-pl;LIK;Shipment ready to be delivered on the next working day;
+parcel-pl;LK;Shipment handed out to courier for delivery;
+parcel-pl;LP;Shipment arrived in branch office;
+parcel-pl;LW;Shipment in transport;
+parcel-pl;LW_PL;Shipment on its way to Poland;
+parcel-pl;OP;Recipient refused to pick up shipment;
+parcel-pl;OP_BWER;Pick-up refused – content impossible to verify before signing or collecting COD;
+parcel-pl;OP_COD;Pick-up refused – invalid amount of COD;
+parcel-pl;OP_DO;Return of shipment to Sender – invalid ID;
+parcel-pl;OP_DOK;Return of shipment to Sender – no additional documents to pick up;
+parcel-pl;OP_DUB;Pick-up refused – order doubled;
+parcel-pl;OP_OTH;Recipient refused to pick up shipment;
+parcel-pl;OP_PLA;Pick-up refused – invalid payer;
+parcel-pl;OP_PNK;Recipient refused to pick up shipment;
+parcel-pl;OP_REZ;Pick-up refused – resignation;
+parcel-pl;OP_ROD;Pick-up refused – incomplete ROD;
+parcel-pl;OP_SAS;Alternative neighbour recipient refused to pick up shipment;
+parcel-pl;OP_TNZ;Pick-up refused – goods not ordered or incorrect;
+parcel-pl;OP_UMO;Pick-up refused – errors in contract;
+parcel-pl;OP_USK;Recipient refused to pick up shipment;
+parcel-pl;OP_USP;Recipient refused to pick up shipment;
+parcel-pl;OWL;Shipment to be picked up by customer in DHL terminal;
+parcel-pl;OWL_KP;Customer was notified about the date and place for picking up shipment;
+parcel-pl;OWL_ONO;Shipment to be picked up by customer;
+parcel-pl;OWL_PS_KP;Customer was notified about the date and place for picking up shipment;
+parcel-pl;OWL_PS_ONO;Shipment to be picked up by customer – Packstation;
+parcel-pl;OWL_SP_KP;Customer was notified about the date and place for picking up shipment/parcel locker filled/to be picked up in Service Point;
+parcel-pl;OWL_SP_ONO;Shipment to be picked up by customer – Service Point;
+parcel-pl;PNK;Incomplete shipment;
+parcel-pl;PNPT;Recipient’s decision: new date for shipment delivery;
+parcel-pl;PO18;Recipient’s decision: changed hours for shipment delivery;
+parcel-pl;POW;Notification has been sent to recipient;
+parcel-pl;PPDOR;Shipment was picked up in DHL Customer Service Point;
+parcel-pl;PSHOP;Recipient’s decision: shipment to be picked up in person in DHL POP;
+parcel-pl;REZ;Recipient’s decision: shipment will be returned to Sender;
+parcel-pl;SAS;Recipient’s decision: alternative delivery address for shipment in case there is no Addressee;
+parcel-pl;SEC;Shipment in customs clearance;
+parcel-pl;SOB;Recipient’s decision: new date for shipment delivery;
+parcel-pl;SORT;Shipment under processing in sorting depot;
+parcel-pl;SP_ATDSP;Shipment ready to be delivered on the next working day;
+parcel-pl;SP_CAP;Delivery to DHL POP was not possible.There will be another delivery attempt;
+parcel-pl;SP_CN;Posting shipment from DHL POP was cancelled. Please contact the Sender;
+parcel-pl;SP_DOR;Shipment has been collected from DHL POP;
+parcel-pl;SP_DSP;Shipment is waiting to be collected from DHL POP;
+parcel-pl;SP_DW;Your shipment is on its way to DHL POP point;
+parcel-pl;SP_DWP;Shipment sent from DHL POP is waiting to be collected by DHL courier;
+parcel-pl;SP_KP;Customer was notified about the date and place for picking up shipment from DHL POP;
+parcel-pl;SP_KZW;Return of shipment to Sender – collection date from DHL POP has expired;
+parcel-pl;SP_OP;Shipment returned to sender – recipient refused to accept shipment from DHL POP;
+parcel-pl;SP_PA;Shipment is waiting to be collected from DHL POP;
+parcel-pl;SP_PU;Shipment picked up by DHL courier from DHL POP;
+parcel-pl;SP_TO;Return of shipment to Sender – collection date from DHL POP has expired;
+parcel-pl;SP_ZAM;Shipment delivery to DHL POP was suspended.Please contact DHL Parcel Customer Service Department at 42 6 345 345;
+parcel-pl;SP_ZWR;Shipment returned to sender – recipient refused to accept shipment;
+parcel-pl;TRM;Shipment ready to be delivered on the next working day;
+parcel-pl;TRM_X;Shipment ready to be delivered on the next working day;
+parcel-pl;TRM2;Shipment arrived at DHL Terminal.Delivery to the recipient is planned today at the time agreed with recipient;
+parcel-pl;WEJPL;Shipment arrived in Poland;
+parcel-pl;WER;Shipment ready to be delivered on the next working day;
+parcel-pl;WYJPL;Shipment left Poland;
+parcel-pl;ZA;Recipient’s decision: new delivery address for shipment;
+parcel-pl;ZAIT;Recipient’s decision: new delivery address for shipment;
+parcel-pl;ZID;Shipment ready to be delivered on the next working day;
+parcel-pl;ZMA;Shipment ready to be delivered on the next working day;
+parcel-pl;ZOS;Shipment ready to be delivered on the next working day;
+parcel-pl;ZWN;Shipment returned to sender;
+parcel-pl;ZWR;Shipment will be returned to sender;
+parcel-pl;ZWR_AN;Shipment will be returned to sender;
+parcel-pl;ZWR_OP;Shipment will be returned to sender.Delivery was not possible;
+parcel-pl;ZWR_WER;Shipment will be returned to sender;
+parcel-pl;ZWR_ZB;DHL courier made two delivery attempts. Time for shipment collection in DHL point has expired.Shipment will be returned to sender;
+parcel-pl;ZWR_ZT;DHL courier made two delivery attempts. Time for shipment collection in DHL point has expired. Shipment was returned to sender after telephone confirmation;
+parcel-pl;ZWW;Delivery failed. Shipment awaiting consecutive delivery cycle.;
+parcel-pl;ZWW_KRYZ;Shipment ready to be delivered on the next working day;
+parcel-pl;ZWW_NSP;Delivery to DHL POP is planned on the next working day;
+express;PY;Payment;new since 4th June 2024
+express;SM;Scheduled for movement;new since 4th June 2024
+svb;AMBIGUOUS;UNKNOWN;
+svb;AMOUNT_TRANSFERRED;DELIVERED;
+svb;ANNOUNCED;PRE_TRANSIT;
+svb;ARRIVAL_AT_OFFICE_OF_DELIVERY;TRANSIT;
+svb;ARRIVED_IN_DESTINATION_COUNTRY;TRANSIT;
+svb;ARRIVED_TRANSIT;TRANSIT;
+svb;BZ;TRANSIT;
+svb;BZA;TRANSIT;
+svb;BZE;TRANSIT;
+svb;CONFIRMATION_PENDING;DELIVERED;
+svb;CONFIRMED;DELIVERED;
+svb;CONFIRMED_BY_SENDER;DELIVERED;
+svb;DELIVERED;DELIVERED;
+svb;DELIVERED_ZU_NOT_OK;DELIVERED;
+svb;DELIVERED_ZU_OK;DELIVERED;
+svb;DELIVERY_ATTEMPTED;TRANSIT;
+svb;DEPARTURE_FROM_INWARD_OE;TRANSIT;
+svb;FETCHED;DELIVERED;
+svb;FETCHED_KEY_ACCOUNT_PENDING_DELIVERY_CONFIRMATION;DELIVERED;
+svb;FETCHED_NOTIFIED;DELIVERED;
+svb;FETCHED_PACKSTATION;DELIVERED;
+svb;FETCHED_PENDING_DELIVERY_CONFIRMATION;DELIVERED;
+svb;FETCHED_PO_BOX_PENDING_DELIVERY_CONFIRMATION;DELIVERED;
+svb;FORWARDED_ABROAD;TRANSIT;
+svb;HANDOVER_CUSTOMS;TRANSIT;
+svb;HELD_BY_CUSTOMS;TRANSIT;
+svb;IN_DELIVERY;TRANSIT;
+svb;IP_CUSTOMS;TRANSIT;
+svb;ISSUE_OF_A_REPLACEMENT_CERTIFICATE_PZA;TRANSIT;
+svb;MARBURG;TRANSIT;
+svb;NO_INFO;UNKNOWN;
+svb;NOTIFIED;TRANSIT;
+svb;NOTIFIED_KEY_ACCOUNT;TRANSIT;
+svb;NOTIFIED_PACKSTATION;TRANSIT;
+svb;NOTIFIED_PO_BOX;TRANSIT;
+svb;PAID_EPOS;DELIVERED;
+svb;PAID_MAILMAN;DELIVERED;
+svb;PASSED_LETTER_CENTER;TRANSIT;
+svb;POSTED;TRANSIT;
+svb;POSTED_ARRIVED;TRANSIT;
+svb;POSTED_MAIL_TERMINAL;TRANSIT;
+svb;REDIRECTED;TRANSIT;
+svb;RETURNED_TO_SENDER;DELIVERED;
+svb;SENT_BACK;TRANSIT;return
+svb;SENT_BACK_ABROAD;TRANSIT;return
+svb;TO_BE_SENT_ABROAD;TRANSIT;
+ecommerce-ppl;150;We received the parcel from the sender;
+ecommerce-ppl;300;The parcel is located at the delivery depot;
+ecommerce-ppl;343;Package is ready in pickup point;
+ecommerce-ppl;400;The parcel is ready for delivery;
+ecommerce-ppl;450;The parcel is delivered;
+ecommerce-ppl;460;The parcel will be delivered on another day;
+ecommerce-ppl;464;The recipient refused to accept the parcel;
+ecommerce-ppl;500;The parcel is on the way to the delivery depot;
+ecommerce-ppl;900;Electronic data received;
+ecommerce-ppl;997;Undelivered - Shipment lost;
+ecommerce-ppl;999;Cancellation confirmed by sender - data only;
+freight;ACT-2;Consignment created;
+freight;64-0;Collection arranged - OK;
+freight;48-0;Loaded by customer ready for Collection;
+freight;15-501;Out for Collection;
+freight;31-139;Entered collection geofence area;
+freight;55-211;Not Collected - consignor closed;
+freight;55-68;Not Collected - customer not ready;
+freight;55-21;Not Collected - customer refusal;
+freight;55-126;Not Collected - customs issue;
+freight;55-240;Not Collected - DHL refusal, goods not transportable;
+freight;55-241;Not Collected - missing or wrong reference;
+freight;55-265;Not Collected - other reasons;
+freight;55-294;Not Collected - time issue;
+freight;55-20;Not Collected - traffic jam;
+freight;55-266;Not Collected - weather condition issue;
+freight;55-234;Not Collected - wrong address;
+freight;13-0;Collected;
+freight;31-140;Exited collection geofence area;
+freight;24-0;Shipped from terminal;
+freight;1-0;Received at terminal;
+freight;20-126;On hold - in customs clearance.;
+freight;12-0;Customs cleared;
+freight;20-266;Delayed during transport - bad weather.;
+freight;20-354;Delayed during transport - bank holiday.;
+freight;20-270;Exception occurred - Strike.;
+freight;7-0;New shipping instruction - consignment cancelled by sender;
+freight;56-222;New shipping instruction - shipment returned.;
+freight;1-21;Arrival at destination;
+freight;20-208;Shipment in warehouse – Awaiting delivery appointment;
+freight;20-209;Shipment in warehouse – Delivery appointment booked;
+freight;20-13;Shipment in warehouse - ready for self collection by consignee;
+freight;20-296;Shipment in warehouse - waiting for consignee payment.;
+freight;24-628;Direct delivery;
+freight;24-501;Out for Delivery;
+freight;361-139;Entered delivery geofence area;
+freight;20-211;Attempted DHL delivery - consignee closed;
+freight;56-211;Attempted DHL delivery - consignee not met;
+freight;56-292;Attempted DHL delivery - refused by consignee, COD/DAD problem.;
+freight;56-284;Attempted DHL delivery - refused by consignee, wrong goods.;
+freight;56-611;Attempted DHL delivery - refused by consignee.;
+freight;56-241;Attempted DHL delivery - refused due to missing documents;
+freight;20-234;Attempted DHL delivery - wrong consignee address ;
+freight;24-600;Received by consignee;
+freight;21-234;Shipment delivered - new delivery address following consignee instruction;
+freight;21-23;Shipment delivered with exception - partly delivered;
+freight;21-600;Shipment delivered with exception.;
+freight;21-0;Delivered;
+freight;361-140;Exited delivery geofence area;
+dgf;DATA_SUBMITTED;DATA SUBMITTED - AWAITING PARCEL HANDOVER TO DHL;pre-transit (dgf sbr only)
+dgf;PICKUP_SUCCESSFUL;PICKUP SUCCESSFUL;transit (dgf sbr only)
+dgf;ARRIVED_AT_ORIGIN_FACILITY;ARRIVED AT ORIGIN FACILITY;transit (dgf sbr only)
+dgf;PROCESSED_AT_ORIGIN_FACILITY;PROCESSED AT FACILITY;transit (dgf sbr only)
+dgf;DEPARTED_FROM_ORIGIN_FACILITY;DEPARTED FROM FACILITY;transit (dgf sbr only)
+dgf;READY_FOR_DEPARTURE;READY FOR DEPARTURE;transit (dgf sbr only)
+dgf;DEPARTED;DEPARTED ON OUTBOUND FLIGHT;transit (dgf sbr only)
+dgf;ARRIVED;FLIGHT LANDED;transit (dgf sbr only)
+dgf;ARRIVED_AT_CUSTOMS;ARRIVED AT CUSTOMS;transit (dgf sbr only)
+dgf;ARRIVED_AT_CUSTOMS;ARRIVED AT CUSTOMS;transit (dgf sbr only)
+dgf;CLEARED_BY_CUSTOMS;CLEARED BY CUSTOMS;transit (dgf sbr only)
+dgf;ARRIVED_PROCESSED_AT_FACILITY;ARRIVED AT FACILITY - PARTNER;transit (dgf sbr only)
+dgf;ARRIVED_PROCESSED_AT_FACILITY;ARRIVED AT FACILITY - PARTNER;transit (dgf sbr only)
+dgf;OUT_FOR_DELIVERY;OUT FOR DELIVERY;transit (dgf sbr only)
+dgf;DELIVERED;SUCCESSFULLY DELIVERED;delivered (dgf sbr only)
+dgf;HELD_AT_CUSTOMS;HELD AT CUSTOMS;transit (dgf sbr only)
+dgf;DELIVERY_EXCEPTION;DELIVERY EXCEPTION;transit (dgf sbr only)
+ecommerce-europe;1;Electronical shipment data has been provided to DHL;Pre-transit
+ecommerce-europe;2;The shipment has been collected;Transit
+ecommerce-europe;3;The shipment has been dropped off at Parcelshop by sender;Transit
+ecommerce-europe;4;The shipment has been dropped off at Parcelstation by sender;Transit
+ecommerce-europe;5;The shipment has been dropped off at Postoffice by sender;Transit
+ecommerce-europe;6;The shipment has been dropped off at depot by sender;Transit
+ecommerce-europe;7;The shipment has been dropped off at sorting center by sender;Transit
+ecommerce-europe;8;The shipment has been dropped off at gateway by sender;Transit
+ecommerce-europe;9;The shipment has been picked up at sender;Transit
+ecommerce-europe;14;The shipment has been picked up at Parcelshop by courier ;Transit
+ecommerce-europe;15;The shipment has been picked up at Parcelstation by courier ;Transit
+ecommerce-europe;16;The shipment has been picked up at Access Point by courier ;Transit
+ecommerce-europe;17;The shipment has been picked up at Postoffice by courier ;Transit
+ecommerce-europe;19;The shipment has been processed at terminal;Transit
+ecommerce-europe;20;The shipment has departed from terminal;Transit
+ecommerce-europe;22;The shipment has been processed at depot;Transit
+ecommerce-europe;23;The shipment has left the depot;Transit
+ecommerce-europe;25;The shipment has been processed at sorting center ;Transit
+ecommerce-europe;26;The shipment has been processed and left the sorting center;Transit
+ecommerce-europe;27;The shipment has arrived at gateway in origin country ;Transit
+ecommerce-europe;28;The shipment has been processed at gateway in origin country ;Transit
+ecommerce-europe;29;The shipment has left origin country ;Transit
+ecommerce-europe;30;The shipment has arrived in transit country;Transit
+ecommerce-europe;31;The shipment has been processed in transit country;Transit
+ecommerce-europe;32;The shipment has left transit country;Transit
+ecommerce-europe;33;The shipment has arrived in destination country;Transit
+ecommerce-europe;37;The shipment has arrived at sorting center ;Transit
+ecommerce-europe;38;The shipment has been processed at sorting center ;Transit
+ecommerce-europe;40;The shipment has arrived at depot ;Transit
+ecommerce-europe;41;The shipment has been processed at depot ;Transit
+ecommerce-europe;42;The shipment has been loaded to the van;Transit
+ecommerce-europe;43;The shipment has been handed over to the Access Point;Delivered
+ecommerce-europe;44;The shipment has been handed over to the Parcelshop;Delivered
+ecommerce-europe;45;The shipment has been handed over to the Parcelstation;Delivered
+ecommerce-europe;46;The shipment has been handed over to the Postoffice;Delivered
+ecommerce-europe;47;The shipment has been handed over to the depot;Transit
+ecommerce-europe;52;The recipient has been notified (e.g. via email) about delivery details and available services;Transit
+ecommerce-europe;53;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;56;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;57;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;58;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;59;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;60;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;61;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;62;The recipient has requested changes to the delivery process;Transit
+ecommerce-europe;63;The shipment has been successfully delivered;Delivered
+ecommerce-europe;64;The shipment has been successfully delivered;Delivered
+ecommerce-europe;65;The shipment has been picked up by the recipient from depot;Delivered
+ecommerce-europe;66;The shipment has been picked up by the recipient from Parcelshop;Delivered
+ecommerce-europe;67;The shipment has been picked up by the recipient from Parcelstation;Delivered
+ecommerce-europe;68;The shipment has been picked up by the recipient from Postoffice;Delivered
+ecommerce-europe;69;The shipment has been successfully delivered;Delivered
+ecommerce-europe;70;The shipment has been successfully delivered;Delivered
+ecommerce-europe;71;The shipment has been successfully delivered;Delivered
+ecommerce-europe;72;The shipment could not be delivered to the recipient;Failure
+ecommerce-europe;73;The shipment could not be delivered to the recipient, because the recipient was not available;Failure
+ecommerce-europe;74;The shipment could not be delivered to the recipient, because the recipient was not available;Failure
+ecommerce-europe;75;The shipment could not be delivered to the recipient, because the recipient was not available;Failure
+ecommerce-europe;76;The shipment could not be delivered to the recipient, because the recipient has refused the shipment;Failure
+ecommerce-europe;77;The shipment could not be delivered to the recipient, due to unsuccessful COD payment;Failure
+ecommerce-europe;78;The shipment could not be delivered to the recipient, due to unsuccessful COD payment;Failure
+ecommerce-europe;79;The shipment could not be delivered to the recipient, because of an incorrect delivery address;Failure
+ecommerce-europe;80;The shipment could not be delivered to the recipient, because of an incorrect delivery address;Failure
+ecommerce-europe;81;The shipment could not be delivered to the recipient, because the recipient has moved away;Failure
+ecommerce-europe;82;The shipment could not be delivered to the recipient, because the recipient could not show the mandatory ID for personal identification;Failure
+ecommerce-europe;83;During the delivery, the shipment was damaged;Failure
+ecommerce-europe;85;The shipment could not be delivered to the recipient, because the recipient was not available;Failure
+ecommerce-europe;86;The shipment could not be delivered to the recipient, because the payment of charges is missing;Failure
+ecommerce-europe;87;The shipment could not be handed over to the Service Point because the Service point was closed ;Failure
+ecommerce-europe;88;The shipment could not be handed over to the Service Point because of capacity restraints in the Service Point;Failure
+ecommerce-europe;89;The shipment could not be handed over to the Service Point because it exceeds the maximum weight or dimensions allowed in the Service Point;Failure
+ecommerce-europe;90;The shipment could not be handed over to the Service Point because the Service point was closed ;Failure
+ecommerce-europe;91;The shipment could not be handed over to the Service Point because of capacity restraints in the Service Point;Failure
+ecommerce-europe;92;The shipment could not be handed over to the Service Point because it exceeds the maximum weight or dimensions allowed in the Service Point;Failure
+ecommerce-europe;93;The shipment could not be handed over to the Parcel Locker because of capacity restraints in the Parcel Locker;Failure
+ecommerce-europe;94;The shipment could not be handed over to the Parcel Locker because the Parcel Locker is out of service;Failure
+ecommerce-europe;95;The shipment could not be handed over to the Parcel Locker because it violates the GT&C of the Parcel Locker;Failure
+ecommerce-europe;96;The shipment could not be handed over to the Post Office because the Post Office was closed ;Failure
+ecommerce-europe;97;The shipment could not be handed over to the Post Office because of capacity restraints in the Post Office;Failure
+ecommerce-europe;98;The shipment could not be handed over to the Post Office because it exceeds the maximum weight or dimensions allowed in the Post Office;Failure
+ecommerce-europe;99;The shipment has no been picked up by the recipient within the defined time and will be sent back to the sender;Failure
+ecommerce-europe;100;The shipment has no been picked up by the recipient within the defined time and will be sent back to the sender;Failure
+ecommerce-europe;101;The shipment has no been picked up by the recipient within the defined time and will be sent back to the sender;Failure
+ecommerce-europe;102;The shipment has no been picked up by the recipient within the defined time and will be sent back to the sender;Failure
+ecommerce-europe;130;The shipment has been released from export Customs;Transit
+ecommerce-europe;133;The shipment has been cleared at import Customs in destination country / region;Transit
+ecommerce-europe;141;The shipment has been held until next working day because recipient is not available;Transit
+ecommerce-europe;142;The shipment has been held because recipient requested later delivery;Transit
+ecommerce-europe;149;The shipment has been held and will be returned to sender;Failure
+ecommerce-europe;151;The shipment has been stopped without delivery attempt because recipient has refused the shipment.The shipment will be returned to sender;Failure
+ecommerce-europe;152;The import of the shipment has been terminated. The shipment will be returned to sender;Failure
+ecommerce-europe;154;The delivery of the shipment failed;Transit
+ecommerce-europe;155;The shipment has not been picked up within the defined time and will be sent back to the sender;Failure
+ecommerce-europe;156;The shipment could not be delivered because of an exceptional event;Failure
+ecommerce-europe;157;The shipment could not be delivered because recipient moved. Shipment will be returned to sender;Failure
+ecommerce-europe;159;The shipment could not be delivered because recipient requested to forward/redirect parcel;Transit
+ecommerce-europe;160;The shipment could not be delivered and will be returned to the sender;Failure
+ecommerce-europe;161;The shipment could not be delivered;Transit
+ecommerce-europe;172;The shipment has been held because recipient requested later delivery;Transit
+ecommerce-europe;194;Shipment has been held according to recipient's request;Transit
+ecommerce-europe;200;The shipment could not be handed over to the Service Point because it exceeds the maximum weight or dimensions allowed in the Service Point;Failure
+ecommerce-europe;206;The shipment could not be delivered to the recipient, because of incorrect address;Transit
+ecommerce-europe;207;Recipient has refused the shipment;Failure
+ecommerce-europe;208;Recipient has refused the shipment during collection;Failure
+ecommerce-europe;209;Recipient has refused the shipment during collection;Failure
+ecommerce-europe;210;The shipment could not be delivered, because the recipient has refused it;Failure
+ecommerce-europe;211;The shipment could not be delivered, because the recipient has refused it;Failure
+ecommerce-europe;214;The shipment could not be handed over because payment of charges is missing;Failure
+ecommerce-europe;215;The shipment could not be handed over because payment of charges is missing;Failure
+ecommerce-europe;217;The shipment could not be delivered and is scheduled for further processing on next working day;Transit
+ecommerce-europe;218;The shipment could not be delivered because recipient requested later delivery;Transit
+ecommerce-europe;219;The shipment could not be delivered and is being held because recipient requested later delivery;Transit
+ecommerce-europe;222;The shipment  could not be delivered due recipient's request;Failure
+ecommerce-europe;223;The shipment  could not be delivered due recipient's request;Failure
+ecommerce-europe;226;The shipment has been collected;Transit
+ecommerce-europe;228;The shipment has been picked up at access point by courier ;Transit
+ecommerce-europe;230;The shipment has been processed at terminal in origin country;Transit
+ecommerce-europe;231;The shipment has departed from terminal;Transit
+ecommerce-europe;232;The shipment has been processed in transit country;Transit
+ecommerce-europe;233;The shipment has been processed at terminal in destination country;Transit
+ecommerce-europe;234;The shipment has arrived at gateway in origin country ;Transit
+ecommerce-europe;235;The shipment has left origin country ;Transit
+ecommerce-europe;236;The shipment has arrived in transit country;Transit
+ecommerce-europe;237;The shipment has left transit country;Transit
+ecommerce-europe;238;The shipment has arrived in destination country;Transit
+ecommerce-europe;240;The shipment has arrived at sorting center ;Transit
+ecommerce-europe;242;The shipment has arrived at depot ;Transit
+ecommerce-europe;248;The shipment is undeliverable and will be returned to destination under a new ID;Failure
+ecommerce-europe;249;The shipment is undeliverable and will be returned to the agreed return address in the destination country;Failure
+ecommerce-europe;253;The shipment couldn´t be delivered because of an exceptional event. Further attempt on next working day;Failure
+ecommerce-europe;254;The shipment has left the customer facility;Pre-transit
+ecommerce-europe;255;The shipment was pre-sorted by 3rd party provider;Transit
+ecommerce-europe;258;The shipment was presented to import  customs by 3rd party provider;Failure
+ecommerce-europe;259;The shipment has been held because of missing or inapproriate documentation and will be returned to the sender;Failure
+ecommerce-europe;264;The shipment could not be delivered because of bad weather conditions. Further processing expected on next working day;Failure
+ecommerce-europe;265;The shipment could not be delivered because of capacity issues. Further processing expected on next working day;Failure
+ecommerce-europe;266;The shipment has been held for bad weather conditions. Further processing expected next working day;Failure
+ecommerce-europe;267;The shipment has been held for capacity issues. Further processing expected next working day;Failure
+ecommerce-europe;268;The shipment has been held and is awaiting payment of charges;Failure
+ecommerce-europe;269;The shipment has been held. Further processing expected next working day;Failure
+ecommerce-europe;302;The shipment has been handed over for final delivery;Delivered
+ecommerce-europe;306;Packaging of parcel was torn. Parcel has been successfully delivered;Delivered
+ecommerce-europe;330;The shipment could not be delivered to the recipient, because the recipient could not show the mandatory ID for personal identification;Failure
+ecommerce-europe;354;The shipment has been processed at terminal;Transit
+ecommerce-europe;355;The shipment has been processed in transit country;Transit
+ecommerce-europe;356;The shipment has been processed at terminal in destination country;Transit
+ecommerce-europe;358;The shipment has been identified as oversized;Transit
+ecommerce-europe;363;The shipment is handled by a return consolidator;Transit
+ecommerce-europe;364;The shipment is assigned to a transport container;Transit
+ecommerce-europe;365;The shipment was assigned to a transport container and is ready for departure from return consolidator with new shipment ID;Transit
+ecommerce-europe;366;The shipment has been delivered back to the business sender;Delivered
+ecommerce-europe;367;The shipment was pre-sorted by 3rd party provider;Pre-transit
+ecommerce-europe;368;The shipment was presented to export customs by 3rd party provider;Pre-transit
+ecommerce-europe;369;The shipment was handed over to transport provider;Pre-transit
+ecommerce-europe;370;The shipment was presented to import  customs by 3rd party provider;Pre-transit
+ecommerce-europe;372;The shipment could not be delivered to the recipient, because the recipient was not available;Failure
+ecommerce-europe;377;The shipment has been processed in transit country;Transit
+ecommerce-europe;378;The shipment has been processed in transit country;Transit
+ecommerce-europe;379;The shipment has been processed in transit country;Transit
+ecommerce-europe;380;The shipment has been processed according to the business customer's instructions;Transit
+ecommerce-europe;392;The shipment could not be picked up due to a malfuntion of the Locker;Transit
+ecommerce-europe;395;The shipment couldn´t be handed over to the Service Point as it was closed;Transit
