@@ -1,5 +1,12 @@
 {
   "errorCode": "ERR001",
   "errorMessage": "Invalid shipment data",
-  "errorOrigin": "META-API"
+  "errorOrigin": "META-API",
+  "debugList": [
+    {
+      "request": "sample request data",
+      "response": "sample response data",
+      "methodName": "sampleMethod"
+    }
+  ]
 }

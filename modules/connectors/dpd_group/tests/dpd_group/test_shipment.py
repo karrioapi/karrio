@@ -190,7 +190,7 @@ ParsedErrorResponse = [
             "carrier_id": "dpd_group",
             "carrier_name": "dpd_group",
             "code": "ERR001",
-            "message": "Invalid shipment data",
+            "message": "Error Code ERR001: Invalid shipment data",
             "details": {"errorOrigin": "META-API"},
         }
     ],
