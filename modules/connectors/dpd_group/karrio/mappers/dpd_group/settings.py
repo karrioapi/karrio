@@ -14,8 +14,9 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     """DPD Group connection settings."""
 
     # DPD META-API authentication properties
-    # Required
+    # Required fields
     bucode: str  # Business Unit code (X-DPD-BUCODE)
+    customer_id: str  # DPD customer ID (customerInfos.customerID)
 
     # Authentication method 1: Username/Password
     username: str = None  # X-DPD-LOGIN
@@ -26,8 +27,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     client_secret: str = None  # X-DPD-CLIENTSECRET
 
     # Optional account information
-    account_number: str = None
-    customer_account_number: str = None
+    customer_account_number: str = None  # DPD account number
 
     # generic properties (DO NOT MODIFY)
     id: str = None
