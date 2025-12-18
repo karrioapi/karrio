@@ -406,6 +406,28 @@ def to_dict(
     return utils.DP.to_dict(value, clear_empty=clear_empty)
 
 
+def to_dict_safe(response: typing.Union[str, bytes, None]) -> dict:
+    """
+    Safely parses a string or bytes into a dictionary.
+    - Handles None, empty, or whitespace-only input by returning {}.
+    - If parsing fails, returns a standardized error dictionary.
+    """
+    if response is None:
+        return {}
+
+    content = response
+    if isinstance(response, bytes):
+        content = decode(response)
+
+    if not str(content).strip():
+        return {}
+
+    try:
+        return to_dict(content)
+    except Exception as e:
+        return {"errors": [{"message": f"Failed to parse response: {e}", "code": "parsing_error"}]}
+
+
 def to_json(
     value: typing.Any,
 ) -> str:
