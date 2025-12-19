@@ -21,6 +21,7 @@ class ShipmentStatus(utils.Enum):
 
 class TrackerStatus(utils.Enum):
     pending = "pending"
+    picked_up = "picked_up"
     unknown = "unknown"
     on_hold = "on_hold"
     cancelled = "cancelled"
@@ -49,6 +50,7 @@ CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)
 UPLOAD_DOCUMENT_TYPE = [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
 LABEL_TEMPLATE_TYPES = [("SVG", "SVG"), ("ZPL", "ZPL")]
+TRACKING_INCIDENT_REASONS = [(c.name, c.name) for c in list(units.TrackingIncidentReason)]
 
 
 class CarrierDetails(serializers.Serializer):
@@ -1076,17 +1078,31 @@ class TrackingEvent(serializers.Serializer):
         allow_null=True,
         help_text="The tracking event's time. Format: `HH:MM AM/PM`",
     )
+    timestamp = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The tracking event's timestamp. Format: `YYYY-MM-DDTHH:MM:SS.sssZ` (ISO 8601)",
+    )
+    status = serializers.ChoiceField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        choices=TRACKER_STATUS,
+        help_text="The normalized status of this specific event",
+    )
     code = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         help_text="The tracking event's code",
     )
-    reason = serializers.CharField(
+    reason = serializers.ChoiceField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="The tracking event's reason",
+        choices=TRACKING_INCIDENT_REASONS,
+        help_text="The normalized incident reason (for exception events only)",
     )
     description = serializers.CharField(
         required=False, help_text="The tracking event's description"

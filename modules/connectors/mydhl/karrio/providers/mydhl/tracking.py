@@ -65,6 +65,26 @@ def _extract_details(
                 code=event.typeCode,
                 time=lib.ftime(event.time, try_formats=["%H:%M:%S", "%H:%M"]),
                 location=next((e.description for e in event.serviceArea or []), None),
+                timestamp=lib.fiso_timestamp(
+                    lib.fdate(event.date),
+                    lib.ftime(event.time, try_formats=["%H:%M:%S", "%H:%M"]),
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if getattr(event, "typeCode", None) in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if getattr(event, "typeCode", None) in r.value
+                    ),
+                    None,
+                ),
             )
             for event in (shipment.events or [])
         ],

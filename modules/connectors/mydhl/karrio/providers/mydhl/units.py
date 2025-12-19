@@ -343,3 +343,36 @@ class TrackingStatus(lib.Enum):
     delivery_delayed = ["AD", "DY", "HI", "HO", "HW", "RD", "SM", "WX"]
     out_for_delivery = ["WC", "OO"]
     ready_for_pickup = ["HP", "LX"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps MyDHL exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["BN", "DMG"]  # Damaged parcel
+    carrier_parcel_lost = ["LO", "LP"]  # Lost parcel
+    carrier_sorting_error = ["MS"]  # Missorted
+    carrier_delay = ["DY", "SM"]  # Delay
+
+    # Consignee-caused issues
+    consignee_refused = ["RF", "CR"]  # Refused by consignee
+    consignee_not_home = ["NH", "NA"]  # Not home, Not available
+    consignee_business_closed = ["BC", "CL"]  # Business closed
+    consignee_incorrect_address = ["IA", "BA", "CA"]  # Incorrect/bad/changed address
+    consignee_access_restricted = ["AR"]  # Access restricted
+
+    # Customs-related issues
+    customs_delay = ["CC", "CI", "CD", "CM", "CU"]  # Customs clearance/delay/inspection/missing docs/unpaid
+
+    # Weather/Force majeure
+    weather_delay = ["WX", "HW"]  # Weather delay
+
+    # Delivery exceptions
+    delivery_exception_hold = ["OH", "HP", "HN", "HX"]  # On hold variations
+    delivery_exception_undeliverable = ["UD"]  # Undeliverable
+
+    # Other delays
+    delivery_delayed = ["AD", "HI", "HO", "RD"]  # Address delay, holiday, other delays
+
+    # Unknown/Other
+    unknown = []

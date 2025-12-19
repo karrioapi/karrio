@@ -66,6 +66,7 @@ ParsedTrackingResponse = [
                     "description": "string",
                     "location": "string",
                     "time": "07:40 AM",
+                    "timestamp": "2012-10-12T07:40:31.000Z",
                 },
                 {
                     "code": "string",
@@ -73,6 +74,7 @@ ParsedTrackingResponse = [
                     "description": "string",
                     "location": "string",
                     "time": "06:40 AM",
+                    "timestamp": "2012-10-12T06:40:31.000Z",
                 },
             ],
             "tracking_number": "24333892874",

@@ -83,7 +83,28 @@ def _extract_details(
                     else None
                 ),
                 time=lib.flocaltime(a.time, "%H%M%S"),
-                code=getattr(last_event.status, "code", None),
+                code=getattr(a.status, "code", None),
+                timestamp=lib.fiso_timestamp(
+                    lib.fdate(a.date, "%Y%m%d"),
+                    lib.ftime(a.time, "%H%M%S"),
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if getattr(a.status, "type", None) in s.value
+                        or getattr(a.status, "code", None) in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if getattr(a.status, "code", None) in r.value
+                    ),
+                    None,
+                ),
             )
             for a in package.activity
         ],

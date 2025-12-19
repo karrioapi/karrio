@@ -160,6 +160,8 @@ TRACKERS_LIST = {
                     "latitude": None,
                     "longitude": None,
                     "reason": None,
+                    "status": None,
+                    "timestamp": None,
                 }
             ],
             "delivered": False,
@@ -189,6 +191,8 @@ TRACKERS_LIST = {
                     "latitude": None,
                     "longitude": None,
                     "reason": None,
+                    "status": None,
+                    "timestamp": None,
                 }
             ],
             "delivered": False,
@@ -262,6 +266,8 @@ UPDATED_TRACKERS_LIST = {
                     "latitude": None,
                     "longitude": None,
                     "reason": None,
+                    "status": None,
+                    "timestamp": None,
                 },
                 {
                     "date": "2021-01-11",
@@ -272,6 +278,8 @@ UPDATED_TRACKERS_LIST = {
                     "latitude": None,
                     "longitude": None,
                     "reason": None,
+                    "status": None,
+                    "timestamp": None,
                 },
             ],
             "delivered": False,
@@ -301,6 +309,8 @@ UPDATED_TRACKERS_LIST = {
                     "latitude": None,
                     "longitude": None,
                     "reason": None,
+                    "status": None,
+                    "timestamp": None,
                 }
             ],
             "delivered": False,

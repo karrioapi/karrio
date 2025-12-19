@@ -61,6 +61,23 @@ def _extract_details(
                 description=event.description,
                 location=event.location,
                 time=lib.flocaltime(event.date, "%Y-%m-%dT%H:%M:%S%z"),
+                timestamp=lib.fiso_timestamp(event.date, current_format="%Y-%m-%dT%H:%M:%S%z"),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if item.status in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if item.status in r.value
+                    ),
+                    None,
+                ),
             )
             for event in item.events
         ],

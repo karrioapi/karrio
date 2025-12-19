@@ -75,6 +75,26 @@ def _extract_details(
                     event.date.content,
                     current_format="%m/%d/%Y %H:%M:%S %p",
                 ),
+                timestamp=lib.fiso_timestamp(
+                    event.date.content,
+                    current_format="%m/%d/%Y %H:%M:%S %p",
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if event.status in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.status in r.value
+                    ),
+                    None,
+                ),
             )
             for event in events
         ],

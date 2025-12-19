@@ -73,7 +73,29 @@ def _extract_detail(
                 time=lib.flocaltime(
                     shorten_date(event.timestamp), try_formats=date_formats
                 ),
-                reason=lib.text(event.remark),
+                timestamp=lib.fiso_timestamp(
+                    shorten_date(event.timestamp),
+                    current_format="%Y-%m-%dT%H:%M:%S",
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if (event.statusCode or "").lower() in s.value
+                        or (event.status or "").lower() in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if (event.statusCode or "").lower() in r.value
+                        or (event.status or "").lower() in r.value
+                        or (event.description or "").lower() in r.value
+                    ),
+                    None,
+                ),
             )
             for event in shipment.events or []
         ],

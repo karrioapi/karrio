@@ -100,7 +100,9 @@ ParsedTrackingResponse = [
                     "date": "2021-02-10",
                     "description": "Your package was released by the customs agency.",
                     "location": "Wayne, NJ, 07470, US",
+                    "status": "on_hold",
                     "time": "07:13 AM",
+                    "timestamp": "2021-02-10T07:13:00.000Z",
                 }
             ],
             "info": {

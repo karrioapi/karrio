@@ -228,3 +228,39 @@ class TrackingStatus(lib.Enum):
     delivered = ["Delivery"]
     delivery_failed = ["Undeliverable"]
     out_for_delivery = ["OnDelivery"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps Purolator exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["Damaged", "Package Damaged"]
+    carrier_sorting_error = ["Misrouted", "Routing Error"]
+    carrier_address_not_found = ["Address Not Found", "Invalid Address"]
+    carrier_parcel_lost = ["Lost", "Missing Package"]
+    carrier_not_enough_time = ["Insufficient Time"]
+    carrier_vehicle_issue = ["Vehicle Breakdown", "Mechanical Issue"]
+
+    # Consignee-caused issues
+    consignee_refused = ["Refused", "Delivery Refused", "Recipient Refused"]
+    consignee_business_closed = ["Business Closed", "Closed"]
+    consignee_not_available = ["Not Available", "Recipient Not Available"]
+    consignee_not_home = ["Not Home", "No One Home", "Recipient Not Home"]
+    consignee_incorrect_address = ["Incorrect Address", "Wrong Address", "Bad Address"]
+    consignee_access_restricted = ["Access Restricted", "Cannot Access", "Restricted Access"]
+
+    # Customs-related issues
+    customs_delay = ["Customs Delay", "Customs Hold", "Customs Processing"]
+    customs_documentation = ["Customs Documentation Required", "Missing Customs Documents"]
+    customs_duties_unpaid = ["Duties Unpaid", "Customs Fees Due"]
+
+    # Weather/Force majeure
+    weather_delay = ["Weather Delay", "Weather", "Severe Weather"]
+    natural_disaster = ["Natural Disaster", "Emergency"]
+
+    # Delivery exceptions
+    delivery_exception_hold = ["Hold", "Customer Hold", "Held at Depot"]
+    delivery_exception_undeliverable = ["Undeliverable", "Cannot Deliver"]
+
+    # Other issues
+    unknown = []

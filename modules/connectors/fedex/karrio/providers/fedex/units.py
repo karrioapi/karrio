@@ -482,8 +482,47 @@ class DocumentUploadOption(lib.Enum):
 class TrackingStatus(lib.Enum):
     on_hold = ["DE", "SE"]
     delivered = ["DL"]
+    picked_up = ["PU", "PX", "OC", "OF"]
     in_transit = ["IT", "IX"]
     delivery_failed = ["CA", "RS"]
     delivery_delayed = ["DY", "DD"]
     out_for_delivery = ["AD", "ED", "OD"]
     ready_for_pickup = ["HL"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps FedEx exception codes to normalized TrackingIncidentReason.
+
+    Based on FedEx API exception/status codes.
+    """
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DA", "DM", "DMG"]  # Damaged
+    carrier_sorting_error = ["MR", "MSR"]  # Misrouted
+    carrier_address_not_found = ["NA", "ANF"]  # Address not found
+    carrier_parcel_lost = ["LO", "LT", "LP"]  # Lost
+    carrier_not_enough_time = ["NT"]  # No time
+    carrier_vehicle_issue = ["ME", "VB"]  # Mechanical, vehicle breakdown
+
+    # Consignee-caused issues
+    consignee_refused = ["RF", "RJ", "RE"]  # Refused
+    consignee_business_closed = ["BC", "CL"]  # Business closed
+    consignee_not_available = ["NA1", "NI"]  # Not available
+    consignee_not_home = ["NH", "NAH"]  # Not home
+    consignee_incorrect_address = ["IA", "WA", "BA"]  # Incorrect/wrong/bad address
+    consignee_access_restricted = ["NS", "SC"]  # No safe location, security issue
+
+    # Customs-related issues
+    customs_delay = ["CD", "CH", "CI"]  # Customs delay/hold/inspection
+    customs_documentation = ["CM", "CP"]  # Customs missing docs, paperwork
+    customs_duties_unpaid = ["CU", "DU"]  # Customs unpaid, duties unpaid
+
+    # Weather/Force majeure
+    weather_delay = ["WE", "WD", "PMX"]  # Weather
+    natural_disaster = ["ND", "EM"]  # Natural disaster, emergency
+
+    # Delivery exceptions
+    delivery_exception_hold = ["SEC", "HD"]  # Customer-requested hold, hold at depot
+    delivery_exception_undeliverable = ["PD", "UD"]  # Problem with delivery, undeliverable
+
+    # Other issues
+    unknown = []  # Unrecognized codes

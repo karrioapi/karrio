@@ -76,14 +76,18 @@ ParsedTrackingResponse = [
                     "date": "2024-11-22",
                     "description": "Delivered, Parcel Locker",
                     "location": "HERNANDO, 34442, FL",
+                    "status": "delivered",
                     "time": "13:58 PM",
+                    "timestamp": "2024-11-22T13:58:00.000Z",
                 },
                 {
                     "code": "OF",
                     "date": "2024-11-22",
                     "description": "Out for Delivery",
                     "location": "HERNANDO, 34442, FL",
+                    "status": "out_for_delivery",
                     "time": "09:10 AM",
+                    "timestamp": "2024-11-22T09:10:00.000Z",
                 },
                 {
                     "code": "07",
@@ -91,6 +95,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at Post Office",
                     "location": "LECANTO, 34461, FL",
                     "time": "08:59 AM",
+                    "timestamp": "2024-11-22T08:59:00.000Z",
                 },
                 {
                     "code": "A1",
@@ -98,24 +103,31 @@ ParsedTrackingResponse = [
                     "description": "Arrived at USPS Regional Facility",
                     "location": "JACKSONVILLE FL DISTRIBUTION CENTER",
                     "time": "01:13 AM",
+                    "timestamp": "2024-11-20T01:13:00.000Z",
                 },
                 {
                     "code": "TL",
                     "date": "2024-11-20",
                     "description": "In Transit to Next Facility",
+                    "status": "in_transit",
                     "time": "01:11 AM",
+                    "timestamp": "2024-11-20T01:11:00.000Z",
                 },
                 {
                     "code": "TL",
                     "date": "2024-11-19",
                     "description": "In Transit to Next Facility",
+                    "status": "in_transit",
                     "time": "18:07 PM",
+                    "timestamp": "2024-11-19T18:07:00.000Z",
                 },
                 {
                     "code": "TL",
                     "date": "2024-11-19",
                     "description": "In Transit to Next Facility",
+                    "status": "in_transit",
                     "time": "12:11 PM",
+                    "timestamp": "2024-11-19T12:11:00.000Z",
                 },
                 {
                     "code": "T1",
@@ -123,6 +135,7 @@ ParsedTrackingResponse = [
                     "description": "Departed USPS Regional Facility",
                     "location": "QUEENS NY DISTRIBUTION CENTER",
                     "time": "06:16 AM",
+                    "timestamp": "2024-11-19T06:16:00.000Z",
                 },
                 {
                     "code": "10",
@@ -130,6 +143,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at USPS Regional Origin Facility",
                     "location": "QUEENS NY DISTRIBUTION CENTER",
                     "time": "18:02 PM",
+                    "timestamp": "2024-11-18T18:02:00.000Z",
                 },
                 {
                     "code": "SF",
@@ -137,6 +151,7 @@ ParsedTrackingResponse = [
                     "description": "Departed Post Office",
                     "location": "JAMAICA, 11430, NY",
                     "time": "17:01 PM",
+                    "timestamp": "2024-11-18T17:01:00.000Z",
                 },
                 {
                     "code": "03",
@@ -144,6 +159,7 @@ ParsedTrackingResponse = [
                     "description": "USPS in possession of item",
                     "location": "JAMAICA, 11430, NY",
                     "time": "11:10 AM",
+                    "timestamp": "2024-11-18T11:10:00.000Z",
                 },
                 {
                     "code": "GX",
@@ -151,6 +167,7 @@ ParsedTrackingResponse = [
                     "description": "Shipping Label Created, USPS Awaiting Item",
                     "location": "SPRINGFIELD GARDENS, 11413, NY",
                     "time": "11:32 AM",
+                    "timestamp": "2024-11-15T11:32:00.000Z",
                 },
             ],
             "info": {

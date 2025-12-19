@@ -47,6 +47,26 @@ def _extract_details(
                 description=scan.Description,
                 location=scan.Depot.Name,
                 code=scan.ScanType,
+                timestamp=lib.fiso_timestamp(
+                    lib.fdate(scan.ScanDate),
+                    lib.ftime(scan.ScanTime, "%H%M%S"),
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if getattr(scan, "ScanType", None) in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if scan.ScanType in r.value or scan.Description in r.value
+                    ),
+                    None,
+                ),
             )
             for scan in track.Scans.Scan
         ],

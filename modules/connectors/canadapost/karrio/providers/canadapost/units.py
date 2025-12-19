@@ -195,6 +195,22 @@ class TrackingStatus(lib.Enum):
         "1499",
     ]
     in_transit = [""]
+    picked_up = [
+        "100",
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "1400",
+        "1401",
+        "1402",
+        "1403",
+        "1404",
+        "1405",
+    ]
     on_hold = [
         "117",
         "120",
@@ -271,6 +287,40 @@ class TrackingStatus(lib.Enum):
         "2412",
     ]
     out_for_delivery = ["174", "500"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps Canada Post exception codes to normalized TrackingIncidentReason.
+
+    Based on Canada Post tracking event codes.
+    """
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["119", "142", "143", "144", "145", "146", "147", "148", "149"]
+    carrier_sorting_error = ["128", "129", "130", "131", "132", "133"]
+    carrier_address_not_found = ["122", "123", "1413", "1440", "1485", "1486", "1489", "1490"]
+    carrier_parcel_lost = ["124", "126", "151", "152", "153"]
+    carrier_not_enough_time = ["155", "157", "158"]
+    carrier_vehicle_issue = ["134", "135", "136", "137", "138"]
+
+    # Consignee-caused issues
+    consignee_refused = ["150", "1415", "1416"]
+    consignee_business_closed = ["179", "181", "182"]
+    consignee_not_available = ["183", "184", "190", "1418", "1419", "1420"]
+    consignee_not_home = ["167", "168", "169", "1417"]
+    consignee_incorrect_address = ["172", "173", "1482", "1483"]
+    consignee_access_restricted = ["154", "180", "185", "186", "187", "188", "189"]
+
+    # Customs-related issues
+    customs_delay = ["810", "1443", "1484", "1487"]
+    customs_documentation = ["117", "120", "121"]
+    customs_duties_unpaid = ["125", "127", "1494"]
+
+    # Weather/Force majeure
+    weather_delay = ["159", "160", "161", "162", "163"]
+    natural_disaster = ["164", "165", "166"]
+
+    # Other issues
+    unknown = []
 
 
 INTERNATIONAL_NON_DELIVERY_OPTION = [

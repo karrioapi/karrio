@@ -60,6 +60,26 @@ def _extract_tracking(
                 code=e.ServiceEvent.EventCode,
                 location=e.ServiceArea.Description,
                 description=lib.text(e.ServiceEvent.Description, e.Signatory),
+                timestamp=lib.fiso_timestamp(
+                    lib.fdate(e.Date),
+                    lib.ftime(e.Time),
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if e.ServiceEvent.EventCode in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if e.ServiceEvent.EventCode in r.value
+                    ),
+                    None,
+                ),
             )
             for e in reversed(events)
         ],

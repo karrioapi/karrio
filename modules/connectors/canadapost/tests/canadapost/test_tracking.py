@@ -90,6 +90,7 @@ ParsedTrackingResponse = [
                     "description": "Signature image recorded for Online viewing",
                     "location": "SAINTE-FOY, QC",
                     "time": "11:59 AM",
+                    "timestamp": "2011-02-03T11:59:00.000Z",
                 },
                 {
                     "code": "0174",
@@ -97,6 +98,7 @@ ParsedTrackingResponse = [
                     "description": "Item out for delivery",
                     "location": "SAINTE-FOY, QC",
                     "time": "08:27 AM",
+                    "timestamp": "2011-02-03T08:27:00.000Z",
                 },
                 {
                     "code": "0100",
@@ -104,6 +106,7 @@ ParsedTrackingResponse = [
                     "description": "Item processed at postal facility",
                     "location": "QUEBEC, QC",
                     "time": "14:45 PM",
+                    "timestamp": "2011-02-02T14:45:00.000Z",
                 },
                 {
                     "code": "0173",
@@ -111,13 +114,16 @@ ParsedTrackingResponse = [
                     "description": "Customer addressing error found; attempting to correct. Possible delay",
                     "location": "QUEBEC, QC",
                     "time": "06:19 AM",
+                    "timestamp": "2011-02-02T06:19:00.000Z",
                 },
                 {
                     "code": "1496",
                     "date": "2011-02-01",
                     "description": "Item successfully delivered",
                     "location": "QUEBEC, QC",
+                    "status": "delivered",
                     "time": "07:59 AM",
+                    "timestamp": "2011-02-01T07:59:00.000Z",
                 },
                 {
                     "code": "20",
@@ -125,6 +131,7 @@ ParsedTrackingResponse = [
                     "description": "Signature image recorded for Online viewing",
                     "location": "QUEBEC, QC",
                     "time": "07:59 AM",
+                    "timestamp": "2011-02-01T07:59:00.000Z",
                 },
             ],
             "info": {

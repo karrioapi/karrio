@@ -64,6 +64,26 @@ def _extract_details(
                     try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
                 ),
                 location=event.Location,
+                timestamp=lib.fiso_timestamp(
+                    event.EventDT,
+                    try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if (event.OmniCode or event.Code) in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if (event.OmniCode or event.Code) in r.value
+                    ),
+                    None,
+                ),
             )
             for event in events
         ],

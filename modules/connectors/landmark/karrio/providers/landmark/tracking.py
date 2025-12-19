@@ -68,6 +68,26 @@ def _extract_details(
                 description=event.Status,
                 code=event.EventCode,
                 location=event.Location,
+                timestamp=lib.fiso_timestamp(
+                    event.DateTime,
+                    try_formats=DATETIME_FORMATS,
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if event.EventCode in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.EventCode in r.value
+                    ),
+                    None,
+                ),
             )
             for event in package.Events.Event
         ]

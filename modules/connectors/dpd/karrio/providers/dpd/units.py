@@ -99,6 +99,37 @@ class TrackingStatus(lib.Enum):
     out_for_delivery = ["Courier", "ReturningFromDelivery"]
 
 
+class TrackingIncidentReason(lib.Enum):
+    """Maps DPD exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DMG", "DAMAGED"]
+    carrier_sorting_error = ["MISROUTED"]
+    carrier_address_not_found = ["ADDRESS_NOT_FOUND"]
+    carrier_parcel_lost = ["LOST"]
+    carrier_vehicle_issue = ["VEHICLE_ISSUE"]
+
+    # Consignee-caused issues
+    consignee_refused = ["REFUSED", "REJECTED"]
+    consignee_business_closed = ["BUSINESS_CLOSED"]
+    consignee_not_available = ["NOT_AVAILABLE"]
+    consignee_not_home = ["NOT_HOME", "RECIPIENT_ABSENT"]
+    consignee_incorrect_address = ["INCORRECT_ADDRESS", "WRONG_ADDRESS"]
+    consignee_access_restricted = ["ACCESS_RESTRICTED"]
+
+    # Customs-related issues
+    customs_delay = ["CUSTOMS_DELAY", "CUSTOMS_HOLD"]
+    customs_documentation = ["CUSTOMS_DOCS"]
+    customs_duties_unpaid = ["DUTIES_UNPAID"]
+
+    # Weather/Force majeure
+    weather_delay = ["WEATHER"]
+    natural_disaster = ["NATURAL_DISASTER"]
+
+    # Other issues
+    unknown = []
+
+
 DEFAULT_SERVICES = [
     models.ServiceLevel(
         service_name="DPD Express 10h",

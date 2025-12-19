@@ -180,6 +180,37 @@ class TrackingStatus(lib.Enum):
     ]
 
 
+class TrackingIncidentReason(lib.Enum):
+    """Maps Landmark exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = []
+    carrier_sorting_error = []
+    carrier_address_not_found = []
+    carrier_parcel_lost = []
+    carrier_vehicle_issue = []
+
+    # Consignee-caused issues
+    consignee_refused = ["900"]  # Delivery failed
+    consignee_business_closed = []
+    consignee_not_available = ["400"]  # Attempted delivery
+    consignee_not_home = ["400"]  # Attempted delivery
+    consignee_incorrect_address = ["450"]  # Item re-directed to new address
+    consignee_access_restricted = []
+
+    # Customs-related issues
+    customs_delay = ["135"]  # Customs Issue
+    customs_documentation = ["135"]  # Customs Issue
+    customs_duties_unpaid = ["90"]  # Shipment held for payment
+
+    # Weather/Force majeure
+    weather_delay = []
+    natural_disaster = []
+
+    # Other issues
+    unknown = []
+
+
 def load_services_from_csv() -> list:
     """
     Load service definitions from CSV file.

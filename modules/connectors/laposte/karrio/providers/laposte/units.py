@@ -55,3 +55,34 @@ class TrackingStatus(lib.Enum):
     delivered = ["DI1"]
     in_transit = [""]
     out_for_delivery = ["MD2", "ET1"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps La Poste exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = []
+    carrier_sorting_error = []
+    carrier_address_not_found = ["AN1"]
+    carrier_parcel_lost = []
+    carrier_vehicle_issue = []
+
+    # Consignee-caused issues
+    consignee_refused = ["RE1"]
+    consignee_business_closed = []
+    consignee_not_available = ["ND1", "AG1"]
+    consignee_not_home = ["ND1"]
+    consignee_incorrect_address = ["AN1"]
+    consignee_access_restricted = []
+
+    # Customs-related issues
+    customs_delay = ["DO1"]
+    customs_documentation = []
+    customs_duties_unpaid = []
+
+    # Weather/Force majeure
+    weather_delay = []
+    natural_disaster = []
+
+    # Other issues
+    unknown = []

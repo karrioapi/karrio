@@ -78,7 +78,29 @@ def _extract_details(
                     event.eventCountry,
                     separator=", ",
                 ),
-                reason=lib.text(event.reasonCode),
+                timestamp=lib.fiso_timestamp(
+                    event.eventTimestamp,
+                    current_format="%Y-%m-%dT%H:%M:%SZ",
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if any(
+                            _.lower() in (event.eventType or "").lower()
+                            for _ in s.value
+                        )
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.eventCode in r.value
+                    ),
+                    None,
+                ),
             )
             for event in details.trackingEvents
         ],

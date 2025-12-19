@@ -80,7 +80,26 @@ def _extract_details(
                     try_formats=["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"],
                     output_format="%H:%M %p",
                 ),
-                reason=lib.text(event.reason),
+                timestamp=lib.fiso_timestamp(
+                    event.local_scan_time or event.scan_time,
+                    current_format="%Y-%m-%dT%H:%M:%S",
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if event.event_type in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.event_type in r.value or event.description in r.value
+                    ),
+                    None,
+                ),
             )
             for event in events
         ],

@@ -192,6 +192,42 @@ class TrackingStatus(lib.Enum):
     delivery_delayed = ["unknown"]
 
 
+class TrackingIncidentReason(lib.Enum):
+    """Maps DHL Parcel DE exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["damaged", "package_damaged", "parcel_damaged"]
+    carrier_sorting_error = ["misrouted", "sorting_error", "wrong_route"]
+    carrier_address_not_found = ["address_not_found", "invalid_address", "unknown_address"]
+    carrier_parcel_lost = ["lost", "missing", "not_found"]
+    carrier_not_enough_time = ["time_constraint", "insufficient_time"]
+    carrier_vehicle_issue = ["vehicle_issue", "transport_problem", "mechanical_issue"]
+
+    # Consignee-caused issues
+    consignee_refused = ["refused", "delivery_refused", "recipient_refused"]
+    consignee_business_closed = ["business_closed", "closed", "shop_closed"]
+    consignee_not_available = ["not_available", "recipient_not_available", "unavailable"]
+    consignee_not_home = ["not_home", "nobody_home", "recipient_absent"]
+    consignee_incorrect_address = ["incorrect_address", "wrong_address", "bad_address"]
+    consignee_access_restricted = ["access_restricted", "no_access", "restricted"]
+
+    # Customs-related issues
+    customs_delay = ["customs_delay", "customs_hold", "customs_processing", "clearance_delay"]
+    customs_documentation = ["customs_documents", "missing_documents", "documentation_required"]
+    customs_duties_unpaid = ["duties_unpaid", "customs_fees", "payment_required"]
+
+    # Weather/Force majeure
+    weather_delay = ["weather_delay", "weather", "severe_weather", "weather_conditions"]
+    natural_disaster = ["natural_disaster", "emergency", "catastrophe"]
+
+    # Delivery exceptions
+    delivery_exception_hold = ["hold", "held", "on_hold", "depot_hold"]
+    delivery_exception_undeliverable = ["undeliverable", "cannot_deliver", "delivery_impossible"]
+
+    # Other issues
+    unknown = []
+
+
 def load_services_from_csv() -> list:
     """
     Load service definitions from CSV file.

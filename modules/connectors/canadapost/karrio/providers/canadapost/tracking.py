@@ -58,6 +58,26 @@ def _extract_tracking(
                     event.event_site, event.event_province, join=True, separator=", "
                 ),
                 description=event.event_description,
+                timestamp=lib.fiso_timestamp(
+                    lib.fdate(event.event_date, "%Y-%m-%d"),
+                    lib.ftime(event.event_time, "%H:%M:%S"),
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if event.event_identifier in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.event_identifier in r.value
+                    ),
+                    None,
+                ),
             )
             for event in events
         ],

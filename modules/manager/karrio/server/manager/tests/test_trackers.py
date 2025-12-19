@@ -130,6 +130,8 @@ TRACKING_RESPONSE = {
             "latitude": None,
             "longitude": None,
             "reason": None,
+            "status": None,
+            "timestamp": None,
         }
     ],
     "messages": [],
@@ -182,6 +184,8 @@ UPDATE_TRACKING_RESPONSE = {
             "longitude": None,
             "time": "20:34",
             "reason": None,
+            "status": None,
+            "timestamp": None,
         }
     ],
     "delivered": False,

@@ -67,11 +67,14 @@ class TrackingSerializer(TrackingDetails):
             raise_on_error=(pending_pickup is not True),
         )
 
+        # Apply picked_up transformation for initial events
+        events = utils._ensure_picked_up_status(lib.to_dict(response.tracking.events))
+
         return models.Tracking.objects.create(
             created_by=context.user,
             tracking_number=tracking_number,
             account_number=account_number,
-            events=lib.to_dict(response.tracking.events),
+            events=events,
             test_mode=response.tracking.test_mode,
             delivered=response.tracking.delivered,
             status=response.tracking.status,
@@ -191,6 +194,8 @@ def update_shipment_tracker(tracker: models.Tracking):
             status = ShipmentStatus.delivered.value
         elif tracker.status == TrackerStatus.pending.value:
             status = tracker.shipment.status
+        elif tracker.status == TrackerStatus.picked_up.value:
+            status = ShipmentStatus.shipped.value
         elif tracker.status == TrackerStatus.out_for_delivery.value:
             status = ShipmentStatus.out_for_delivery.value
         elif tracker.status == TrackerStatus.delivery_failed.value:

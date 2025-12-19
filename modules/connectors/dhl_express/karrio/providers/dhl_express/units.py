@@ -626,10 +626,50 @@ def shipping_options_initializer(
 class TrackingStatus(lib.Enum):
     on_hold = ["BA", "HP", "OH"]
     delivered = ["OK"]
-    in_transit = [""]
+    picked_up = ["PU", "PL", "OR"]
+    in_transit = ["DF", "AF", "AR", "IT", "TR", "CC", "CD"]
     delivery_failed = ["CM", "DM", "DP", "DS", "NH", "RD", "RT", "SS", "ST"]
     delivery_delayed = ["IR", "MD", "TD", "UD"]
     out_for_delivery = ["WC"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps DHL Express exception codes to normalized TrackingIncidentReason.
+
+    Based on DHL Express API exception/status codes.
+    """
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DA", "DG", "BR"]  # Damaged, broken
+    carrier_sorting_error = ["MS", "MR"]  # Missorted, misrouted
+    carrier_address_not_found = ["NA", "IA"]  # No address, incorrect address
+    carrier_parcel_lost = ["LO", "LS"]  # Lost
+    carrier_not_enough_time = ["LT", "DL"]  # Late, delay
+    carrier_vehicle_issue = ["VB", "ME"]  # Vehicle breakdown, mechanical
+
+    # Consignee-caused issues
+    consignee_refused = ["RF", "RJ", "RR"]  # Refused, rejected
+    consignee_business_closed = ["BC", "CL", "HO"]  # Business closed, holiday
+    consignee_not_available = ["CA", "NC"]  # Consignee absent, not contacted
+    consignee_not_home = ["NH", "NI"]  # Not home, no one available
+    consignee_incorrect_address = ["IA", "WA", "AD"]  # Incorrect/wrong address
+    consignee_access_restricted = ["SC", "RS"]  # Security issue, restricted area
+
+    # Customs-related issues
+    customs_delay = ["CD", "CS", "CI"]  # Customs delay, customs hold, customs inspection
+    customs_documentation = ["CM", "DP", "DD"]  # Customs missing docs, documentation problem
+    customs_duties_unpaid = ["CU", "DU", "TP"]  # Customs unpaid, duties unpaid, tax pending
+
+    # Weather/Force majeure
+    weather_delay = ["WD", "WE", "WS"]  # Weather delay, weather, weather situation
+    natural_disaster = ["ND", "EM", "FO"]  # Natural disaster, emergency, force majeure
+
+    # Other delivery issues
+    delivery_address_issue = ["AD", "IA", "IC"]  # Address issue, incorrect, incomplete
+    delivery_attempt_failed = ["FA", "UA", "UD"]  # Failed attempt, unable to attempt, unable to deliver
+    shipment_on_hold = ["HP", "OH", "HO"]  # Hold placed, on hold, hold
+
+    # Unknown/unrecognized codes
+    unknown = []
 
 
 class CountryRegion(lib.Enum):

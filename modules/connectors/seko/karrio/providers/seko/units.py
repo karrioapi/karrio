@@ -250,3 +250,34 @@ class TrackingStatus(lib.Enum):
         "OP-90",  # Return processed
         "OP-94",  # RTS consolidated
     ]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps SEKO exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["OP-17", "OP-69"]  # Parcel Damaged, RTS - Damaged Parcel
+    carrier_parcel_lost = ["OP-15"]  # Parcel lost
+    carrier_sorting_error = ["OP-13", "OP-35"]  # Misdirected, Mis sorted by carrier
+    carrier_delay = ["OP-16"]  # Parcel Delayed
+
+    # Consignee-caused issues
+    consignee_refused = ["OP-28", "OP-64"]  # Refused by customer, RTS - Refused
+    consignee_not_home = ["OP-24", "OP-84"]  # Receiver carded, Recipient not available
+    consignee_not_available = ["OP-59", "OP-65"]  # Card Left Never Collected, Unclaimed
+    consignee_business_closed = ["OP-43"]  # Not collected from store
+    consignee_incorrect_address = ["OP-23", "OP-27", "OP-41", "OP-61"]  # Invalid/Insufficient Address, Customer not known, Incorrect details, RTS - Invalid Address
+    consignee_access_restricted = ["OP-37"]  # No access to receivers address
+    consignee_identification_failed = ["OP-38"]  # Customer Identification failed
+
+    # Customs-related issues
+    customs_delay = ["OP-6"]  # Customs held for inspection and clearance
+
+    # Payment/Delivery issues
+    delivery_exception_hold = ["OP-26", "OP-49", "OP-87", "OP-88"]  # Held by carrier, Held by Delivery Courier, High Value Unpaid, Additional Payment Required
+    delivery_exception_undeliverable = ["OP-30", "OP-70", "OP-91"]  # Non delivery, Parcel Blocked, Parcel Blocked - Declared LIT
+    delivery_exception_cancelled = ["OP-34", "OP-60", "OP-67"]  # Cancelled, RTS - Fraudulent, RTS - Cancelled Order
+    delivery_exception_high_value_rejected = ["OP-63"]  # RTS - High Value Rejected
+
+    # Unknown/Other
+    unknown = []
