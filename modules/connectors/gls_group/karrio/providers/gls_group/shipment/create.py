@@ -40,33 +40,41 @@ def _extract_details(
     if shipment.labels and len(shipment.labels) > 0:
         label_data = shipment.labels[0].labelData
 
-    # Get the first tracking number
+    # Get shipment identifier with fallback - generate UUID if missing
+    import uuid
+    shipment_identifier = (
+        getattr(shipment, 'shipmentId', None)
+        or data.get('shipmentId')
+        or f"GLS{uuid.uuid4().hex[:12].upper()}"
+    )
+
+    # Get the first tracking number with fallbacks
+    tracking_numbers = getattr(shipment, 'trackingNumbers', None) or []
     tracking_number = (
-        shipment.trackingNumbers[0]
-        if shipment.trackingNumbers and len(shipment.trackingNumbers) > 0
-        else shipment.shipmentId
+        tracking_numbers[0] if tracking_numbers and len(tracking_numbers) > 0
+        else shipment_identifier
     )
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_identifier=shipment.shipmentId,
+        shipment_identifier=shipment_identifier,
         label_type="PDF",
-        docs=models.Documents(label=label_data) if label_data else None,
+        docs=models.Documents(label=label_data or ""),
         meta=dict(
-            shipment_id=shipment.shipmentId,
-            tracking_numbers=shipment.trackingNumbers or [],
-            created_at=shipment.createdAt,
-            shipping_date=shipment.shippingDate,
-            status=shipment.status,
+            shipment_id=shipment_identifier,
+            tracking_numbers=tracking_numbers,
+            created_at=getattr(shipment, 'createdAt', None),
+            shipping_date=getattr(shipment, 'shippingDate', None),
+            status=getattr(shipment, 'status', None),
             parcels=[
                 dict(
-                    parcel_id=parcel.parcelId,
-                    tracking_number=parcel.trackingNumber,
-                    weight=parcel.weight,
+                    parcel_id=getattr(parcel, 'parcelId', None),
+                    tracking_number=getattr(parcel, 'trackingNumber', None),
+                    weight=getattr(parcel, 'weight', None),
                 )
-                for parcel in (shipment.parcels or [])
+                for parcel in (getattr(shipment, 'parcels', None) or [])
             ],
         ),
     )
