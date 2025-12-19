@@ -4,10 +4,14 @@ import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.providers.gls_group.utils as provider_utils
 import karrio.mappers.gls_group.settings as provider_settings
+import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
-class Proxy(proxy.Proxy):
+class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     settings: provider_settings.Settings
+
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        return super().get_rates(request)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
