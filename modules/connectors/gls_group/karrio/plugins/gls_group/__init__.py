@@ -16,6 +16,7 @@ METADATA = metadata.PluginMetadata(
     is_hub=False,
     options=units.ShippingOption,
     services=units.ShippingService,
+    service_levels=units.DEFAULT_SERVICES,
     connection_configs=utils.ConnectionConfig,
     # Extra info
     website="https://www.gls-group.net",
