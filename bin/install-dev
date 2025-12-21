@@ -653,6 +653,46 @@ echo "   → SQLite Database: .karrio/db.sqlite3"
 echo "   → Work Directory: .karrio/"
 
 # =============================================================================
+# STEP 9: DATABASE MIGRATIONS
+# =============================================================================
+echo ""
+print_step "Database setup..."
+
+# Check if virtual environment exists
+if [[ -d ".venv/karrio" ]]; then
+    echo -n "Do you want to run database migrations (karrio migrate)? [y/N]: "
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        print_step "Running database migrations..."
+
+        # Activate virtual environment and run migrations
+        if (
+            source ".venv/karrio/bin/activate" 2>/dev/null
+            cd "$ROOT_DIR"
+
+            # Source environment variables if .env exists
+            if [[ -f ".env" ]]; then
+                set -a
+                source ".env" 2>/dev/null || true
+                set +a
+            fi
+
+            # Run migrations
+            karrio migrate
+        ); then
+            print_success "Database migrations completed successfully"
+        else
+            print_warning "Database migrations failed. You can run them manually later with: karrio migrate"
+        fi
+    else
+        print_step "Skipping database migrations"
+        echo "   You can run them later with: ${GREEN}karrio migrate${NC}"
+    fi
+else
+    print_warning "Virtual environment not found. Please run migrations manually after activating the environment."
+fi
+
+# =============================================================================
 # COMPLETION
 # =============================================================================
 echo ""
