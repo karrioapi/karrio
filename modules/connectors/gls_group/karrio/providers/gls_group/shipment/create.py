@@ -35,25 +35,30 @@ def _extract_details(
     """Extract shipment details from GLS Group response."""
     shipment = lib.to_object(gls_response.ShipmentResponseType, data)
 
+    # Validate required fields exist in API response
+    if not getattr(shipment, 'shipmentId', None):
+        raise ValueError(
+            f"GLS API response missing required field 'shipmentId'. "
+            f"Raw response: {lib.to_json(data)}. "
+            f"This may indicate an API error or incomplete sandbox response."
+        )
+
+    tracking_numbers = getattr(shipment, 'trackingNumbers', None) or []
+    if not tracking_numbers or len(tracking_numbers) == 0:
+        raise ValueError(
+            f"GLS API response missing required field 'trackingNumbers'. "
+            f"Raw response: {lib.to_json(data)}. "
+            f"This may indicate an API error or incomplete sandbox response."
+        )
+
     # Get the first label data if available
     label_data = None
     if shipment.labels and len(shipment.labels) > 0:
         label_data = shipment.labels[0].labelData
 
-    # Get shipment identifier with fallback - generate UUID if missing
-    import uuid
-    shipment_identifier = (
-        getattr(shipment, 'shipmentId', None)
-        or data.get('shipmentId')
-        or f"GLS{uuid.uuid4().hex[:12].upper()}"
-    )
-
-    # Get the first tracking number with fallbacks
-    tracking_numbers = getattr(shipment, 'trackingNumbers', None) or []
-    tracking_number = (
-        tracking_numbers[0] if tracking_numbers and len(tracking_numbers) > 0
-        else shipment_identifier
-    )
+    # Extract validated fields directly from schema
+    shipment_identifier = shipment.shipmentId
+    tracking_number = tracking_numbers[0]
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
@@ -65,16 +70,16 @@ def _extract_details(
         meta=dict(
             shipment_id=shipment_identifier,
             tracking_numbers=tracking_numbers,
-            created_at=getattr(shipment, 'createdAt', None),
-            shipping_date=getattr(shipment, 'shippingDate', None),
-            status=getattr(shipment, 'status', None),
+            created_at=shipment.createdAt,
+            shipping_date=shipment.shippingDate,
+            status=shipment.status,
             parcels=[
                 dict(
-                    parcel_id=getattr(parcel, 'parcelId', None),
-                    tracking_number=getattr(parcel, 'trackingNumber', None),
-                    weight=getattr(parcel, 'weight', None),
+                    parcel_id=parcel.parcelId,
+                    tracking_number=parcel.trackingNumber,
+                    weight=parcel.weight,
                 )
-                for parcel in (getattr(shipment, 'parcels', None) or [])
+                for parcel in (shipment.parcels or [])
             ],
         ),
     )
@@ -151,14 +156,14 @@ def shipment_request(
                     references=[
                         gls_request.ReferenceType(
                             type="CUSTOMER_REFERENCE",
-                            value=getattr(package, 'parcel_id', None) or f"parcel_{idx+1}",
+                            value=package.parcel_id or f"parcel_{idx+1}",
                         )
-                    ] if getattr(package, 'parcel_id', None) else None,
+                    ] if hasattr(package, 'parcel_id') and package.parcel_id else None,
                 )
                 for idx, package in enumerate(packages)
             ],
             services=services if services else None,
-            shippingDate=lib.fdate(getattr(payload, 'shipment_date', None)) if getattr(payload, 'shipment_date', None) else None,
+            shippingDate=lib.fdate(payload.shipment_date) if hasattr(payload, 'shipment_date') and payload.shipment_date else None,
             references=references if references else None,
             labelFormat=label_format,
             printingOptions=gls_request.PrintingOptionsType(
