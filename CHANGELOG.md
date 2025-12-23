@@ -1,3 +1,29 @@
+# Karrio 2025.5.7
+
+## Changes
+
+### Feat
+
+- feat: set up agent-specific md files + enhanced shared AGENTS.md
+- feat: add support for karrio migrate post dev install
+- feat: draft claude carrier integration skill and PRD for integrator agent implementation
+- feat: introduce reason, timestamp and status at the tracking event object level + picked_up status for richer tracking analytics
+- feat(sapient): improve error handling + upgrade to standardized authenticate proxy method for a more robust auth handling
+
+### Fix
+
+- fix(fedex): exclude customs for domestic shipments
+
+### Docs
+
+- docs: prepare PRDs for upcomming feature developments
+
+### Chore
+
+- refactor: authentications to the new proxy interface
+
+---
+
 # Karrio 2025.5.6
 
 ## Changes
