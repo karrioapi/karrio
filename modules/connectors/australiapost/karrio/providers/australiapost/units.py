@@ -157,3 +157,23 @@ class TrackingStatus(lib.Enum):
     delivery_delayed = ["Possible delay", "To be Re-Delivered"]
     out_for_delivery = ["On Board for Delivery"]
     ready_for_pickup = ["Awaiting collection", "Ready for Pickup"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps Australia Post exception codes to normalized TrackingIncidentReason."""
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["Article damaged"]  # Article damaged
+    carrier_delay = ["Possible delay"]  # Possible delay
+
+    # Consignee-caused issues
+    consignee_not_available = ["Unsuccessful Delivery"]  # Unsuccessful Delivery
+
+    # Delivery exceptions
+    delivery_exception_hold = ["Held by courier"]  # Held by courier
+    delivery_exception_undeliverable = ["Cannot be delivered"]  # Cannot be delivered
+    delivery_exception_cancelled = ["Cancelled"]  # Cancelled
+    delivery_exception_redelivery = ["To be Re-Delivered"]  # To be Re-Delivered
+
+    # Unknown/Other
+    unknown = []

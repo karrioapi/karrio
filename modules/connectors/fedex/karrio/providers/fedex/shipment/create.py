@@ -124,6 +124,10 @@ def shipment_request(
         recipient=payload.recipient,
         weight_unit=weight_unit.value,
     )
+    is_intl = lib.identity(
+        shipper.country_code != recipient.country_code
+        or (shipper.country_code == "IN" and recipient.country_code == "IN")
+    )
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
     label_type, label_format = lib.identity(
         provider_units.LabelType.map(payload.label_type or "PDF_4x6").value
@@ -610,7 +614,7 @@ def shipment_request(
                         ),
                     ),
                 )
-                if payload.customs is not None
+                if payload.customs is not None and is_intl
                 else None
             ),
             smartPostInfoDetail=lib.identity(

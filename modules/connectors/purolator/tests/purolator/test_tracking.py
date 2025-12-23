@@ -44,8 +44,9 @@ TRACKING_REQUEST_PAYLOAD = ["m123"]
 PARSED_TRACKING_RESPONSE = [
     [
         {
-            "carrier_name": "purolator",
             "carrier_id": "purolator",
+            "carrier_name": "purolator",
+            "delivered": False,
             "events": [
                 {
                     "code": "Other",
@@ -53,6 +54,7 @@ PARSED_TRACKING_RESPONSE = [
                     "description": "New Tracking Number Assigned -",
                     "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
                     "time": "17:23 PM",
+                    "timestamp": "2004-01-13T17:23:00.000Z",
                 },
                 {
                     "code": "Other",
@@ -60,14 +62,14 @@ PARSED_TRACKING_RESPONSE = [
                     "description": "New Tracking Number Assigned -",
                     "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
                     "time": "17:23 PM",
+                    "timestamp": "2004-01-13T17:23:00.000Z",
                 },
             ],
-            "tracking_number": "M123",
-            "delivered": False,
             "info": {
                 "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=M123"
             },
             "status": "in_transit",
+            "tracking_number": "M123",
         }
     ],
     [],

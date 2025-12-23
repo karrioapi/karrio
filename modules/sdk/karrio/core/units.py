@@ -1647,6 +1647,7 @@ class ComputedDocumentFile(models.DocumentFile):
 
 class TrackingStatus(utils.Enum):
     pending = ["pending"]
+    picked_up = ["picked_up"]
     on_hold = ["on_hold"]
     cancelled = ["cancelled"]
     delivered = ["delivered"]
@@ -1656,6 +1657,66 @@ class TrackingStatus(utils.Enum):
     out_for_delivery = ["out_for_delivery"]
     ready_for_pickup = ["ready_for_pickup"]
     return_to_sender = ["return_to_sender"]
+    unknown = ["unknown"]
+
+
+class TrackingIncidentReason(utils.Enum):
+    """Normalized tracking incident/exception reason codes.
+
+    Categories:
+    - carrier_*: Issues caused by the carrier during handling/transit
+    - retailer_*: Issues caused by the shipper/retailer
+    - consignee_*: Issues caused by or related to the recipient
+    - customs_*: Customs-related delays or issues
+    - weather_*: Weather-related delays
+    - other_*: Miscellaneous issues
+    """
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["carrier_damaged_parcel"]
+    carrier_sorting_error = ["carrier_sorting_error"]
+    carrier_address_not_found = ["carrier_address_not_found"]
+    carrier_parcel_lost = ["carrier_parcel_lost"]
+    carrier_not_enough_time = ["carrier_not_enough_time"]
+    carrier_vehicle_issue = ["carrier_vehicle_issue"]
+    carrier_capacity_exceeded = ["carrier_capacity_exceeded"]
+    carrier_mechanical_delay = ["carrier_mechanical_delay"]
+
+    # Retailer/Shipper-caused issues
+    retailer_cancelled = ["retailer_cancelled"]
+    retailer_incorrect_data = ["retailer_incorrect_data"]
+    retailer_not_ready = ["retailer_not_ready"]
+    retailer_incorrect_parcel = ["retailer_incorrect_parcel"]
+    retailer_incorrect_dimensions = ["retailer_incorrect_dimensions"]
+    retailer_packaging_issue = ["retailer_packaging_issue"]
+
+    # Consignee/Recipient-caused issues
+    consignee_refused = ["consignee_refused"]
+    consignee_business_closed = ["consignee_business_closed"]
+    consignee_not_available = ["consignee_not_available"]
+    consignee_not_home = ["consignee_not_home"]
+    consignee_cancelled = ["consignee_cancelled"]
+    consignee_verification_failed = ["consignee_verification_failed"]
+    consignee_incorrect_address = ["consignee_incorrect_address"]
+    consignee_access_restricted = ["consignee_access_restricted"]
+    consignee_safe_place_unavailable = ["consignee_safe_place_unavailable"]
+
+    # Customs-related issues
+    customs_delay = ["customs_delay"]
+    customs_documentation = ["customs_documentation"]
+    customs_duties_unpaid = ["customs_duties_unpaid"]
+    customs_prohibited = ["customs_prohibited"]
+    customs_inspection = ["customs_inspection"]
+
+    # Weather/Force majeure
+    weather_delay = ["weather_delay"]
+    natural_disaster = ["natural_disaster"]
+    force_majeure = ["force_majeure"]
+
+    # Other issues
+    parcel_being_researched = ["parcel_being_researched"]
+    security_issue = ["security_issue"]
+    regulatory_hold = ["regulatory_hold"]
     unknown = ["unknown"]
 
 

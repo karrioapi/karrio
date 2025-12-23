@@ -301,3 +301,44 @@ class TrackingStatus(lib.Enum):
     delivery_delayed = ["delivery delayed"]
     out_for_delivery = ["out for delivery"]
     ready_for_pickup = ["ready for pickup"]
+    picked_up = ["PICKED_UP", "PU", "picked up", "origin scan", "acceptance"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps USPS exception codes to normalized TrackingIncidentReason.
+
+    Based on USPS API exception/status codes.
+    """
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DAMAGED", "DMG"]
+    carrier_sorting_error = ["MISROUTED", "MSR"]
+    carrier_address_not_found = ["ADDRESS_NOT_FOUND", "ANF", "NO_SUCH_NUMBER"]
+    carrier_parcel_lost = ["LOST", "LO"]
+    carrier_not_enough_time = ["LATE", "LT"]
+    carrier_vehicle_issue = ["VEHICLE_BREAKDOWN", "VB"]
+
+    # Consignee-caused issues
+    consignee_refused = ["REFUSED", "RF"]
+    consignee_business_closed = ["BUSINESS_CLOSED", "BC"]
+    consignee_not_available = ["NOT_AVAILABLE", "NA"]
+    consignee_not_home = ["NOT_HOME", "NH"]
+    consignee_incorrect_address = ["INCORRECT_ADDRESS", "IA", "WRONG_ADDRESS"]
+    consignee_access_restricted = ["ACCESS_RESTRICTED", "AR", "NO_SECURE_LOCATION"]
+
+    # Customs-related issues
+    customs_delay = ["CUSTOMS_DELAY", "CD", "CUSTOMS_HOLD"]
+    customs_documentation = ["CUSTOMS_DOCUMENTATION", "CM"]
+    customs_duties_unpaid = ["CUSTOMS_UNPAID", "CU", "DUTIES_UNPAID"]
+
+    # Weather/Force majeure
+    weather_delay = ["WEATHER", "WE", "WEATHER_DELAY"]
+    natural_disaster = ["NATURAL_DISASTER", "ND", "EMERGENCY"]
+
+    # Delivery attempts and failures
+    delivery_attempted = ["DELIVERY_ATTEMPTED", "DA", "ATTEMPTED"]
+    no_access_to_delivery_location = ["NO_ACCESS", "NS"]
+    signature_required = ["SIGNATURE_REQUIRED", "SR"]
+    recipient_moved = ["MOVED", "MV", "RECIPIENT_MOVED"]
+
+    # Other issues
+    unknown = []

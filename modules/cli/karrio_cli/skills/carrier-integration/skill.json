@@ -1,0 +1,182 @@
+{
+  "name": "karrio-carrier-integration",
+  "display_title": "Karrio Carrier Integration Expert",
+  "version": "2.0.0",
+  "description": "Comprehensive expert skill for building Karrio shipping carrier integrations. Covers all features (rating, shipping, tracking, pickup, manifest, document upload, address validation, duties, insurance, webhooks, OAuth), all patterns (JSON/XML/SOAP APIs), and extensive karrio.lib utilities reference.",
+  "author": "Karrio",
+  "source": "custom",
+  "tags": [
+    "karrio",
+    "carrier",
+    "integration",
+    "shipping",
+    "sdk",
+    "python",
+    "api",
+    "logistics"
+  ],
+  "capabilities": [
+    "scaffold_carrier_extension",
+    "implement_rate_api",
+    "implement_tracking_api",
+    "implement_shipment_api",
+    "implement_pickup_api",
+    "implement_manifest_api",
+    "implement_document_upload_api",
+    "implement_address_validation_api",
+    "implement_duties_calculation_api",
+    "implement_insurance_api",
+    "implement_webhook_registration",
+    "implement_oauth_flow",
+    "implement_callback_handlers",
+    "generate_schemas_json",
+    "generate_schemas_xml",
+    "write_comprehensive_tests",
+    "debug_integration_issues",
+    "validate_success_criteria",
+    "use_karrio_lib_utilities"
+  ],
+  "files": [
+    "instructions.md",
+    "examples/lib_reference.py",
+    "examples/models_reference.py",
+    "examples/rate_implementation.py",
+    "examples/tracking_implementation.py",
+    "examples/shipment_implementation.py",
+    "examples/pickup_implementation.py",
+    "examples/webhook_oauth_implementation.py",
+    "examples/manifest_document_address_implementation.py",
+    "examples/duties_insurance_implementation.py",
+    "examples/error_proxy_settings_patterns.py",
+    "examples/units_template.py"
+  ],
+  "context_files": [
+    "CARRIER_INTEGRATION_GUIDE.md",
+    "AGENTS.md",
+    "CLAUDE.md"
+  ],
+  "tools_required": [
+    "shell",
+    "file_read",
+    "file_write",
+    "grep",
+    "glob"
+  ],
+  "environment": {
+    "activate_command": "source ./bin/activate-env",
+    "cli_command": "./bin/cli",
+    "test_command": "python -m unittest discover -v -f",
+    "sdk_test_command": "./bin/run-sdk-tests",
+    "generate_command": "./bin/run-generate-on"
+  },
+  "patterns": {
+    "direct_carrier_reference": "modules/connectors/ups",
+    "json_api_reference": "modules/connectors/seko",
+    "xml_api_reference": "modules/connectors/canadapost",
+    "hub_carrier_reference": "community/plugins/easyship",
+    "oauth_reference": "modules/connectors/fedex",
+    "sdk_location": "modules/sdk",
+    "cli_location": "modules/cli",
+    "templates_location": "modules/cli/karrio_cli/templates"
+  },
+  "lib_utilities": {
+    "data_parsing": ["to_dict", "to_dict_safe", "to_json", "to_object", "to_element", "to_xml"],
+    "string_manipulation": ["text", "join", "to_snake_case", "to_slug"],
+    "number_formatting": ["to_int", "to_decimal", "to_money", "format_decimal", "to_list"],
+    "date_time": ["fdate", "ftime", "fdatetime", "ftimestamp", "fiso_timestamp", "to_date"],
+    "address": ["to_address", "to_zip5", "to_zip4", "to_country_name", "to_state_name"],
+    "shipping": ["to_packages", "to_services", "to_shipping_options", "to_customs_info", "to_commodities"],
+    "multi_piece": ["to_multi_piece_rates", "to_multi_piece_shipment"],
+    "http": ["request", "to_query_string", "run_concurently", "run_asynchronously"],
+    "documents": ["image_to_pdf", "bundle_pdfs", "bundle_base64", "zpl_to_pdf", "encode_base64"],
+    "utilities": ["failsafe", "identity", "sort_events", "to_buffer", "decode"]
+  },
+  "features": {
+    "rating": {
+      "request_model": "RateRequest",
+      "response_model": "RateDetails",
+      "provider_file": "rate.py",
+      "test_file": "test_rate.py"
+    },
+    "shipping": {
+      "request_model": "ShipmentRequest",
+      "response_model": "ShipmentDetails",
+      "provider_files": ["shipment/create.py", "shipment/cancel.py"],
+      "test_file": "test_shipment.py"
+    },
+    "tracking": {
+      "request_model": "TrackingRequest",
+      "response_model": "TrackingDetails",
+      "provider_file": "tracking.py",
+      "test_file": "test_tracking.py"
+    },
+    "pickup": {
+      "request_models": ["PickupRequest", "PickupUpdateRequest", "PickupCancelRequest"],
+      "response_model": "PickupDetails",
+      "provider_files": ["pickup/create.py", "pickup/update.py", "pickup/cancel.py"],
+      "test_file": "test_pickup.py"
+    },
+    "manifest": {
+      "request_model": "ManifestRequest",
+      "response_model": "ManifestDetails",
+      "provider_file": "manifest.py",
+      "test_file": "test_manifest.py"
+    },
+    "document": {
+      "request_model": "DocumentUploadRequest",
+      "response_model": "DocumentUploadDetails",
+      "provider_file": "document.py",
+      "test_file": "test_document.py"
+    },
+    "address": {
+      "request_model": "AddressValidationRequest",
+      "response_model": "AddressValidationDetails",
+      "provider_file": "address.py",
+      "test_file": "test_address.py"
+    },
+    "duties": {
+      "request_model": "DutiesCalculationRequest",
+      "response_model": "DutiesCalculationDetails",
+      "provider_file": "duties.py"
+    },
+    "insurance": {
+      "request_model": "InsuranceRequest",
+      "response_model": "InsuranceDetails",
+      "provider_file": "insurance/apply.py"
+    },
+    "webhook": {
+      "request_models": ["WebhookRegistrationRequest", "WebhookDeregistrationRequest"],
+      "response_model": "WebhookRegistrationDetails",
+      "provider_files": ["webhook/register.py", "webhook/deregister.py", "callback/event.py", "callback/oauth.py"]
+    }
+  },
+  "success_criteria": [
+    "Environment activated with source ./bin/activate-env",
+    "Extension scaffolded via ./bin/cli sdk add-extension",
+    "Schema samples in schemas/ directory",
+    "Generated Python dataclasses in karrio/schemas/[carrier]/",
+    "Settings configured with carrier credentials",
+    "Units defined (services, options, tracking status, packaging)",
+    "Proxy implemented with proper authentication",
+    "Provider functions use generated schema types (MANDATORY)",
+    "Error parser handles all carrier error formats",
+    "All carrier tests pass (4-method pattern per feature)",
+    "SDK tests pass with ./bin/run-sdk-tests",
+    "Plugin registered in ./bin/cli plugins list",
+    "Plugin details accessible via ./bin/cli plugins show [carrier]",
+    "Installation works with pip install -e [path]"
+  ],
+  "anti_patterns": [
+    "Manual file creation (always use CLI)",
+    "Manual dictionary manipulation (use generated schema types)",
+    "For loops (use list comprehensions)",
+    "Modifying mapper.py (auto-generated)",
+    "Editing generated schema files",
+    "Using pytest (use unittest)",
+    "Bare exception handling",
+    "Mutable default arguments",
+    "Reinventing lib utilities",
+    "Not using lib.to_object for response parsing",
+    "Not using lib.to_address for address wrapping"
+  ]
+}

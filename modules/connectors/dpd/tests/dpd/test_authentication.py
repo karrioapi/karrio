@@ -2,49 +2,67 @@ import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
 
+import datetime
 import karrio.lib as lib
-import karrio.providers.dpd.utils as utils
 
 
-class TestDPDLogin(unittest.TestCase):
+class TestDPDAuthentication(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
-    def test_login(self):
+    def test_authenticate(self):
+        # Create a fresh gateway without cached auth to test the login flow
+        import karrio.sdk as karrio
+
+        fresh_gateway = karrio.gateway["dpd"].create(
+            dict(
+                delis_id="KD*****",
+                password="****",
+                test_mode=True,
+            ),
+        )
+
         with patch("karrio.mappers.dpd.proxy.lib.request") as mock:
             mock.return_value = LoginResponse
-            parsed_response = utils.login(gateway.settings)
+            # Call authenticate directly on the proxy
+            result = fresh_gateway.proxy.authenticate()
+            parsed_response = result.deserialize()
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/soap/services/LoginService/V2_1",
+                f"{fresh_gateway.settings.server_url}/soap/services/LoginService/V2_1",
             )
             self.assertEqual(
                 mock.call_args[1]["data"],
                 LoginRequest,
             )
-            self.assertDictEqual(
-                lib.to_dict(parsed_response),
-                ParsedLoginResponse,
+            # Compare token returned
+            self.assertEqual(
+                parsed_response,
+                "GFadfGob14GWWgQcIldI6zYtuR7cyEHe2z6eWzb7BpFmcFvrzclRljlcV1OF",
             )
 
     def test_parse_error_response(self):
+        # Create a fresh gateway without cached auth to test the login flow
+        import karrio.sdk as karrio
+
+        fresh_gateway = karrio.gateway["dpd"].create(
+            dict(
+                delis_id="KD*****",
+                password="****",
+                test_mode=True,
+            ),
+        )
+
         with patch("karrio.mappers.dpd.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
 
             with self.assertRaises(Exception):
-                utils.login(gateway.settings)
+                fresh_gateway.proxy.authenticate()
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
-ParsedLoginResponse = {
-    "expiry": ANY,
-    "depot": "0530",
-    "token": "GFadfGob14GWWgQcIldI6zYtuR7cyEHe2z6eWzb7BpFmcFvrzclRljlcV1OF",
-}
 
 
 LoginRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://dpd.com/common/service/types/LoginService/2.1">

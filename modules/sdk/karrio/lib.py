@@ -346,6 +346,78 @@ def ftimestamp(
     return utils.DF.ftimestamp(timestamp)
 
 
+def fiso_timestamp(
+    date_str: str = None,
+    time_str: str = None,
+    current_format: str = None,
+    try_formats: typing.List[str] = None,
+) -> typing.Optional[str]:
+    """Convert date and time strings to ISO 8601 timestamp.
+
+    Args:
+        date_str: Date string or combined datetime string
+        time_str: Optional time string (if separate from date)
+        current_format: Expected format of the input
+        try_formats: List of formats to try parsing
+
+    Returns:
+        ISO 8601 format string "2025-12-04T07:16:00.000Z" or None
+    """
+    if not date_str:
+        return None
+
+    # Default formats to try
+    formats_to_try = try_formats or [
+        "%Y-%m-%dT%H:%M:%S%z",
+        "%Y-%m-%dT%H:%M:%S.%f%z",
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%S.%fZ",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M",
+        "%Y-%m-%d %H:%M:%S %p",
+        "%Y-%m-%d %H:%M %p",
+        "%Y-%m-%d %I:%M:%S %p",
+        "%Y-%m-%d %I:%M %p",
+        "%Y%m%d%H%M%S",
+        "%Y%m%d %H%M%S",
+        "%Y%m%d %H%M",
+        "%Y%m%d %H:%M:%S",
+        "%Y%m%d %H:%M",
+        "%d-%m-%Y %H:%M:%S",
+        "%m/%d/%Y %H:%M:%S",
+        "%m/%d/%Y %I:%M %p",
+        "%m/%d/%Y %I:%M:%S %p",
+        "%m/%d/%Y %H:%M %p",
+        "%m/%d/%Y %H:%M",
+        "%d/%m/%Y %H:%M:%S",
+        "%d/%m/%Y %I:%M %p",
+        "%Y-%m-%d",
+        "%Y%m%d",
+    ]
+
+    # Combine date and time if time is separate
+    combined = f"{date_str} {time_str}".strip() if time_str else date_str
+
+    # Try explicit format first
+    if current_format:
+        try:
+            parsed = datetime.datetime.strptime(combined, current_format)
+            return parsed.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        except (ValueError, TypeError):
+            pass
+
+    # Try each format
+    for fmt in formats_to_try:
+        try:
+            parsed = datetime.datetime.strptime(combined, fmt)
+            return parsed.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        except (ValueError, TypeError):
+            continue
+
+    return None
+
+
 def to_date(
     date_value: typing.Union[str, datetime.datetime] = None,
     current_format: str = "%Y-%m-%d",
@@ -404,6 +476,31 @@ def to_dict(
     :return: a dictionary.
     """
     return utils.DP.to_dict(value, clear_empty=clear_empty)
+
+
+def to_dict_safe(response: typing.Union[str, bytes, None]) -> dict:
+    """
+    Safely parses a string or bytes into a dictionary.
+    - Handles None, empty, or whitespace-only input by returning {}.
+    - If parsing fails, returns a standardized error dictionary.
+    """
+    if response is None:
+        return {}
+
+    content = response
+    if isinstance(response, bytes):
+        content = decode(response)
+
+    if not str(content).strip():
+        return {}
+
+    try:
+        result = to_dict(content)
+        if isinstance(result, dict):
+            return result
+        return {"data": result}
+    except Exception as e:
+        return {"errors": [{"message": f"Failed to parse response: {e}", "code": "parsing_error"}]}
 
 
 def to_json(

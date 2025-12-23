@@ -13,7 +13,7 @@ import PIL.ImageFile
 from functools import reduce
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request, ProxyHandler, build_opener, install_opener
-from typing import List, TypeVar, Callable, Optional, Any, cast
+from typing import List, TypeVar, Callable, Optional, Any, Union, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from karrio.core.utils.logger import logger
 ssl._create_default_https_context = ssl._create_unverified_context  # type: ignore
@@ -246,6 +246,10 @@ def process_error(
     return _error
 
 
+# Default HTTP status codes that should trigger a retry
+RETRYABLE_STATUS_CODES = {500, 502, 503, 504, 522, 524}
+
+
 def request(
     decoder: Callable = decode_bytes,
     on_ok: Callable[[Any], str] = None,
@@ -253,29 +257,108 @@ def request(
     trace: Callable[[Any, str], Any] = None,
     proxy: str = None,
     timeout: Optional[int] = None,
+    max_retries: int = 0,
+    retry_delay: float = 1.0,
+    retry_on_status: List[int] = None,
     **kwargs,
 ) -> str:
     """Return an HTTP response body.
 
-    make a http request (wrapper around Request method from built in urllib)
-    Proxy example: 'Username:Password@IP_Address:Port'
+    Make an HTTP request (wrapper around Request method from built-in urllib).
+
+    Args:
+        decoder: Function to decode the response bytes (default: decode_bytes)
+        on_ok: Optional callback to process successful responses
+        on_error: Optional callback to process error responses
+        trace: Trace function for logging
+        proxy: Proxy configuration string (format: 'Username:Password@IP_Address:Port')
+        timeout: Request timeout in seconds
+        max_retries: Maximum number of retry attempts for transient failures (default: 0)
+        retry_delay: Initial delay between retries in seconds, doubles each attempt (default: 1.0)
+        retry_on_status: List of HTTP status codes to retry on (default: 500, 502, 503, 504, 522, 524)
+        **kwargs: Additional arguments passed to urllib.request.Request
+
+    Returns:
+        The decoded response body string
     """
+    import time
 
+    _retry_statuses = set(retry_on_status or RETRYABLE_STATUS_CODES)
     _request_id = str(uuid.uuid4())
-    logger.debug("Sending HTTP request", request_id=_request_id)
+    _last_error: Optional[Union[HTTPError, TimeoutError, ConnectionError, OSError]] = None
+    _last_response = None
 
-    try:
-        _request = process_request(_request_id, trace, proxy, **kwargs)
+    for attempt in range(max_retries + 1):
+        try:
+            if attempt > 0:
+                delay = retry_delay * (2 ** (attempt - 1))
+                logger.warning(
+                    "Retrying HTTP request",
+                    request_id=_request_id,
+                    attempt=attempt,
+                    max_retries=max_retries,
+                    delay=delay,
+                )
+                time.sleep(delay)
 
-        with urlopen(_request, timeout=timeout) as f:
-            _response = process_response(
-                _request_id, f, decoder, on_ok=on_ok, trace=trace
+            logger.debug(
+                "Sending HTTP request",
+                request_id=_request_id,
+                attempt=attempt if max_retries > 0 else None,
             )
 
-    except HTTPError as e:
-        _response = process_error(_request_id, e, on_error=on_error, trace=trace)
+            _request = process_request(_request_id, trace if attempt == 0 else None, proxy, **kwargs)
 
-    return _response
+            with urlopen(_request, timeout=timeout) as f:
+                _response = process_response(
+                    _request_id, f, decoder, on_ok=on_ok, trace=trace if attempt == 0 else None
+                )
+
+            return _response
+
+        except HTTPError as e:
+            _last_error = e
+
+            # Check if we should retry this error
+            if e.code in _retry_statuses and attempt < max_retries:
+                logger.warning(
+                    "HTTP request failed with retryable status",
+                    request_id=_request_id,
+                    status_code=e.code,
+                    attempt=attempt,
+                    max_retries=max_retries,
+                )
+                continue
+
+            # No more retries, process the error
+            _last_response = process_error(_request_id, e, on_error=on_error, trace=trace)
+            return _last_response
+
+        except (TimeoutError, ConnectionError, OSError) as e:
+            _last_error = e
+
+            # Retry on connection/timeout errors
+            if attempt < max_retries:
+                logger.warning(
+                    "HTTP request failed with connection error, retrying",
+                    request_id=_request_id,
+                    error=str(e),
+                    attempt=attempt,
+                    max_retries=max_retries,
+                )
+                continue
+
+            # No more retries, raise the error
+            raise
+
+    # Should not reach here, but just in case
+    if _last_response is not None:
+        return _last_response
+
+    if _last_error is not None:
+        raise _last_error
+
+    return ""
 
 
 def exec_parrallel(

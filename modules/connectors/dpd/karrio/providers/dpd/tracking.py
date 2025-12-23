@@ -1,4 +1,5 @@
 import karrio.schemas.dpd.ParcelLifecycleServiceV20 as dpd
+import karrio.schemas.dpd.Authentication20 as auth_schema
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -75,6 +76,26 @@ def _extract_details(
                     event.date.content,
                     current_format="%m/%d/%Y %H:%M:%S %p",
                 ),
+                timestamp=lib.fiso_timestamp(
+                    event.date.content,
+                    current_format="%m/%d/%Y %H:%M:%S %p",
+                ),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if event.status in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.status in r.value
+                    ),
+                    None,
+                ),
             )
             for event in events
         ],
@@ -93,7 +114,11 @@ def tracking_request(
     request = {
         tracking_number: lib.Envelope(
             Header=lib.Header(
-                settings.authentication,
+                auth_schema.authentication(
+                    delisId=settings.delis_id,
+                    authToken="[AUTH_TOKEN]",
+                    messageLanguage=settings.message_language,
+                )
             ),
             Body=lib.Body(
                 dpd.getTrackingData(

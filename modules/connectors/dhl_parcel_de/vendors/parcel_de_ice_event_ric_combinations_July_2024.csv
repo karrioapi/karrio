@@ -1,0 +1,339 @@
+ice_event_code;ice_ric_code;ttpro_event_code;ice_event_name;ice_ric_name;ice_event_name_de;ice_ric_name_de;ttpro_standardereignis_bedeutung;ttpro_event_code_meaning;dhl_paket;dhl_paket_international;dhl_europaket
+ADVIS;DLVDT;DD;Advise;DeLiVery DaTe;Sendungsavise/-auftrag;Wunschtag;Datendienst;Data Service;1;1;0
+ADVIS;DLVTM;DD;Advise;DeLiVery TiME;Sendungsavise/-auftrag;Wunschzeit / Zustellzeitfenster;Datendienst;Data Service;1;0;0
+ADVIS;MSGER;DD;Advise;Message Error;Sendungsavise/-auftrag;Fehler bei Nachrichtenübermittlung von Multikanalplattform;Datendienst;Data Service;1;0;0
+ADVIS;MSGPC;DD;Advise;Message processing;Sendungsavise/-auftrag;SMS bei Provider in Bearbeitung;Datendienst;Data Service;1;0;0
+ADVIS;MSGST;DD;Advise;Message sent;Sendungsavise/-auftrag;Nachricht zugestellt;Datendienst;Data Service;1;0;0
+ADVIS;ORDER;DD;Advise;Ordered;Sendungsavise/-auftrag;Beauftragt;Datendienst;Data Service;0;1;0
+ADVIS;PFLOC;DD;Advise;Preferred Location/Neighbor;Sendungsavise/-auftrag;Wunschort/Wunschnachbar;Datendienst;Data Service;1;0;0
+ADVIS;REJCT;DD;Advise;Rejected;Sendungsavise/-auftrag;Der Auftrag wurde abgelehnt;Datendienst;Data Service;1;0;0
+ADVIS;ROUCR;DD;Advise;reROUted on Customer Request;Sendungsavise/-auftrag;Weiterleitung auf Kundenwunsch;Datendienst;Data Service;1;0;0
+ADVIS;SECDA;DD;Advise;SECond Delivery Attempt;Sendungsavise/-auftrag;Zweiter Zustellversuch;Datendienst;Data Service;0;1;0
+ADVIS;STBSD;DD;Advise;Stopped by sender;Sendungsavise/-auftrag;Absenderverfügung: Sendung anhalten;Datendienst;Data Service;1;0;0
+ADVIS;STBSD;ZN;Advise;Stopped by sender;Sendungsavise/-auftrag;Absenderverfügung: Sendung anhalten;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+ALERT;BDADD;BV;Alert;Bad address;Benachrichtigung;Adresse fehlerhaft;Besondere Vorkommnisse;Exception;1;0;0
+ALERT;DLVTM;DD;Alert;DeLiVery TiME;Benachrichtigung;Wunschzeit / Zustellzeitfenster;Datendienst;Data Service;1;1;0
+ASMVT;NRQRD;NB;Assigned to movement / tour vehicle;ICE Details;Transportzuweisung;Keine weiteren Details erforderlich;Normale Bearbeitung;Normal processing;0;0;1
+CANCL;NRQRD;BV;The shipment order was canceled by the sender;ICE Details;Der angekündigte Versand der Sendung wurde vom Absender storniert;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;1;0;0
+CHECK;SVCHG;BV;Checked;Product feature check - Service changed;Produktmerkmal-Prüfung;Produktprüfung - Service geändert;Besondere Vorkommnisse;Exception;0;0;1
+CNFSC;LEGAT;BV;Confiscation;LEGal AuThority;Beschlagnahme/Postsperre;Übergabe der Sendung an Bevollmächtigten;Besondere Vorkommnisse;Exception;1;0;0
+CNRFC;HDFCT;LA;Consignee notified - Ready for collection;Held at DHL facility;Benachrichtigt;Lagerung wegen Selbstabholung;Lagerung;In storage;1;0;0
+CNRFC;HDFCT;ZF;Consignee notified - Ready for collection;Held at DHL facility;Benachrichtigt;Lagerung wegen Selbstabholung;Zustellung Filiale;Delivery to postal outlet;0;1;0
+CNRFC;NRQRD;ZF;Consignee notified - Ready for collection;ICE Details;Benachrichtigt;Keine weiteren Details erforderlich;Zustellung Filiale;Delivery to postal outlet;1;1;1
+CNRFC;PCKST;ZF;Consignee notified - Ready for collection;Packstation;Benachrichtigt;Packstation;Zustellung Filiale;Delivery to postal outlet;1;0;0
+CNRFC;SERPT;ZF;Consignee notified - Ready for collection;Service Point;Benachrichtigt;Filiale / Agentur;Zustellung Filiale;Delivery to postal outlet;1;1;0
+DLVRD;ACCDM;ZU;Delivered;Accepted - damaged;Ausgeliefert;Erfolgreiche Zustellung - Beschädigt;Zugestellt;Delivery successful;1;0;1
+DLVRD;ACCPK;ZU;Delivered;Collected from automated site;Ausgeliefert;Sendung aus Packstation entnommen;Zugestellt;Delivery successful;1;0;0
+DLVRD;ACCPT;ZU;Delivered;Accepted;Ausgeliefert;Erfolgreiche Zustellung;Zugestellt;Delivery successful;1;1;1
+DLVRD;ACCSI;ZU;Delivered;Accepted - Shipment incomplete;Ausgeliefert;Erfolgreiche Zustellung - Sendung unvollständig;Zugestellt;Delivery successful;0;0;1
+DLVRD;AGENT;ZU;Delivered;Hand over/delivery to Agent;Ausgeliefert;Übergabe/Zustellung an Bevollmächtigten;Zugestellt;Delivery successful;1;1;0
+DLVRD;CODAR;GT;Delivered;Electronic shipment advise received;Ausgeliefert;Auftrag zur NN-Betrag-Überweisung von Bank bestätigt;Geld-Transfer;Money transfer;1;0;0
+DLVRD;CODRP;GT;Delivered;COD remittance processed;Ausgeliefert;NN-Betrag-Überweisung durch Bank ist erfolgt.;Geld-Transfer;Money transfer;1;0;0
+DLVRD;CODRP;ZU;Delivered;COD remittance processed;Ausgeliefert;NN-Betrag-Überweisung durch Bank ist erfolgt.;Zugestellt;Delivery successful;1;0;0
+DLVRD;CUSTM;ZU;Delivered;Customs;Ausgeliefert;Übergabe an Zoll zur Prüfung und Zustellung;Zugestellt;Delivery successful;1;1;0
+DLVRD;DIDLV;ZU;Delivered;Direct delivery at hub/delivery depot;Ausgeliefert;Vereinfachte Zustellung;Zugestellt;Delivery successful;1;1;0
+DLVRD;FAMLY;ZU;Delivered;Delivery to a family member;Ausgeliefert;Zustellung an Familienmitglied;Zugestellt;Delivery successful;1;1;0
+DLVRD;HNDTC;ZU;Delivered;Handover to carrier;Ausgeliefert;Übergabe an Dienstleister;Zugestellt;Delivery successful;1;0;0
+DLVRD;NGHBR;ZU;Delivered;Delivery to neighbor;Ausgeliefert;Zustellung an Nachbarn;Zugestellt;Delivery successful;1;1;0
+DLVRD;OTHER;ZU;Delivered;Other / Delivery to an other person;Ausgeliefert;Andere Gründe / Zustellung an andere anwesende Person;Zugestellt;Delivery successful;1;0;0
+DLVRD;PCKAD;ZU;Delivered;PaCKstation – Alternate Delivery;Ausgeliefert;Packstation auf Firmengelände voll - Zustellung an Hauspoststelle;Zugestellt;Delivery successful;1;0;0
+DLVRD;PKBOX;ZU;Delivered;Delivery to Packetbox;Ausgeliefert;Zustellung an Paketkasten;Zugestellt;Delivery successful;1;0;0
+DLVRD;POBOX;ZU;Delivered;Postbox;Ausgeliefert;Briefkastenzustellung;Zugestellt;Delivery successful;1;0;0
+DLVRD;SECPL;ZU;Delivered;Secure Place;Ausgeliefert;Zustellung an vereinbartem, gesicherten Ort;Zugestellt;Delivery successful;1;0;0
+DLVRD;SERPT;ZU;Delivered;Service Point;Ausgeliefert;Filiale / Agentur;Zugestellt;Delivery successful;1;0;0
+DLVRD;SPOUS;ZU;Delivered;Delivery to spouse;Ausgeliefert;Zustellung an Ehegatten;Zugestellt;Delivery successful;1;0;0
+DLVRD;WINPL;ZU;Delivered;Prefered Neighbor/Place;Ausgeliefert;Wunschnachbar/Wunschort;Zugestellt;Delivery successful;1;0;0
+DLVRF;CROAT;ZN;Delivery refused;DHL arrived outside agreed time;Annahme verweigert;Kurier unpünktlich;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;0;1
+DLVRF;DMGED;ZN;Delivery refused;Damage under investigation;Annahme verweigert;Keine Übernahme wegen Beschädigung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;1
+DLVRF;NEXCH;ZN;Delivery refused;No exchange unit;Annahme verweigert;Fehlende Wechselbehälter;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+DLVRF;NTORD;ZN;Delivery refused;Not ordered;Annahme verweigert;Annahmeverweigerung - nicht bestellt;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;1
+DLVRF;OTHER;ZN;Delivery refused;Other / Delivery to an other person;Annahme verweigert;Andere Gründe / Zustellung an andere anwesende Person;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;1
+DLVRF;SHNCP;ZN;Delivery refused;Shipment not complete;Annahme verweigert;Sendung nicht vollständig;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;0;1
+DLVRF;TRPMT;ZN;Delivery refused;Terms of payment;Annahme verweigert;Zahlungsschwierigkeiten / Zahlungsterminal defekt;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;0;1
+DMGDS;CSDOC;BV;Damage discovered;ConSignee DOCumentation;Beschädigt;Kundendokumentation;Besondere Vorkommnisse;Exception;1;0;0
+DMGDS;CTCST;BV;Damage discovered;Contacted customer;Beschädigt;Kunde wurde informiert;Besondere Vorkommnisse;Exception;1;0;0
+DMGDS;DMGED;BV;Damage discovered;Damage under investigation;Beschädigt;Keine Übernahme wegen Beschädigung;Besondere Vorkommnisse;Exception;1;0;0
+DMGDS;DMGPC;BV;Damage discovered;Damaged in process;Beschädigt;Beschädigt bei der Bearbeitung vorgefunden;Besondere Vorkommnisse;Exception;1;1;1
+DMGDS;LDMGD;AA;Damage discovered;Loaded Damaged;Beschädigt;Beladung einer beschädigten/nachverpackten Sendung;Abgang aus ...;Departed from;1;0;0
+DMGDS;LDMGD;BV;Damage discovered;Loaded Damaged;Beschädigt;Beladung einer beschädigten/nachverpackten Sendung;Besondere Vorkommnisse;Exception;1;0;0
+DMGDS;LDMGD;EE;Damage discovered;Loaded Damaged;Beschädigt;Beladung einer beschädigten/nachverpackten Sendung;Eingang in ...;Arrived at;1;0;0
+DMGDS;NRQRD;BV;Damage discovered;ICE Details;Beschädigt;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;1;0;0
+DMGDS;PUDMG;BV;Damage discovered;Picked up damaged;Beschädigt;Erfolgreich abgeholt - Sendung beschädigt übernommen;Besondere Vorkommnisse;Exception;0;0;1
+DSPSD;BDADD;ZU;Disposed of;Bad address;Vernichtung;Adresse fehlerhaft;Zugestellt;Delivery successful;0;1;0
+DSPSD;CLREF;BV;Disposed of;Clearance refused;Vernichtung;Die Zollabfertigung wurde abgelehnt;Besondere Vorkommnisse;Exception;0;1;0
+DSPSD;CNCNR;ZU;Disposed of;Consignee could not be reached;Vernichtung;Empfänger nicht erreicht;Zugestellt;Delivery successful;0;1;0
+DSPSD;CRQST;BV;Disposed of;Customer request;Vernichtung;Sendung wurde auf Kundenwunsch vernichtet;Besondere Vorkommnisse;Exception;0;0;1
+DSPSD;CSREQ;ZN;Disposed of;ConSignee REQuest;Vernichtung;Empfänger-Verfügung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+DSPSD;DMGED;BV;Disposed of;Damage under investigation;Vernichtung;Keine Übernahme wegen Beschädigung;Besondere Vorkommnisse;Exception;0;1;0
+DSPSD;DMGED;ZU;Disposed of;Damage under investigation;Vernichtung;Keine Übernahme wegen Beschädigung;Zugestellt;Delivery successful;0;1;0
+DSPSD;DMGPC;BV;Disposed of;Damaged in process;Vernichtung;Beschädigt bei der Bearbeitung vorgefunden;Besondere Vorkommnisse;Exception;1;0;0
+DSPSD;FRMJR;ZU;Disposed of;Force majeur;Vernichtung;Verzögerung wegen höherer Gewalt;Zugestellt;Delivery successful;0;1;0
+DSPSD;FSCCH;BV;Disposed of;Failed dangerous goods check;Vernichtung;Gefahrgutprüfung negativ;Besondere Vorkommnisse;Exception;1;0;0
+DSPSD;GDNMS;ZU;Disposed of;Goods / packaging not meet standard;Vernichtung;Sendung entspricht nicht den DHL-Standards;Zugestellt;Delivery successful;0;1;0
+DSPSD;MOVED;ZU;Disposed of;Moved;Vernichtung;Empfänger verzogen;Zugestellt;Delivery successful;0;1;0
+DSPSD;MSLBL;BV;Disposed of;Missing Label;Vernichtung;Fehlendes Label;Besondere Vorkommnisse;Exception;1;0;0
+DSPSD;NRQRD;BV;Disposed of;ICE Details;Vernichtung;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;0;1;0
+DSPSD;NTCLM;ZU;Disposed of;Not claimed;Vernichtung;Vernichtung wg. Nichtabholung;Zugestellt;Delivery successful;0;1;0
+DSPSD;NTORD;ZU;Disposed of;Not ordered;Vernichtung;Annahmeverweigerung - nicht bestellt;Zugestellt;Delivery successful;0;1;0
+DTNPC;GHSTP;BV;Data, but no piece;Ghost piece;Daten ohne Sendung;Daten ohne Sendung;Besondere Vorkommnisse;Exception;1;0;0
+DTNPC;NPRPF;BV;Data, but no piece;No piece received from previous facility;Daten ohne Sendung;Erwartete Sendung nicht eingetroffen;Besondere Vorkommnisse;Exception;1;1;1
+EXPHD;BDADD;BV;Exception hold;Bad address;Sonderereignis;Adresse fehlerhaft;Besondere Vorkommnisse;Exception;1;1;1
+EXPHD;BDADD;PO;Exception hold;Bad address;Sonderereignis;Adresse fehlerhaft;Im Zustellprozess;In delivery process;0;1;0
+EXPHD;CAPEX;PO;Exception hold;capacity exceeded;Sonderereignis;Kapazitätsproblem;Im Zustellprozess;In delivery process;1;0;0
+EXPHD;CLREF;ZF;Exception hold;Clearance refused;Sonderereignis;Die Zollabfertigung wurde abgelehnt;Zustellung Filiale;Delivery to postal outlet;0;1;0
+EXPHD;CLREF;ZO;Exception hold;Clearance refused;Sonderereignis;Die Zollabfertigung wurde abgelehnt;Zoll;Customs clearance;0;1;0
+EXPHD;DMGED;BV;Exception hold;Damage under investigation;Sonderereignis;Keine Übernahme wegen Beschädigung;Besondere Vorkommnisse;Exception;1;1;0
+EXPHD;DMGPC;BV;Exception hold;Damaged in process;Sonderereignis;Beschädigt bei der Bearbeitung vorgefunden;Besondere Vorkommnisse;Exception;1;0;0
+EXPHD;DMPHD;BV;Exception hold;Damaged by poor handling;Sonderereignis;Nachverpackung wg. unsachgemäßer Behandlung;Besondere Vorkommnisse;Exception;0;1;0
+EXPHD;EQUBF;BV;Exception hold;Equipment unavailable, broken down or faulty;Sonderereignis;Verzögerung wg. technischer Probleme;Besondere Vorkommnisse;Exception;1;0;0
+EXPHD;FFTCH;BV;Exception hold;Failed product feature validation;Sonderereignis;Produkteigenschaften-Prüfung negativ;Besondere Vorkommnisse;Exception;0;0;1
+EXPHD;FRMJR;BV;Exception hold;Force majeur;Sonderereignis;Verzögerung wegen höherer Gewalt;Besondere Vorkommnisse;Exception;1;1;1
+EXPHD;FRMJR;PO;Exception hold;Force majeur;Sonderereignis;Verzögerung wegen höherer Gewalt;Im Zustellprozess;In delivery process;0;1;0
+EXPHD;GDNMS;BV;Exception hold;Goods / packaging not meet standard;Sonderereignis;Sendung entspricht nicht den DHL-Standards;Besondere Vorkommnisse;Exception;0;1;1
+EXPHD;INCSH;BV;Exception hold;Incomplete shipment;Sonderereignis;Mehrteilige Sendung unvollständig;Besondere Vorkommnisse;Exception;0;0;1
+EXPHD;INSPT;BV;Exception hold;Inspection;Sonderereignis;Es besteht der Verdacht auf Beraubung. Die Sendung wird inspiziert.;Besondere Vorkommnisse;Exception;0;1;0
+EXPHD;LOSTX;BV;Exception hold;Lost;Sonderereignis;Verlust;Besondere Vorkommnisse;Exception;1;0;0
+EXPHD;MSDOC;BV;Exception hold;Missing Document;Sonderereignis;Fehlendes Dokument;Besondere Vorkommnisse;Exception;0;1;1
+EXPHD;MSLBL;BV;Exception hold;Missing Label;Sonderereignis;Fehlendes Label;Besondere Vorkommnisse;Exception;0;0;1
+EXPHD;MSSDT;BV;Exception hold;Missing data;Sonderereignis;fehlende Daten;Besondere Vorkommnisse;Exception;1;0;1
+EXPHD;MSSDT;PO;Exception hold;Missing data;Sonderereignis;fehlende Daten;Im Zustellprozess;In delivery process;1;0;0
+EXPHD;NRQRD;BV;Exception hold;ICE Details;Sonderereignis;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;0;0;1
+EXPHD;OTHER;BV;Exception hold;Other / Delivery to an other person;Sonderereignis;Andere Gründe / Zustellung an andere anwesende Person;Besondere Vorkommnisse;Exception;1;1;1
+EXPHD;PWMFD;BV;Exception hold;Paperwork missing;Sonderereignis;Fehlende Zolldokumente;Besondere Vorkommnisse;Exception;0;0;1
+EXPHD;RTTSP;BV;Exception hold;Return to shipper;Sonderereignis;Rücksendung, ggf.  mit neuem Label;Besondere Vorkommnisse;Exception;0;1;1
+EXPHD;RTTSP;ZN;Exception hold;Return to shipper;Sonderereignis;Rücksendung, ggf.  mit neuem Label;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+EXPHD;STBSD;BV;Exception hold;Stopped by sender;Sonderereignis;Absenderverfügung: Sendung anhalten;Besondere Vorkommnisse;Exception;0;0;1
+EXPHD;STPRB;BV;Exception hold;Sort problem;Sonderereignis;Sortierproblem;Besondere Vorkommnisse;Exception;1;0;0
+EXPHD;TRPMT;BV;Exception hold;Terms of payment;Sonderereignis;Zahlungsschwierigkeiten / Zahlungsterminal defekt;Besondere Vorkommnisse;Exception;0;0;1
+EXPHD;UDFPC;BV;Exception hold;Unidentifiable piece;Sonderereignis;Unidentifizierbars Packstück;Besondere Vorkommnisse;Exception;1;0;1
+EXPHD;WRGRI;BV;Exception hold;Wrong Receiver Information;Sonderereignis;Falsche Empfängerinformationen;Besondere Vorkommnisse;Exception;1;0;0
+FWDCF;SERPT;PO;Forwarded to correct facility;Service Point;Weitertransport / Rücktransport;Filiale / Agentur;Im Zustellprozess;In delivery process;1;0;0
+HLDCC;HDFCT;LA;Held for consignee collection;Held at DHL facility;Sendung liegt zur Abholung bereit;Lagerung wegen Selbstabholung;Lagerung;In storage;1;0;1
+HLDCC;HDFCT;ZF;Held for consignee collection;Held at DHL facility;Sendung liegt zur Abholung bereit;Lagerung wegen Selbstabholung;Zustellung Filiale;Delivery to postal outlet;1;1;0
+HLDCC;LDPCK;LA;Held for consignee collection;Held in automated collection site;Sendung liegt zur Abholung bereit;Zustellung an Packstation / Einlieferung in Packstation;Lagerung;In storage;1;1;0
+HLDCC;NTCCN;ZF;Held for consignee collection;Not collected by consignee;Sendung liegt zur Abholung bereit;Keine Abholung durch Kunden zum Ablauf der Lagerfrist;Zustellung Filiale;Delivery to postal outlet;0;1;0
+HLDCC;SERPT;LA;Held for consignee collection;Service Point;Sendung liegt zur Abholung bereit;Filiale / Agentur;Lagerung;In storage;1;1;0
+HLDCC;SERPT;PO;Held for consignee collection;Service Point;Sendung liegt zur Abholung bereit;Filiale / Agentur;Im Zustellprozess;In delivery process;1;0;0
+HLDCC;SERPT;ZF;Held for consignee collection;Service Point;Sendung liegt zur Abholung bereit;Filiale / Agentur;Zustellung Filiale;Delivery to postal outlet;0;1;0
+HLDCP;NORSN;ZO;Held for clearance purposes;No reason;Bereithaltung zur Zollübergabe;Keine weitere Begründung durch Zoll;Zoll;Customs clearance;0;0;1
+HLDCU;NORSN;BV;Held by Customs;No reason;Zollbearbeitung;Keine weitere Begründung durch Zoll;Besondere Vorkommnisse;Exception;0;0;1
+HLDCU;NORSN;ZO;Held by Customs;No reason;Zollbearbeitung;Keine weitere Begründung durch Zoll;Zoll;Customs clearance;0;0;1
+HNDDE;SERPT;LA;Handover to 3rd party - Delivery details expected;Service Point;Übergabe an Servicepartner;Filiale / Agentur;Lagerung;In storage;1;0;0
+HNDDE;SERPT;PO;Handover to 3rd party - Delivery details expected;Service Point;Übergabe an Servicepartner;Filiale / Agentur;Im Zustellprozess;In delivery process;0;1;0
+HNDDE;SERPT;ZF;Handover to 3rd party - Delivery details expected;Service Point;Übergabe an Servicepartner;Filiale / Agentur;Zustellung Filiale;Delivery to postal outlet;1;0;0
+HNDND;CUSTM;ZO;Handover to 3rd party - No delivery details expect;Customs;Übergabe an Servicepartner;Übergabe an Zoll zur Prüfung und Zustellung;Zoll;Customs clearance;1;0;0
+ICPRC;FWEXH;ZO;Into clearance processing;ForWarded for Export Handling;Zollabfertigung gestartet;Weiterleitung zur Exportbearbeitung;Zoll;Customs clearance;0;1;0
+ICPRC;NRQRD;ZO;Into clearance processing;ICE Details;Zollabfertigung gestartet;Keine weiteren Details erforderlich;Zoll;Customs clearance;0;0;1
+ICPRC;OARRV;ZO;Into clearance processing;On arrival;Zollabfertigung gestartet;Zollfreigabe;Zoll;Customs clearance;0;1;0
+INFCL;CSREQ;LA;In facility;ConSignee REQuest;Lagerung;Empfänger-Verfügung;Lagerung;In storage;1;1;0
+INFCL;CSREQ;PO;In facility;ConSignee REQuest;Lagerung;Empfänger-Verfügung;Im Zustellprozess;In delivery process;1;0;0
+INFCL;CTCST;LA;In facility;Contacted customer;Lagerung;Kunde wurde informiert;Lagerung;In storage;0;0;1
+INFCL;DLVDT;LA;In facility;DeLiVery DaTe;Lagerung;Wunschtag;Lagerung;In storage;1;0;0
+INFCL;FWEXH;BV;In facility;ForWarded for Export Handling;Lagerung;Weiterleitung zur Exportbearbeitung;Besondere Vorkommnisse;Exception;0;1;0
+INFCL;HLDAY;LA;In facility;HoLiDAY;Lagerung;Lagerung wegen Ferien, Betriebsferien oder Feiertagen;Lagerung;In storage;1;0;0
+INFCL;HLDSR;LA;In facility;HeLD on Shipper Request;Lagerung;Lagerung aufgrund einer Absenderverfügung;Lagerung;In storage;1;0;1
+INFCL;HNDCA;LA;In facility;Held for Next working Day delivery on;Lagerung;Rückstellung für eine Zustellung am nächsten Werktag aufgrund einer Empfängervereinbarung;Lagerung;In storage;1;0;0
+INFCL;HNDCA;PO;In facility;Held for Next working Day delivery on;Lagerung;Rückstellung für eine Zustellung am nächsten Werktag aufgrund einer Empfängervereinbarung;Im Zustellprozess;In delivery process;1;1;0
+INFCL;INCSH;LA;In facility;Incomplete shipment;Lagerung;Mehrteilige Sendung unvollständig;Lagerung;In storage;0;1;1
+INFCL;INCSH;PO;In facility;Incomplete shipment;Lagerung;Mehrteilige Sendung unvollständig;Im Zustellprozess;In delivery process;1;1;0
+INFCL;NRQRD;LA;In facility;ICE Details;Lagerung;Keine weiteren Details erforderlich;Lagerung;In storage;1;0;1
+INFCL;OARRV;BV;In facility;On arrival;Lagerung;Zollfreigabe;Besondere Vorkommnisse;Exception;0;1;0
+INFCL;SERPT;LA;In facility;Service Point;Lagerung;Filiale / Agentur;Lagerung;In storage;1;0;0
+ITBAR;CSTBA;ZO;In bonded area;Customs bonded area;Lagerung unter Verschluss;Zollverschluss;Zoll;Customs clearance;0;0;1
+ITBAR;FWEXH;ZO;In bonded area;ForWarded for Export Handling;Lagerung unter Verschluss;Weiterleitung zur Exportbearbeitung;Zoll;Customs clearance;1;1;0
+ITBAR;OARRV;ZO;In bonded area;On arrival;Lagerung unter Verschluss;Zollfreigabe;Zoll;Customs clearance;0;1;0
+LDEXC;BDADD;PO;Loading exception;Bad address;Ladungsrückstellung;Adresse fehlerhaft;Im Zustellprozess;In delivery process;1;0;0
+LDEXC;MSDLA;BV;Loading exception;Missed delivery cycle - Received after cut off;Ladungsrückstellung;Sendung zu spät in Station für Zustellung;Besondere Vorkommnisse;Exception;0;0;1
+LDEXC;MSDLA;PO;Loading exception;Missed delivery cycle - Received after cut off;Ladungsrückstellung;Sendung zu spät in Station für Zustellung;Im Zustellprozess;In delivery process;0;1;0
+LDEXC;MSDLA;ZN;Loading exception;Missed delivery cycle - Received after cut off;Ladungsrückstellung;Sendung zu spät in Station für Zustellung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;0;1
+LDEXC;OVRLD;BV;Loading exception;Overload;Ladungsrückstellung;Abladung wg. Überladung;Besondere Vorkommnisse;Exception;0;0;1
+LDTHU;NRQRD;NB;Loaded to handling unit;ICE Details;Gebindebeladung;Keine weiteren Details erforderlich;Normale Bearbeitung;Normal processing;1;0;0
+LDTMV;FWEXH;AA;Loaded to movement / tour vehicle;ForWarded for Export Handling;Abgang;Weiterleitung zur Exportbearbeitung;Abgang aus ...;Departed from;0;1;0
+LDTMV;FWEXH;NB;Loaded to movement / tour vehicle;ForWarded for Export Handling;Abgang;Weiterleitung zur Exportbearbeitung;Normale Bearbeitung;Normal processing;1;1;0
+LDTMV;MVMTV;AA;Loaded to movement / tour vehicle;Movement / tour vehicle;Abgang;Beladung;Abgang aus ...;Departed from;1;1;0
+LDTMV;MVMTV;NB;Loaded to movement / tour vehicle;Movement / tour vehicle;Abgang;Beladung;Normale Bearbeitung;Normal processing;1;0;0
+LDTMV;MVMTV;PO;Loaded to movement / tour vehicle;Movement / tour vehicle;Abgang;Beladung;Im Zustellprozess;In delivery process;1;1;1
+LDTMV;NRQRD;AA;Loaded to movement / tour vehicle;ICE Details;Abgang;Keine weiteren Details erforderlich;Abgang aus ...;Departed from;0;0;1
+LDTMV;PCKST;PO;Loaded to movement / tour vehicle;Packstation;Abgang;Packstation;Im Zustellprozess;In delivery process;1;0;0
+LDTMV;SECDA;PO;Loaded to movement / tour vehicle;SECond Delivery Attempt;Abgang;Zweiter Zustellversuch;Im Zustellprozess;In delivery process;1;0;0
+LDTMV;SECDA;ZN;Loaded to movement / tour vehicle;SECond Delivery Attempt;Abgang;Zweiter Zustellversuch;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;1
+LDTMV;SERPT;ES;Loaded to movement / tour vehicle;Service Point;Abgang;Filiale / Agentur;Eingang in Sendungsverlauf;Handed over to DHL;1;0;0
+LDTMV;SERPT;PO;Loaded to movement / tour vehicle;Service Point;Abgang;Filiale / Agentur;Im Zustellprozess;In delivery process;1;0;0
+LDTMV;SERPT;ZF;Loaded to movement / tour vehicle;Service Point;Abgang;Filiale / Agentur;Zustellung Filiale;Delivery to postal outlet;1;0;0
+MSRTD;CRRCS;BV;Mis routed;Correct Routing information but delivered to wRong;Routingfehler;Falscher Empfänger bei Firmenzustellung;Besondere Vorkommnisse;Exception;1;0;0
+MSRTD;CRRFN;BV;Mis routed;Correct routing information but at the wrong facil;Routingfehler;Sortierfehler - richtiger Routing-Code / Sendung in falscher Lokation;Besondere Vorkommnisse;Exception;0;0;1
+MSRTD;CRRFN;PO;Mis routed;Correct routing information but at the wrong facil;Routingfehler;Sortierfehler - richtiger Routing-Code / Sendung in falscher Lokation;Im Zustellprozess;In delivery process;1;0;0
+MSRTD;NRQRD;BV;Mis routed;ICE Details;Routingfehler;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;1;0;1
+MSRTD;NRQRD;PO;Mis routed;ICE Details;Routingfehler;Keine weiteren Details erforderlich;Im Zustellprozess;In delivery process;1;0;0
+MSRTD;NRQRD;ZN;Mis routed;ICE Details;Routingfehler;Keine weiteren Details erforderlich;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+MSRTD;WRGTR;BV;Mis routed;Wrong tour;Routingfehler;Falsche Tour;Besondere Vorkommnisse;Exception;0;1;0
+MVARR;NRQRD;EE;Movement / tour vehicle arrived;ICE Details;Fahrzeug angekommen;Keine weiteren Details erforderlich;Eingang in ...;Arrived at;1;0;1
+MVARR;NRQRD;PO;Movement / tour vehicle arrived;ICE Details;Fahrzeug angekommen;Keine weiteren Details erforderlich;Im Zustellprozess;In delivery process;0;1;1
+MVARR;NRQRD;ZU;Movement / tour vehicle arrived;ICE Details;Fahrzeug angekommen;Keine weiteren Details erforderlich;Zugestellt;Delivery successful;1;0;0
+MVDEX;FRMJR;BV;Movement / tour vehicle departure exception;Force majeur;Fahrzeug verspätet;Verzögerung wegen höherer Gewalt;Besondere Vorkommnisse;Exception;0;0;1
+MVDPT;NRQRD;AA;Movement / tour vehicle departed;ICE Details;Fahrzeug hat den Standort verlassen;Keine weiteren Details erforderlich;Abgang aus ...;Departed from;1;0;1
+MVTEX;FRMJR;BV;Movement / tour vehicle exception;Force majeur;Problem beim Transport;Verzögerung wegen höherer Gewalt;Besondere Vorkommnisse;Exception;0;1;1
+MVTEX;FRMJR;PO;Movement / tour vehicle exception;Force majeur;Problem beim Transport;Verzögerung wegen höherer Gewalt;Im Zustellprozess;In delivery process;0;0;1
+MVTEX;TCATC;BV;Movement / tour vehicle exception;Traffic Congestion / Air traffic control;Problem beim Transport;Verkehrsstau;Besondere Vorkommnisse;Exception;0;0;1
+MVTEX;TCHBD;BV;Movement / tour vehicle exception;Technical / Breakdown;Problem beim Transport;Technische Probleme;Besondere Vorkommnisse;Exception;0;0;1
+MVTEX;TCHBD;PO;Movement / tour vehicle exception;Technical / Breakdown;Problem beim Transport;Technische Probleme;Im Zustellprozess;In delivery process;0;0;1
+MVTEX;VHARU;BV;Movement / tour vehicle exception;Vehicle / aircraft unavailable;Problem beim Transport;Fahrzeugt nicht bereit;Besondere Vorkommnisse;Exception;1;0;0
+NTADT;NPRPF;PO;Not assigned to delivery tour;No piece received from previous facility;Sendung nicht in der Zustellung;Erwartete Sendung nicht eingetroffen;Im Zustellprozess;In delivery process;1;0;0
+NTDEL;AGNEG;ZN;Not delivered;Age-Check negativ;Nicht ausgeliefert;Altersprüfung negativ;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;BDADD;ZN;Not delivered;Bad address;Nicht ausgeliefert;Adresse fehlerhaft;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+NTDEL;CAPEX;ZN;Not delivered;capacity exceeded;Nicht ausgeliefert;Kapazitätsproblem;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;CLOSD;ZN;Not delivered;Closed;Nicht ausgeliefert;Geschlossen;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;1
+NTDEL;CNCNR;ZN;Not delivered;Consignee could not be reached;Nicht ausgeliefert;Empfänger nicht erreicht;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;1
+NTDEL;CPUNK;ZN;Not delivered;Company dissolved / unknown;Nicht ausgeliefert;Empfänger unbekannt;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;1
+NTDEL;CRROT;PO;Not delivered;Courier out of time;Nicht ausgeliefert;Kurier zu spät / Schicht zuende;Im Zustellprozess;In delivery process;1;0;0
+NTDEL;CRROT;ZN;Not delivered;Courier out of time;Nicht ausgeliefert;Kurier zu spät / Schicht zuende;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;0;1
+NTDEL;CTCNI;ZN;Not delivered;Customer could not identify themselves;Nicht ausgeliefert;Identitätsprüfung negativ;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;CTCST;ZN;Not delivered;Contacted customer;Nicht ausgeliefert;Kunde wurde informiert;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+NTDEL;DMGED;ZN;Not delivered;Damage under investigation;Nicht ausgeliefert;Keine Übernahme wegen Beschädigung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+NTDEL;DRCRU;ZN;Not delivered;Driver / crew unavailable;Nicht ausgeliefert;Verzögerung wegen fehlendem Fahrer;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;FRMJR;ZN;Not delivered;Force majeur;Nicht ausgeliefert;Verzögerung wegen höherer Gewalt;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+NTDEL;HLDAY;ZN;Not delivered;HoLiDAY;Nicht ausgeliefert;Lagerung wegen Ferien, Betriebsferien oder Feiertagen;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;1
+NTDEL;IDDMG;ZN;Not delivered;ID damaged or not readable;Nicht ausgeliefert;Prüf-ID beschädigt oder nicht lesbar;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;IDNEG;ZN;Not delivered;Identitycheck negativ;Nicht ausgeliefert;Identitätsprüfung Negativ;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;MOVED;ZN;Not delivered;Moved;Nicht ausgeliefert;Empfänger verzogen;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+NTDEL;MSDOC;ZN;Not delivered;Missing Document;Nicht ausgeliefert;Fehlendes Dokument;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;MSLBL;ZN;Not delivered;Missing Label;Nicht ausgeliefert;Fehlendes Label;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;MSSDT;ZN;Not delivered;Missing data;Nicht ausgeliefert;fehlende Daten;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;NAGTB;ZN;Not delivered;Not According to General Terms of Business;Nicht ausgeliefert;Sendung nicht AGB-konform - Rücksendung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;1
+NTDEL;NHOME;ZN;Not delivered;Not home;Nicht ausgeliefert;Benachrichtigt: Empfänger nicht angetroffen;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;1
+NTDEL;NTCCN;ZN;Not delivered;Not collected by consignee;Nicht ausgeliefert;Keine Abholung durch Kunden zum Ablauf der Lagerfrist;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;NTIHU;ZN;Not delivered;Not in Handling Unit;Nicht ausgeliefert;Sendung fehlt in Transporteinheit (Postbox);Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;OTHER;ZN;Not delivered;Other / Delivery to an other person;Nicht ausgeliefert;Andere Gründe / Zustellung an andere anwesende Person;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+NTDEL;OTHRE;ZN;Not delivered;Other reason;Nicht ausgeliefert;Andere Gründe;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+NTDEL;PCKST;ZN;Not delivered;Packstation;Nicht ausgeliefert;Packstation;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;RFUSD;ZN;Not delivered;Refused;Nicht ausgeliefert;Annahme Verweigert;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+NTDEL;RSEXW;ZN;Not delivered;Return to Shipper EXWorks error;Nicht ausgeliefert;"Rücksendung - Empfänger ist nicht berechtigt ""Ab Werk""-Sendungen zu erhalten";Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;SECDA;ZN;Not delivered;SECond Delivery Attempt;Nicht ausgeliefert;Zweiter Zustellversuch;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+NTDEL;SERPT;ZN;Not delivered;Service Point;Nicht ausgeliefert;Filiale / Agentur;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;SHINF;ZN;Not delivered;SHipper INFormation;Nicht ausgeliefert;Unzustellbarkeitsanzeige;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;TCHBD;ZN;Not delivered;Technical / Breakdown;Nicht ausgeliefert;Technische Probleme;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;TRPMT;ZN;Not delivered;Terms of payment;Nicht ausgeliefert;Zahlungsschwierigkeiten / Zahlungsterminal defekt;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;1
+NTDEL;UDLVR;ZN;Not delivered;Undeliverable;Nicht ausgeliefert;Unzustellbar;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;WRGPN;ZN;Not delivered;Wrong Post-ID;Nicht ausgeliefert;Falsche Postnummer;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;WRGRI;ZN;Not delivered;Wrong Receiver Information;Nicht ausgeliefert;Falsche Empfängerinformationen;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+NTDEL;WRGTR;ZN;Not delivered;Wrong tour;Nicht ausgeliefert;Falsche Tour;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;1
+NTPUP;BDADD;AN;Not picked up;Bad address;Nicht abgeholt;Adresse fehlerhaft;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;0
+NTPUP;CLOSD;AN;Not picked up;Closed;Nicht abgeholt;Geschlossen;Abholung beim Kunden nicht erfolgreich;Pickup not successful;0;0;1
+NTPUP;CLRTE;AN;Not picked up;Tour exception;Nicht abgeholt;Keine Abholung wegen Verspätung;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;0
+NTPUP;CPUNK;AN;Not picked up;Company dissolved / unknown;Nicht abgeholt;Empfänger unbekannt;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;1
+NTPUP;CRROT;AN;Not picked up;Courier out of time;Nicht abgeholt;Kurier zu spät / Schicht zuende;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;1
+NTPUP;DMGED;AN;Not picked up;Damage under investigation;Nicht abgeholt;Keine Übernahme wegen Beschädigung;Abholung beim Kunden nicht erfolgreich;Pickup not successful;0;0;1
+NTPUP;GDNMS;AN;Not picked up;Goods / packaging not meet standard;Nicht abgeholt;Sendung entspricht nicht den DHL-Standards;Abholung beim Kunden nicht erfolgreich;Pickup not successful;0;0;1
+NTPUP;GDNRD;AN;Not picked up;Goods not ready;Nicht abgeholt;Sendung war nicht versandfertig;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;1
+NTPUP;NAGTB;AN;Not picked up;Not According to General Terms of Business;Nicht abgeholt;Sendung nicht AGB-konform - Rücksendung;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;0
+NTPUP;NHOME;AN;Not picked up;Not home;Nicht abgeholt;Benachrichtigt: Empfänger nicht angetroffen;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;0
+NTPUP;NPYMT;AN;Not picked up;No payment;Nicht abgeholt;Keine Abholung wg. Zahlungsproblemen;Abholung beim Kunden nicht erfolgreich;Pickup not successful;0;0;1
+NTPUP;NTHND;AN;Not picked up;Customer refused to hand over the shipment to DHL;Nicht abgeholt;Die Herausgabe der Sendung wurde verweigert;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;0
+NTPUP;NTHNG;AN;Not picked up;Nothing to collect;Nicht abgeholt;Keine Sendung zur Abholung vorhanden;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;1
+NTPUP;OTHER;AN;Not picked up;Other / Delivery to an other person;Nicht abgeholt;Andere Gründe / Zustellung an andere anwesende Person;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;1
+NTPUP;SPCNR;AN;Not picked up;Shipper cannot be reached;Nicht abgeholt;Versender wurde nicht angetroffen;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;1
+NTPUP;TRPMT;AN;Not picked up;Terms of payment;Nicht abgeholt;Zahlungsschwierigkeiten / Zahlungsterminal defekt;Abholung beim Kunden nicht erfolgreich;Pickup not successful;1;0;0
+NTPUP;WRGTR;AN;Not picked up;Wrong tour;Nicht abgeholt;Falsche Tour;Abholung beim Kunden nicht erfolgreich;Pickup not successful;0;0;1
+OFWRD;CNCNR;BV;Onforwarded;Consignee could not be reached;Nachsendung / Rücksendung;Empfänger nicht erreicht;Besondere Vorkommnisse;Exception;0;0;1
+OFWRD;CNRFW;ZN;Onforwarded;Consignee request: Forward to an other address.;Nachsendung / Rücksendung;Empfängerverfügung: Nachsendung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+OFWRD;CRFRD;PO;Onforwarded;Customer request for redirection;Nachsendung / Rücksendung;Kunde wünscht Zusendung zu anderer Adresse;Im Zustellprozess;In delivery process;0;1;0
+OFWRD;CRRFN;AA;Onforwarded;Correct routing information but at the wrong facil;Nachsendung / Rücksendung;Sortierfehler - richtiger Routing-Code / Sendung in falscher Lokation;Abgang aus ...;Departed from;0;1;0
+OFWRD;CRRFN;EE;Onforwarded;Correct routing information but at the wrong facil;Nachsendung / Rücksendung;Sortierfehler - richtiger Routing-Code / Sendung in falscher Lokation;Eingang in ...;Arrived at;0;1;0
+OFWRD;CSREQ;PO;Onforwarded;ConSignee REQuest;Nachsendung / Rücksendung;Empfänger-Verfügung;Im Zustellprozess;In delivery process;1;1;1
+OFWRD;NRQRD;PO;Onforwarded;ICE Details;Nachsendung / Rücksendung;Keine weiteren Details erforderlich;Im Zustellprozess;In delivery process;0;1;0
+OFWRD;PBNBR;PO;Onforwarded;PO box number;Nachsendung / Rücksendung;Postfach als Zustelladresse angegeben;Im Zustellprozess;In delivery process;0;1;0
+OFWRD;RDRCR;AA;Onforwarded;Redirected by customer request;Nachsendung / Rücksendung;Absender-/Empfängerverfügung: Zustellung an andere Adresse;Abgang aus ...;Departed from;0;0;1
+OFWRD;RDRCR;AN;Onforwarded;Redirected by customer request;Nachsendung / Rücksendung;Absender-/Empfängerverfügung: Zustellung an andere Adresse;Abholung beim Kunden nicht erfolgreich;Pickup not successful;0;0;1
+OFWRD;RDRCR;PO;Onforwarded;Redirected by customer request;Nachsendung / Rücksendung;Absender-/Empfängerverfügung: Zustellung an andere Adresse;Im Zustellprozess;In delivery process;0;1;1
+OFWRD;RDRCR;ZN;Onforwarded;Redirected by customer request;Nachsendung / Rücksendung;Absender-/Empfängerverfügung: Zustellung an andere Adresse;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;1
+OFWRD;RDRDO;PO;Onforwarded;Redirected by redirection order;Nachsendung / Rücksendung;Absender-/Empfängerverfügung: Zustellung an andere Adresse;Im Zustellprozess;In delivery process;1;0;0
+OFWRD;RDRDO;ZN;Onforwarded;Redirected by redirection order;Nachsendung / Rücksendung;Absender-/Empfängerverfügung: Zustellung an andere Adresse;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+OFWRD;RTSCR;AA;Onforwarded;Return to shipper at customer request;Nachsendung / Rücksendung;Rücksendung aufgrund von Kundenwunsch;Abgang aus ...;Departed from;1;0;0
+OFWRD;RTSCR;BV;Onforwarded;Return to shipper at customer request;Nachsendung / Rücksendung;Rücksendung aufgrund von Kundenwunsch;Besondere Vorkommnisse;Exception;0;0;1
+OFWRD;RTSCR;EE;Onforwarded;Return to shipper at customer request;Nachsendung / Rücksendung;Rücksendung aufgrund von Kundenwunsch;Eingang in ...;Arrived at;1;0;0
+OFWRD;RTSCR;PO;Onforwarded;Return to shipper at customer request;Nachsendung / Rücksendung;Rücksendung aufgrund von Kundenwunsch;Im Zustellprozess;In delivery process;0;0;1
+OFWRD;RTSCR;ZN;Onforwarded;Return to shipper at customer request;Nachsendung / Rücksendung;Rücksendung aufgrund von Kundenwunsch;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+OFWRD;RTSSA;ZN;Onforwarded;Return to shipper by customer standard agreement;Nachsendung / Rücksendung;Rücksendung aufgrund Vereinbarung mit Absender;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+PARCV;NRQRD;VA;PAN Received by Carrier;ICE Details;Elektronische Sendungsdaten liegen vor;Keine weiteren Details erforderlich;Vorankündigung (per EDI);Electronic pre advise;1;0;0
+PBNDT;NDRFC;BV;Piece, but no data;No data received from customer;Sendung ohne Daten;Fehlende EDI-Daten vom Kunden;Besondere Vorkommnisse;Exception;0;0;1
+PBNDT;NDRFN;BV;Piece, but no data;No data received from network;Sendung ohne Daten;Fehlende EDI-Daten vom Netzwerk;Besondere Vorkommnisse;Exception;0;1;1
+PBNDT;NORSN;BV;Piece, but no data;No reason;Sendung ohne Daten;Keine weitere Begründung durch Zoll;Besondere Vorkommnisse;Exception;0;1;0
+PCKDU;PFLOC;AE;Picked up;Preferred Location/Neighbor;Abholung;Wunschort/Wunschnachbar;Abholung beim Kunden erfolgreich;Pickup successful;1;0;0
+PCKDU;PKBOX;AE;Picked up;Delivery to Packetbox;Abholung;Zustellung an Paketkasten;Abholung beim Kunden erfolgreich;Pickup successful;1;0;0
+PCKDU;PKBOX;ES;Picked up;Delivery to Packetbox;Abholung;Zustellung an Paketkasten;Eingang in Sendungsverlauf;Handed over to DHL;1;0;0
+PCKDU;PUBCR;AE;Picked up;Piece pick up;Abholung;Erfolgreich abgeholt;Abholung beim Kunden erfolgreich;Pickup successful;1;1;1
+PCKDU;WINPL;AE;Picked up;Prefered Neighbor/Place;Abholung;Wunschnachbar/Wunschort;Abholung beim Kunden erfolgreich;Pickup successful;1;0;0
+PMTCR;NRQRD;GT;Payments received from courier;ICE Details;Zahlungsübergabe;Keine weiteren Details erforderlich;Geld-Transfer;Money transfer;1;0;0
+PMTCS;NRQRD;GT;Payment received from customer;ICE Details;Zahlung erhalten;Keine weiteren Details erforderlich;Geld-Transfer;Money transfer;0;1;0
+PMTCS;SERPT;GT;Payment received from customer;Service Point;Zahlung erhalten;Filiale / Agentur;Geld-Transfer;Money transfer;1;0;0
+PURCR;BDADD;BV;Pick up request created;Bad address;Abholauftrag erhalten;Adresse fehlerhaft;Besondere Vorkommnisse;Exception;1;0;0
+PURCR;BOOKN;VA;Pick up request created;Booking;Abholauftrag erhalten;Buchung erfolgt;Vorankündigung (per EDI);Electronic pre advise;1;0;0
+PURCR;NRQRD;VA;Pick up request created;ICE Details;Abholauftrag erhalten;Keine weiteren Details erforderlich;Vorankündigung (per EDI);Electronic pre advise;1;0;0
+PURCR;OTHER;BV;Pick up request created;Other / Delivery to an other person;Abholauftrag erhalten;Andere Gründe / Zustellung an andere anwesende Person;Besondere Vorkommnisse;Exception;1;0;0
+PURCR;REJCT;DD;Pick up request created;Rejected;Abholauftrag erhalten;Der Auftrag wurde abgelehnt;Datendienst;Data Service;1;0;0
+PURCR;SECPL;DD;Pick up request created;Secure Place;Abholauftrag erhalten;Zustellung an vereinbartem, gesicherten Ort;Datendienst;Data Service;1;0;0
+RCCLS;GHSTP;BV;Record closed;Ghost piece;Sendungslauf beendet;Daten ohne Sendung;Besondere Vorkommnisse;Exception;1;0;0
+RCCLS;LOSTX;ZN;Record closed;Lost;Sendungslauf beendet;Verlust;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;0;1
+RELBL;NRQRD;BV;Relabeled;ICE Details;Neues Label erstellt;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;1;0;0
+RELBL;PLDMG;PO;Relabeled;Piece label damaged;Neues Label erstellt;Label defekt;Im Zustellprozess;In delivery process;1;0;0
+RELBL;PPQLT;PO;Relabeled;Poor quality piece label;Neues Label erstellt;mangelhaftes Label erneuert;Im Zustellprozess;In delivery process;1;0;0
+REPCK;DMGPC;BV;Repacked;Damaged in process;Sendung wurde neu verpackt;Beschädigt bei der Bearbeitung vorgefunden;Besondere Vorkommnisse;Exception;1;1;0
+REPCK;LDMGD;PO;Repacked;Loaded Damaged;Sendung wurde neu verpackt;Beladung einer beschädigten/nachverpackten Sendung;Im Zustellprozess;In delivery process;1;0;0
+REPCK;MVMTV;AA;Repacked;Movement / tour vehicle;Sendung wurde neu verpackt;Beladung;Abgang aus ...;Departed from;1;0;0
+REPCK;NRQRD;BV;Repacked;ICE Details;Sendung wurde neu verpackt;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;1;1;0
+REPCK;RDRDO;BV;Repacked;Redirected by redirection order;Sendung wurde neu verpackt;Absender-/Empfängerverfügung: Zustellung an andere Adresse;Besondere Vorkommnisse;Exception;1;0;0
+REPCK;WRGRI;BV;Repacked;Wrong Receiver Information;Sendung wurde neu verpackt;Falsche Empfängerinformationen;Besondere Vorkommnisse;Exception;1;0;0
+RETRN;BDADD;ZN;Shipment will be returned to origin;Bad address;Rücksendung;Adresse fehlerhaft;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+RETRN;CLREF;ZO;Shipment will be returned to origin;Clearance refused;Rücksendung;Die Zollabfertigung wurde abgelehnt;Zoll;Customs clearance;0;1;0
+RETRN;CNCNR;ZN;Shipment will be returned to origin;Consignee could not be reached;Rücksendung;Empfänger nicht erreicht;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+RETRN;CSREQ;ZN;Shipment will be returned to origin;ConSignee REQuest;Rücksendung;Empfänger-Verfügung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+RETRN;DMGED;ZN;Shipment will be returned to origin;Damage under investigation;Rücksendung;Keine Übernahme wegen Beschädigung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+RETRN;DMGPC;BV;Shipment will be returned to origin;Damaged in process;Rücksendung;Beschädigt bei der Bearbeitung vorgefunden;Besondere Vorkommnisse;Exception;1;0;0
+RETRN;FRMJR;ZN;Shipment will be returned to origin;Force majeur;Rücksendung;Verzögerung wegen höherer Gewalt;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+RETRN;FSCCH;BV;Shipment will be returned to origin;Failed dangerous goods check;Rücksendung;Gefahrgutprüfung negativ;Besondere Vorkommnisse;Exception;1;0;0
+RETRN;GDNMS;BV;Shipment will be returned to origin;Goods / packaging not meet standard;Rücksendung;Sendung entspricht nicht den DHL-Standards;Besondere Vorkommnisse;Exception;0;1;0
+RETRN;INSPF;ZO;Shipment will be returned to origin;Inspection failed;Rücksendung;Zollprüfung negativ;Zoll;Customs clearance;0;1;0
+RETRN;MOVED;ZN;Shipment will be returned to origin;Moved;Rücksendung;Empfänger verzogen;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+RETRN;MSDLA;ZN;Shipment will be returned to origin;Missed delivery cycle - Received after cut off;Rücksendung;Sendung zu spät in Station für Zustellung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+RETRN;MSSDT;ZN;Shipment will be returned to origin;Missing data;Rücksendung;fehlende Daten;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+RETRN;NAGTB;BV;Shipment will be returned to origin;Not According to General Terms of Business;Rücksendung;Sendung nicht AGB-konform - Rücksendung;Besondere Vorkommnisse;Exception;1;1;0
+RETRN;NAGTB;ZN;Shipment will be returned to origin;Not According to General Terms of Business;Rücksendung;Sendung nicht AGB-konform - Rücksendung;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+RETRN;NEXCH;ZN;Shipment will be returned to origin;No exchange unit;Rücksendung;Fehlende Wechselbehälter;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+RETRN;NHOME;ZN;Shipment will be returned to origin;Not home;Rücksendung;Benachrichtigt: Empfänger nicht angetroffen;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+RETRN;NTCCN;ZN;Shipment will be returned to origin;Not collected by consignee;Rücksendung;Keine Abholung durch Kunden zum Ablauf der Lagerfrist;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+RETRN;NTORD;ZN;Shipment will be returned to origin;Not ordered;Rücksendung;Annahmeverweigerung - nicht bestellt;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+RETRN;OTHER;ZN;Shipment will be returned to origin;Other / Delivery to an other person;Rücksendung;Andere Gründe / Zustellung an andere anwesende Person;Zustellversuch nicht erfolgreich;Delivery attempt not successful;0;1;0
+RETRN;RFUSD;ZN;Shipment will be returned to origin;Refused;Rücksendung;Annahme Verweigert;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+RETRN;RTSCR;ZN;Shipment will be returned to origin;Return to shipper at customer request;Rücksendung;Rücksendung aufgrund von Kundenwunsch;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+RETRN;RTSSA;ZN;Shipment will be returned to origin;Return to shipper by customer standard agreement;Rücksendung;Rücksendung aufgrund Vereinbarung mit Absender;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;1;0
+RETRN;UDFPC;BV;Shipment will be returned to origin;Unidentifiable piece;Rücksendung;Unidentifizierbars Packstück;Besondere Vorkommnisse;Exception;1;0;0
+RETRN;WRGDT;ZN;Shipment will be returned to origin;Wrong Date;Rücksendung;Falsches Datum;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+RETRN;WRGID;ZN;Shipment will be returned to origin;Wrong Check-ID;Rücksendung;Falsche Prüf-ID;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+RETRN;WRGTR;ZN;Shipment will be returned to origin;Wrong tour;Rücksendung;Falsche Tour;Zustellversuch nicht erfolgreich;Delivery attempt not successful;1;0;0
+ROUCR;PKBOX;PO;Re-Routed on customer request;Delivery to Packetbox;Umleitung aufgrund Empfängerverfügung;Zustellung an Paketkasten;Im Zustellprozess;In delivery process;1;0;0
+RSDCP;FWEXH;ZO;Released from clearance processing;ForWarded for Export Handling;Zollfreigabe;Weiterleitung zur Exportbearbeitung;Zoll;Customs clearance;1;1;0
+RSDCP;OARRV;ZO;Released from clearance processing;On arrival;Zollfreigabe;Zollfreigabe;Zoll;Customs clearance;0;1;1
+SECHK;CCPSD;BV;Security checked;Content Check - Passed;Sicherheitsprüfung;Inhaltskontrolle erfolgt;Besondere Vorkommnisse;Exception;1;0;0
+SECHK;DGCPS;BV;Security checked;Dangerous goods check - Passed;Sicherheitsprüfung;Gefahrgutprüfung erfolgt;Besondere Vorkommnisse;Exception;1;0;0
+SECHK;INSPT;BV;Security checked;Inspection;Sicherheitsprüfung;Es besteht der Verdacht auf Beraubung. Die Sendung wird inspiziert.;Besondere Vorkommnisse;Exception;1;0;0
+SECHK;NRQRD;BV;Security checked;ICE Details;Sicherheitsprüfung;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;1;0;0
+SHRCU;NRQRD;ES;Shipment Received from customer;ICE Details;Einlieferung der Sendung durch den Kunden;Keine weiteren Details erforderlich;Eingang in Sendungsverlauf;Handed over to DHL;1;0;0
+SHRCU;PCKST;ES;Shipment Received from customer;Packstation;Einlieferung der Sendung durch den Kunden;Packstation;Eingang in Sendungsverlauf;Handed over to DHL;1;0;0
+SHRCU;SERPT;ES;Shipment Received from customer;Service Point;Einlieferung der Sendung durch den Kunden;Filiale / Agentur;Eingang in Sendungsverlauf;Handed over to DHL;1;0;0
+SRTED;FWAPS;AA;Sorted;ForWarded for Army Postal Service;Sortierung;Weiterleitung für die Feldpost-Bearbeitung;Abgang aus ...;Departed from;1;0;0
+SRTED;FWAPS;EE;Sorted;ForWarded for Army Postal Service;Sortierung;Weiterleitung für die Feldpost-Bearbeitung;Eingang in ...;Arrived at;1;0;0
+SRTED;FWEXH;AA;Sorted;ForWarded for Export Handling;Sortierung;Weiterleitung zur Exportbearbeitung;Abgang aus ...;Departed from;1;0;0
+SRTED;FWEXH;EE;Sorted;ForWarded for Export Handling;Sortierung;Weiterleitung zur Exportbearbeitung;Eingang in ...;Arrived at;1;1;0
+SRTED;FWEXH;NB;Sorted;ForWarded for Export Handling;Sortierung;Weiterleitung zur Exportbearbeitung;Normale Bearbeitung;Normal processing;0;0;1
+SRTED;FWEXP;AA;Sorted;ForWarded for EXPress handling;Sortierung;Weiterleitung zum Transport im Express-Netzwerk;Abgang aus ...;Departed from;1;0;0
+SRTED;FWEXP;EE;Sorted;ForWarded for EXPress handling;Sortierung;Weiterleitung zum Transport im Express-Netzwerk;Eingang in ...;Arrived at;1;0;0
+SRTED;NRQRD;AE;Sorted;ICE Details;Sortierung;Keine weiteren Details erforderlich;Abholung beim Kunden erfolgreich;Pickup successful;0;1;0
+SRTED;NRQRD;ES;Sorted;ICE Details;Sortierung;Keine weiteren Details erforderlich;Eingang in Sendungsverlauf;Handed over to DHL;1;0;0
+SRTED;NRQRD;NB;Sorted;ICE Details;Sortierung;Keine weiteren Details erforderlich;Normale Bearbeitung;Normal processing;1;1;1
+SRTED;NRQRD;PO;Sorted;ICE Details;Sortierung;Keine weiteren Details erforderlich;Im Zustellprozess;In delivery process;1;0;1
+STORN;NRQRD;DD;The previous event was deleted by driver;ICE Details;Storno - vorheriges Ereignis durch Zusteller gelöscht;Keine weiteren Details erforderlich;Datendienst;Data Service;1;0;0
+TRBCR;NRQRD;BV;Transferred between carriers;ICE Details;Übergabe zwischen Transporteuren;Keine weiteren Details erforderlich;Besondere Vorkommnisse;Exception;1;0;0
+ULFMV;OARRV;EE;Unloaded from movement / tour vehicle;On arrival;Eingang;Zollfreigabe;Eingang in ...;Arrived at;0;1;0
+ULFMV;OARRV;NB;Unloaded from movement / tour vehicle;On arrival;Eingang;Zollfreigabe;Normale Bearbeitung;Normal processing;0;1;0
+ULFMV;UNLDD;EE;Unloaded from movement / tour vehicle;Unloaded;Eingang;Entladung;Eingang in ...;Arrived at;1;1;0
+ULFMV;UNLDD;PO;Unloaded from movement / tour vehicle;Unloaded;Eingang;Entladung;Im Zustellprozess;In delivery process;1;0;1

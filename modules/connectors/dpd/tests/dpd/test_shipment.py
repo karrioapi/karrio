@@ -173,7 +173,7 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
     <soapenv:Header>
         <ns:authentication>
             <delisId>KD*****</delisId>
-            <authToken>****</authToken>
+            <authToken>[AUTH_TOKEN]</authToken>
             <messageLanguage>en_EN</messageLanguage>
         </ns:authentication>
     </soapenv:Header>
@@ -185,6 +185,7 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
             </printOptions>
             <order>
                 <generalShipmentData>
+                    <sendingDepot>0530</sendingDepot>
                     <product>CL</product>
                     <sender>
                         <name1>Senders NV</name1>
@@ -225,7 +226,7 @@ MultiPieceShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.x
     <soapenv:Header>
         <ns:authentication>
             <delisId>KD*****</delisId>
-            <authToken>****</authToken>
+            <authToken>[AUTH_TOKEN]</authToken>
             <messageLanguage>en_EN</messageLanguage>
         </ns:authentication>
     </soapenv:Header>
@@ -237,6 +238,7 @@ MultiPieceShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.x
             </printOptions>
             <order>
                 <generalShipmentData>
+                    <sendingDepot>0530</sendingDepot>
                     <product>CL</product>
                     <sender>
                         <name1>Senders NV</name1>
@@ -281,7 +283,7 @@ IntlShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap
     <soapenv:Header>
         <ns:authentication>
             <delisId>KD*****</delisId>
-            <authToken>****</authToken>
+            <authToken>[AUTH_TOKEN]</authToken>
             <messageLanguage>en_EN</messageLanguage>
         </ns:authentication>
     </soapenv:Header>
@@ -294,6 +296,7 @@ IntlShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap
             <order>
                 <generalShipmentData>
                     <mpsCustomerReferenceNumber1>#Order 11111</mpsCustomerReferenceNumber1>
+                    <sendingDepot>0530</sendingDepot>
                     <product>CL</product>
                     <sender>
                         <name1>Senders NV</name1>

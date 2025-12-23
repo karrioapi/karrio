@@ -339,7 +339,9 @@ class TrackingEvent:
     description: str
     code: str = None
     time: str = None
-    reason: str = None
+    timestamp: str = None  # ISO 8601 format "2025-12-04T07:16:00.000Z"
+    status: str = None  # Normalized status (TrackerStatus enum value name)
+    reason: str = None  # Normalized reason (TrackingIncidentReason enum value name)
     location: str = None
 
     # Geolocation

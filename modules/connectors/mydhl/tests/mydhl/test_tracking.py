@@ -118,26 +118,28 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "mydhl",
             "carrier_name": "mydhl",
-            "tracking_number": "9356579890",
+            "delivered": True,
+            "estimated_delivery": "2024-01-15",
             "events": [
                 {
-                    "date": "2024-01-15",
-                    "time": "17:00",
                     "code": "OK",
+                    "date": "2024-01-15",
                     "description": "Shipment delivered",
-                    "location": "New York, NY"
+                    "location": "New York, NY",
+                    "status": "delivered",
+                    "time": "17:00",
+                    "timestamp": "2024-01-15T17:00:00.000Z",
                 },
                 {
-                    "date": "2024-01-15",
-                    "time": "08:00",
                     "code": "PU",
+                    "date": "2024-01-15",
                     "description": "Shipment picked up",
-                    "location": "Los Angeles, CA"
+                    "location": "Los Angeles, CA",
+                    "status": "pending",
+                    "time": "08:00",
+                    "timestamp": "2024-01-15T08:00:00.000Z",
                 }
             ],
-            "estimated_delivery": "2024-01-15",
-            "delivered": True,
-            "status": "delivered",
             "images": {},
             "info": {
                 "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=9356579890",
@@ -150,6 +152,8 @@ ParsedTrackingResponse = [
                 "product_code": "P",
                 "shipment_timestamp": "2024-01-10T10:00:00"
             },
+            "status": "delivered",
+            "tracking_number": "9356579890",
         }
     ],
     []

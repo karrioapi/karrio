@@ -17,6 +17,7 @@ gateway = karrio.gateway["dpd"].create(
     dict(
         delis_id=delis_id,
         password=password,
+        depot="0530",
         test_mode=True,
     ),
     cache=lib.Cache(**cached_auth),

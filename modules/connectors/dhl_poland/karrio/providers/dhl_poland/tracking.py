@@ -53,6 +53,10 @@ def _extract_tracking_details(
                 location=event.terminal,
                 code=event.status,
                 time=lib.flocaltime(event.timestamp, "%Y-%m-%d %H:%M:%S"),
+                timestamp=lib.fiso_timestamp(
+                    event.timestamp,
+                    current_format="%Y-%m-%d %H:%M:%S",
+                ),
             )
             for event in events
         ],

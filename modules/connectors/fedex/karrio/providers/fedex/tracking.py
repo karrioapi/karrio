@@ -98,7 +98,23 @@ def _extract_details(
                     else e.locationType
                 ),
                 description=(lib.text(e.exceptionDescription) or e.eventDescription),
-                reason=lib.text(e.exceptionDescription),
+                timestamp=lib.fiso_timestamp(e.date, current_format=DATETIME_FORMATS[0]),
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if e.eventType in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if e.eventType in r.value
+                    ),
+                    None,
+                ),
             )
             for e in detail.scanEvents
         ],

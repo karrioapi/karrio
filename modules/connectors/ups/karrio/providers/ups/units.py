@@ -633,50 +633,87 @@ class UploadDocumentType(utils.StrEnum):
 class TrackingStatus(utils.Enum):
     # Based on UPS API documentation - Status types and codes
     # D = delivery information, I = in-progress, M/MV = manifest, U = update, X = exception
-    
-    # Delivered statuses
-    delivered = ["D", "FS", "KB", "F4"]  # D=delivered type, FS=final status, KB=delivered, F4=delivered code
-    
-    # In-transit/processing statuses
-    in_transit = ["I", "OR", "DP", "AA", "AR", "AF", "AL", "OD", "DS", "IH", "AP"]
-    # I=in-progress, OR=origin scan, DP=departure scan, AA=arrival scan, AR=arrival scan
-    # AF=arrival facility, AL=arrival location, OD=on delivery vehicle, DS=departure scan
-    # IH=in-transit hub, AP=arrival at post office
-    
-    # Pending/manifest statuses  
+
+    # Pending/manifest statuses - shipment info received, awaiting pickup
     pending = ["M", "MV", "MP", "XD", "OA", "DD"]  # M=manifest, MV=manifest void, MP=manifest pickup
     # XD=signature required, OA=order assigned, DD=data downloaded
-    
+
+    # Picked up - package physically picked up by carrier (NEW)
+    picked_up = ["OR", "PU", "OC", "OG"]  # OR=origin scan, PU=picked up
+    # OC=origin country, OG=origin gate
+
+    # Delivered statuses
+    delivered = ["D", "FS", "KB", "F4"]  # D=delivered type, FS=final status, KB=delivered, F4=delivered code
+
+    # In-transit/processing statuses
+    in_transit = ["I", "DP", "AA", "AR", "AF", "AL", "DS", "IH", "AP"]
+    # I=in-progress, DP=departure scan, AA=arrival scan, AR=arrival scan
+    # AF=arrival facility, AL=arrival location, DS=departure scan
+    # IH=in-transit hub, AP=arrival at post office
+
     # Out for delivery
     out_for_delivery = ["OT", "OD", "OF", "DL"]  # OT=out for delivery, OD=on delivery vehicle
     # OF=out for final delivery, DL=delivery in progress
-    
+
     # On hold/exception statuses
     on_hold = ["X", "EX", "HX", "HD", "HI", "HS", "HU", "NH"]  # X=exception type
     # EX=exception, HX=hold exception, HD=hold at depot, HI=hold instruction
     # HS=hold at station, HU=hold until, NH=no such number
-    
+
     # Delivery failed/returned statuses
-    delivery_failed = ["RS", "RT", "RF", "RH", "UR", "UF", "CC"]  # RS=return to sender
-    # RT=return to, RF=refused, RH=return home, UR=undeliverable return
+    delivery_failed = ["RF", "UR", "UF", "CC"]  # RF=refused, UR=undeliverable return
     # UF=unable to forward, CC=call center
-    
-    # Cancelled/void statuses  
+
+    # Cancelled/void statuses
     cancelled = ["VD", "CA", "CN", "CV"]  # VD=void, CA=cancelled, CN=cancel, CV=cancel void
-    
+
     # Ready for pickup
-    ready_for_pickup = ["RP", "UU", "PU", "AC", "WC"]  # RP=ready for pickup, UU=unable to deliver
-    # PU=pickup, AC=available for collection, WC=will call
-    
+    ready_for_pickup = ["RP", "UU", "AC", "WC"]  # RP=ready for pickup, UU=unable to deliver
+    # AC=available for collection, WC=will call
+
     # Delivery delayed
-    delivery_delayed = ["DY", "DE", "DD", "SD"]  # DY=delay, DE=delayed, DD=delivery date, SD=service delay
-    
-    # Return to sender  
+    delivery_delayed = ["DY", "DE", "SD"]  # DY=delay, DE=delayed, SD=service delay
+
+    # Return to sender
     return_to_sender = ["RS", "RT", "RH", "RU"]  # RS=return to sender, RT=return to
     # RH=return home, RU=return undeliverable
-    
+
     # Unknown/unrecognized statuses
     unknown = []  # For any unrecognized status codes
+
+
+class TrackingIncidentReason(utils.Enum):
+    """Maps UPS exception codes to normalized TrackingIncidentReason.
+
+    Based on UPS API exception/status codes.
+    """
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DA", "DM", "DMG"]  # Damaged
+    carrier_sorting_error = ["MR", "MSR"]  # Misrouted
+    carrier_address_not_found = ["NA", "NL", "ANF"]  # Address not found, no location
+    carrier_parcel_lost = ["LO", "LT", "LP"]  # Lost
+    carrier_not_enough_time = ["LT", "NT"]  # Late/no time
+    carrier_vehicle_issue = ["ME", "VB"]  # Mechanical, vehicle breakdown
+
+    # Consignee-caused issues
+    consignee_refused = ["RF", "RJ", "RE"]  # Refused
+    consignee_business_closed = ["BC", "CL"]  # Business closed
+    consignee_not_available = ["NA1", "NI"]  # Not available
+    consignee_not_home = ["NH", "NI", "NAH"]  # Not home
+    consignee_incorrect_address = ["IA", "WA", "BA"]  # Incorrect/wrong/bad address
+    consignee_access_restricted = ["AR", "NS", "SC"]  # Access restricted, no safe, security
+
+    # Customs-related issues
+    customs_delay = ["CD", "CH", "CI"]  # Customs delay/hold/inspection
+    customs_documentation = ["CM", "CP"]  # Customs missing docs, paperwork
+    customs_duties_unpaid = ["CU", "DU"]  # Customs unpaid, duties unpaid
+
+    # Weather/Force majeure
+    weather_delay = ["WE", "WD"]  # Weather
+    natural_disaster = ["ND", "EM"]  # Natural disaster, emergency
+
+    # Other issues
+    unknown = []  # Unrecognized codes
 
 
 # from https://developer.ups.com/api/reference/rating/appendix?loc=en_US

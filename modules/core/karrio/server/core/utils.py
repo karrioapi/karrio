@@ -796,6 +796,24 @@ def get_carrier_tracking_link(carrier, tracking_number: str):
     return tracking_url.format(tracking_number) if tracking_url is not None else None
 
 
+def _ensure_picked_up_status(events: typing.List[dict]) -> typing.List[dict]:
+    """Transform the chronologically first in_transit event to picked_up if none exists."""
+    if not events or any(e.get("status") == "picked_up" for e in events):
+        return events
+
+    # Events are sorted desc, so first in_transit chronologically is last in list
+    first_idx = next(
+        (i for i in range(len(events) - 1, -1, -1) if events[i].get("status") == "in_transit"),
+        None,
+    )
+
+    return (
+        [{**e, "status": "picked_up"} if i == first_idx else e for i, e in enumerate(events)]
+        if first_idx is not None
+        else events
+    )
+
+
 def process_events(
     response_events: typing.List[datatypes.TrackingEvent],
     current_events: typing.List[dict],
@@ -874,7 +892,11 @@ def process_events(
 
     # Merge and sort all events
     merged_events = current_events + unique_new_events
-    return sorted(merged_events, key=create_sort_key, reverse=True)
+    sorted_events = sorted(merged_events, key=create_sort_key, reverse=True)
+
+    # Transform first in_transit to picked_up if no picked_up exists
+    # This provides a consistent pickup milestone across all carriers
+    return _ensure_picked_up_status(sorted_events)
 
 
 def _get_carrier_for_service(service: str, context=None) -> typing.Optional[str]:
