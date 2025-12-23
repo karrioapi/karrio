@@ -1,11 +1,8 @@
 """USPS International connection settings."""
 
 import re
-import datetime
 import karrio.lib as lib
 import karrio.core as core
-import karrio.core.errors as errors
-from karrio.core.utils.caching import ThreadSafeTokenManager
 
 AccountType = lib.units.create_enum(
     "AccountType",
@@ -44,33 +41,6 @@ class Settings(core.Settings):
             option_type=ConnectionConfig,
         )
 
-    @property
-    def access_token(self):
-        """Retrieve the access_token using the client_id|client_secret pair
-        or collect it from the cache if an unexpired access_token exist.
-        """
-        cache_key = f"access|{self.carrier_name}|{self.client_id}|{self.client_secret}"
-
-        return self.connection_cache.thread_safe(
-            refresh_func=lambda: oauth2_login(self),
-            cache_key=cache_key,
-            buffer_minutes=30,
-        ).get_state()
-
-    @property
-    def payment_token(self):
-        """Retrieve the paymentAuthorizationToken using the client_id|client_secret pair
-        or collect it from the cache if an unexpired paymentAuthorizationToken exist.
-        """
-        cache_key = f"payment|{self.carrier_name}|{self.client_id}|{self.client_secret}"
-
-        return self.connection_cache.thread_safe(
-            refresh_func=lambda: payment_auth(self),
-            cache_key=cache_key,
-            buffer_minutes=30,
-            token_field="paymentAuthorizationToken",
-        ).get_state()
-
 
 class ConnectionConfig(lib.Enum):
     permit_ZIP = lib.OptionEnum("permit_ZIP")
@@ -84,102 +54,6 @@ class ConnectionConfig(lib.Enum):
             ["RETAIL", "COMMERCIAL", "COMMERCIAL_BASE", "COMMERCIAL_PLUS", "CONTRACT"],
         ),
     )
-
-
-def oauth2_login(settings: Settings):
-    import karrio.providers.usps_international.error as error
-
-    API_SCOPES = [
-        "addresses",
-        "international-prices",
-        "subscriptions",
-        "payments",
-        "pickup",
-        "tracking",
-        "labels",
-        "scan-forms",
-        "companies",
-        "service-delivery-standards",
-        "locations",
-        "international-labels",
-        "prices",
-        "shipments",
-    ]
-    result = lib.request(
-        url=f"{settings.server_url}/oauth2/v3/token",
-        trace=settings.trace_as("json"),
-        method="POST",
-        headers={"content-Type": "application/x-www-form-urlencoded"},
-        data=lib.to_query_string(
-            dict(
-                grant_type="client_credentials",
-                client_id=settings.client_id,
-                client_secret=settings.client_secret,
-                scope=" ".join(API_SCOPES),
-            )
-        ),
-    )
-
-    response = lib.to_dict(result)
-    messages = error.parse_error_response(response, settings)
-
-    if any(messages):
-        raise errors.ParsedMessagesError(messages)
-
-    expiry = datetime.datetime.now() + datetime.timedelta(
-        seconds=float(response.get("expires_in", 0))
-    )
-
-    return {**response, "expiry": lib.fdatetime(expiry)}
-
-
-def payment_auth(settings: Settings):
-    import karrio.providers.usps_international.error as error
-
-    result = lib.request(
-        url=f"{settings.server_url}/payments/v3/payment-authorization",
-        trace=settings.trace_as("json"),
-        method="POST",
-        headers={
-            "content-Type": "application/json",
-            "Authorization": f"Bearer {settings.access_token}",
-        },
-        data=lib.to_json(
-            {
-                "roles": [
-                    {
-                        "roleName": "LABEL_OWNER",
-                        "CRID": settings.CRID,
-                        "MID": settings.MID,
-                        "accountType": settings.account_type or "EPS",
-                        "accountNumber": settings.account_number,
-                        "manifestMID": settings.manifest_MID,
-                        # "permitNumber": settings.connection_config.permit_number.state,
-                        # "permitZIP": settings.connection_config.permit_ZIP.state,
-                    },
-                    {
-                        "roleName": "PAYER",
-                        "CRID": settings.CRID,
-                        "MID": settings.MID,
-                        "accountType": settings.account_type or "EPS",
-                        "accountNumber": settings.account_number,
-                        # "permitNumber": settings.connection_config.permit_number.state,
-                        # "permitZIP": settings.connection_config.permit_zip.state,
-                    },
-                ]
-            }
-        ),
-    )
-
-    response = lib.to_dict(result)
-    messages = error.parse_error_response(response, settings)
-
-    if any(messages):
-        raise errors.ParsedMessagesError(messages)
-
-    expiry = datetime.datetime.now() + datetime.timedelta(minutes=50)
-
-    return {**response, "expiry": lib.fdatetime(expiry)}
 
 
 def normalize_multipart_response(response: str) -> str:

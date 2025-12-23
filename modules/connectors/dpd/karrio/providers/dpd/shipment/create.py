@@ -1,4 +1,5 @@
 import karrio.schemas.dpd.ShipmentServiceV33 as dpd
+import karrio.schemas.dpd.Authentication20 as auth_schema
 import typing
 import base64
 import karrio.lib as lib
@@ -79,7 +80,11 @@ def shipment_request(
 
     request = lib.Envelope(
         Header=lib.Header(
-            settings.authentication,
+            auth_schema.authentication(
+                delisId=settings.delis_id,
+                authToken="[AUTH_TOKEN]",
+                messageLanguage=settings.message_language,
+            ),
         ),
         Body=lib.Body(
             dpd.storeOrders(
@@ -318,9 +323,11 @@ def shipment_request(
                                                 invoicePosition=None,
                                             )
                                             for index, item in enumerate(
-                                                pkg.items
-                                                if any(pkg.items)
-                                                else customs.commodities,
+                                                (
+                                                    pkg.items
+                                                    if any(pkg.items)
+                                                    else customs.commodities
+                                                ),
                                                 start=1,
                                             )
                                         ],

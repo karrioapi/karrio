@@ -1,12 +1,53 @@
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
+import karrio.providers.ups.error as provider_error
 from karrio.mappers.ups.settings import Settings
 
 
 class Proxy(proxy.Proxy):
     settings: Settings
+
+    def authenticate(self, _=None) -> lib.Deserializable[str]:
+        """Retrieve the access_token using the client_id|client_secret pair
+        or collect it from the cache if an unexpired access_token exist.
+        """
+        cache_key = f"{self.settings.carrier_name}|{self.settings.client_id}|{self.settings.client_secret}"
+
+        def get_token():
+            merchant_id = self.settings.connection_config.merchant_id.state
+            result = lib.request(
+                url=f"{self.settings.server_url}/security/v1/oauth/token",
+                trace=self.settings.trace_as("json"),
+                data="grant_type=client_credentials",
+                method="POST",
+                headers={
+                    "authorization": f"Basic {self.settings.authorization}",
+                    "content-Type": "application/x-www-form-urlencoded",
+                    **({"x-merchant-id": merchant_id} if merchant_id else {}),
+                },
+                max_retries=2,
+            )
+            response = lib.to_dict(result)
+            messages = provider_error.parse_error_response(response, self.settings)
+
+            if any(messages):
+                raise errors.ParsedMessagesError(messages=messages)
+
+            expiry = datetime.datetime.fromtimestamp(
+                float(response.get("issued_at")) / 1000
+            ) + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
+            return {**response, "expiry": lib.fdatetime(expiry)}
+
+        token = self.settings.connection_cache.thread_safe(
+            refresh_func=get_token,
+            cache_key=cache_key,
+            buffer_minutes=30,
+        )
+
+        return lib.Deserializable(token.get_state())
 
     def _send_request(
         self,
@@ -16,7 +57,7 @@ class Proxy(proxy.Proxy):
         headers: dict = None,
     ) -> str:
         try:
-            access_token = self.settings.access_token
+            access_token = self.authenticate().deserialize()
 
             return lib.request(
                 url=f"{self.settings.server_url}{path}",

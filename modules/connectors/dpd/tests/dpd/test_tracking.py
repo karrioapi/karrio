@@ -220,7 +220,7 @@ TrackingRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
     <soapenv:Header>
         <ns:authentication>
             <delisId>KD*****</delisId>
-            <authToken>****</authToken>
+            <authToken>[AUTH_TOKEN]</authToken>
             <messageLanguage>en_EN</messageLanguage>
         </ns:authentication>
     </soapenv:Header>

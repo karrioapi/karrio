@@ -1,4 +1,5 @@
 import karrio.schemas.dpd.ParcelLifecycleServiceV20 as dpd
+import karrio.schemas.dpd.Authentication20 as auth_schema
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -113,7 +114,11 @@ def tracking_request(
     request = {
         tracking_number: lib.Envelope(
             Header=lib.Header(
-                settings.authentication,
+                auth_schema.authentication(
+                    delisId=settings.delis_id,
+                    authToken="[AUTH_TOKEN]",
+                    messageLanguage=settings.message_language,
+                )
             ),
             Body=lib.Body(
                 dpd.getTrackingData(
