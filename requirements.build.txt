@@ -14,6 +14,7 @@
 -e ./modules/connectors/dpd
 -e ./modules/connectors/fedex
 -e ./modules/connectors/generic
+-e ./modules/connectors/gls_group
 -e ./modules/connectors/landmark
 -e ./modules/connectors/laposte
 -e ./modules/connectors/purolator

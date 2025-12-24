@@ -1,0 +1,23 @@
+{
+  "shipmentId": "GLS123456789",
+  "trackingNumbers": [
+    "12345678901234567890"
+  ],
+  "parcels": [
+    {
+      "parcelId": "P001",
+      "trackingNumber": "12345678901234567890",
+      "weight": 5.5
+    }
+  ],
+  "labels": [
+    {
+      "trackingNumber": "12345678901234567890",
+      "labelData": "JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlL0NhdGFs...",
+      "labelFormat": "PDF"
+    }
+  ],
+  "createdAt": "2025-01-15T10:30:00Z",
+  "shippingDate": "2025-01-16",
+  "status": "CREATED"
+}

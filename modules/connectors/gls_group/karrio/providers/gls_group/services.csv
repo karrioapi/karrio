@@ -1,0 +1,6 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+PARCEL,GLS Parcel,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,1,true,false
+EXPRESS,GLS Express,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,1,true,false
+GUARANTEED24,GLS Guaranteed24,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,1,true,false
+BUSINESSPARCEL,GLS Business Parcel,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,2,true,false
+EUROBUSINESSPARCEL,GLS Euro Business Parcel,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,31.5,200,60,60,0.0,EUR,3,false,true
