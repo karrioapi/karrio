@@ -1,0 +1,62 @@
+[
+  {
+    "numberOfParcels": "1a",
+    "shipmentInfos": {
+      "productCode": "101a",
+      "shipmentId": "SHIP123456",
+      "weight": "3000a",
+      "dimensions": {
+        "length": 30,
+        "width": 20,
+        "height": 15
+      }
+    },
+    "sender": {
+      "customerInfos": {
+        "customerID": "CUST001",
+        "customerAccountNumber": "ACC123"
+      },
+      "address": {
+        "companyName": "Sender Corp",
+        "name1": "John Sender",
+        "street": "Main Street",
+        "houseNumber": "42a",
+        "zipCode": "10115a",
+        "city": "Berlin",
+        "country": "DE"
+      },
+      "contact": {
+        "phone1": "+49301234567",
+        "email": "sender@example.com"
+      }
+    },
+    "receiver": {
+      "address": {
+        "name1": "Jane Receiver",
+        "companyName": "Receiver Inc",
+        "street": "Secondary Road",
+        "houseNumber": "88a",
+        "zipCode": "75001a",
+        "city": "Paris",
+        "country": "FR"
+      },
+      "contact": {
+        "phone1": "+33123456789",
+        "email": "receiver@example.com"
+      }
+    },
+    "parcel": [
+      {
+        "parcelInfos": {
+          "weight": "3000a",
+          "dimensions": {
+            "length": 30,
+            "width": 20,
+            "height": 15
+          }
+        },
+        "parcelContent": "Electronic equipment"
+      }
+    ]
+  }
+]
