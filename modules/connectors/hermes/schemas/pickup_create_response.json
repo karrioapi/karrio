@@ -1,0 +1,10 @@
+{
+  "pickupResponse": {
+    "confirmationNumber": "PICKUP123456",
+    "pickupDate": "2023-06-01",
+    "readyTime": "09:00",
+    "closingTime": "17:00",
+    "status": "scheduled",
+    "requestId": "REQ123456"
+  }
+}
