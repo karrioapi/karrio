@@ -1,6 +1,9 @@
 {
-  "shipmentCancelResponse": {
-    "success": true,
-    "message": "Shipment successfully cancelled"
-  }
+  "listOfResultCodes": [
+    {
+      "code": "i001",
+      "message": "Shipment order deleted successfully"
+    }
+  ],
+  "shipmentOrderID": "52269002669"
 }

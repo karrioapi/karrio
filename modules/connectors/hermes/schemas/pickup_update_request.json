@@ -1,24 +1,28 @@
 {
-  "pickupUpdateRequest": {
-    "confirmationNumber": "PICKUP123456",
-    "accountNumber": "123456",
-    "pickupDate": "2023-06-01",
-    "readyTime": "10:00",
-    "closingTime": "18:00",
-    "instruction": "Please knock loudly and call before arrival",
-    "address": {
-      "companyName": "ACME Corp",
-      "personName": "John Doe",
-      "street": "123 Main St",
-      "city": "Anytown",
-      "state": "CA",
-      "postalCode": "12345",
-      "country": "US",
-      "phone": "555-123-4567",
-      "email": "john@example.com"
-    },
-    "parcelCount": 5,
-    "weight": 15.5,
-    "weightUnit": "KG"
+  "pickupOrderID": "12345678901",
+  "pickupAddress": {
+    "street": "Essener Str.",
+    "houseNumber": "89",
+    "zipCode": "22419",
+    "town": "Hamburg",
+    "countryCode": "DE",
+    "addressAddition": ""
+  },
+  "pickupName": {
+    "title": "Herr",
+    "gender": "M",
+    "firstname": "Max",
+    "middlename": "",
+    "lastname": "Mustermann"
+  },
+  "phone": "+4940537550",
+  "pickupDate": "2025-03-08",
+  "pickupTimeSlot": "BETWEEN_12_AND_15",
+  "parcelCount": {
+    "pickupParcelCountXS": 0,
+    "pickupParcelCountS": 3,
+    "pickupParcelCountM": 2,
+    "pickupParcelCountL": 1,
+    "pickupParcelCountXL": 0
   }
 }

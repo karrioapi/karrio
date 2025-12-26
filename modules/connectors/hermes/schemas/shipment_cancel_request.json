@@ -1,5 +1,3 @@
 {
-  "shipmentCancelRequest": {
-    "shipmentIdentifier": "SHIP123456"
-  }
+  "shipmentOrderID": "52269002669"
 }
