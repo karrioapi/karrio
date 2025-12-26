@@ -7,8 +7,8 @@ import typing
 class FiscalRepresentationAddressType:
     company: typing.Optional[str] = None
     street: typing.Optional[str] = None
-    houseNumber: typing.Optional[int] = None
-    zipCode: typing.Optional[int] = None
+    houseNumber: typing.Optional[str] = None
+    zipCode: typing.Optional[str] = None
     town: typing.Optional[str] = None
     addressAddition: typing.Optional[str] = None
     phone: typing.Optional[str] = None
@@ -87,8 +87,8 @@ class ParcelType:
 @attr.s(auto_attribs=True)
 class ErAddressType:
     street: typing.Optional[str] = None
-    houseNumber: typing.Optional[int] = None
-    zipCode: typing.Optional[int] = None
+    houseNumber: typing.Optional[str] = None
+    zipCode: typing.Optional[str] = None
     town: typing.Optional[str] = None
     countryCode: typing.Optional[str] = None
     addressAddition: typing.Optional[str] = None
@@ -129,9 +129,9 @@ class CustomerAlertServiceType:
 
 @attr.s(auto_attribs=True)
 class IdentServiceType:
-    identID: typing.Optional[int] = None
+    identID: typing.Optional[str] = None
     identType: typing.Optional[str] = None
-    identVerifyFsk: typing.Optional[int] = None
+    identVerifyFsk: typing.Optional[str] = None
     identVerifyBirthday: typing.Optional[str] = None
 
 
@@ -146,7 +146,7 @@ class MultipartServiceType:
 class ParcelShopDeliveryServiceType:
     psCustomerFirstName: typing.Optional[str] = None
     psCustomerLastName: typing.Optional[str] = None
-    psID: typing.Optional[int] = None
+    psID: typing.Optional[str] = None
     psSelectionRule: typing.Optional[str] = None
 
 

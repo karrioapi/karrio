@@ -1,9 +1,9 @@
 {
-  "pickupOrderID": "12345678901",
+  "pickupOrderID": "PO-12345678901",
   "pickupAddress": {
     "street": "Essener Str.",
-    "houseNumber": "89",
-    "zipCode": "22419",
+    "houseNumber": "89b",
+    "zipCode": "DE-22419",
     "town": "Hamburg",
     "countryCode": "DE",
     "addressAddition": ""

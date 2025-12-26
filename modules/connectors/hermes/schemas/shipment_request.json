@@ -10,8 +10,8 @@
   },
   "receiverAddress": {
     "street": "Essener Bogen",
-    "houseNumber": "1",
-    "zipCode": "22419",
+    "houseNumber": "1a",
+    "zipCode": "DE-22419",
     "town": "Hamburg",
     "countryCode": "DE",
     "addressAddition": "Second Floor",
@@ -32,8 +32,8 @@
   },
   "senderAddress": {
     "street": "Company Street",
-    "houseNumber": "1",
-    "zipCode": "12345",
+    "houseNumber": "1b",
+    "zipCode": "DE-12345",
     "town": "Sender City",
     "countryCode": "DE",
     "addressAddition": "Example Company",
@@ -76,14 +76,14 @@
     "parcelShopDeliveryService": {
       "psCustomerFirstName": "Max",
       "psCustomerLastName": "Mustermann",
-      "psID": "656499",
+      "psID": "PS-656499",
       "psSelectionRule": "SELECT_BY_ID"
     },
     "compactParcelService": false,
     "identService": {
-      "identID": "123456789",
+      "identID": "ID-123456789",
       "identType": "GERMAN_IDENTITY_CARD",
-      "identVerifyFsk": "18",
+      "identVerifyFsk": "FSK-18",
       "identVerifyBirthday": "2000-01-01"
     },
     "statedDayService": {
@@ -124,8 +124,8 @@
       "fiscalRepresentationAddress": {
         "company": "Example Company",
         "street": "Example Street",
-        "houseNumber": "1",
-        "zipCode": "3001",
+        "houseNumber": "1c",
+        "zipCode": "CH-3001",
         "town": "Example Town",
         "addressAddition": "Second Floor",
         "phone": "",
