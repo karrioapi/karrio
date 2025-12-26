@@ -8,9 +8,11 @@ import karrio.providers.hermes.utils as provider_utils
 class Settings(provider_utils.Settings):
     """Hermes connection settings."""
 
-    # Add carrier specific API connection properties here
-    api_key: str
-    account_number: str = None
+    # OAuth2 credentials (password flow)
+    username: str  # type:ignore
+    password: str  # type:ignore
+    client_id: str  # type:ignore
+    client_secret: str  # type:ignore
 
     # generic properties
     id: str = None
