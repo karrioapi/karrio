@@ -1,10 +1,9 @@
 {
-  "pickupUpdateResponse": {
-    "confirmationNumber": "PICKUP123456",
-    "pickupDate": "2023-06-01",
-    "readyTime": "10:00",
-    "closingTime": "18:00",
-    "status": "modified",
-    "requestId": "REQ123456"
-  }
+  "listOfResultCodes": [
+    {
+      "code": "i001",
+      "message": "Pickup order updated successfully"
+    }
+  ],
+  "pickupOrderID": "12345678901"
 }

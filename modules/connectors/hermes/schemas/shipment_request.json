@@ -1,43 +1,156 @@
 {
-  "shipmentRequest": {
-    "shipper": {
-      "addressLine1": "123 Main St",
-      "city": "Anytown",
-      "postalCode": "12345",
-      "countryCode": "US",
-      "stateCode": "CA",
-      "personName": "John Doe",
-      "companyName": "ACME Corp",
-      "phoneNumber": "555-123-4567",
-      "email": "john@example.com"
+  "clientReference": "01234567890123456789",
+  "clientReference2": "01234567890123456789",
+  "receiverName": {
+    "title": "Herr",
+    "gender": "M",
+    "firstname": "Max",
+    "middlename": "",
+    "lastname": "Mustermann"
+  },
+  "receiverAddress": {
+    "street": "Essener Bogen",
+    "houseNumber": "1",
+    "zipCode": "22419",
+    "town": "Hamburg",
+    "countryCode": "DE",
+    "addressAddition": "Second Floor",
+    "addressAddition2": "",
+    "addressAddition3": ""
+  },
+  "receiverContact": {
+    "phone": "+4940537550",
+    "mobile": "+491701234567",
+    "mail": "someone@example.com"
+  },
+  "senderName": {
+    "title": "",
+    "gender": "",
+    "firstname": "SendersFirstName",
+    "middlename": "",
+    "lastname": "SendersLastName"
+  },
+  "senderAddress": {
+    "street": "Company Street",
+    "houseNumber": "1",
+    "zipCode": "12345",
+    "town": "Sender City",
+    "countryCode": "DE",
+    "addressAddition": "Example Company",
+    "addressAddition2": "",
+    "addressAddition3": ""
+  },
+  "parcel": {
+    "parcelClass": "M",
+    "parcelHeight": 500,
+    "parcelWidth": 300,
+    "parcelDepth": 200,
+    "parcelWeight": 5000,
+    "parcelVolume": 500,
+    "productType": "PARCEL"
+  },
+  "service": {
+    "tanService": false,
+    "multipartService": {
+      "partNumber": 1,
+      "numberOfParts": 1,
+      "parentShipmentOrderID": ""
     },
-    "recipient": {
-      "addressLine1": "456 Oak St",
-      "city": "Somewhere",
-      "postalCode": "67890",
-      "countryCode": "US",
-      "stateCode": "NY",
-      "personName": "Jane Smith",
-      "companyName": "XYZ Inc",
-      "phoneNumber": "555-987-6543",
-      "email": "jane@example.com"
+    "limitedQuantitiesService": false,
+    "cashOnDeliveryService": {
+      "currency": "EUR",
+      "amount": 100.00,
+      "bankTransferAmount": 100.00,
+      "bankTransferCurrency": "EUR"
     },
-    "packages": [
+    "bulkGoodService": false,
+    "statedTimeService": {
+      "timeSlot": "FORENOON"
+    },
+    "householdSignatureService": false,
+    "customerAlertService": {
+      "notificationType": "EMAIL_SMS",
+      "notificationEmail": "someone@example.com",
+      "notificationNumber": "004917012345678"
+    },
+    "parcelShopDeliveryService": {
+      "psCustomerFirstName": "Max",
+      "psCustomerLastName": "Mustermann",
+      "psID": "656499",
+      "psSelectionRule": "SELECT_BY_ID"
+    },
+    "compactParcelService": false,
+    "identService": {
+      "identID": "123456789",
+      "identType": "GERMAN_IDENTITY_CARD",
+      "identVerifyFsk": "18",
+      "identVerifyBirthday": "2000-01-01"
+    },
+    "statedDayService": {
+      "statedDay": "2025-09-25"
+    },
+    "nextDayService": false,
+    "signatureService": false,
+    "redirectionProhibitedService": false,
+    "excludeParcelShopAuthorization": false,
+    "lateInjectionService": false
+  },
+  "customsAndTaxes": {
+    "currency": "EUR",
+    "shipmentCost": 200,
+    "items": [
       {
-        "weight": 10.5,
-        "weightUnit": "KG",
-        "length": 20.0,
-        "width": 15.0,
-        "height": 10.0,
-        "dimensionUnit": "CM",
-        "packagingType": "BOX"
+        "sku": "sku12345",
+        "category": "low",
+        "countryCodeOfManufacture": "CN",
+        "value": 1000,
+        "weight": 250,
+        "quantity": 2,
+        "description": "Shirts",
+        "exportDescription": "",
+        "exportHsCode": "",
+        "hsCode": "12345678901",
+        "url": ""
       }
     ],
-    "service": "EXPRESS",
-    "options": {
-      "insurance": true,
-      "signature_required": false
+    "invoiceReferences": ["Ref1", "Ref2"],
+    "value": 6000,
+    "exportCustomsClearance": true,
+    "client": {
+      "eoriNumber": "GB345678901234",
+      "iossId": "",
+      "vatId": "GB1234",
+      "zazAccount": "",
+      "fiscalRepresentationAddress": {
+        "company": "Example Company",
+        "street": "Example Street",
+        "houseNumber": "1",
+        "zipCode": "3001",
+        "town": "Example Town",
+        "addressAddition": "Second Floor",
+        "phone": "",
+        "mobile": "",
+        "mail": ""
+      }
     },
-    "labelType": "PDF"
+    "shipmentOriginAddress": {
+      "title": "",
+      "firstname": "",
+      "lastname": "",
+      "company": "",
+      "street": "",
+      "houseNumber": "",
+      "zipCode": "",
+      "town": "",
+      "state": "",
+      "countryCode": "DE",
+      "addressAddition": "",
+      "addressAddition2": "",
+      "addressAddition3": "",
+      "phone": "",
+      "fax": "",
+      "mobile": "",
+      "mail": ""
+    }
   }
 }

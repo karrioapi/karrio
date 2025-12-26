@@ -1,11 +1,8 @@
 {
-  "errorResponse": {
-    "errors": [
-      {
-        "code": "ERROR_CODE",
-        "message": "Error message description",
-        "details": "Additional error details"
-      }
-    ]
-  }
+  "listOfResultCodes": [
+    {
+      "code": "e001",
+      "message": "The attributes do not correspond to the specification."
+    }
+  ]
 }

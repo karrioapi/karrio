@@ -1,7 +1,9 @@
 {
-  "pickupCancelResponse": {
-    "status": "cancelled",
-    "confirmationNumber": "PICKUP123456",
-    "statusMessage": "Pickup successfully cancelled"
-  }
+  "listOfResultCodes": [
+    {
+      "code": "i001",
+      "message": "Pickup order cancelled successfully"
+    }
+  ],
+  "pickupOrderID": "12345678901"
 }
