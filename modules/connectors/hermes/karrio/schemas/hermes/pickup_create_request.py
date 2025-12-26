@@ -15,8 +15,8 @@ class ParcelCountType:
 @attr.s(auto_attribs=True)
 class PickupAddressType:
     street: typing.Optional[str] = None
-    houseNumber: typing.Optional[int] = None
-    zipCode: typing.Optional[int] = None
+    houseNumber: typing.Optional[str] = None
+    zipCode: typing.Optional[str] = None
     town: typing.Optional[str] = None
     countryCode: typing.Optional[str] = None
     addressAddition: typing.Optional[str] = None

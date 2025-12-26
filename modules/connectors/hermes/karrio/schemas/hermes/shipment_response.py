@@ -28,7 +28,7 @@ class AddressType:
     addressLine8: typing.Optional[str] = None
     addressLine9: typing.Optional[str] = None
     addressLine10: typing.Optional[str] = None
-    postcode: typing.Optional[int] = None
+    postcode: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -66,7 +66,7 @@ class OriginType:
 class ServiceDescriptionType:
     serviceDescriptionText: typing.Optional[str] = None
     serviceLogoRef: typing.Optional[str] = None
-    servicePosition: typing.Optional[int] = None
+    servicePosition: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)

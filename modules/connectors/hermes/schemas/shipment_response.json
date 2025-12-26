@@ -23,7 +23,7 @@
       "addressLine8": "",
       "addressLine9": "",
       "addressLine10": "",
-      "postcode": "12345"
+      "postcode": "DE-12345"
     },
     "senderAddress": {
       "title": "",
@@ -37,7 +37,7 @@
       "addressLine8": "",
       "addressLine9": "",
       "addressLine10": "",
-      "postcode": "12345"
+      "postcode": "DE-12345"
     },
     "destinationAddress": {
       "title": "Herr",
@@ -51,7 +51,7 @@
       "addressLine8": "",
       "addressLine9": "",
       "addressLine10": "",
-      "postcode": "22419"
+      "postcode": "DE-22419"
     },
     "carrier1": {
       "id": "hermes",
@@ -77,7 +77,7 @@
       {
         "serviceDescriptionText": "Standard Parcel",
         "serviceLogoRef": "",
-        "servicePosition": "1"
+        "servicePosition": "POS-1"
       }
     ],
     "entities": [

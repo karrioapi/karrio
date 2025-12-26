@@ -1,8 +1,8 @@
 {
   "pickupAddress": {
     "street": "Essener Str.",
-    "houseNumber": "89",
-    "zipCode": "22419",
+    "houseNumber": "89a",
+    "zipCode": "DE-22419",
     "town": "Hamburg",
     "countryCode": "DE",
     "addressAddition": ""
