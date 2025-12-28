@@ -1,9 +1,0 @@
-{
-  "listOfResultCodes": [
-    {
-      "code": "i001",
-      "message": "Shipment order deleted successfully"
-    }
-  ],
-  "shipmentOrderID": "SO-52269002669"
-}

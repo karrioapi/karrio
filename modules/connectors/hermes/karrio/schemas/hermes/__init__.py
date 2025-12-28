@@ -32,8 +32,6 @@ from karrio.schemas.hermes.shipment_response import (
     EntityType,
     HintType,
 )
-from karrio.schemas.hermes.shipment_cancel_request import ShipmentCancelRequestType
-from karrio.schemas.hermes.shipment_cancel_response import ShipmentCancelResponseType
 from karrio.schemas.hermes.pickup_create_request import (
     PickupCreateRequestType,
     PickupAddressType,
@@ -41,7 +39,5 @@ from karrio.schemas.hermes.pickup_create_request import (
     ParcelCountType,
 )
 from karrio.schemas.hermes.pickup_create_response import PickupCreateResponseType
-from karrio.schemas.hermes.pickup_update_request import PickupUpdateRequestType
-from karrio.schemas.hermes.pickup_update_response import PickupUpdateResponseType
 from karrio.schemas.hermes.pickup_cancel_request import PickupCancelRequestType
 from karrio.schemas.hermes.pickup_cancel_response import PickupCancelResponseType

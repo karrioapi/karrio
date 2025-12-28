@@ -1,9 +1,0 @@
-{
-  "listOfResultCodes": [
-    {
-      "code": "i001",
-      "message": "Pickup order updated successfully"
-    }
-  ],
-  "pickupOrderID": "PO-12345678901"
-}
