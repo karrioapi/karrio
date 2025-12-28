@@ -4,7 +4,6 @@ from karrio.mappers.hermes.mapper import Mapper
 from karrio.mappers.hermes.proxy import Proxy
 from karrio.mappers.hermes.settings import Settings
 import karrio.providers.hermes.units as units
-import karrio.providers.hermes.utils as utils
 
 
 # This METADATA object is used by Karrio to discover and register this plugin
@@ -20,10 +19,10 @@ METADATA = PluginMetadata(
     Settings=Settings,
     # Data Units
     is_hub=False,
-    # options=units.ShippingOption,
-    # services=units.ShippingService,
+    options=units.ShippingOption,
+    services=units.ShippingService,
     connection_configs=units.ConnectionConfig,
     # Extra info
-    website="",
-    documentation="",
+    website="https://www.hermesworld.com",
+    documentation="https://de-api-int.hermesworld.com/docs/applications/order",
 )
