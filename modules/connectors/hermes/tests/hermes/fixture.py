@@ -5,10 +5,12 @@ import karrio.sdk as karrio
 
 gateway = karrio.gateway["hermes"].create(
     dict(
-        id="123456789",
+        id="hermes_test",
         test_mode=True,
         carrier_id="hermes",
-        account_number="123456789",
-        api_key="TEST_API_KEY",
+        username="test_user",
+        password="test_password",
+        client_id="test_client_id",
+        client_secret="test_client_secret",
     )
 )

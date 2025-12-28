@@ -12,6 +12,7 @@ class TestPickup(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.PickupRequest = models.PickupRequest(**PickupPayload)
+        self.PickupCancelRequest = models.PickupCancelRequest(**PickupCancelPayload)
 
     def test_create_pickup_request(self):
         request = gateway.mapper.create_pickup_request(self.PickupRequest)
@@ -23,25 +24,16 @@ class TestPickup(unittest.TestCase):
             karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups"
-            )
-
-    def test_update_pickup(self):
-        with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Pickup.update(self.PickupRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups/123/update"
+                f"{gateway.settings.server_url}/pickuporders"
             )
 
     def test_cancel_pickup(self):
         with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
             mock.return_value = "{}"
-            karrio.Pickup.cancel(self.PickupRequest).from_(gateway)
+            karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups/123/cancel"
+                f"{gateway.settings.server_url}/pickuporders/12345678901"
             )
 
     def test_parse_pickup_response(self):
@@ -53,6 +45,16 @@ class TestPickup(unittest.TestCase):
                 .parse()
             )
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
+
+    def test_parse_pickup_cancel_response(self):
+        with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
+            mock.return_value = PickupCancelResponse
+            parsed_response = (
+                karrio.Pickup.cancel(self.PickupCancelRequest)
+                .from_(gateway)
+                .parse()
+            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupCancelResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
@@ -71,76 +73,92 @@ if __name__ == "__main__":
 
 PickupPayload = {
     "address": {
-        "address_line1": "123 Test Street",
-        "city": "Test City",
-        "postal_code": "12345",
-        "country_code": "US",
-        "state_code": "CA",
-        "person_name": "Test Person",
+        "street_name": "Essener Bogen",
+        "street_number": "1",
+        "city": "Hamburg",
+        "postal_code": "22419",
+        "country_code": "DE",
+        "person_name": "Max Mustermann",
         "company_name": "Test Company",
-        "phone_number": "1234567890",
-        "email": "test@example.com"
+        "phone_number": "+49401234567",
     },
-    "pickup_date": "2024-01-01",
+    "pickup_date": "2025-01-15",
     "ready_time": "09:00",
     "closing_time": "17:00",
-    "confirmation_number": "123"
+    "parcels": [{"weight": 5.0}]
+}
+
+PickupCancelPayload = {
+    "confirmation_number": "12345678901"
 }
 
 PickupRequest = {
-    "address": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
+    "pickupAddress": {
+        "street": "Essener Bogen",
+        "houseNumber": "1",
+        "zipCode": "22419",
+        "town": "Hamburg",
+        "countryCode": "DE",
+        "addressAddition": "Test Company"
     },
-    "pickupDate": "2024-01-01",
-    "readyTime": "09:00",
-    "closingTime": "17:00"
+    "pickupName": {
+        "title": None,
+        "gender": None,
+        "firstname": "Max",
+        "middlename": None,
+        "lastname": "Mustermann"
+    },
+    "phone": "+49401234567",
+    "pickupDate": "2025-01-15",
+    "pickupTimeSlot": "FORENOON",
+    "parcelCount": {
+        "pickupParcelCountXS": 0,
+        "pickupParcelCountS": 0,
+        "pickupParcelCountM": 1,
+        "pickupParcelCountL": 0,
+        "pickupParcelCountXL": 0
+    }
+}
+
+PickupCancelRequest = {
+    "pickupOrderID": "12345678901"
 }
 
 PickupResponse = """{
-  "confirmationNumber": "PICKUP123",
-  "pickupDate": "2024-01-01",
-  "readyTime": "09:00",
-  "closingTime": "17:00",
-  "status": "scheduled"
-}"""
-
-PickupUpdateResponse = """{
-  "confirmationNumber": "PICKUP123",
-  "pickupDate": "2024-01-02",
-  "readyTime": "10:00",
-  "closingTime": "18:00",
-  "status": "updated"
+    "listOfResultCodes": [],
+    "pickupOrderID": "12345678901"
 }"""
 
 PickupCancelResponse = """{
-  "success": true,
-  "message": "Pickup successfully cancelled"
+    "listOfResultCodes": [],
+    "pickupOrderID": "12345678901"
 }"""
 
 ErrorResponse = """{
-  "error": {
-    "code": "pickup_error",
-    "message": "Unable to schedule pickup",
-    "details": "Invalid pickup date provided"
-  }
+    "listOfResultCodes": [
+        {
+            "code": "e070",
+            "message": "Unable to cancel the pickup order."
+        }
+    ]
 }"""
 
 ParsedPickupResponse = [
     {
         "carrier_id": "hermes",
         "carrier_name": "hermes",
-        "confirmation_number": "PICKUP123",
-        "pickup_date": "2024-01-01",
-        "ready_time": "09:00",
-        "closing_time": "17:00",
+        "confirmation_number": "12345678901",
+        "pickup_date": None
+    },
+    []
+]
+
+ParsedPickupCancelResponse = [
+    {
+        "carrier_id": "hermes",
+        "carrier_name": "hermes",
+        "success": True,
+        "operation": "Cancel Pickup"
     },
     []
 ]
@@ -151,11 +169,9 @@ ParsedErrorResponse = [
         {
             "carrier_id": "hermes",
             "carrier_name": "hermes",
-            "code": "pickup_error",
-            "message": "Unable to schedule pickup",
-            "details": {
-                "details": "Invalid pickup date provided"
-            }
+            "code": "e070",
+            "message": "Unable to cancel the pickup order.",
+            "details": {}
         }
     ]
 ]

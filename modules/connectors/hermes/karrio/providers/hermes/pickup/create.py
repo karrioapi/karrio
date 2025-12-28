@@ -5,7 +5,6 @@ import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.hermes.error as error
 import karrio.providers.hermes.utils as provider_utils
-import karrio.providers.hermes.units as provider_units
 import karrio.schemas.hermes.pickup_create_request as hermes_req
 import karrio.schemas.hermes.pickup_create_response as hermes_res
 

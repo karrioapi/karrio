@@ -5,7 +5,6 @@ import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.hermes.error as error
 import karrio.providers.hermes.utils as provider_utils
-import karrio.schemas.hermes.pickup_cancel_response as hermes_res
 
 
 def parse_pickup_cancel_response(
@@ -21,8 +20,6 @@ def parse_pickup_cancel_response(
 
     confirmation = None
     if success:
-        # Parse response to get pickupOrderID confirmation
-        parsed = lib.to_object(hermes_res.PickupCancelResponseType, response)
         confirmation = models.ConfirmationDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,

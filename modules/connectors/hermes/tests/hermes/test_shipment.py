@@ -10,11 +10,11 @@ import karrio.core.models as models
 
 logger = logging.getLogger(__name__)
 
+
 class TestHermesShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -26,7 +26,7 @@ class TestHermesShipment(unittest.TestCase):
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipments"
+                f"{gateway.settings.server_url}/shipmentorders/labels"
             )
 
     def test_parse_shipment_response(self):
@@ -38,29 +38,6 @@ class TestHermesShipment(unittest.TestCase):
                 .parse()
             )
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
-
-    def test_create_shipment_cancel_request(self):
-        request = gateway.mapper.create_shipment_cancel_request(self.ShipmentCancelRequest)
-        self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
-
-    def test_cancel_shipment(self):
-        with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipments/SHIP123456/cancel"
-            )
-
-    def test_parse_shipment_cancel_response(self):
-        with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
-            mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
@@ -79,150 +56,138 @@ if __name__ == "__main__":
 
 ShipmentPayload = {
     "shipper": {
-        "address_line1": "123 Test Street",
-        "city": "Test City",
-        "postal_code": "12345",
-        "country_code": "US",
-        "state_code": "CA",
-        "person_name": "Test Person",
+        "street_name": "Essener Bogen",
+        "street_number": "1",
+        "city": "Hamburg",
+        "postal_code": "22419",
+        "country_code": "DE",
+        "person_name": "Max Mustermann",
         "company_name": "Test Company",
-        "phone_number": "1234567890",
-        "email": "test@example.com"
+        "phone_number": "+49401234567",
+        "email": "sender@example.com"
     },
     "recipient": {
-        "address_line1": "123 Test Street",
-        "city": "Test City",
-        "postal_code": "12345",
-        "country_code": "US",
-        "state_code": "CA",
-        "person_name": "Test Person",
-        "company_name": "Test Company",
-        "phone_number": "1234567890",
-        "email": "test@example.com"
+        "street_name": "Essener Bogen",
+        "street_number": "1",
+        "city": "Hamburg",
+        "postal_code": "22419",
+        "country_code": "DE",
+        "person_name": "Max Mustermann",
+        "phone_number": "+49401234567",
+        "email": "receiver@example.com"
     },
     "parcels": [{
-        "weight": 10.0,
-        "width": 10.0,
-        "height": 10.0,
-        "length": 10.0,
+        "weight": 5.0,
+        "width": 30.0,
+        "height": 20.0,
+        "length": 40.0,
         "weight_unit": "KG",
         "dimension_unit": "CM",
-        "packaging_type": "BOX"
     }],
-    "service": "express"
-}
-
-ShipmentCancelPayload = {
-    "shipment_identifier": "SHIP123456"
+    "service": "hermes_standard",
+    "reference": "ORDER-12345"
 }
 
 ShipmentRequest = {
-    "shipper": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
+    "clientReference": "ORDER-12345",
+    "clientReference2": None,
+    "receiverName": {
+        "title": None,
+        "gender": None,
+        "firstname": "Max",
+        "middlename": None,
+        "lastname": "Mustermann"
     },
-    "recipient": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
+    "receiverAddress": {
+        "street": "Essener Bogen",
+        "houseNumber": "1",
+        "zipCode": "22419",
+        "town": "Hamburg",
+        "countryCode": "DE",
+        "addressAddition": None,
+        "addressAddition2": None,
+        "addressAddition3": None
     },
-    "packages": [
-        {
-            "weight": 10.0,
-            "weightUnit": "KG",
-            "length": 10.0,
-            "width": 10.0,
-            "height": 10.0,
-            "dimensionUnit": "CM",
-            "packagingType": "BOX"
-        }
-    ],
-    "serviceCode": "express",
-    "labelFormat": "PDF"
-}
-
-ShipmentCancelRequest = {
-    "shipmentIdentifier": "SHIP123456"
+    "receiverContact": {
+        "phone": "+49401234567",
+        "mobile": None,
+        "mail": "receiver@example.com"
+    },
+    "senderName": {
+        "title": None,
+        "gender": None,
+        "firstname": "Max",
+        "middlename": None,
+        "lastname": "Mustermann"
+    },
+    "senderAddress": {
+        "street": "Essener Bogen",
+        "houseNumber": "1",
+        "zipCode": "22419",
+        "town": "Hamburg",
+        "countryCode": "DE",
+        "addressAddition": "Test Company",
+        "addressAddition2": None,
+        "addressAddition3": None
+    },
+    "parcel": {
+        "parcelClass": None,
+        "parcelHeight": 200,
+        "parcelWidth": 300,
+        "parcelDepth": 400,
+        "parcelWeight": 5000,
+        "parcelVolume": None,
+        "productType": "PARCEL"
+    },
+    "service": None,
+    "customsAndTaxes": None
 }
 
 ShipmentResponse = """{
-  "shipment": {
-    "trackingNumber": "1Z999999999999999",
-    "shipmentId": "SHIP123456",
-    "labelData": {
-      "format": "PDF",
-      "image": "base64_encoded_label_data"
-    },
-    "invoiceImage": "base64_encoded_invoice_data",
-    "serviceCode": "express"
-  }
-}"""
-
-ShipmentCancelResponse = """{
-  "success": true,
-  "message": "Shipment successfully cancelled"
+    "listOfResultCodes": [],
+    "shipmentID": "H1234567890123456789",
+    "shipmentOrderID": "12345678901",
+    "labelImage": "JVBERi0xLjQKMSAwIG9iago8PAovVHlwZS...",
+    "commInvoiceImage": null,
+    "labelMediatype": "application/pdf"
 }"""
 
 ErrorResponse = """{
-  "error": {
-    "code": "shipment_error",
-    "message": "Unable to create shipment",
-    "details": "Invalid shipment information provided"
-  }
+    "listOfResultCodes": [
+        {
+            "code": "e010",
+            "message": "Error while creating shipment order – Parcel class does not match the dimensions."
+        }
+    ]
 }"""
 
 ParsedShipmentResponse = [
     {
         "carrier_id": "hermes",
         "carrier_name": "hermes",
-        "tracking_number": "1Z999999999999999",
-        "shipment_identifier": "SHIP123456",
-        "label_type": "PDF",
+        "tracking_number": "H1234567890123456789",
+        "shipment_identifier": "12345678901",
+        "label_type": "application/pdf",
         "docs": {
-            "label": "base64_encoded_label_data",
-            "invoice": "base64_encoded_invoice_data"
+            "label": "JVBERi0xLjQKMSAwIG9iago8PAovVHlwZS..."
         },
         "meta": {
-            "service_code": "express"
+            "shipment_id": "H1234567890123456789",
+            "shipment_order_id": "12345678901"
         }
     },
     []
 ]
 
-ParsedShipmentCancelResponse = [
-    {
-        "carrier_id": "hermes",
-        "carrier_name": "hermes",
-        "success": True,
-        "operation": "Cancel Shipment"
-    },
-    []
-]
-
 ParsedErrorResponse = [
-    {},
+    None,
     [
         {
             "carrier_id": "hermes",
             "carrier_name": "hermes",
-            "code": "shipment_error",
-            "message": "Unable to create shipment",
-            "details": {
-                "details": "Invalid shipment information provided"
-            }
+            "code": "e010",
+            "message": "Error while creating shipment order – Parcel class does not match the dimensions.",
+            "details": {}
         }
     ]
 ]
