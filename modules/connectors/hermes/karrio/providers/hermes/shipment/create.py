@@ -136,9 +136,9 @@ def shipment_request(
             zipCode=shipper.postal_code,
             town=shipper.city,
             countryCode=shipper.country_code,
-            addressAddition=shipper.address_line2 or shipper.company_name or None,
+            addressAddition=shipper.address_line2 or None,
             addressAddition2=None,
-            addressAddition3=None,
+            addressAddition3=shipper.company_name or None,
         ) if shipper.street else None,
         # Parcel details (weight in grams)
         parcel=hermes_req.ParcelType(

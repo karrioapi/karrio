@@ -119,7 +119,7 @@ ShipmentRequest = {
         "zipCode": "22419",
         "town": "Hamburg",
         "countryCode": "DE",
-        "addressAddition": "Test Company"
+        "addressAddition3": "Test Company"
     },
     "parcel": {
         "parcelHeight": 200,
