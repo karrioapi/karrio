@@ -1,7 +1,7 @@
 """Hermes carrier shipment tests."""
 
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch, PropertyMock
 from .fixture import gateway
 import logging
 import karrio.sdk as karrio
@@ -21,33 +21,39 @@ class TestHermesShipment(unittest.TestCase):
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipmentorders/labels"
-            )
+        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+            mock_token.return_value = {"access_token": "test_token"}
+            with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
+                mock.return_value = "{}"
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
+                self.assertEqual(
+                    mock.call_args[1]["url"],
+                    f"{gateway.settings.server_url}/shipmentorders/labels"
+                )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
-            mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
+        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+            mock_token.return_value = {"access_token": "test_token"}
+            with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
+                mock.return_value = ShipmentResponse
+                parsed_response = (
+                    karrio.Shipment.create(self.ShipmentRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
-            mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+            mock_token.return_value = {"access_token": "test_token"}
+            with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
+                mock.return_value = ErrorResponse
+                parsed_response = (
+                    karrio.Shipment.create(self.ShipmentRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -56,8 +62,7 @@ if __name__ == "__main__":
 
 ShipmentPayload = {
     "shipper": {
-        "street_name": "Essener Bogen",
-        "street_number": "1",
+        "address_line1": "Essener Bogen 1",
         "city": "Hamburg",
         "postal_code": "22419",
         "country_code": "DE",
@@ -67,8 +72,7 @@ ShipmentPayload = {
         "email": "sender@example.com"
     },
     "recipient": {
-        "street_name": "Essener Bogen",
-        "street_number": "1",
+        "address_line1": "Essener Bogen 1",
         "city": "Hamburg",
         "postal_code": "22419",
         "country_code": "DE",
@@ -90,12 +94,8 @@ ShipmentPayload = {
 
 ShipmentRequest = {
     "clientReference": "ORDER-12345",
-    "clientReference2": None,
     "receiverName": {
-        "title": None,
-        "gender": None,
         "firstname": "Max",
-        "middlename": None,
         "lastname": "Mustermann"
     },
     "receiverAddress": {
@@ -103,21 +103,14 @@ ShipmentRequest = {
         "houseNumber": "1",
         "zipCode": "22419",
         "town": "Hamburg",
-        "countryCode": "DE",
-        "addressAddition": None,
-        "addressAddition2": None,
-        "addressAddition3": None
+        "countryCode": "DE"
     },
     "receiverContact": {
         "phone": "+49401234567",
-        "mobile": None,
         "mail": "receiver@example.com"
     },
     "senderName": {
-        "title": None,
-        "gender": None,
         "firstname": "Max",
-        "middlename": None,
         "lastname": "Mustermann"
     },
     "senderAddress": {
@@ -126,21 +119,15 @@ ShipmentRequest = {
         "zipCode": "22419",
         "town": "Hamburg",
         "countryCode": "DE",
-        "addressAddition": "Test Company",
-        "addressAddition2": None,
-        "addressAddition3": None
+        "addressAddition": "Test Company"
     },
     "parcel": {
-        "parcelClass": None,
         "parcelHeight": 200,
         "parcelWidth": 300,
         "parcelDepth": 400,
         "parcelWeight": 5000,
-        "parcelVolume": None,
         "productType": "PARCEL"
-    },
-    "service": None,
-    "customsAndTaxes": None
+    }
 }
 
 ShipmentResponse = """{

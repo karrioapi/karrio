@@ -144,9 +144,8 @@ class LabelType(lib.StrEnum):
 
 
 class PickupTimeSlot(lib.StrEnum):
-    """Hermes pickup time slots."""
+    """Hermes pickup time slots per OpenAPI spec."""
 
-    FORENOON = "FORENOON"
-    NOON = "NOON"
-    AFTERNOON = "AFTERNOON"
-    EVENING = "EVENING"
+    BETWEEN_10_AND_13 = "BETWEEN_10_AND_13"
+    BETWEEN_12_AND_15 = "BETWEEN_12_AND_15"
+    BETWEEN_14_AND_17 = "BETWEEN_14_AND_17"

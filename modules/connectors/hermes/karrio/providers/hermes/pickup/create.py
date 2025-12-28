@@ -61,22 +61,21 @@ def pickup_request(
     )
 
     # Map time slot from ready_time/closing_time
+    # Valid values per OpenAPI: BETWEEN_10_AND_13, BETWEEN_12_AND_15, BETWEEN_14_AND_17
     time_slot = None
     if payload.ready_time:
         hour = int(payload.ready_time.split(":")[0]) if ":" in payload.ready_time else 12
-        if hour < 10:
-            time_slot = "FORENOON"
-        elif hour < 13:
-            time_slot = "NOON"
-        elif hour < 17:
-            time_slot = "AFTERNOON"
+        if hour < 12:
+            time_slot = "BETWEEN_10_AND_13"
+        elif hour < 14:
+            time_slot = "BETWEEN_12_AND_15"
         else:
-            time_slot = "EVENING"
+            time_slot = "BETWEEN_14_AND_17"
 
     # Create the request using generated schema types
     request = hermes_req.PickupCreateRequestType(
         pickupAddress=hermes_req.PickupAddressType(
-            street=address.street,
+            street=address.street_name,
             houseNumber=address.street_number or "",
             zipCode=address.postal_code,
             town=address.city,

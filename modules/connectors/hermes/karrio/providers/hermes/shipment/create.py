@@ -96,7 +96,7 @@ def shipment_request(
     # Create the request using generated schema types
     request = hermes_req.ShipmentRequestType(
         clientReference=payload.reference or "",
-        clientReference2=options.get("clientReference2") or None,
+        clientReference2=(payload.options or {}).get("clientReference2"),
         # Receiver name
         receiverName=hermes_req.ErNameType(
             title=None,
@@ -107,7 +107,7 @@ def shipment_request(
         ),
         # Receiver address
         receiverAddress=hermes_req.ErAddressType(
-            street=recipient.street,
+            street=recipient.street_name,
             houseNumber=recipient.street_number or "",
             zipCode=recipient.postal_code,
             town=recipient.city,
@@ -131,7 +131,7 @@ def shipment_request(
             lastname=" ".join(shipper.person_name.split()[1:]) if shipper.person_name and len(shipper.person_name.split()) > 1 else shipper.person_name,
         ) if shipper.person_name else None,
         senderAddress=hermes_req.ErAddressType(
-            street=shipper.street,
+            street=shipper.street_name,
             houseNumber=shipper.street_number or "",
             zipCode=shipper.postal_code,
             town=shipper.city,
@@ -249,7 +249,7 @@ def _build_service(options: units.ShippingOptions) -> hermes_req.ServiceType:
 
 def _build_customs(
     customs: models.Customs,
-    shipper: lib.Address,
+    shipper,
 ) -> hermes_req.CustomsAndTaxesType:
     """Build customs and taxes for international shipments."""
     items = [
@@ -282,7 +282,7 @@ def _build_customs(
             firstname=shipper.person_name.split()[0] if shipper.person_name else None,
             lastname=" ".join(shipper.person_name.split()[1:]) if shipper.person_name else None,
             company=shipper.company_name,
-            street=shipper.street,
+            street=shipper.street_name,
             houseNumber=shipper.street_number or "",
             zipCode=shipper.postal_code,
             town=shipper.city,
