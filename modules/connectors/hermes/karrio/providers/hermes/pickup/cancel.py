@@ -5,55 +5,47 @@ import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.hermes.error as error
 import karrio.providers.hermes.utils as provider_utils
+import karrio.schemas.hermes.pickup_cancel_response as hermes_res
 
 
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    """Parse pickup cancellation response from carrier API"""
+) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+    """Parse Hermes pickup cancellation response."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    # Check if cancellation was successful
-    success = _extract_cancellation_status(response)
-    confirmation = (
-        models.ConfirmationDetails(
+    # Check if cancellation was successful (no errors means success)
+    success = len(messages) == 0
+
+    confirmation = None
+    if success:
+        # Parse response to get pickupOrderID confirmation
+        parsed = lib.to_object(hermes_res.PickupCancelResponseType, response)
+        confirmation = models.ConfirmationDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            success=success,
+            success=True,
             operation="Cancel Pickup",
-        ) if success else None
-    )
+        )
 
     return confirmation, messages
-
-
-def _extract_cancellation_status(
-    response: dict
-) -> bool:
-    """Extract cancellation success status from carrier response"""
-    
-    # Example implementation for JSON response:
-    # return response.get("status", "").lower() == "cancelled"
-
-    # For development, always return success
-    return True
-    
 
 
 def pickup_cancel_request(
     payload: models.PickupCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create pickup cancellation request for carrier API"""
-    # Extract cancellation details
-    confirmation_number = payload.confirmation_number
+    """Create Hermes pickup cancellation request.
 
-    
-    # Example implementation for JSON request:
+    Note: The pickup order ID is passed in the URL path, not in the body.
+    The proxy.cancel_pickup method extracts pickupOrderID from the payload.
+    """
+    # Hermes uses DELETE /pickuporders/{pickupOrderID}
+    # The confirmation_number from Karrio is the pickupOrderID
     request = {
-        "confirmationNumber": confirmation_number
+        "pickupOrderID": payload.confirmation_number,
     }
 
     return lib.Serializable(request, lib.to_dict)
