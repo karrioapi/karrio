@@ -20,8 +20,9 @@ def parse_shipment_response(
     messages = error.parse_error_response(response, settings)
 
     # Check if we have valid shipment data (shipmentID indicates success)
+    # Only proceed if response is a dict
     shipment = None
-    if response.get("shipmentID") or response.get("shipmentOrderID"):
+    if isinstance(response, dict) and (response.get("shipmentID") or response.get("shipmentOrderID")):
         shipment = _extract_details(response, settings)
 
     return shipment, messages
@@ -65,6 +66,13 @@ def _extract_details(
     )
 
 
+def _truncate(value: typing.Optional[str], max_length: int) -> typing.Optional[str]:
+    """Truncate string to max length if needed."""
+    if value is None:
+        return None
+    return value[:max_length] if len(value) > max_length else value
+
+
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
@@ -94,9 +102,13 @@ def shipment_request(
         customs = _build_customs(payload.customs, shipper)
 
     # Create the request using generated schema types
+    # Field length limits per OpenAPI spec:
+    # - street: 50, houseNumber: 5, town: 30
+    # - addressAddition: 50, addressAddition2: 20, addressAddition3: 20
+    # - clientReference: 20, clientReference2: 20, phone: 20
     request = hermes_req.ShipmentRequestType(
-        clientReference=payload.reference or "",
-        clientReference2=(payload.options or {}).get("clientReference2"),
+        clientReference=_truncate(payload.reference, 20) or "",
+        clientReference2=_truncate((payload.options or {}).get("clientReference2"), 20),
         # Receiver name
         receiverName=hermes_req.ErNameType(
             title=None,
@@ -107,18 +119,18 @@ def shipment_request(
         ),
         # Receiver address
         receiverAddress=hermes_req.ErAddressType(
-            street=recipient.street_name,
-            houseNumber=recipient.street_number or "",
+            street=_truncate(recipient.street_name, 50),
+            houseNumber=_truncate(recipient.street_number, 5) or "",
             zipCode=recipient.postal_code,
-            town=recipient.city,
+            town=_truncate(recipient.city, 30),
             countryCode=recipient.country_code,
-            addressAddition=recipient.address_line2 or None,
+            addressAddition=_truncate(recipient.address_line2, 50),
             addressAddition2=None,
-            addressAddition3=recipient.company_name or None,
+            addressAddition3=_truncate(recipient.company_name, 20),
         ),
         # Receiver contact
         receiverContact=hermes_req.ReceiverContactType(
-            phone=recipient.phone_number or None,
+            phone=_truncate(recipient.phone_number, 20),
             mobile=None,
             mail=recipient.email or None,
         ) if recipient.phone_number or recipient.email else None,
@@ -131,14 +143,14 @@ def shipment_request(
             lastname=" ".join(shipper.person_name.split()[1:]) if shipper.person_name and len(shipper.person_name.split()) > 1 else shipper.person_name,
         ) if shipper.person_name else None,
         senderAddress=hermes_req.ErAddressType(
-            street=shipper.street_name,
-            houseNumber=shipper.street_number or "",
+            street=_truncate(shipper.street_name, 50),
+            houseNumber=_truncate(shipper.street_number, 5) or "",
             zipCode=shipper.postal_code,
-            town=shipper.city,
+            town=_truncate(shipper.city, 30),
             countryCode=shipper.country_code,
-            addressAddition=shipper.address_line2 or None,
+            addressAddition=_truncate(shipper.address_line2, 50),
             addressAddition2=None,
-            addressAddition3=shipper.company_name or None,
+            addressAddition3=_truncate(shipper.company_name, 20),
         ) if shipper.street else None,
         # Parcel details (weight in grams)
         parcel=hermes_req.ParcelType(
