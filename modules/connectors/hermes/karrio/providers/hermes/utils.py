@@ -59,6 +59,7 @@ class Settings(core.Settings):
 def login(settings: Settings):
     """Authenticate with Hermes OAuth2 password flow."""
     import karrio.providers.hermes.error as error
+    import karrio.core.models as models
 
     result = lib.request(
         url=settings.token_url,
@@ -76,6 +77,20 @@ def login(settings: Settings):
         }),
     )
     response = lib.to_dict(result)
+
+    # Handle case where response is not a dict
+    if not isinstance(response, dict):
+        raise errors.ParsedMessagesError(
+            messages=[
+                models.Message(
+                    carrier_id=settings.carrier_id,
+                    carrier_name=settings.carrier_name,
+                    code="AUTH_ERROR",
+                    message=f"Authentication failed - unexpected response: {str(response)[:200]}",
+                )
+            ]
+        )
+
     messages = error.parse_error_response(response, settings)
 
     if any(messages):

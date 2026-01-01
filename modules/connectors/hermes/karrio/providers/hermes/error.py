@@ -7,7 +7,7 @@ import karrio.providers.hermes.utils as provider_utils
 
 
 def parse_error_response(
-    response: dict,
+    response: typing.Union[dict, str, None],
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
@@ -15,6 +15,19 @@ def parse_error_response(
     messages: typing.List[models.Message] = []
 
     if response is None:
+        return messages
+
+    # Handle case where response is not a dict (e.g., raw string response)
+    if not isinstance(response, dict):
+        messages.append(
+            models.Message(
+                carrier_id=settings.carrier_id,
+                carrier_name=settings.carrier_name,
+                code="PARSE_ERROR",
+                message=f"Unexpected response format: {str(response)[:200]}",
+                details={**kwargs},
+            )
+        )
         return messages
 
     # Handle OAuth2 error response

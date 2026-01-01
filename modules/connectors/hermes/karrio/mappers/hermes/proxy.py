@@ -15,7 +15,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def _get_headers(self, accept: str = "application/json") -> dict:
         """Get common headers for Hermes API requests."""
-        access_token = self.settings.access_token.get("access_token")
+        token_data = self.settings.access_token
+        # Handle case where token_data might not be a dict
+        access_token = token_data.get("access_token") if isinstance(token_data, dict) else token_data
         language = self.settings.connection_config.language.state or "DE"
 
         return {

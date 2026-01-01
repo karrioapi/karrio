@@ -140,11 +140,11 @@ class TrackingStatus(lib.Enum):
 
 
 class LabelType(lib.StrEnum):
-    """Hermes label formats."""
+    """Hermes label formats - use +json variants for JSON response with base64 label."""
 
-    PDF = "application/pdf"
-    ZPL = "text/vnd.hermes.zpl"
-    PNG = "image/png"
+    PDF = "application/shippinglabel-pdf+json"
+    ZPL = "application/shippinglabel-zpl+json;dpi=300"
+    PNG = "application/shippinglabel-data+json"
 
 
 class PickupTimeSlot(lib.StrEnum):
