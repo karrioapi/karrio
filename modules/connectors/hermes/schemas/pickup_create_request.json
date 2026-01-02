@@ -1,0 +1,27 @@
+{
+  "pickupAddress": {
+    "street": "Essener Str.",
+    "houseNumber": "89a",
+    "zipCode": "DE-22419",
+    "town": "Hamburg",
+    "countryCode": "DE",
+    "addressAddition": ""
+  },
+  "pickupName": {
+    "title": "Herr",
+    "gender": "M",
+    "firstname": "Max",
+    "middlename": "",
+    "lastname": "Mustermann"
+  },
+  "phone": "+4940537550",
+  "pickupDate": "2025-03-07",
+  "pickupTimeSlot": "BETWEEN_10_AND_13",
+  "parcelCount": {
+    "pickupParcelCountXS": 0,
+    "pickupParcelCountS": 5,
+    "pickupParcelCountM": 0,
+    "pickupParcelCountL": 2,
+    "pickupParcelCountXL": 1
+  }
+}

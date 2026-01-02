@@ -1,0 +1,9 @@
+{
+  "listOfResultCodes": [
+    {
+      "code": "i001",
+      "message": "Pickup order created successfully"
+    }
+  ],
+  "pickupOrderID": "PO-12345678901"
+}

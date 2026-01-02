@@ -1,0 +1,6 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+hermes_standard,Hermes Standard,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,2-3,true,false
+hermes_next_day,Hermes Next Day,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1,true,false
+hermes_stated_day,Hermes Stated Day,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1-5,true,false
+hermes_parcel_shop,Hermes Parcel Shop,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,2-3,true,false
+hermes_international,Hermes International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,3-7,false,true
