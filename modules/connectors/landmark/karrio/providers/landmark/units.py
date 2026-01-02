@@ -214,7 +214,10 @@ class TrackingIncidentReason(lib.Enum):
 def load_services_from_csv() -> list:
     """
     Load service definitions from CSV file.
-    CSV format: service_code, service_name, zone_label, country_codes, min_weight, max_weight, rate, currency, transit_days
+    CSV format: service_code, service_name, zone_label, country_codes, rate, currency, transit_days, min_weight, max_weight, weight_unit
+
+    Weight limits (min_weight, max_weight, weight_unit) are at the service level.
+    Zones contain: label, rate, transit_days, country_codes.
     """
     csv_path = pathlib.Path(__file__).resolve().parent / "services.csv"
 
@@ -248,6 +251,13 @@ def load_services_from_csv() -> list:
                     ).value_or_key,
                     "service_code": ShippingService.map(service_code).name_or_key,
                     "currency": row.get("currency", "GBP"),
+                    "min_weight": (
+                        float(row["min_weight"]) if row.get("min_weight") else None
+                    ),
+                    "max_weight": (
+                        float(row["max_weight"]) if row.get("max_weight") else None
+                    ),
+                    "weight_unit": row.get("weight_unit", "KG"),
                     "zones": [],
                 }
 
@@ -256,12 +266,10 @@ def load_services_from_csv() -> list:
                 c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
             ]
 
-            # Create zone
+            # Create zone (without weight limits - those are at service level)
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
-                min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
-                max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
                 transit_days=(
                     int(row["transit_days"]) if row.get("transit_days") else None
                 ),
@@ -276,7 +284,6 @@ def load_services_from_csv() -> list:
             **service_data,
             international=True,  # All Landmark services are international-only
             domicile=False,
-            weight_unit="KG",  # Weight unit for zone matching
         )
         for service_data in services_dict.values()
     ]

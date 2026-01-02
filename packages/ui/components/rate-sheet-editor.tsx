@@ -35,6 +35,7 @@ import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
+import { MultiSelect } from "@karrio/ui/components/multi-select";
 import { cn } from "@karrio/ui/lib/utils";
 import {
   PlusIcon,
@@ -49,6 +50,48 @@ import { Loader2 } from "lucide-react";
 const generateId = (prefix: string = "temp") =>
   `${prefix}-${crypto.randomUUID()}`;
 
+// Convert features to object format for GraphQL mutation
+// Handles both array format ['tracked', 'b2c'] and object format { tracked: true, b2c: true, first_mile: "drop_off" }
+const featuresToObject = (features?: string[] | Record<string, any>): Record<string, any> | undefined => {
+  if (!features) return undefined;
+
+  // If already an object, return as-is (new structured format)
+  if (!Array.isArray(features)) {
+    // Filter out null/undefined/empty/whitespace string values but keep false values
+    const result: Record<string, any> = {};
+    for (const [key, value] of Object.entries(features)) {
+      // Convert empty/whitespace strings to null
+      if (typeof value === "string") {
+        const trimmed = value.trim();
+        if (trimmed === "") {
+          result[key] = null;
+        } else {
+          result[key] = trimmed;
+        }
+      } else if (value !== null && value !== undefined) {
+        result[key] = value;
+      }
+    }
+    return Object.keys(result).length > 0 ? result : undefined;
+  }
+
+  // If array, convert to object (legacy format)
+  if (features.length === 0) return undefined;
+  return features.reduce((acc, feature) => {
+    acc[feature] = true;
+    return acc;
+  }, {} as Record<string, boolean>);
+};
+
+// Convert features object to array for UI state
+// { tracked: true, b2c: true, express: false } => ['tracked', 'b2c']
+const featuresToArray = (features?: Record<string, any> | null): string[] => {
+  if (!features || typeof features !== 'object') return [];
+  return Object.entries(features)
+    .filter(([_, value]) => value === true)
+    .map(([key]) => key);
+};
+
 // Types for the rate sheet editor
 export interface EmbeddedZone {
   id: string;
@@ -57,6 +100,7 @@ export interface EmbeddedZone {
   cost?: number | null;
   min_weight?: number | null;
   max_weight?: number | null;
+  weight_unit?: string | null;
   transit_days?: number | null;
   transit_time?: number | null;
   country_codes?: string[];
@@ -92,9 +136,12 @@ export interface ServiceLevelWithZones {
   weight_unit?: string | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  use_volumetric?: boolean;
+  dim_factor?: number | null;
   zones?: EmbeddedZone[];
   zone_ids?: string[];
   surcharge_ids?: string[];
+  features?: string[];
 }
 
 export interface RateSheetCarrier {
@@ -141,6 +188,7 @@ export const RateSheetEditor = ({
   // Local state
   const [carrierName, setCarrierName] = useState<string>(preloadCarrier || "");
   const [name, setName] = useState<string>("");
+  const [originCountries, setOriginCountries] = useState<string[]>([]);
   const [services, setServices] = useState<ServiceLevelWithZones[]>([]);
   const [surcharges, setSurcharges] = useState<SharedSurcharge[]>([]);
   const [sharedZones, setSharedZones] = useState<EmbeddedZone[]>([]);
@@ -189,7 +237,9 @@ export const RateSheetEditor = ({
   const existingRateSheet = query?.data?.rate_sheet;
   const isRateSheetLoading = query?.isLoading;
 
-  // Get list of carriers with ratesheet support
+  // Get list of carriers that support rate sheets
+  // All enabled carriers are included (backend returns all carriers in ratesheets,
+  // some with default zones/services, others with empty defaults for custom configuration)
   const carriers = useMemo(() => {
     const carriersList = references?.carriers || {};
     const ratesheets = references?.ratesheets || {};
@@ -230,6 +280,7 @@ export const RateSheetEditor = ({
     if (existingRateSheet && isEditMode) {
       setCarrierName(existingRateSheet.carrier_name || "");
       setName(existingRateSheet.name || "");
+      setOriginCountries(existingRateSheet.origin_countries || []);
 
       const existingSharedZones = existingRateSheet.zones || [];
       const serviceRates = existingRateSheet.service_rates || [];
@@ -255,8 +306,9 @@ export const RateSheetEditor = ({
             label: zone?.label || `Zone ${index + 1}`,
             rate: rateEntry?.rate ?? 0,
             cost: rateEntry?.cost ?? null,
-            min_weight: rateEntry?.min_weight ?? null,
-            max_weight: rateEntry?.max_weight ?? null,
+            min_weight: rateEntry?.min_weight ?? zone?.min_weight ?? null,
+            max_weight: rateEntry?.max_weight ?? zone?.max_weight ?? null,
+            weight_unit: zone?.weight_unit ?? null,
             transit_days: rateEntry?.transit_days ?? zone?.transit_days ?? null,
             transit_time: rateEntry?.transit_time ?? zone?.transit_time ?? null,
             country_codes: zone?.country_codes || [],
@@ -265,9 +317,17 @@ export const RateSheetEditor = ({
           };
         });
 
+        // Extract string enum fields from features object for the service editor
+        const featuresObj = service.features as Record<string, any> | null;
         return {
           ...service,
           zones: embeddedZones,
+          features: featuresToArray(service.features),
+          // Extract logistics options from features for the service editor modal
+          first_mile: featuresObj?.first_mile || "",
+          last_mile: featuresObj?.last_mile || "",
+          form_factor: featuresObj?.form_factor || "",
+          age_check: featuresObj?.age_check || "",
         };
       });
 
@@ -278,8 +338,9 @@ export const RateSheetEditor = ({
           label: zone.label || "",
           rate: 0,
           cost: null,
-          min_weight: null,
-          max_weight: null,
+          min_weight: zone.min_weight ?? null,
+          max_weight: zone.max_weight ?? null,
+          weight_unit: zone.weight_unit ?? null,
           transit_days: zone.transit_days ?? null,
           transit_time: zone.transit_time ?? null,
           country_codes: zone.country_codes || [],
@@ -353,6 +414,7 @@ export const RateSheetEditor = ({
         setCarrierName("");
         setName("");
       }
+      setOriginCountries([]);
       setServices([]);
       setSharedZones([]);
       setSurcharges([]);
@@ -415,6 +477,7 @@ export const RateSheetEditor = ({
             label: "Zone 1",
             min_weight: null,
             max_weight: null,
+            weight_unit: null,
             transit_days: null,
             transit_time: null,
             cities: [],
@@ -431,6 +494,7 @@ export const RateSheetEditor = ({
         max_height: serviceData.max_height ?? null,
         max_length: serviceData.max_length ?? null,
         dimension_unit: serviceData.dimension_unit ?? null,
+        features: serviceData.features ?? [],
       };
       setServices((prev) => [...prev, newService]);
     }
@@ -516,6 +580,7 @@ export const RateSheetEditor = ({
       label: `Zone ${nextNum}`,
       min_weight: null,
       max_weight: null,
+      weight_unit: null,
       transit_days: null,
       transit_time: null,
       cities: [],
@@ -724,6 +789,7 @@ export const RateSheetEditor = ({
               cost: rateEntry?.cost ?? null,
               min_weight: rateEntry?.min_weight ?? zone.min_weight ?? null,
               max_weight: rateEntry?.max_weight ?? zone.max_weight ?? null,
+              weight_unit: zone.weight_unit ?? null,
               transit_days: rateEntry?.transit_days ?? zone.transit_days ?? null,
               transit_time: rateEntry?.transit_time ?? zone.transit_time ?? null,
               country_codes: zone.country_codes || [],
@@ -742,6 +808,7 @@ export const RateSheetEditor = ({
                     label: "Zone 1",
                     min_weight: null,
                     max_weight: null,
+                    weight_unit: null,
                     transit_days: null,
                     transit_time: null,
                     cities: [],
@@ -840,6 +907,9 @@ export const RateSheetEditor = ({
             cities: string[];
             transit_days: number | null;
             transit_time: number | null;
+            min_weight: number | null;
+            max_weight: number | null;
+            weight_unit: string | null;
           }
         >();
 
@@ -859,6 +929,9 @@ export const RateSheetEditor = ({
               cities: zone.cities || [],
               transit_days: zone.transit_days ?? null,
               transit_time: zone.transit_time ?? null,
+              min_weight: zone.min_weight ?? null,
+              max_weight: zone.max_weight ?? null,
+              weight_unit: zone.weight_unit ?? null,
             });
             zoneIndex++;
           }
@@ -879,6 +952,9 @@ export const RateSheetEditor = ({
                 cities: zone.cities || [],
                 transit_days: zone.transit_days ?? null,
                 transit_time: zone.transit_time ?? null,
+                min_weight: zone.min_weight ?? null,
+                max_weight: zone.max_weight ?? null,
+                weight_unit: zone.weight_unit ?? null,
               });
               zoneIndex++;
             }
@@ -902,6 +978,9 @@ export const RateSheetEditor = ({
         cities: zone.cities.length > 0 ? zone.cities : undefined,
         transit_days: zone.transit_days,
         transit_time: zone.transit_time,
+        min_weight: zone.min_weight,
+        max_weight: zone.max_weight,
+        weight_unit: zone.weight_unit,
       }));
 
       const serviceRates: Array<{
@@ -979,14 +1058,18 @@ export const RateSheetEditor = ({
             weight_unit: service.weight_unit,
             domicile: service.domicile,
             international: service.international,
+            use_volumetric: service.use_volumetric,
+            dim_factor: service.dim_factor,
             zone_ids: zoneIds,
             surcharge_ids: mappedSurchargeIds,
+            features: featuresToObject(service.features),
           };
         });
 
         await mutations.updateRateSheet.mutateAsync({
           id: rateSheetId,
           name,
+          origin_countries: originCountries,
           services: updateServices,
           zones: zonesForMutation,
           surcharges: surchargesForMutation,
@@ -1042,14 +1125,18 @@ export const RateSheetEditor = ({
             weight_unit: service.weight_unit,
             domicile: service.domicile,
             international: service.international,
+            use_volumetric: service.use_volumetric,
+            dim_factor: service.dim_factor,
             zone_ids: zoneIds,
             surcharge_ids: mappedSurchargeIds,
+            features: featuresToObject(service.features),
           };
         });
 
         await mutations.createRateSheet.mutateAsync({
           name,
           carrier_name: carrierName,
+          origin_countries: originCountries,
           services: createServices,
           zones: zonesForMutation,
           surcharges: surchargesForMutation,
@@ -1106,7 +1193,7 @@ export const RateSheetEditor = ({
               <Button
                 onClick={handleSave}
                 disabled={isSaving || isInitialLoading}
-                className="mr-8 sm:mr-10"
+                className="mr-12"
               >
                 {isSaving ? (
                   <>
@@ -1361,6 +1448,16 @@ export const RateSheetEditor = ({
                           ))}
                         </SelectContent>
                       </Select>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs mb-1 block">Origin Countries</Label>
+                      <MultiSelect
+                        options={countryOptions}
+                        value={originCountries}
+                        onValueChange={setOriginCountries}
+                        placeholder="Select countries..."
+                      />
                     </div>
 
                     <div>

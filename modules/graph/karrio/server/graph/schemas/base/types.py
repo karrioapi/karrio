@@ -1172,6 +1172,11 @@ class SharedZoneType:
     postal_codes: typing.Optional[typing.List[str]] = None
     country_codes: typing.Optional[typing.List[str]] = None
 
+    # Weight constraints for this zone
+    min_weight: typing.Optional[float] = None
+    max_weight: typing.Optional[float] = None
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = None
+
     @staticmethod
     def parse(zone: dict):
         return SharedZoneType(
@@ -1186,6 +1191,9 @@ class SharedZoneType:
             cities=zone.get("cities"),
             postal_codes=zone.get("postal_codes"),
             country_codes=zone.get("country_codes"),
+            min_weight=zone.get("min_weight"),
+            max_weight=zone.get("max_weight"),
+            weight_unit=zone.get("weight_unit"),
         )
 
 
