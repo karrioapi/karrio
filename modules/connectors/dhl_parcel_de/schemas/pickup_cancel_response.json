@@ -1,0 +1,16 @@
+{
+  "confirmedCancellations": [
+    {
+      "orderID": "123e4567e89b12d3a456426614174000",
+      "orderState": "STORNIERT",
+      "message": "Order successfully cancelled"
+    }
+  ],
+  "failedCancellations": [
+    {
+      "orderID": "456e7890e12b34d5a678901234567890",
+      "orderState": "ABGEHOLT",
+      "message": "Cannot cancel - order already picked up"
+    }
+  ]
+}

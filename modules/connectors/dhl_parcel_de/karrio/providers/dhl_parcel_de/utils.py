@@ -38,6 +38,14 @@ class Settings(core.Settings):
         return "https://api-eu.dhl.com"
 
     @property
+    def pickup_server_url(self):
+        return (
+            "https://api-sandbox.dhl.com/parcel/de/transportation/pickup/v3"
+            if self.test_mode
+            else "https://api-eu.dhl.com/parcel/de/transportation/pickup/v3"
+        )
+
+    @property
     def tracking_url(self):
         country = self.account_country_code or "DE"
         language = self.connection_config.language.state or "en"

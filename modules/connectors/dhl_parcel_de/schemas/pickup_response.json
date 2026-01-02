@@ -1,0 +1,18 @@
+{
+  "confirmation": {
+    "type": "ORDERPICKUP",
+    "value": {
+      "orderID": "123e4567e89b12d3a456426614174000",
+      "pickupDate": "2099-04-21",
+      "freeOfCharge": true,
+      "pickupType": "EZA",
+      "confirmedShipments": [
+        {
+          "transportationType": "PAKET",
+          "shipmentNo": "1234567890",
+          "orderDate": "2024-01-15T14:30:00"
+        }
+      ]
+    }
+  }
+}

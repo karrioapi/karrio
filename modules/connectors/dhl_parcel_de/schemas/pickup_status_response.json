@@ -1,0 +1,78 @@
+[
+  {
+    "orderDetails": {
+      "orderID": "123e4567e89b12d3a456426614174000",
+      "orderState": "ANGENOMMEN"
+    },
+    "customerDetails": {
+      "accountNumber": "2222222222",
+      "billingNumber": "22222222220801"
+    },
+    "pickupLocation": {
+      "id": "AS3254120698",
+      "pickupAddress": {
+        "name1": "Deutsche Post DHL Group",
+        "name2": "Lieferanteneingang",
+        "addressStreet": "Charles-de-Gaulle-Straße",
+        "addressHouse": "20",
+        "postalCode": "53113",
+        "city": "Bonn",
+        "country": "DE",
+        "state": "NRW"
+      }
+    },
+    "businessHours": [
+      {
+        "timeFrom": "09:00",
+        "timeUntil": "12:00"
+      }
+    ],
+    "contactPerson": [
+      {
+        "name": "Max Mustermann",
+        "phone": "09999 100111820",
+        "email": "max@post.de",
+        "emailNotification": {
+          "sendPickupConfirmationEmail": true,
+          "sendPickupTimeWindowEmail": true
+        }
+      }
+    ],
+    "pickupDetails": {
+      "pickupDate": {
+        "type": "Date",
+        "value": "2099-04-21"
+      },
+      "totalWeight": {
+        "uom": "g",
+        "value": 5000
+      },
+      "comment": "Please pickup 3 packages"
+    },
+    "shipmentDetails": {
+      "shipments": [
+        {
+          "shipment": {
+            "transportationType": "PAKET",
+            "replacement": false,
+            "shipmentNo": "1234567890",
+            "size": "M",
+            "pickupServices": {
+              "bulkyGood": {
+                "comment": "Bicycle"
+              }
+            },
+            "customerReference": "987654321"
+          },
+          "shipmentState": {
+            "state": "ANGENOMMEN",
+            "responseTime": "2024-01-15T14:30:00",
+            "actualPickupDate": "2099-04-21"
+          },
+          "orderDate": "2024-01-15T14:30:00"
+        }
+      ]
+    },
+    "feedback": "Order confirmed"
+  }
+]

@@ -9,3 +9,9 @@ from karrio.providers.dhl_parcel_de.tracking import (
     parse_tracking_response,
     tracking_request,
 )
+from karrio.providers.dhl_parcel_de.pickup import (
+    parse_pickup_response,
+    parse_pickup_cancel_response,
+    pickup_request,
+    pickup_cancel_request,
+)

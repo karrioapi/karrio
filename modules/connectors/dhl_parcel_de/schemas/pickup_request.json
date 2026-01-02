@@ -1,0 +1,89 @@
+{
+  "customerDetails": {
+    "accountNumber": "2222222222",
+    "billingNumber": "22222222220801"
+  },
+  "pickupLocation": {
+    "type": "Address",
+    "pickupAddress": {
+      "name1": "Deutsche Post DHL Group",
+      "name2": "Lieferanteneingang",
+      "addressStreet": "Charles-de-Gaulle-Straße",
+      "addressHouse": "20",
+      "postalCode": "53113",
+      "city": "Bonn",
+      "country": "DE",
+      "state": "NRW"
+    },
+    "asId": "AS3254120698"
+  },
+  "businessHours": [
+    {
+      "timeFrom": "09:00",
+      "timeUntil": "12:00"
+    },
+    {
+      "timeFrom": "13:30",
+      "timeUntil": "17:30"
+    }
+  ],
+  "contactPerson": [
+    {
+      "name": "Max Mustermann",
+      "phone": "09999 100111820",
+      "email": "max@post.de",
+      "emailNotification": {
+        "sendPickupConfirmationEmail": true,
+        "sendPickupTimeWindowEmail": true
+      }
+    },
+    {
+      "name": "Maxi Mustermann",
+      "phone": "0888 10111223",
+      "email": "maxi@post.de",
+      "emailNotification": {
+        "sendPickupConfirmationEmail": true,
+        "sendPickupTimeWindowEmail": true
+      }
+    }
+  ],
+  "pickupDetails": {
+    "pickupDate": {
+      "type": "Date",
+      "value": "2099-04-21"
+    },
+    "totalWeight": {
+      "uom": "g",
+      "value": 5000
+    },
+    "comment": "Bitte 3 einzelne Pakete und einen Rollbehälter abholen."
+  },
+  "shipmentDetails": {
+    "shipments": [
+      {
+        "transportationType": "PAKET",
+        "replacement": false,
+        "shipmentNo": "1234567890",
+        "size": "M",
+        "pickupServices": {
+          "bulkyGood": {
+            "comment": "Fahrrad"
+          },
+          "printLabel": {
+            "consignee": {
+              "name1": "Max Mustermann",
+              "name2": "z. Hd. Frau Mustermann",
+              "addressStreet": "Platz der Deutschen Post",
+              "addressHouse": "1",
+              "postalCode": "53113",
+              "city": "Bonn",
+              "country": "DE",
+              "state": "NRW"
+            }
+          }
+        },
+        "customerReference": "987654321"
+      }
+    ]
+  }
+}
