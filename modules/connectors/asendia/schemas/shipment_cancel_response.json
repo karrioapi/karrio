@@ -1,0 +1,6 @@
+{
+  "shipmentCancelResponse": {
+    "success": true,
+    "message": "Shipment successfully cancelled"
+  }
+}
