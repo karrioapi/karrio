@@ -1,0 +1,8 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/postat
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+# Generate Python types from Austrian Post XSD schemas (SOAP API)
+generateDS --no-namespace-defs -o "${LIB_MODULES}/plc_types.py" $SCHEMAS/postat.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/void_types.py" $SCHEMAS/postat_void.xsd

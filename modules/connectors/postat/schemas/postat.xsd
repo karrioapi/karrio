@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+    <!-- Austrian Post (PostAT/PLC) Shipping API Schema -->
+
+    <!-- Simple Types -->
+    <xs:simpleType name="LabelFormatIDType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="100x150"/>
+            <xs:enumeration value="100x200"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="LanguageIDType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PDF"/>
+            <xs:enumeration value="ZPL2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PaperLayoutIDType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="2xA5inA4"/>
+            <xs:enumeration value="4xA6inA4"/>
+            <xs:enumeration value="A4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="EncodingType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UTF-8"/>
+            <xs:enumeration value="WINDOWS-1252"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Address Type -->
+    <xs:complexType name="AddressType">
+        <xs:sequence>
+            <xs:element name="Name1" type="xs:string" minOccurs="0"/>
+            <xs:element name="Name2" type="xs:string" minOccurs="0"/>
+            <xs:element name="Name3" type="xs:string" minOccurs="0"/>
+            <xs:element name="Name4" type="xs:string" minOccurs="0"/>
+            <xs:element name="AddressLine1" type="xs:string" minOccurs="0"/>
+            <xs:element name="AddressLine2" type="xs:string" minOccurs="0"/>
+            <xs:element name="HouseNumber" type="xs:string" minOccurs="0"/>
+            <xs:element name="PostalCode" type="xs:string" minOccurs="0"/>
+            <xs:element name="City" type="xs:string" minOccurs="0"/>
+            <xs:element name="CountryID" type="xs:string" minOccurs="0"/>
+            <xs:element name="Tel1" type="xs:string" minOccurs="0"/>
+            <xs:element name="Tel2" type="xs:string" minOccurs="0"/>
+            <xs:element name="Email" type="xs:string" minOccurs="0"/>
+            <xs:element name="Fax" type="xs:string" minOccurs="0"/>
+            <xs:element name="VATID" type="xs:string" minOccurs="0"/>
+            <xs:element name="EORINumber" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Printer Object Type -->
+    <xs:complexType name="PrinterObjectType">
+        <xs:sequence>
+            <xs:element name="LabelFormatID" type="xs:string" minOccurs="0"/>
+            <xs:element name="LanguageID" type="xs:string" minOccurs="0"/>
+            <xs:element name="PaperLayoutID" type="xs:string" minOccurs="0"/>
+            <xs:element name="Encoding" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Collo Article Row -->
+    <xs:complexType name="ColloArticleRowType">
+        <xs:sequence>
+            <xs:element name="ArticleName" type="xs:string" minOccurs="0"/>
+            <xs:element name="ArticleNumber" type="xs:string" minOccurs="0"/>
+            <xs:element name="Quantity" type="xs:int" minOccurs="0"/>
+            <xs:element name="ValueOfGoodsPerUnit" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="CurrencyID" type="xs:string" minOccurs="0"/>
+            <xs:element name="CountryOfOriginID" type="xs:string" minOccurs="0"/>
+            <xs:element name="HSTariffNumber" type="xs:string" minOccurs="0"/>
+            <xs:element name="ConsumerUnitNetWeight" type="xs:decimal" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Collo Article List -->
+    <xs:complexType name="ColloArticleListType">
+        <xs:sequence>
+            <xs:element name="ColloArticleRow" type="ColloArticleRowType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Collo Code Row -->
+    <xs:complexType name="ColloCodeRowType">
+        <xs:sequence>
+            <xs:element name="Code" type="xs:string" minOccurs="0"/>
+            <xs:element name="NumberTypeID" type="xs:string" minOccurs="0"/>
+            <xs:element name="OUCarrierThirdPartyID" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Collo Code List -->
+    <xs:complexType name="ColloCodeListType">
+        <xs:sequence>
+            <xs:element name="ColloCodeRow" type="ColloCodeRowType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Collo Row -->
+    <xs:complexType name="ColloRowType">
+        <xs:sequence>
+            <xs:element name="Weight" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="Length" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="Width" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="Height" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="ColloArticleList" type="ColloArticleListType" minOccurs="0"/>
+            <xs:element name="ColloCodeList" type="ColloCodeListType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Collo List -->
+    <xs:complexType name="ColloListType">
+        <xs:sequence>
+            <xs:element name="ColloRow" type="ColloRowType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Additional Information Row -->
+    <xs:complexType name="AdditionalInformationRowType">
+        <xs:sequence>
+            <xs:element name="ThirdPartyID" type="xs:string" minOccurs="0"/>
+            <xs:element name="Value1" type="xs:string" minOccurs="0"/>
+            <xs:element name="Value2" type="xs:string" minOccurs="0"/>
+            <xs:element name="Value3" type="xs:string" minOccurs="0"/>
+            <xs:element name="Value4" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Additional Information List -->
+    <xs:complexType name="AdditionalInformationListType">
+        <xs:sequence>
+            <xs:element name="AdditionalInformationRow" type="AdditionalInformationRowType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Import Shipment Row -->
+    <xs:complexType name="ImportShipmentRowType">
+        <xs:sequence>
+            <xs:element name="ClientID" type="xs:string" minOccurs="0"/>
+            <xs:element name="OrgUnitID" type="xs:string" minOccurs="0"/>
+            <xs:element name="OrgUnitGuid" type="xs:string" minOccurs="0"/>
+            <xs:element name="DeliveryServiceThirdPartyID" type="xs:string" minOccurs="0"/>
+            <xs:element name="CustomDataBit1" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="OUShipperReference1" type="xs:string" minOccurs="0"/>
+            <xs:element name="OUShipperReference2" type="xs:string" minOccurs="0"/>
+            <xs:element name="ColloList" type="ColloListType" minOccurs="0"/>
+            <xs:element name="OURecipientAddress" type="AddressType" minOccurs="0"/>
+            <xs:element name="OUShipperAddress" type="AddressType" minOccurs="0"/>
+            <xs:element name="PrinterObject" type="PrinterObjectType" minOccurs="0"/>
+            <xs:element name="AdditionalInformationList" type="AdditionalInformationListType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Import Shipment Type -->
+    <xs:complexType name="ImportShipmentType">
+        <xs:sequence>
+            <xs:element name="row" type="ImportShipmentRowType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Import Shipment Response -->
+    <xs:complexType name="ImportShipmentResponseType">
+        <xs:sequence>
+            <xs:element name="ImportShipmentResult" type="ColloListType" minOccurs="0"/>
+            <xs:element name="pdfData" type="xs:base64Binary" minOccurs="0"/>
+            <xs:element name="zplLabelData" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Root Elements -->
+    <xs:element name="ImportShipment" type="ImportShipmentType"/>
+    <xs:element name="ImportShipmentResponse" type="ImportShipmentResponseType"/>
+
+</xs:schema>

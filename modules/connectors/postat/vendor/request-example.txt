@@ -1,0 +1,46 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:post="http://post.ondot.at" xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:core="http://Core.Model" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/">
+	<soapenv:Header/>
+	<soapenv:Body>
+		<post:ImportShipment>
+			<!--Optional:-->
+			<post:row>
+				<post:ClientID>-1</post:ClientID>
+				<post:ColloList>
+					<post:ColloRow>
+						<post:Weight>17</post:Weight>
+					</post:ColloRow>
+					<post:ColloRow>
+						<post:Weight>5</post:Weight>
+					</post:ColloRow>
+				</post:ColloList>
+				<post:CustomDataBit1>false</post:CustomDataBit1>
+				<post:DeliveryServiceThirdPartyID>10</post:DeliveryServiceThirdPartyID>
+				<post:OURecipientAddress>
+					<post:AddressLine1>Teststrasse</post:AddressLine1>
+					<post:AddressLine2/>
+					<post:City>Wien</post:City>
+					<post:CountryID>AT</post:CountryID>
+					<post:Email/>
+					<post:HouseNumber>1</post:HouseNumber>
+					<post:Name1>Test Recipient</post:Name1>
+					<post:PostalCode>1030</post:PostalCode>
+				</post:OURecipientAddress>
+				<post:OUShipperAddress>
+					<post:AddressLine1>Musergasse</post:AddressLine1>
+					<post:City>Wien</post:City>
+					<post:CountryID>AT</post:CountryID>
+					<post:Name1>test &amp; test</post:Name1>
+					<post:Name2/>
+					<post:PostalCode>1010</post:PostalCode>
+				</post:OUShipperAddress>
+				<post:OrgUnitGuid>cd96848d-6552-4653-a992-f0f411710fb4</post:OrgUnitGuid>
+				<post:OrgUnitID>1461448</post:OrgUnitID>
+				<post:PrinterObject>
+					<post:LabelFormatID>100x200</post:LabelFormatID>
+					<post:LanguageID>pdf</post:LanguageID>
+					<post:PaperLayoutID>2xA5inA4</post:PaperLayoutID>
+				</post:PrinterObject>
+			</post:row>
+		</post:ImportShipment>
+	</soapenv:Body>
+</soapenv:Envelope>

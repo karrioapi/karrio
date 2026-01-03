@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+    <!-- Austrian Post (PostAT/PLC) Cancel/Void API Schema -->
+
+    <!-- Void Shipment Row -->
+    <xs:complexType name="VoidShipmentRowType">
+        <xs:sequence>
+            <xs:element name="ShipmentID" type="xs:string" minOccurs="0"/>
+            <xs:element name="TrackingNumber" type="xs:string" minOccurs="0"/>
+            <xs:element name="OrgUnitID" type="xs:string" minOccurs="0"/>
+            <xs:element name="OrgUnitGuid" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Void Shipment Type -->
+    <xs:complexType name="VoidShipmentType">
+        <xs:sequence>
+            <xs:element name="row" type="VoidShipmentRowType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Void Result Type -->
+    <xs:complexType name="VoidResultType">
+        <xs:sequence>
+            <xs:element name="Success" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="ShipmentID" type="xs:string" minOccurs="0"/>
+            <xs:element name="TrackingNumber" type="xs:string" minOccurs="0"/>
+            <xs:element name="ErrorMessage" type="xs:string" minOccurs="0"/>
+            <xs:element name="ErrorCode" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Void Shipment Response -->
+    <xs:complexType name="VoidShipmentResponseType">
+        <xs:sequence>
+            <xs:element name="VoidShipmentResult" type="VoidResultType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Root Elements -->
+    <xs:element name="VoidShipment" type="VoidShipmentType"/>
+    <xs:element name="VoidShipmentResponse" type="VoidShipmentResponseType"/>
+
+</xs:schema>

@@ -1,0 +1,5 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+parcelat_standard_domestic,Paket Standard,Austria,AT,0.01,31.5,150,60,60,0.0,EUR,1-3,true,false
+parcelat_express_domestic,Paket Express,Austria,AT,0.01,31.5,150,60,60,0.0,EUR,1,true,false
+parcelat_international_standard,Paket International Standard,Europe,"DE,CH,CZ,HU,SK,SI,IT,PL,BE,NL,FR,LU,GB,ES,PT,DK,SE,FI,NO,IE,GR,HR,BG,RO,LT,LV,EE,CY,MT",0.01,31.5,150,60,60,0.0,EUR,3-7,false,true
+parcelat_international_express,Paket International Express,Worldwide,,0.01,31.5,150,60,60,0.0,EUR,2-5,false,true
