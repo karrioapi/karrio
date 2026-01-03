@@ -1,43 +1,110 @@
 {
-  "shipmentRequest": {
-    "shipper": {
-      "addressLine1": "123 Main St",
-      "city": "Anytown",
-      "postalCode": "12345",
-      "countryCode": "US",
-      "stateCode": "CA",
-      "personName": "John Doe",
-      "companyName": "ACME Corp",
-      "phoneNumber": "555-123-4567",
-      "email": "john@example.com"
+  "customerId": "DE12345678",
+  "labelType": "PDF",
+  "referencenumber": "1234",
+  "sequencenumber": "1234567",
+  "senderEORI": "DE123456789012345",
+  "sellerEORI": "DE123456789012345",
+  "senderTaxId": "DE123456789",
+  "receiverTaxId": "CH123456789",
+  "weight": 1.5,
+  "shippingCost": 10.50,
+  "asendiaService": {
+    "format": "B",
+    "product": "EPAQSTD",
+    "service": "CUP",
+    "options": ["OPT1"],
+    "insurance": "EL150",
+    "returnLabelOption": {
+      "enabled": true,
+      "type": "EPAQRETDOM",
+      "payment": "RETPP"
+    }
+  },
+  "addresses": {
+    "sender": {
+      "name": "Peter Baer",
+      "company": "ACME GmbH",
+      "address1": "High Street 1",
+      "address2": "Apt. B1",
+      "address3": "2nd Floor",
+      "postalCode": "3030",
+      "city": "Bern",
+      "province": "BE",
+      "country": "CH",
+      "email": "pbaer@acme.ch",
+      "mobile": "+41123456789",
+      "phone": "+41123456789"
     },
-    "recipient": {
-      "addressLine1": "456 Oak St",
-      "city": "Somewhere",
-      "postalCode": "67890",
-      "countryCode": "US",
-      "stateCode": "NY",
-      "personName": "Jane Smith",
-      "companyName": "XYZ Inc",
-      "phoneNumber": "555-987-6543",
-      "email": "jane@example.com"
+    "receiver": {
+      "name": "Jane Smith",
+      "company": "XYZ Inc",
+      "address1": "Main Street 100",
+      "address2": "",
+      "address3": "",
+      "postalCode": "10001",
+      "city": "New York",
+      "province": "NY",
+      "country": "US",
+      "email": "jane@xyz.com",
+      "mobile": "+1234567890",
+      "phone": "+1234567890"
     },
-    "packages": [
+    "importer": {
+      "name": "Import Agent",
+      "company": "Import Co",
+      "address1": "Import Street 1",
+      "address2": "",
+      "address3": "",
+      "postalCode": "10002",
+      "city": "New York",
+      "province": "NY",
+      "country": "US",
+      "email": "import@co.com",
+      "mobile": "+1234567891",
+      "phone": "+1234567891"
+    },
+    "seller": {
+      "name": "Seller Name",
+      "company": "Seller Co",
+      "address1": "Seller Street 1",
+      "address2": "",
+      "address3": "",
+      "postalCode": "3030",
+      "city": "Bern",
+      "province": "BE",
+      "country": "CH",
+      "email": "seller@co.ch",
+      "mobile": "+41123456780",
+      "phone": "+41123456780"
+    },
+    "pudoAddress": {
+      "address1": "123 Main St",
+      "address2": "Apt 4B",
+      "address3": "Building C",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001",
+      "countryCode": "US",
+      "pudoId": "PUDO12345"
+    }
+  },
+  "customsInfo": {
+    "currency": "EUR",
+    "items": [
       {
-        "weight": 10.5,
-        "weightUnit": "KG",
-        "length": 20.0,
-        "width": 15.0,
-        "height": 10.0,
-        "dimensionUnit": "CM",
-        "packagingType": "BOX"
+        "articleDescription": "Blue Watch",
+        "articleUrl": "https://example.com/watch",
+        "articleNumber": "ACBLWATCH001",
+        "articleComposition": "50% cotton 50% polyester",
+        "unitValue": 100.00,
+        "currency": "EUR",
+        "harmonizationCode": "910310",
+        "originCountry": "CN",
+        "unitWeight": 0.5,
+        "quantity": 1,
+        "volatileOrganicCompoundInGrams": 0
       }
-    ],
-    "service": "EXPRESS",
-    "options": {
-      "insurance": true,
-      "signature_required": false
-    },
-    "labelType": "PDF"
+    ]
   }
 }

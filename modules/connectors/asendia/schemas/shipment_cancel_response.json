@@ -1,6 +1,4 @@
 {
-  "shipmentCancelResponse": {
-    "success": true,
-    "message": "Shipment successfully cancelled"
-  }
+  "success": true,
+  "message": "Parcel successfully deleted"
 }
