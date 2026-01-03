@@ -888,13 +888,54 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    on_hold = ["on_hold"]
-    delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
-    delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
-    ready_for_pickup = ["ready_for_pickup"]
+    """Maps carrier tracking status codes to normalized Karrio statuses."""
+    pending = ["PENDING", "CREATED", "LABEL_PRINTED"]
+    picked_up = ["PICKED_UP", "COLLECTED"]
+    on_hold = ["ON_HOLD", "HELD"]
+    delivered = ["DELIVERED", "POD"]
+    in_transit = ["IN_TRANSIT", "DEPARTED", "ARRIVED"]
+    delivery_failed = ["FAILED", "NOT_DELIVERED", "REFUSED"]
+    delivery_delayed = ["DELAYED", "RESCHEDULED"]
+    out_for_delivery = ["OUT_FOR_DELIVERY"]
+    ready_for_pickup = ["READY_FOR_PICKUP"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps carrier exception codes to normalized incident reasons.
+
+    These codes map carrier-specific exception/status codes to standardized
+    incident reasons for tracking events. The reason field helps identify
+    why a delivery exception occurred.
+
+    Update this enum with actual carrier-specific exception codes.
+    """
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DAMAGED", "DMG"]
+    carrier_sorting_error = ["MISROUTED", "MSR"]
+    carrier_address_not_found = ["ADDRESS_NOT_FOUND", "ANF"]
+    carrier_parcel_lost = ["LOST", "LP"]
+    carrier_not_enough_time = ["LATE", "NO_TIME"]
+    carrier_vehicle_issue = ["VEHICLE_BREAKDOWN", "VB"]
+
+    # Consignee-caused issues
+    consignee_refused = ["REFUSED", "RJ"]
+    consignee_business_closed = ["BUSINESS_CLOSED", "BC"]
+    consignee_not_available = ["NOT_AVAILABLE", "NA"]
+    consignee_not_home = ["NOT_HOME", "NH"]
+    consignee_incorrect_address = ["WRONG_ADDRESS", "IA"]
+    consignee_access_restricted = ["ACCESS_RESTRICTED", "AR"]
+
+    # Customs-related issues
+    customs_delay = ["CUSTOMS_DELAY", "CD"]
+    customs_documentation = ["CUSTOMS_DOCS", "CM"]
+    customs_duties_unpaid = ["DUTIES_UNPAID", "DU"]
+
+    # Weather/Force majeure
+    weather_delay = ["WEATHER", "WE"]
+    natural_disaster = ["NATURAL_DISASTER", "ND"]
+
+    # Unknown
+    unknown = []
 
 '''
 )

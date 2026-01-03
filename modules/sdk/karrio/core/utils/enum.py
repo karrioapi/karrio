@@ -33,6 +33,39 @@ class MetaEnum(enum.EnumMeta):
 
         return EnumWrapper(key)
 
+    def find(cls, key: typing.Any):
+        """Find an enum member where the key is contained in the member's value.
+
+        This is useful for enums with list values (e.g., TrackingStatus, TrackingIncidentReason)
+        where you need to check if a code is IN any of the list values.
+
+        Example:
+            class TrackingStatus(lib.Enum):
+                delivered = ["DEL", "DL", "DELIVERED"]
+                in_transit = ["IT", "OT", "IN_TRANSIT"]
+
+            status = TrackingStatus.find("DEL").name  # "delivered"
+            status = TrackingStatus.find("UNKNOWN").name  # None
+
+        :param key: The key to search for within enum values.
+        :return: EnumWrapper with the matching enum or None.
+        """
+        return EnumWrapper(
+            key,
+            next(
+                (
+                    member
+                    for member in typing.cast(typing.Any, cls).__members__.values()
+                    if (
+                        key in member.value
+                        if isinstance(member.value, (list, tuple))
+                        else key == member.value
+                    )
+                ),
+                None,
+            ) if key is not None else None,
+        )
+
     def as_dict(self):
         return {name: enum.value for name, enum in self.__members__.items()}
 
