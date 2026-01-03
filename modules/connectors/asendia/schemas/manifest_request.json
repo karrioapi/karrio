@@ -1,0 +1,14 @@
+{
+  "manifestRequest": {
+    "accountNumber": "123456",
+    "closeDate": "2023-06-01",
+    "shipments": [
+      {
+        "trackingNumber": "1Z12345E0205271688"
+      },
+      {
+        "trackingNumber": "1Z12345E0205271689"
+      }
+    ]
+  }
+}
