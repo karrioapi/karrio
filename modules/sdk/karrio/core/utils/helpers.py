@@ -250,6 +250,150 @@ def process_error(
 RETRYABLE_STATUS_CODES = {500, 502, 503, 504, 522, 524}
 
 
+class HttpResponse:
+    """HTTP response wrapper that provides access to both content and headers."""
+
+    def __init__(
+        self,
+        content: str,
+        status_code: int = 200,
+        headers: Optional[dict] = None,
+        is_error: bool = False,
+    ):
+        self.content = content
+        self.status_code = status_code
+        self.headers = headers or {}
+        self.is_error = is_error
+
+    def __str__(self) -> str:
+        return self.content
+
+    def get_header(self, name: str, default: str = None) -> Optional[str]:
+        """Get a header value (case-insensitive)."""
+        for key, value in self.headers.items():
+            if key.lower() == name.lower():
+                return value
+        return default
+
+
+def request_with_response(
+    decoder: Callable = decode_bytes,
+    on_ok: Callable[[Any], str] = None,
+    on_error: Callable[[HTTPError], str] = None,
+    trace: Callable[[Any, str], Any] = None,
+    proxy: str = None,
+    timeout: Optional[int] = None,
+    max_retries: int = 0,
+    retry_delay: float = 1.0,
+    retry_on_status: List[int] = None,
+    **kwargs,
+) -> HttpResponse:
+    """Return an HTTP response object with content, headers, and status.
+
+    This is similar to request() but returns an HttpResponse object
+    that provides access to response headers in addition to the body.
+
+    Args:
+        decoder: Function to decode the response bytes (default: decode_bytes)
+        on_ok: Optional callback to process successful responses
+        on_error: Optional callback to process error responses
+        trace: Trace function for logging
+        proxy: Proxy configuration string (format: 'Username:Password@IP_Address:Port')
+        timeout: Request timeout in seconds
+        max_retries: Maximum number of retry attempts for transient failures (default: 0)
+        retry_delay: Initial delay between retries in seconds, doubles each attempt (default: 1.0)
+        retry_on_status: List of HTTP status codes to retry on (default: 500, 502, 503, 504, 522, 524)
+        **kwargs: Additional arguments passed to urllib.request.Request
+
+    Returns:
+        HttpResponse object with content, status_code, headers, and is_error flag
+    """
+    import time
+
+    _retry_statuses = set(retry_on_status or RETRYABLE_STATUS_CODES)
+    _request_id = str(uuid.uuid4())
+    _last_error: Optional[Union[HTTPError, TimeoutError, ConnectionError, OSError]] = None
+    _last_response = None
+
+    for attempt in range(max_retries + 1):
+        try:
+            if attempt > 0:
+                delay = retry_delay * (2 ** (attempt - 1))
+                logger.warning(
+                    "Retrying HTTP request",
+                    request_id=_request_id,
+                    attempt=attempt,
+                    max_retries=max_retries,
+                    delay=delay,
+                )
+                time.sleep(delay)
+
+            logger.debug(
+                "Sending HTTP request",
+                request_id=_request_id,
+                attempt=attempt if max_retries > 0 else None,
+            )
+
+            _request = process_request(_request_id, trace if attempt == 0 else None, proxy, **kwargs)
+
+            with urlopen(_request, timeout=timeout) as f:
+                _content = process_response(
+                    _request_id, f, decoder, on_ok=on_ok, trace=trace if attempt == 0 else None
+                )
+                return HttpResponse(
+                    content=_content,
+                    status_code=f.status,
+                    headers=dict(f.headers),
+                    is_error=False,
+                )
+
+        except HTTPError as e:
+            _last_error = e
+
+            # Check if we should retry this error
+            if e.code in _retry_statuses and attempt < max_retries:
+                logger.warning(
+                    "HTTP request failed with retryable status",
+                    request_id=_request_id,
+                    status_code=e.code,
+                    attempt=attempt,
+                    max_retries=max_retries,
+                )
+                continue
+
+            # No more retries, process the error
+            _content = process_error(_request_id, e, on_error=on_error, trace=trace)
+            return HttpResponse(
+                content=_content,
+                status_code=e.code,
+                headers=dict(e.headers) if e.headers else {},
+                is_error=True,
+            )
+
+        except (TimeoutError, ConnectionError, OSError) as e:
+            _last_error = e
+
+            # Retry on connection/timeout errors
+            if attempt < max_retries:
+                logger.warning(
+                    "HTTP request failed with connection error, retrying",
+                    request_id=_request_id,
+                    error=str(e),
+                    attempt=attempt,
+                    max_retries=max_retries,
+                )
+                continue
+
+            # No more retries, raise the error
+            raise
+
+    # Should not reach here, but just in case
+    if _last_error is not None:
+        raise _last_error
+
+    return HttpResponse(content="", status_code=0, headers={}, is_error=True)
+
+
 def request(
     decoder: Callable = decode_bytes,
     on_ok: Callable[[Any], str] = None,

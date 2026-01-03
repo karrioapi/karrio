@@ -12,8 +12,11 @@
 -e ./modules/connectors/dhl_poland
 -e ./modules/connectors/dhl_universal
 -e ./modules/connectors/dpd
+-e ./modules/connectors/dpd_meta
 -e ./modules/connectors/fedex
 -e ./modules/connectors/generic
+-e ./modules/connectors/gls
+-e ./modules/connectors/hermes
 -e ./modules/connectors/landmark
 -e ./modules/connectors/laposte
 -e ./modules/connectors/mydhl

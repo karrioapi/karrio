@@ -1,0 +1,245 @@
+[
+  {
+    "numberOfParcels": "1a",
+    "shipmentInfos": {
+      "productCode": "101a",
+      "shipmentId": "SHIP123456",
+      "weight": "3000a",
+      "cifcost": {
+        "amount": 100.00,
+        "currency": "EUR"
+      },
+      "dimensions": {
+        "length": 30,
+        "width": 20,
+        "height": 15
+      }
+    },
+    "sender": {
+      "customerInfos": {
+        "customerID": "CUST001",
+        "customerAccountNumber": "ACC123",
+        "customerSubAccountNumber": null,
+        "originalCustomerId": null
+      },
+      "address": {
+        "companyName": "Sender Corp",
+        "name1": "John Sender",
+        "name2": null,
+        "street": "Main Street",
+        "houseNumber": "42",
+        "addressLine2": null,
+        "addressLine3": null,
+        "interphoneName": null,
+        "floor": null,
+        "doorCode": null,
+        "building": null,
+        "department": null,
+        "zipCode": "10115",
+        "city": "Berlin",
+        "state": null,
+        "country": "DE"
+      },
+      "contact": {
+        "contactPerson": "John Sender",
+        "phone1": "+49301234567",
+        "phone2": null,
+        "fax": null,
+        "email": "sender@example.com"
+      },
+      "legalEntity": {
+        "businessType": "B",
+        "eori": "DE123456789",
+        "vatNumber": "DE123456789",
+        "taxIdType": null,
+        "taxIdValue": null
+      }
+    },
+    "receiver": {
+      "address": {
+        "name1": "Jane Receiver",
+        "name2": null,
+        "companyName": "Receiver Inc",
+        "street": "Secondary Road",
+        "houseNumber": "88a",
+        "addressLine2": null,
+        "addressLine3": null,
+        "interphoneName": null,
+        "floor": null,
+        "doorCode": null,
+        "building": null,
+        "department": null,
+        "zipCode": "75001a",
+        "city": "Paris",
+        "state": null,
+        "country": "FR"
+      },
+      "contact": {
+        "contactPerson": "Jane Receiver",
+        "phone1": "+33123456789",
+        "phone2": null,
+        "fax": null,
+        "email": "receiver@example.com"
+      },
+      "legalEntity": {
+        "businessType": "P",
+        "eori": null,
+        "vatNumber": null,
+        "taxIdType": null,
+        "taxIdValue": null
+      }
+    },
+    "parcel": [
+      {
+        "parcelInfos": {
+          "weight": "3000a",
+          "dimensions": {
+            "length": 30,
+            "width": 20,
+            "height": 15
+          }
+        },
+        "parcelContent": "Electronic equipment",
+        "references": [
+          {
+            "referenceNumber": "REF001",
+            "referenceType": "CUSTOMER_REFERENCE"
+          }
+        ],
+        "hazardous": {
+          "classCode": null,
+          "identificationClass": null,
+          "substanceWeight": null,
+          "factor": null,
+          "notOtherwiseSpecified": null,
+          "packingGroup": null,
+          "subsidiaryRisk": null,
+          "description": null,
+          "hazardousWeight": null,
+          "tunnelRestrictionCode": null,
+          "identificationUnNo": null,
+          "packingCode": null
+        },
+        "cod": {
+          "amount": {
+            "amount": 50.00,
+            "currency": "EUR"
+          },
+          "collectType": "s0",
+          "purpose": null,
+          "bankCode": null,
+          "bankName": null,
+          "bankAccountNumber": null,
+          "bankAccountName": null,
+          "iban": null,
+          "bic": null
+        },
+        "insurance": {
+          "insuranceAmount": {
+            "amount": 500.00,
+            "currency": "EUR"
+          },
+          "insuranceParcelContent": "Electronic equipment"
+        },
+        "messages": {
+          "email1": {
+            "notificationType": "DELIVERY",
+            "notificationEmail": "receiver@example.com",
+            "notificationLanguage": "EN"
+          },
+          "sms1": {
+            "notificationType": "DELIVERY",
+            "notificationPhone": "+33123456789",
+            "notificationLanguage": "EN"
+          }
+        },
+        "person": {
+          "personToNotify": "Jane Receiver",
+          "personToDeliver": "Jane Receiver"
+        }
+      }
+    ],
+    "international": {
+      "parcelType": "P",
+      "customsAmount": {
+        "amount": 150.00,
+        "currency": "EUR"
+      },
+      "customsAmountEx": {
+        "amount": 150.00,
+        "currency": "EUR"
+      },
+      "customsTerms": "s01",
+      "customsPaper": "A",
+      "clearanceStatus": "N",
+      "customsHighLowValue": "M",
+      "customsInvoice": "INV001",
+      "customsInvoiceDates": ["2025-01-15"],
+      "mrn": null,
+      "numberOfArticles": "1a",
+      "destinationCountryRegistration": null,
+      "exportReason": "s01",
+      "shipmentContent": "Electronic equipment",
+      "importer": {
+        "address": {
+          "companyName": "Importer Corp",
+          "name1": "Import Manager",
+          "street": "Import Street",
+          "houseNumber": "1a",
+          "zipCode": "75002a",
+          "city": "Paris",
+          "country": "FR"
+        },
+        "contact": {
+          "phone1": "+33198765432",
+          "email": "importer@example.com"
+        },
+        "gln": null,
+        "vatNumber": "FR12345678901",
+        "customerDefermentNumber": null,
+        "eori": "FR123456789000"
+      },
+      "exporter": {
+        "address": {
+          "companyName": "Exporter Corp",
+          "name1": "Export Manager",
+          "street": "Export Street",
+          "houseNumber": "2a",
+          "zipCode": "10115a",
+          "city": "Berlin",
+          "country": "DE"
+        },
+        "contact": {
+          "phone1": "+49301234567",
+          "email": "exporter@example.com"
+        },
+        "eori": "DE123456789"
+      },
+      "interInvoiceLines": [
+        {
+          "invoicePosition": "1a",
+          "quantityOfItems": "2a",
+          "content": "Laptop Computer",
+          "amountOfPosition": 500.00,
+          "manufacturedCountry": "CN",
+          "netWeight": "2000a",
+          "grossWeight": "2500a",
+          "customerProductCode": "LAPTOP-001",
+          "productDescription": "15 inch Laptop",
+          "fabricComposition": null,
+          "importTarifCode": "8471300000",
+          "exportTarifCode": "8471300000",
+          "goodsWebPage": null,
+          "parcelRank": "1a"
+        }
+      ]
+    },
+    "delivery": {
+      "dateFrom": "2025-01-16",
+      "dateTo": "2025-01-16",
+      "timeFrom": "09:00",
+      "timeTo": "18:00",
+      "timeSlotTariff": null
+    }
+  }
+]

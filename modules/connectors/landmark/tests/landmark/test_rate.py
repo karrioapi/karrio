@@ -44,7 +44,10 @@ class TestLandmarkServiceConfiguration(unittest.TestCase):
 
         self.assertIsNotNone(maxipak_ddp)
         self.assertEqual(maxipak_ddp.currency, "GBP")
-        self.assertGreater(len(maxipak_ddp.zones), 10)
+        self.assertGreater(len(maxipak_ddp.zones), 0)
+        # Weight limits at service level
+        self.assertEqual(maxipak_ddp.min_weight, 0)
+        self.assertEqual(maxipak_ddp.max_weight, 30)
 
     def test_minipak_ddp_service_structure(self):
         """Test MiniPak DDP service has correct structure."""
@@ -62,13 +65,12 @@ class TestLandmarkServiceConfiguration(unittest.TestCase):
             if zone.country_codes
             for code in zone.country_codes
         }
-        self.assertNotIn("US", all_countries, "MiniPak DDP should be EU only")
-        self.assertNotIn("CA", all_countries, "MiniPak DDP should be EU only")
-        self.assertNotIn("AU", all_countries, "MiniPak DDP should be EU only")
+        # MiniPak DDP is available for all zones including US, CA, AU
+        self.assertIn("US", all_countries, "MiniPak DDP should include US")
+        self.assertIn("DE", all_countries, "MiniPak DDP should include EU countries")
 
-        max_weights = [z.max_weight for z in minipak_ddp.zones if z.max_weight]
-        max_weight = max(max_weights) if max_weights else 0
-        self.assertLessEqual(max_weight, 2.0, "MiniPak max weight should be 2kg")
+        # Weight limits at service level
+        self.assertLessEqual(minipak_ddp.max_weight, 2.0, "MiniPak max weight should be 2kg")
 
     def test_all_services_have_zones_and_rates(self):
         """Test that all services have zones with valid rates."""
@@ -106,45 +108,15 @@ class TestLandmarkZoneConfiguration(unittest.TestCase):
             None,
         )
 
-    def test_us_zone_has_multiple_weight_tiers(self):
-        """Test that US zone has multiple weight tiers."""
+    def test_us_zone_exists(self):
+        """Test that US zone exists."""
         us_zones = [
             z
             for z in self.maxipak_ddp.zones
             if z.country_codes and "US" in z.country_codes
         ]
 
-        self.assertGreater(len(us_zones), 5, "US should have multiple weight tiers")
-
-        weight_ranges = {(z.min_weight, z.max_weight) for z in us_zones}
-        self.assertEqual(
-            len(weight_ranges),
-            len(us_zones),
-            "Weight ranges should be unique",
-        )
-
-    def test_us_rates_increase_with_weight(self):
-        """Test that US rates increase with weight."""
-        us_zones = sorted(
-            [
-                z
-                for z in self.maxipak_ddp.zones
-                if z.country_codes
-                and "US" in z.country_codes
-                and z.label == "United States"
-                and z.max_weight
-            ],
-            key=lambda z: z.max_weight,
-        )
-
-        for i in range(len(us_zones) - 1):
-            current_rate = us_zones[i].rate
-            next_rate = us_zones[i + 1].rate
-            self.assertLessEqual(
-                current_rate,
-                next_rate * 1.1,
-                f"Rate should increase with weight: {us_zones[i].min_weight}-{us_zones[i].max_weight}kg @ £{current_rate} vs {us_zones[i+1].min_weight}-{us_zones[i+1].max_weight}kg @ £{next_rate}",
-            )
+        self.assertGreater(len(us_zones), 0, "US zone should exist")
 
     def test_eu_zone_coverage(self):
         """Test that EU zones cover expected countries."""
@@ -162,15 +134,12 @@ class TestLandmarkZoneConfiguration(unittest.TestCase):
         )
 
     def test_germany_rate_lower_than_us(self):
-        """Test that Germany rates are lower than US rates for same weight."""
+        """Test that Germany rates are lower than US rates."""
         de_zone = next(
             (
                 z
                 for z in self.maxipak_ddp.zones
-                if z.country_codes
-                and "DE" in z.country_codes
-                and z.min_weight == 0.5
-                and z.max_weight == 1.0
+                if z.country_codes and "DE" in z.country_codes
             ),
             None,
         )
@@ -179,10 +148,7 @@ class TestLandmarkZoneConfiguration(unittest.TestCase):
             (
                 z
                 for z in self.maxipak_ddp.zones
-                if z.country_codes
-                and "US" in z.country_codes
-                and z.min_weight == 0.5
-                and z.max_weight == 1.0
+                if z.country_codes and "US" in z.country_codes
             ),
             None,
         )
@@ -207,31 +173,6 @@ class TestLandmarkZoneConfiguration(unittest.TestCase):
         if us_zones:
             self.assertEqual(us_zones[0].transit_days, 7, "US transit should be 7 days")
 
-    def test_zone_weight_ranges_no_gaps(self):
-        """Test that weight ranges don't have gaps for each destination."""
-        zones_by_destination = {}
-        for zone in self.maxipak_ddp.zones:
-            zones_by_destination.setdefault(zone.label, []).append(zone)
-
-        for destination, zones in zones_by_destination.items():
-            sorted_zones = sorted(
-                [z for z in zones if z.min_weight is not None],
-                key=lambda z: z.min_weight,
-            )
-
-            if len(sorted_zones) < 2:
-                continue
-
-            for i in range(len(sorted_zones) - 1):
-                current_max = sorted_zones[i].max_weight
-                next_min = sorted_zones[i + 1].min_weight
-
-                self.assertEqual(
-                    current_max,
-                    next_min,
-                    f"{destination}: Gap in weight ranges - zone {i} ends at {current_max}kg, zone {i+1} starts at {next_min}kg",
-                )
-
 
 class TestLandmarkRateScenarios(unittest.TestCase):
     """Test realistic shipping scenarios."""
@@ -248,81 +189,40 @@ class TestLandmarkRateScenarios(unittest.TestCase):
             None,
         )
 
-    def test_light_package_to_us_rate(self):
-        """Test rate for 0.3kg package to US."""
-        matching_zone = next(
+    def test_service_weight_limits(self):
+        """Test that service has weight limits defined."""
+        self.assertIsNotNone(self.maxipak_ddp.min_weight, "Service should have min_weight")
+        self.assertIsNotNone(self.maxipak_ddp.max_weight, "Service should have max_weight")
+        self.assertEqual(self.maxipak_ddp.min_weight, 0, "Min weight should be 0")
+        self.assertEqual(self.maxipak_ddp.max_weight, 30, "Max weight should be 30kg")
+
+    def test_us_zone_rate(self):
+        """Test that US zone has expected rate."""
+        us_zone = next(
             (
                 z
                 for z in self.maxipak_ddp.zones
-                if z.country_codes
-                and "US" in z.country_codes
-                and z.min_weight is not None
-                and z.max_weight is not None
-                and z.min_weight <= 0.3 < z.max_weight
+                if z.country_codes and "US" in z.country_codes
             ),
             None,
         )
 
-        self.assertIsNotNone(matching_zone, "Should find zone for 0.3kg to US")
-        self.assertEqual(matching_zone.rate, 6.86, "0.3kg to US should cost £6.86")
+        self.assertIsNotNone(us_zone, "Should find US zone")
+        self.assertEqual(us_zone.rate, 5.71, "US rate should be £5.71")
 
-    def test_medium_package_to_us_rate(self):
-        """Test rate for 0.75kg package to US."""
-        matching_zone = next(
+    def test_eu_zone1_rate(self):
+        """Test that EU Zone 1 has expected rate."""
+        eu_zone1 = next(
             (
                 z
                 for z in self.maxipak_ddp.zones
-                if z.country_codes
-                and "US" in z.country_codes
-                and z.min_weight is not None
-                and z.max_weight is not None
-                and z.min_weight <= 0.75 < z.max_weight
+                if z.label == "EU Zone 1"
             ),
             None,
         )
 
-        self.assertIsNotNone(matching_zone, "Should find zone for 0.75kg to US")
-        self.assertEqual(matching_zone.rate, 8.78, "0.75kg to US should cost £8.78")
-
-    def test_heavy_package_to_us_rate(self):
-        """Test rate for 1.5kg package to US."""
-        matching_zone = next(
-            (
-                z
-                for z in self.maxipak_ddp.zones
-                if z.country_codes
-                and "US" in z.country_codes
-                and z.min_weight is not None
-                and z.max_weight is not None
-                and z.min_weight <= 1.5 < z.max_weight
-            ),
-            None,
-        )
-
-        self.assertIsNotNone(matching_zone, "Should find zone for 1.5kg to US")
-        self.assertEqual(matching_zone.rate, 10.81, "1.5kg to US should cost £10.81")
-
-    def test_package_on_tier_boundary(self):
-        """Test package weight exactly on tier boundary."""
-        matching_zone = next(
-            (
-                z
-                for z in self.maxipak_ddp.zones
-                if z.country_codes
-                and "US" in z.country_codes
-                and z.min_weight is not None
-                and z.max_weight is not None
-                and z.min_weight <= 0.5 < z.max_weight
-            ),
-            None,
-        )
-
-        if matching_zone:
-            self.assertEqual(
-                matching_zone.min_weight,
-                0.5,
-                "0.5kg should match tier starting at 0.5kg",
-            )
+        self.assertIsNotNone(eu_zone1, "Should find EU Zone 1")
+        self.assertEqual(eu_zone1.rate, 4.33, "EU Zone 1 rate should be £4.33")
 
 
 if __name__ == "__main__":
@@ -364,18 +264,18 @@ ParsedRateResponse = [
             "currency": "GBP",
             "extra_charges": [
                 {
-                    "amount": 8.78,
+                    "amount": 5.71,
                     "currency": "GBP",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "MaxiPak Scan DDP",
-                "shipping_charges": 8.78,
+                "shipping_charges": 5.71,
                 "shipping_currency": "GBP",
             },
             "service": "landmark_maxipak_scan_ddp",
-            "total_charge": 8.78,
+            "total_charge": 5.71,
             "transit_days": 7,
         },
         {
@@ -384,18 +284,58 @@ ParsedRateResponse = [
             "currency": "GBP",
             "extra_charges": [
                 {
-                    "amount": 8.78,
+                    "amount": 5.71,
                     "currency": "GBP",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "MaxiPak Scan DDU",
-                "shipping_charges": 8.78,
+                "shipping_charges": 5.71,
                 "shipping_currency": "GBP",
             },
             "service": "landmark_maxipak_scan_ddu",
-            "total_charge": 8.78,
+            "total_charge": 5.71,
+            "transit_days": 7,
+        },
+        {
+            "carrier_id": "landmark",
+            "carrier_name": "landmark",
+            "currency": "GBP",
+            "extra_charges": [
+                {
+                    "amount": 5.71,
+                    "currency": "GBP",
+                    "name": "Base Charge",
+                }
+            ],
+            "meta": {
+                "service_name": "MiniPak Scan DDP",
+                "shipping_charges": 5.71,
+                "shipping_currency": "GBP",
+            },
+            "service": "landmark_minipak_scan_ddp",
+            "total_charge": 5.71,
+            "transit_days": 7,
+        },
+        {
+            "carrier_id": "landmark",
+            "carrier_name": "landmark",
+            "currency": "GBP",
+            "extra_charges": [
+                {
+                    "amount": 5.71,
+                    "currency": "GBP",
+                    "name": "Base Charge",
+                }
+            ],
+            "meta": {
+                "service_name": "MiniPak Scan DDU",
+                "shipping_charges": 5.71,
+                "shipping_currency": "GBP",
+            },
+            "service": "landmark_minipak_scan_ddu",
+            "total_charge": 5.71,
             "transit_days": 7,
         },
         {

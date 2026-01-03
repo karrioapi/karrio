@@ -931,6 +931,9 @@ def run_asynchronously(
 # region
 
 
+HttpResponse = utils.HttpResponse
+
+
 def request(
     decoder: typing.Callable = utils.decode_bytes,
     on_ok: typing.Callable = None,
@@ -941,6 +944,34 @@ def request(
     **kwargs,
 ) -> str:
     return utils.request(
+        decoder=decoder,
+        on_ok=on_ok,
+        on_error=on_error,
+        trace=trace,
+        proxy=proxy,
+        timeout=timeout,
+        **kwargs,
+    )
+
+
+def request_with_response(
+    decoder: typing.Callable = utils.decode_bytes,
+    on_ok: typing.Callable = None,
+    on_error: typing.Callable = None,
+    trace: typing.Callable[[typing.Any, str], typing.Any] = None,
+    proxy: str = None,
+    timeout: typing.Optional[int] = None,
+    **kwargs,
+) -> HttpResponse:
+    """Make an HTTP request and return response with headers.
+
+    Similar to request() but returns an HttpResponse object that provides
+    access to response headers in addition to the body content.
+
+    Returns:
+        HttpResponse object with content, status_code, headers, and is_error flag
+    """
+    return utils.request_with_response(
         decoder=decoder,
         on_ok=on_ok,
         on_error=on_error,

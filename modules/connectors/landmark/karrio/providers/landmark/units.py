@@ -64,8 +64,8 @@ class ShippingServiceName(lib.StrEnum):
     # fmt: off
     landmark_maxipak_scan_ddp = "MaxiPak Scan DDP"
     landmark_maxipak_scan_ddu = "MaxiPak Scan DDU"
-    landmark_minipak_scan_ddp = "MiniPak Scan DDP (EU Only)"
-    landmark_minipak_scan_ddu = "MiniPak Scan DDU shipments (EU & ROW)"
+    landmark_minipak_scan_ddp = "MiniPak Scan DDP"
+    landmark_minipak_scan_ddu = "MiniPak Scan DDU"
     landmark_maxipak_scan_premium_ups_express_ddp = "MaxiPak Scan Premium UPS Express DDP"
     landmark_maxipak_scan_premium_ups_express_ddu = "MaxiPak Scan Premium UPS Express DDU"
     landmark_maxipak_scan_premium_ups_standard_ddp = "MaxiPak Scan Premium UPS Standard DDP"
@@ -214,10 +214,11 @@ class TrackingIncidentReason(lib.Enum):
 def load_services_from_csv() -> list:
     """
     Load service definitions from CSV file.
-    CSV format: service_code, service_name, zone_label, country_codes, rate, currency, transit_days, min_weight, max_weight, weight_unit
+    CSV format: service_code, service_name, zone_label, country_codes, rate, currency, transit_days
 
-    Weight limits (min_weight, max_weight, weight_unit) are at the service level.
-    Zones contain: label, rate, transit_days, country_codes.
+    Weight limits are derived from service name:
+    - MiniPak services: 0-2 KG
+    - MaxiPak services: 0-30 KG
     """
     csv_path = pathlib.Path(__file__).resolve().parent / "services.csv"
 
@@ -242,22 +243,23 @@ def load_services_from_csv() -> list:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
+            service_name = row.get("service_name", "")
 
             # Initialize service if not exists
             if service_code not in services_dict:
+                # Derive weight limits from service name
+                is_minipak = "MiniPak" in service_name
+                max_weight = 2.0 if is_minipak else 30.0
+
                 services_dict[service_code] = {
                     "service_name": ShippingServiceName.map(
                         ShippingService.map(service_code).name_or_key
                     ).value_or_key,
                     "service_code": ShippingService.map(service_code).name_or_key,
                     "currency": row.get("currency", "GBP"),
-                    "min_weight": (
-                        float(row["min_weight"]) if row.get("min_weight") else None
-                    ),
-                    "max_weight": (
-                        float(row["max_weight"]) if row.get("max_weight") else None
-                    ),
-                    "weight_unit": row.get("weight_unit", "KG"),
+                    "min_weight": 0.0,
+                    "max_weight": max_weight,
+                    "weight_unit": "KG",
                     "zones": [],
                 }
 
@@ -266,7 +268,7 @@ def load_services_from_csv() -> list:
                 c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
             ]
 
-            # Create zone (without weight limits - those are at service level)
+            # Create zone
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),

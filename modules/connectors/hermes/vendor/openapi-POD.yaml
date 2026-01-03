@@ -1,0 +1,144 @@
+openapi: "3.0.3"
+info:
+  title: POD API
+  version: "2025-11-28"
+  description: " <p>\n    This is the POD API of the Hermes Shipping Interface.\n  </p>\n  <details>\n    <summary>Note on User Agent header</summary>\n    <p>\n      By providing an application specific <a href=\"https://www.rfc-editor.org/rfc/rfc2616#section-14.43\" target=\"_blank\">User Agent</a>, you help us to identify\n      your application that is making the API call. This makes troubleshooting more effectively and faster as we can identify your requests more easily.\n  <p>\n  </details>\n"
+servers:
+  - url: https://de-api-int.hermesworld.com/services/pod
+security:
+  - OAuth2: [ ]
+paths:
+  /signature:
+    post:
+      tags:
+        - Signature
+      description: Use this operation to request customer signature for your shipment.
+      operationId: getSignature
+      parameters:
+        - in: header
+          name: Accept-Language
+          schema:
+            type: string
+            enum: [ DE, EN ]
+            default: DE
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetSignatureRequest"
+        required: true
+      responses:
+        "200":
+          description: PDF file containing the signature
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: "<p>Bad Request</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e001: The attributes [list of attributes] do not correspond to the specification.<li>e001: The body is not readable.<li>e001: The body is missing.<li>e002: The mandatory fields [list of mandatory fields] are not filled.<li>e007: You are not authorized to request the signature for the shipment number.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: "<p>Unauthorized</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e900: You are not authorized to execute this functionality.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: "<p>Forbidden</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e900: You are not authorized to execute this functionality.<li>e902: Token is invalid.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: "<p>Not Found</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e005: There is no signature for the shipment number.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "406":
+          description: "<p>Not Acceptable</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e004: The given media type is unknown.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "415":
+          description: "<p>Unsupported Media Type</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e003: The given Content-Type [name of content type] is not supported.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: "<p>To Many Requests</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e008: You have reached the limit of monthly permitted requests.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: "<p>Internal Server Error</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e999: A technical error has occurred.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "504":
+          description: "<p>Gateway Timout</p><p>Please refer to the listOfResultCodes for possible causes.</p><p>These might be:</p><ul><li>e006: Request of the signature failed.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    GetSignatureRequest:
+      type: object
+      properties:
+        shipmentId:
+          description: Shipment id used to fetch signature.
+          type: string
+          example: 89195131100303
+        reason:
+          description: Reason for fetching signature.
+          type: string
+          enum:
+            - REQUESTED_BY_PAYMENT_PROVIDER
+            - REQUESTED_BY_HEALTH_INSURANCE
+            - REQUESTED_BY_RECEIVER
+            - REQUESTED_BY_AUTHORITY
+            - POSSIBLE_FRAUD_CASE
+    ErrorResponse:
+      type: object
+      properties:
+        listOfResultCodes:
+          type: array
+          description: Error list
+          items:
+            $ref: '#/components/schemas/ResultCode'
+      description: Error Response
+    ResultCode:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Contains code when created status could not be mapped to a HTTP-Statuscode.
+          example: e005
+        message:
+          type: string
+          description: Contains message when created status could not be mapped to a HTTP-Statuscode.
+          example: There is no signature for the shipment number.
+      description: Error list
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: https://authme-int.myhermes.de/authorization-facade/oauth2/access_token
+          refreshUrl: https://authme-int.myhermes.de/authorization-facade/oauth2/access_token
+          scopes: { }
+        authorizationCode:
+          authorizationUrl: https://authme-int.myhermes.de/authorization-facade/oauth2/authorize
+          tokenUrl: https://authme-int.myhermes.de/authorization-facade/oauth2/access_token
+          refreshUrl: https://authme-int.myhermes.de/authorization-facade/oauth2/access_token
+          scopes: { }

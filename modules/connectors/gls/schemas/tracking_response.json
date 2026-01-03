@@ -1,0 +1,30 @@
+{
+  "parcels": [
+    {
+      "requested": "12345678901234567890",
+      "unitno": "12345678901234567890",
+      "status": "INTRANSIT",
+      "statusDateTime": "2024-10-11T15:24:57+0200",
+      "events": [
+        {
+          "code": "INTIAL.NORMAL",
+          "city": "Berlin",
+          "postalCode": "10437",
+          "country": "DE",
+          "description": "The parcel was handed over to GLS.",
+          "eventDateTime": "2024-10-07T10:46:14+0200"
+        },
+        {
+          "code": "INTIAL.PREADVICE",
+          "city": "",
+          "postalCode": "",
+          "country": "DE",
+          "description": "The parcel data was entered into the GLS IT system.",
+          "eventDateTime": "2024-10-07T09:30:00+0200"
+        }
+      ],
+      "errorCode": null,
+      "errorMessage": null
+    }
+  ]
+}

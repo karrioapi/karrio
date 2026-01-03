@@ -1,0 +1,802 @@
+---
+openapi: "3.0.0"
+info:
+  version: "1.0.7"
+  title: "Track And Trace V1"
+  description: "This API allows users to retrieve parcel status and event information\
+    \ by providing parcel identifiers or references. It supports querying parcel data\
+    \ based on different formats and types of references, which may vary depending\
+    \ on the country of origin and destination.<br><br>Parcel numbers, also known\
+    \ as Transport Unit Numbers (Unito Nos), are used to track the status and history\
+    \ of parcels across various regions. Different countries may employ distinct formats\
+    \ for these numbers. Additionally, some references may correspond to multiple\
+    \ parcels, resulting in multiple event records for a single query.<br><br>Users\
+    \ can provide a set of parcel numbers or other valid reference types such as tracking\
+    \ IDs or notification card IDs to obtain the status and event history for parcels.\
+    \ The API is designed to return detailed information for each parcel, including\
+    \ current status, history of events, and relevant tracking details, ensuring accurate\
+    \ and up-to-date parcel tracking across regions.<br><br>The API utilizes the <a\
+    \ href='https://en.wikipedia.org/wiki/HATEOAS'>HATEOAS</a> paradigm. Additional\
+    \ data is made available through other APIs. Depending on the case and situation,\
+    \ the T&T API provides an appropriate URL (links) for further use.<h3><br><b>Production\
+    \ Access</b></h3>By default, clients are limited to 500 requests per day.<br>If\
+    \ a higher request limit is required, please contact GLS Field-IT, Sales or Partner\
+    \ Management.<br> \n\n <br><h3><b>Notice:</b></h3><ul><li>The production and sandbox\
+    \ environments are identical. Please always use the production environment.</li><li>The\
+    \ Try-it feature is currently unavailable due to an underlying service disruption.</li></ul>\n\
+    \n<br><h3><b>Test Data Set:</b></h3>To support early testing of the system, a\
+    \ set of Test Parcels is available. These can be used before the actual (productive)\
+    \ Parcels are live.<br>More details are described under <a href='types/TrackTraceTestDataSet'>Test\
+    \ Data Set</a> \n\n<br><h3><b>Changelog</b></h3> <table style= 'margin:0; padding:0'><tr><td>1.0.7</td><td>10.09.2025</td><td>Added\
+    \ <a href='types/TrackTraceTestDataSet'>Test Data Set</a></td></tr><tr><td>1.0.6</td><td>30.07.2025</td><td>Added\
+    \ the showEvents parameter (defaulting to true) to enable clients to retrieve\
+    \ basic status information without including events. Additionally, parts of the\
+    \ documentation were revised for clarity.</td></tr><tr><td>1.0.5</td><td>02.06.2025</td><td>The\
+    \ parameter showErrors has been removed and the response always show the errors\
+    \ if parcels do not exist.</td></tr><tr><td>1.0.4</td><td>14.05.2025</td><td>Changed\
+    \ user group to public with quota rules.</td></tr><tr><td>1.0.3</td><td>09.04.2025</td><td>Added\
+    \ Events Codes API</td></tr><tr><td>1.0.2</td><td>13.02.2025</td><td>Enhanced\
+    \ response by adding <a href='https://en.wikipedia.org/wiki/HATEOAS'>HATEOAS</a>\
+    \ links with a new query parameter <i>showLinks</i></td></tr><tr><td>1.0.1</td><td>23.10.2024</td><td>Enhanced\
+    \ response with a new query parameter <i>showErrors</i></td></tr><tr><td>1.0.0</td><td>13.09.2023</td><td>Initial\
+    \ release</td></tr></table>"
+servers:
+- url: "https://api-sandbox.gls-group.net/track-and-trace-v1/"
+  description: "Sandbox - uses test data"
+- url: "https://api.gls-group.net/track-and-trace-v1/"
+  description: "Production - to be used only in PROD"
+- url: "https://api-qas.gls-group.net/track-and-trace-v1/"
+  description: "QAS - to be used for integration tests"
+paths:
+  /tracking/simple/trackids/{unitnos}:
+    get:
+      tags:
+      - "track-and-trace-controller"
+      summary: "Gets parcel status and events by the given parcel numbers"
+      description: "The function provides the ability to retrieve the status and detailed\
+        \ event history of parcels by using the provided parcel numbers, with a maximum\
+        \ limit of 10 parcel IDs per request. GLS employs different formats for parcel\
+        \ numbers, depending on the country of origin and the destination. These parcel\
+        \ numbers, also known as Transport Unit Numbers (Unito Nos), serve as unique\
+        \ identifiers for tracking the parcel throughout the delivery process.<br><br>In\
+        \ particular, GLS uses varying parcel number formats across different countries.\
+        \ One of the most commonly recognized formats is the 11- or 12-digit parcel\
+        \ number, which is widely used in Germany and other regions. Additionally,\
+        \ an 8-characters parcel number format is frequently employed by certain countries,\
+        \ such as Denmark. These format differences are important when handling cross-border\
+        \ shipments to ensure accurate tracking and status updates.<br><br>By understanding\
+        \ the distinctions in these parcel number formats, users can effectively track\
+        \ their shipments across multiple countries and ensure that the provided parcel\
+        \ IDs align with the country-specific requirements."
+      operationId: "getEventsByParcelNumber"
+      parameters:
+      - $ref: "#/components/parameters/RequestUnitNos"
+      - $ref: "#/components/parameters/RequestShowLinks"
+      - $ref: "#/components/parameters/RequestShowEvents"
+      - $ref: "#/components/parameters/RequestAcceptLanguage"
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "401":
+          $ref: "#/components/responses/Response401"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "429":
+          $ref: "#/components/responses/Response429"
+      security:
+      - OAuthProd: []
+  /tracking/simple/references/{references}:
+    get:
+      tags:
+      - "track-and-trace-controller"
+      summary: "Gets parcel status and events by the given references"
+      description: "The function allows retrieval of parcel event histories by providing\
+        \ parcel references, with a maximum limit of 10 references per request. It\
+        \ is important to note that a single reference may correspond to multiple\
+        \ parcels, which can result in multiple event records being returned (as illustrated\
+        \ in the examples below).<br><br>Currently, the following reference types\
+        \ are supported: \n- **Parcel Number**: 11- or 12-digit format. \n- **Track\
+        \ ID**: 8-characters format. \n- **Notification Card ID**: 6-characters format.\
+        \ \n- **Digital Notification Card ID**: 14-characters format.\n\nBy leveraging\
+        \ these reference types, users can efficiently obtain event information for\
+        \ parcels, while being mindful that certain references may retrieve data for\
+        \ more than one parcel, depending on the logistics context."
+      operationId: "getEventsByReferences"
+      parameters:
+      - $ref: "#/components/parameters/RequestReferences"
+      - $ref: "#/components/parameters/RequestShowLinks"
+      - $ref: "#/components/parameters/RequestShowEvents"
+      - $ref: "#/components/parameters/RequestAcceptLanguage"
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200"
+        "400":
+          $ref: "#/components/responses/Response400"
+        "401":
+          $ref: "#/components/responses/Response401"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "429":
+          $ref: "#/components/responses/Response429"
+      security:
+      - OAuthProd: []
+  /tracking/deliveryinfo/parcelid/{unitno}:
+    get:
+      tags:
+      - "deliveryinfo-controller"
+      summary: "Gets delivery information for parcel by the given parcel number"
+      description: "The function provides the ability to retrieve available delivery\
+        \ information for a specific parcel like Parcel Shop.<br>The query parameter\
+        \ parcelid (unitno) must be the unitno from the Track and Track API (see above).<br>\
+        \ Notice that other APIs (for example the Parcelshop Management API) might\
+        \ need other credentials or they need to be added to the current App in the\
+        \ GLS Developer Portal to be able to use the same credentials."
+      operationId: "getEventsByParcelNumber"
+      parameters:
+      - $ref: "#/components/parameters/RequestUnitNo"
+      - $ref: "#/components/parameters/RequestOriginalDestinationPostalCode"
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200_DeliveryInfo"
+        "401":
+          $ref: "#/components/responses/Response401"
+        "400":
+          $ref: "#/components/responses/Response400_DeliveryInfo"
+        "404":
+          $ref: "#/components/responses/Response404_DeliveryInfo"
+        "429":
+          $ref: "#/components/responses/Response429"
+      security:
+      - OAuthProd: []
+  /tracking/events/codes:
+    get:
+      tags:
+      - "eventcode-controller"
+      summary: "Gets all relevant track and trace events with their description"
+      description: "The function provides the ability to retrieve all relevant track\
+        \ and trace events with their description."
+      operationId: "getEventsCodes"
+      parameters:
+      - $ref: "#/components/parameters/RequestAcceptLanguage"
+      responses:
+        "200":
+          $ref: "#/components/responses/Response200_EventsCodes"
+        "400":
+          $ref: "#/components/responses/Response400_General"
+        "401":
+          $ref: "#/components/responses/Response401"
+        "404":
+          $ref: "#/components/responses/Response404"
+        "429":
+          $ref: "#/components/responses/Response429"
+      security:
+      - OAuthProd: []
+components:
+  schemas:
+    EventDTO:
+      type: "object"
+      description: "Events occurred in the parcel history"
+      properties:
+        code:
+          type: "string"
+          description: "These are specific combinations that identify the type of\
+            \ the Event. As an example, a delivery to a parcel shop will have the\
+            \ event DELIVD.PARCELSHOP"
+        city:
+          type: "string"
+          description: "The city name where this event had occurred. Examples: Berlin,\
+            \ Paris and Copenhagen"
+        postalCode:
+          type: "string"
+          description: "The postal code of the city where this event had occurred.\
+            \ Examples: 10437, 75004 and 1055"
+        country:
+          type: "string"
+          description: "The country code where this event had occurred in ISO 3166-1\
+            \ alpha-2 format. Examples: DE, FR and DK"
+        description:
+          type: "string"
+          description: "A detailed description of the event in the request language.\
+            \ Example: The parcel was handed over to GLS"
+        eventDateTime:
+          type: "string"
+          description: "Event occurrence date and time in ISO 8601 format. Example:\
+            \ 2024-10-07T10:46:14+0200"
+    ParcelDTO:
+      type: "object"
+      description: "Parcel Data including the current status and events history"
+      properties:
+        requested:
+          type: "string"
+          description: "The originally requested parcel id or reference"
+        unitno:
+          type: "string"
+          description: "The GLS Parcel Number (Unit No) that relate to the requested\
+            \ parcel id or reference"
+        status:
+          type: "string"
+          description: "The current status of the parcel. They are a limited number\
+            \ of statuses as can be seen below:<br>PLANNEDPICKUP: Parcel is planned\
+            \ to be picked up<br>INPICKUP: Parcel will be picked up by a driver<br>NOTPICKEDUP:\
+            \ Parcel was not picked up<br>PREADVICE: GLS has received the parceldata\
+            \ but not the physical parcel<br>INTRANSIT: Parcel is on its way to the\
+            \ final depot<br>INDELIVERY: Parcel in in delivey by a driver<br>DELIVEREDPS:\
+            \ Parcel delivered to a parcel shop<br>DELIVERED: Parcel was delivered<br>INWAREHOUSE:\
+            \ Parcel is in warehouse<br>NOTDELIVERED: Parcel was not delivered<br>CANCELED:\
+            \ Parcel was cancelled<br>FINAL: Parcel history closed"
+          enum:
+          - "PLANNEDPICKUP"
+          - "INPICKUP"
+          - "NOTPICKEDUP"
+          - "PREADVICE"
+          - "INTRANSIT"
+          - "INDELIVERY"
+          - "DELIVEREDPS"
+          - "DELIVERED"
+          - "INWAREHOUSE"
+          - "NOTDELIVERED"
+          - "CANCELED"
+          - "FINAL"
+        statusDateTime:
+          type: "string"
+          description: "Status change occurrence date and time in ISO 8601 format.\
+            \ Example: 2024-10-07T10:46:14+0200"
+        _links:
+          type: "object"
+          description: "Include <a href='https://en.wikipedia.org/wiki/HATEOAS'>HATEOAS</a>\
+            \ links to other resources related to the parcel. Example: Delivery Information"
+          properties:
+            deliveryInfo:
+              $ref: "#/components/schemas/LinksDeliveryInfoDTO"
+        events:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/EventDTO"
+        errorCode:
+          $ref: "#/components/schemas/ParcelErrorCodeDTO"
+        errorMessage:
+          type: "string"
+          description: "Error description related to the requested parcel id or reference.\
+            \ This only available in English."
+    ParcelsResponseDTO:
+      type: "object"
+      properties:
+        parcels:
+          type: "array"
+          description: "List of parcels"
+          items:
+            $ref: "#/components/schemas/ParcelDTO"
+    DeliveryInfoResponseDTO:
+      type: "object"
+      properties:
+        parcelshopDelivery:
+          type: "object"
+          description: "Parcel Shop Delivery"
+          properties:
+            parcelshopId:
+              type: "string"
+              description: "parcelshopId"
+            partnerId:
+              type: "string"
+              description: "partnerId"
+            _links:
+              type: "object"
+              description: "Include <a href='https://en.wikipedia.org/wiki/HATEOAS'>HATEOAS</a>\
+                \ links to other resources related to the parcel. Example: Parcelshop\
+                \ Management"
+              properties:
+                parcelShopManagement:
+                  $ref: "#/components/schemas/LinksParcelShopManagementDTO"
+        errorCode:
+          $ref: "#/components/schemas/ParcelErrorCodeDTO"
+        errorMessage:
+          type: "string"
+          description: "Error description related to the requested parcel id. This\
+            \ only available in English."
+    EventsCodesDTO:
+      type: "object"
+      properties:
+        eventsCodes:
+          type: "array"
+          description: "List of Events Codes with their description"
+          items:
+            $ref: "#/components/schemas/EventCodeDTO"
+    EventCodeDTO:
+      type: "object"
+      description: "EventsCodes with their description"
+      properties:
+        code:
+          type: "string"
+          description: "These are specific combinations that identify the type of\
+            \ the Event. As an example, a delivery to a parcel shop will have the\
+            \ event DELIVD.PARCELSHOP"
+        description:
+          type: "string"
+          description: "A detailed description of the event in the request language.\
+            \ Example: The parcel was handed over to GLS"
+    ParcelErrorCodeDTO:
+      type: "string"
+      description: "Error code related to the requested parcel id which may have the\
+        \ following values:<br>E_400_01: Bad Request<br>E_400_02: Limit Size Exceeded<br>E_400_03:\
+        \ Wrong Postal Code<br>E_404_01: Resource Not Found<br>E_404_02: No Delivery\
+        \ Info<br>E_500_01: Internal Server Error"
+      enum:
+      - "E_400_01"
+      - "E_400_02"
+      - "E_400_03"
+      - "E_404_01"
+      - "E_404_02"
+      - "E_500_01"
+    ErrorResponseDTO:
+      type: "object"
+      properties:
+        type:
+          type: "string"
+          description: "Type of the error. Example: about:blank"
+        title:
+          type: "string"
+          description: "Title of the error. Example: Bad Request"
+        status:
+          type: "integer"
+          description: "Status of the error. Example: 400"
+        detail:
+          type: "string"
+          description: "Detail of the error. Example: Failed to convert a query parameter"
+        instance:
+          type: "string"
+          description: "Instance of the API where the error occurred. Example: Wrong\
+            \ API URL"
+    ErrorResponseApigeeDTO:
+      type: "object"
+      description: "Errors that can be returned by the API management Apigee. Example:\
+        \ Authentication or Rate Limiting Errors"
+      properties:
+        fault:
+          type: "object"
+          properties:
+            faultstring:
+              type: "string"
+              description: "Fault Description"
+            detail:
+              type: "object"
+              properties:
+                errorcode:
+                  type: "string"
+                  description: "Error Code"
+    LinksDeliveryInfoDTO:
+      type: "object"
+      description: "A link to the Delivery Information API"
+      properties:
+        href:
+          type: "string"
+          description: "The URL to the Delivery Information API"
+        templated:
+          type: "boolean"
+          description: "Indicates if the API URL is templated"
+    LinksParcelShopManagementDTO:
+      type: "object"
+      description: "A link to the Parcel Shop Management API, which can be used to\
+        \ get detailed the Parcel Shop information"
+      properties:
+        href:
+          type: "string"
+          description: "The URL to the Parcel Shop Management API"
+        templated:
+          type: "boolean"
+          description: "Indicates if the API URL is templated"
+    TrackTraceTestDataSet:
+      type: "object"
+      description: "To support early testing of the system, a set of Test Parcels\
+        \ is available. These can be used before the actual (productive) Parcels are\
+        \ live.<br>Customers can track and trace those parcels at anytime.<br> The\
+        \ parcel history (events) doesn't, but only the eventDateTime field of each\
+        \ event will always reflect the previous days changes, simulating somehow\
+        \ the real parcel liftime behavior.<br><table style='margin:0; padding:0'><tr><th>Parcel\
+        \ Id</th><th>Reference</th><th>Postal Code</th><th>Parcel Status</th><th>Description</th></tr><tr><td>QAS_0000001</td><td>REF_0000001</td><td></td><td>PLANNEDPICKUP</td><td>Planned\
+        \ pickup</td></tr><tr><td>QAS_0000002</td><td>REF_0000002</td><td></td><td>INPICKUP\
+        \     </td><td>In pickup</td></tr><tr><td>QAS_0000003</td><td>REF_0000003</td><td></td><td>NOTPICKEDUP\
+        \  </td><td>Not picked up</td></tr><tr><td>QAS_0000004</td><td>REF_0000004</td><td></td><td>PREADVICE\
+        \    </td><td>Preadvice</td></tr><tr><td>QAS_0000005</td><td>REF_0000005</td><td></td><td>INTRANSIT\
+        \    </td><td>In transit</td></tr><tr><td>QAS_0000006</td><td>REF_0000006</td><td></td><td>INDELIVERY\
+        \   </td><td>In delivery</td></tr><tr><td>QAS_0000007</td><td>REF_0000007</td><td>00000</td><td>DELIVEREDPS\
+        \  </td><td>Delivered to Parcel Shop</td></tr><tr><td>QAS_0000008</td><td>REF_0000008</td><td></td><td>DELIVERED\
+        \    </td><td>Delivered</td></tr><tr><td>QAS_0000009</td><td>REF_0000009</td><td></td><td>INWAREHOUSE\
+        \  </td><td>In warehouse</td></tr><tr><td>QAS_0000010</td><td>REF_0000010</td><td></td><td>NOTDELIVERED\
+        \ </td><td>Not delivered</td></tr><tr><td>QAS_0000011</td><td>REF_0000011</td><td></td><td>CANCELED\
+        \     </td><td>Cancelled</td></tr><tr><td>QAS_0000012</td><td>REF_0000012</td><td></td><td>FINAL\
+        \        </td><td>Final</td></tr></table>"
+  parameters:
+    RequestUnitNo:
+      name: "unitno"
+      in: "path"
+      required: true
+      schema:
+        type: "string"
+      examples:
+        unitNo:
+          summary: "Parcel Id / UnitNo"
+          value: "93835368025"
+    RequestUnitNos:
+      name: "unitnos"
+      in: "path"
+      required: true
+      schema:
+        type: "string"
+      examples:
+        unitNo:
+          summary: "Parcel Ids / UnitNos"
+          value: "93835368025"
+    RequestReferences:
+      name: "references"
+      in: "path"
+      required: true
+      schema:
+        type: "string"
+      examples:
+        ParcelNumber:
+          summary: "Parcel Number"
+          value: "93835368025"
+        TrackId:
+          summary: "Track Id"
+          value: "ZX61QJIX"
+        NotificationCardId:
+          summary: "Notification Card Id"
+          value: "FA653N"
+        DigitalNotificationCardId:
+          summary: "Digital Notification  Card Id"
+          value: "ZX61QJIXFA653N"
+    RequestShowLinks:
+      name: "showLinks"
+      in: "query"
+      required: false
+      schema:
+        type: "boolean"
+        default: false
+      examples:
+        showLinksTrue:
+          summary: "Show <a href='https://en.wikipedia.org/wiki/HATEOAS'>HATEOAS</a>\
+            \ Links of Parcels"
+          value: "true"
+        showLinksFalse:
+          summary: "Don't show any Links"
+          value: "false"
+    RequestShowEvents:
+      name: "showEvents"
+      in: "query"
+      required: false
+      schema:
+        type: "boolean"
+        default: true
+      examples:
+        showEventsTrue:
+          summary: "Show Parcels Events"
+          value: "true"
+        showEventsFalse:
+          summary: "Doesn't Parcels Events"
+          value: "false"
+    RequestOriginalDestinationPostalCode:
+      name: "originaldestinationpostalcode"
+      in: "query"
+      required: true
+      schema:
+        type: "string"
+      examples:
+        PostalCode65760:
+          summary: "Postal Code 65760"
+          value: "65760"
+    RequestAcceptLanguage:
+      name: "Accept-Language"
+      in: "header"
+      required: false
+      schema:
+        type: "string"
+        default: "EN"
+      examples:
+        LanguageEN:
+          summary: "Show T&T events description information in English"
+          value: "EN"
+        LanguageDE:
+          summary: "Show T&T events description information in German"
+          value: "DE"
+  responses:
+    Response200:
+      description: "Successful operation"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ParcelsResponseDTO"
+          examples:
+            "200WithErrors":
+              summary: "Show T&T With Errors"
+              value:
+                parcels:
+                - requested: "42249018928"
+                  errorCode: "E_404_01"
+                  errorMessage: "Resource Not Found"
+                - requested: "36301917596"
+                  unitno: "36301917596"
+                  status: "PREADVICE"
+                  statusDateTime: "2024-10-11T15:24:57+0200"
+                  events:
+                  - code: "INTIAL.E48_DATA"
+                    city: ""
+                    postalCode: ""
+                    country: "DE"
+                    description: "The parcel was provided by the sender for collection\
+                      \ by GLS."
+                    eventDateTime: "2024-10-11T15:24:52+0200"
+                  - code: "INTIAL.PREADVICE"
+                    city: ""
+                    postalCode: ""
+                    country: "DE"
+                    description: "The parcel data was entered into the GLS IT system;\
+                      \ the parcel was not yet handed over to GLS."
+                    eventDateTime: "2024-10-11T15:24:51+0200"
+            "200WithoutErrors":
+              summary: "Show T&T Without Errors"
+              value:
+                parcels:
+                - requested: "36301917596"
+                  unitno: "36301917596"
+                  status: "PREADVICE"
+                  statusDateTime: "2024-10-11T15:24:57+0200"
+                  events:
+                  - code: "INTIAL.E48_DATA"
+                    city: ""
+                    postalCode: ""
+                    country: "DE"
+                    description: "The parcel was provided by the sender for collection\
+                      \ by GLS."
+                    eventDateTime: "2024-10-11T15:24:52+0200"
+                  - code: "INTIAL.PREADVICE"
+                    city: ""
+                    postalCode: ""
+                    country: "DE"
+                    description: "The parcel data was entered into the GLS IT system;\
+                      \ the parcel was not yet handed over to GLS."
+                    eventDateTime: "2024-10-11T15:24:51+0200"
+            "200Reference2Parcels":
+              summary: "One Notification Card finds 2 related Parcels"
+              value:
+                parcels:
+                - requested: "747N6K"
+                  unitno: "93835330599"
+                  status: "INTRANSIT"
+                  statusDateTime: "2024-09-18T06:50:22+0200"
+                  events:
+                  - code: "INTIAL.NORMAL"
+                    city: ""
+                    postalCode: ""
+                    country: "IT"
+                    description: "The parcel was handed over to GLS."
+                    eventDateTime: "2024-09-18T06:50:22+0200"
+                  - code: "INTIAL.PREADVICE"
+                    city: ""
+                    postalCode: ""
+                    country: "IT"
+                    description: "The parcel data was entered into the GLS IT system;\
+                      \ the parcel was not yet handed over to GLS."
+                    eventDateTime: "2024-09-17T22:27:25+0200"
+                - requested: "747N6K"
+                  unitno: "93835330600"
+                  status: "INTRANSIT"
+                  statusDateTime: "2024-09-18T06:48:46+0200"
+                  events:
+                  - code: "INTIAL.NORMAL"
+                    city: ""
+                    postalCode: ""
+                    country: "IT"
+                    description: "The parcel was handed over to GLS."
+                    eventDateTime: "2024-09-18T06:48:46+0200"
+                  - code: "INTIAL.PREADVICE"
+                    city: ""
+                    postalCode: ""
+                    country: "IT"
+                    description: "The parcel data was entered into the GLS IT system;\
+                      \ the parcel was not yet handed over to GLS."
+                    eventDateTime: "2024-09-17T22:27:25+0200"
+            "200WithLinks":
+              summary: "Show T&T With <a href='https://en.wikipedia.org/wiki/HATEOAS'>HATEOAS</a>\
+                \ Links"
+              value:
+                parcels:
+                - requested: "42249028960"
+                  unitno: "42249028960"
+                  status: "DELIVEREDPS"
+                  statusDateTime: "2025-02-10T15:13:46+0100"
+                  _links:
+                    deliveryInfo:
+                      href: "/tracking/deliveryinfo/parcelid/42249028960?{originaldestinationpostalcode}"
+                      templated: true
+                  events:
+                  - code: "DELIVD.PARCELSHOP"
+                    city: ""
+                    postalCode: ""
+                    country: ""
+                    description: "The parcel has been delivered at the ParcelShop\
+                      \ (see ParcelShop information)."
+                    eventDateTime: "2025-02-10T15:13:46+0100"
+                  - code: "INTIAL.NORMAL"
+                    city: ""
+                    postalCode: ""
+                    country: "DE"
+                    description: "The parcel was handed over to GLS."
+                    eventDateTime: "2025-02-10T15:11:12+0100"
+                  - code: "INTIAL.E48_DATA"
+                    city: ""
+                    postalCode: ""
+                    country: "DE"
+                    description: "The parcel was provided by the sender for collection\
+                      \ by GLS."
+                    eventDateTime: "2025-02-10T15:08:44+0100"
+                  - code: "INTIAL.PREADVICE"
+                    city: ""
+                    postalCode: ""
+                    country: "DE"
+                    description: "The parcel data was entered into the GLS IT system;\
+                      \ the parcel was not yet handed over to GLS."
+                    eventDateTime: "2025-02-10T15:08:43+0100"
+    Response400:
+      description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseDTO"
+          examples:
+            "400BadRequestQuery":
+              summary: "Wrong Query Parameter"
+              value:
+                type: "about:blank"
+                title: "Bad Request"
+                status: 400
+                detail: "Failed to convert 'showLinks' with value: 'xyz'"
+                instance: "/tracking/simple/references/36301917596"
+            "400BadRequestPath":
+              summary: "Too many Parcels/References"
+              value:
+                type: "about:blank"
+                title: "Bad Request"
+                status: 400
+                detail: "Provided references of size '11' is more than allowed limit\
+                  \ of 10"
+                instance: "/tracking/simple/references/11113481990,11113481991,11113481992,11113481993,11113481994,11113481995,11113481996,11113481997,11113481998,11113481999,11113482000"
+    Response400_General:
+      description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseDTO"
+          examples:
+            "400BadRequestQuery":
+              summary: "Wrong Parameter"
+              value:
+                type: "about:blank"
+                title: "Bad Request"
+                status: 400
+                detail: "Failed to ..."
+                instance: "/tracking/..."
+    Response401:
+      description: "Authorization Error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseApigeeDTO"
+          examples:
+            "401ApigeeTokenExpired":
+              summary: "Token has Expired"
+              value:
+                fault:
+                  faultstring: "The Token has expired: policy(Verify-JWT)"
+                  detail:
+                    errorcode: "steps.jwt.TokenExpired"
+    Response404:
+      description: "Not Found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseDTO"
+          examples:
+            "404NotFound":
+              summary: "Wrong Call"
+              value:
+                type: "about:blank"
+                title: "Not Found"
+                status: 404
+                detail: "No static resource ..."
+                instance: "/tracking/..."
+    Response429:
+      description: "Rate limit quota violation"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseDTO"
+          examples:
+            "429RateLimitQuotaViolation":
+              summary: "Rate limit quota violation"
+              value:
+                fault:
+                  faultstring: "Rate limit quota violation. Quota limit  exceeded.\
+                    \ Identifier : 14f8edf5-8954-45d8-986b-ee9db7cc68d3"
+                  detail:
+                    errorcode: "policies.ratelimit.QuotaViolation"
+    Response200_DeliveryInfo:
+      description: "Successful operation"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeliveryInfoResponseDTO"
+          examples:
+            "200Success":
+              summary: "Show Delivery Info Success"
+              value:
+                parcelshopDelivery:
+                  parcelshopId: "2760188645"
+                  partnerId: "GLS_DE"
+                  _links:
+                    parcelShopManagement:
+                      href: "https://api.gls-group.net/parcel-shop-management/v2/active-public-parcel-shops/GLS_DE/2760188645"
+                      templated: false
+            "200Error":
+              summary: "Show Delivery Info With Error"
+              value:
+                errorCode: "E_404_01"
+                errorMessage: "Resource Not Found"
+    Response400_DeliveryInfo:
+      description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseDTO"
+          examples:
+            "400BadRequestRequiredParameter":
+              summary: "Bad Request - Required Parameter"
+              value:
+                type: "about:blank"
+                title: "Bad Request"
+                status: 400
+                detail: "Required parameter 'originaldestinationpostalcode' is not\
+                  \ present."
+                instance: "/tracking/deliveryinfo/parcelid/62006256336"
+    Response404_DeliveryInfo:
+      description: "Not Found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseDTO"
+          examples:
+            "404NotFound":
+              summary: "Wrong Call"
+              value:
+                type: "about:blank"
+                title: "Not Found"
+                status: 404
+                detail: "No static resource tracking/deliveryinfo/parcelids/62006256336."
+                instance: "/tracking/deliveryinfo/parcelids/62006256336"
+    Response200_EventsCodes:
+      description: "Successful operation"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EventsCodesDTO"
+          examples:
+            "200Success":
+              summary: "Show Events Codes"
+              value:
+                eventsCodes:
+                - code: "CANCEL.NORMAL"
+                  description: "The parcel data have been deleted from the GLS IT\
+                    \ system."
+                - code: "CHANGD.MONEWADDR"
+                  description: "Change completed for - Delivery at new address"
+                - code: "CHANGD.PARCELBOX"
+                  description: "Change completed for - ParcelLocker"
+  securitySchemes:
+    OAuthProd:
+      type: "oauth2"
+      description: "Prod requirements have been listed below."
+      flows:
+        clientCredentials:
+          tokenUrl: "https://api.gls-group.net/oauth2/v1/token"
+          scopes: {}

@@ -1,0 +1,157 @@
+---
+openapi: "3.0.0"
+info:
+  title: "Authentication API v2"
+  version: "2.0.0"
+  description: "This API issues Oauth access tokens that are needed to invoke other\
+    \ GLS APIs.<br><br> <sub><sup> Corporate information: <br> General Logistics Systems,\
+    \ Germany GmbH & Co. OHG, GLS Germany-Straße 1 - 7, 36286 Neuenstein, Germany\
+    \ Authorised representatives: Personally liable participators: GLS Beteiligungs\
+    \ GmbH, represented by Saadi Al-Soudani, Eberhard Fritze, Martin Seidenberg and\
+    \ Dr. Karl Pfaff, General Logistics Systems B.V., represented by Martin Seidenberg\
+    \ Commercial Register No: Local Court Bad Hersfeld HRA 863, Sales Tax ID No: DE\
+    \ 812802911 Information on Online Dispute Resolution for consumers: The EU commission\
+    \ has set up an online platform for the online-resolution of disputes (\"ODR-platform\"\
+    ). This platform serves as a contact point for extrajudicial resolutions of disputes\
+    \ concerning contractual obligations, arising from online sales or services agreements.\
+    \ Customers can reach the ODR-platform under the following [<sub><sup> link](http://ec.europa.eu/consumers/odr)\
+    \ General obligation to provide information under Section 36 of the German Act\
+    \ on Alternative Dispute Resolution in Consumer Matters (VSBG), Senders who contractually\
+    \ make use of postal services of GLS Germany under generally accessible conditions\
+    \ with regard to prices and services (e.g. via GLS ParcelShops, GLS-ONE and GLS\
+    \ App) and their recipients, may call upon the regulatory authority as conciliation\
+    \ body for the settlement of disputes with GLS Germany concerning rights and obligations\
+    \ in the event of loss, theft or damage to postal items or the infringement of\
+    \ their own rights to which they are entitled on the basis of a statutory ordinance\
+    \ under Section 18 of the German Postal Act, if dispute settlement with GLS Germany\
+    \ has previously been unsuccessful. If a consumer calls the conciliation body,\
+    \ GLS Germany is obliged to take part in the dispute resolution procedure. Beyond\
+    \ that, GLS Germany does not to take part in dispute resolution procedures before\
+    \ a consumer conciliation body. Competent consumer conciliation body: Bundesnetzagentur\
+    \ für Elektrizität, Gas, Telekommunikation, Post und Eisenbahnen, Schlichtungsstelle\
+    \ Post, Tulpenfeld 4, 53113 Bonn, Internet: www.bundesnetzagentur.de To the extent\
+    \ participation is mandatory, GLS Germany will take part in a dispute resolution\
+    \ procedure before this consumer conciliation body. <br> </sub></sup>"
+  termsOfService: "https://dev-portal.gls-group.net/terms"
+tags:
+- name: "Token"
+servers:
+- url: "https://api-sandbox.gls-group.net/oauth2/v2"
+  description: "Sandbox (uses test data)"
+- url: "https://api.gls-group.net/oauth2/v2"
+  description: "Production (uses live data)"
+- url: "https://api-sandbox.gls-group.net/oauth2/v2"
+  description: "Sandbox (uses test data)"
+paths:
+  /token:
+    post:
+      tags:
+      - "Token"
+      summary: "Generate access token"
+      description: "Generates an access token following OAuth 2.0 Authentication Framework\
+        \ as defined in RFC 6749 (https://tools.ietf.org/html/rfc6749). There are\
+        \ two ways of sending the request, either with a basic auth header (client_id,\
+        \ client_secret) and the grant_type as urlencoded form parameter, or with\
+        \ all parameters in the request body. Tokens are valid for up to four hours\
+        \ since issueing. Maximum of 100000 requests per App id are allowed per day."
+      operationId: "createToken"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "Base64 encoded string of your apps client_key and client_secret"
+        required: false
+        schema:
+          type: "string"
+          example: "Basic e3t1c2VyfX06e3twd319"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: "object"
+              properties:
+                grant_type:
+                  enum:
+                  - "client_credentials"
+                  description: "The desired type of Authentication grant as per RFC\
+                    \ 6749."
+                client_id:
+                  type: "string"
+                  description: "If you don't use the Authorization Header, you can\
+                    \ provide the client_id and client_secret in the body as urlencoded\
+                    \ parameter"
+                client_secret:
+                  type: "string"
+                  description: "If you don't use the Authorization Header, you can\
+                    \ provide the client_id and client_secret in the body as urlencoded\
+                    \ parameter"
+                scope:
+                  type: "string"
+                  description: "The scopes the token should be valid for. If no scope\
+                    \ is provided the token will contain all available scopes of the\
+                    \ client app"
+              required:
+              - "grant_type"
+      responses:
+        "200":
+          description: "Ok. Successfully issued token."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          description: "Bad request. Fields missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaultResponse"
+        "500":
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaultResponse"
+      security:
+      - basicAuth: []
+components:
+  securitySchemes:
+    basicAuth:
+      type: "http"
+      scheme: "basic"
+  schemas:
+    TokenResponse:
+      type: "object"
+      required:
+      - "token_type"
+      - "access_token"
+      - "expires_in"
+      properties:
+        token_type:
+          type: "string"
+          enum:
+          - "Bearer"
+          description: "The type of the token"
+        access_token:
+          type: "string"
+          description: "The issued access token"
+          example: "eyJraWQiOiIxMzM3IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJhY2Nlc3NfdG9rZW4iOiJDR3ZQQm1JUkJzVzVTbDVHUjZIWEdUb29JUUlJIiwic2NwIjoiIiwic3ViIjoiSFF5R1FibXA0RzdaeG91SkZ5cjd0T2twSUNoTTViRloiLCJpc3MiOiJodHRwczpcL1wvYXBpLWRldi5nbHMtZ3JvdXAubmV0XC9vYXV0aDJcL3YxIiwiZXhwIjoxNTk5MDM3NzkzLCJpYXQiOjE1OTkwMzU5OTMsImNsaWVudF9pZCI6IkhReUdRYm1wNEc3WnhvdUpGeXI3dE9rcElDaE01YkZaIiwianRpIjoiMzk3YjZhZGEtNmE2Zi00Y2YyLTk1NjMtMGIzZDhmMjI3NTQxIn0.iRFnyB6OcZJj0uWajb3Qe31apvNJK3h-aGoZGw7OjN1xwIyRwnQEWVco852_hyYvWVnhW5nCUOZDwjD-UsYsiKiXYbuJDaX6BQ9UOILqaOhbgvehUW2JXmH_eolvUfoLy3FBbQ3c00fmE1De06wjbvZIHhCRa5_QlCSYibTI5XBcrEXLwkCTqDPPjJNEj0VHro0WFLmFbffQ_OdAtuCJc83s1O4Ctb7YKBCidzpfi2bducOtjdDaWh9bpt7XJMdHWrt1p9c_TVqYT7hb4ZFQn0sI6bYFlMdfRa7-Yu2NuFvpKnoponLzFquG-gXn85N7TC2W7LK0a1QYtX5H0F6dxSYZ5noAleLGVuKaPczdSCI3op1UA-uC0V9sIg7OhAnPrqqwXJaxoN1lnClSpC6kQdh_iIyfPFwkNIN-bjOPBXCbv8FX_0XaHgoa7xH-nuV3g6gmPtOCjsgiloMMAV_Tbl1_VTwab6E0cI5sF7TQJnpA88oUYBcYyZffGLp4F8InKMofa7koJlhTLuweRDz3pM9fAFsmWWgJfOvL6v8uUJsbimULaU5m-90WUyDqTviAPKoJicUqsSFR4WP0tWh5q5FjaiHsjRSMyNJg7ouoKoz33PW9t5zTJkMMZJkbDPCkK6YNhGeI4ZKAi9ogkQOTxrjI1hVFiFQ1IVoZwvf7iAE"
+        expires_in:
+          type: "number"
+          description: "Time in seconds until the token expires"
+          example: "14400"
+    FaultResponse:
+      type: "object"
+      required:
+      - "errors"
+      properties:
+        errors:
+          type: "array"
+          items:
+            properties:
+              message:
+                type: "string"
+                description: "The error message"
+                example: "Invalid client identifier"
+              type:
+                type: "string"
+                description: "The error code"
+                example: "400"

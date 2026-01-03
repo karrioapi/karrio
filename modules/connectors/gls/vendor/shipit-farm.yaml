@@ -1,0 +1,1624 @@
+---
+openapi: "3.0.0"
+info:
+  title: "GLS ShipIT API v1"
+  description: "This specification is referring to the actual structure of a ShipIT\
+    \ request. To have more detailed and business-related information please see [GLS\
+    \ ShipIT Download Server](https://shipit-download.gls-group.eu/documentation/).\
+    \ There you will also find information for web service integration with SOAP.<br>\
+    \ When using SOAP the base URL has to be adapted to https://api.gls-group.net/shipit-farm-soap/v1/backend/\
+    \ .<br><br> All URLs in this documentation are relative to productive usage. For\
+    \ testing in sandbox (without data transmission) please adapt the ShipIT URL to:\
+    \ https://api-sandbox.gls-group.net/shipit-farm/v1/backend/rs/<br><br> To receive\
+    \ an access token please refer to authentication API v2:<br><ul><li>Production:\
+    \ https://api.gls-group.net/oauth2/v2/token</li><li>Sandbox: https://api-sandbox.gls-group.net/oauth2/v2/token</li></ul>"
+  termsOfService: "https://shipit-download.gls-group.eu/"
+  contact:
+    url: "https://shipit-download.gls-group.eu/"
+  version: ""
+servers:
+- url: "https://api.gls-group.net/shipit-farm/v1/backend"
+  description: "production environment (uses live data)"
+- url: "https://api-sandbox.gls-group.net/shipit-farm/v1/backend"
+  description: "sanbox environment"
+security:
+- OAuthPROD: []
+  OAuthSandbox: []
+paths:
+  /rs/parcelshop/address:
+    post:
+      operationId: "findNearestParcelShopForAddress"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/ParcelShopSearchLocation"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/ListOfParcelShop"
+  /rs/parcelshop/country/{countryCode}:
+    get:
+      operationId: "getParcelShopByCountryCode"
+      parameters:
+      - name: "countryCode"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/ListOfParcelShop"
+  /rs/parcelshop/{id}:
+    get:
+      operationId: "getParcelShopByID"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/ParcelShop"
+  /rs/parcelshop/{partnerId}/{id}:
+    get:
+      operationId: "getParcelShopByID_1"
+      parameters:
+      - name: "partnerId"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/ParcelShop"
+  /rs/parcelshop/distance:
+    post:
+      operationId: "getParcelShopInDistance"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/ParcelShopSearchDistance"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/ListOfParcelShop"
+  /rs/shipments/cancel/{trackID}:
+    post:
+      operationId: "cancelParcelByID"
+      parameters:
+      - name: "trackID"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/CancelParcelResponse"
+  /rs/shipments:
+    post:
+      operationId: "createParcels"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/ShipmentRequestData"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/CreateParcelsResponse"
+  /rs/shipments/allowedservices:
+    post:
+      operationId: "getAllowedServices"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/AllowedServicesRequestParameter"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/AllowedServicesResponse"
+  /rs/shipments/endofday:
+    post:
+      operationId: "getEndOfDayReport"
+      parameters:
+      - name: "date"
+        in: "query"
+        schema:
+          type: "string"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/EndOfDayResponse"
+  /rs/shipments/reprintparcel:
+    post:
+      operationId: "reprintParcel"
+      parameters:
+      - name: "clientid"
+        in: "header"
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/ReprintParcelRequestParameter"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/ReprintParcelResponse"
+  /rs/shipments/updateparcelweight:
+    post:
+      operationId: "updateParcelWeight"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/UpdateParcelWeightRequestParameter"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/UpdateParcelWeightResponse"
+  /rs/shipments/validate:
+    post:
+      operationId: "validateParcels"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/ValidateShipmentRequestData"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/ValidateParcelsResponse"
+  /rs/sporadiccollection:
+    post:
+      operationId: "orderSporadicCollection"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/SporadicCollection"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/SporadicCollectionResponse"
+  /rs/tracking/parcels:
+    post:
+      operationId: "findParcels"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/TULReferenceData"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/TUListResponse"
+  /rs/tracking/parceldetails:
+    post:
+      operationId: "getParcelDetailsByID"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/DetailsReferenceData"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/ParcelDetailResponse"
+  /rs/tracking/parcelpod:
+    post:
+      operationId: "getParcelPODByID"
+      requestBody:
+        content:
+          application/glsVersion1+json:
+            schema:
+              $ref: "#/components/schemas/TUPReferenceData"
+      responses:
+        default:
+          description: "default response"
+          content:
+            application/glsVersion1+json:
+              schema:
+                $ref: "#/components/schemas/PODResponse"
+components:
+  schemas:
+    Address:
+      required:
+      - "City"
+      - "CountryCode"
+      - "Name1"
+      - "Street"
+      type: "object"
+      properties:
+        Name1:
+          type: "string"
+        Name2:
+          type: "string"
+        Name3:
+          type: "string"
+        CountryCode:
+          type: "string"
+        Province:
+          type: "string"
+        City:
+          type: "string"
+        Street:
+          type: "string"
+        StreetNumber:
+          type: "string"
+        ContactPerson:
+          type: "string"
+        FixedLinePhonenumber:
+          type: "string"
+        MobilePhoneNumber:
+          type: "string"
+        Email:
+          type: "string"
+        Zipcode:
+          type: "string"
+    Hours:
+      required:
+      - "From"
+      - "To"
+      type: "object"
+      properties:
+        From:
+          type: "string"
+          format: "date-time"
+        To:
+          type: "string"
+          format: "date-time"
+    ListOfParcelShop:
+      type: "object"
+      properties:
+        ParcelShop:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ParcelShop"
+      xml:
+        name: "ListOfParcelShop"
+        namespace: "http://fpcs.gls-group.eu/v1/ParcelShop"
+    Location:
+      required:
+      - "CountryCode"
+      type: "object"
+      properties:
+        CountryCode:
+          type: "string"
+        Zipcode:
+          type: "string"
+    OpeningClosingHours:
+      type: "object"
+      properties:
+        OpeningHours:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Hours"
+    ParcelShop:
+      required:
+      - "Address"
+      - "ParcelShopID"
+      type: "object"
+      properties:
+        ParcelShopID:
+          type: "string"
+        Location:
+          $ref: "#/components/schemas/Location"
+        Address:
+          $ref: "#/components/schemas/Address"
+        Holidays:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Vacations"
+        WorkingDay:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/WorkingDay"
+        AirlineDistance:
+          type: "string"
+      xml:
+        name: "ParcelShop"
+        namespace: "http://fpcs.gls-group.eu/v1/ParcelShop"
+    Vacations:
+      required:
+      - "EndDate"
+      - "StartDate"
+      type: "object"
+      properties:
+        StartDate:
+          type: "string"
+        EndDate:
+          type: "string"
+    WorkingDay:
+      type: "object"
+      properties:
+        DayOfWeek:
+          type: "string"
+          enum:
+          - "MON"
+          - "TUE"
+          - "WED"
+          - "THU"
+          - "FRI"
+          - "SAT"
+          - "SUN"
+        OpeningHours:
+          $ref: "#/components/schemas/OpeningClosingHours"
+        Breaks:
+          $ref: "#/components/schemas/OpeningClosingHours"
+    ParcelShopSearchLocation:
+      required:
+      - "CountryCode"
+      type: "object"
+      properties:
+        Street:
+          type: "string"
+        StreetNumber:
+          type: "string"
+        CountryCode:
+          type: "string"
+        Province:
+          type: "string"
+        City:
+          type: "string"
+        Distance:
+          type: "string"
+        MaxNumberOfShops:
+          type: "string"
+        Zipcode:
+          type: "string"
+      xml:
+        name: "ParcelShopSearchLocation"
+        namespace: "http://fpcs.gls-group.eu/v1/ParcelShop"
+    ParcelShopSearchDistance:
+      required:
+      - "Distance"
+      - "Latitude"
+      - "Longitude"
+      type: "object"
+      properties:
+        Latitude:
+          type: "string"
+        Longitude:
+          type: "string"
+        Distance:
+          type: "string"
+        MaxNumberOfShops:
+          type: "string"
+      xml:
+        name: "ParcelShopSearchDistance"
+        namespace: "http://fpcs.gls-group.eu/v1/ParcelShop"
+    CancelParcelResponse:
+      required:
+      - "Result"
+      - "TrackID"
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        Result:
+          type: "string"
+      xml:
+        name: "CancelParcelResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    Barcodes:
+      type: "object"
+      properties:
+        Primary2D:
+          type: "string"
+        Secondary2D:
+          type: "string"
+        Primary1D:
+          type: "string"
+        Primary1DPrint:
+          type: "boolean"
+        Ndi1:
+          type: "string"
+          xml:
+            name: "NDI1"
+        Ndi2:
+          type: "string"
+          xml:
+            name: "NDI2"
+        UniShip:
+          type: "string"
+    CreateParcelsResponse:
+      required:
+      - "CreatedShipment"
+      type: "object"
+      properties:
+        CreatedShipment:
+          $ref: "#/components/schemas/CreatedShipment"
+      xml:
+        name: "CreateParcelsResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    CreatedShipment:
+      required:
+      - "CustomerID"
+      - "PickupLocation"
+      type: "object"
+      properties:
+        ShipmentReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentReference"
+        ParcelData:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ParcelData"
+        PrintData:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Document"
+        CustomerID:
+          type: "string"
+        PickupLocation:
+          type: "string"
+        Gdpr:
+          type: "array"
+          xml:
+            name: "GDPR"
+          items:
+            type: "string"
+            xml:
+              name: "GDPR"
+        Nemonico:
+          type: "string"
+    Document:
+      required:
+      - "Data"
+      - "LabelFormat"
+      type: "object"
+      properties:
+        Data:
+          type: "array"
+          items:
+            type: "string"
+            format: "byte"
+            xml:
+              name: "Data"
+        LabelFormat:
+          type: "string"
+          enum:
+          - "PDF"
+          - "ZEBRA"
+          - "INTERMEC"
+          - "DATAMAX"
+          - "TOSHIBA"
+          - "PNG"
+    ExpressData:
+      required:
+      - "Kurier1D"
+      - "KurierImportStation"
+      - "KurierLatestDeliveryTime"
+      - "KurierTourNumber"
+      type: "object"
+      properties:
+        KurierAlternateDelivery:
+          type: "boolean"
+        Kurier1D:
+          type: "string"
+        KurierTourNumber:
+          type: "string"
+        KurierImportStation:
+          type: "string"
+        KurierLatestDeliveryTime:
+          type: "string"
+    Information:
+      type: "object"
+      properties:
+        Name:
+          type: "string"
+        Value:
+          type: "string"
+    MondialRelayArea:
+      required:
+      - "MondialRelayNumber"
+      type: "object"
+      properties:
+        MondialRelayNumber:
+          type: "string"
+    NDIArea:
+      required:
+      - "Ndi1D"
+      type: "object"
+      properties:
+        Ndi1D:
+          type: "string"
+          xml:
+            name: "NDI1D"
+        Chpri1D:
+          type: "string"
+          xml:
+            name: "CHPRI1D"
+        Chsi1D:
+          type: "string"
+          xml:
+            name: "CHSI1D"
+        GbproductIdentifier:
+          type: "string"
+        GbpostOffice1D:
+          type: "string"
+        ChparcelNumber:
+          type: "string"
+    ParcelData:
+      required:
+      - "ParcelNumber"
+      - "TrackID"
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        PartnerParcelNumber:
+          type: "string"
+        ExchangeParcelID:
+          type: "string"
+        ShipmentUnitReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentUnitReference"
+        ParcelNumber:
+          type: "string"
+        Barcodes:
+          $ref: "#/components/schemas/Barcodes"
+        RoutingInfo:
+          $ref: "#/components/schemas/RoutingInfo"
+        ExpressData:
+          $ref: "#/components/schemas/ExpressData"
+        ServiceArea:
+          $ref: "#/components/schemas/ServiceArea"
+        HandlingInformation:
+          type: "string"
+        MondialRelayArea:
+          $ref: "#/components/schemas/MondialRelayArea"
+        Ndiarea:
+          $ref: "#/components/schemas/NDIArea"
+    RoutingInfo:
+      required:
+      - "FinalLocationCode"
+      - "HubLocation"
+      - "InboundSortingFlag"
+      - "LastRoutingDate"
+      - "Tour"
+      type: "object"
+      properties:
+        Tour:
+          type: "string"
+        InboundSortingFlag:
+          type: "string"
+        FinalLocationCode:
+          type: "string"
+        PickupLocationCode:
+          type: "string"
+        HubLocation:
+          type: "string"
+        LastRoutingDate:
+          type: "string"
+          format: "date-time"
+        GeoTour:
+          type: "string"
+        LoadingArea:
+          type: "string"
+        DispositionFlag:
+          type: "string"
+    ServiceArea:
+      required:
+      - "Service"
+      type: "object"
+      properties:
+        Service:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ServiceInfo"
+    ServiceInfo:
+      required:
+      - "Header"
+      type: "object"
+      properties:
+        Header:
+          type: "string"
+        Information:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Information"
+    AddOnLiabilityService:
+      required:
+      - "Amount"
+      - "Currency"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        Amount:
+          type: "number"
+        Currency:
+          type: "string"
+        ParcelContent:
+          type: "string"
+    CashService:
+      required:
+      - "Amount"
+      - "Currency"
+      - "Reason"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        Reason:
+          type: "string"
+        Amount:
+          type: "number"
+        Currency:
+          type: "string"
+    Consignee:
+      type: "object"
+      properties:
+        ConsigneeID:
+          type: "string"
+        CostCenter:
+          type: "string"
+        Category:
+          type: "string"
+          enum:
+          - "BUSINESS"
+          - "PRIVATE"
+        Address:
+          $ref: "#/components/schemas/Address"
+    CustomContent:
+      type: "object"
+      properties:
+        CustomerLogo:
+          type: "array"
+          items:
+            type: "string"
+            format: "byte"
+            xml:
+              name: "CustomerLogo"
+        BarcodeContentType:
+          type: "string"
+          enum:
+          - "TRACK_ID"
+          - "SHIPMENT_REFERENCE"
+        Barcode:
+          type: "string"
+        BarcodeType:
+          type: "string"
+          enum:
+          - "EAN_128"
+          - "CODE_39"
+        HideShipperAddress:
+          type: "boolean"
+    DefinePrinter:
+      required:
+      - "LabelPrinter"
+      type: "object"
+      properties:
+        LabelPrinter:
+          type: "string"
+        DocumentPrinter:
+          type: "string"
+    DeliveryAtWorkService:
+      required:
+      - "Building"
+      - "Floor"
+      - "RecipientName"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        RecipientName:
+          type: "string"
+        AlternateRecipientName:
+          type: "string"
+        Building:
+          type: "string"
+        Floor:
+          type: "string"
+        Room:
+          type: "string"
+        Phonenumber:
+          type: "string"
+    DepositService:
+      required:
+      - "PlaceOfDeposit"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        PlaceOfDeposit:
+          type: "string"
+    ExWorksService:
+      required:
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+    ExchangeService:
+      required:
+      - "Address"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        Address:
+          $ref: "#/components/schemas/Address"
+        ExpectedWeight:
+          type: "number"
+    HazardousGood:
+      required:
+      - "Weight"
+      type: "object"
+      properties:
+        Weight:
+          type: "number"
+        GlshazNo:
+          type: "string"
+    HazardousGoodsService:
+      required:
+      - "HazardousGood"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        HazardousGood:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/HazardousGood"
+    IdentPINService:
+      required:
+      - "Pin"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        Pin:
+          type: "string"
+          xml:
+            name: "PIN"
+        Birthdate:
+          type: "string"
+          format: "date-time"
+    IdentService:
+      required:
+      - "Birthdate"
+      - "Firstname"
+      - "Lastname"
+      - "Nationality"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        Birthdate:
+          type: "string"
+          format: "date-time"
+        Firstname:
+          type: "string"
+        Lastname:
+          type: "string"
+        Nationality:
+          $ref: "#/components/schemas/Nationality"
+    IntercompanyService:
+      required:
+      - "Address"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        Address:
+          $ref: "#/components/schemas/Address"
+        NumberOfLabels:
+          type: "integer"
+          format: "int64"
+        ExpectedWeight:
+          type: "number"
+    LimitedQuantitiesService:
+      required:
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        Weight:
+          type: "number"
+    Nationality:
+      required:
+      - "CountryCode"
+      type: "object"
+      properties:
+        CountryCode:
+          type: "string"
+    PickAndReturnService:
+      required:
+      - "PickupDate"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        PickupDate:
+          type: "string"
+          format: "date-time"
+        SendEMailToShipper:
+          type: "boolean"
+        SendEMailToConsignee:
+          type: "boolean"
+        SendSMSToShipper:
+          type: "boolean"
+    PickAndShipService:
+      required:
+      - "PickupDate"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        PickupDate:
+          type: "string"
+          format: "date-time"
+        SendEMailToShipper:
+          type: "boolean"
+        SendEMailToConsignee:
+          type: "boolean"
+        SendSMSToShipper:
+          type: "boolean"
+    PrintingOptions:
+      type: "object"
+      properties:
+        ReturnLabels:
+          $ref: "#/components/schemas/ReturnLabels"
+        UseDefault:
+          type: "string"
+        DefinePrinter:
+          $ref: "#/components/schemas/DefinePrinter"
+    Return:
+      type: "object"
+      properties:
+        Address:
+          $ref: "#/components/schemas/Address"
+    ReturnLabels:
+      required:
+      - "LabelFormat"
+      - "TemplateSet"
+      type: "object"
+      properties:
+        TemplateSet:
+          type: "string"
+          enum:
+          - "NONE"
+          - "D_200"
+          - "PF_4_I"
+          - "PF_4_I_200"
+          - "PF_4_I_300"
+          - "PF_8_D_200"
+          - "T_200_BF"
+          - "T_300_BF"
+          - "ZPL_200"
+          - "ZPL_200_TRACKID_EAN_128"
+          - "ZPL_200_TRACKID_CODE_39"
+          - "ZPL_200_REFNO_EAN_128"
+          - "ZPL_200_REFNO_CODE_39"
+          - "ZPL_300"
+          - "ZPL_300_TRACKID_EAN_128"
+          - "ZPL_300_TRACKID_CODE_39"
+          - "ZPL_300_REFNO_EAN_128"
+          - "ZPL_300_REFNO_CODE_39"
+        LabelFormat:
+          type: "string"
+          enum:
+          - "PDF"
+          - "ZEBRA"
+          - "INTERMEC"
+          - "DATAMAX"
+          - "TOSHIBA"
+          - "PNG"
+    ReturnOptions:
+      type: "object"
+      properties:
+        ReturnPrintData:
+          type: "boolean"
+          default: true
+        ReturnRoutingInfo:
+          type: "boolean"
+          default: true
+    Service:
+      required:
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+    Shipment:
+      required:
+      - "Consignee"
+      - "Product"
+      - "ShipmentUnit"
+      - "Shipper"
+      type: "object"
+      properties:
+        ShipmentReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentReference"
+        ShippingDate:
+          type: "string"
+          format: "date-time"
+        IncotermCode:
+          type: "string"
+        Identifier:
+          type: "string"
+        Middleware:
+          type: "string"
+        Product:
+          type: "string"
+          enum:
+          - "PARCEL"
+          - "EXPRESS"
+          - "FREIGHT"
+          - "PHARMA"
+          - "PHARMAPLUS"
+        ExpressAltDeliveryAllowed:
+          type: "boolean"
+        Consignee:
+          $ref: "#/components/schemas/Consignee"
+        Shipper:
+          $ref: "#/components/schemas/Shipper"
+        Carrier:
+          type: "string"
+          enum:
+          - "ROYALMAIL"
+        ShipmentUnit:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ShipmentUnit"
+        Service:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ShipmentService"
+        Return:
+          $ref: "#/components/schemas/Return"
+    ShipmentRequestData:
+      required:
+      - "PrintingOptions"
+      - "Shipment"
+      type: "object"
+      properties:
+        Shipment:
+          $ref: "#/components/schemas/Shipment"
+        PrintingOptions:
+          $ref: "#/components/schemas/PrintingOptions"
+        CustomContent:
+          $ref: "#/components/schemas/CustomContent"
+        ReturnOptions:
+          $ref: "#/components/schemas/ReturnOptions"
+        PartnerReference:
+          type: "string"
+          xml:
+            attribute: true
+      xml:
+        name: "ShipmentRequestData"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    ShipmentService:
+      type: "object"
+      properties:
+        Service:
+          $ref: "#/components/schemas/Service"
+        ShopDelivery:
+          $ref: "#/components/schemas/ShopDeliveryService"
+        ShopReturn:
+          $ref: "#/components/schemas/ShopReturnService"
+        Intercompany:
+          $ref: "#/components/schemas/IntercompanyService"
+        Exchange:
+          $ref: "#/components/schemas/ExchangeService"
+        DeliveryAtWork:
+          $ref: "#/components/schemas/DeliveryAtWorkService"
+        Deposit:
+          $ref: "#/components/schemas/DepositService"
+        IdentPin:
+          $ref: "#/components/schemas/IdentPINService"
+        Ident:
+          $ref: "#/components/schemas/IdentService"
+        PickAndShip:
+          $ref: "#/components/schemas/PickAndShipService"
+        PickAndReturn:
+          $ref: "#/components/schemas/PickAndReturnService"
+    ShipmentUnit:
+      type: "object"
+      properties:
+        ShipmentUnitReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentUnitReference"
+        PartnerParcelNumber:
+          type: "string"
+        Weight:
+          type: "number"
+        Note1:
+          type: "string"
+        Note2:
+          type: "string"
+        Service:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UnitService"
+        TrackID:
+          type: "string"
+        Injected:
+          type: "boolean"
+          default: false
+        ParcelNumber:
+          type: "string"
+        Volume:
+          $ref: "#/components/schemas/Volume"
+        FralphaParcelReference:
+          type: "string"
+    Shipper:
+      required:
+      - "ContactID"
+      type: "object"
+      properties:
+        ContactID:
+          type: "string"
+        AlternativeShipperAddress:
+          $ref: "#/components/schemas/Address"
+        Address:
+          $ref: "#/components/schemas/Address"
+        FralphaCustomerReference:
+          type: "string"
+    ShopDeliveryService:
+      required:
+      - "ParcelShopID"
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        ParcelShopID:
+          type: "string"
+    ShopReturnService:
+      required:
+      - "ServiceName"
+      type: "object"
+      properties:
+        ServiceName:
+          type: "string"
+        NumberOfLabels:
+          type: "integer"
+          format: "int64"
+    UnitService:
+      type: "object"
+      properties:
+        Cash:
+          $ref: "#/components/schemas/CashService"
+        AddonLiability:
+          $ref: "#/components/schemas/AddOnLiabilityService"
+        HazardousGoods:
+          $ref: "#/components/schemas/HazardousGoodsService"
+        ExWorks:
+          $ref: "#/components/schemas/ExWorksService"
+        LimitedQuantities:
+          $ref: "#/components/schemas/LimitedQuantitiesService"
+    Volume:
+      required:
+      - "Height"
+      - "Length"
+      - "ScannerStation"
+      - "VolumetricType"
+      - "Width"
+      type: "object"
+      properties:
+        Width:
+          type: "string"
+        Height:
+          type: "string"
+        Length:
+          type: "string"
+        ScannerStation:
+          type: "string"
+        VolumetricType:
+          type: "string"
+          enum:
+          - "CALIBRATED"
+          - "NON_CALIBRATED"
+    AllowedService:
+      type: "object"
+      properties:
+        ProductName:
+          type: "string"
+          enum:
+          - "PARCEL"
+          - "EXPRESS"
+          - "FREIGHT"
+          - "PHARMA"
+          - "PHARMAPLUS"
+        ServiceName:
+          type: "string"
+    AllowedServicesResponse:
+      type: "object"
+      properties:
+        AllowedServices:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AllowedService"
+      xml:
+        name: "AllowedServicesResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    AllowedServicesRequestParameter:
+      required:
+      - "Destination"
+      - "Source"
+      type: "object"
+      properties:
+        Source:
+          $ref: "#/components/schemas/Location"
+        Destination:
+          $ref: "#/components/schemas/Location"
+        ContactID:
+          type: "string"
+      xml:
+        name: "AllowedServicesRequestParameter"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    EndOfDayResponse:
+      type: "object"
+      properties:
+        Shipments:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Shipment"
+      xml:
+        name: "EndOfDayResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    ReprintParcelResponse:
+      required:
+      - "CreatedShipment"
+      type: "object"
+      properties:
+        CreatedShipment:
+          $ref: "#/components/schemas/CreatedShipment"
+      xml:
+        name: "ReprintParcelResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    ReprintParcelRequestParameter:
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ParcelNumber:
+          type: "string"
+        ShipmentReference:
+          type: "string"
+        ShipmentUnitReference:
+          type: "string"
+        PartnerParcelNumber:
+          type: "string"
+        CreationDate:
+          type: "string"
+          format: "date-time"
+        PrintingOptions:
+          $ref: "#/components/schemas/PrintingOptions"
+        ReturnOptions:
+          $ref: "#/components/schemas/ReturnOptions"
+        CustomContent:
+          $ref: "#/components/schemas/CustomContent"
+      xml:
+        name: "ReprintParcelRequestParameter"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    UpdateParcelWeightResponse:
+      required:
+      - "UpdatedWeight"
+      type: "object"
+      properties:
+        UpdatedWeight:
+          type: "number"
+      xml:
+        name: "UpdateParcelWeightResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    UpdateParcelWeightRequestParameter:
+      required:
+      - "Weight"
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ShipmentReference:
+          type: "string"
+        ShipmentUnitReference:
+          type: "string"
+        ParcelNumber:
+          type: "string"
+        PartnerParcelNumber:
+          type: "string"
+        Weight:
+          type: "number"
+      xml:
+        name: "UpdateParcelWeightRequestParameter"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    ShipmentValidationResult:
+      type: "object"
+      properties:
+        Issues:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ValidationIssue"
+    ValidateParcelsResponse:
+      required:
+      - "ValidationResult"
+      type: "object"
+      properties:
+        Success:
+          type: "boolean"
+        ValidationResult:
+          $ref: "#/components/schemas/ShipmentValidationResult"
+      xml:
+        name: "ValidateParcelsResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    ValidationIssue:
+      required:
+      - "Location"
+      - "Rule"
+      type: "object"
+      properties:
+        Rule:
+          type: "string"
+        Location:
+          type: "string"
+        Parameters:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "Parameters"
+    ValidateShipmentRequestData:
+      required:
+      - "Shipment"
+      type: "object"
+      properties:
+        Shipment:
+          $ref: "#/components/schemas/Shipment"
+      xml:
+        name: "ValidateShipmentRequestData"
+        namespace: "http://fpcs.gls-group.eu/v1/ShipmentProcessing/types"
+    SporadicCollectionResponse:
+      required:
+      - "EstimatedPickUpDate"
+      type: "object"
+      properties:
+        EstimatedPickUpDate:
+          type: "string"
+          format: "date-time"
+      xml:
+        name: "SporadicCollectionResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/SporadicCollection"
+    SporadicCollection:
+      required:
+      - "ContactID"
+      - "PreferredPickUpDate"
+      - "Product"
+      type: "object"
+      properties:
+        ContactID:
+          type: "string"
+        PreferredPickUpDate:
+          type: "string"
+          format: "date-time"
+        NumberOfParcels:
+          type: "integer"
+          format: "int64"
+        Product:
+          type: "string"
+          enum:
+          - "PARCEL"
+          - "EXPRESS"
+          - "FREIGHT"
+          - "PHARMA"
+          - "PHARMAPLUS"
+        ExpectedTotalWeight:
+          type: "number"
+        ContainsHazGoods:
+          type: "boolean"
+        AdditionalInformation:
+          type: "string"
+      xml:
+        name: "SporadicCollection"
+        namespace: "http://fpcs.gls-group.eu/v1/SporadicCollection"
+    TUListResponse:
+      type: "object"
+      properties:
+        UnitItems:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UnitItem"
+      xml:
+        name: "TUListResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/Tracking"
+    UnitItem:
+      required:
+      - "InitialDate"
+      - "Status"
+      - "TrackID"
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ParcelNumber:
+          type: "string"
+        PartnerParcelNumber:
+          type: "string"
+        ShipmentReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentReference"
+        ShipmentUnitReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentUnitReference"
+        InitialDate:
+          type: "string"
+          format: "date-time"
+        Status:
+          type: "string"
+    TULReferenceData:
+      required:
+      - "DateFrom"
+      - "DateTo"
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ShipmentReference:
+          type: "string"
+        ShipmentUnitReference:
+          type: "string"
+        ParcelNumber:
+          type: "string"
+        PartnerParcelNumber:
+          type: "string"
+        DateFrom:
+          type: "string"
+          format: "date-time"
+        DateTo:
+          type: "string"
+          format: "date-time"
+      xml:
+        name: "TULReferenceData"
+        namespace: "http://fpcs.gls-group.eu/v1/Tracking"
+    ParcelDetailResponse:
+      required:
+      - "UnitDetail"
+      type: "object"
+      properties:
+        UnitDetail:
+          $ref: "#/components/schemas/UnitDetail"
+      xml:
+        name: "ParcelDetailResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/Tracking"
+    TUHistory:
+      required:
+      - "Country"
+      - "Date"
+      - "Description"
+      - "Location"
+      - "LocationCode"
+      - "StatusCode"
+      type: "object"
+      properties:
+        Date:
+          type: "string"
+          format: "date-time"
+        LocationCode:
+          type: "string"
+        Location:
+          type: "string"
+        Country:
+          type: "string"
+        StatusCode:
+          type: "string"
+        Description:
+          type: "string"
+    UnitDetail:
+      required:
+      - "Consignee"
+      - "Product"
+      - "Shipper"
+      - "TrackID"
+      - "Weight"
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ShipmentReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentReference"
+        ShipmentUnitReference:
+          type: "array"
+          items:
+            type: "string"
+            xml:
+              name: "ShipmentUnitReference"
+        Weight:
+          type: "number"
+        DeliveryDate:
+          type: "string"
+          format: "date-time"
+        Signature:
+          type: "string"
+        Product:
+          type: "string"
+          enum:
+          - "PARCEL"
+          - "EXPRESS"
+          - "FREIGHT"
+          - "PHARMA"
+          - "PHARMAPLUS"
+        Consignee:
+          $ref: "#/components/schemas/Consignee"
+        Shipper:
+          $ref: "#/components/schemas/Shipper"
+        Service:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/UnitService"
+        ShipmentService:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ShipmentService"
+        History:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TUHistory"
+    DetailsReferenceData:
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ShipmentReference:
+          type: "string"
+        ShipmentUnitReference:
+          type: "string"
+        ParcelNumber:
+          type: "string"
+        PartnerParcelNumber:
+          type: "string"
+      xml:
+        name: "DetailsReferenceData"
+        namespace: "http://fpcs.gls-group.eu/v1/Tracking"
+    PODItem:
+      required:
+      - "ImageData"
+      - "TrackID"
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ImageData:
+          type: "array"
+          items:
+            type: "string"
+            format: "byte"
+            xml:
+              name: "ImageData"
+    PODResponse:
+      type: "object"
+      properties:
+        Poditem:
+          $ref: "#/components/schemas/PODItem"
+      xml:
+        name: "PODResponse"
+        namespace: "http://fpcs.gls-group.eu/v1/Tracking"
+    TUPReferenceData:
+      type: "object"
+      properties:
+        TrackID:
+          type: "string"
+        ShipmentReference:
+          type: "string"
+        ShipmentUnitReference:
+          type: "string"
+        ParcelNumber:
+          type: "string"
+        PartnerParcelNumber:
+          type: "string"
+      xml:
+        name: "TUPReferenceData"
+        namespace: "http://fpcs.gls-group.eu/v1/Tracking"
+  securitySchemes:
+    OAuth:
+      description: "The ShipIT-Farm API uses OAuth 2 with the client credentials flow.\
+        \ Use your apps credentials to receive the token."
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: "https://api.gls-group.net/oauth2/v2/token"
+      type: "oauth2"
+    OAuthSandbox:
+      description: "The ShipIT-Farm API uses OAuth 2 with the client credentials flow.\
+        \ Use your apps credentials to receive the token."
+      type: "oauth2"
+      flows:
+        clientCredentials:
+          tokenUrl: "https://api-sandbox.gls-group.net/oauth2/v2/token"
+          scopes: {}

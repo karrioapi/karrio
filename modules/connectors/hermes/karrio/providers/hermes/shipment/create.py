@@ -11,6 +11,16 @@ import karrio.schemas.hermes.shipment_request as hermes_req
 import karrio.schemas.hermes.shipment_response as hermes_res
 
 
+def _split_name(name: typing.Optional[str]) -> typing.Tuple[str, str]:
+    """Split full name into firstname and lastname for Hermes API."""
+    if not name:
+        return (None, None)
+    parts = name.split()
+    firstname = parts[0] if parts else None
+    lastname = " ".join(parts[1:]) if len(parts) > 1 else firstname
+    return (firstname, lastname)
+
+
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
@@ -66,13 +76,6 @@ def _extract_details(
     )
 
 
-def _truncate(value: typing.Optional[str], max_length: int) -> typing.Optional[str]:
-    """Truncate string to max length if needed."""
-    if value is None:
-        return None
-    return value[:max_length] if len(value) > max_length else value
-
-
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
@@ -101,57 +104,73 @@ def shipment_request(
     if payload.customs:
         customs = _build_customs(payload.customs, shipper)
 
+    # Split names for Hermes API
+    recipient_firstname, recipient_lastname = _split_name(recipient.person_name)
+    shipper_firstname, shipper_lastname = _split_name(shipper.person_name)
+
     # Create the request using generated schema types
     # Field length limits per OpenAPI spec:
     # - street: 50, houseNumber: 5, town: 30
     # - addressAddition: 50, addressAddition2: 20, addressAddition3: 20
     # - clientReference: 20, clientReference2: 20, phone: 20
     request = hermes_req.ShipmentRequestType(
-        clientReference=_truncate(payload.reference, 20) or "",
-        clientReference2=_truncate((payload.options or {}).get("clientReference2"), 20),
+        clientReference=lib.text(payload.reference, max=20) or "",
+        clientReference2=lib.text((payload.options or {}).get("clientReference2"), max=20),
         # Receiver name
         receiverName=hermes_req.ErNameType(
             title=None,
             gender=None,
-            firstname=recipient.person_name.split()[0] if recipient.person_name else None,
+            firstname=recipient_firstname,
             middlename=None,
-            lastname=" ".join(recipient.person_name.split()[1:]) if recipient.person_name and len(recipient.person_name.split()) > 1 else recipient.person_name,
+            lastname=recipient_lastname,
         ),
         # Receiver address
         receiverAddress=hermes_req.ErAddressType(
-            street=_truncate(recipient.street_name, 50),
-            houseNumber=_truncate(recipient.street_number, 5) or "",
+            street=lib.text(recipient.street_name, max=50),
+            houseNumber=lib.text(recipient.street_number, max=5) or "",
             zipCode=recipient.postal_code,
-            town=_truncate(recipient.city, 30),
+            town=lib.text(recipient.city, max=30),
             countryCode=recipient.country_code,
-            addressAddition=_truncate(recipient.address_line2, 50),
+            addressAddition=lib.text(recipient.address_line2, max=50),
             addressAddition2=None,
-            addressAddition3=_truncate(recipient.company_name, 20),
+            addressAddition3=lib.text(recipient.company_name, max=20),
         ),
         # Receiver contact
-        receiverContact=hermes_req.ReceiverContactType(
-            phone=_truncate(recipient.phone_number, 20),
-            mobile=None,
-            mail=recipient.email or None,
-        ) if recipient.phone_number or recipient.email else None,
+        receiverContact=lib.identity(
+            hermes_req.ReceiverContactType(
+                phone=lib.text(recipient.phone_number, max=20),
+                mobile=None,
+                mail=recipient.email,
+            )
+            if recipient.phone_number or recipient.email
+            else None
+        ),
         # Sender (divergent sender if different from account default)
-        senderName=hermes_req.ErNameType(
-            title=None,
-            gender=None,
-            firstname=shipper.person_name.split()[0] if shipper.person_name else None,
-            middlename=None,
-            lastname=" ".join(shipper.person_name.split()[1:]) if shipper.person_name and len(shipper.person_name.split()) > 1 else shipper.person_name,
-        ) if shipper.person_name else None,
-        senderAddress=hermes_req.ErAddressType(
-            street=_truncate(shipper.street_name, 50),
-            houseNumber=_truncate(shipper.street_number, 5) or "",
-            zipCode=shipper.postal_code,
-            town=_truncate(shipper.city, 30),
-            countryCode=shipper.country_code,
-            addressAddition=_truncate(shipper.address_line2, 50),
-            addressAddition2=None,
-            addressAddition3=_truncate(shipper.company_name, 20),
-        ) if shipper.street else None,
+        senderName=lib.identity(
+            hermes_req.ErNameType(
+                title=None,
+                gender=None,
+                firstname=shipper_firstname,
+                middlename=None,
+                lastname=shipper_lastname,
+            )
+            if shipper.person_name
+            else None
+        ),
+        senderAddress=lib.identity(
+            hermes_req.ErAddressType(
+                street=lib.text(shipper.street_name, max=50),
+                houseNumber=lib.text(shipper.street_number, max=5) or "",
+                zipCode=shipper.postal_code,
+                town=lib.text(shipper.city, max=30),
+                countryCode=shipper.country_code,
+                addressAddition=lib.text(shipper.address_line2, max=50),
+                addressAddition2=None,
+                addressAddition3=lib.text(shipper.company_name, max=20),
+            )
+            if shipper.street
+            else None
+        ),
         # Parcel details (weight in grams)
         parcel=hermes_req.ParcelType(
             parcelClass=None,  # Optional, calculated from dimensions
@@ -266,46 +285,52 @@ def _build_customs(
     """Build customs and taxes for international shipments."""
     items = [
         hermes_req.ItemType(
-            sku=item.sku or None,
+            sku=item.sku,
             category=None,
-            countryCodeOfManufacture=item.origin_country or None,
+            countryCodeOfManufacture=item.origin_country,
             value=lib.to_int(item.value_amount * 100) if item.value_amount else None,  # In cents
             weight=lib.to_int(item.weight * 1000) if item.weight else None,  # In grams
             quantity=item.quantity or 1,
-            description=item.description or item.title or None,
+            description=item.description or item.title,
             exportDescription=None,
             exportHsCode=None,
-            hsCode=item.hs_code or None,
+            hsCode=item.hs_code,
             url=None,
         )
         for item in customs.commodities or []
     ]
 
+    shipper_firstname, shipper_lastname = _split_name(shipper.person_name) if shipper else (None, None)
+
     return hermes_req.CustomsAndTaxesType(
-        currency=customs.duty.currency if customs.duty else "EUR",
+        currency=lib.identity(customs.duty.currency if customs.duty else "EUR"),
         shipmentCost=None,
-        items=items if items else None,
+        items=items or None,
         invoiceReferences=None,
         value=None,
         exportCustomsClearance=None,
         client=None,
-        shipmentOriginAddress=hermes_req.ShipmentOriginAddressType(
-            title=None,
-            firstname=shipper.person_name.split()[0] if shipper.person_name else None,
-            lastname=" ".join(shipper.person_name.split()[1:]) if shipper.person_name else None,
-            company=shipper.company_name,
-            street=shipper.street_name,
-            houseNumber=shipper.street_number or "",
-            zipCode=shipper.postal_code,
-            town=shipper.city,
-            state=shipper.state_code,
-            countryCode=shipper.country_code,
-            addressAddition=shipper.address_line2,
-            addressAddition2=None,
-            addressAddition3=None,
-            phone=shipper.phone_number,
-            fax=None,
-            mobile=None,
-            mail=shipper.email,
-        ) if shipper else None,
+        shipmentOriginAddress=lib.identity(
+            hermes_req.ShipmentOriginAddressType(
+                title=None,
+                firstname=shipper_firstname,
+                lastname=shipper_lastname,
+                company=shipper.company_name,
+                street=shipper.street_name,
+                houseNumber=shipper.street_number or "",
+                zipCode=shipper.postal_code,
+                town=shipper.city,
+                state=shipper.state_code,
+                countryCode=shipper.country_code,
+                addressAddition=shipper.address_line2,
+                addressAddition2=None,
+                addressAddition3=None,
+                phone=shipper.phone_number,
+                fax=None,
+                mobile=None,
+                mail=shipper.email,
+            )
+            if shipper
+            else None
+        ),
     )
