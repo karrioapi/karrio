@@ -1,14 +1,16 @@
 {
-  "shipmentResponse": {
-    "trackingNumber": "1Z999999999999999",
-    "shipmentIdentifier": "SHIP123456",
-    "labelType": "PDF",
-    "label": "base64_encoded_label_data",
-    "documents": {
-      "invoice": "base64_encoded_invoice_data"
-    },
-    "meta": {
-      "serviceCode": "EXPRESS"
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "trackingNumber": "ASENDIA123456789",
+  "returnTrackingNumber": "ASENDIARET123456",
+  "errorMessages": [
+    {
+      "field": "weight",
+      "message": "Weight exceeds maximum limit"
     }
-  }
+  ],
+  "labelLocation": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/label",
+  "returnLabelLocation": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/return-label",
+  "customsDocumentLocation": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/customs-document",
+  "manifestLocation": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/manifest",
+  "commercialInvoiceLocation": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/commercial-invoice-document"
 }

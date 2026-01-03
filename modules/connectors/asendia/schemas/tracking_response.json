@@ -1,28 +1,29 @@
 {
-  "trackingResponse": {
-    "trackingInfo": [
-      {
-        "trackingNumber": "1Z999999999999999",
-        "status": "in_transit",
-        "statusDetails": "Package is in transit",
-        "estimatedDelivery": "2024-04-15",
-        "events": [
-          {
-            "date": "2024-04-12",
-            "time": "14:30:00",
-            "code": "PU",
-            "description": "Package picked up",
-            "location": "San Francisco, CA"
-          },
-          {
-            "date": "2024-04-13",
-            "time": "09:15:00",
-            "code": "IT",
-            "description": "In transit",
-            "location": "Los Angeles, CA"
-          }
-        ]
-      }
-    ]
-  }
+  "trackingNumber": "ASENDIA123456789",
+  "trackingEvents": [
+    {
+      "id": 1,
+      "code": "PU",
+      "time": "2024-04-12T14:30:00Z",
+      "locationName": "Bern",
+      "carrierEventDescription": "Package picked up",
+      "locationCountry": "CH"
+    },
+    {
+      "id": 2,
+      "code": "IT",
+      "time": "2024-04-13T09:15:00Z",
+      "locationName": "Zurich Airport",
+      "carrierEventDescription": "In transit to destination",
+      "locationCountry": "CH"
+    },
+    {
+      "id": 3,
+      "code": "DL",
+      "time": "2024-04-15T11:00:00Z",
+      "locationName": "New York",
+      "carrierEventDescription": "Delivered",
+      "locationCountry": "US"
+    }
+  ]
 }

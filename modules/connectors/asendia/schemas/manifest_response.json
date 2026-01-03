@@ -1,10 +1,10 @@
 {
-  "manifestResponse": {
-    "manifestId": "MAN123456",
-    "manifestUrl": "https://example.com/manifest/MAN123456",
-    "manifestData": "base64_encoded_manifest_data",
-    "status": "completed",
-    "shipmentCount": 2,
-    "creationDate": "2023-06-01T15:30:00Z"
-  }
+  "id": "5gc07h86-7929-6784-d5he-4e185h88cgc8",
+  "createdAt": "2024-04-12T15:30:00Z",
+  "errorMessage": null,
+  "errorParcelIds": [],
+  "status": "COMPLETED",
+  "manifestDocumentLocation": "/manifests/5gc07h86-7929-6784-d5he-4e185h88cgc8/document",
+  "parcelsLocation": "/manifests/5gc07h86-7929-6784-d5he-4e185h88cgc8/parcels",
+  "manifestLocation": "/manifests/5gc07h86-7929-6784-d5he-4e185h88cgc8"
 }

@@ -1,11 +1,15 @@
 {
-  "errorResponse": {
-    "errors": [
-      {
-        "code": "ERROR_CODE",
-        "message": "Error message description",
-        "details": "Additional error details"
-      }
-    ]
-  }
+  "type": "https://www.asendia-sync.com/problem/constraint-violation",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Validation failed",
+  "path": "/api/parcels",
+  "message": "error.validation",
+  "fieldErrors": [
+    {
+      "objectName": "parcelRequest",
+      "field": "weight",
+      "message": "must be greater than 0"
+    }
+  ]
 }
