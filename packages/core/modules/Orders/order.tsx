@@ -300,7 +300,7 @@ export const OrderComponent = ({
           <div className="my-6 pt-1"></div>
 
           {/* Activity Timeline section */}
-          <h2 className="title is-5 my-4">Activity</h2>
+          <h2 className="text-xl font-semibold my-4">Activity</h2>
 
           <ActivityTimeline
             logs={logs}
@@ -310,8 +310,8 @@ export const OrderComponent = ({
       )}
 
       {query.isFetched && isNone(order) && (
-        <div className="card my-6">
-          <div className="card-content has-text-centered">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm my-6">
+          <div className="p-6 text-center">
             <p>Uh Oh!</p>
             <p>{"We couldn't find any order with that reference"}</p>
           </div>
