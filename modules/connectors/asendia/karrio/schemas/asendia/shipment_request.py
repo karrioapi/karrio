@@ -10,7 +10,7 @@ class ImporterType:
     address1: typing.Optional[str] = None
     address2: typing.Optional[str] = None
     address3: typing.Optional[str] = None
-    postalCode: typing.Optional[int] = None
+    postalCode: typing.Optional[str] = None
     city: typing.Optional[str] = None
     province: typing.Optional[str] = None
     country: typing.Optional[str] = None
@@ -26,7 +26,7 @@ class PudoAddressType:
     address3: typing.Optional[str] = None
     city: typing.Optional[str] = None
     state: typing.Optional[str] = None
-    zipCode: typing.Optional[int] = None
+    zipCode: typing.Optional[str] = None
     countryCode: typing.Optional[str] = None
     pudoId: typing.Optional[str] = None
 
@@ -65,7 +65,7 @@ class ItemType:
     articleComposition: typing.Optional[str] = None
     unitValue: typing.Optional[float] = None
     currency: typing.Optional[str] = None
-    harmonizationCode: typing.Optional[int] = None
+    harmonizationCode: typing.Optional[str] = None
     originCountry: typing.Optional[str] = None
     unitWeight: typing.Optional[float] = None
     quantity: typing.Optional[int] = None
@@ -82,8 +82,8 @@ class CustomsInfoType:
 class ShipmentRequestType:
     customerId: typing.Optional[str] = None
     labelType: typing.Optional[str] = None
-    referencenumber: typing.Optional[int] = None
-    sequencenumber: typing.Optional[int] = None
+    referencenumber: typing.Optional[str] = None
+    sequencenumber: typing.Optional[str] = None
     senderEORI: typing.Optional[str] = None
     sellerEORI: typing.Optional[str] = None
     senderTaxId: typing.Optional[str] = None

@@ -5,4 +5,4 @@ import typing
 
 @attr.s(auto_attribs=True)
 class AuthResponseType:
-    idtoken: typing.Optional[str] = None
+    id_token: typing.Optional[str] = None
