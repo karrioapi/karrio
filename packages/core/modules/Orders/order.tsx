@@ -125,20 +125,20 @@ export const OrderComponent = ({
             {/* address and line items section */}
             <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 my-0`}>
               {/* Shipping Address section */}
-              <div className="text-base py-1">
+              <div className="text-xs py-1">
                 <p className="text-base font-semibold tracking-wide my-2">SHIP TO</p>
                 <div className="space-y-1">
-                  <p className="text-base my-1">{order?.shipping_to.person_name}</p>
-                  <p className="text-base my-1">{order?.shipping_to.company_name}</p>
-                  <p className="text-base my-1 text-blue-600">{order?.shipping_to.email}</p>
-                  <p className="text-base my-1 text-blue-600">{order?.shipping_to.phone_number}</p>
-                  <p className="text-base my-1">
+                  <p className="text-xs my-1 font-semibold">{order?.shipping_to.person_name}</p>
+                  <p className="text-xs my-1 font-semibold">{order?.shipping_to.company_name}</p>
+                  <p className="text-xs my-1 font-semibold text-blue-600">{order?.shipping_to.email}</p>
+                  <p className="text-xs my-1 font-semibold text-blue-600">{order?.shipping_to.phone_number}</p>
+                  <p className="text-xs my-1 font-semibold text-gray-600">
                     <span>{order?.shipping_to.address_line1}</span>
                     {!isNone(order?.shipping_to.address_line2) && (
                       <span> {order?.shipping_to.address_line2}</span>
                     )}
                   </p>
-                  <p className="text-base my-1">{formatAddressLocation(order?.shipping_to)}</p>
+                  <p className="text-xs my-1 font-semibold text-gray-600">{formatAddressLocation(order?.shipping_to)}</p>
                 </div>
               </div>
 
