@@ -182,17 +182,15 @@ export const OrderComponent = ({
             )}
 
             {/* Billing address section */}
-            <div className="columns mt-6 mb-0 is-multiline">
-              {order?.billing_address && (
-                <div className="column is-6 is-size-6 py-1">
-                  <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                    BILL TO
-                  </p>
+            {order?.billing_address && (
+              <div className="mt-6">
+                <p className="text-base font-semibold tracking-wide my-2">
+                  BILL TO
+                </p>
 
-                  <AddressDescription address={order?.billing_address} />
-                </div>
-              )}
-            </div>
+                <AddressDescription address={order?.billing_address} />
+              </div>
+            )}
           </div>
 
           {/* Metadata section */}
