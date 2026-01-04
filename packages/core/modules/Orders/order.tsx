@@ -1,8 +1,6 @@
 "use client";
-import {
-  MetadataEditor,
-  MetadataEditorContext,
-} from "@karrio/ui/core/forms/metadata-editor";
+import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
+import { useMetadataMutation } from "@karrio/hooks/metadata";
 import {
   formatAddressLocation,
   formatDateTime,
@@ -15,14 +13,14 @@ import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
+import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Spinner } from "@karrio/ui/core/components/spinner";
-import { MetadataObjectTypeEnum } from "@karrio/types";
+import { MetadataObjectTypeEnum, NotificationType } from "@karrio/types";
 import { useEvents } from "@karrio/hooks/event";
 import { useOrder } from "@karrio/hooks/order";
 import { useLogs } from "@karrio/hooks/log";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@karrio/ui/components/ui/table";
 import { Button } from "@karrio/ui/components/ui/button";
 import React from "react";
 
@@ -38,6 +36,7 @@ export const OrderComponent = ({
   isPreview,
   isSheet,
 }: OrderComponentProps): JSX.Element => {
+  const notifier = useNotifier();
   const { setLoading } = useLoader();
   const entity_id = orderId;
   const { query: logs } = useLogs({ entity_id });
@@ -45,6 +44,41 @@ export const OrderComponent = ({
   const {
     query: { data: { order } = {}, ...query },
   } = useOrder(entity_id);
+  const { updateMetadata } = useMetadataMutation([
+    "orders",
+    entity_id,
+  ]);
+
+  const handleMetadataChange = async (newMetadata: any) => {
+    try {
+      const currentMetadata = order?.metadata || {};
+
+      // Calculate added_values (new or changed metadata)
+      const added_values = { ...newMetadata };
+
+      // Calculate discarded_keys (keys that were removed)
+      const discarded_keys = Object.keys(currentMetadata).filter(
+        key => !(key in newMetadata)
+      );
+
+      await updateMetadata.mutateAsync({
+        id: entity_id,
+        object_type: MetadataObjectTypeEnum.order,
+        discarded_keys,
+        added_values,
+      });
+
+      notifier.notify({
+        type: NotificationType.success,
+        message: "Metadata updated successfully",
+      });
+    } catch (error) {
+      notifier.notify({
+        type: NotificationType.error,
+        message: "Failed to update metadata",
+      });
+    }
+  };
 
   React.useEffect(() => {
     setLoading(query.isFetching);
@@ -194,36 +228,20 @@ export const OrderComponent = ({
           </div>
 
           {/* Metadata section */}
-          <MetadataEditor
-            id={order?.id}
-            object_type={MetadataObjectTypeEnum.order}
-            metadata={order?.metadata}
-          >
-            {/* @ts-ignore */}
-            <MetadataEditorContext.Consumer>
-              {({ isEditing, editMetadata }) => (
-                <>
-                  <div className="is-flex is-justify-content-space-between">
-                    <h2 className="title is-5 my-4">Metadata</h2>
+          <h2 className="text-xl font-semibold my-4">Metadata</h2>
+          <div className="border-t border-gray-200 mt-1 mb-2"></div>
 
-                    <button
-                      type="button"
-                      className="button is-default is-small is-align-self-center"
-                      disabled={isEditing}
-                      onClick={() => editMetadata()}
-                    >
-                      <span className="icon is-small">
-                        <i className="fas fa-pen"></i>
-                      </span>
-                      <span>Edit metadata</span>
-                    </button>
-                  </div>
-
-                  <hr className="mt-1 mb-2" style={{ height: "1px" }} />
-                </>
-              )}
-            </MetadataEditorContext.Consumer>
-          </MetadataEditor>
+          <div className="my-4">
+            <EnhancedMetadataEditor
+              value={order?.metadata || {}}
+              onChange={handleMetadataChange}
+              placeholder="No metadata configured"
+              emptyStateMessage="Add key-value pairs to configure metadata"
+              allowEdit={true}
+              showTypeInference={true}
+              maxHeight="300px"
+            />
+          </div>
 
           <div className="my-6 pt-1"></div>
 
