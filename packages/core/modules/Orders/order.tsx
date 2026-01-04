@@ -160,28 +160,26 @@ export const OrderComponent = ({
             </div>
 
             {/* Options section */}
-            <div className="columns mt-6 mb-0 is-multiline">
-              {Object.values(order?.options as object).length > 0 && (
-                <div className="column is-6 is-size-6 py-1">
-                  <p className="is-title is-size-6 my-2 has-text-weight-semibold">
-                    ORDER OPTIONS
-                  </p>
+            {Object.values(order?.options as object).length > 0 && (
+              <div className="mt-6">
+                <p className="text-base font-semibold tracking-wide my-2">
+                  ORDER OPTIONS
+                </p>
 
+                <div className="space-y-1">
                   {Object.entries(order?.options).map(
                     ([key, value]: any, index) => (
-                      <React.Fragment key={index + "item-info"}>
-                        <p className="is-subtitle is-size-7 my-1 has-text-weight-semibold has-text-grey">
-                          <span>
-                            {formatRef(key).toLowerCase()}:{" "}
-                            <strong>{String(value)}</strong>
-                          </span>
-                        </p>
-                      </React.Fragment>
+                      <p key={index + "item-info"} className="text-sm text-gray-600">
+                        <span className="font-semibold">
+                          {formatRef(key).toLowerCase()}:
+                        </span>{" "}
+                        <span className="font-bold text-gray-900">{String(value)}</span>
+                      </p>
                     ),
                   )}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Billing address section */}
             <div className="columns mt-6 mb-0 is-multiline">
