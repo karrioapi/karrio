@@ -21,6 +21,7 @@ import { MetadataObjectTypeEnum, NotificationType } from "@karrio/types";
 import { useEvents } from "@karrio/hooks/event";
 import { useOrder } from "@karrio/hooks/order";
 import { useLogs } from "@karrio/hooks/log";
+import { Table, TableBody, TableRow, TableCell } from "@karrio/ui/components/ui/table";
 import { Button } from "@karrio/ui/components/ui/button";
 import React from "react";
 
@@ -246,20 +247,22 @@ export const OrderComponent = ({
           <div className="my-6 pt-1"></div>
 
           {/* Shipments section */}
-          <h2 className="title is-5 my-4">Shipments</h2>
+          <h2 className="text-xl font-semibold my-4">Shipments</h2>
 
-          {(order?.shipments || []).length == 0 && <div>No shipments</div>}
+          {(order?.shipments || []).length == 0 && (
+            <p className="text-sm text-gray-600">No shipments</p>
+          )}
 
           {(order?.shipments || []).length > 0 && (
-            <div
-              className="table-container"
-              style={{ maxHeight: "20em", overflow: "auto" }}
-            >
-              <table className="related-item-table table is-hoverable is-fullwidth">
-                <tbody>
+            <div className="max-h-80 overflow-auto rounded-md border">
+              <Table>
+                <TableBody>
                   {(order?.shipments || []).map((shipment) => (
-                    <tr key={shipment.id} className="items is-clickable">
-                      <td className="status is-vcentered p-0 px-2">
+                    <TableRow
+                      key={shipment.id}
+                      className="cursor-pointer hover:bg-gray-50"
+                    >
+                      <TableCell className="p-0 px-2">
                         <AppLink
                           href={`/shipments/${shipment.id}`}
                           className="pr-2"
@@ -268,29 +271,29 @@ export const OrderComponent = ({
                             status={shipment.status as string}
                           />
                         </AppLink>
-                      </td>
-                      <td className="description is-vcentered p-0 px-2">
+                      </TableCell>
+                      <TableCell className="p-0 px-2">
                         <AppLink
                           href={`/shipments/${shipment.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2"
+                          className="text-xs font-semibold text-gray-600 flex py-2"
                         >
                           {shipment.id}
                           {shipment.tracking_number &&
                             ` - ${shipment.tracking_number}`}
                         </AppLink>
-                      </td>
-                      <td className="date is-vcentered p-0 px-2">
+                      </TableCell>
+                      <TableCell className="p-0 px-2 text-right">
                         <AppLink
                           href={`/shipments/${shipment.id}`}
-                          className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2"
+                          className="text-xs font-semibold text-gray-600 flex justify-end py-2"
                         >
                           <span>{formatDateTime(shipment.created_at)}</span>
                         </AppLink>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
 
