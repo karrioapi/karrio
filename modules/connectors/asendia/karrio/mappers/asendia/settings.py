@@ -8,11 +8,14 @@ import karrio.providers.asendia.utils as provider_utils
 class Settings(provider_utils.Settings):
     """Asendia connection settings."""
 
-    # Add carrier specific API connection properties here
-    api_key: str
-    account_number: str = None
+    # Asendia API credentials (required)
+    username: str
+    password: str
 
-    # generic properties
+    # Customer ID for API operations
+    customer_id: str = None
+
+    # Generic properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "asendia"
