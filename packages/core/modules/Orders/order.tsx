@@ -114,7 +114,7 @@ export const OrderComponent = ({
                     </AppLink>
                   </Button>
                 )}
-                <OrderMenu order={order as any} isViewing />
+                <OrderMenu order={order as any} isViewing variant="outline" />
               </div>
             </div>
 
@@ -127,7 +127,7 @@ export const OrderComponent = ({
                   </AppLink>
                 </Button>
               )}
-              <OrderMenu order={order as any} isViewing />
+              <OrderMenu order={order as any} isViewing variant="outline" />
             </div>
           </div>
 
@@ -288,47 +288,76 @@ export const OrderComponent = ({
                 )}
 
                 {(order?.shipments || []).length > 0 && (
-                  <div className="max-h-80 overflow-auto rounded-md border mt-3">
-                    <Table>
-                      <TableBody>
-                        {(order?.shipments || []).map((shipment) => (
-                          <TableRow
-                            key={shipment.id}
-                            className="cursor-pointer hover:bg-gray-50"
-                          >
-                            <TableCell className="p-0 px-2">
-                              <AppLink
-                                href={`/shipments/${shipment.id}`}
-                                className="pr-2"
-                              >
-                                <ShipmentsStatusBadge
-                                  status={shipment.status as string}
-                                />
-                              </AppLink>
-                            </TableCell>
-                            <TableCell className="p-0 px-2">
-                              <AppLink
-                                href={`/shipments/${shipment.id}`}
-                                className="text-xs font-semibold text-gray-600 flex py-2"
-                              >
-                                {shipment.id}
-                                {shipment.tracking_number &&
-                                  ` - ${shipment.tracking_number}`}
-                              </AppLink>
-                            </TableCell>
-                            <TableCell className="p-0 px-2 text-right">
-                              <AppLink
-                                href={`/shipments/${shipment.id}`}
-                                className="text-xs font-semibold text-gray-600 flex justify-end py-2"
-                              >
-                                <span>{formatDateTime(shipment.created_at)}</span>
-                              </AppLink>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                  <>
+                    {/* Mobile Card Layout */}
+                    <div className="md:hidden space-y-3 mt-3 max-h-80 overflow-auto">
+                      {(order?.shipments || []).map((shipment) => (
+                        <AppLink
+                          key={shipment.id}
+                          href={`/shipments/${shipment.id}`}
+                          className="block p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <ShipmentsStatusBadge status={shipment.status as string} />
+                            <span className="text-xs text-gray-500">
+                              {formatDateTime(shipment.created_at)}
+                            </span>
+                          </div>
+                          <div className="text-sm font-semibold text-gray-700 truncate">
+                            {shipment.id}
+                          </div>
+                          {shipment.tracking_number && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              Tracking: {shipment.tracking_number}
+                            </div>
+                          )}
+                        </AppLink>
+                      ))}
+                    </div>
+
+                    {/* Desktop Table Layout */}
+                    <div className="hidden md:block max-h-80 overflow-auto rounded-md border mt-3">
+                      <Table>
+                        <TableBody>
+                          {(order?.shipments || []).map((shipment) => (
+                            <TableRow
+                              key={shipment.id}
+                              className="cursor-pointer hover:bg-gray-50"
+                            >
+                              <TableCell className="p-0 px-2">
+                                <AppLink
+                                  href={`/shipments/${shipment.id}`}
+                                  className="pr-2"
+                                >
+                                  <ShipmentsStatusBadge
+                                    status={shipment.status as string}
+                                  />
+                                </AppLink>
+                              </TableCell>
+                              <TableCell className="p-0 px-2">
+                                <AppLink
+                                  href={`/shipments/${shipment.id}`}
+                                  className="text-xs font-semibold text-gray-600 flex py-2"
+                                >
+                                  {shipment.id}
+                                  {shipment.tracking_number &&
+                                    ` - ${shipment.tracking_number}`}
+                                </AppLink>
+                              </TableCell>
+                              <TableCell className="p-0 px-2 text-right">
+                                <AppLink
+                                  href={`/shipments/${shipment.id}`}
+                                  className="text-xs font-semibold text-gray-600 flex justify-end py-2"
+                                >
+                                  <span>{formatDateTime(shipment.created_at)}</span>
+                                </AppLink>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </>
                 )}
               </div>
 

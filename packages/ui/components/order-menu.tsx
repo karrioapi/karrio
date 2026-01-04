@@ -28,11 +28,13 @@ interface OrderMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
   order: OrderType;
   templates?: DocumentTemplateType[];
   isViewing?: boolean;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 }
 
 export const OrderMenu = ({
   order,
   isViewing,
+  variant = "ghost",
 }: OrderMenuComponent): JSX.Element => {
   const router = useRouter();
   const { basePath } = useAppMode();
@@ -108,7 +110,7 @@ export const OrderMenu = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="ghost"
+            variant={variant}
             size="icon"
             className="h-8 w-8 p-0 hover:bg-muted"
           >
