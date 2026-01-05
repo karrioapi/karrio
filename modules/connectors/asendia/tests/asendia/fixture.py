@@ -5,10 +5,11 @@ import karrio.sdk as karrio
 
 gateway = karrio.gateway["asendia"].create(
     dict(
-        id="123456789",
+        id="asendia",
         test_mode=True,
         carrier_id="asendia",
-        account_number="123456789",
-        api_key="TEST_API_KEY",
+        username="test_user",
+        password="test_pass",
+        customer_id="CUST123",
     )
 )
