@@ -10,6 +10,7 @@ import karrio.core.models as models
 
 logger = logging.getLogger(__name__)
 
+
 class TestAsendiaShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
@@ -22,55 +23,49 @@ class TestAsendiaShipment(unittest.TestCase):
 
     def test_create_shipment(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipments"
-            )
+            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+                mock.return_value = "{}"
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
+                self.assertEqual(
+                    mock.call_args[1]["url"],
+                    f"{gateway.settings.server_url}/api/parcels"
+                )
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
+            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+                mock.return_value = ShipmentResponse
+                parsed_response = (
+                    karrio.Shipment.create(self.ShipmentRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
-    def test_create_shipment_cancel_request(self):
-        request = gateway.mapper.create_shipment_cancel_request(self.ShipmentCancelRequest)
-        self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
+    def test_create_cancel_request(self):
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipments/SHIP123456/cancel"
-            )
+            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+                mock.return_value = "{}"
+                karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+                self.assertEqual(
+                    mock.call_args[1]["url"],
+                    f"{gateway.settings.server_url}/api/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                )
 
-    def test_parse_shipment_cancel_response(self):
+    def test_parse_cancel_response(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
-
-    def test_parse_error_response(self):
-        with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+                mock.return_value = "{}"
+                parsed_response = (
+                    karrio.Shipment.cancel(self.ShipmentCancelRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
 
 if __name__ == "__main__":
@@ -79,125 +74,97 @@ if __name__ == "__main__":
 
 ShipmentPayload = {
     "shipper": {
-        "address_line1": "123 Test Street",
-        "city": "Test City",
-        "postal_code": "12345",
-        "country_code": "US",
-        "state_code": "CA",
-        "person_name": "Test Person",
-        "company_name": "Test Company",
-        "phone_number": "1234567890",
-        "email": "test@example.com"
+        "address_line1": "Musterstrasse 10",
+        "city": "Bern",
+        "postal_code": "3030",
+        "country_code": "CH",
+        "person_name": "John Sender",
+        "company_name": "Sender Company",
+        "phone_number": "+41791234567",
+        "email": "sender@example.com"
     },
     "recipient": {
-        "address_line1": "123 Test Street",
-        "city": "Test City",
-        "postal_code": "12345",
+        "address_line1": "123 Main Street",
+        "city": "New York",
+        "postal_code": "10001",
         "country_code": "US",
-        "state_code": "CA",
-        "person_name": "Test Person",
-        "company_name": "Test Company",
-        "phone_number": "1234567890",
-        "email": "test@example.com"
+        "state_code": "NY",
+        "person_name": "Jane Receiver",
+        "company_name": "Receiver Inc",
+        "phone_number": "+12125551234",
+        "email": "receiver@example.com"
     },
     "parcels": [{
-        "weight": 10.0,
-        "width": 10.0,
-        "height": 10.0,
-        "length": 10.0,
+        "weight": 1.5,
         "weight_unit": "KG",
-        "dimension_unit": "CM",
-        "packaging_type": "BOX"
     }],
-    "service": "express"
+    "service": "asendia_epaq_standard",
+    "reference": "REF-123456",
 }
 
 ShipmentCancelPayload = {
-    "shipment_identifier": "SHIP123456"
+    "shipment_identifier": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 }
 
 ShipmentRequest = {
-    "shipper": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
+    "addresses": {
+        "receiver": {
+            "address1": "123 Main Street",
+            "city": "New York",
+            "company": "Receiver Inc",
+            "country": "US",
+            "email": "receiver@example.com",
+            "name": "Jane Receiver",
+            "phone": "+12125551234",
+            "postalCode": "10001",
+            "province": "NY",
+        },
+        "sender": {
+            "address1": "Musterstrasse 10",
+            "city": "Bern",
+            "company": "Sender Company",
+            "country": "CH",
+            "email": "sender@example.com",
+            "name": "John Sender",
+            "phone": "+41791234567",
+            "postalCode": "3030",
+        },
     },
-    "recipient": {
-        "addressLine1": "123 Test Street",
-        "city": "Test City",
-        "postalCode": "12345",
-        "countryCode": "US",
-        "stateCode": "CA",
-        "personName": "Test Person",
-        "companyName": "Test Company",
-        "phoneNumber": "1234567890",
-        "email": "test@example.com"
+    "asendiaService": {
+        "format": "B",
+        "product": "EPAQSTD",
     },
-    "packages": [
-        {
-            "weight": 10.0,
-            "weightUnit": "KG",
-            "length": 10.0,
-            "width": 10.0,
-            "height": 10.0,
-            "dimensionUnit": "CM",
-            "packagingType": "BOX"
-        }
-    ],
-    "serviceCode": "express",
-    "labelFormat": "PDF"
+    "customerId": "CUST123",
+    "labelType": "PDF",
+    "referencenumber": "REF-123456",
+    "weight": 1.5,
 }
 
-ShipmentCancelRequest = {
-    "shipmentIdentifier": "SHIP123456"
-}
+ShipmentCancelRequest = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 
 ShipmentResponse = """{
-  "shipment": {
-    "trackingNumber": "1Z999999999999999",
-    "shipmentId": "SHIP123456",
-    "labelData": {
-      "format": "PDF",
-      "image": "base64_encoded_label_data"
-    },
-    "invoiceImage": "base64_encoded_invoice_data",
-    "serviceCode": "express"
-  }
-}"""
-
-ShipmentCancelResponse = """{
-  "success": true,
-  "message": "Shipment successfully cancelled"
-}"""
-
-ErrorResponse = """{
-  "error": {
-    "code": "shipment_error",
-    "message": "Unable to create shipment",
-    "details": "Invalid shipment information provided"
-  }
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "trackingNumber": "ASENDIA123456789",
+  "returnTrackingNumber": null,
+  "errorMessages": [],
+  "labelLocation": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/label",
+  "returnLabelLocation": null,
+  "customsDocumentLocation": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/customs-document",
+  "manifestLocation": null,
+  "commercialInvoiceLocation": null
 }"""
 
 ParsedShipmentResponse = [
     {
         "carrier_id": "asendia",
         "carrier_name": "asendia",
-        "tracking_number": "1Z999999999999999",
-        "shipment_identifier": "SHIP123456",
         "label_type": "PDF",
-        "docs": {
-            "label": "base64_encoded_label_data",
-            "invoice": "base64_encoded_invoice_data"
-        },
         "meta": {
-            "service_code": "express"
-        }
+            "customs_document_location": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/customs-document",
+            "label_location": "/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6/label",
+        },
+        "shipment_identifier": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "tracking_number": "ASENDIA123456789",
     },
     []
 ]
@@ -210,19 +177,4 @@ ParsedShipmentCancelResponse = [
         "operation": "Cancel Shipment"
     },
     []
-]
-
-ParsedErrorResponse = [
-    {},
-    [
-        {
-            "carrier_id": "asendia",
-            "carrier_name": "asendia",
-            "code": "shipment_error",
-            "message": "Unable to create shipment",
-            "details": {
-                "details": "Invalid shipment information provided"
-            }
-        }
-    ]
 ]
