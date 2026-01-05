@@ -1,105 +1,86 @@
 """Karrio Asendia manifest creation implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract manifest details from the response to populate ManifestDetails
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., ManifestRequestType),
-# while XML schema types don't have this suffix (e.g., ManifestRequest).
-
-import karrio.schemas.asendia.manifest_request as asendia_req
-import karrio.schemas.asendia.manifest_response as asendia_res
-
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.asendia.error as error
 import karrio.providers.asendia.utils as provider_utils
+import karrio.schemas.asendia.manifest_request as asendia_req
+import karrio.schemas.asendia.manifest_response as asendia_res
 
 
 def parse_manifest_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
-    """
-    Parse manifest creation response from carrier API
-
-    _response: The carrier response to deserialize
-    settings: The carrier connection settings
-
-    Returns a tuple with (ManifestDetails, List[Message])
-    """
+) -> typing.Tuple[typing.Optional[models.ManifestDetails], typing.List[models.Message]]:
+    """Parse manifest creation response from Asendia API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    # Extract manifest details
-    manifest = _extract_details(response, settings)
+    # Parse response to typed object
+    manifest = lib.to_object(asendia_res.ManifestResponseType, response)
 
-    return manifest, messages
+    # Check for errors in response
+    if manifest.errorMessage:
+        messages.append(
+            models.Message(
+                carrier_id=settings.carrier_id,
+                carrier_name=settings.carrier_name,
+                code="MANIFEST_ERROR",
+                message=manifest.errorMessage,
+            )
+        )
+
+    # Add messages for failed parcels
+    if manifest.errorParcelIds:
+        for parcel_id in manifest.errorParcelIds:
+            messages.append(
+                models.Message(
+                    carrier_id=settings.carrier_id,
+                    carrier_name=settings.carrier_name,
+                    code="PARCEL_ERROR",
+                    message=f"Failed to include parcel: {parcel_id}",
+                )
+            )
+
+    # Extract manifest details if successful
+    has_manifest = manifest.id is not None and manifest.errorMessage is None
+
+    details = _extract_details(manifest, settings) if has_manifest else None
+
+    return details, messages
 
 
 def _extract_details(
-    data: dict,
+    manifest: asendia_res.ManifestResponseType,
     settings: provider_utils.Settings,
 ) -> models.ManifestDetails:
-    """
-    Extract manifest details from carrier response data
-
-    data: The carrier-specific manifest response data
-    settings: The carrier connection settings
-
-    Returns a ManifestDetails object with the manifest information
-    """
-    
-    # For JSON APIs, convert dict to proper response object
-    manifest = lib.to_object(asendia_res.ManifestResponseType, data)
-
-    # Extract manifest details
-    manifest_id = manifest.manifestId if hasattr(manifest, 'manifestId') else ""
-    manifest_url = manifest.manifestUrl if hasattr(manifest, 'manifestUrl') else ""
-    manifest_document = manifest.manifestData if hasattr(manifest, 'manifestData') else ""
-    status = manifest.status if hasattr(manifest, 'status') else ""
-    
-
+    """Extract manifest details from Asendia response."""
     return models.ManifestDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        manifest_id=manifest_id,
-        doc=models.ManifestDocument(manifest=manifest_document) if manifest_document else None,
+        manifest_id=manifest.id,
         meta=dict(
-            status=status,
-            manifest_url=manifest_url,
+            status=manifest.status,
+            created_at=manifest.createdAt,
+            manifest_document_location=manifest.manifestDocumentLocation,
+            parcels_location=manifest.parcelsLocation,
+            manifest_location=manifest.manifestLocation,
         ),
-    ) if manifest_id else None
+    )
 
 
 def manifest_request(
     payload: models.ManifestRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    """Create a manifest request for Asendia API.
+
+    Asendia uses POST /api/manifests with parcel IDs.
+    The shipment_identifiers should be the parcel IDs returned from create shipment.
     """
-    Create a manifest request for the carrier API
-
-    payload: The standardized ManifestRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
-    # Convert karrio models to carrier-specific format
-    address = lib.to_address(payload.address) if payload.address else None
-
-    
-    # For JSON API request
     request = asendia_req.ManifestRequestType(
-        accountNumber=settings.account_number,
-        closeDate=payload.options.get("closeDate") if payload.options else None,
-        shipments=[
-            {"trackingNumber": identifier}
-            for identifier in payload.shipment_identifiers
-        ],
+        parcelIds=payload.shipment_identifiers,
     )
-    
 
     return lib.Serializable(request, lib.to_dict)
