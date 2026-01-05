@@ -59,7 +59,7 @@ def _extract_details(
     return models.ManifestDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        manifest_id=manifest.id,
+        id=manifest.id,
         meta=dict(
             status=manifest.status,
             created_at=manifest.createdAt,

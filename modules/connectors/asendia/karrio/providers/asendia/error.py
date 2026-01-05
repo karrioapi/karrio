@@ -31,14 +31,26 @@ def parse_error_response(
     if response is None:
         return errors
 
-    # Parse error response using generated schema
+    # Get status code from response - must be a numeric value (HTTP status code)
+    # Non-numeric status values (like "CREATED" in manifest responses) are not error codes
+    raw_status = response.get("status")
+    status_code = None
+    if raw_status is not None and isinstance(raw_status, (int, float)):
+        status_code = int(raw_status)
+    elif raw_status is not None and isinstance(raw_status, str):
+        try:
+            status_code = int(raw_status)
+        except ValueError:
+            # Not a numeric status code (e.g., "CREATED"), not an error
+            status_code = None
+
+    # Parse error response using generated schema (only if there's an error indicator)
     error = lib.to_object(asendia.ErrorResponseType, response)
 
     # Check for error status or error fields
     is_error = (
-        (error.status is not None and error.status >= 400)
+        (status_code is not None and status_code >= 400)
         or error.title is not None
-        or error.message is not None
         or (error.fieldErrors is not None and len(error.fieldErrors) > 0)
     )
 
@@ -52,7 +64,7 @@ def parse_error_response(
                 models.Message(
                     carrier_id=settings.carrier_id,
                     carrier_name=settings.carrier_name,
-                    code=str(error.status or "ERROR"),
+                    code=str(status_code or "ERROR"),
                     message=f"{field_error.field}: {field_error.message}",
                     details={
                         "objectName": field_error.objectName,
@@ -67,7 +79,7 @@ def parse_error_response(
             models.Message(
                 carrier_id=settings.carrier_id,
                 carrier_name=settings.carrier_name,
-                code=str(error.status or "ERROR"),
+                code=str(status_code or "ERROR"),
                 message=error.detail or error.message or error.title or "Unknown error",
                 details={
                     "type": error.type,
