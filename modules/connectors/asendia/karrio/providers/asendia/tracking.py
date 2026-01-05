@@ -1,30 +1,19 @@
 """Karrio Asendia tracking API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract tracking details and events from the response to populate TrackingDetails
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., TrackingRequestType),
-# while XML schema types don't have this suffix (e.g., TrackingRequest).
-
-import karrio.schemas.asendia.tracking_request as asendia_req
-import karrio.schemas.asendia.tracking_response as asendia_res
-
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.asendia.error as error
 import karrio.providers.asendia.utils as provider_utils
 import karrio.providers.asendia.units as provider_units
+import karrio.schemas.asendia.tracking_response as asendia_res
 
 
 def parse_tracking_response(
     _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    """Parse tracking response from Asendia API."""
     responses = _response.deserialize()
 
     messages: typing.List[models.Message] = sum(
@@ -38,6 +27,7 @@ def parse_tracking_response(
     tracking_details = [
         _extract_details(details, settings, tracking_number)
         for tracking_number, details in responses
+        if details.get("trackingNumber") or details.get("trackingEvents")
     ]
 
     return tracking_details, messages
@@ -48,67 +38,50 @@ def _extract_details(
     settings: provider_utils.Settings,
     tracking_number: str = None,
 ) -> models.TrackingDetails:
-    """
-    Extract tracking details from carrier response data
+    """Extract tracking details from Asendia response."""
+    # Convert to typed object
+    tracking = lib.to_object(asendia_res.TrackingResponseType, data)
 
-    data: The carrier-specific tracking data structure
-    settings: The carrier connection settings
-    tracking_number: The tracking number being tracked
+    # Use tracking number from response or fallback to request
+    number = tracking.trackingNumber or tracking_number
 
-    Returns a TrackingDetails object with extracted tracking information
-    """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    tracking_details = lib.to_object(asendia_res.TrackingResponseType, data)
-
-    # Extract tracking status and information
-    status_code = tracking_details.statusCode if hasattr(tracking_details, 'statusCode') else ""
-    status_detail = tracking_details.statusDescription if hasattr(tracking_details, 'statusDescription') else ""
-    est_delivery = tracking_details.estimatedDeliveryDate if hasattr(tracking_details, 'estimatedDeliveryDate') else None
-
-    # Extract events
+    # Extract and sort events (most recent first)
     events = []
-    if hasattr(tracking_details, 'events') and tracking_details.events:
-        for event in tracking_details.events:
-            events.append({
-                "date": event.date if hasattr(event, 'date') else "",
-                "time": event.time if hasattr(event, 'time') else "",
-                "code": event.code if hasattr(event, 'code') else "",
-                "description": event.description if hasattr(event, 'description') else "",
-                "location": event.location if hasattr(event, 'location') else "",
-                "reason": event.reason if hasattr(event, 'reason') else ""
-            })
-    
+    if tracking.trackingEvents:
+        sorted_events = sorted(
+            tracking.trackingEvents,
+            key=lambda e: e.time or "",
+            reverse=True,
+        )
+        events = [
+            models.TrackingEvent(
+                date=lib.fdate(event.time, "%Y-%m-%dT%H:%M:%SZ"),
+                time=lib.ftime(event.time, "%Y-%m-%dT%H:%M:%SZ"),
+                description=event.carrierEventDescription,
+                code=event.code,
+                location=lib.join(
+                    event.locationName,
+                    event.locationCountry,
+                    separator=", ",
+                ),
+            )
+            for event in sorted_events
+        ]
 
-    # Map carrier status to karrio standard tracking status
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if status_code in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
+    # Determine status from latest event
+    latest_event = tracking.trackingEvents[0] if tracking.trackingEvents else None
+    status = provider_units.parse_tracking_status(
+        latest_event.code if latest_event else None,
+        latest_event.carrierEventDescription if latest_event else None,
     )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=tracking_number,
-        events=[
-            models.TrackingEvent(
-                date=lib.fdate(event["date"]),
-                description=event["description"],
-                code=event["code"],
-                time=lib.flocaltime(event["time"]),
-                location=event["location"],
-                reason=lib.text(event["reason"]) if event.get("reason") else None,
-            )
-            for event in events
-        ],
-        estimated_delivery=lib.fdate(est_delivery) if est_delivery else None,
-        delivered=status == "delivered",
-        status=status,
+        tracking_number=number,
+        events=events,
+        delivered=status == provider_units.TrackingStatus.delivered,
+        status=status.name,
     )
 
 
@@ -116,29 +89,9 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    """Create a tracking request for Asendia API.
+
+    Asendia uses GET /api/customers/{customerId}/tracking/{trackingNumber}
+    The proxy handles concurrent requests for multiple tracking numbers.
     """
-    Create a tracking request for the carrier API
-
-    payload: The standardized TrackingRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
-    # Extract the tracking number(s) from payload
-    tracking_numbers = payload.tracking_numbers
-    reference = payload.reference
-
-    
-    # For JSON API request
-    request = asendia_req.TrackingRequestType(
-        trackingInfo={
-            "trackingNumbers": tracking_numbers,
-            "reference": reference,
-            "language": payload.language_code or "en",
-        },
-        # Add account credentials
-        accountNumber=settings.account_number,
-    )
-    
-
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(payload.tracking_numbers)
