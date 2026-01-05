@@ -51,7 +51,7 @@ class Proxy(proxy.Proxy):
                 },
             )
 
-        responses = lib.run_concurrently(_get_tracking, request.serialize())
+        responses = lib.run_concurently(_get_tracking, request.serialize())
 
         return lib.Deserializable(
             responses,

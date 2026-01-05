@@ -80,8 +80,13 @@ def shipment_request(
     # Get package (Asendia supports single package per request)
     package = packages.single
 
-    # Parse service code (format: PRODUCT or PRODUCT_SERVICE)
-    service_code = payload.service or "EPAQSTD"
+    # Map service to Asendia product code using ShippingService enum
+    # The value will be in format "EPAQSTD" or "EPAQSTD_CUP"
+    service_code = provider_units.ShippingService.map(
+        payload.service or "EPAQSTD"
+    ).value_or_key
+
+    # Parse product and service modifier from mapped code
     service_parts = service_code.split("_") if "_" in service_code else [service_code]
     product_code = service_parts[0]
     service_modifier = service_parts[1] if len(service_parts) > 1 else None
@@ -97,10 +102,10 @@ def shipment_request(
     ).value_or_key
 
     # Build customs info for international shipments
-    customs = payload.customs or models.Customs()
+    customs = payload.customs
     customs_info = None
 
-    if customs.commodities:
+    if customs and customs.commodities:
         customs_info = asendia_req.CustomsInfoType(
             currency=customs.duty.currency if customs.duty else "USD",
             items=[

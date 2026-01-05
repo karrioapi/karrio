@@ -47,6 +47,7 @@ def _extract_details(
 
     # Extract and sort events (most recent first)
     events = []
+    sorted_events = []
     if tracking.trackingEvents:
         sorted_events = sorted(
             tracking.trackingEvents,
@@ -62,14 +63,15 @@ def _extract_details(
                 location=lib.join(
                     event.locationName,
                     event.locationCountry,
+                    join=True,
                     separator=", ",
                 ),
             )
             for event in sorted_events
         ]
 
-    # Determine status from latest event
-    latest_event = tracking.trackingEvents[0] if tracking.trackingEvents else None
+    # Determine status from latest event (first in sorted list)
+    latest_event = sorted_events[0] if sorted_events else None
     status = provider_units.parse_tracking_status(
         latest_event.code if latest_event else None,
         latest_event.carrierEventDescription if latest_event else None,
