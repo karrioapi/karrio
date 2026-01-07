@@ -101,16 +101,20 @@ def shipment_request(
         package.packaging_type or "your_packaging"
     ).value_or_key
 
-    # Build customs info for international shipments
-    customs = payload.customs
-    customs_info = None
+    # Build customs info for international shipments using lib.to_customs_info
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=units.WeightUnit.KG.name,
+    )
 
-    if customs and customs.commodities:
-        customs_info = asendia_req.CustomsInfoType(
-            currency=customs.duty.currency if customs.duty else "USD",
+    customs_info = lib.identity(
+        asendia_req.CustomsInfoType(
+            currency=lib.failsafe(lambda: customs.duty.currency) or "USD",
             items=[
                 asendia_req.ItemType(
-                    articleDescription=item.description or item.title,
+                    articleDescription=lib.text(item.description or item.title, max=200),
                     articleNumber=item.sku,
                     unitValue=item.value_amount,
                     currency=item.value_currency or "USD",
@@ -122,15 +126,20 @@ def shipment_request(
                 for item in customs.commodities
             ],
         )
+        if customs.commodities
+        else None
+    )
 
     # Build return label option if requested
-    return_label_option = None
-    if options.asendia_return_label.state:
-        return_label_option = asendia_req.ReturnLabelOptionType(
+    return_label_option = lib.identity(
+        asendia_req.ReturnLabelOptionType(
             enabled=True,
             type=options.asendia_return_label_type.state or "EPAQRETDOM",
             payment=options.asendia_return_label_payment.state or "RETPP",
         )
+        if options.asendia_return_label.state
+        else None
+    )
 
     # Build the request
     request = asendia_req.ShipmentRequestType(
