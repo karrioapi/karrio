@@ -39,25 +39,37 @@ def _extract_details(
     tracking_number: str = None,
 ) -> models.TrackingDetails:
     """Extract tracking details from Asendia response."""
-    # Convert to typed object
     tracking = lib.to_object(asendia_res.TrackingResponseType, data)
-
-    # Use tracking number from response or fallback to request
     number = tracking.trackingNumber or tracking_number
 
-    # Extract and sort events (most recent first)
-    events = []
-    sorted_events = []
-    if tracking.trackingEvents:
-        sorted_events = sorted(
-            tracking.trackingEvents,
-            key=lambda e: e.time or "",
-            reverse=True,
-        )
-        events = [
+    # Sort events (most recent first)
+    sorted_events = sorted(
+        tracking.trackingEvents or [],
+        key=lambda e: e.time or "",
+        reverse=True,
+    )
+
+    # Get latest event for overall status
+    latest_event = next(iter(sorted_events), None)
+
+    # Determine overall status using next() pattern
+    status = next(
+        (
+            s.name
+            for s in list(provider_units.TrackingStatus)
+            if latest_event and latest_event.code in s.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
+
+    return models.TrackingDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        tracking_number=number,
+        events=[
             models.TrackingEvent(
                 date=lib.fdate(event.time, "%Y-%m-%dT%H:%M:%SZ"),
-                time=lib.ftime(event.time, "%Y-%m-%dT%H:%M:%SZ"),
+                time=lib.flocaltime(event.time, "%Y-%m-%dT%H:%M:%SZ"),
                 description=event.carrierEventDescription,
                 code=event.code,
                 location=lib.join(
@@ -66,24 +78,34 @@ def _extract_details(
                     join=True,
                     separator=", ",
                 ),
+                # REQUIRED: ISO 8601 timestamp
+                timestamp=lib.fiso_timestamp(
+                    event.time,
+                    current_format="%Y-%m-%dT%H:%M:%SZ",
+                ),
+                # REQUIRED: Normalized status at event level
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if event.code in s.value
+                    ),
+                    None,
+                ),
+                # REQUIRED: Incident reason for delivery exceptions
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.code in r.value
+                    ),
+                    None,
+                ),
             )
             for event in sorted_events
-        ]
-
-    # Determine status from latest event (first in sorted list)
-    latest_event = sorted_events[0] if sorted_events else None
-    status = provider_units.parse_tracking_status(
-        latest_event.code if latest_event else None,
-        latest_event.carrierEventDescription if latest_event else None,
-    )
-
-    return models.TrackingDetails(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        tracking_number=number,
-        events=events,
-        delivered=status == provider_units.TrackingStatus.delivered,
-        status=status.name,
+        ],
+        delivered=status == "delivered",
+        status=status,
     )
 
 
