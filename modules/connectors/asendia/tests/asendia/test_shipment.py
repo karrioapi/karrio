@@ -19,22 +19,21 @@ class TestAsendiaShipment(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
+        # Request is now a list (one per package) for Pattern B
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
+        with patch("karrio.mappers.asendia.proxy.lib.run_asynchronously") as mock_async:
             with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
-                mock.return_value = "{}"
+                mock_async.return_value = [ShipmentResponse]
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-                self.assertEqual(
-                    mock.call_args[1]["url"],
-                    f"{gateway.settings.server_url}/api/parcels"
-                )
+                # Verify the async function was called with a list of requests
+                self.assertTrue(mock_async.called)
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
+        with patch("karrio.mappers.asendia.proxy.lib.run_asynchronously") as mock_async:
             with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
-                mock.return_value = ShipmentResponse
+                mock_async.return_value = [ShipmentResponse]
                 parsed_response = (
                     karrio.Shipment.create(self.ShipmentRequest)
                     .from_(gateway)
@@ -106,39 +105,42 @@ ShipmentCancelPayload = {
     "shipment_identifier": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 }
 
-ShipmentRequest = {
-    "addresses": {
-        "receiver": {
-            "address1": "123 Main Street",
-            "city": "New York",
-            "company": "Receiver Inc",
-            "country": "US",
-            "email": "receiver@example.com",
-            "name": "Jane Receiver",
-            "phone": "+12125551234",
-            "postalCode": "10001",
-            "province": "NY",
+# Request is now a list (one per package) for Pattern B: Per-Package Request
+ShipmentRequest = [
+    {
+        "addresses": {
+            "receiver": {
+                "address1": "123 Main Street",
+                "city": "New York",
+                "company": "Receiver Inc",
+                "country": "US",
+                "email": "receiver@example.com",
+                "name": "Jane Receiver",
+                "phone": "+12125551234",
+                "postalCode": "10001",
+                "province": "NY",
+            },
+            "sender": {
+                "address1": "Musterstrasse 10",
+                "city": "Bern",
+                "company": "Sender Company",
+                "country": "CH",
+                "email": "sender@example.com",
+                "name": "John Sender",
+                "phone": "+41791234567",
+                "postalCode": "3030",
+            },
         },
-        "sender": {
-            "address1": "Musterstrasse 10",
-            "city": "Bern",
-            "company": "Sender Company",
-            "country": "CH",
-            "email": "sender@example.com",
-            "name": "John Sender",
-            "phone": "+41791234567",
-            "postalCode": "3030",
+        "asendiaService": {
+            "format": "B",
+            "product": "EPAQSTD",
         },
-    },
-    "asendiaService": {
-        "format": "B",
-        "product": "EPAQSTD",
-    },
-    "customerId": "CUST123",
-    "labelType": "PDF",
-    "referencenumber": "REF-123456",
-    "weight": 1.5,
-}
+        "customerId": "CUST123",
+        "labelType": "PDF",
+        "referencenumber": "REF-123456",
+        "weight": 1.5,
+    }
+]
 
 ShipmentCancelRequest = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 

@@ -12,29 +12,45 @@ import karrio.schemas.asendia.shipment_response as asendia_res
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[dict],
+    _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
-    response = _response.deserialize()
-    messages = error.parse_error_response(response, settings)
+    """Parse shipment response from Asendia API.
 
-    # Parse response to typed object
-    shipment = lib.to_object(asendia_res.ShipmentResponseType, response)
+    Asendia uses per-package requests, so we receive a list of responses.
+    Use lib.to_multi_piece_shipment() to aggregate multiple package responses.
+    """
+    responses = _response.deserialize()
 
-    # Check if we have a valid shipment (tracking number present)
-    has_shipment = shipment.trackingNumber is not None and len(messages) == 0
+    # Aggregate errors from all responses using sum()
+    messages: typing.List[models.Message] = sum(
+        [error.parse_error_response(response, settings) for response in responses],
+        start=[],
+    )
 
-    details = _extract_details(shipment, settings, _response.ctx) if has_shipment else None
+    # Extract shipment details from each response
+    shipment = lib.to_multi_piece_shipment(
+        [
+            (
+                f"{idx}",
+                _extract_details(response, settings, _response.ctx)
+                if response.get("trackingNumber")
+                else None,
+            )
+            for idx, response in enumerate(responses, start=1)
+        ]
+    )
 
-    return details, messages
+    return shipment, messages
 
 
 def _extract_details(
-    shipment: asendia_res.ShipmentResponseType,
+    data: dict,
     settings: provider_utils.Settings,
     ctx: dict = None,
 ) -> models.ShipmentDetails:
     """Extract shipment details from Asendia response."""
+    shipment = lib.to_object(asendia_res.ShipmentResponseType, data)
     ctx = ctx or {}
     label_type = ctx.get("label_type", "PDF")
 
@@ -65,8 +81,11 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create a shipment request for Asendia API."""
+    """Create a shipment request for Asendia API.
 
+    Asendia uses per-package requests (Pattern B).
+    Returns a list of requests, one per package.
+    """
     # Convert karrio models to carrier-specific format
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
@@ -76,9 +95,6 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-
-    # Get package (Asendia supports single package per request)
-    package = packages.single
 
     # Map service to Asendia product code using ShippingService enum
     # The value will be in format "EPAQSTD" or "EPAQSTD_CUP"
@@ -96,38 +112,12 @@ def shipment_request(
         payload.label_type or "PDF"
     ).value_or_key
 
-    # Determine packaging format
-    packaging_type = provider_units.PackagingType.map(
-        package.packaging_type or "your_packaging"
-    ).value_or_key
-
     # Build customs info for international shipments using lib.to_customs_info
     customs = lib.to_customs_info(
         payload.customs,
         shipper=payload.shipper,
         recipient=payload.recipient,
         weight_unit=units.WeightUnit.KG.name,
-    )
-
-    customs_info = lib.identity(
-        asendia_req.CustomsInfoType(
-            currency=lib.failsafe(lambda: customs.duty.currency) or "USD",
-            items=[
-                asendia_req.ItemType(
-                    articleDescription=lib.text(item.description or item.title, max=200),
-                    articleNumber=item.sku,
-                    unitValue=item.value_amount,
-                    currency=item.value_currency or "USD",
-                    harmonizationCode=item.hs_code,
-                    originCountry=item.origin_country,
-                    unitWeight=item.weight,
-                    quantity=item.quantity or 1,
-                )
-                for item in customs.commodities
-            ],
-        )
-        if customs.commodities
-        else None
     )
 
     # Build return label option if requested
@@ -141,52 +131,80 @@ def shipment_request(
         else None
     )
 
-    # Build the request
-    request = asendia_req.ShipmentRequestType(
-        customerId=settings.customer_id,
-        labelType=label_type,
-        referencenumber=payload.reference,
-        weight=package.weight.KG,
-        shippingCost=options.declared_value.state if options.declared_value.state else None,
-        senderEORI=options.asendia_sender_eori.state,
-        sellerEORI=options.asendia_seller_eori.state,
-        senderTaxId=options.asendia_sender_tax_id.state,
-        receiverTaxId=options.asendia_receiver_tax_id.state,
-        asendiaService=asendia_req.AsendiaServiceType(
-            format=packaging_type,
-            product=product_code,
-            service=service_modifier,
-            insurance=options.asendia_insurance.state,
-            returnLabelOption=return_label_option,
-        ),
-        addresses=asendia_req.AddressesType(
-            sender=asendia_req.ImporterType(
-                name=shipper.person_name,
-                company=shipper.company_name,
-                address1=shipper.address_line1,
-                address2=shipper.address_line2,
-                city=shipper.city,
-                province=shipper.state_code,
-                postalCode=shipper.postal_code,
-                country=shipper.country_code,
-                email=shipper.email,
-                phone=shipper.phone_number,
+    # Build list of requests, one per package (Pattern B: Per-Package Request)
+    request = [
+        asendia_req.ShipmentRequestType(
+            customerId=settings.customer_id,
+            labelType=label_type,
+            referencenumber=payload.reference,
+            weight=package.weight.KG,
+            shippingCost=options.declared_value.state if options.declared_value.state else None,
+            senderEORI=options.asendia_sender_eori.state,
+            sellerEORI=options.asendia_seller_eori.state,
+            senderTaxId=options.asendia_sender_tax_id.state,
+            receiverTaxId=options.asendia_receiver_tax_id.state,
+            asendiaService=asendia_req.AsendiaServiceType(
+                format=provider_units.PackagingType.map(
+                    package.packaging_type or "your_packaging"
+                ).value_or_key,
+                product=product_code,
+                service=service_modifier,
+                insurance=options.asendia_insurance.state,
+                returnLabelOption=return_label_option,
             ),
-            receiver=asendia_req.ImporterType(
-                name=recipient.person_name,
-                company=recipient.company_name,
-                address1=recipient.address_line1,
-                address2=recipient.address_line2,
-                city=recipient.city,
-                province=recipient.state_code,
-                postalCode=recipient.postal_code,
-                country=recipient.country_code,
-                email=recipient.email,
-                phone=recipient.phone_number,
+            addresses=asendia_req.AddressesType(
+                sender=asendia_req.ImporterType(
+                    name=shipper.person_name,
+                    company=shipper.company_name,
+                    address1=shipper.address_line1,
+                    address2=shipper.address_line2,
+                    city=shipper.city,
+                    province=shipper.state_code,
+                    postalCode=shipper.postal_code,
+                    country=shipper.country_code,
+                    email=shipper.email,
+                    phone=shipper.phone_number,
+                ),
+                receiver=asendia_req.ImporterType(
+                    name=recipient.person_name,
+                    company=recipient.company_name,
+                    address1=recipient.address_line1,
+                    address2=recipient.address_line2,
+                    city=recipient.city,
+                    province=recipient.state_code,
+                    postalCode=recipient.postal_code,
+                    country=recipient.country_code,
+                    email=recipient.email,
+                    phone=recipient.phone_number,
+                ),
             ),
-        ),
-        customsInfo=customs_info,
-    )
+            customsInfo=lib.identity(
+                asendia_req.CustomsInfoType(
+                    currency=lib.failsafe(lambda: customs.duty.currency) or "USD",
+                    items=[
+                        asendia_req.ItemType(
+                            articleDescription=lib.text(
+                                item.description or item.title, max=200
+                            ),
+                            articleNumber=item.sku,
+                            unitValue=item.value_amount,
+                            currency=item.value_currency or "USD",
+                            harmonizationCode=item.hs_code,
+                            originCountry=item.origin_country,
+                            unitWeight=item.weight,
+                            quantity=item.quantity or 1,
+                        )
+                        for item in (
+                            package.items if any(package.items) else customs.commodities
+                        )
+                    ],
+                )
+                if any(package.items) or customs.commodities
+                else None
+            ),
+        )
+        for package in packages
+    ]
 
     return lib.Serializable(
         request,
