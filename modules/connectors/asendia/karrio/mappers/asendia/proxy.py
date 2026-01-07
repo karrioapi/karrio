@@ -9,19 +9,30 @@ class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Create a parcel and retrieve the label."""
-        response = lib.request(
-            url=f"{self.settings.server_url}/api/parcels",
-            data=lib.to_json(request.serialize()),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.settings.access_token}",
-            },
+        """Create parcels and retrieve labels.
+
+        Asendia uses per-package requests (Pattern B).
+        Runs requests asynchronously for each package in the list.
+        """
+        responses = lib.run_asynchronously(
+            lambda payload: lib.request(
+                url=f"{self.settings.server_url}/api/parcels",
+                data=lib.to_json(payload),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.settings.access_token}",
+                },
+            ),
+            request.serialize(),
         )
 
-        return lib.Deserializable(response, lib.to_dict, request.ctx)
+        return lib.Deserializable(
+            responses,
+            lambda res: [lib.to_dict(r) for r in res],
+            request.ctx,
+        )
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         """Cancel/delete a parcel by its ID."""
