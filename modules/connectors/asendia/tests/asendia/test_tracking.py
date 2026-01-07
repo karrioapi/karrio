@@ -83,33 +83,39 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "asendia",
             "carrier_name": "asendia",
-            "tracking_number": "ASENDIA123456789",
+            "delivered": True,
             "events": [
                 {
-                    "date": "2024-04-15",
-                    "time": "11:00",
                     "code": "DL",
+                    "date": "2024-04-15",
                     "description": "Delivered",
                     "location": "New York, US",
+                    "status": "delivered",
+                    "time": "11:00 AM",
+                    "timestamp": "2024-04-15T11:00:00.000Z",
                 },
                 {
-                    "date": "2024-04-13",
-                    "time": "09:15",
                     "code": "IT",
+                    "date": "2024-04-13",
                     "description": "In transit to destination",
                     "location": "Zurich Airport, CH",
+                    "status": "in_transit",
+                    "time": "09:15 AM",
+                    "timestamp": "2024-04-13T09:15:00.000Z",
                 },
                 {
-                    "date": "2024-04-12",
-                    "time": "14:30",
                     "code": "PU",
+                    "date": "2024-04-12",
                     "description": "Package picked up",
                     "location": "Bern, CH",
+                    "status": "ready_for_pickup",
+                    "time": "14:30 PM",
+                    "timestamp": "2024-04-12T14:30:00.000Z",
                 },
             ],
-            "delivered": True,
             "status": "delivered",
+            "tracking_number": "ASENDIA123456789",
         }
     ],
-    []
+    [],
 ]

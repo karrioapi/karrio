@@ -146,12 +146,10 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    """Asendia tracking status mapping."""
+    """Maps Asendia tracking status codes to normalized Karrio statuses."""
 
-    # Pending/Processing statuses
-    pending = ["PENDING", "CREATED", "ACCEPTED"]
-
-    # In transit statuses
+    pending = ["PENDING", "CREATED", "ACCEPTED", "LABEL_PRINTED"]
+    picked_up = ["PICKED_UP", "COLLECTED", "COLLECTION"]
     in_transit = [
         "IN_TRANSIT",
         "IT",
@@ -162,40 +160,61 @@ class TrackingStatus(lib.Enum):
         "CUSTOMS",
         "CLEARED",
     ]
-
-    # Out for delivery
     out_for_delivery = ["OUT_FOR_DELIVERY", "OFD", "WITH_COURIER"]
-
-    # Delivered
     delivered = ["DELIVERED", "DL", "DELIVERY_CONFIRMED"]
-
-    # Pickup/Collection
-    ready_for_pickup = ["READY_FOR_PICKUP", "PICKUP", "PU", "COLLECTED"]
-
-    # Delays and holds
+    ready_for_pickup = ["READY_FOR_PICKUP", "PICKUP", "PU", "AT_LOCATION"]
     on_hold = ["ON_HOLD", "HELD", "AWAITING"]
-    delivery_delayed = ["DELAYED", "DELAY"]
-
-    # Failures
+    delivery_delayed = ["DELAYED", "DELAY", "RESCHEDULED"]
     delivery_failed = [
         "DELIVERY_FAILED",
         "FAILED",
         "UNDELIVERABLE",
         "RETURNED",
-        "RTS",  # Return to sender
+        "RTS",
     ]
 
 
-def parse_tracking_status(code: str, description: str = None) -> TrackingStatus:
-    """Parse Asendia tracking code/description to unified status."""
-    code_upper = (code or "").upper()
-    desc_upper = (description or "").upper()
+class TrackingIncidentReason(lib.Enum):
+    """Maps carrier exception codes to normalized incident reasons.
 
-    for status in TrackingStatus:
-        if code_upper in status.value or any(
-            s in desc_upper for s in status.value
-        ):
-            return status
+    IMPORTANT: This enum is required for tracking implementations.
+    It maps carrier-specific exception/status codes to standardized
+    incident reasons for tracking events. The reason field helps
+    identify why a delivery exception occurred.
 
-    # Default to in_transit if unknown
-    return TrackingStatus.in_transit
+    Categories of reasons:
+    - carrier_*: Issues caused by the carrier
+    - consignee_*: Issues caused by the recipient
+    - customs_*: Customs-related delays
+    - weather_*: Weather/force majeure events
+    """
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DAMAGED", "DMG"]
+    carrier_sorting_error = ["MISROUTED", "MSR"]
+    carrier_address_not_found = ["ADDRESS_NOT_FOUND", "ANF"]
+    carrier_parcel_lost = ["LOST", "LP"]
+    carrier_not_enough_time = ["LATE", "NO_TIME"]
+    carrier_vehicle_issue = ["VEHICLE_BREAKDOWN", "VB"]
+
+    # Consignee-caused issues
+    consignee_refused = ["REFUSED", "RJ"]
+    consignee_business_closed = ["BUSINESS_CLOSED", "BC"]
+    consignee_not_available = ["NOT_AVAILABLE", "NA"]
+    consignee_not_home = ["NOT_HOME", "NH"]
+    consignee_incorrect_address = ["WRONG_ADDRESS", "IA"]
+    consignee_access_restricted = ["ACCESS_RESTRICTED", "AR"]
+
+    # Customs-related issues
+    customs_delay = ["CUSTOMS_DELAY", "CD"]
+    customs_documentation = ["CUSTOMS_DOCS", "CM"]
+    customs_duties_unpaid = ["DUTIES_UNPAID", "DU"]
+
+    # Weather/Force majeure
+    weather_delay = ["WEATHER", "WE"]
+    natural_disaster = ["NATURAL_DISASTER", "ND"]
+
+    # Unknown
+    unknown = []
+
+
