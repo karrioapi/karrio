@@ -1,3 +1,5 @@
+"""Karrio UPS tracking API implementation."""
+
 import karrio.schemas.ups.tracking_response as ups
 import typing
 import karrio.lib as lib
@@ -50,13 +52,9 @@ def _extract_details(
         lambda: getattr(package.deliveryInformation.deliveryPhoto, "photo", None)
     )
     last_event = package.activity[0]
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if getattr(last_event.status, "type", None) in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
+    status = (
+        provider_units.TrackingStatus.find(getattr(last_event.status, "type", None)).name
+        or provider_units.TrackingStatus.in_transit.name
     )
 
     return models.TrackingDetails(
@@ -88,23 +86,11 @@ def _extract_details(
                     lib.fdate(a.date, "%Y%m%d"),
                     lib.ftime(a.time, "%H%M%S"),
                 ),
-                status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if getattr(a.status, "type", None) in s.value
-                        or getattr(a.status, "code", None) in s.value
-                    ),
-                    None,
+                status=(
+                    provider_units.TrackingStatus.find(getattr(a.status, "type", None)).name
+                    or provider_units.TrackingStatus.find(getattr(a.status, "code", None)).name
                 ),
-                reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if getattr(a.status, "code", None) in r.value
-                    ),
-                    None,
-                ),
+                reason=provider_units.TrackingIncidentReason.find(getattr(a.status, "code", None)).name,
             )
             for a in package.activity
         ],

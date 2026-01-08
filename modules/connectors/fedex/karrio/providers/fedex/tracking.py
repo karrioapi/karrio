@@ -1,3 +1,5 @@
+"""Karrio FedEx tracking API implementation."""
+
 import karrio.schemas.fedex.tracking_request as fedex
 import karrio.schemas.fedex.tracking_response as tracking
 import typing
@@ -59,13 +61,9 @@ def _extract_details(
             try_formats=DATETIME_FORMATS,
         )
     )
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if detail.latestStatusDetail.code in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
+    status = (
+        provider_units.TrackingStatus.find(detail.latestStatusDetail.code).name
+        or provider_units.TrackingStatus.in_transit.name
     )
     delivered = status == "delivered"
     img = lib.failsafe(
@@ -99,22 +97,8 @@ def _extract_details(
                 ),
                 description=(lib.text(e.exceptionDescription) or e.eventDescription),
                 timestamp=lib.fiso_timestamp(e.date, current_format=DATETIME_FORMATS[0]),
-                status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if e.eventType in s.value
-                    ),
-                    None,
-                ),
-                reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if e.eventType in r.value
-                    ),
-                    None,
-                ),
+                status=provider_units.TrackingStatus.find(e.eventType).name,
+                reason=provider_units.TrackingIncidentReason.find(e.eventType).name,
             )
             for e in detail.scanEvents
         ],

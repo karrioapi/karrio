@@ -1,0 +1,702 @@
+---
+openapi: "3.0.0"
+info:
+  title: "Customs Document Management API"
+  description: "This API allows the maintenance of Documents related to specific use\
+    \ cases in GLS, such as commercial invoices for Customs Consignments (have a look\
+    \ at our <a href=\"/docs/customs-consignments-v3/1/overview\">Customs API</a>\
+    \ for details) - any Documents not fitting to their use case will be removed.\
+    \ Typically, the upload and download of a Document requires calling a preparation\
+    \ endpoint upfront, which returns a Document-specific URL allowing further interaction.\
+    \ **Note that any access to documents that have not been changed for more than\
+    \ 15 days is forbidden.** For further details have a look at <a href=\"/customs-document-management-api\"\
+    >Customs Document Management Overview</a>. <br><br>Note that below services <strong>require\
+    \ authentication</strong> via OAuth Client Credentials flow - use our <a href=\"\
+    /docs/authentification-service-v2/1/overview\">Authentication API</a> to issue\
+    \ a token.\n> **Corporate information:** <br>\nGeneral Logistics Systems, Germany\
+    \ GmbH & Co. OHG, GLS Germany-Straße 1 - 7, 36286 Neuenstein, Germany /\nAuthorised\
+    \ representatives: Personally liable participators: GLS Beteiligungs GmbH, represented\
+    \ by Saadi Al-Soudani, Eberhard Fritze, Martin Seidenberg and Dr. Karl Pfaff,\
+    \ General Logistics Systems B.V., represented by Martin Seidenberg /\nCommercial\
+    \ Register No: Local Court Bad Hersfeld HRA 863, Sales Tax ID No: DE 812802911\
+    \ /\nInformation on Online Dispute Resolution for consumers: The EU commission\
+    \ has set up an online platform for the online-resolution of disputes ('ODR-platform').\
+    \ This platform serves as a contact point for extrajudicial resolutions of disputes\
+    \ concerning contractual obligations, arising from online sales or services agreements.\
+    \ Customers can reach the ODR-platform under the following [link] (http://ec.europa.eu/consumers/odr)\
+    \ /\nGeneral obligation to provide information under Section 36 of the German\
+    \ Act on Alternative Dispute Resolution in Consumer Matters (VSBG), Senders who\
+    \ contractually make use of postal services of GLS Germany under generally accessible\
+    \ conditions with regard to prices and services (e.g. via GLS ParcelShops, GLS-ONE\
+    \ and GLS App) and their recipients, may call upon the regulatory authority as\
+    \ conciliation body for the settlement of disputes with GLS Germany concerning\
+    \ rights and obligations in the event of loss, theft or damage to postal items\
+    \ or the infringement of their own rights to which they are entitled on the basis\
+    \ of a statutory ordinance under Section 18 of the German Postal Act, if dispute\
+    \ settlement with GLS Germany has previously been unsuccessful. If a consumer\
+    \ calls the conciliation body, GLS Germany is obliged to take part in the dispute\
+    \ resolution procedure. Beyond that, GLS Germany does not to take part in dispute\
+    \ resolution procedures before a consumer conciliation body. /\nCompetent consumer\
+    \ conciliation body - Bundesnetzagentur für Elektrizität, Gas, Telekommunikation,\
+    \ Post und Eisenbahnen, Schlichtungsstelle Post, Tulpenfeld 4, 53113 Bonn, Internet\
+    \ - www. bundesnetzagentur. de /\nTo the extent participation is mandatory, GLS\
+    \ Germany will take part in a dispute resolution procedure before this consumer\
+    \ conciliation body.\n<br>\n</sub></sup>\n<br>"
+  version: "1.0.1"
+servers:
+- url: "https://api-sandbox.gls-group.net/document-management/v1"
+  description: "Sandbox (uses test data)"
+- url: "https://api-qas.gls-group.net/document-management/v1"
+  description: "QAS (uses test data)"
+- url: "https://api.gls-group.net/document-management/v1"
+  description: "Prod (uses live data)"
+paths:
+  /documents/customs/prepare-upload:
+    post:
+      tags:
+      - "Document administration"
+      summary: "Create an upload-URL for a document"
+      description: "Create an upload-URL for a document.<br><br><br>**Notes:<br><br>The\
+        \ call to prepare-upload does not create any document** , just a document\
+        \ info entry. The document upload is required to be done in 2 steps:<ol><li>Call\
+        \ prepare-upload with all required attributes.</li><li>Use the use the _uploadUrl_\
+        \ returned and make a HTTP _PUT_ request, with the physical document to be\
+        \ uploaded in request body. Specify _Content-Type_ in request Header with\
+        \ appropriate value e.g. _application/pdf_. **Please note that the upload-URL\
+        \ received in the response must not be changed. The URL is valid only for\
+        \ 15 minutes and does not require any token.**</li></ol><br>The prepare-upload\
+        \ call returns a also _downloadUrl_ which can be used to download the document.\
+        \ **The download call requires a token**, as the access to the document is\
+        \ restricted depending on the user role, e.g. a customer can only download\
+        \ its own documents. The download endpoint is not provided via API gateway\
+        \ due to technical restrictions regarding the size of the payload and is therefore\
+        \ not documented here.<br><br>**It is not guaranteed that the returned URLs\
+        \ point to a fix host.**"
+      security:
+      - OAuthSandbox: []
+      requestBody:
+        description: "Create an upload-URL for a customs document"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadUrlRequest"
+      responses:
+        "200":
+          description: "OK. URL retrieved."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/GeneralError"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Unauthorized"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Forbidden"
+        "500":
+          description: "Internal server error"
+  /documents/customs/{document-id}:
+    get:
+      tags:
+      - "Document administration"
+      summary: "Get document details"
+      description: "Retrieves details of a document"
+      security:
+      - OAuthSandbox: []
+      parameters:
+      - name: "document-id"
+        in: "path"
+        description: "Document identifier"
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+          example: "000021e8-2bd3-440d-a48c-0c8045374b0d"
+      responses:
+        "200":
+          description: "OK. Document details retrieved."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentDetailsResponse"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/GeneralError"
+        "401":
+          description: "Authorization header must contain a valid bearer token"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Unauthorized"
+        "403":
+          description: "User is not allowed to perform this action."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Forbidden"
+        "404":
+          description: "Document not found."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/GeneralError"
+        "500":
+          description: "Internal server error"
+    delete:
+      tags:
+      - "Document administration"
+      summary: "Delete a document"
+      description: "Deletes an existing document present in draft status."
+      parameters:
+      - name: "document-id"
+        in: "path"
+        description: "Identifier of document."
+        required: true
+        schema:
+          type: "string"
+          format: "uuid"
+          example: "c03ecd80-db08-4b24-96a9-f58eba1828a9"
+      security:
+      - OAuthSandbox: []
+      responses:
+        "204":
+          description: "OK. Document deleted."
+        "400":
+          description: "Bad Request."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/GeneralError"
+        "401":
+          description: "Authorization header must contain a valid bearer token"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Unauthorized"
+        "403":
+          description: "User is not allowed to perform this action."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/Forbidden"
+        "404":
+          description: "Document not found."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/GeneralError"
+        "500":
+          description: "Internal server error"
+components:
+  schemas:
+    UploadUrlRequest:
+      type: "object"
+      properties:
+        attributes:
+          type: "object"
+          required:
+          - "documentType"
+          - "documentFormat"
+          - "displayFileName"
+          properties:
+            documentType:
+              type: "string"
+              enum:
+              - "COMMERCIAL_INVOICE"
+              - "MULTIPLE_INVOICES"
+              - "PROOF_OF_PREFERENCE"
+              - "PACKING_LIST"
+              - "EXPORT_DECLARATION"
+              - "T_PAPER"
+              - "CUSTOMS_RECEIPT"
+              - "CHARGE_BACK_IMPORT_CUST_INVOICE"
+              - "IMPORT_ENTRY_ADVICE"
+              example: "COMMERCIAL_INVOICE"
+            documentFormat:
+              type: "string"
+              enum:
+              - "PDF"
+              - "pdf"
+              example: "pdf"
+            displayFileName:
+              type: "string"
+              example: "Test.pdf"
+    CountryCode:
+      type: "string"
+      example: "CH"
+      description: "Country A2 code"
+      enum:
+      - "AF"
+      - "AX"
+      - "AL"
+      - "DZ"
+      - "AS"
+      - "AD"
+      - "AO"
+      - "AI"
+      - "AQ"
+      - "AG"
+      - "AR"
+      - "AM"
+      - "AW"
+      - "AU"
+      - "AT"
+      - "AZ"
+      - "BS"
+      - "BH"
+      - "BD"
+      - "BB"
+      - "BY"
+      - "BE"
+      - "BZ"
+      - "BJ"
+      - "BM"
+      - "BT"
+      - "BO"
+      - "BQ"
+      - "BA"
+      - "BW"
+      - "BV"
+      - "BR"
+      - "IO"
+      - "BN"
+      - "BG"
+      - "BF"
+      - "BI"
+      - "CV"
+      - "KH"
+      - "CM"
+      - "CA"
+      - "KY"
+      - "CF"
+      - "TD"
+      - "CL"
+      - "CN"
+      - "CX"
+      - "CC"
+      - "CO"
+      - "KM"
+      - "CG"
+      - "CD"
+      - "CK"
+      - "CR"
+      - "CI"
+      - "HR"
+      - "CU"
+      - "CW"
+      - "CY"
+      - "CZ"
+      - "DK"
+      - "DJ"
+      - "DM"
+      - "DO"
+      - "EC"
+      - "EG"
+      - "SV"
+      - "GQ"
+      - "ER"
+      - "EE"
+      - "SZ"
+      - "ET"
+      - "FK"
+      - "FO"
+      - "FJ"
+      - "FI"
+      - "FR"
+      - "GF"
+      - "PF"
+      - "TF"
+      - "GA"
+      - "GM"
+      - "GE"
+      - "DE"
+      - "GH"
+      - "GI"
+      - "GR"
+      - "GL"
+      - "GD"
+      - "GP"
+      - "GU"
+      - "GT"
+      - "GG"
+      - "GN"
+      - "GW"
+      - "GY"
+      - "HT"
+      - "HM"
+      - "VA"
+      - "HN"
+      - "HK"
+      - "HU"
+      - "IS"
+      - "IN"
+      - "ID"
+      - "IR"
+      - "IQ"
+      - "IE"
+      - "IM"
+      - "IL"
+      - "IT"
+      - "JM"
+      - "JP"
+      - "JE"
+      - "JO"
+      - "KZ"
+      - "KE"
+      - "KI"
+      - "KP"
+      - "KR"
+      - "KW"
+      - "KG"
+      - "LA"
+      - "LV"
+      - "LB"
+      - "LS"
+      - "LR"
+      - "LY"
+      - "LI"
+      - "LT"
+      - "LU"
+      - "MO"
+      - "MG"
+      - "MW"
+      - "MY"
+      - "MV"
+      - "ML"
+      - "MT"
+      - "MH"
+      - "MQ"
+      - "MR"
+      - "MU"
+      - "YT"
+      - "MX"
+      - "FM"
+      - "MD"
+      - "MC"
+      - "MN"
+      - "ME"
+      - "MS"
+      - "MA"
+      - "MZ"
+      - "MM"
+      - "NA"
+      - "NR"
+      - "NP"
+      - "NL"
+      - "NC"
+      - "NZ"
+      - "NI"
+      - "NE"
+      - "NG"
+      - "NU"
+      - "NF"
+      - "MK"
+      - "MP"
+      - "NO"
+      - "OM"
+      - "PK"
+      - "PW"
+      - "PS"
+      - "PA"
+      - "PG"
+      - "PY"
+      - "PE"
+      - "PH"
+      - "PN"
+      - "PL"
+      - "PT"
+      - "PR"
+      - "QA"
+      - "RE"
+      - "RO"
+      - "RU"
+      - "RW"
+      - "BL"
+      - "SH"
+      - "KN"
+      - "LC"
+      - "MF"
+      - "PM"
+      - "VC"
+      - "WS"
+      - "SM"
+      - "ST"
+      - "SA"
+      - "SN"
+      - "RS"
+      - "SC"
+      - "SL"
+      - "SG"
+      - "SX"
+      - "SK"
+      - "SI"
+      - "SB"
+      - "SO"
+      - "ZA"
+      - "GS"
+      - "SS"
+      - "ES"
+      - "LK"
+      - "SD"
+      - "SR"
+      - "SJ"
+      - "SE"
+      - "CH"
+      - "SY"
+      - "TW"
+      - "TJ"
+      - "TZ"
+      - "TH"
+      - "TL"
+      - "TG"
+      - "TK"
+      - "TO"
+      - "TT"
+      - "TN"
+      - "TR"
+      - "TM"
+      - "TC"
+      - "TV"
+      - "UG"
+      - "UA"
+      - "AE"
+      - "GB"
+      - "US"
+      - "UM"
+      - "UY"
+      - "UZ"
+      - "VU"
+      - "VE"
+      - "VN"
+      - "VG"
+      - "VI"
+      - "WF"
+      - "EH"
+      - "YE"
+      - "ZM"
+      - "ZW"
+    UploadUrlResponse:
+      type: "object"
+      properties:
+        documentId:
+          type: "string"
+          description: "Document ID"
+          format: "uuid"
+          example: "c03ecd80-db08-4b24-96a9-f58eba1828a9"
+          readOnly: true
+        uploadURL:
+          type: "string"
+          description: "URL to use for binary upload of file."
+          readOnly: true
+        downloadURL:
+          type: "string"
+          description: "URL to use for binary download of file."
+          readOnly: true
+    DocumentDetailsResponse:
+      type: "object"
+      properties:
+        attributes:
+          type: "object"
+          properties:
+            documentType:
+              type: "string"
+              enum:
+              - "COMMERCIAL_INVOICE"
+              - "MULTIPLE_INVOICES"
+              - "PROOF_OF_PREFERENCE"
+              - "PACKING_LIST"
+              - "EXPORT_DECLARATION"
+              - "T_PAPER"
+              - "CUSTOMS_RECEIPT"
+              - "CHARGE_BACK_IMPORT_CUST_INVOICE"
+              - "IMPORT_ENTRY_ADVICE"
+              example: "COMMERCIAL_INVOICE"
+            documentFormat:
+              type: "string"
+              enum:
+              - "PDF"
+              - "pdf"
+              example: "pdf"
+            displayFileName:
+              type: "string"
+              example: "Test.pdf"
+            draft:
+              type: "boolean"
+              example: "true"
+        documentContentAvailable:
+          type: "boolean"
+          example: "true"
+        insertTimestamp:
+          type: "string"
+          format: "YYYY-MM-ddTHH:mm:ssZ"
+          description: "Timestamp in UTC when the record was created."
+          example: "2022-08-17T19:31:58.294Z"
+        updateTimestamp:
+          type: "string"
+          format: "YYYY-MM-ddTHH:mm:ssZ"
+          description: "Timestamp in UTC when the record was created."
+          example: "2022-08-18T19:31:58.294Z"
+    UserMetaData:
+      type: "object"
+      required:
+      - "userPrincipalName"
+      - "roles"
+      properties:
+        userPrincipalName:
+          type: "string"
+          example: "max.mustermann@example.com"
+        userSource:
+          type: "string"
+          enum:
+          - "gls-internal"
+          - "gls-external"
+          - "other"
+        roles:
+          type: "array"
+          items:
+            type: "string"
+            enum:
+            - "cssp-superUser"
+            - "cssp-countryUser"
+            - "cssp-depotUser"
+            - "cssp-customer"
+            - "aeb-system"
+        countryCode:
+          type: "string"
+          example: "DE"
+        locationKey:
+          type: "string"
+          example: "DE 210"
+        customerId:
+          type: "string"
+          example: "12345"
+    GeneralError:
+      type: "object"
+      properties:
+        type:
+          description: "Machine-readable error type."
+          type: "string"
+          example: "MINMAX-CONSTRAINT-VIOLATED"
+        fieldName:
+          type: "string"
+          description: "Name of field where error occurred."
+          example: "offset"
+        fieldValue:
+          type: "string"
+          description: "Field value where error occurred."
+          example: "-12"
+        documentationUrl:
+          type: "string"
+          description: "Link to further help on the error."
+          example: "https://dev-portal.gls-group.net/error-codes?code=MINMAX-CONSTRAIN-VIOLATED"
+    Unauthorized:
+      type: "object"
+      properties:
+        type:
+          description: "Machine-readable error type."
+          type: "string"
+          example: "Unauthorized"
+        fieldName:
+          type: "string"
+          description: "Name of field where error occurred."
+          example: "offset"
+        documentationUrl:
+          type: "string"
+          description: "Link to further help on the error."
+          example: "https://dev-portal.gls-group.net/error-codes?code=401-UNAUTHORIZED"
+    Forbidden:
+      type: "object"
+      properties:
+        type:
+          description: "Machine-readable error type."
+          type: "string"
+          example: "Forbidden"
+        fieldName:
+          type: "string"
+          description: "Name of field where error occurred."
+          example: "offset"
+        documentationUrl:
+          type: "string"
+          description: "Link to further help on the error."
+          example: "https://dev-portal.gls-group.net/error-codes?code=403-RESOURCE-FORBIDDEN"
+  securitySchemes:
+    OAuthSandbox:
+      description: "The document-management API uses OAuth 2 with the client credentials\
+        \ flow. Use your apps credentials to receive the token."
+      type: "oauth2"
+      flows:
+        clientCredentials:
+          tokenUrl: "https://api-sandbox.gls-group.net/oauth2/v1/token"
+security:
+- OAuthSandbox: []

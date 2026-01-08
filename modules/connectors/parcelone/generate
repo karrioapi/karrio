@@ -1,0 +1,6 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/parcelone
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/shipping_wcf.py" $SCHEMAS/shipping_wcf.xsd

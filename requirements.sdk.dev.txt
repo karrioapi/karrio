@@ -6,16 +6,22 @@
 # Shipping Plugins
 -e ./modules/connectors/australiapost
 -e ./modules/connectors/canadapost
+-e ./modules/connectors/chronopost
 -e ./modules/connectors/dhl_express
 -e ./modules/connectors/dhl_parcel_de
 -e ./modules/connectors/dhl_poland
 -e ./modules/connectors/dhl_universal
 -e ./modules/connectors/dpd
+-e ./modules/connectors/dpd_meta
 -e ./modules/connectors/fedex
 -e ./modules/connectors/generic
+-e ./modules/connectors/gls
+-e ./modules/connectors/hermes
 -e ./modules/connectors/landmark
 -e ./modules/connectors/laposte
 -e ./modules/connectors/mydhl
+-e ./modules/connectors/parcelone
+-e ./modules/connectors/postat
 -e ./modules/connectors/purolator
 -e ./modules/connectors/seko
 -e ./modules/connectors/sendle

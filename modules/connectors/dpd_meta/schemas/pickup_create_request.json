@@ -1,0 +1,44 @@
+{
+  "customerInfos": {
+    "customerAccountNumber": "ACC123456",
+    "customerSubAccountNumber": "SUB001",
+    "customerID": "CUST789"
+  },
+  "shipmentNumbers": [
+    "SHIP001",
+    "SHIP002"
+  ],
+  "parcelNumbers": [
+    "1234567890123",
+    "1234567890124"
+  ],
+  "pickup": {
+    "date": "2025-12-01",
+    "fromTime": "09:00",
+    "toTime": "17:00"
+  },
+  "numberOfParcels": 2,
+  "pickupAddress": {
+    "companyName": "ABC Logistics",
+    "name1": "John Smith",
+    "street": "Main Street",
+    "houseNumber": "42",
+    "city": "Berlin",
+    "zipCode": "10115",
+    "country": "DE"
+  },
+  "pickupContact": {
+    "contactPerson": "Jane Doe",
+    "phone1": "+4930123456",
+    "email": "pickup@abclogistics.com"
+  },
+  "pickupWeight": 5000,
+  "parcelMaxWeight": 2500,
+  "parcelMaxDimensions": {
+    "length": 30,
+    "width": 20,
+    "height": 15
+  },
+  "comment": "Ground floor delivery preferred",
+  "sendingDepot": "BER0001"
+}

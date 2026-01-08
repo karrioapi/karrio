@@ -16,7 +16,6 @@ import karrio.schemas.{{id}}.tracking_response as {{id}}_res
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.{{id}}.error as error
 import karrio.providers.{{id}}.utils as provider_utils
@@ -105,13 +104,9 @@ def _extract_details(
     {% endif %}
 
     # Map carrier status to karrio standard tracking status
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if status_code in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
+    status = (
+        provider_units.TrackingStatus.find(status_code).name
+        or provider_units.TrackingStatus.in_transit.name
     )
 
     return models.TrackingDetails(
@@ -125,7 +120,15 @@ def _extract_details(
                 code=event["code"],
                 time=lib.flocaltime(event["time"]),
                 location=event["location"],
-                reason=lib.text(event["reason"]) if event.get("reason") else None,
+                # REQUIRED: ISO 8601 timestamp
+                timestamp=lib.fiso_timestamp(
+                    lib.fdate(event["date"]),
+                    lib.ftime(event["time"]),
+                ),
+                # REQUIRED: normalized status at event level
+                status=provider_units.TrackingStatus.find(event["code"]).name,
+                # Incident reason for exception events (from TrackingIncidentReason enum)
+                reason=provider_units.TrackingIncidentReason.find(event["code"]).name,
             )
             for event in events
         ],

@@ -599,6 +599,10 @@ class SharedZoneInput(utils.BaseInput):
     radius: typing.Optional[float] = strawberry.UNSET
     latitude: typing.Optional[float] = strawberry.UNSET
     longitude: typing.Optional[float] = strawberry.UNSET
+    # Weight constraints for this zone
+    min_weight: typing.Optional[float] = strawberry.UNSET
+    max_weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
 
 
 @strawberry.input

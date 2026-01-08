@@ -5,6 +5,14 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { MultiSelect } from "@karrio/ui/components/multi-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@karrio/ui/components/ui/select";
+import { WEIGHT_UNITS } from "@karrio/types";
 import { PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import type {
   EmbeddedZone,
@@ -228,6 +236,61 @@ export function ZonesTab({
                     }}
                     placeholder="2"
                   />
+                </div>
+              </div>
+
+              {/* Weight Constraints Section */}
+              <div className="pt-3 mt-3 border-t border-border">
+                <h5 className="text-sm font-medium text-foreground mb-3">Weight Limits</h5>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <Label className="text-xs mb-1 block">Min Weight</Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min={0}
+                      value={zone.min_weight?.toString() || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const parsed = val ? parseFloat(val) : null;
+                        onUpdateZone(zoneKey, { min_weight: parsed });
+                      }}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs mb-1 block">Max Weight</Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min={0}
+                      value={zone.max_weight?.toString() || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const parsed = val ? parseFloat(val) : null;
+                        onUpdateZone(zoneKey, { max_weight: parsed });
+                      }}
+                      placeholder="No limit"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs mb-1 block">Weight Unit</Label>
+                    <Select
+                      value={zone.weight_unit || ""}
+                      onValueChange={(value) => onUpdateZone(zoneKey, { weight_unit: value || null })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select unit" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WEIGHT_UNITS.map((unit) => (
+                          <SelectItem key={unit} value={unit}>
+                            {unit}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>

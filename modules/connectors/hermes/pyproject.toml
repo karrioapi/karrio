@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "karrio_hermes"
+version = "2026.1"
+description = "Karrio - Hermes Shipping Extension"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "LGPL-3.0"
+authors = [
+    {name = "karrio", email = "hello@karrio.io"}
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "karrio",
+]
+
+[project.urls]
+Homepage = "https://github.com/karrioapi/karrio"
+
+[project.entry-points."karrio.plugins"]
+hermes = "karrio.plugins.hermes:METADATA"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[tool.setuptools.packages.find]
+exclude = ["tests.*", "tests"]
+namespaces = true

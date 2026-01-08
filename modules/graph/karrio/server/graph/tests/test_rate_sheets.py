@@ -88,6 +88,9 @@ class TestRateSheets(GraphTestCase):
                       label
                       cities
                       country_codes
+                      min_weight
+                      max_weight
+                      weight_unit
                     }
                     surcharges {
                       id
@@ -121,9 +124,10 @@ class TestRateSheets(GraphTestCase):
         )
         response_data = response.data
 
+        print(response)  # Debug print as per AGENTS.md guidelines
         self.assertResponseNoErrors(response)
         self.assertDictEqual(
-            lib.to_dict(response_data),
+            lib.to_dict(response_data, clear_empty=False),
             RATE_SHEETS_RESPONSE,
         )
 
@@ -543,6 +547,88 @@ class TestRateSheetZones(GraphTestCase):
         self.assertEqual(new_zone["cities"], ["Seattle", "Portland"])
         self.assertEqual(new_zone["transit_days"], 3)
         self.assertEqual(new_zone["radius"], 100.0)
+
+    def test_add_shared_zone_with_weight_limits(self):
+        """Test adding a zone with weight limits."""
+        response = self.query(
+            """
+            mutation add_zone($data: AddSharedZoneMutationInput!) {
+              add_shared_zone(input: $data) {
+                rate_sheet {
+                  id
+                  zones {
+                    id
+                    label
+                    country_codes
+                    min_weight
+                    max_weight
+                    weight_unit
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="add_zone",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "zone": {
+                        "label": "Weight Limited Zone",
+                        "country_codes": ["US"],
+                        "min_weight": 0.0,
+                        "max_weight": 30.0,
+                        "weight_unit": "KG",
+                    },
+                },
+            },
+        )
+
+        self.assertResponseNoErrors(response)
+        zones = response.data["data"]["add_shared_zone"]["rate_sheet"]["zones"]
+        new_zone = zones[-1]
+        self.assertEqual(new_zone["label"], "Weight Limited Zone")
+        self.assertEqual(new_zone["min_weight"], 0.0)
+        self.assertEqual(new_zone["max_weight"], 30.0)
+        self.assertEqual(new_zone["weight_unit"], "KG")
+
+    def test_update_shared_zone_weight_limits(self):
+        """Test updating a zone's weight limits."""
+        response = self.query(
+            """
+            mutation update_zone($data: UpdateSharedZoneMutationInput!) {
+              update_shared_zone(input: $data) {
+                rate_sheet {
+                  zones {
+                    id
+                    label
+                    min_weight
+                    max_weight
+                    weight_unit
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="update_zone",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "zone_id": "zone_1",
+                    "zone": {
+                        "label": "Zone 1",
+                        "min_weight": 0.5,
+                        "max_weight": 20.0,
+                        "weight_unit": "LB",
+                    },
+                },
+            },
+        )
+
+        self.assertResponseNoErrors(response)
+        zone = response.data["data"]["update_shared_zone"]["rate_sheet"]["zones"][0]
+        self.assertEqual(zone["min_weight"], 0.5)
+        self.assertEqual(zone["max_weight"], 20.0)
+        self.assertEqual(zone["weight_unit"], "LB")
 
     def test_add_multiple_zones_sequentially(self):
         """Test adding multiple zones one after another."""
@@ -1915,6 +2001,9 @@ RATE_SHEETS_RESPONSE = {
                                 "label": "Zone 1",
                                 "cities": ["New York", "Los Angeles"],
                                 "country_codes": ["US"],
+                                "min_weight": None,
+                                "max_weight": None,
+                                "weight_unit": None,
                             }
                         ],
                         "surcharges": [

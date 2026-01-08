@@ -1,0 +1,32 @@
+{
+  "shipmentId": "SHIP123456",
+  "parcelIds": [
+    "0987654321"
+  ],
+  "networkShipmentId": "NET123456",
+  "networkParcelIds": [
+    "0987654321"
+  ],
+  "parcelBarcodes": [
+    {
+      "parcel": "0987654321",
+      "barcode": "0987654321000",
+      "reference": "REF001"
+    }
+  ],
+  "label": {
+    "base64Data": "JVBERi0xLjQKJeLjz9MNCiXvv73vv73vv73vv73vv71NCjEgMCBvYmoKPDwKL1R5cGUgL0NhdGFsb2cKL1BhZ2VzIDIgMCBSCj4+CmVuZG9iagoyIDAgb2JqCjw8Ci9UeXBlIC9QYWdlcwo+PgplbmRvYmoKc3RhcnR4cmVmCjU1NgolJUVPRgo=",
+    "media-type": "application/pdf"
+  },
+  "qrcode": {
+    "base64Data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    "media-type": "image/png"
+  },
+  "debugList": [
+    {
+      "methodName": "createShipment",
+      "request": "...",
+      "response": "..."
+    }
+  ]
+}

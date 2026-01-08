@@ -109,3 +109,35 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         )
 
         return lib.Deserializable(responses, lambda res: [lib.to_dict(r) for r in res])
+
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        access_token = self.authenticate().deserialize()
+        response = lib.request(
+            url=f"{self.settings.pickup_server_url}/orders",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "content-type": "application/json",
+                "Accept-Language": self.settings.language,
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
+
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        access_token = self.authenticate().deserialize()
+        query = urllib.parse.urlencode(request.serialize())
+        response = lib.request(
+            url=f"{self.settings.pickup_server_url}/orders?{query}",
+            trace=self.trace_as("json"),
+            method="DELETE",
+            headers={
+                "content-type": "application/json",
+                "Accept-Language": self.settings.language,
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)

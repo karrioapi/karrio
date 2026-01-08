@@ -1,0 +1,296 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Parcel.One TrackLMC REST API",
+        "description": "ParcelOne [https://parcel.one](https://parcel.one) provides you with a REST API for implementing an interface to ParcelOne tracking services into your own shop/warehouse or, respectively, into the shops/warehouses of your customers. Differently from our Tracking-REST-API, with this API the Tracking Events are returned up to the point, when a Last Mile Carrier took over the shipment. So, if you want to do further tracking with the Last Mile Carrier, this API does tell you when to do it.\r\n ___\r\n This documentation in OpenAPI-Standard has not been finished yet. You can download a valid documentation as PDF from here:\r\n  * [PDF](https://doc.parcelone.io/Documentation_API-TrackLMC.pdf)\r\n___\r\nThis documentation was created adhering to the OpenAPI 3.0 standard. We use Swagger.IO tool for display. If you prefer to use another OpenAPI-Tool or want to implement this into your own environment, you may download the underlying OpenAPI-Document from here:\r\n  * [JSON-Format](https://doc.parcelone.io/ParcelOneTracklmcRESTApiV1.json)\r\n  * [YAML-Format](https://doc.parcelone.io/ParcelOneTracklmcRESTApiV1.yaml)\r\n___\r\n## Basic Implementation Principles\r\n### Sandbox and Production-Modes\r\nIn order to be able to test your implementation without interfering production environment, we provide a SandBox-Mode as well as a Production-Mode. The URLs:\r\n* Sandbox: https://sandbox.parcelone.io/tracklmc\r\n* Production: https://production.parcelone.io/tracklmc\r\n\r\nPlease, use the Sandbox mode to test your client application thoroughly before switching to Production mode.\r\n___\r\n## Authentification\r\nAuthentification is provided via a API-Key in Request Header to authenificate the provider of the software accessing the API. If you are a platform provider for Parcel.One clients, please, keep in mind, that the ApiKey is only as an identification for you and should not be provided to or even be edited in the UI by the users of your platform. (For backward compatibility, you may also provide the API-Key as Password in Basic Authentification. In this case, specify your Parcel.One customer number  or, if not available, your company name as Username.)\r\n\r\nFor some future capabilities of this API, further Authentification may be provided by Basic Authentification secured over SSL identyfying the end customer. In this case, please, specify the received Login Data as Username/Password. This, of course, requires the API-Key being provided as API-Key-Header.\r\n\r\nYou may also make use of a JWT Access Token to speed up authentification on subsequent requests: Just specify a Header named 'Getaccesstoken' with any value, e.g. value of 'true' along with any of your requests. This will return the JWT access token being valid for the next 12 hours. Your subsequent requests may now be authentificated with this bearer JWT token instead of using Basic Authentification and the ApiKey.\r\n\r\nPlease, contact us if you would like to receive an API-Key and possibly Sandbox Login data for your development.\r\n___\r\n",
+        "termsOfService": "https://parcel.one/en/data-security",
+        "contact": {
+            "name": "Contact our support",
+            "url": "https://parcel.one/en/contact",
+            "email": "support@parcel.one"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://sandbox.parcelone.io/tracklmc",
+            "description": "Parcel.One TrackLMC REST API - Sandbox"
+        }
+    ],
+    "paths": {
+        "/shipment/{trackno}": {
+            "get": {
+                "tags": [
+                    "shipment"
+                ],
+                "summary": "get Tracking data for Shipment",
+                "description": "get Tracking data for Shipment",
+                "operationId": "getTrackings",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/trackno"
+                    },
+                    {
+                        "$ref": "#/components/parameters/lang"
+                    },
+                    {
+                        "$ref": "#/components/parameters/platform"
+                    },
+                    {
+                        "$ref": "#/components/parameters/requestor"
+                    },
+                    {
+                        "$ref": "#/components/parameters/Getaccesstoken"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "properties": {
+                                                "P1Trackno": {
+                                                    "description": "Parcel.One Tracknumber from request",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "TrackingEvents": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "lang": {
+                                                    "description": "Language parameter from request",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "platform": {
+                                                    "description": "Platform parameter from request",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "requestor": {
+                                                    "description": "Requestor parameter from request",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "ResultSuccess": {
+                                        "summary": "ResultSuccess",
+                                        "value": {
+                                            "P1Trackno": "4050100151016",
+                                            "TrackingEvents": [
+                                                {
+                                                    "EventdateCET": "2021-10-18T08:26:05+02:00",
+                                                    "EventdateUTC": "2021-10-18T06:26:05+00:00",
+                                                    "Statuscode": "P100",
+                                                    "Status": "The shipment has been prepared for transportation by the sender.",
+                                                    "Location": "DE Füssen",
+                                                    "DeliveryStatus": "InfoReceived_001",
+                                                    "CarrierTrackno": "",
+                                                    "Carrier": "",
+                                                    "CarrierSlug": "",
+                                                    "CarrierTrackURL": "",
+                                                    "TrackingEventsStatus": ""
+                                                },
+                                                {
+                                                    "EventdateCET": "2021-10-18T09:43:18+02:00",
+                                                    "EventdateUTC": "2021-10-18T07:43:18+00:00",
+                                                    "Statuscode": "P101",
+                                                    "Status": "The shipment has been handed over to a carrier and is now on it's way to PARCEL.ONE.",
+                                                    "Location": "DE Füssen",
+                                                    "DeliveryStatus": "Pending_001",
+                                                    "CarrierTrackno": "",
+                                                    "Carrier": "",
+                                                    "CarrierSlug": "",
+                                                    "CarrierTrackURL": "",
+                                                    "TrackingEventsStatus": ""
+                                                },
+                                                {
+                                                    "EventdateCET": "2021-10-20T09:01:00+02:00",
+                                                    "EventdateUTC": "2021-10-20T07:01:00+00:00",
+                                                    "Statuscode": "300",
+                                                    "Status": "The shipment arrived the P1 HUB and is now being handled.",
+                                                    "Location": "DE Pohlheim",
+                                                    "DeliveryStatus": "InTransit_003",
+                                                    "CarrierTrackno": "",
+                                                    "Carrier": "",
+                                                    "CarrierSlug": "",
+                                                    "CarrierTrackURL": "",
+                                                    "TrackingEventsStatus": ""
+                                                },
+                                                {
+                                                    "EventdateCET": "2021-10-20T16:15:00+02:00",
+                                                    "EventdateUTC": "2021-10-20T14:15:00+00:00",
+                                                    "Statuscode": "394",
+                                                    "Status": "The shipment has left the P1 HUB and can be tracked further in the tracking system of <a class=clink href=https://tools.usps.com/go/TrackConfirmAction?tLabels=LX035843846BE target=_blank>USPS</a> using the shipment number <a class=clink href=https://tools.usps.com/go/TrackConfirmAction?tLabels=LX035843846BE target=_blank>LX035843846BE</a>.",
+                                                    "Location": "DE Pohlheim",
+                                                    "DeliveryStatus": "InTransit_001",
+                                                    "CarrierTrackno": "LX035843846BE",
+                                                    "Carrier": "USPS",
+                                                    "CarrierSlug": "correos-de-mexico",
+                                                    "CarrierTrackURL": "https://tools.usps.com/go/TrackConfirmAction?tLabels=LX035843846BE",
+                                                    "TrackingEventsStatus": "P1TrackingEndsHere,RequestLMCCarrierTracking"
+                                                }
+                                            ],
+                                            "lang": "en",
+                                            "platform": "",
+                                            "requestor": ""
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentification failed"
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "ResultError Shipment not found": {
+                                        "summary": "ResultError Shipment not found",
+                                        "value": {
+                                            "Error": "No shipment data found yet, try again later!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "parameters": {
+            "lang": {
+                "name": "lang",
+                "in": "query",
+                "description": "Setting to control multilingual response",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "default": "en",
+                    "enum": [
+                        "en",
+                        "de",
+                        "es"
+                    ]
+                }
+            },
+            "Getaccesstoken": {
+                "name": "Getaccesstoken",
+                "in": "header",
+                "description": "Header-flag to return JWT Access Token, insert 'true' to send this header",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "true"
+                    ]
+                }
+            },
+            "trackno": {
+                "name": "trackno",
+                "in": "path",
+                "description": "search Tracking data for Parcel.One-Shipment Trackingnumber - 13 digits",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "platform": {
+                "name": "platform",
+                "in": "query",
+                "description": "platform (string) - maxlen 30 - if you are a platform provider, please, specify here, e.g. Ebay, Amazon, ...",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "requestor": {
+                "name": "requestor",
+                "in": "query",
+                "description": "requestor (string) - maxlen 30 - your company name",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            }
+        },
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "Apikey",
+                "in": "header"
+            },
+            "BasicAuth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "Bearer_JWT": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "security": [
+        {
+            "api_key": [],
+            "BasicAuth": [],
+            "Bearer_JWT": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Migration from WCF",
+            "description": "If you are migrating from our previos WCF-API to the actual REST-API, you will find useful information about which WCF-function corresponds to which REST-API-Path e.g. in our specific external documentation!",
+            "externalDocs": {
+                "description": "Doc",
+                "url": "https://doc.parcelone.io/ParcelOneShippingRESTApiV1-migration.html"
+            }
+        },
+        {
+            "name": "Multilinguality",
+            "description": "To make use of our multilingual support, please, specify a Header named 'Lang' with a value of one of our supported languages in ISO-3166-2-format: 'de' for German, 'en' for English or 'es' for Spanish."
+        }
+    ],
+    "externalDocs": {
+        "description": "Find out more about Parcel.One",
+        "url": "http://parcel.one"
+    }
+}

@@ -3,17 +3,18 @@ asgiref==3.11.0
 attrs==25.4.0
 backoff==2.2.1
 brotli==1.2.0
-certifi==2025.11.12
+certifi==2026.1.4
 cffi==2.0.0
 charset-normalizer==3.4.4
 click==8.3.1
+cross-web==0.4.0
 cryptography==46.0.3
 cssselect2==0.8.0
 deprecation==2.1.0
 diff-match-patch==20241021
 distro==1.9.0
-dj-database-url==3.0.1
-Django==6.0
+dj-database-url==3.1.0
+Django==6.0.1
 django-constance==4.3.4
 django-cors-headers==4.9.0
 django-downloadview==2.5.0
@@ -23,7 +24,7 @@ django-formtools==2.5.1
 django-health-check==3.20.8
 django-import-export==4.3.14
 django-oauth-toolkit==3.1.0
-django-otp==1.6.3
+django-otp==1.7.0
 django-phonenumber-field==8.4.0
 django-picklefield==3.4.0
 django-redis==6.0.0
@@ -39,31 +40,34 @@ grpcio==1.76.0
 gunicorn==23.0.0
 h11==0.16.0
 hiredis==3.3.0
-huey==2.5.5
+huey==2.6.0
 idna==3.11
 importlib_metadata==8.7.1
 inflection==0.5.1
 Jinja2==3.1.6
 jsonfield==3.2.0
-jsonschema==4.25.1
+jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 jstruct==2021.11
 jwcrypto==1.5.6
 karrio @ file://${PWD}/modules/sdk
 karrio_australiapost @ file://${PWD}/modules/connectors/australiapost
 karrio_canadapost @ file://${PWD}/modules/connectors/canadapost
-karrio_chronopost @ file://${PWD}/community/plugins/chronopost
+karrio_chronopost @ file://${PWD}/modules/connectors/chronopost
 karrio_dhl_express @ file://${PWD}/modules/connectors/dhl_express
 karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
 karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
 karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
 karrio_dpd @ file://${PWD}/modules/connectors/dpd
+karrio_dpd_meta @ file://${PWD}/modules/connectors/dpd_meta
 karrio_easypost @ file://${PWD}/community/plugins/easypost
 karrio_easyship @ file://${PWD}/community/plugins/easyship
 karrio_eshipper @ file://${PWD}/community/plugins/eshipper
 karrio_fedex @ file://${PWD}/modules/connectors/fedex
 karrio_freightcom @ file://${PWD}/community/plugins/freightcom
 karrio_generic @ file://${PWD}/modules/connectors/generic
+karrio_gls @ file://${PWD}/modules/connectors/gls
+karrio_hermes @ file://${PWD}/modules/connectors/hermes
 karrio_landmark @ file://${PWD}/modules/connectors/landmark
 karrio_laposte @ file://${PWD}/modules/connectors/laposte
 karrio_purolator @ file://${PWD}/modules/connectors/purolator
@@ -84,7 +88,6 @@ karrio_teleship @ file://${PWD}/modules/connectors/teleship
 karrio_ups @ file://${PWD}/modules/connectors/ups
 karrio_usps @ file://${PWD}/modules/connectors/usps
 karrio_usps_international @ file://${PWD}/modules/connectors/usps_international
-lia-web==0.2.3
 loguru==0.7.3
 lxml==6.0.2
 lxml-stubs==0.5.1
@@ -110,10 +113,10 @@ opentelemetry-semantic-conventions==0.60b1
 opentelemetry-util-http==0.60b1
 packaging==25.0
 phonenumbers==9.0.21
-pillow==12.0.0
-posthog==7.4.2
+pillow==12.1.0
+posthog==7.5.0
 protobuf==6.33.2
-psutil==7.1.3
+psutil==7.2.1
 psycopg2-binary==2.9.11
 py_soap @ file://${PWD}/modules/soap
 pycparser==2.23
@@ -135,14 +138,14 @@ rpds-py==0.30.0
 sentry-sdk==2.48.0
 six==1.17.0
 sqlparse==0.5.5
-strawberry-graphql==0.287.3
+strawberry-graphql==0.288.2
 tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.0.0
 toml==0.10.2
 typing_extensions==4.15.0
 uritemplate==4.2.0
-urllib3==2.6.2
+urllib3==2.6.3
 uvicorn==0.40.0
 validators==0.35.0
 weasyprint==67.0

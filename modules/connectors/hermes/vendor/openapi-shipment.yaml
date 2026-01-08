@@ -1,0 +1,566 @@
+openapi: 3.0.1
+info:
+  title: Shipment Info API
+  description: |2
+      <p>
+        This is the shipment info API of the Hermes Shipping Interface.
+      </p>
+      <details>
+        <summary>Note on User Agent header</summary>
+        <p>
+          By providing an application specific <a href="https://www.rfc-editor.org/rfc/rfc2616#section-14.43">User Agent</a>, you help us to identify
+          your application that is making the API call. This makes troubleshooting more effectively and faster as we can identify your requests more easily.
+        </p>
+      </details>
+  version: "2025-12-08"
+servers:
+  - url: "https://de-api-int.hermesworld.com/services/hsi"
+security:
+  - OAuth2: [ ]
+paths:
+  /shipmentstatus:
+    get:
+      tags:
+        - ShipmentInfo
+      summary: Shipment History
+      description: Use this operation to request the complete history for your shipments.
+      operationId: getShipmentHistory
+      parameters:
+        - name: shipmentID
+          in: query
+          description: ShipmentIDs for actual status request. Up to 100 ShipmentIDs
+            can be transferred.
+          required: true
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+          examples:
+            Forecast:
+              description: An en route shipment with forecast.
+              value: ["T1132981237129800"]
+            Delayed:
+              description: A delayed shipment.
+              value: ["T1000987654321020"]
+            Delivered:
+              description: A delivered shipment.
+              value: ["T1000987654321040"]
+        - name: Accept-Language
+          in: header
+          description: Select English/German
+          required: false
+          schema:
+            type: string
+            default: DE
+      responses:
+        "200":
+          description: "<p>OK</p>Possible response codes: <br>e001: There is no information\
+            \ for the entered value."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetShipmentHistoryResponse"
+        "400":
+          description: "<p>Bad Request</p><p>You provided an invalid request. Please\
+            \ refer to the listOfResultCodes for possible causes.</p><p>These might\
+            \ be:</p><ul><li>e002: Query for shipment information not successful.<li>e005:\
+            \ Syntax error during validation – Incorrect properties specified.<li>e006:\
+            \ Required field error during validation – Required fields not filled.<li>e008:\
+            \ Unsupported Combination of request Parameter<li>e009: The given media\
+            \ type is unknown<li>e902: Token is invalid.<li>e903: Token is expired.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: "<p>Forbidden</p><p>You are not authorized to use this endpoint.\
+            \ Please refer to the listOfResultCodes for possible causes.</p><p>These\
+            \ might be:</p><ul><li>e900: You are not authorized to perform this functionality.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: "<p>Internal Server Error</p><p>Please refer to the listOfResultCodes\
+            \ for possible causes.</p><p>These might be:</p><ul><li>e999: General\
+            \ technical error.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      deprecated: true
+  /shipmentstatus/current:
+    get:
+      tags:
+        - ShipmentInfo
+      summary: Shipment Status
+      description: Use this operation to request the status for your shipments.
+      operationId: getCurrentShipmentStatus
+      parameters:
+        - name: shipmentID
+          in: query
+          description: ShipmentIDs for actual status request. Up to 100 ShipmentIDs
+            can be transferred.
+          required: true
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+          examples:
+            Forecast:
+              description: An en route shipment with forecast.
+              value: ["T1132981237129800"]
+            Delayed:
+              description: A delayed shipment.
+              value: ["T1000987654321020"]
+            Delivered:
+              description: A delivered shipment.
+              value: ["T1000987654321040"]
+        - name: Accept-Language
+          in: header
+          description: Select English/German
+          required: false
+          schema:
+            type: string
+            default: DE
+      responses:
+        "200":
+          description: "<p>OK</p>Possible response codes: <br>e001: There is no information\
+            \ for the entered value."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCurrentShipmentStatusResponse"
+        "400":
+          description: "<p>Bad Request</p><p>You provided an invalid request. Please\
+            \ refer to the listOfResultCodes for possible causes.</p><p>These might\
+            \ be:</p><ul><li>e002: Query for shipment information not successful.<li>e005:\
+            \ Syntax error during validation – Incorrect properties specified.<li>e006:\
+            \ Required field error during validation – Required fields not filled.<li>e008:\
+            \ Unsupported Combination of request Parameter<li>e009: The given media\
+            \ type is unknown<li>e902: Token is invalid.<li>e903: Token is expired.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: "<p>Forbidden</p><p>You are not authorized to use this endpoint.\
+            \ Please refer to the listOfResultCodes for possible causes.</p><p>These\
+            \ might be:</p><ul><li>e900: You are not authorized to perform this functionality.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: "<p>Internal Server Error</p><p>Please refer to the listOfResultCodes\
+            \ for possible causes.</p><p>These might be:</p><ul><li>e999: General\
+            \ technical error.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      deprecated: true
+  /shipmentinfo:
+    get:
+      tags:
+        - ShipmentInfo
+      summary: Request shipment information by client id & client reference OR! by
+        shipment ids.
+      description: Use this endpoint to request shipment information for one or more
+        shipments by either providing the clientID and clientReference or by using
+        a set of shipment ids.
+      operationId: getByShipmentIDs
+      parameters:
+        - name: clientID
+          in: query
+          description: Client identifier used to fetch shipment information.
+          schema:
+            maxLength: 4
+            minLength: 1
+            pattern: "[0-9]+"
+            type: string
+        - name: clientReference
+          in: query
+          description: Client reference used to fetch shipment information.
+          schema:
+            type: string
+        - name: shipmentID
+          in: query
+          description: ShipmentIDs for actual status request. Up to 100 ShipmentIDs
+            can be transferred.
+          required: false
+          schema:
+            maxItems: 100
+            minItems: 1
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+          examples:
+            Forecast:
+              description: An en route shipment with forecast.
+              value: ["T1132981237129800"]
+            Delayed:
+              description: A delayed shipment.
+              value: ["T1000987654321020"]
+            Delivered:
+              description: A delivered shipment.
+              value: ["T1000987654321040"]
+        - name: Accept-Language
+          in: header
+          description: Select English/German
+          required: false
+          schema:
+            type: string
+            default: DE
+      responses:
+        "200":
+          description: "<p>OK</p>Possible response codes: <br>e001: There is no information\
+            \ for the entered value."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShipmentInfoResponse"
+        "400":
+          description: "<p>Bad Request</p><p>You provided an invalid request. Please\
+            \ refer to the listOfResultCodes for possible causes.</p><p>These might\
+            \ be:</p><ul><li>e002: Query for shipment information not successful.<li>e005:\
+            \ Syntax error during validation – Incorrect properties specified.<li>e006:\
+            \ Required field error during validation – Required fields not filled.<li>e008:\
+            \ Unsupported Combination of request Parameter<li>e009: The given media\
+            \ type is unknown<li>e902: Token is invalid.<li>e903: Token is expired.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: "<p>Forbidden</p><p>You are not authorized to use this endpoint.\
+            \ Please refer to the listOfResultCodes for possible causes.</p><p>These\
+            \ might be:</p><ul><li>e900: You are not authorized to perform this functionality.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: "<p>Internal Server Error</p><p>Please refer to the listOfResultCodes\
+            \ for possible causes.</p><p>These might be:</p><ul><li>e999: General\
+            \ technical error.</ul>"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    CurrentShipmentStatus:
+      type: object
+      properties:
+        shipmentID:
+          type: string
+          description: System generated order id. (AN (24))
+        clientReference:
+          type: string
+        clientReference2:
+          type: string
+        internationalShipmentID:
+          type: string
+        statusInformation:
+          $ref: "#/components/schemas/StatusInformation"
+    DeliveryForecast:
+      type: object
+      properties:
+        fixed:
+          type: boolean
+          description: Flags the expected delivery as fixed date (true) or as just
+            a forecast (false)
+          example: true
+        date:
+          type: string
+          description: "Expected delivery date, YYYY-MM-DD."
+          format: date
+          example: 2020-06-06
+        timeSlot:
+          $ref: "#/components/schemas/TimeSlot"
+      description: Contains the calculated time of delivery.
+    ErrorResponse:
+      type: object
+      properties:
+        listOfResultCodes:
+          type: array
+          description: Error list
+          items:
+            $ref: "#/components/schemas/ResultCode"
+      description: Error Response
+    ExpectedDelivery:
+      type: object
+      properties:
+        expectedDate:
+          type: string
+          description: "Expected delivery date, YYYY-MM-DD. (AN (10))"
+          format: date
+          example: 2020-06-06
+        expectedTimeEarliest:
+          type: string
+          description: Optimistic time of delivery
+          example: 10:00
+        expectedTimeLatest:
+          type: string
+          description: Pessimistic time of delivery
+          example: 18:00
+        fixedDateOfDelivery:
+          type: boolean
+          description: Flags the expected delivery as fixed date (true) or as just
+            a forecast (false)
+          example: true
+      description: The expected delivery of this shipment.
+    GetCurrentShipmentStatusResponse:
+      type: object
+      properties:
+        listOfResultCodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResultCode"
+        listOfCurrentShipmentStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/CurrentShipmentStatus"
+    GetShipmentHistoryResponse:
+      type: object
+      properties:
+        listOfResultCodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResultCode"
+        listOfShipmentHistoryStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShipmentHistoryStatus"
+    ReceiverAddress:
+      type: object
+      properties:
+        city:
+          type: string
+          description: City of the receiver address.
+          example: Hamburg
+        zipCode:
+          type: string
+          description: Zip code of the receiver address.
+          example: "22083"
+        countryCode:
+          type: string
+          description: Country code of the receiver address. According to ISO 3166-1
+            alpha-3
+          example: DEU
+      description: Contains information about the receiver.
+    ResultCode:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Contains code when created status could not be mapped to a
+            HTTP-Statuscode.
+          example: e001
+        message:
+          type: string
+          description: Contains message when created status could not be mapped to
+            a HTTP-Statuscode.)
+          example: There is no information for the entered value.
+      description: Error list
+    ScanningUnit:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the scanning unit.
+          example: Hermes Germany
+        city:
+          type: string
+          description: City of the scanning unit.
+          example: Hamburg
+        countryCode:
+          type: string
+          description: Country code of the scanning unit. According to ISO 3166-1
+            alpha-3
+          example: DEU
+      description: Contains information about the scanning unit.
+    ShipmentHistoryStatus:
+      type: object
+      properties:
+        shipmentID:
+          type: string
+          description: System generated order id. (AN (24))
+        clientReference:
+          type: string
+        clientReference2:
+          type: string
+        internationalShipmentID:
+          type: string
+        listOfStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusHistoryEntry"
+    ShipmentInfo:
+      type: object
+      properties:
+        shipmentID:
+          type: string
+          description: System generated tracking number.
+          example: H9746130018743501086
+        partNumber:
+          type: string
+          description: Part number that describes the shipments content  (e.g 78810030
+            for a bicycle). This value may be missing if there is no part number associated
+            with the shipment.
+          example: "78810030"
+        clientID:
+          type: string
+          description: Client identifier (ATG-Kennzeichen). This value is only returned
+            for requests containing a clientID parameter.
+          example: "4711"
+        clientReference:
+          type: string
+          description: Client reference used in case of custom order numbers (e.g.
+            Auftragsnummer).
+          example: AC/DC-42
+        result:
+          $ref: "#/components/schemas/ResultCode"
+        receiverAddress:
+          $ref: "#/components/schemas/ReceiverAddress"
+        deliveryForecast:
+          $ref: "#/components/schemas/DeliveryForecast"
+        status:
+          type: array
+          description: Contains the whole status history for this shipment.
+          items:
+            $ref: "#/components/schemas/ShipmentStatus"
+        clientReference2:
+          type: string
+          description: Second client reference used in case of custom references (e.g.
+            Rechnungsnummer).
+          example: "1023456"
+        internationalShipmentID:
+          type: string
+          description: Contains the international tracking number.
+          example: "00340633031105567586"
+        trackingLink:
+          type: string
+          description: Contains the tracking link.
+          example: https://example.com/tracking/00340633031105567586
+    ShipmentInfoResponse:
+      type: object
+      properties:
+        shipmentinfo:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShipmentInfo"
+    ShipmentStatus:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: Timestamp associated with this status change in ISO 8601 format.
+          format: date-time
+          example: 2020-12-04T07:58:24+01:00
+        code:
+          type: string
+          description: "Status code, 3 digits with leading '0'."
+          example: 0-0-0
+        description:
+          type: string
+          description: Human readable description of this status change.
+          example: The parcel has been delivered.
+        scanningUnit:
+          $ref: "#/components/schemas/ScanningUnit"
+      description: Contains the whole status history for this shipment.
+    StatusHistoryEntry:
+      type: object
+      properties:
+        statusDate:
+          type: string
+          description: "Status date, YYYY-MM-DD. (AN (10))"
+          format: date
+        statusTime:
+          type: string
+          description: "Status time, hh:mm:ss. (AN (8))"
+        statusCode:
+          type: string
+          description: "Status code, 3 digits with leading '0'. (N (3))"
+        description:
+          type: string
+          description: Status description.
+        resultCode:
+          type: string
+          description: Contains code when no Data were found for the given ID. (AN
+            (11))
+        resultMessage:
+          type: string
+          description: Contains message when no Data were found for the given ID.
+    StatusInformation:
+      type: object
+      properties:
+        statusDate:
+          type: string
+          description: "Status date, YYYY-MM-DD. (AN (10))"
+          format: date
+        statusTime:
+          type: string
+          description: "Status time, hh:mm:ss. (AN (8))"
+        statusCode:
+          type: string
+          description: "Status code, 3 digits with leading '0'. (N (3))"
+        statusImageID:
+          type: integer
+          description: ID of the status image
+          format: int32
+          example: 5
+        description:
+          type: string
+          description: Status description.
+        resultCode:
+          type: string
+          description: Contains code when no Data were found for the given ID. (AN
+            (11))
+        resultMessage:
+          type: string
+          description: Contains message when no Data were found for the given ID.
+        expectedDelivery:
+          $ref: "#/components/schemas/ExpectedDelivery"
+        city:
+          type: string
+          description: City of the receiver address.
+          example: Hamburg
+        zipCode:
+          type: string
+          description: Zip code of the receiver address.
+          example: "22083"
+        countryCode:
+          type: string
+          description: Country code of the receiver address. According to ISO 3166-1
+            alpha-3
+          example: DEU
+    TimeSlot:
+      type: object
+      properties:
+        from:
+          type: string
+          description: Optimistic time of delivery (CET or CEST).
+          example: 10:00
+        to:
+          type: string
+          description: Pessimistic time of delivery (CET or CEST).
+          example: 18:00
+      description: Expected time slot for delivery
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: "https://authme-int.myhermes.de/authorization-facade/oauth2/access_token"
+          refreshUrl: "https://authme-int.myhermes.de/authorization-facade/oauth2/access_token"
+          scopes: { }
+        authorizationCode:
+          authorizationUrl: "https://authme-int.myhermes.de/authorization-facade/oauth2/authorize"
+          tokenUrl: "https://authme-int.myhermes.de/authorization-facade/oauth2/access_token"
+          refreshUrl: "https://authme-int.myhermes.de/authorization-facade/oauth2/access_token"
+          scopes: { }

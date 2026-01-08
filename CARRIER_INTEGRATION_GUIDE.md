@@ -357,11 +357,59 @@ def shipping_options_initializer(
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
 class TrackingStatus(lib.Enum):
+    """Maps carrier tracking status codes to normalized Karrio statuses."""
     on_hold = ["ON_HOLD"]
     delivered = ["DELIVERED"]
     in_transit = ["IN_TRANSIT"]
     delivery_failed = ["DELIVERY_FAILED"]
     out_for_delivery = ["OUT_FOR_DELIVERY"]
+    pending = ["PENDING", "CREATED", "LABEL_PRINTED"]
+    picked_up = ["PICKED_UP", "COLLECTED"]
+    delivery_delayed = ["DELAYED", "RESCHEDULED"]
+    ready_for_pickup = ["READY_FOR_PICKUP", "AT_LOCATION"]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps carrier exception codes to normalized incident reasons.
+
+    IMPORTANT: This enum is required for tracking implementations.
+    It maps carrier-specific exception/status codes to standardized
+    incident reasons for tracking events. The reason field helps
+    identify why a delivery exception occurred.
+
+    Categories of reasons:
+    - carrier_*: Issues caused by the carrier
+    - consignee_*: Issues caused by the recipient
+    - customs_*: Customs-related delays
+    - weather_*: Weather/force majeure events
+    """
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DAMAGED", "DMG"]
+    carrier_sorting_error = ["MISROUTED", "MSR"]
+    carrier_address_not_found = ["ADDRESS_NOT_FOUND", "ANF"]
+    carrier_parcel_lost = ["LOST", "LP"]
+    carrier_not_enough_time = ["LATE", "NO_TIME"]
+    carrier_vehicle_issue = ["VEHICLE_BREAKDOWN", "VB"]
+
+    # Consignee-caused issues
+    consignee_refused = ["REFUSED", "RJ"]
+    consignee_business_closed = ["BUSINESS_CLOSED", "BC"]
+    consignee_not_available = ["NOT_AVAILABLE", "NA"]
+    consignee_not_home = ["NOT_HOME", "NH"]
+    consignee_incorrect_address = ["WRONG_ADDRESS", "IA"]
+    consignee_access_restricted = ["ACCESS_RESTRICTED", "AR"]
+
+    # Customs-related issues
+    customs_delay = ["CUSTOMS_DELAY", "CD"]
+    customs_documentation = ["CUSTOMS_DOCS", "CM"]
+    customs_duties_unpaid = ["DUTIES_UNPAID", "DU"]
+
+    # Weather/Force majeure
+    weather_delay = ["WEATHER", "WE"]
+    natural_disaster = ["NATURAL_DISASTER", "ND"]
+
+    # Unknown
+    unknown = []
 ```
 
 ### Step 10: Implement the API Proxy
@@ -674,6 +722,27 @@ import karrio.providers.[carrier_name].utils as provider_utils
 import karrio.providers.[carrier_name].units as provider_units
 import karrio.schemas.[carrier_name].tracking_response as [carrier_name]_res
 
+
+def _match_status(code: str) -> typing.Optional[str]:
+    """Match code against TrackingStatus enum values."""
+    if not code:
+        return None
+    for status in list(provider_units.TrackingStatus):
+        if code in status.value:
+            return status.name
+    return None
+
+
+def _match_reason(code: str) -> typing.Optional[str]:
+    """Match code against TrackingIncidentReason enum values."""
+    if not code:
+        return None
+    for reason in list(provider_units.TrackingIncidentReason):
+        if code in reason.value:
+            return reason.name
+    return None
+
+
 def parse_tracking_response(
     _response: lib.Deserializable,
     settings: provider_utils.Settings,
@@ -689,21 +758,35 @@ def parse_tracking_response(
 
         events = [
             models.TrackingEvent(
-                date=lib.to_date(event.date),
+                date=lib.fdate(event.date, "%Y-%m-%d"),
                 description=event.description,
                 location=event.location,
-                code=event.status,
-                time=lib.to_time(event.time),
+                code=event.status_code,
+                time=lib.flocaltime(event.time, "%H:%M:%S"),
+                # REQUIRED: timestamp in ISO 8601 format
+                timestamp=lib.fiso_timestamp(
+                    lib.fdate(event.date, "%Y-%m-%d"),
+                    lib.ftime(event.time, "%H:%M:%S"),
+                ),
+                # REQUIRED: normalized status at event level
+                status=_match_status(event.status_code),
+                # Incident reason for exception events
+                reason=_match_reason(event.status_code),
             )
             for event in (tracking.events or [])
         ]
+
+        # Determine overall status from latest event
+        latest_event = events[0] if events else None
+        status = latest_event.status or provider_units.TrackingStatus.in_transit.name
 
         detail = models.TrackingDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             tracking_number=tracking_number,
             events=events,
-            status=provider_units.TrackingStatus.map(tracking.status),
+            status=status,
+            delivered=status == "delivered",
         )
         tracking_details.append(detail)
 
@@ -716,6 +799,152 @@ def tracking_request(
     """Create a tracking request object."""
     return lib.Serializable(payload.tracking_numbers)
 ```
+
+**IMPORTANT TrackingEvent Fields:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `date` | str | Yes | Event date (e.g., "2024-01-15") |
+| `time` | str | Yes | Event time (e.g., "14:30:00") |
+| `description` | str | Yes | Human-readable event description |
+| `code` | str | Yes | Carrier-specific status code |
+| `location` | str | No | Event location |
+| `timestamp` | str | **Yes** | ISO 8601 timestamp (e.g., "2024-01-15T14:30:00") |
+| `status` | str | **Yes** | Normalized status from `TrackingStatus` enum |
+| `reason` | str | No | Incident reason from `TrackingIncidentReason` enum |
+
+**Usage of `lib.fiso_timestamp`:**
+```python
+# Combines date and time into ISO 8601 timestamp
+timestamp = lib.fiso_timestamp(
+    lib.fdate(event.date, "%Y-%m-%d"),
+    lib.ftime(event.time, "%H:%M:%S"),
+)
+# Result: "2024-01-15T14:30:00"
+```
+
+#### Multi-Piece/Multi-Package Shipment Support
+
+**CRITICAL**: Before implementing shipment creation, you MUST determine how the carrier API handles multi-package shipments. This affects the entire request/response structure.
+
+##### Step 1: Analyze Carrier API Documentation
+
+Check the carrier API documentation to determine which pattern applies:
+
+| Look For | Pattern | Implementation |
+|----------|---------|----------------|
+| Single endpoint accepts `packages[]` array | **Bundled** | All packages in one request |
+| Response has `PackageResults` or `pieceResponses` | **Bundled** | Parse individual package results |
+| Response has `masterTrackingNumber` | **Bundled** | Use master as primary tracking |
+| Must call endpoint once per package | **Per-Package** | Create list of requests |
+| Each package gets separate label | **Per-Package** | Use `lib.to_multi_piece_shipment()` |
+
+##### Step 2: Implement Correct Pattern
+
+**Pattern A: Bundled Request (FedEx, UPS, DHL Express style)**
+
+```python
+def shipment_request(payload, settings):
+    packages = lib.to_packages(payload.parcels)
+
+    # All packages in single request
+    request = carrier_req.ShipmentRequestType(
+        packages=[
+            carrier_req.PackageType(
+                weight=pkg.weight.KG,
+                dimensions=carrier_req.DimensionsType(
+                    length=pkg.length.CM,
+                    width=pkg.width.CM,
+                    height=pkg.height.CM,
+                ),
+            )
+            for pkg in packages
+        ],
+        # ... other fields
+    )
+    return lib.Serializable(request, lib.to_dict)
+
+def parse_shipment_response(_response, settings):
+    response = _response.deserialize()
+
+    # Extract master tracking
+    tracking_number = response.masterTrackingNumber
+
+    # Extract all package results
+    packages = lib.failsafe(lambda: response.PackageResults) or []
+    tracking_ids = [pkg.TrackingID for pkg in packages if pkg.TrackingID]
+
+    # Bundle all labels
+    labels = [pkg.Label for pkg in packages if pkg.Label]
+    label = lib.bundle_base64(labels, "PDF") if len(labels) > 1 else next(iter(labels), None)
+
+    return models.ShipmentDetails(
+        tracking_number=tracking_number,
+        docs=models.Documents(label=label),
+        meta=dict(tracking_numbers=tracking_ids),
+    ), messages
+```
+
+**Pattern B: Per-Package Request (Canada Post, USPS style)**
+
+```python
+def shipment_request(payload, settings):
+    packages = lib.to_packages(payload.parcels)
+
+    # Create list of requests, one per package
+    request = [
+        carrier_req.ShipmentType(
+            parcel=carrier_req.ParcelType(
+                weight=pkg.weight.KG,
+                dimensions=carrier_req.DimensionsType(...),
+            ),
+            # ... common fields for each package
+        )
+        for pkg in packages
+    ]
+    return lib.Serializable(request, _serialize_requests)
+
+def parse_shipment_response(_response, settings):
+    responses = _response.deserialize()  # List of responses
+    messages = error.parse_error_response(responses, settings)
+
+    # Extract details from each package response
+    shipment_details = [
+        (f"{idx}", _extract_shipment(response, settings))
+        for idx, response in enumerate(responses, start=1)
+        if _is_valid_response(response)
+    ]
+
+    # Use lib.to_multi_piece_shipment() to aggregate
+    shipment = lib.to_multi_piece_shipment(shipment_details)
+    return shipment, messages
+```
+
+##### Step 3: Ensure Proper Label Bundling
+
+For multi-package shipments, always bundle labels:
+
+```python
+# For bundled pattern - bundle from package results
+labels = [pkg.Label for pkg in packages if pkg.Label]
+label = lib.bundle_base64(labels, label_type) if len(labels) > 1 else next(iter(labels), None)
+
+# For per-package pattern - lib.to_multi_piece_shipment() handles bundling automatically
+```
+
+##### Step 4: Populate Meta Fields
+
+Always include tracking numbers for all packages in meta:
+
+```python
+meta=dict(
+    tracking_numbers=tracking_ids,           # List of all package tracking numbers
+    shipment_identifiers=shipment_ids,       # List of all shipment IDs (if applicable)
+    carrier_tracking_link=tracking_url,      # Link for master/primary tracking
+)
+```
+
+---
 
 #### Shipment Implementation
 

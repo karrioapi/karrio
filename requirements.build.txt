@@ -6,13 +6,17 @@
 # Shipping Plugins
 -e ./modules/connectors/australiapost
 -e ./modules/connectors/canadapost
+-e ./modules/connectors/chronopost
 -e ./modules/connectors/dhl_express
 -e ./modules/connectors/dhl_parcel_de
 -e ./modules/connectors/dhl_poland
 -e ./modules/connectors/dhl_universal
 -e ./modules/connectors/dpd
+-e ./modules/connectors/dpd_meta
 -e ./modules/connectors/fedex
 -e ./modules/connectors/generic
+-e ./modules/connectors/gls
+-e ./modules/connectors/hermes
 -e ./modules/connectors/landmark
 -e ./modules/connectors/laposte
 -e ./modules/connectors/purolator
@@ -24,7 +28,6 @@
 -e ./modules/connectors/usps_international
 
 # Community Plugins
--e ./community/plugins/chronopost
 -e ./community/plugins/easypost
 -e ./community/plugins/easyship
 -e ./community/plugins/eshipper

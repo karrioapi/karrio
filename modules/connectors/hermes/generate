@@ -1,0 +1,13 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/hermes
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+# Hermes API uses camelCase field names, so we use --no-nice-property-names
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py"
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py"
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py"
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_create_request.json" "${LIB_MODULES}/pickup_create_request.py"
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_create_response.json" "${LIB_MODULES}/pickup_create_response.py"
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_cancel_request.json" "${LIB_MODULES}/pickup_cancel_request.py"
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_cancel_response.json" "${LIB_MODULES}/pickup_cancel_response.py"

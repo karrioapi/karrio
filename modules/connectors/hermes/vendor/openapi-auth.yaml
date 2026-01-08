@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+  title: Business Customer Authentication
+  description: |
+    <p>
+      Our APIs for the Hermes Shipping Interface use the <a href="https://tools.ietf.org/html/rfc6749" target="_blank">
+      OAuth 2.0 protocol</a>. Currently we support the "<a href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1"
+     target="_blank">Authorization Code Grant</a>" and the "<a href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3"
+     target="_blank">Resource Owner Password Credentials Grant</a>".
+    
+    Currently only the grant types password, refresh_token and authorization_code are supported.
+    </p>
+    <details>
+      <summary>Note on User Agent header</summary>
+      <p>
+        By providing an application specific <a href="https://www.rfc-editor.org/rfc/rfc2616#section-14.43" target="_blank">
+        User Agent</a>, you help us to identify
+        your application that is making the API call. This makes troubleshooting more effectively and faster as we can
+        identify your requests more easily.
+      </p>
+    </details>
+    <details>
+      <summary>Note on Access and Refresh Token size</summary>
+      <p>
+        Issued Access and Refresh Tokens are <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-1" target="_blank">JSON Web
+        Tokens</a>. These JSON Web Tokens contain claims which may vary over time.
+        With varying claims, the size of Access and Refresh Tokens also changes. However, there is a size limit of 8 KB
+        that Access and Refresh Tokens will never exceed.
+      </p>
+    </details>
+  version: 2025-07-28
+servers:
+  - url: https://authme.myhermes.de
+    description: Production
+  - url: https://authme-int.myhermes.de
+    description: Integration
+tags:
+  - name: Authorization Endpoint
+    description: ''
+    externalDocs:
+      url: https://www.rfc-editor.org/rfc/rfc6749#section-3.1
+  - name: Token Endpoint
+    description: ''
+    externalDocs:
+      url: https://www.rfc-editor.org/rfc/rfc6749#section-3.2
+paths:
+  /authorization-facade/oauth2/access_token:
+    post:
+      tags:
+        - Token Endpoint
+      summary: ''
+      description: Request access and refresh token (The access token is valid for 1 hour). Renew access token using the refresh token.
+      operationId: postAccessTokenUsingPOST
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - client_id
+                - grant_type
+              properties:
+                client_id:
+                  type: string
+                  description: ID of the client
+                client_secret:
+                  type: string
+                  description: The password of the client
+                grant_type:
+                  type: string
+                  description: '''authorization_code'' for initial request, ''refresh_token'' to renew the token. For ''password'', username and password are expected.'
+                  enum:
+                    - authorization_code
+                    - refresh_token
+                    - password
+                redirect_uri:
+                  type: string
+                  description: URL to be redirected to
+                code:
+                  type: string
+                  description: The grant code at the first request
+                refresh_token:
+                  type: string
+                  description: The refresh token to renew the token
+                username:
+                  type: string
+                  description: The user who authorizes the client
+                password:
+                  type: string
+                  description: The password of the resource owner
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token200Response'
+        '400':
+          description: 'Invalid input.<br> Possible reasons:<br> 1. invalid_request - Missing grant type.<br> 2. invalid_type - Implicit grant type not supported from token endpoint.<br> 3. unsupported_grant_type - Unsupported grant type: type<br> 4. invalid_grant - A redirect_uri must be supplied.<br> 5. invalid_grant - Invalid redirect: redirectUri does not match one of the registered values: <urisInLdap><br> 6. invalid_request - An authorization code must be supplied.<br> 7. invalid_grant - Invalid refresh token<br> 8. invalid_grant - Invalid authorization code: grant code<br> 9. invalid_grant - A client must have at least one authorized grant type.<br> 10. invalid_grant - A redirect_uri can only be used by implicit or authorization_code grant types.<br> 11.invalid_grant - A redirectUri must be either supplied or preconfigured in the ClientDetails<br> 12.invalid_grant - Redirect URI mismatch.<br>'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token400Response'
+        '401':
+          description: 'Invalid input.<br> Possible reasons:<br> 1. invalid_client - Given client ID does not match authenticated client.<br> 2. invalid_token - Token has expired<br> 2. invalid_token - Invalid token (token not found)<br> 3. invalid_token - Client not valid: client<br> 4. invalid_token - Encoded token is not a refresh token<br> 5. invalid_token - Invalid refresh token (expired): refresh token<br>'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token401Response'
+  /authorization-facade/oauth2/authorize:
+    get:
+      tags:
+        - Authorization Endpoint
+      summary: ''
+      description: Request the authorization grant. This endpoint is accessed through the browser and starts the authorization flow.
+      operationId: authorizeUsingGET_7
+      parameters:
+        - name: response_type
+          in: query
+          description: Input must be 'code' (Without quotes)
+          required: true
+          schema:
+            type: string
+            enum:
+              - code
+        - name: client_id
+          in: query
+          description: ID of the Client
+          required: true
+          schema:
+            type: string
+        - name: redirect_uri
+          in: query
+          description: URL to be redirected to
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: 'Optional. Protection against CSRF. See: https://tools.ietf.org/html/rfc6749#section-10.12'
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth200Response'
+        '400':
+          description: 'Invalid input<br> Possible reasons:<br> 1. invalid_request - Possible CSRF detected - state parameter was present but no state could be found<br> 2. invalid_request - A redirect_uri must be supplied<br> 3. invalid_grant - Redirect URI mismatch<br> 4. invalid_grant - A redirectUri must be either supplied or preconfigured in the ClientDetails<br> 5. invalid_grant - Invalid redirect: <redirectUri> does not match one of the registered values: urisInLdap'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth400Response'
+components:
+  schemas:
+    Token200Response:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: The access token. Expiration time of 1 hour
+        expires_in:
+          type: string
+          description: Expiration time of the access token in seconds
+        realm:
+          type: string
+          description: Realm should be set as '/'. Optional. Can also be omitted completely
+        refresh_token:
+          type: string
+          description: The refresh token. Used to renew the access token
+        scope:
+          type: string
+          description: full
+        token_type:
+          type: string
+          description: The token type 'Bearer' is returned
+    Token400Response:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error name / code
+        error_description:
+          type: string
+          description: Error description
+    Token401Response:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error name / code
+        error_description:
+          type: string
+          description: Error description
+    Auth200Response:
+      type: object
+      properties:
+        message:
+          type: string
+          description: OK response or potential messages / warnings
+        summary:
+          type: string
+          description: Confirmation or description of a message / warning
+    Auth400Response:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error name / code
+        error_description:
+          type: string
+          description: Error description

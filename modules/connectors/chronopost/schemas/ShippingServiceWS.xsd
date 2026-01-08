@@ -1,0 +1,1542 @@
+<xs:schema xmlns:tns="http://cxf.shipping.soap.chronopost.fr/" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://cxf.shipping.soap.chronopost.fr/">
+<xs:complexType name="resultGetReservedSkybillValue">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="skybill" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultReservationExpeditionValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="codeDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="codeService" type="xs:string"/>
+<xs:element minOccurs="0" name="DSort" type="xs:string"/>
+<xs:element minOccurs="0" name="destinationDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="ESDFullNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="ESDNumber" type="xs:string"/>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostCodeBarre" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostNumeroColis" type="xs:string"/>
+<xs:element minOccurs="0" name="groupingPriorityLabel" type="xs:string"/>
+<xs:element minOccurs="0" name="OSort" type="xs:string"/>
+<xs:element minOccurs="0" name="pickupDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceMark" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceName" type="xs:string"/>
+<xs:element minOccurs="0" name="signaletiqueProduit" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="esdValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="closingDateTime" type="xs:dateTime"/>
+<xs:element name="height" type="xs:float"/>
+<xs:element name="length" type="xs:float"/>
+<xs:element minOccurs="0" name="retrievalDateTime" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="shipperBuildingFloor" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCarriesCode" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperServiceDirection" type="xs:string"/>
+<xs:element minOccurs="0" name="specificInstructions" type="xs:string"/>
+<xs:element name="width" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="headerValue">
+<xs:sequence>
+<xs:element name="accountNumber" type="xs:int"/>
+<xs:element minOccurs="0" name="idEmit" type="xs:string"/>
+<xs:element minOccurs="0" name="identWebPro" type="xs:string"/>
+<xs:element name="subAccount" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="shipperValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="shipperAdress1" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperAdress2" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCity" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCivility" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperContactName" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCountryName" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperEmail" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperMobilePhone" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperName" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperName2" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperPhone" type="xs:string"/>
+<xs:element name="shipperPreAlert" type="xs:int"/>
+<xs:element minOccurs="0" name="shipperZipCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="customerValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="customerAdress1" type="xs:string"/>
+<xs:element minOccurs="0" name="customerAdress2" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCity" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCivility" type="xs:string"/>
+<xs:element minOccurs="0" name="customerContactName" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCountryName" type="xs:string"/>
+<xs:element minOccurs="0" name="customerEmail" type="xs:string"/>
+<xs:element minOccurs="0" name="customerMobilePhone" type="xs:string"/>
+<xs:element minOccurs="0" name="customerName" type="xs:string"/>
+<xs:element minOccurs="0" name="customerName2" type="xs:string"/>
+<xs:element minOccurs="0" name="customerPhone" type="xs:string"/>
+<xs:element name="customerPreAlert" type="xs:int"/>
+<xs:element minOccurs="0" name="customerZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="printAsSender" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="recipientValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="recipientAdress1" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientAdress2" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCity" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientContactName" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCountryName" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientEmail" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientMobilePhone" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientName" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientName2" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientPhone" type="xs:string"/>
+<xs:element name="recipientPreAlert" type="xs:int"/>
+<xs:element minOccurs="0" name="recipientZipCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="refValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="customerSkybillNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="PCardTransactionNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientRef" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperRef" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="skybillValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="bulkNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="codCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="codValue" type="xs:float"/>
+<xs:element minOccurs="0" name="content1" type="xs:string"/>
+<xs:element minOccurs="0" name="content2" type="xs:string"/>
+<xs:element minOccurs="0" name="content3" type="xs:string"/>
+<xs:element minOccurs="0" name="content4" type="xs:string"/>
+<xs:element minOccurs="0" name="content5" type="xs:string"/>
+<xs:element minOccurs="0" name="customsCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="customsValue" type="xs:float"/>
+<xs:element minOccurs="0" name="evtCode" type="xs:string"/>
+<xs:element minOccurs="0" name="insuredCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="insuredValue" type="xs:float"/>
+<xs:element minOccurs="0" name="latitude" type="xs:string"/>
+<xs:element minOccurs="0" name="longitude" type="xs:string"/>
+<xs:element minOccurs="0" name="masterSkybillNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="objectType" type="xs:string"/>
+<xs:element minOccurs="0" name="portCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="portValue" type="xs:float"/>
+<xs:element minOccurs="0" name="productCode" type="xs:string"/>
+<xs:element minOccurs="0" name="qualite" type="xs:string"/>
+<xs:element minOccurs="0" name="service" type="xs:string"/>
+<xs:element minOccurs="0" name="shipDate" type="xs:dateTime"/>
+<xs:element name="shipHour" type="xs:int"/>
+<xs:element minOccurs="0" name="skybillRank" type="xs:string"/>
+<xs:element minOccurs="0" name="source" type="xs:string"/>
+<xs:element minOccurs="0" name="weight" type="xs:float"/>
+<xs:element minOccurs="0" name="weightUnit" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="skybillParamsValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="duplicata" type="xs:string"/>
+<xs:element minOccurs="0" name="mode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="scheduledValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="appointmentValue" type="tns:appointmentValue"/>
+<xs:element minOccurs="0" name="expirationDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="sellByDate" type="xs:dateTime"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="appointmentValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="timeSlotEndDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="timeSlotStartDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="timeSlotTariffLevel" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultExpeditionValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="ESDFullNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="ESDNumber" type="xs:string"/>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="pickupDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="skybill" type="xs:base64Binary"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="esdWithRefClientValue">
+<xs:complexContent>
+<xs:extension base="tns:esdValue">
+<xs:sequence>
+<xs:element name="ltAImprimerParChronopost" type="xs:boolean"/>
+<xs:element name="nombreDePassageMaximum" type="xs:int"/>
+<xs:element minOccurs="0" name="refEsdClient" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="esdWithRefClientValueV2">
+<xs:complexContent>
+<xs:extension base="tns:esdWithRefClientValue">
+<xs:sequence>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="parcelsNumber" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="esdValue3">
+<xs:complexContent>
+<xs:extension base="tns:esdWithRefClientValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="codeDepotColReq" type="xs:string"/>
+<xs:element minOccurs="0" name="numColReq" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="headerValueV2">
+<xs:complexContent>
+<xs:extension base="tns:headerValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="iv4OrderId" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="shipperValueV2">
+<xs:complexContent>
+<xs:extension base="tns:shipperValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="shipperType" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="recipientValueV2">
+<xs:complexContent>
+<xs:extension base="tns:recipientValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="recipientType" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="refValueV2">
+<xs:complexContent>
+<xs:extension base="tns:refValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="idRelais" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillWithDimensionsValue">
+<xs:complexContent>
+<xs:extension base="tns:skybillValue">
+<xs:sequence>
+<xs:element name="height" type="xs:float"/>
+<xs:element name="length" type="xs:float"/>
+<xs:element name="width" type="xs:float"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillWithDimensionsValueV2">
+<xs:complexContent>
+<xs:extension base="tns:skybillWithDimensionsValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="as" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillWithDimensionsValueV3">
+<xs:complexContent>
+<xs:extension base="tns:skybillWithDimensionsValueV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="subAccount" type="xs:string"/>
+<xs:element minOccurs="0" name="toTheOrderOf" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillWithDimensionsValueV4">
+<xs:complexContent>
+<xs:extension base="tns:skybillWithDimensionsValueV3">
+<xs:sequence>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillWithDimensionsValueV5">
+<xs:complexContent>
+<xs:extension base="tns:skybillWithDimensionsValueV4">
+<xs:sequence>
+<xs:element minOccurs="0" name="carrier" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillBackNumber" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillWithDimensionsValueV6">
+<xs:complexContent>
+<xs:extension base="tns:skybillWithDimensionsValueV5">
+<xs:sequence>
+<xs:element minOccurs="0" name="alternateProductCode" type="xs:string"/>
+<xs:element minOccurs="0" name="labelNumber" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillParamsValueV2">
+<xs:complexContent>
+<xs:extension base="tns:skybillParamsValue">
+<xs:sequence>
+<xs:element name="withReservation" type="xs:int"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="recipientLocalValue">
+<xs:complexContent>
+<xs:extension base="tns:recipientValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="identityCardNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="province" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="recipientLocalValueV2">
+<xs:complexContent>
+<xs:extension base="tns:recipientLocalValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="recipientType" type="xs:string"/>
+<xs:element minOccurs="0" name="thirdParty" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="customsValue">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="articlesValue" nillable="true" type="tns:articleValue"/>
+<xs:element minOccurs="0" name="bagNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="clearanceCleared" type="xs:string"/>
+<xs:element minOccurs="0" name="currency" type="xs:string"/>
+<xs:element minOccurs="0" name="description" type="xs:string"/>
+<xs:element minOccurs="0" name="descriptionInLanguage" type="xs:string"/>
+<xs:element minOccurs="0" name="eori" type="xs:string"/>
+<xs:element minOccurs="0" name="incoterm" type="xs:string"/>
+<xs:element minOccurs="0" name="language" type="xs:string"/>
+<xs:element minOccurs="0" name="numberOfItems" type="xs:int"/>
+<xs:element minOccurs="0" name="value" type="xs:float"/>
+<xs:element minOccurs="0" name="vatNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="articleValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="content" type="xs:string"/>
+<xs:element minOccurs="0" name="contentInLanguage" type="xs:string"/>
+<xs:element minOccurs="0" name="grossWeight" type="xs:float"/>
+<xs:element minOccurs="0" name="hscode" type="xs:string"/>
+<xs:element minOccurs="0" name="netWeight" type="xs:float"/>
+<xs:element minOccurs="0" name="origin" type="xs:string"/>
+<xs:element minOccurs="0" name="position" type="xs:int"/>
+<xs:element minOccurs="0" name="quantity" type="xs:int"/>
+<xs:element minOccurs="0" name="regime" type="xs:string"/>
+<xs:element minOccurs="0" name="value" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultShippingValue">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultMultiParcelExpeditionValue">
+<xs:complexContent>
+<xs:extension base="tns:resultShippingValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="ESDFullNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="ESDNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="pickupDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="resultMultiParcelValue" nillable="true" type="tns:resultMultiParcelValue"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="resultMultiParcelValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="asCode" type="xs:string"/>
+<xs:element minOccurs="0" name="codeDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="codeService" type="xs:string"/>
+<xs:element minOccurs="0" name="destinationDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostCodeBarre" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostNumeroColis" type="xs:string"/>
+<xs:element minOccurs="0" name="groupingPriorityLabel" type="xs:string"/>
+<xs:element minOccurs="0" name="pdfEtiquette" type="xs:base64Binary"/>
+<xs:element minOccurs="0" name="serviceMark" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceName" type="xs:string"/>
+<xs:element minOccurs="0" name="signaletiqueProduit" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="dSort" type="xs:string"/>
+<xs:element minOccurs="0" name="oSort" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultExpeditionValueV3">
+<xs:complexContent>
+<xs:extension base="tns:resultExpeditionValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="codeDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="codeService" type="xs:string"/>
+<xs:element minOccurs="0" name="destinationDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostCodeBarre" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostNumeroColis" type="xs:string"/>
+<xs:element minOccurs="0" name="groupingPriorityLabel" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceMark" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceName" type="xs:string"/>
+<xs:element minOccurs="0" name="signaletiqueProduit" type="xs:string"/>
+<xs:element minOccurs="0" name="dSort" type="xs:string"/>
+<xs:element minOccurs="0" name="oSort" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="resultMonoParcelExpeditionValue">
+<xs:complexContent>
+<xs:extension base="tns:resultExpeditionValueV3">
+<xs:sequence>
+<xs:element minOccurs="0" name="pdfEtiquette" type="xs:base64Binary"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="resultGetRouting">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="geopostResult" type="tns:geopostResult"/>
+<xs:element minOccurs="0" name="posteComptable" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="geopostResult">
+<xs:sequence>
+<xs:element minOccurs="0" name="barcodeId" type="xs:string"/>
+<xs:element minOccurs="0" name="barcodePostcode" type="xs:string"/>
+<xs:element minOccurs="0" name="buAlphaString" type="xs:string"/>
+<xs:element minOccurs="0" name="buCode" type="xs:string"/>
+<xs:element minOccurs="0" name="CSort" type="xs:string"/>
+<xs:element minOccurs="0" name="DCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="DDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="DDepotCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="DDepotStr" type="xs:string"/>
+<xs:element minOccurs="0" name="DSort" type="xs:string"/>
+<xs:element minOccurs="0" name="groupingPriority" type="xs:string"/>
+<xs:element minOccurs="0" name="networkCode" type="xs:string"/>
+<xs:element minOccurs="0" name="OSort" type="xs:string"/>
+<xs:element minOccurs="0" name="partnerCode" type="xs:string"/>
+<xs:element minOccurs="0" name="SSort" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceMark" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceText" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="skybillValueV2">
+<xs:complexContent>
+<xs:extension base="tns:skybillValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="as" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="resultFaisabiliteESD">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="donneurDOrdre">
+<xs:sequence>
+<xs:element minOccurs="0" name="autreTelephone" type="xs:string"/>
+<xs:element minOccurs="0" name="batiment" type="xs:string"/>
+<xs:element minOccurs="0" name="codeCivilite" type="xs:string"/>
+<xs:element minOccurs="0" name="codeNaf" type="xs:string"/>
+<xs:element minOccurs="0" name="codePays" type="xs:string"/>
+<xs:element minOccurs="0" name="codePostal" type="xs:string"/>
+<xs:element minOccurs="0" name="EMail" type="xs:string"/>
+<xs:element minOccurs="0" name="fax" type="xs:string"/>
+<xs:element minOccurs="0" name="lieuDit" type="xs:string"/>
+<xs:element minOccurs="0" name="nom" type="xs:string"/>
+<xs:element minOccurs="0" name="prenom" type="xs:string"/>
+<xs:element minOccurs="0" name="raisonSociale" type="xs:string"/>
+<xs:element minOccurs="0" name="service" type="xs:string"/>
+<xs:element minOccurs="0" name="telephone" type="xs:string"/>
+<xs:element minOccurs="0" name="ville" type="xs:string"/>
+<xs:element minOccurs="0" name="voie" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="adresseEnlevement">
+<xs:sequence>
+<xs:element minOccurs="0" name="codeCivilite" type="xs:string"/>
+<xs:element minOccurs="0" name="codePays" type="xs:string"/>
+<xs:element minOccurs="0" name="codePorte" type="xs:string"/>
+<xs:element minOccurs="0" name="codePostal" type="xs:string"/>
+<xs:element minOccurs="0" name="lieuDit" type="xs:string"/>
+<xs:element minOccurs="0" name="nom" type="xs:string"/>
+<xs:element minOccurs="0" name="nomPersonneARencontrer" type="xs:string"/>
+<xs:element minOccurs="0" name="numeroVoie" type="xs:string"/>
+<xs:element name="porteAPorte" type="xs:boolean"/>
+<xs:element minOccurs="0" name="prenom" type="xs:string"/>
+<xs:element minOccurs="0" name="raisonSociale" type="xs:string"/>
+<xs:element minOccurs="0" name="residenceBatimentEtage" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceDirection" type="xs:string"/>
+<xs:element minOccurs="0" name="telephone" type="xs:string"/>
+<xs:element minOccurs="0" name="ville" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="adresseEnlevementV2">
+<xs:complexContent>
+<xs:extension base="tns:adresseEnlevement">
+<xs:sequence>
+<xs:element minOccurs="0" name="email" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="adresseEnlevementV3">
+<xs:complexContent>
+<xs:extension base="tns:adresseEnlevementV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="refExpediteur" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="particularitesEsd">
+<xs:sequence>
+<xs:element name="etudeDeFaisabilite" type="xs:boolean"/>
+<xs:element name="grosVolume" type="xs:boolean"/>
+<xs:element name="hauteur" type="xs:int"/>
+<xs:element minOccurs="0" name="instructionsParticulieres" type="xs:string"/>
+<xs:element name="largeur" type="xs:int"/>
+<xs:element minOccurs="0" name="listeColisAnnonces" type="xs:string"/>
+<xs:element name="longueur" type="xs:int"/>
+<xs:element name="nombreEnvois" type="xs:int"/>
+<xs:element name="poids" type="xs:float"/>
+<xs:element minOccurs="0" name="volume" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="options">
+<xs:sequence>
+<xs:element name="aviserSurRealisation" type="xs:boolean"/>
+<xs:element name="chezUnTiers" type="xs:boolean"/>
+<xs:element name="envoyerLtParMail" type="xs:boolean"/>
+<xs:element name="LTaImprimerParChronopost" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultEnlevementNational">
+<xs:sequence>
+<xs:element name="codeErreur" type="xs:int"/>
+<xs:element minOccurs="0" name="infoEnlevement" type="tns:infoEnlevement"/>
+<xs:element minOccurs="0" name="libelleErreur" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="infoEnlevement">
+<xs:sequence>
+<xs:element minOccurs="0" name="ancienNumeroESD" type="xs:string"/>
+<xs:element minOccurs="0" name="codeBu" type="xs:string"/>
+<xs:element minOccurs="0" name="codeDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="codePostal" type="xs:string"/>
+<xs:element minOccurs="0" name="dateCreation" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="datePassage" type="xs:dateTime"/>
+<xs:element name="idEnlevement" type="xs:int"/>
+<xs:element minOccurs="0" name="numeroUniqueESD" type="xs:string"/>
+<xs:element minOccurs="0" name="refDestinataire" type="xs:string"/>
+<xs:element minOccurs="0" name="refEsdClient" type="xs:string"/>
+<xs:element minOccurs="0" name="ville" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultGetReservedSkybillWithTypeValue">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="skybill" type="xs:string"/>
+<xs:element minOccurs="0" name="type" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="destinatairesDpd">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="destinataireDpd" nillable="true" type="tns:destinataireDpd"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="destinataireDpd">
+<xs:sequence>
+<xs:element minOccurs="0" name="adresseDestinataire" type="tns:adresseDestinataire"/>
+<xs:element minOccurs="0" name="infoClient" type="tns:infoClient"/>
+<xs:element minOccurs="0" name="particularites" type="tns:particularites"/>
+<xs:element minOccurs="0" name="particularitesColisDpd" type="tns:particularitesColisDpd"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="adresseDestinataire">
+<xs:sequence>
+<xs:element minOccurs="0" name="adresse" type="xs:string"/>
+<xs:element minOccurs="0" name="adresseSuite" type="xs:string"/>
+<xs:element minOccurs="0" name="codePays" type="xs:string"/>
+<xs:element minOccurs="0" name="codePostal" type="xs:string"/>
+<xs:element minOccurs="0" name="digicode" type="xs:string"/>
+<xs:element minOccurs="0" name="etage" type="xs:string"/>
+<xs:element minOccurs="0" name="mail" type="xs:string"/>
+<xs:element minOccurs="0" name="nom" type="xs:string"/>
+<xs:element minOccurs="0" name="poids" type="xs:float"/>
+<xs:element minOccurs="0" name="prenom" type="xs:string"/>
+<xs:element minOccurs="0" name="raisonSociale" type="xs:string"/>
+<xs:element minOccurs="0" name="referenceDestinataire" type="xs:string"/>
+<xs:element minOccurs="0" name="telephone" type="xs:string"/>
+<xs:element minOccurs="0" name="ville" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="infoClient">
+<xs:sequence>
+<xs:element minOccurs="0" name="contenu" type="xs:string"/>
+<xs:element minOccurs="0" name="devise" type="xs:string"/>
+<xs:element minOccurs="0" name="montant" type="xs:double"/>
+<xs:element minOccurs="0" name="refEsdClient" type="xs:string"/>
+<xs:element minOccurs="0" name="service" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="particularites">
+<xs:sequence>
+<xs:element name="hauteur" type="xs:float"/>
+<xs:element minOccurs="0" name="instructionsParticulieres" type="xs:string"/>
+<xs:element name="largeur" type="xs:float"/>
+<xs:element name="longueur" type="xs:float"/>
+<xs:element name="nombreEnvois" type="xs:int"/>
+<xs:element name="poids" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="particularitesColisDpd">
+<xs:sequence>
+<xs:element minOccurs="0" name="infoDouanieres" type="tns:infoDouanieres"/>
+<xs:element name="valeurAssuree" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="infoDouanieres">
+<xs:sequence>
+<xs:element minOccurs="0" name="devise" type="xs:string"/>
+<xs:element name="montant" type="xs:float"/>
+<xs:element minOccurs="0" name="type" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultPickupOrCollectionRequest">
+<xs:sequence>
+<xs:element name="codeErreur" type="xs:int"/>
+<xs:element name="collectionRequest" type="xs:boolean"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="infoEnlevements" nillable="true" type="tns:infoEnlevement"/>
+<xs:element minOccurs="0" name="libelleErreur" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultReservationMultiParcelExpeditionValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="ESDFullNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="ESDNumber" type="xs:string"/>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="pickupDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="resultParcelValue" nillable="true" type="tns:resultParcelValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultParcelValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="codeDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="codeService" type="xs:string"/>
+<xs:element minOccurs="0" name="DSort" type="xs:string"/>
+<xs:element minOccurs="0" name="destinationDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostCodeBarre" type="xs:string"/>
+<xs:element minOccurs="0" name="geoPostNumeroColis" type="xs:string"/>
+<xs:element minOccurs="0" name="groupingPriorityLabel" type="xs:string"/>
+<xs:element minOccurs="0" name="OSort" type="xs:string"/>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceMark" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceName" type="xs:string"/>
+<xs:element minOccurs="0" name="signaletiqueProduit" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="esdResultContraintesAgenceValue">
+<xs:sequence>
+<xs:element name="codeErreur" type="xs:int"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="esdContraintesAgence" nillable="true" type="tns:esdContraintesAgence"/>
+<xs:element minOccurs="0" name="libelleErreur" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="esdContraintesAgence">
+<xs:sequence>
+<xs:element minOccurs="0" name="battement" type="xs:int"/>
+<xs:element minOccurs="0" name="battementEnHeure" type="xs:string"/>
+<xs:element minOccurs="0" name="codeAgence" type="xs:string"/>
+<xs:element minOccurs="0" name="codePays" type="xs:string"/>
+<xs:element minOccurs="0" name="codePostal" type="xs:string"/>
+<xs:element minOccurs="0" name="hla" type="xs:string"/>
+<xs:element minOccurs="0" name="hlp" type="xs:string"/>
+<xs:element minOccurs="0" name="hppt" type="xs:string"/>
+<xs:element minOccurs="0" name="nomAgence" type="xs:string"/>
+<xs:element minOccurs="0" name="raisonNonActivite" type="xs:string"/>
+<xs:element minOccurs="0" name="ville" type="xs:string"/>
+<xs:element name="zoneA" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultReservationMultiParcelExpeditionValueV2">
+<xs:complexContent>
+<xs:extension base="tns:resultReservationMultiParcelExpeditionValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="asCode" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="resultAnnulerEnlevement">
+<xs:sequence>
+<xs:element name="codeErreur" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element name="statut">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="key" type="xs:anyType"/>
+<xs:element minOccurs="0" name="value" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultReservationExpeditionValueV2">
+<xs:complexContent>
+<xs:extension base="tns:resultReservationExpeditionValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="asCode" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="skybillValueBase">
+<xs:sequence>
+<xs:element minOccurs="0" name="as" type="xs:string"/>
+<xs:element minOccurs="0" name="objectType" type="xs:string"/>
+<xs:element minOccurs="0" name="productCode" type="xs:string"/>
+<xs:element minOccurs="0" name="service" type="xs:string"/>
+<xs:element minOccurs="0" name="shipDate" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="weight" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="resultShippingInfo">
+<xs:sequence>
+<xs:element minOccurs="0" name="error" type="tns:error"/>
+<xs:element minOccurs="0" name="shippingInfo" type="tns:shippingInfo"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="error">
+<xs:sequence>
+<xs:element minOccurs="0" name="detail" type="tns:detail"/>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="detail">
+<xs:sequence>
+<xs:element name="errorCode" type="xs:int"/>
+<xs:element minOccurs="0" name="errorMessage" type="xs:string"/>
+<xs:element minOccurs="0" name="mode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="shippingInfo">
+<xs:sequence>
+<xs:element minOccurs="0" name="asCode" type="xs:string"/>
+<xs:element minOccurs="0" name="codeService" type="xs:string"/>
+<xs:element minOccurs="0" name="destinationDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="groupingPriorityLabel" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceMark" type="xs:string"/>
+<xs:element minOccurs="0" name="serviceName" type="xs:string"/>
+<xs:element minOccurs="0" name="signaletiqueProduit" type="xs:string"/>
+<xs:element minOccurs="0" name="dSort" type="xs:string"/>
+<xs:element minOccurs="0" name="oSort" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybill" type="tns:getReservedSkybill"/>
+<xs:complexType name="getReservedSkybill">
+<xs:sequence>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillResponse" type="tns:getReservedSkybillResponse"/>
+<xs:complexType name="getReservedSkybillResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultGetReservedSkybillValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservationAndESDWithRefClientPC" type="tns:shippingWithReservationAndESDWithRefClientPC"/>
+<xs:complexType name="shippingWithReservationAndESDWithRefClientPC">
+<xs:sequence>
+<xs:element minOccurs="0" name="refEsdClient" type="xs:string"/>
+<xs:element minOccurs="0" name="retrievalDateTime" type="xs:string"/>
+<xs:element minOccurs="0" name="closingDateTime" type="xs:string"/>
+<xs:element minOccurs="0" name="specificInstructions" type="xs:string"/>
+<xs:element minOccurs="0" name="height" type="xs:string"/>
+<xs:element minOccurs="0" name="width" type="xs:string"/>
+<xs:element minOccurs="0" name="length" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCarriesCode" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperBuildingFloor" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperServiceDirection" type="xs:string"/>
+<xs:element minOccurs="0" name="nombreDePassageMaximum" type="xs:string"/>
+<xs:element minOccurs="0" name="ltAImprimerParChronopost" type="xs:string"/>
+<xs:element minOccurs="0" name="header_idEmit" type="xs:string"/>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="subAccount" type="xs:string"/>
+<xs:element minOccurs="0" name="header_identWebPro" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCivility" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperName" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperName2" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperAdress1" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperAdress2" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCity" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperCountryName" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperContactName" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperEmail" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperPhone" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperMobilePhone" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCivility" type="xs:string"/>
+<xs:element minOccurs="0" name="customerName" type="xs:string"/>
+<xs:element minOccurs="0" name="customerName2" type="xs:string"/>
+<xs:element minOccurs="0" name="customerAdress1" type="xs:string"/>
+<xs:element minOccurs="0" name="customerAdress2" type="xs:string"/>
+<xs:element minOccurs="0" name="customerZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCity" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="customerCountryName" type="xs:string"/>
+<xs:element minOccurs="0" name="customerContactName" type="xs:string"/>
+<xs:element minOccurs="0" name="customerEmail" type="xs:string"/>
+<xs:element minOccurs="0" name="customerPhone" type="xs:string"/>
+<xs:element minOccurs="0" name="customerMobilePhone" type="xs:string"/>
+<xs:element minOccurs="0" name="customerPreAlert" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCivility" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientName" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientName2" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientAdress1" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientAdress2" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientZipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCity" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCountry" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientCountryName" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientContactName" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientEmail" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientPhone" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientMobilePhone" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientPreAlert" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperRef" type="xs:string"/>
+<xs:element minOccurs="0" name="recipientRef" type="xs:string"/>
+<xs:element minOccurs="0" name="customerSkybillNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="evtCode" type="xs:string"/>
+<xs:element minOccurs="0" name="productCode" type="xs:string"/>
+<xs:element minOccurs="0" name="shipDate" type="xs:string"/>
+<xs:element minOccurs="0" name="shipHour" type="xs:string"/>
+<xs:element minOccurs="0" name="weight" type="xs:string"/>
+<xs:element minOccurs="0" name="weightUnit" type="xs:string"/>
+<xs:element minOccurs="0" name="insuredValue" type="xs:string"/>
+<xs:element minOccurs="0" name="insuredCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="codValue" type="xs:string"/>
+<xs:element minOccurs="0" name="codCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="customsValue" type="xs:string"/>
+<xs:element minOccurs="0" name="customsCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="service" type="xs:string"/>
+<xs:element minOccurs="0" name="as" type="xs:string"/>
+<xs:element minOccurs="0" name="objectType" type="xs:string"/>
+<xs:element minOccurs="0" name="content1" type="xs:string"/>
+<xs:element minOccurs="0" name="content2" type="xs:string"/>
+<xs:element minOccurs="0" name="content3" type="xs:string"/>
+<xs:element minOccurs="0" name="content4" type="xs:string"/>
+<xs:element minOccurs="0" name="content5" type="xs:string"/>
+<xs:element minOccurs="0" name="portValue" type="xs:string"/>
+<xs:element minOccurs="0" name="portCurrency" type="xs:string"/>
+<xs:element minOccurs="0" name="skybillRank" type="xs:string"/>
+<xs:element minOccurs="0" name="bulkNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="mode" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element minOccurs="0" name="timeSlotStartDate" type="xs:string"/>
+<xs:element minOccurs="0" name="timeSlotEndDate" type="xs:string"/>
+<xs:element minOccurs="0" name="timeSlotTariffLevel" type="xs:string"/>
+<xs:element minOccurs="0" name="expirationDate" type="xs:string"/>
+<xs:element minOccurs="0" name="sellByDate" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservationAndESDWithRefClientPCResponse" type="tns:shippingWithReservationAndESDWithRefClientPCResponse"/>
+<xs:complexType name="shippingWithReservationAndESDWithRefClientPCResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV3" type="tns:shippingV3"/>
+<xs:complexType name="shippingV3">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV3Response" type="tns:shippingV3Response"/>
+<xs:complexType name="shippingV3Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV2" type="tns:shippingV2"/>
+<xs:complexType name="shippingV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV2Response" type="tns:shippingV2Response"/>
+<xs:complexType name="shippingV2Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithESDOnlyV2" type="tns:shippingWithESDOnlyV2"/>
+<xs:complexType name="shippingWithESDOnlyV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdWithRefClientValueV2"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithESDOnlyV2Response" type="tns:shippingWithESDOnlyV2Response"/>
+<xs:complexType name="shippingWithESDOnlyV2Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV5" type="tns:shippingMultiParcelV5"/>
+<xs:complexType name="shippingMultiParcelV5">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="shipperValue" type="tns:shipperValueV2"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV6"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValueV2"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientLocalValue" type="tns:recipientLocalValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="customsValue" type="tns:customsValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV5Response" type="tns:shippingMultiParcelV5Response"/>
+<xs:complexType name="shippingMultiParcelV5Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultMultiParcelExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV7" type="tns:shippingV7"/>
+<xs:complexType name="shippingV7">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV3"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValueV2"/>
+<xs:element minOccurs="0" name="customsValue" type="tns:customsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV7Response" type="tns:shippingV7Response"/>
+<xs:complexType name="shippingV7Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultMonoParcelExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getRouting" type="tns:getRouting"/>
+<xs:complexType name="getRouting">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="shipperDepot" type="xs:string"/>
+<xs:element minOccurs="0" name="countryCode" type="xs:string"/>
+<xs:element minOccurs="0" name="zipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="socode" type="xs:string"/>
+<xs:element minOccurs="0" name="ascode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getRoutingResponse" type="tns:getRoutingResponse"/>
+<xs:complexType name="getRoutingResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultGetRouting"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV4" type="tns:shippingMultiParcelV4"/>
+<xs:complexType name="shippingMultiParcelV4">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="shipperValue" type="tns:shipperValueV2"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV6"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValueV2"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientLocalValue" type="tns:recipientLocalValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="customsValue" type="tns:customsValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV4Response" type="tns:shippingMultiParcelV4Response"/>
+<xs:complexType name="shippingMultiParcelV4Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultMultiParcelExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV6" type="tns:shippingV6"/>
+<xs:complexType name="shippingV6">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValueV2"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV6Response" type="tns:shippingV6Response"/>
+<xs:complexType name="shippingV6Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultExpeditionValueV3"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV3" type="tns:shippingMultiParcelV3"/>
+<xs:complexType name="shippingMultiParcelV3">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="shipperValue" type="tns:shipperValueV2"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV5"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValueV2"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientLocalValue" type="tns:recipientLocalValueV2"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="customsValue" type="tns:customsValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV3Response" type="tns:shippingMultiParcelV3Response"/>
+<xs:complexType name="shippingMultiParcelV3Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultMultiParcelExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV5" type="tns:shippingV5"/>
+<xs:complexType name="shippingV5">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValueV2"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV5Response" type="tns:shippingV5Response"/>
+<xs:complexType name="shippingV5Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV2" type="tns:shippingMultiParcelV2"/>
+<xs:complexType name="shippingMultiParcelV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="shipperValue" type="tns:shipperValueV2"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV4"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValueV2"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientLocalValue" type="tns:recipientLocalValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="customsValue" type="tns:customsValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelV2Response" type="tns:shippingMultiParcelV2Response"/>
+<xs:complexType name="shippingMultiParcelV2Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultMultiParcelExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV4" type="tns:shippingV4"/>
+<xs:complexType name="shippingV4">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValueV2"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingV4Response" type="tns:shippingV4Response"/>
+<xs:complexType name="shippingV4Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="faisabiliteESD" type="tns:faisabiliteESD"/>
+<xs:complexType name="faisabiliteESD">
+<xs:sequence>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="retrievalDateTime" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="closingDateTime" type="xs:dateTime"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="faisabiliteESDResponse" type="tns:faisabiliteESDResponse"/>
+<xs:complexType name="faisabiliteESDResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultFaisabiliteESD"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="creerEnlevementNational" type="tns:creerEnlevementNational"/>
+<xs:complexType name="creerEnlevementNational">
+<xs:sequence>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="datePassage" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="datePassageFermeture" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="donneurDOrdre" type="tns:donneurDOrdre"/>
+<xs:element minOccurs="0" name="adresseEnlevement" type="tns:adresseEnlevementV3"/>
+<xs:element minOccurs="0" name="particulartiesEsd" type="tns:particularitesEsd"/>
+<xs:element minOccurs="0" name="referenceEsdClient" type="xs:string"/>
+<xs:element minOccurs="0" name="contenu" type="xs:string"/>
+<xs:element minOccurs="0" name="options" type="tns:options"/>
+<xs:element minOccurs="0" name="locale" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="creerEnlevementNationalResponse" type="tns:creerEnlevementNationalResponse"/>
+<xs:complexType name="creerEnlevementNationalResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultEnlevementNational"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithESDOnly" type="tns:shippingWithESDOnly"/>
+<xs:complexType name="shippingWithESDOnly">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdWithRefClientValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithESDOnlyResponse" type="tns:shippingWithESDOnlyResponse"/>
+<xs:complexType name="shippingWithESDOnlyResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithTypeAndModeByReservation" type="tns:getReservedSkybillWithTypeAndModeByReservation"/>
+<xs:complexType name="getReservedSkybillWithTypeAndModeByReservation">
+<xs:sequence>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="mode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithTypeAndModeByReservationResponse" type="tns:getReservedSkybillWithTypeAndModeByReservationResponse"/>
+<xs:complexType name="getReservedSkybillWithTypeAndModeByReservationResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultGetReservedSkybillWithTypeValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="creerEnlevementEurope" type="tns:creerEnlevementEurope"/>
+<xs:complexType name="creerEnlevementEurope">
+<xs:sequence>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="datePassage" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="donneurDOrdre" type="tns:donneurDOrdre"/>
+<xs:element minOccurs="0" name="adresseEnlevement" type="tns:adresseEnlevementV3"/>
+<xs:element minOccurs="0" name="destinatairesEsd" type="tns:destinatairesDpd"/>
+<xs:element minOccurs="0" name="locale" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="creerEnlevementEuropeResponse" type="tns:creerEnlevementEuropeResponse"/>
+<xs:complexType name="creerEnlevementEuropeResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultPickupOrCollectionRequest"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelWithReservation" type="tns:shippingMultiParcelWithReservation"/>
+<xs:complexType name="shippingMultiParcelWithReservation">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdWithRefClientValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelWithReservationResponse" type="tns:shippingMultiParcelWithReservationResponse"/>
+<xs:complexType name="shippingMultiParcelWithReservationResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationMultiParcelExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="rechercherContraintesEnlevement" type="tns:rechercherContraintesEnlevement"/>
+<xs:complexType name="rechercherContraintesEnlevement">
+<xs:sequence>
+<xs:element minOccurs="0" name="country" type="xs:string"/>
+<xs:element minOccurs="0" name="zipCode" type="xs:string"/>
+<xs:element minOccurs="0" name="city" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="rechercherContraintesEnlevementResponse" type="tns:rechercherContraintesEnlevementResponse"/>
+<xs:complexType name="rechercherContraintesEnlevementResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:esdResultContraintesAgenceValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservationAndESDWithRefClient" type="tns:shippingWithReservationAndESDWithRefClient"/>
+<xs:complexType name="shippingWithReservationAndESDWithRefClient">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdWithRefClientValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservationAndESDWithRefClientResponse" type="tns:shippingWithReservationAndESDWithRefClientResponse"/>
+<xs:complexType name="shippingWithReservationAndESDWithRefClientResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcel" type="tns:shippingMultiParcel"/>
+<xs:complexType name="shippingMultiParcel">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV3"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValueV2"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelResponse" type="tns:shippingMultiParcelResponse"/>
+<xs:complexType name="shippingMultiParcelResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultMultiParcelExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithTypeAndModeAuth" type="tns:getReservedSkybillWithTypeAndModeAuth"/>
+<xs:complexType name="getReservedSkybillWithTypeAndModeAuth">
+<xs:sequence>
+<xs:element minOccurs="0" name="numberSearch" type="xs:string"/>
+<xs:element minOccurs="0" name="mode" type="xs:string"/>
+<xs:element name="accountNumber" type="xs:int"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithTypeAndModeAuthResponse" type="tns:getReservedSkybillWithTypeAndModeAuthResponse"/>
+<xs:complexType name="getReservedSkybillWithTypeAndModeAuthResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultGetReservedSkybillWithTypeValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shipping" type="tns:shipping"/>
+<xs:complexType name="shipping">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingResponse" type="tns:shippingResponse"/>
+<xs:complexType name="shippingResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithTypeAndMode" type="tns:getReservedSkybillWithTypeAndMode"/>
+<xs:complexType name="getReservedSkybillWithTypeAndMode">
+<xs:sequence>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="mode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithTypeAndModeResponse" type="tns:getReservedSkybillWithTypeAndModeResponse"/>
+<xs:complexType name="getReservedSkybillWithTypeAndModeResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultGetReservedSkybillWithTypeValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithType" type="tns:getReservedSkybillWithType"/>
+<xs:complexType name="getReservedSkybillWithType">
+<xs:sequence>
+<xs:element minOccurs="0" name="reservationNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getReservedSkybillWithTypeResponse" type="tns:getReservedSkybillWithTypeResponse"/>
+<xs:complexType name="getReservedSkybillWithTypeResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultGetReservedSkybillWithTypeValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelWithReservationV3" type="tns:shippingMultiParcelWithReservationV3"/>
+<xs:complexType name="shippingMultiParcelWithReservationV3">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue3"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV2"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelWithReservationV3Response" type="tns:shippingMultiParcelWithReservationV3Response"/>
+<xs:complexType name="shippingMultiParcelWithReservationV3Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationMultiParcelExpeditionValueV2"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="annulerEnlevements" type="tns:annulerEnlevements"/>
+<xs:complexType name="annulerEnlevements">
+<xs:sequence>
+<xs:element minOccurs="0" name="accountNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="locale" type="xs:string"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="esdNumber" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="annulerEnlevementsResponse" type="tns:annulerEnlevementsResponse"/>
+<xs:complexType name="annulerEnlevementsResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultAnnulerEnlevement"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelWithReservationV2" type="tns:shippingMultiParcelWithReservationV2"/>
+<xs:complexType name="shippingMultiParcelWithReservationV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdWithRefClientValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="skybillValue" type="tns:skybillWithDimensionsValueV2"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element name="numberOfParcel" type="xs:int"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="multiParcel" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingMultiParcelWithReservationV2Response" type="tns:shippingMultiParcelWithReservationV2Response"/>
+<xs:complexType name="shippingMultiParcelWithReservationV2Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationMultiParcelExpeditionValueV2"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservationV2" type="tns:shippingWithReservationV2"/>
+<xs:complexType name="shippingWithReservationV2">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdWithRefClientValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValueV2"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+<xs:element minOccurs="0" name="version" type="xs:string"/>
+<xs:element minOccurs="0" name="scheduledValue" type="tns:scheduledValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservationV2Response" type="tns:shippingWithReservationV2Response"/>
+<xs:complexType name="shippingWithReservationV2Response">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationExpeditionValueV2"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getShippingInformation" type="tns:getShippingInformation"/>
+<xs:complexType name="getShippingInformation">
+<xs:sequence>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="skybillValueBase" type="tns:skybillValueBase"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="getShippingInformationResponse" type="tns:getShippingInformationResponse"/>
+<xs:complexType name="getShippingInformationResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultShippingInfo"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservation" type="tns:shippingWithReservation"/>
+<xs:complexType name="shippingWithReservation">
+<xs:sequence>
+<xs:element minOccurs="0" name="esdValue" type="tns:esdValue"/>
+<xs:element minOccurs="0" name="headerValue" type="tns:headerValue"/>
+<xs:element minOccurs="0" name="shipperValue" type="tns:shipperValue"/>
+<xs:element minOccurs="0" name="customerValue" type="tns:customerValue"/>
+<xs:element minOccurs="0" name="recipientValue" type="tns:recipientValue"/>
+<xs:element minOccurs="0" name="refValue" type="tns:refValue"/>
+<xs:element minOccurs="0" name="skybillValue" type="tns:skybillValue"/>
+<xs:element minOccurs="0" name="skybillParamsValue" type="tns:skybillParamsValue"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+<xs:element minOccurs="0" name="modeRetour" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="shippingWithReservationResponse" type="tns:shippingWithReservationResponse"/>
+<xs:complexType name="shippingWithReservationResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="tns:resultReservationExpeditionValue"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

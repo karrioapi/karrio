@@ -1,11 +1,9 @@
-"""Karrio USPS rating API implementation."""
+"""Karrio USPS tracking API implementation."""
 
-# import karrio.schemas.usps.tracking_request as usps
 import karrio.schemas.usps.tracking_response as tracking
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.usps.error as error
 import karrio.providers.usps.utils as provider_utils
