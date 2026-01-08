@@ -317,22 +317,50 @@ export interface GetSystemConnectionVariables {
 // GraphQL query operation: GetRateSheets
 // ====================================================
 
-export interface GetRateSheets_rate_sheets_edges_node_services_zones {
+export interface GetRateSheets_rate_sheets_edges_node_zones {
+  id: string;
   label: string | null;
-  rate: number | null;
+  country_codes: string[] | null;
+  postal_codes: string[] | null;
+  cities: string[] | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface GetRateSheets_rate_sheets_edges_node_surcharges {
+  id: string;
+  name: string;
+  amount: number;
+  surcharge_type: string;
+  cost: number | null;
+  active: boolean;
+}
+
+export interface GetRateSheets_rate_sheets_edges_node_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
   min_weight: number | null;
   max_weight: number | null;
-  transit_days: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_services {
   id: string;
   service_name: string | null;
   service_code: string | null;
-  zones: GetRateSheets_rate_sheets_edges_node_services_zones[];
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  dimension_unit: DimensionUnitEnum | null;
+  max_weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  active: boolean | null;
+  zone_ids: string[];
+  surcharge_ids: string[];
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_carriers {
@@ -347,6 +375,9 @@ export interface GetRateSheets_rate_sheets_edges_node {
   slug: string;
   carrier_name: CarrierNameEnum;
   metadata: any | null;
+  zones: GetRateSheets_rate_sheets_edges_node_zones[] | null;
+  surcharges: GetRateSheets_rate_sheets_edges_node_surcharges[] | null;
+  service_rates: GetRateSheets_rate_sheets_edges_node_service_rates[] | null;
   services: GetRateSheets_rate_sheets_edges_node_services[];
   carriers: GetRateSheets_rate_sheets_edges_node_carriers[];
 }
@@ -384,28 +415,70 @@ export interface GetRateSheetsVariables {
 // GraphQL query operation: GetRateSheet
 // ====================================================
 
-export interface GetRateSheet_rate_sheet_services_zones {
+export interface GetRateSheet_rate_sheet_zones {
+  id: string;
   label: string | null;
-  rate: number | null;
+  country_codes: string[] | null;
+  postal_codes: string[] | null;
+  cities: string[] | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export interface GetRateSheet_rate_sheet_surcharges {
+  id: string;
+  name: string;
+  amount: number;
+  surcharge_type: string;
+  cost: number | null;
+  active: boolean;
+}
+
+export interface GetRateSheet_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
   min_weight: number | null;
   max_weight: number | null;
   transit_days: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
+  transit_time: number | null;
 }
 
 export interface GetRateSheet_rate_sheet_services {
   id: string;
+  object_type: string;
   service_name: string | null;
   service_code: string | null;
-  zones: GetRateSheet_rate_sheet_services_zones[];
+  carrier_service_code: string | null;
+  description: string | null;
+  active: boolean | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  dimension_unit: DimensionUnitEnum | null;
+  max_weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zone_ids: string[];
+  surcharge_ids: string[];
 }
 
 export interface GetRateSheet_rate_sheet_carriers {
   id: string;
   carrier_name: string;
   active: boolean;
+  carrier_id: string;
+  display_name: string;
+  capabilities: string[];
+  test_mode: boolean;
 }
 
 export interface GetRateSheet_rate_sheet {
@@ -414,6 +487,9 @@ export interface GetRateSheet_rate_sheet {
   slug: string;
   carrier_name: CarrierNameEnum;
   metadata: any | null;
+  zones: GetRateSheet_rate_sheet_zones[] | null;
+  surcharges: GetRateSheet_rate_sheet_surcharges[] | null;
+  service_rates: GetRateSheet_rate_sheet_service_rates[] | null;
   services: GetRateSheet_rate_sheet_services[];
   carriers: GetRateSheet_rate_sheet_carriers[];
 }
@@ -1234,74 +1310,6 @@ export interface DeleteRateSheetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: UpdateRateSheetZoneCell
-// ====================================================
-
-export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface UpdateRateSheetZoneCell_update_rate_sheet_zone_cell {
-  errors: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_errors[] | null;
-  rate_sheet: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell_rate_sheet | null;
-}
-
-export interface UpdateRateSheetZoneCell {
-  update_rate_sheet_zone_cell: UpdateRateSheetZoneCell_update_rate_sheet_zone_cell;
-}
-
-export interface UpdateRateSheetZoneCellVariables {
-  input: UpdateRateSheetZoneCellMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: BatchUpdateRateSheetCells
-// ====================================================
-
-export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface BatchUpdateRateSheetCells_batch_update_rate_sheet_cells {
-  errors: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_errors[] | null;
-  rate_sheet: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells_rate_sheet | null;
-}
-
-export interface BatchUpdateRateSheetCells {
-  batch_update_rate_sheet_cells: BatchUpdateRateSheetCells_batch_update_rate_sheet_cells;
-}
-
-export interface BatchUpdateRateSheetCellsVariables {
-  input: BatchUpdateRateSheetCellsMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: DeleteRateSheetService
 // ====================================================
 
@@ -1320,6 +1328,430 @@ export interface DeleteRateSheetService {
 
 export interface DeleteRateSheetServiceVariables {
   input: DeleteRateSheetServiceMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: AddSharedZone
+// ====================================================
+
+export interface AddSharedZone_add_shared_zone_rate_sheet_zones {
+  id: string;
+  label: string | null;
+  country_codes: string[] | null;
+  postal_codes: string[] | null;
+  cities: string[] | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface AddSharedZone_add_shared_zone_rate_sheet {
+  id: string;
+  zones: AddSharedZone_add_shared_zone_rate_sheet_zones[] | null;
+}
+
+export interface AddSharedZone_add_shared_zone_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface AddSharedZone_add_shared_zone {
+  rate_sheet: AddSharedZone_add_shared_zone_rate_sheet | null;
+  errors: AddSharedZone_add_shared_zone_errors[] | null;
+}
+
+export interface AddSharedZone {
+  add_shared_zone: AddSharedZone_add_shared_zone;
+}
+
+export interface AddSharedZoneVariables {
+  input: AddSharedZoneMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateSharedZone
+// ====================================================
+
+export interface UpdateSharedZone_update_shared_zone_rate_sheet_zones {
+  id: string;
+  label: string | null;
+  country_codes: string[] | null;
+  postal_codes: string[] | null;
+  cities: string[] | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface UpdateSharedZone_update_shared_zone_rate_sheet {
+  id: string;
+  zones: UpdateSharedZone_update_shared_zone_rate_sheet_zones[] | null;
+}
+
+export interface UpdateSharedZone_update_shared_zone_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateSharedZone_update_shared_zone {
+  rate_sheet: UpdateSharedZone_update_shared_zone_rate_sheet | null;
+  errors: UpdateSharedZone_update_shared_zone_errors[] | null;
+}
+
+export interface UpdateSharedZone {
+  update_shared_zone: UpdateSharedZone_update_shared_zone;
+}
+
+export interface UpdateSharedZoneVariables {
+  input: UpdateSharedZoneMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteSharedZone
+// ====================================================
+
+export interface DeleteSharedZone_delete_shared_zone_rate_sheet_zones {
+  id: string;
+  label: string | null;
+}
+
+export interface DeleteSharedZone_delete_shared_zone_rate_sheet {
+  id: string;
+  zones: DeleteSharedZone_delete_shared_zone_rate_sheet_zones[] | null;
+}
+
+export interface DeleteSharedZone_delete_shared_zone_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteSharedZone_delete_shared_zone {
+  rate_sheet: DeleteSharedZone_delete_shared_zone_rate_sheet | null;
+  errors: DeleteSharedZone_delete_shared_zone_errors[] | null;
+}
+
+export interface DeleteSharedZone {
+  delete_shared_zone: DeleteSharedZone_delete_shared_zone;
+}
+
+export interface DeleteSharedZoneVariables {
+  input: DeleteSharedZoneMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: AddSharedSurcharge
+// ====================================================
+
+export interface AddSharedSurcharge_add_shared_surcharge_rate_sheet_surcharges {
+  id: string;
+  name: string;
+  amount: number;
+  surcharge_type: string;
+  cost: number | null;
+  active: boolean;
+}
+
+export interface AddSharedSurcharge_add_shared_surcharge_rate_sheet {
+  id: string;
+  surcharges: AddSharedSurcharge_add_shared_surcharge_rate_sheet_surcharges[] | null;
+}
+
+export interface AddSharedSurcharge_add_shared_surcharge_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface AddSharedSurcharge_add_shared_surcharge {
+  rate_sheet: AddSharedSurcharge_add_shared_surcharge_rate_sheet | null;
+  errors: AddSharedSurcharge_add_shared_surcharge_errors[] | null;
+}
+
+export interface AddSharedSurcharge {
+  add_shared_surcharge: AddSharedSurcharge_add_shared_surcharge;
+}
+
+export interface AddSharedSurchargeVariables {
+  input: AddSharedSurchargeMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateSharedSurcharge
+// ====================================================
+
+export interface UpdateSharedSurcharge_update_shared_surcharge_rate_sheet_surcharges {
+  id: string;
+  name: string;
+  amount: number;
+  surcharge_type: string;
+  cost: number | null;
+  active: boolean;
+}
+
+export interface UpdateSharedSurcharge_update_shared_surcharge_rate_sheet {
+  id: string;
+  surcharges: UpdateSharedSurcharge_update_shared_surcharge_rate_sheet_surcharges[] | null;
+}
+
+export interface UpdateSharedSurcharge_update_shared_surcharge_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateSharedSurcharge_update_shared_surcharge {
+  rate_sheet: UpdateSharedSurcharge_update_shared_surcharge_rate_sheet | null;
+  errors: UpdateSharedSurcharge_update_shared_surcharge_errors[] | null;
+}
+
+export interface UpdateSharedSurcharge {
+  update_shared_surcharge: UpdateSharedSurcharge_update_shared_surcharge;
+}
+
+export interface UpdateSharedSurchargeVariables {
+  input: UpdateSharedSurchargeMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteSharedSurcharge
+// ====================================================
+
+export interface DeleteSharedSurcharge_delete_shared_surcharge_rate_sheet_surcharges {
+  id: string;
+  name: string;
+}
+
+export interface DeleteSharedSurcharge_delete_shared_surcharge_rate_sheet {
+  id: string;
+  surcharges: DeleteSharedSurcharge_delete_shared_surcharge_rate_sheet_surcharges[] | null;
+}
+
+export interface DeleteSharedSurcharge_delete_shared_surcharge_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteSharedSurcharge_delete_shared_surcharge {
+  rate_sheet: DeleteSharedSurcharge_delete_shared_surcharge_rate_sheet | null;
+  errors: DeleteSharedSurcharge_delete_shared_surcharge_errors[] | null;
+}
+
+export interface DeleteSharedSurcharge {
+  delete_shared_surcharge: DeleteSharedSurcharge_delete_shared_surcharge;
+}
+
+export interface DeleteSharedSurchargeVariables {
+  input: DeleteSharedSurchargeMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: BatchUpdateSurcharges
+// ====================================================
+
+export interface BatchUpdateSurcharges_batch_update_surcharges_rate_sheet_surcharges {
+  id: string;
+  name: string;
+  amount: number;
+  surcharge_type: string;
+  cost: number | null;
+  active: boolean;
+}
+
+export interface BatchUpdateSurcharges_batch_update_surcharges_rate_sheet {
+  id: string;
+  surcharges: BatchUpdateSurcharges_batch_update_surcharges_rate_sheet_surcharges[] | null;
+}
+
+export interface BatchUpdateSurcharges_batch_update_surcharges_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface BatchUpdateSurcharges_batch_update_surcharges {
+  rate_sheet: BatchUpdateSurcharges_batch_update_surcharges_rate_sheet | null;
+  errors: BatchUpdateSurcharges_batch_update_surcharges_errors[] | null;
+}
+
+export interface BatchUpdateSurcharges {
+  batch_update_surcharges: BatchUpdateSurcharges_batch_update_surcharges;
+}
+
+export interface BatchUpdateSurchargesVariables {
+  input: BatchUpdateSurchargesMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateServiceRate
+// ====================================================
+
+export interface UpdateServiceRate_update_service_rate_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+}
+
+export interface UpdateServiceRate_update_service_rate_rate_sheet {
+  id: string;
+  service_rates: UpdateServiceRate_update_service_rate_rate_sheet_service_rates[] | null;
+}
+
+export interface UpdateServiceRate_update_service_rate_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateServiceRate_update_service_rate {
+  rate_sheet: UpdateServiceRate_update_service_rate_rate_sheet | null;
+  errors: UpdateServiceRate_update_service_rate_errors[] | null;
+}
+
+export interface UpdateServiceRate {
+  update_service_rate: UpdateServiceRate_update_service_rate;
+}
+
+export interface UpdateServiceRateVariables {
+  input: UpdateServiceRateMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: BatchUpdateServiceRates
+// ====================================================
+
+export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+}
+
+export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet {
+  id: string;
+  service_rates: BatchUpdateServiceRates_batch_update_service_rates_rate_sheet_service_rates[] | null;
+}
+
+export interface BatchUpdateServiceRates_batch_update_service_rates_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface BatchUpdateServiceRates_batch_update_service_rates {
+  rate_sheet: BatchUpdateServiceRates_batch_update_service_rates_rate_sheet | null;
+  errors: BatchUpdateServiceRates_batch_update_service_rates_errors[] | null;
+}
+
+export interface BatchUpdateServiceRates {
+  batch_update_service_rates: BatchUpdateServiceRates_batch_update_service_rates;
+}
+
+export interface BatchUpdateServiceRatesVariables {
+  input: BatchUpdateServiceRatesMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateServiceZoneIds
+// ====================================================
+
+export interface UpdateServiceZoneIds_update_service_zone_ids_rate_sheet_services {
+  id: string;
+  zone_ids: string[];
+}
+
+export interface UpdateServiceZoneIds_update_service_zone_ids_rate_sheet {
+  id: string;
+  services: UpdateServiceZoneIds_update_service_zone_ids_rate_sheet_services[];
+}
+
+export interface UpdateServiceZoneIds_update_service_zone_ids_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateServiceZoneIds_update_service_zone_ids {
+  rate_sheet: UpdateServiceZoneIds_update_service_zone_ids_rate_sheet | null;
+  errors: UpdateServiceZoneIds_update_service_zone_ids_errors[] | null;
+}
+
+export interface UpdateServiceZoneIds {
+  update_service_zone_ids: UpdateServiceZoneIds_update_service_zone_ids;
+}
+
+export interface UpdateServiceZoneIdsVariables {
+  input: UpdateServiceZoneIdsMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateServiceSurchargeIds
+// ====================================================
+
+export interface UpdateServiceSurchargeIds_update_service_surcharge_ids_rate_sheet_services {
+  id: string;
+  surcharge_ids: string[];
+}
+
+export interface UpdateServiceSurchargeIds_update_service_surcharge_ids_rate_sheet {
+  id: string;
+  services: UpdateServiceSurchargeIds_update_service_surcharge_ids_rate_sheet_services[];
+}
+
+export interface UpdateServiceSurchargeIds_update_service_surcharge_ids_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateServiceSurchargeIds_update_service_surcharge_ids {
+  rate_sheet: UpdateServiceSurchargeIds_update_service_surcharge_ids_rate_sheet | null;
+  errors: UpdateServiceSurchargeIds_update_service_surcharge_ids_errors[] | null;
+}
+
+export interface UpdateServiceSurchargeIds {
+  update_service_surcharge_ids: UpdateServiceSurchargeIds_update_service_surcharge_ids;
+}
+
+export interface UpdateServiceSurchargeIdsVariables {
+  input: UpdateServiceSurchargeIdsMutationInput;
 }
 
 
@@ -1846,6 +2278,7 @@ export enum CarrierNameEnum {
   dhl_universal = "dhl_universal",
   dicom = "dicom",
   dpd = "dpd",
+  dpd_meta = "dpd_meta",
   dtdc = "dtdc",
   easypost = "easypost",
   easyship = "easyship",
@@ -1854,12 +2287,16 @@ export enum CarrierNameEnum {
   freightcom = "freightcom",
   generic = "generic",
   geodis = "geodis",
+  gls = "gls",
   hay_post = "hay_post",
+  hermes = "hermes",
   landmark = "landmark",
   laposte = "laposte",
   locate2u = "locate2u",
   mydhl = "mydhl",
   nationex = "nationex",
+  parcelone = "parcelone",
+  postat = "postat",
   purolator = "purolator",
   roadie = "roadie",
   royalmail = "royalmail",
@@ -1875,6 +2312,211 @@ export enum CarrierNameEnum {
   usps_international = "usps_international",
   veho = "veho",
   zoom2u = "zoom2u",
+}
+
+export enum CurrencyCodeEnum {
+  AED = "AED",
+  AMD = "AMD",
+  ANG = "ANG",
+  AOA = "AOA",
+  ARS = "ARS",
+  AUD = "AUD",
+  AWG = "AWG",
+  AZN = "AZN",
+  BAM = "BAM",
+  BBD = "BBD",
+  BDT = "BDT",
+  BGN = "BGN",
+  BHD = "BHD",
+  BIF = "BIF",
+  BMD = "BMD",
+  BND = "BND",
+  BOB = "BOB",
+  BRL = "BRL",
+  BSD = "BSD",
+  BTN = "BTN",
+  BWP = "BWP",
+  BYN = "BYN",
+  BZD = "BZD",
+  CAD = "CAD",
+  CDF = "CDF",
+  CHF = "CHF",
+  CLP = "CLP",
+  CNY = "CNY",
+  COP = "COP",
+  CRC = "CRC",
+  CUC = "CUC",
+  CVE = "CVE",
+  CZK = "CZK",
+  DJF = "DJF",
+  DKK = "DKK",
+  DOP = "DOP",
+  DZD = "DZD",
+  EGP = "EGP",
+  ERN = "ERN",
+  ETB = "ETB",
+  EUR = "EUR",
+  FJD = "FJD",
+  GBP = "GBP",
+  GEL = "GEL",
+  GHS = "GHS",
+  GMD = "GMD",
+  GNF = "GNF",
+  GTQ = "GTQ",
+  GYD = "GYD",
+  HKD = "HKD",
+  HNL = "HNL",
+  HRK = "HRK",
+  HTG = "HTG",
+  HUF = "HUF",
+  IDR = "IDR",
+  ILS = "ILS",
+  INR = "INR",
+  IRR = "IRR",
+  ISK = "ISK",
+  JMD = "JMD",
+  JOD = "JOD",
+  JPY = "JPY",
+  KES = "KES",
+  KGS = "KGS",
+  KHR = "KHR",
+  KMF = "KMF",
+  KPW = "KPW",
+  KRW = "KRW",
+  KWD = "KWD",
+  KYD = "KYD",
+  KZT = "KZT",
+  LAK = "LAK",
+  LKR = "LKR",
+  LRD = "LRD",
+  LSL = "LSL",
+  LYD = "LYD",
+  MAD = "MAD",
+  MDL = "MDL",
+  MGA = "MGA",
+  MKD = "MKD",
+  MMK = "MMK",
+  MNT = "MNT",
+  MOP = "MOP",
+  MRO = "MRO",
+  MUR = "MUR",
+  MVR = "MVR",
+  MWK = "MWK",
+  MXN = "MXN",
+  MYR = "MYR",
+  MZN = "MZN",
+  NAD = "NAD",
+  NGN = "NGN",
+  NIO = "NIO",
+  NOK = "NOK",
+  NPR = "NPR",
+  NZD = "NZD",
+  OMR = "OMR",
+  PEN = "PEN",
+  PGK = "PGK",
+  PHP = "PHP",
+  PKR = "PKR",
+  PLN = "PLN",
+  PYG = "PYG",
+  QAR = "QAR",
+  RON = "RON",
+  RSD = "RSD",
+  RUB = "RUB",
+  RWF = "RWF",
+  SAR = "SAR",
+  SBD = "SBD",
+  SCR = "SCR",
+  SDG = "SDG",
+  SEK = "SEK",
+  SGD = "SGD",
+  SHP = "SHP",
+  SLL = "SLL",
+  SOS = "SOS",
+  SRD = "SRD",
+  SSP = "SSP",
+  STD = "STD",
+  SYP = "SYP",
+  SZL = "SZL",
+  THB = "THB",
+  TJS = "TJS",
+  TND = "TND",
+  TOP = "TOP",
+  TRY = "TRY",
+  TTD = "TTD",
+  TWD = "TWD",
+  TZS = "TZS",
+  UAH = "UAH",
+  USD = "USD",
+  UYU = "UYU",
+  UZS = "UZS",
+  VEF = "VEF",
+  VND = "VND",
+  VUV = "VUV",
+  WST = "WST",
+  XAF = "XAF",
+  XCD = "XCD",
+  XOF = "XOF",
+  XPF = "XPF",
+  YER = "YER",
+  ZAR = "ZAR",
+}
+
+export enum DimensionUnitEnum {
+  CM = "CM",
+  IN = "IN",
+}
+
+export enum WeightUnitEnum {
+  G = "G",
+  KG = "KG",
+  LB = "LB",
+  OZ = "OZ",
+}
+
+export enum SurchargeTypeEnum {
+  AMOUNT = "AMOUNT",
+  PERCENTAGE = "PERCENTAGE",
+}
+
+export enum UserRole {
+  admin = "admin",
+  developer = "developer",
+  member = "member",
+}
+
+export enum ShipmentStatusEnum {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  delivery_failed = "delivery_failed",
+  draft = "draft",
+  in_transit = "in_transit",
+  needs_attention = "needs_attention",
+  out_for_delivery = "out_for_delivery",
+  purchased = "purchased",
+  shipped = "shipped",
+}
+
+export enum TrackerStatusEnum {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  delivery_delayed = "delivery_delayed",
+  delivery_failed = "delivery_failed",
+  in_transit = "in_transit",
+  on_hold = "on_hold",
+  out_for_delivery = "out_for_delivery",
+  pending = "pending",
+  picked_up = "picked_up",
+  ready_for_pickup = "ready_for_pickup",
+  return_to_sender = "return_to_sender",
+  unknown = "unknown",
+}
+
+export enum OrderStatus {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  fulfilled = "fulfilled",
+  partial = "partial",
+  unfulfilled = "unfulfilled",
 }
 
 export enum CountryCodeEnum {
@@ -2120,210 +2762,6 @@ export enum CountryCodeEnum {
   ZW = "ZW",
 }
 
-export enum SurchargeTypeEnum {
-  AMOUNT = "AMOUNT",
-  PERCENTAGE = "PERCENTAGE",
-}
-
-export enum UserRole {
-  admin = "admin",
-  developer = "developer",
-  member = "member",
-}
-
-export enum ShipmentStatusEnum {
-  cancelled = "cancelled",
-  delivered = "delivered",
-  delivery_failed = "delivery_failed",
-  draft = "draft",
-  in_transit = "in_transit",
-  needs_attention = "needs_attention",
-  out_for_delivery = "out_for_delivery",
-  purchased = "purchased",
-  shipped = "shipped",
-}
-
-export enum CurrencyCodeEnum {
-  AED = "AED",
-  AMD = "AMD",
-  ANG = "ANG",
-  AOA = "AOA",
-  ARS = "ARS",
-  AUD = "AUD",
-  AWG = "AWG",
-  AZN = "AZN",
-  BAM = "BAM",
-  BBD = "BBD",
-  BDT = "BDT",
-  BGN = "BGN",
-  BHD = "BHD",
-  BIF = "BIF",
-  BMD = "BMD",
-  BND = "BND",
-  BOB = "BOB",
-  BRL = "BRL",
-  BSD = "BSD",
-  BTN = "BTN",
-  BWP = "BWP",
-  BYN = "BYN",
-  BZD = "BZD",
-  CAD = "CAD",
-  CDF = "CDF",
-  CHF = "CHF",
-  CLP = "CLP",
-  CNY = "CNY",
-  COP = "COP",
-  CRC = "CRC",
-  CUC = "CUC",
-  CVE = "CVE",
-  CZK = "CZK",
-  DJF = "DJF",
-  DKK = "DKK",
-  DOP = "DOP",
-  DZD = "DZD",
-  EGP = "EGP",
-  ERN = "ERN",
-  ETB = "ETB",
-  EUR = "EUR",
-  FJD = "FJD",
-  GBP = "GBP",
-  GEL = "GEL",
-  GHS = "GHS",
-  GMD = "GMD",
-  GNF = "GNF",
-  GTQ = "GTQ",
-  GYD = "GYD",
-  HKD = "HKD",
-  HNL = "HNL",
-  HRK = "HRK",
-  HTG = "HTG",
-  HUF = "HUF",
-  IDR = "IDR",
-  ILS = "ILS",
-  INR = "INR",
-  IRR = "IRR",
-  ISK = "ISK",
-  JMD = "JMD",
-  JOD = "JOD",
-  JPY = "JPY",
-  KES = "KES",
-  KGS = "KGS",
-  KHR = "KHR",
-  KMF = "KMF",
-  KPW = "KPW",
-  KRW = "KRW",
-  KWD = "KWD",
-  KYD = "KYD",
-  KZT = "KZT",
-  LAK = "LAK",
-  LKR = "LKR",
-  LRD = "LRD",
-  LSL = "LSL",
-  LYD = "LYD",
-  MAD = "MAD",
-  MDL = "MDL",
-  MGA = "MGA",
-  MKD = "MKD",
-  MMK = "MMK",
-  MNT = "MNT",
-  MOP = "MOP",
-  MRO = "MRO",
-  MUR = "MUR",
-  MVR = "MVR",
-  MWK = "MWK",
-  MXN = "MXN",
-  MYR = "MYR",
-  MZN = "MZN",
-  NAD = "NAD",
-  NGN = "NGN",
-  NIO = "NIO",
-  NOK = "NOK",
-  NPR = "NPR",
-  NZD = "NZD",
-  OMR = "OMR",
-  PEN = "PEN",
-  PGK = "PGK",
-  PHP = "PHP",
-  PKR = "PKR",
-  PLN = "PLN",
-  PYG = "PYG",
-  QAR = "QAR",
-  RON = "RON",
-  RSD = "RSD",
-  RUB = "RUB",
-  RWF = "RWF",
-  SAR = "SAR",
-  SBD = "SBD",
-  SCR = "SCR",
-  SDG = "SDG",
-  SEK = "SEK",
-  SGD = "SGD",
-  SHP = "SHP",
-  SLL = "SLL",
-  SOS = "SOS",
-  SRD = "SRD",
-  SSP = "SSP",
-  STD = "STD",
-  SYP = "SYP",
-  SZL = "SZL",
-  THB = "THB",
-  TJS = "TJS",
-  TND = "TND",
-  TOP = "TOP",
-  TRY = "TRY",
-  TTD = "TTD",
-  TWD = "TWD",
-  TZS = "TZS",
-  UAH = "UAH",
-  USD = "USD",
-  UYU = "UYU",
-  UZS = "UZS",
-  VEF = "VEF",
-  VND = "VND",
-  VUV = "VUV",
-  WST = "WST",
-  XAF = "XAF",
-  XCD = "XCD",
-  XOF = "XOF",
-  XPF = "XPF",
-  YER = "YER",
-  ZAR = "ZAR",
-}
-
-export enum TrackerStatusEnum {
-  cancelled = "cancelled",
-  delivered = "delivered",
-  delivery_delayed = "delivery_delayed",
-  delivery_failed = "delivery_failed",
-  in_transit = "in_transit",
-  on_hold = "on_hold",
-  out_for_delivery = "out_for_delivery",
-  pending = "pending",
-  ready_for_pickup = "ready_for_pickup",
-  return_to_sender = "return_to_sender",
-  unknown = "unknown",
-}
-
-export enum OrderStatus {
-  cancelled = "cancelled",
-  delivered = "delivered",
-  fulfilled = "fulfilled",
-  partial = "partial",
-  unfulfilled = "unfulfilled",
-}
-
-export enum DimensionUnitEnum {
-  CM = "CM",
-  IN = "IN",
-}
-
-export enum WeightUnitEnum {
-  G = "G",
-  KG = "KG",
-  LB = "LB",
-  OZ = "OZ",
-}
-
 // null
 export interface UserFilter {
   offset?: number | null;
@@ -2534,6 +2972,7 @@ export interface InstanceConfigMutationInput {
   DHL_UNIVERSAL_ENABLED?: boolean | null;
   DICOM_ENABLED?: boolean | null;
   DPD_ENABLED?: boolean | null;
+  DPD_META_ENABLED?: boolean | null;
   DTDC_ENABLED?: boolean | null;
   EASYPOST_ENABLED?: boolean | null;
   EASYSHIP_ENABLED?: boolean | null;
@@ -2542,13 +2981,17 @@ export interface InstanceConfigMutationInput {
   FREIGHTCOM_ENABLED?: boolean | null;
   GENERIC_ENABLED?: boolean | null;
   GEODIS_ENABLED?: boolean | null;
+  GLS_ENABLED?: boolean | null;
   GOOGLEGEOCODING_ENABLED?: boolean | null;
   HAY_POST_ENABLED?: boolean | null;
+  HERMES_ENABLED?: boolean | null;
   LANDMARK_ENABLED?: boolean | null;
   LAPOSTE_ENABLED?: boolean | null;
   LOCATE2U_ENABLED?: boolean | null;
   MYDHL_ENABLED?: boolean | null;
   NATIONEX_ENABLED?: boolean | null;
+  PARCELONE_ENABLED?: boolean | null;
+  POSTAT_ENABLED?: boolean | null;
   PUROLATOR_ENABLED?: boolean | null;
   ROADIE_ENABLED?: boolean | null;
   ROYALMAIL_ENABLED?: boolean | null;
@@ -2602,6 +3045,9 @@ export interface CreateRateSheetMutationInput {
   name: string;
   carrier_name: CarrierNameEnum;
   services?: CreateServiceLevelInput[] | null;
+  zones?: SharedZoneInput[] | null;
+  surcharges?: SharedSurchargeInput[] | null;
+  service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
   metadata?: any | null;
 }
@@ -2611,7 +3057,6 @@ export interface CreateServiceLevelInput {
   service_name: string;
   service_code: string;
   currency: CurrencyCodeEnum;
-  zones: ServiceZoneInput[];
   carrier_service_code?: string | null;
   description?: string | null;
   active?: boolean | null;
@@ -2624,25 +3069,52 @@ export interface CreateServiceLevelInput {
   min_weight?: number | null;
   max_weight?: number | null;
   weight_unit?: WeightUnitEnum | null;
+  max_volume?: number | null;
+  cost?: number | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  zone_ids?: string[] | null;
+  surcharge_ids?: string[] | null;
   metadata?: any | null;
 }
 
 // null
-export interface ServiceZoneInput {
-  rate: number;
-  label?: string | null;
-  min_weight?: number | null;
-  max_weight?: number | null;
+export interface SharedZoneInput {
+  label: string;
+  id?: string | null;
+  country_codes?: string[] | null;
+  postal_codes?: string[] | null;
+  cities?: string[] | null;
   transit_days?: number | null;
   transit_time?: number | null;
   radius?: number | null;
   latitude?: number | null;
   longitude?: number | null;
-  cities?: string[] | null;
-  postal_codes?: string[] | null;
-  country_codes?: string[] | null;
+  min_weight?: number | null;
+  max_weight?: number | null;
+  weight_unit?: WeightUnitEnum | null;
+}
+
+// null
+export interface SharedSurchargeInput {
+  name: string;
+  amount: number;
+  id?: string | null;
+  surcharge_type?: string | null;
+  cost?: number | null;
+  active?: boolean | null;
+}
+
+// null
+export interface ServiceRateInput {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost?: number | null;
+  min_weight?: number | null;
+  max_weight?: number | null;
+  transit_days?: number | null;
+  transit_time?: number | null;
 }
 
 // null
@@ -2650,6 +3122,9 @@ export interface UpdateRateSheetMutationInput {
   id: string;
   name?: string | null;
   services?: UpdateServiceLevelInput[] | null;
+  zones?: SharedZoneInput[] | null;
+  surcharges?: SharedSurchargeInput[] | null;
+  service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
   remove_missing_services?: boolean | null;
   metadata?: any | null;
@@ -2657,10 +3132,10 @@ export interface UpdateRateSheetMutationInput {
 
 // null
 export interface UpdateServiceLevelInput {
+  id?: string | null;
   service_name?: string | null;
   service_code?: string | null;
   currency?: CurrencyCodeEnum | null;
-  zones?: UpdateServiceZoneInput[] | null;
   carrier_service_code?: string | null;
   description?: string | null;
   active?: boolean | null;
@@ -2673,54 +3148,18 @@ export interface UpdateServiceLevelInput {
   min_weight?: number | null;
   max_weight?: number | null;
   weight_unit?: WeightUnitEnum | null;
+  max_volume?: number | null;
+  cost?: number | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  zone_ids?: string[] | null;
+  surcharge_ids?: string[] | null;
   metadata?: any | null;
-  id?: string | null;
-}
-
-// null
-export interface UpdateServiceZoneInput {
-  rate?: number | null;
-  label?: string | null;
-  min_weight?: number | null;
-  max_weight?: number | null;
-  transit_days?: number | null;
-  transit_time?: number | null;
-  radius?: number | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  cities?: string[] | null;
-  postal_codes?: string[] | null;
-  country_codes?: string[] | null;
 }
 
 // null
 export interface DeleteMutationInput {
   id: string;
-}
-
-// null
-export interface UpdateRateSheetZoneCellMutationInput {
-  id: string;
-  service_id: string;
-  zone_id: string;
-  field: string;
-  value: any;
-}
-
-// null
-export interface BatchUpdateRateSheetCellsMutationInput {
-  id: string;
-  updates: CellUpdate[];
-}
-
-// null
-export interface CellUpdate {
-  service_id: string;
-  zone_id: string;
-  field: string;
-  value: any;
 }
 
 // null
@@ -2730,15 +3169,94 @@ export interface DeleteRateSheetServiceMutationInput {
 }
 
 // null
+export interface AddSharedZoneMutationInput {
+  rate_sheet_id: string;
+  zone: SharedZoneInput;
+}
+
+// null
+export interface UpdateSharedZoneMutationInput {
+  rate_sheet_id: string;
+  zone_id: string;
+  zone: SharedZoneInput;
+}
+
+// null
+export interface DeleteSharedZoneMutationInput {
+  rate_sheet_id: string;
+  zone_id: string;
+}
+
+// null
+export interface AddSharedSurchargeMutationInput {
+  rate_sheet_id: string;
+  surcharge: SharedSurchargeInput;
+}
+
+// null
+export interface UpdateSharedSurchargeMutationInput {
+  rate_sheet_id: string;
+  surcharge_id: string;
+  surcharge: SharedSurchargeInput;
+}
+
+// null
+export interface DeleteSharedSurchargeMutationInput {
+  rate_sheet_id: string;
+  surcharge_id: string;
+}
+
+// null
+export interface BatchUpdateSurchargesMutationInput {
+  rate_sheet_id: string;
+  surcharges: SharedSurchargeInput[];
+}
+
+// null
+export interface UpdateServiceRateMutationInput {
+  rate_sheet_id: string;
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost?: number | null;
+  min_weight?: number | null;
+  max_weight?: number | null;
+  transit_days?: number | null;
+  transit_time?: number | null;
+}
+
+// null
+export interface BatchUpdateServiceRatesMutationInput {
+  rate_sheet_id: string;
+  rates: ServiceRateInput[];
+}
+
+// null
+export interface UpdateServiceZoneIdsMutationInput {
+  rate_sheet_id: string;
+  service_id: string;
+  zone_ids: string[];
+}
+
+// null
+export interface UpdateServiceSurchargeIdsMutationInput {
+  rate_sheet_id: string;
+  service_id: string;
+  surcharge_ids: string[];
+}
+
+// null
 export interface CreateAddonMutationInput {
   name: string;
   amount: number;
   surcharge_type: SurchargeTypeEnum;
   active?: boolean | null;
+  is_visible?: boolean | null;
   carriers?: string[] | null;
   services?: string[] | null;
   organizations?: string[] | null;
   carrier_accounts?: string[] | null;
+  metadata?: any | null;
 }
 
 // null
@@ -2747,10 +3265,12 @@ export interface UpdateAddonMutationInput {
   amount?: number | null;
   surcharge_type?: SurchargeTypeEnum | null;
   active?: boolean | null;
+  is_visible?: boolean | null;
   carriers?: string[] | null;
   services?: string[] | null;
   organizations?: string[] | null;
   carrier_accounts?: string[] | null;
+  metadata?: any | null;
   id: string;
 }
 

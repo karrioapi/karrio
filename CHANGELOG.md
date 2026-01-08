@@ -1,3 +1,27 @@
+# Karrio 2026.1
+
+## Changes
+
+### Feat
+
+- feat(hermes): add Hermes Germany carrier integration with shipping, pickup, and rating support
+- feat(gls): add GLS Group carrier integration with OAuth2 authentication and shipment/tracking
+- feat(dpd_meta): add DPD META-API carrier integration with Bearer token authentication and caching
+- feat(postat): add Austrian Post (PostAT) carrier integration via Post-Labelcenter SOAP API
+- feat(parcelone): add ParcelOne multi-carrier hub integration with JSON REST API
+- feat(dhl_parcel_de): implement pickup support
+- feat: apply ratesheet GraphQL enhancements and the editor with shared zones and surcharges
+- feat: implement find helper for status and reason mapping retrieval
+- feat: introduce carrier integration FAQ and improve multi-piece shipment abstraction
+
+### Chore
+
+- chore: move chronopost to karrio core maintained connectors
+- refactor: standardize carrier authentication to use Proxy.authenticate() method
+- refactor: review and cleanup new integrations to match coding standard
+
+---
+
 # Karrio 2025.5.7
 
 ## Changes

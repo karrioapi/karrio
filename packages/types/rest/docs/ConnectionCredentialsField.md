@@ -30,6 +30,13 @@ Name | Type | Description | Notes
 **delis_id** | **string** |  | [default to undefined]
 **depot** | **string** |  | [optional] [default to undefined]
 **message_language** | **string** |  | [optional] [default to 'en_EN']
+**dpd_login** | **string** |  | [optional] [default to undefined]
+**dpd_password** | **string** |  | [optional] [default to undefined]
+**dpd_client_id** | **string** |  | [optional] [default to undefined]
+**dpd_client_secret** | **string** |  | [optional] [default to undefined]
+**customer_id** | **string** |  | [default to undefined]
+**customer_account_number** | **string** |  | [optional] [default to undefined]
+**customer_sub_account_number** | **string** |  | [optional] [default to undefined]
 **customer_code** | **string** |  | [default to undefined]
 **access_token** | **string** |  | [default to undefined]
 **principal** | **string** |  | [default to undefined]
@@ -41,10 +48,13 @@ Name | Type | Description | Notes
 **custom_carrier_name** | **string** |  | [default to undefined]
 **identifier** | **string** |  | [default to undefined]
 **code_client** | **string** |  | [optional] [default to undefined]
-**customer_id** | **string** |  | [default to undefined]
 **customer_type** | **string** |  | [default to undefined]
 **region** | **string** |  | [optional] [default to 'Landmark CMH']
 **lang** | **string** | Indicates a lang string | [optional] [default to undefined]
+**mandator_id** | **string** |  | [default to undefined]
+**consigner_id** | **string** |  | [default to undefined]
+**org_unit_id** | **string** |  | [default to undefined]
+**org_unit_guid** | **string** |  | [default to undefined]
 **user_token** | **string** |  | [optional] [default to undefined]
 **shipping_account_id** | **string** |  | [default to undefined]
 **sapient_carrier_code** | **string** | Indicates a sapient_carrier_code string | [optional] [default to undefined]
@@ -94,6 +104,13 @@ const instance: ConnectionCredentialsField = {
     delis_id,
     depot,
     message_language,
+    dpd_login,
+    dpd_password,
+    dpd_client_id,
+    dpd_client_secret,
+    customer_id,
+    customer_account_number,
+    customer_sub_account_number,
     customer_code,
     access_token,
     principal,
@@ -105,10 +122,13 @@ const instance: ConnectionCredentialsField = {
     custom_carrier_name,
     identifier,
     code_client,
-    customer_id,
     customer_type,
     region,
     lang,
+    mandator_id,
+    consigner_id,
+    org_unit_id,
+    org_unit_guid,
     user_token,
     shipping_account_id,
     sapient_carrier_code,

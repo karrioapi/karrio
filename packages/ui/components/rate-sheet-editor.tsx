@@ -77,10 +77,7 @@ const featuresToObject = (features?: string[] | Record<string, any>): Record<str
 
   // If array, convert to object (legacy format)
   if (features.length === 0) return undefined;
-  return features.reduce((acc, feature) => {
-    acc[feature] = true;
-    return acc;
-  }, {} as Record<string, boolean>);
+  return Object.fromEntries(features.map(feature => [feature, true]));
 };
 
 // Convert features object to array for UI state

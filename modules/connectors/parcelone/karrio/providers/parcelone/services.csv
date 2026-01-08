@@ -1,0 +1,19 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+PA1_basic,Parcel.One Basic,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,2-3,true,false
+PA1_eco,Parcel.One Eco,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,3-5,true,false
+PA1_eco,Parcel.One Eco,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,5-7,false,true
+PA1_premium,Parcel.One Premium,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1-2,true,false
+PA1_premium,Parcel.One Premium,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,3-5,false,true
+PA1_express,Parcel.One Express,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1,true,false
+PA1_express,Parcel.One Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,2-3,false,true
+DHL_PAKET,DHL Paket,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1-2,true,false
+DHL_PAKETINT,DHL Paket International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,3-5,false,true
+DHL_EXPRESS,DHL Express,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1,true,false
+DHL_EXPRESS,DHL Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,1-2,false,true
+DHL_RETOURE,DHL Retoure,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,2-3,true,false
+UPS_STANDARD,UPS Standard,Germany,DE,0.01,31.5,150,75,75,0.0,EUR,1-2,true,false
+UPS_STANDARD,UPS Standard,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,150,75,75,0.0,EUR,3-5,false,true
+UPS_EXPRESS,UPS Express,Germany,DE,0.01,31.5,150,75,75,0.0,EUR,1,true,false
+UPS_EXPRESS,UPS Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,150,75,75,0.0,EUR,1-2,false,true
+UPS_EXPSAVER,UPS Express Saver,Germany,DE,0.01,31.5,150,75,75,0.0,EUR,1,true,false
+UPS_EXPSAVER,UPS Express Saver,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,150,75,75,0.0,EUR,2-3,false,true

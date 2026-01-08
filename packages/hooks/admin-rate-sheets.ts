@@ -6,8 +6,6 @@ import {
   GET_RATE_SHEET,
   CREATE_RATE_SHEET,
   UPDATE_RATE_SHEET,
-  UPDATE_RATE_SHEET_ZONE_CELL,
-  BATCH_UPDATE_RATE_SHEET_CELLS,
   DELETE_RATE_SHEET_SERVICE,
   DELETE_RATE_SHEET,
   ADD_SHARED_ZONE,
@@ -107,22 +105,6 @@ export function useRateSheetMutation() {
   const updateRateSheet = useAuthenticatedMutation({
     mutationFn: (input: UpdateRateSheetVariables["input"]) => karrio.admin.request<UpdateRateSheet>(
       gqlstr(UPDATE_RATE_SHEET),
-      { variables: { input } }
-    ),
-    onSuccess: invalidateCache,
-  });
-
-  const updateRateSheetZoneCell = useAuthenticatedMutation({
-    mutationFn: (input: any) => karrio.admin.request(
-      gqlstr(UPDATE_RATE_SHEET_ZONE_CELL),
-      { variables: { input } }
-    ),
-    onSuccess: invalidateCache,
-  });
-
-  const batchUpdateRateSheetCells = useAuthenticatedMutation({
-    mutationFn: (input: any) => karrio.admin.request(
-      gqlstr(BATCH_UPDATE_RATE_SHEET_CELLS),
       { variables: { input } }
     ),
     onSuccess: invalidateCache,
@@ -239,8 +221,6 @@ export function useRateSheetMutation() {
   return {
     createRateSheet,
     updateRateSheet,
-    updateRateSheetZoneCell,
-    batchUpdateRateSheetCells,
     deleteRateSheetService,
     deleteRateSheet,
     // Shared Zone mutations

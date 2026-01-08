@@ -850,42 +850,6 @@ export const DELETE_RATE_SHEET = gql`
   }
 `;
 
-export const UPDATE_RATE_SHEET_ZONE_CELL = gql`
-  mutation UpdateRateSheetZoneCell($input: UpdateRateSheetZoneCellMutationInput!) {
-    update_rate_sheet_zone_cell(input: $input) {
-      errors {
-        field
-        messages
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-  }
-`;
-
-export const BATCH_UPDATE_RATE_SHEET_CELLS = gql`
-  mutation BatchUpdateRateSheetCells($input: BatchUpdateRateSheetCellsMutationInput!) {
-    batch_update_rate_sheet_cells(input: $input) {
-      errors {
-        field
-        messages
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-  }
-`;
-
 export const DELETE_RATE_SHEET_SERVICE = gql`
   mutation DeleteRateSheetService($input: DeleteRateSheetServiceMutationInput!) {
     delete_rate_sheet_service(input: $input) {
