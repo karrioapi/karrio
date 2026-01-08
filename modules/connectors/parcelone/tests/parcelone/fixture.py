@@ -8,8 +8,10 @@ gateway = karrio.gateway["parcelone"].create(
         password="test_password",
         mandator_id="TEST_MANDATOR",
         consigner_id="TEST_CONSIGNER",
-        cep_id="DHL",
-        product_id="PAKET",
         test_mode=True,
+        config=dict(
+            cep_id="DHL",
+            product_id="PAKET",
+        ),
     )
 )

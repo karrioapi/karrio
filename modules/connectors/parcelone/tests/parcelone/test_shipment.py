@@ -19,64 +19,66 @@ class TestParcelOneShipping(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
+        serialized = request.serialize()
 
-        self.assertEqual(request.serialize(), ShipmentRequest)
+        self.assertDictEqual(serialized, ShipmentRequestJSON)
 
     def test_create_cancel_shipment_request(self):
         request = gateway.mapper.create_cancel_shipment_request(
             self.ShipmentCancelRequest
         )
-        self.assertEqual(request.serialize(), ShipmentCancelRequest)
+
+        self.assertDictEqual(request.serialize(), ShipmentCancelRequestJSON)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = "<a></a>"
+            mock.return_value = "{}"
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/shipment",
             )
 
     def test_cancel_shipment(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = "<a></a>"
+            mock.return_value = "{}"
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/shipment/TrackingID/123456789012",
             )
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = ShipmentResponse
+            mock.return_value = ShipmentResponseJSON
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_error_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = ShipmentErrorResponse
+            mock.return_value = ShipmentErrorResponseJSON
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedShipmentErrorResponse
             )
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = ShipmentCancelResponse
+            mock.return_value = ShipmentCancelResponseJSON
             parsed_response = (
                 karrio.Shipment.cancel(self.ShipmentCancelRequest)
                 .from_(gateway)
                 .parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
@@ -122,6 +124,71 @@ ShipmentCancelPayload = {
     "shipment_identifier": "123456789012",
 }
 
+ShipmentRequestJSON = {
+    "ShippingData": {
+        "CEPID": "DHL",
+        "ConsignerID": "TEST_CONSIGNER",
+        "LabelFormat": {
+            "Size": "A6",
+            "Type": "PDF",
+        },
+        "MandatorID": "TEST_MANDATOR",
+        "Packages": [
+            {
+                "PackageDimensions": {
+                    "Height": "15.0",
+                    "Length": "30.0",
+                    "Width": "20.0",
+                },
+                "PackageRef": "1",
+                "PackageWeight": {
+                    "Unit": "kg",
+                    "Value": "5.0",
+                },
+            }
+        ],
+        "PrintDocuments": 0,
+        "PrintLabel": 1,
+        "ProductID": "PAKET",
+        "ReturnShipmentIndicator": 0,
+        "ShipFromData": {
+            "Name1": "Test Shipper",
+            "ShipmentAddress": {
+                "City": "Berlin",
+                "Country": "DE",
+                "PostalCode": "10115",
+                "Street": "123 Teststrasse",
+                "Streetno": "123",
+            },
+            "ShipmentContact": {
+                "Email": "shipper@test.com",
+                "Phone": "+49301234567",
+            },
+        },
+        "ShipToData": {
+            "Name1": "Test Recipient",
+            "PrivateAddressIndicator": 0,
+            "ShipmentAddress": {
+                "City": "Munich",
+                "Country": "DE",
+                "PostalCode": "80331",
+                "Street": "456 Empfangerweg",
+                "Streetno": "456",
+            },
+            "ShipmentContact": {
+                "Email": "recipient@test.com",
+                "Phone": "+498912345678",
+            },
+        },
+        "Software": "Karrio",
+    }
+}
+
+ShipmentCancelRequestJSON = {
+    "ref_field": "TrackingID",
+    "ref_value": "123456789012",
+}
+
 ParsedShipmentResponse = [
     {
         "carrier_id": "parcelone",
@@ -129,6 +196,7 @@ ParsedShipmentResponse = [
         "docs": {"label": "JVBERi0xLjQKJeLjz9MKMSAwIG9iag=="},
         "label_type": "PDF",
         "meta": {
+            "carrier_tracking_link": "https://tracking.parcel.one/?trackingNumber=123456789012",
             "currency": "EUR",
             "shipment_id": "SHIP001",
             "total_charge": 5.99,
@@ -147,6 +215,10 @@ ParsedShipmentErrorResponse = [
             "carrier_id": "parcelone",
             "carrier_name": "parcelone",
             "code": "E001",
+            "details": {
+                "shipment_id": "SHIP001",
+                "tracking_id": "123456789012",
+            },
             "message": "Invalid postal code",
         }
     ],
@@ -163,182 +235,51 @@ ParsedCancelShipmentResponse = [
 ]
 
 
-ShipmentRequest = """<?xml version="1.0" encoding="utf-8"?>
-<soapenv:Envelope
-    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:tns="http://tempuri.org/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF"
-    xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
-    <soapenv:Header>
-        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-            <wsse:UsernameToken>
-                <wsse:Username>test_user</wsse:Username>
-                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">test_password</wsse:Password>
-            </wsse:UsernameToken>
-        </wsse:Security>
-    </soapenv:Header>
-    <soapenv:Body>
-        <tns:registerShipments>
-            <tns:ShippingData>
-                <wcf:Shipment xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <CEPID>DHL</CEPID>
-    <ConsignerID>TEST_CONSIGNER</ConsignerID>
-    <tns:LabelFormat>
-        <Size>100x150</Size>
-        <Type>PDF</Type>
-    </tns:LabelFormat>
-    <MandatorID>TEST_MANDATOR</MandatorID>
-    <tns:Packages>
-        <tns:ShipmentPackage>
-            <tns:PackageDimensions>
-                <Height>15.0</Height>
-                <Length>30.0</Length>
-                <Measurement>CM</Measurement>
-                <Width>20.0</Width>
-            </tns:PackageDimensions>
-            <PackageRef>1</PackageRef>
-            <tns:PackageWeight>
-                <Unit>KG</Unit>
-                <Value>5.0</Value>
-            </tns:PackageWeight>
-        </tns:ShipmentPackage>
-    </tns:Packages>
-    <PrintLabel>1</PrintLabel>
-    <ProductID>PAKET</ProductID>
-    <tns:ShipFromData>
-        <Name1>Test Shipper</Name1>
-        <tns:ShipmentAddress>
-            <City>Berlin</City>
-            <Country>DE</Country>
-            <PostalCode>10115</PostalCode>
-            <Street>123 Teststrasse</Street>
-            <Streetno>123</Streetno>
-        </tns:ShipmentAddress>
-        <tns:ShipmentContact>
-            <Company>Test Shipper</Company>
-            <Email>shipper@test.com</Email>
-            <Phone>+49301234567</Phone>
-        </tns:ShipmentContact>
-    </tns:ShipFromData>
-    <tns:ShipToData>
-        <Name1>Test Recipient</Name1>
-        <PrivateAddressIndicator>0</PrivateAddressIndicator>
-        <tns:ShipmentAddress>
-            <City>Munich</City>
-            <Country>DE</Country>
-            <PostalCode>80331</PostalCode>
-            <Street>456 Empfangerweg</Street>
-            <Streetno>456</Streetno>
-        </tns:ShipmentAddress>
-        <tns:ShipmentContact>
-            <Email>recipient@test.com</Email>
-            <Phone>+498912345678</Phone>
-        </tns:ShipmentContact>
-    </tns:ShipToData>
-    <ShipmentRef></ShipmentRef>
-    <Software>Karrio</Software>
-</wcf:Shipment>
+ShipmentResponseJSON = """{
+    "success": 1,
+    "results": {
+        "ActionResult": {
+            "Success": 1,
+            "ShipmentID": "SHIP001",
+            "TrackingID": "123456789012"
+        },
+        "PackageResults": [
+            {
+                "PackageID": "PKG001",
+                "TrackingID": "123456789012",
+                "Label": "JVBERi0xLjQKJeLjz9MKMSAwIG9iag=="
+            }
+        ],
+        "TotalCharges": {
+            "Value": "5.99",
+            "Currency": "EUR"
+        },
+        "LabelsAvailable": 1
+    }
+}"""
 
-            </tns:ShippingData>
-        </tns:registerShipments>
-    </soapenv:Body>
-</soapenv:Envelope>"""
+ShipmentErrorResponseJSON = """{
+    "success": 1,
+    "results": {
+        "ActionResult": {
+            "Success": 0,
+            "ShipmentID": "SHIP001",
+            "TrackingID": "123456789012",
+            "Errors": [
+                {
+                    "ErrorNo": "E001",
+                    "Message": "Invalid postal code"
+                }
+            ]
+        }
+    }
+}"""
 
-
-ShipmentCancelRequest = """<?xml version="1.0" encoding="utf-8"?>
-<soapenv:Envelope
-    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:tns="http://tempuri.org/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF"
-    xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
-    <soapenv:Header>
-        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-            <wsse:UsernameToken>
-                <wsse:Username>test_user</wsse:Username>
-                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">test_password</wsse:Password>
-            </wsse:UsernameToken>
-        </wsse:Security>
-    </soapenv:Header>
-    <soapenv:Body>
-        <tns:voidShipments>
-            <tns:ShippingData>
-                <wcf:identifyShipment xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <ShipmentRefField>ShipmentID</ShipmentRefField>
-    <ShipmentRefValue>123456789012</ShipmentRefValue>
-</wcf:identifyShipment>
-
-            </tns:ShippingData>
-        </tns:voidShipments>
-    </soapenv:Body>
-</soapenv:Envelope>"""
-
-
-ShipmentResponse = """<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <soap:Body>
-        <registerShipmentsResponse xmlns="http://tempuri.org/">
-            <registerShipmentsResult>
-                <wcf:ShipmentResult>
-                    <wcf:ActionResult>
-                        <wcf:Success>1</wcf:Success>
-                        <wcf:ShipmentID>SHIP001</wcf:ShipmentID>
-                        <wcf:TrackingID>123456789012</wcf:TrackingID>
-                    </wcf:ActionResult>
-                    <wcf:PackageResults>
-                        <wcf:ShipmentPackageResult>
-                            <wcf:PackageID>PKG001</wcf:PackageID>
-                            <wcf:TrackingID>123456789012</wcf:TrackingID>
-                            <wcf:Label>JVBERi0xLjQKJeLjz9MKMSAwIG9iag==</wcf:Label>
-                        </wcf:ShipmentPackageResult>
-                    </wcf:PackageResults>
-                    <wcf:TotalCharges>
-                        <wcf:Value>5.99</wcf:Value>
-                        <wcf:Currency>EUR</wcf:Currency>
-                    </wcf:TotalCharges>
-                    <wcf:LabelsAvailable>1</wcf:LabelsAvailable>
-                </wcf:ShipmentResult>
-            </registerShipmentsResult>
-        </registerShipmentsResponse>
-    </soap:Body>
-</soap:Envelope>"""
-
-
-ShipmentErrorResponse = """<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <soap:Body>
-        <registerShipmentsResponse xmlns="http://tempuri.org/">
-            <registerShipmentsResult>
-                <wcf:ShipmentResult>
-                    <wcf:ActionResult>
-                        <wcf:Success>0</wcf:Success>
-                        <wcf:Errors>
-                            <wcf:Error>
-                                <wcf:ErrorNo>E001</wcf:ErrorNo>
-                                <wcf:Message>Invalid postal code</wcf:Message>
-                            </wcf:Error>
-                        </wcf:Errors>
-                    </wcf:ActionResult>
-                </wcf:ShipmentResult>
-            </registerShipmentsResult>
-        </registerShipmentsResponse>
-    </soap:Body>
-</soap:Envelope>"""
-
-
-ShipmentCancelResponse = """<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <soap:Body>
-        <voidShipmentsResponse xmlns="http://tempuri.org/">
-            <voidShipmentsResult>
-                <wcf:ShipmentActionResult>
-                    <wcf:Success>1</wcf:Success>
-                    <wcf:ShipmentID>SHIP001</wcf:ShipmentID>
-                    <wcf:TrackingID>123456789012</wcf:TrackingID>
-                </wcf:ShipmentActionResult>
-            </voidShipmentsResult>
-        </voidShipmentsResponse>
-    </soap:Body>
-</soap:Envelope>"""
+ShipmentCancelResponseJSON = """{
+    "success": 1,
+    "results": {
+        "Success": 1,
+        "ShipmentID": "SHIP001",
+        "TrackingID": "123456789012"
+    }
+}"""

@@ -17,34 +17,35 @@ class TestParcelOneTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        self.assertEqual(request.serialize(), TrackingRequest)
+        self.assertListEqual(request.serialize(), TrackingRequestJSON)
 
     def test_get_tracking(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = "<a></a>"
+            mock.return_value = "{}"
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
-            self.assertEqual(
+            # Verify tracking URL format
+            self.assertIn(
+                f"{gateway.settings.tracking_url}/tracking/",
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
             )
 
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = TrackingResponse
+            mock.return_value = TrackingResponseJSON
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_no_events_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = TrackingNoEventsResponse
+            mock.return_value = TrackingNoEventsResponseJSON
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedTrackingNoEventsResponse
             )
@@ -55,8 +56,18 @@ if __name__ == "__main__":
 
 
 TrackingPayload = {
-    "tracking_numbers": ["123456789012", "987654321098"],
+    "tracking_numbers": ["123456789012"],
+    "options": {
+        "carrier_id": "PA1",
+    },
 }
+
+TrackingRequestJSON = [
+    {
+        "tracking_id": "123456789012",
+        "carrier_id": "PA1",
+    }
+]
 
 ParsedTrackingResponse = [
     [
@@ -112,7 +123,12 @@ ParsedTrackingResponse = [
                 },
             ],
             "info": {
-                "carrier_tracking_link": "https://tracking.parcel.one/?trackingNumber=123456789012"
+                "carrier_tracking_link": "https://tracking.parcel.one/?trackingNumber=123456789012",
+                "signed_by": "John Doe",
+            },
+            "meta": {
+                "carrier_tracking_id": "DHL123456",
+                "last_mile_carrier": "DHL",
             },
             "status": "delivered",
             "tracking_number": "123456789012",
@@ -124,102 +140,52 @@ ParsedTrackingResponse = [
 ParsedTrackingNoEventsResponse = [[], []]
 
 
-TrackingRequest = """<?xml version="1.0" encoding="utf-8"?>
-<soapenv:Envelope
-    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:tns="http://tempuri.org/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF"
-    xmlns:arr="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
-    <soapenv:Header>
-        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-            <wsse:UsernameToken>
-                <wsse:Username>test_user</wsse:Username>
-                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">test_password</wsse:Password>
-            </wsse:UsernameToken>
-        </wsse:Security>
-    </soapenv:Header>
-    <soapenv:Body>
-        <tns:getTrackings>
-            <tns:ShippingData>
-                <wcf:identifyShipment xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <ShipmentRefField>TrackingID</ShipmentRefField>
-    <ShipmentRefValue>123456789012</ShipmentRefValue>
-</wcf:identifyShipment>
-<wcf:identifyShipment xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <ShipmentRefField>TrackingID</ShipmentRefField>
-    <ShipmentRefValue>987654321098</ShipmentRefValue>
-</wcf:identifyShipment>
+TrackingResponseJSON = """{
+    "success": 1,
+    "results": {
+        "StatusCode": "DELIVERED",
+        "CarrierTrackingID": "DHL123456",
+        "CarrierIDLMC": "DHL",
+        "SignedBy": "John Doe",
+        "Events": [
+            {
+                "DateTime": "2024-01-15T14:30:00",
+                "Location": "Munich, Germany",
+                "Description": "Package delivered",
+                "StatusCode": "DELIVERED"
+            },
+            {
+                "DateTime": "2024-01-15T08:00:00",
+                "Location": "Munich, Germany",
+                "Description": "Out for delivery",
+                "StatusCode": "OUT_FOR_DELIVERY"
+            },
+            {
+                "DateTime": "2024-01-14T22:00:00",
+                "Location": "Munich Hub",
+                "Description": "Arrived at destination facility",
+                "StatusCode": "ARRIVED"
+            },
+            {
+                "DateTime": "2024-01-14T10:00:00",
+                "Location": "Berlin Hub",
+                "Description": "Shipment in transit",
+                "StatusCode": "IN_TRANSIT"
+            },
+            {
+                "DateTime": "2024-01-13T16:00:00",
+                "Location": "Berlin",
+                "Description": "Shipment picked up",
+                "StatusCode": "REGISTERED"
+            }
+        ]
+    }
+}"""
 
-            </tns:ShippingData>
-        </tns:getTrackings>
-    </soapenv:Body>
-</soapenv:Envelope>"""
-
-
-TrackingResponse = """<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <soap:Body>
-        <getTrackingsResponse xmlns="http://tempuri.org/">
-            <getTrackingsResult>
-                <wcf:ShipmentTrackingResult>
-                    <wcf:ActionResult>
-                        <wcf:Success>1</wcf:Success>
-                        <wcf:TrackingID>123456789012</wcf:TrackingID>
-                    </wcf:ActionResult>
-                    <wcf:Trackings>
-                        <wcf:TrackingResult>
-                            <wcf:TrackingDateTime>2024-01-15T14:30:00</wcf:TrackingDateTime>
-                            <wcf:TrackingLocation>Munich, Germany</wcf:TrackingLocation>
-                            <wcf:TrackingStatus>Package delivered</wcf:TrackingStatus>
-                            <wcf:TrackingStatusCode>DELIVERED</wcf:TrackingStatusCode>
-                        </wcf:TrackingResult>
-                        <wcf:TrackingResult>
-                            <wcf:TrackingDateTime>2024-01-15T08:00:00</wcf:TrackingDateTime>
-                            <wcf:TrackingLocation>Munich, Germany</wcf:TrackingLocation>
-                            <wcf:TrackingStatus>Out for delivery</wcf:TrackingStatus>
-                            <wcf:TrackingStatusCode>OUT_FOR_DELIVERY</wcf:TrackingStatusCode>
-                        </wcf:TrackingResult>
-                        <wcf:TrackingResult>
-                            <wcf:TrackingDateTime>2024-01-14T22:00:00</wcf:TrackingDateTime>
-                            <wcf:TrackingLocation>Munich Hub</wcf:TrackingLocation>
-                            <wcf:TrackingStatus>Arrived at destination facility</wcf:TrackingStatus>
-                            <wcf:TrackingStatusCode>ARRIVED</wcf:TrackingStatusCode>
-                        </wcf:TrackingResult>
-                        <wcf:TrackingResult>
-                            <wcf:TrackingDateTime>2024-01-14T10:00:00</wcf:TrackingDateTime>
-                            <wcf:TrackingLocation>Berlin Hub</wcf:TrackingLocation>
-                            <wcf:TrackingStatus>Shipment in transit</wcf:TrackingStatus>
-                            <wcf:TrackingStatusCode>IN_TRANSIT</wcf:TrackingStatusCode>
-                        </wcf:TrackingResult>
-                        <wcf:TrackingResult>
-                            <wcf:TrackingDateTime>2024-01-13T16:00:00</wcf:TrackingDateTime>
-                            <wcf:TrackingLocation>Berlin</wcf:TrackingLocation>
-                            <wcf:TrackingStatus>Shipment picked up</wcf:TrackingStatus>
-                            <wcf:TrackingStatusCode>REGISTERED</wcf:TrackingStatusCode>
-                        </wcf:TrackingResult>
-                    </wcf:Trackings>
-                </wcf:ShipmentTrackingResult>
-            </getTrackingsResult>
-        </getTrackingsResponse>
-    </soap:Body>
-</soap:Envelope>"""
-
-
-TrackingNoEventsResponse = """<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF">
-    <soap:Body>
-        <getTrackingsResponse xmlns="http://tempuri.org/">
-            <getTrackingsResult>
-                <wcf:ShipmentTrackingResult>
-                    <wcf:ActionResult>
-                        <wcf:Success>1</wcf:Success>
-                        <wcf:TrackingID>999999999999</wcf:TrackingID>
-                    </wcf:ActionResult>
-                    <wcf:Trackings/>
-                </wcf:ShipmentTrackingResult>
-            </getTrackingsResult>
-        </getTrackingsResponse>
-    </soap:Body>
-</soap:Envelope>"""
+TrackingNoEventsResponseJSON = """{
+    "success": 1,
+    "results": {
+        "StatusCode": "UNKNOWN",
+        "Events": []
+    }
+}"""

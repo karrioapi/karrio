@@ -16,32 +16,23 @@ class LabelFormat(lib.StrEnum):
 class LabelSize(lib.StrEnum):
     """Supported label sizes."""
 
-    parcelone_100x150 = "100x150"
-    parcelone_100x200 = "100x200"
+    A6 = "A6"
+    A4 = "A4"
 
 
 class WeightUnit(lib.StrEnum):
     """Supported weight units."""
 
-    KG = "KG"
-    G = "G"
-
-
-class DimensionUnit(lib.StrEnum):
-    """Supported dimension units."""
-
-    CM = "CM"
-    MM = "MM"
+    kg = "kg"
+    g = "g"
 
 
 class CEP(lib.StrEnum):
     """Available carriers through ParcelOne (CEP = Courier, Express, Parcel)."""
 
+    PA1 = "PA1"  # Parcel.One
     DHL = "DHL"
-    DPD = "DPD"
     UPS = "UPS"
-    GLS = "GLS"
-    HERMES = "HERMES"
 
 
 class PackagingType(lib.StrEnum):
@@ -63,46 +54,40 @@ class PackagingType(lib.StrEnum):
 class ConnectionConfig(lib.Enum):
     """ParcelOne connection configuration options."""
 
-    label_format = lib.OptionEnum("label_format", LabelFormat, default="PDF")
-    label_size = lib.OptionEnum("label_size", LabelSize, default="100x150")
-    default_cep = lib.OptionEnum("default_cep", CEP)
+    cep_id = lib.OptionEnum("cep_id", str, "PA1")  # Default carrier (PA1, DHL, UPS)
+    product_id = lib.OptionEnum("product_id", str, "eco")  # Default product code
+    label_format = lib.OptionEnum("label_format", LabelFormat)
+    label_size = lib.OptionEnum("label_size", LabelSize)
     shipping_services = lib.OptionEnum("shipping_services", list)
     shipping_options = lib.OptionEnum("shipping_options", list)
 
 
 class ShippingService(lib.StrEnum):
-    """Carrier + Product combinations.
+    """ParcelOne shipping services.
 
     Format: parcelone_{cep}_{product}
-    The service code maps to CEPID_PRODUCTID internally.
+    The service code maps to CEPID and ProductID internally.
     """
 
-    # DHL services
+    # Parcel.One (PA1) services
+    parcelone_pa1_basic = "PA1_basic"
+    parcelone_pa1_eco = "PA1_eco"
+    parcelone_pa1_premium = "PA1_premium"
+    parcelone_pa1_express = "PA1_express"
+
+    # DHL services (via ParcelOne)
     parcelone_dhl_paket = "DHL_PAKET"
     parcelone_dhl_paket_international = "DHL_PAKETINT"
     parcelone_dhl_express = "DHL_EXPRESS"
     parcelone_dhl_retoure = "DHL_RETOURE"
 
-    # DPD services
-    parcelone_dpd_classic = "DPD_CLASSIC"
-    parcelone_dpd_express = "DPD_EXPRESS"
-    parcelone_dpd_international = "DPD_INT"
-
-    # UPS services
+    # UPS services (via ParcelOne)
     parcelone_ups_standard = "UPS_STANDARD"
     parcelone_ups_express = "UPS_EXPRESS"
     parcelone_ups_express_saver = "UPS_EXPSAVER"
 
-    # GLS services
-    parcelone_gls_business = "GLS_BUSINESS"
-    parcelone_gls_express = "GLS_EXPRESS"
 
-    # Hermes services
-    parcelone_hermes_standard = "HERMES_STANDARD"
-    parcelone_hermes_xl = "HERMES_XL"
-
-
-def parse_service_code(service_code: str) -> tuple:
+def parse_service_code(service_code: str) -> typing.Tuple[str, str]:
     """Parse a service code to extract CEP ID and Product ID.
 
     Args:
@@ -118,25 +103,39 @@ def parse_service_code(service_code: str) -> tuple:
 
 
 class ShippingOption(lib.Enum):
-    """Carrier specific options."""
+    """Carrier specific shipping options.
 
-    # ParcelOne services (ServiceID values)
+    ParcelOne ServiceID values that can be added to shipments or packages.
+    """
+
+    # Delivery options
+    parcelone_saturday_delivery = lib.OptionEnum("SDO", bool)  # Saturday delivery only
+    parcelone_return_label = lib.OptionEnum("SRL", bool)  # Return label
+
+    # Payment services
     parcelone_cod = lib.OptionEnum("COD", float)  # Cash on delivery
-    parcelone_cod_currency = lib.OptionEnum("COD_CURRENCY", str)
+    parcelone_cod_currency = lib.OptionEnum("COD_CURRENCY")
     parcelone_insurance = lib.OptionEnum("INS", float)  # Insurance
-    parcelone_insurance_currency = lib.OptionEnum("INS_CURRENCY", str)
+    parcelone_insurance_currency = lib.OptionEnum("INS_CURRENCY")
+
+    # Notification services
+    parcelone_notification_email = lib.OptionEnum("MAIL")  # Email notification
+    parcelone_notification_sms = lib.OptionEnum("SMS")  # SMS notification
+
+    # Delivery confirmation
     parcelone_signature = lib.OptionEnum("SIG", bool)  # Signature required
-    parcelone_saturday_delivery = lib.OptionEnum("SAT", bool)
-    parcelone_notification_email = lib.OptionEnum("MAIL", str)
-    parcelone_notification_sms = lib.OptionEnum("SMS", str)
-    parcelone_age_verification = lib.OptionEnum("AGE", int)  # Age check (16, 18)
     parcelone_ident_check = lib.OptionEnum("IDENT", bool)  # Identity check
-    parcelone_personally = lib.OptionEnum("PERS", bool)  # Personal delivery
+    parcelone_age_check = lib.OptionEnum("AGE", int)  # Age verification (16, 18)
+    parcelone_personally = lib.OptionEnum("PERS", bool)  # Personal delivery only
+
+    # Delivery location options
     parcelone_neighbor_delivery = lib.OptionEnum("NEIGHBOR", bool)
-    parcelone_drop_off_point = lib.OptionEnum("DROP", str)  # Parcel shop delivery
+    parcelone_no_neighbor = lib.OptionEnum("NONEIGHBOR", bool)
+    parcelone_drop_off_point = lib.OptionEnum("DROP")  # Parcel shop delivery (PUDO ID)
+
+    # Premium services
     parcelone_premium = lib.OptionEnum("PREMIUM", bool)
     parcelone_bulky_goods = lib.OptionEnum("BULKY", bool)
-    parcelone_no_neighbor = lib.OptionEnum("NONEIGHBOR", bool)
 
     # Unified option mappings
     cash_on_delivery = parcelone_cod
@@ -144,20 +143,6 @@ class ShippingOption(lib.Enum):
     signature_required = parcelone_signature
     saturday_delivery = parcelone_saturday_delivery
     email_notification = parcelone_notification_email
-
-
-def shipping_services_initializer(
-    services: typing.List[str],
-    **kwargs,
-) -> units.Services:
-    """Apply default service codes to the list of services."""
-    _services = list(set(services or []))
-
-    # If no services specified, return empty
-    if not _services:
-        return units.Services([], ShippingService)
-
-    return units.Services(_services, ShippingService)
 
 
 def shipping_options_initializer(
@@ -177,7 +162,7 @@ def shipping_options_initializer(
 class TrackingStatus(lib.Enum):
     """Carrier tracking status mapping.
 
-    Maps ParcelOne tracking status codes to Karrio unified status.
+    Maps ParcelOne/last-mile-carrier tracking status codes to Karrio unified status.
     """
 
     pending = [
@@ -185,6 +170,8 @@ class TrackingStatus(lib.Enum):
         "REGISTERED",
         "DATA_RECEIVED",
         "LABEL_PRINTED",
+        "0",
+        "1",
     ]
     delivered = [
         "DELIVERED",
@@ -192,6 +179,7 @@ class TrackingStatus(lib.Enum):
         "DELIVERED_NEIGHBOR",
         "DELIVERED_SAFE_PLACE",
         "DELIVERED_PARCELSHOP",
+        "90",
     ]
     in_transit = [
         "IN_TRANSIT",
@@ -202,11 +190,16 @@ class TrackingStatus(lib.Enum):
         "IN_DELIVERY_VEHICLE",
         "EXPORTED",
         "IMPORTED",
+        "SHIPPED",
+        "10",
+        "20",
+        "30",
     ]
     out_for_delivery = [
         "OUT_FOR_DELIVERY",
         "ON_DELIVERY_VEHICLE",
         "DELIVERY_IN_PROGRESS",
+        "80",
     ]
     on_hold = [
         "HELD",
@@ -214,6 +207,7 @@ class TrackingStatus(lib.Enum):
         "CUSTOMS_CLEARANCE",
         "PAYMENT_REQUIRED",
         "AWAITING_PICKUP",
+        "40",
     ]
     delivery_failed = [
         "FAILED",
@@ -222,6 +216,7 @@ class TrackingStatus(lib.Enum):
         "REFUSED",
         "ADDRESSEE_NOT_FOUND",
         "WRONG_ADDRESS",
+        "99",
     ]
     delivery_delayed = [
         "DELAYED",
@@ -232,46 +227,32 @@ class TrackingStatus(lib.Enum):
         "READY_FOR_PICKUP",
         "AT_PARCELSHOP",
         "AVAILABLE_FOR_COLLECTION",
+        "70",
     ]
 
 
-class TrackingIncidentReason(lib.Enum):
-    """Maps ParcelOne exception codes to normalized TrackingIncidentReason.
-
-    These codes map carrier-specific exception/status codes to standardized
-    incident reasons for tracking events.
-    """
-
-    # Carrier-caused issues
-    carrier_damaged_parcel = ["DAMAGED", "DMG", "DAMAGE"]
-    carrier_sorting_error = ["MISROUTED", "MSR", "WRONG_ROUTE"]
-    carrier_address_not_found = ["ADDRESS_NOT_FOUND", "ANF", "NO_LOCATION"]
-    carrier_parcel_lost = ["LOST", "LP", "MISSING"]
-    carrier_not_enough_time = ["LATE", "NO_TIME", "TIME_OUT"]
-    carrier_vehicle_issue = ["VEHICLE_BREAKDOWN", "VB", "MECHANICAL"]
-
-    # Consignee-caused issues
-    consignee_refused = ["REFUSED", "REJECTED", "RE"]
-    consignee_business_closed = ["BUSINESS_CLOSED", "BC", "CLOSED"]
-    consignee_not_available = ["NOT_AVAILABLE", "NA", "UNAVAILABLE"]
-    consignee_not_home = ["NOT_HOME", "NH", "ABSENT"]
-    consignee_incorrect_address = ["WRONG_ADDRESS", "INCORRECT_ADDRESS", "BAD_ADDRESS"]
-    consignee_access_restricted = ["ACCESS_RESTRICTED", "NO_ACCESS", "SECURITY"]
-
-    # Customs-related issues
-    customs_delay = ["CUSTOMS_DELAY", "CUSTOMS_HOLD", "CH"]
-    customs_documentation = ["CUSTOMS_DOCS", "MISSING_DOCS", "CP"]
-    customs_duties_unpaid = ["DUTIES_UNPAID", "DU", "CUSTOMS_UNPAID"]
-
-    # Weather/Force majeure
-    weather_delay = ["WEATHER", "WE", "WEATHER_DELAY"]
-    natural_disaster = ["NATURAL_DISASTER", "ND", "EMERGENCY"]
-
-    # Other issues
-    unknown = []
-
-
 DEFAULT_SERVICES = [
+    # Parcel.One (PA1) services
+    {
+        "service_code": "parcelone_pa1_basic",
+        "service_name": "Parcel.One Basic",
+        "currency": "EUR",
+    },
+    {
+        "service_code": "parcelone_pa1_eco",
+        "service_name": "Parcel.One Eco",
+        "currency": "EUR",
+    },
+    {
+        "service_code": "parcelone_pa1_premium",
+        "service_name": "Parcel.One Premium",
+        "currency": "EUR",
+    },
+    {
+        "service_code": "parcelone_pa1_express",
+        "service_name": "Parcel.One Express",
+        "currency": "EUR",
+    },
     # DHL services
     {
         "service_code": "parcelone_dhl_paket",
@@ -288,17 +269,6 @@ DEFAULT_SERVICES = [
         "service_name": "DHL Express",
         "currency": "EUR",
     },
-    # DPD services
-    {
-        "service_code": "parcelone_dpd_classic",
-        "service_name": "DPD Classic",
-        "currency": "EUR",
-    },
-    {
-        "service_code": "parcelone_dpd_express",
-        "service_name": "DPD Express",
-        "currency": "EUR",
-    },
     # UPS services
     {
         "service_code": "parcelone_ups_standard",
@@ -308,18 +278,6 @@ DEFAULT_SERVICES = [
     {
         "service_code": "parcelone_ups_express",
         "service_name": "UPS Express",
-        "currency": "EUR",
-    },
-    # GLS services
-    {
-        "service_code": "parcelone_gls_business",
-        "service_name": "GLS Business",
-        "currency": "EUR",
-    },
-    # Hermes services
-    {
-        "service_code": "parcelone_hermes_standard",
-        "service_name": "Hermes Standard",
         "currency": "EUR",
     },
 ]

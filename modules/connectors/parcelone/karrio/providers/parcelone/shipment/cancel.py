@@ -1,7 +1,6 @@
 """Karrio ParcelOne shipment cancellation implementation."""
 
 import typing
-import karrio.schemas.parcelone.shipping_wcf as parcelone
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.parcelone.error as error
@@ -9,30 +8,22 @@ import karrio.providers.parcelone.utils as provider_utils
 
 
 def parse_shipment_cancel_response(
-    _response: lib.Deserializable[lib.Element],
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    """Parse shipment cancellation response from ParcelOne API."""
+) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+    """Parse shipment cancellation response from ParcelOne REST API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
+    success = response.get("success") == 1
 
-    action_results: typing.List[parcelone.ShipmentActionResult] = lib.find_element(
-        "ShipmentActionResult", response, parcelone.ShipmentActionResult
-    )
-
-    successful = any(
-        result.Success == 1
-        for result in action_results
-    )
-
-    confirmation = (
+    confirmation = lib.identity(
         models.ConfirmationDetails(
-            carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
-            success=successful,
+            carrier_name=settings.carrier_name,
             operation="Cancel Shipment",
+            success=success,
         )
-        if successful
+        if success
         else None
     )
 
@@ -43,39 +34,27 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create ParcelOne shipment cancellation request."""
-    # Determine the reference field to use
-    # ParcelOne supports: TrackingID, ShipmentID, ShipmentRef
-    ref_field = "TrackingID"
-    if payload.shipment_identifier.isdigit():
+    """Create ParcelOne shipment cancel request.
+
+    The API uses DELETE /shipment/{ShipmentRefField}/{ShipmentRefValue}
+    where ShipmentRefField can be: ShipmentID, ShipmentRef, or TrackingID
+    """
+    # Determine which reference field to use based on identifier format
+    identifier = payload.shipment_identifier
+
+    # If it's a numeric string, it's likely a ShipmentID
+    # If it starts with digits and has a specific length (13), it's likely a TrackingID
+    # Otherwise, treat it as a ShipmentRef
+    if identifier.isdigit() and len(identifier) < 10:
         ref_field = "ShipmentID"
+    elif identifier.isdigit() and len(identifier) >= 10:
+        ref_field = "TrackingID"
+    else:
+        ref_field = "ShipmentRef"
 
-    request = parcelone.identifyShipment(
-        ShipmentRefField=ref_field,
-        ShipmentRefValue=payload.shipment_identifier,
+    request = dict(
+        ref_field=ref_field,
+        ref_value=identifier,
     )
 
-    return lib.Serializable(
-        request,
-        lambda req: _request_serializer(req, settings),
-    )
-
-
-def _request_serializer(
-    request: parcelone.identifyShipment,
-    settings: provider_utils.Settings,
-) -> str:
-    """Serialize cancellation request to SOAP envelope."""
-    identify_xml = lib.to_xml(
-        request,
-        name_="wcf:identifyShipment",
-        namespacedef_='xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF"',
-    )
-
-    body = f"""<tns:voidShipments>
-            <tns:ShippingData>
-                {identify_xml}
-            </tns:ShippingData>
-        </tns:voidShipments>"""
-
-    return provider_utils.create_envelope(body, settings)
+    return lib.Serializable(request, lib.to_dict)

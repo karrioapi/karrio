@@ -1,7 +1,12 @@
-"""Karrio ParcelOne rating implementation."""
+"""Karrio ParcelOne rating implementation.
+
+Note: ParcelOne REST API returns charges as part of the shipment creation response.
+This implementation creates a rate request that can be used to get charges
+by setting ReturnCharges=1 on the shipment request.
+"""
 
 import typing
-import karrio.schemas.parcelone.shipping_wcf as parcelone
+import karrio.schemas.parcelone as parcelone
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.parcelone.error as error
@@ -10,40 +15,40 @@ import karrio.providers.parcelone.units as provider_units
 
 
 def parse_rate_response(
-    _response: lib.Deserializable[lib.Element],
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    """Parse rate response from ParcelOne API."""
+    """Parse rate response from ParcelOne REST API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    charges_results: typing.List[parcelone.ChargesResult] = lib.find_element(
-        "ChargesResult", response, parcelone.ChargesResult
+    rates = lib.identity(
+        [_extract_rate(response, settings, _response.ctx)]
+        if response.get("success") == 1 and response.get("results")
+        else []
     )
-
-    rates = [
-        _extract_rate(result, settings, _response.ctx)
-        for result in charges_results
-        if (result.ActionResult is not None and result.ActionResult.Success == 1)
-        or result.TotalCharges is not None
-    ]
 
     return [rate for rate in rates if rate is not None], messages
 
 
 def _extract_rate(
-    result: parcelone.ChargesResult,
+    data: dict,
     settings: provider_utils.Settings,
-    ctx: typing.Dict[str, typing.Any] = {},
-) -> models.RateDetails:
-    """Extract rate details from ChargesResult element."""
-    service_code = ctx.get("service_code", "parcelone_standard")
+    ctx: typing.Dict[str, typing.Any] = None,
+) -> typing.Optional[models.RateDetails]:
+    """Extract rate details from API response."""
+    ctx = ctx or {}
+    result = lib.to_object(parcelone.ShipmentResultType, data.get("results") or {})
+
+    # Check if we have charges in the response
+    if result.TotalCharges is None and not result.Charges:
+        return None
+
+    service_code = ctx.get("service_code", "parcelone_pa1_eco")
     service = provider_units.ShippingService.map(service_code)
 
-    total_charge = (
-        lib.to_money(result.TotalCharges.Value) if result.TotalCharges else 0.0
-    )
-    currency = result.TotalCharges.Currency if result.TotalCharges else "EUR"
+    total_charge = lib.failsafe(lambda: float(result.TotalCharges.Value)) if result.TotalCharges else 0.0
+    currency = lib.failsafe(lambda: result.TotalCharges.Currency) or "EUR"
 
     extra_charges = [
         models.ChargeDetails(
@@ -51,7 +56,7 @@ def _extract_rate(
             amount=lib.to_money(charge.Value),
             currency=charge.Currency or currency,
         )
-        for charge in (result.ShipmentCharges.Amount if result.ShipmentCharges else [])
+        for charge in (result.Charges or [])
         if charge.Value
     ]
 
@@ -59,12 +64,11 @@ def _extract_rate(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         service=service.name_or_key,
-        total_charge=total_charge,
-        currency=currency or "EUR",
+        total_charge=lib.to_money(total_charge),
+        currency=currency,
         extra_charges=extra_charges,
         meta=dict(
             service_name=service.name_or_key,
-            remarks=result.Remarks,
         ),
     )
 
@@ -73,13 +77,14 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create ParcelOne rate request."""
+    """Create ParcelOne rate request.
+
+    Uses the shipment endpoint with ReturnCharges=1 to get rates.
+    """
+    shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels, required=["weight"])
-    services = lib.to_services(
-        payload.services,
-        initializer=provider_units.shipping_services_initializer,
-    )
+    services = lib.to_services(payload.services, service_type=provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
@@ -87,74 +92,71 @@ def rate_request(
     )
 
     # Get first service or use default
-    service = next(
-        (svc for svc in services),
-        provider_units.ShippingService.parcelone_dhl_paket,
+    service = lib.identity(
+        next(iter(services), None)
+        or provider_units.ShippingService.parcelone_pa1_eco
     )
 
     # Parse service for CEP and product IDs
-    service_code = service.value
+    service_code = service.value if hasattr(service, 'value') else str(service)
     cep_id, product_id = provider_units.parse_service_code(service_code)
-    cep_id = cep_id or settings.cep_id or "DHL"
-    product_id = product_id or settings.product_id or "PAKET"
+    cep_id = cep_id or settings.connection_config.cep_id.state
+    product_id = product_id or settings.connection_config.product_id.state
 
-    request = parcelone.Charges(
-        MandatorID=settings.mandator_id,
-        ConsignerID=settings.consigner_id,
-        CEPID=cep_id,
-        ProductID=product_id,
-        ShipToAddress=parcelone.Address(
-            PostalCode=recipient.postal_code,
-            City=recipient.city,
-            Country=recipient.country_code,
-            State=recipient.state_code,
-        ),
-        Packages=parcelone.ArrayOfShipmentPackage(
-            ShipmentPackage=[
-                parcelone.ShipmentPackage(
-                    PackageWeight=parcelone.Measurement(
-                        Value=str(pkg.weight.KG) if pkg.weight else "0",
-                        Unit="KG",
+    request = parcelone.ShippingDataRequestType(
+        ShippingData=parcelone.ShipmentType(
+            CEPID=cep_id,
+            ProductID=product_id,
+            MandatorID=settings.mandator_id,
+            ConsignerID=settings.consigner_id,
+            ShipToData=parcelone.ShipToType(
+                Name1=recipient.company_name or recipient.person_name,
+                ShipmentAddress=parcelone.AddressType(
+                    Street=recipient.street,
+                    PostalCode=recipient.postal_code,
+                    City=recipient.city,
+                    Country=recipient.country_code,
+                    State=recipient.state_code,
+                ),
+                PrivateAddressIndicator=1 if recipient.residential else 0,
+            ),
+            ShipFromData=parcelone.ShipFromType(
+                Name1=shipper.company_name or shipper.person_name,
+                ShipmentAddress=parcelone.AddressType(
+                    Street=shipper.street,
+                    PostalCode=shipper.postal_code,
+                    City=shipper.city,
+                    Country=shipper.country_code,
+                    State=shipper.state_code,
+                ),
+            ) if shipper else None,
+            ReturnCharges=1,  # Request charges only
+            PrintLabel=0,  # Don't generate label for rate request
+            Software="Karrio",
+            Packages=[
+                parcelone.ShipmentPackageType(
+                    PackageRef=str(index),
+                    PackageWeight=parcelone.MeasurementType(
+                        Value=str(pkg.weight.KG),
+                        Unit="kg",
                     ),
                     PackageDimensions=(
-                        parcelone.Dimensions(
-                            Length=str(pkg.length.CM) if pkg.length else None,
-                            Width=str(pkg.width.CM) if pkg.width else None,
-                            Height=str(pkg.height.CM) if pkg.height else None,
-                            Measurement="CM",
+                        parcelone.DimensionsType(
+                            Length=str(pkg.length.CM),
+                            Width=str(pkg.width.CM),
+                            Height=str(pkg.height.CM),
                         )
-                        if pkg.length and pkg.width and pkg.height
+                        if pkg.length.CM and pkg.width.CM and pkg.height.CM
                         else None
                     ),
                 )
-                for pkg in packages
-            ]
+                for index, pkg in enumerate(packages, 1)
+            ],
         ),
-        PrivateAddressIndicator=1 if recipient.residential else 0,
     )
 
     return lib.Serializable(
         request,
-        lambda req: _request_serializer(req, settings),
-        dict(service_code=service.name),
+        lib.to_dict,
+        dict(service_code=service.name if hasattr(service, 'name') else str(service)),
     )
-
-
-def _request_serializer(
-    request: parcelone.Charges,
-    settings: provider_utils.Settings,
-) -> str:
-    """Serialize rate request to SOAP envelope."""
-    charges_xml = lib.to_xml(
-        request,
-        name_="wcf:Charges",
-        namespacedef_='xmlns:wcf="http://schemas.datacontract.org/2004/07/ShippingWCF"',
-    )
-
-    body = f"""<tns:getCharges>
-            <tns:ChargesData>
-                {charges_xml}
-            </tns:ChargesData>
-        </tns:getCharges>"""
-
-    return provider_utils.create_envelope(body, settings)

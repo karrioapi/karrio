@@ -17,6 +17,8 @@ This document complements the [CARRIER_INTEGRATION_GUIDE.md](./CARRIER_INTEGRATI
    - [Not Filtering None in Test Assertions](#4-not-filtering-none-in-test-assertions)
    - [Redundant None Checks on Package Dimensions](#5-redundant-none-checks-on-package-dimensions)
    - [Defensive Empty String Fallbacks](#6-defensive-empty-string-fallbacks-in-response-parsing)
+   - [Using Helper Functions Instead of Single Tree](#7-using-_build_-helper-functions-instead-of-single-tree-instantiation)
+   - [Services and Options Declaration Patterns](#8-services-and-options-declaration-patterns)
 6. [SOAP/WCF Integration Patterns](#soapwcf-integration-patterns)
 7. [Error Handling](#error-handling)
 8. [Service and Option Mappings](#service-and-option-mappings)
@@ -651,6 +653,224 @@ def parse_shipment_response(_response, settings):
     )
     return shipment, messages
 ```
+
+### 7. Using `_build_*` Helper Functions Instead of Single Tree Instantiation
+
+**Never create helper functions** like `_build_services()`, `_build_customs_data()`, `_build_address()` to construct parts of a request. Always use **single tree instantiation** where the entire request object is built in one expression.
+
+```python
+# WRONG - DO NOT DO THIS!
+def _build_services(options):
+    """Build services list from options."""
+    services = []
+    if options.cash_on_delivery.state:
+        services.append(ServiceType(ServiceID="COD", Value=options.cash_on_delivery.state))
+    if options.insurance.state:
+        services.append(ServiceType(ServiceID="INS", Value=options.insurance.state))
+    return services
+
+def _build_customs_data(customs):
+    """Build customs data."""
+    return CustomsType(
+        InvoiceNo=customs.invoice,
+        Items=[ItemType(...) for item in customs.commodities],
+    )
+
+def shipment_request(payload, settings):
+    # ... setup code ...
+    services = _build_services(options)  # WRONG!
+    customs_data = _build_customs_data(customs)  # WRONG!
+
+    request = ShipmentType(
+        Services=services,
+        Customs=customs_data,
+    )
+```
+
+```python
+# CORRECT - Single tree instantiation with everything inline
+def shipment_request(payload, settings):
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(payload.parcels, required=["weight"])
+    options = lib.to_shipping_options(payload.options, ...)
+    customs = payload.customs
+
+    request = ShipmentType(
+        ShipToData=AddressType(
+            Name1=recipient.company_name or recipient.person_name,
+            Street=recipient.street,
+            City=recipient.city,
+            Country=recipient.country_code,
+        ),
+        ShipFromData=AddressType(
+            Name1=shipper.company_name or shipper.person_name,
+            Street=shipper.street,
+            City=shipper.city,
+            Country=shipper.country_code,
+        ),
+        Packages=[
+            PackageType(
+                Weight=pkg.weight.KG,
+                Length=pkg.length.CM,
+                Width=pkg.width.CM,
+                Height=pkg.height.CM,
+                # Customs data inline per package
+                CustomsData=(
+                    CustomsType(
+                        InvoiceNo=customs.invoice,
+                        Items=[
+                            ItemType(
+                                Description=item.description,
+                                Quantity=item.quantity,
+                                Value=item.value_amount,
+                            )
+                            for item in (customs.commodities or [])
+                        ] if customs.commodities else None,
+                    )
+                    if customs
+                    else None
+                ),
+            )
+            for index, pkg in enumerate(packages, 1)
+        ],
+        # Services inline - see pattern below
+        Services=[
+            *(
+                [ServiceType(ServiceID="COD", Value=str(options.cash_on_delivery.state))]
+                if options.cash_on_delivery.state
+                else []
+            ),
+            *(
+                [ServiceType(ServiceID="INS", Value=str(options.insurance.state))]
+                if options.insurance.state
+                else []
+            ),
+            *([ServiceType(ServiceID="SIG")] if options.signature_required.state else []),
+        ],
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+```
+
+**Why single tree instantiation?**
+- Easier to read and understand the complete request structure
+- No jumping between functions to understand what's being built
+- Consistent with karrio codebase patterns (see DHL Express, Canada Post, UPS)
+- Makes it obvious what data goes where
+
+### 8. Services and Options Declaration Patterns
+
+When declaring services or options inline, follow these patterns based on the complexity:
+
+#### Pattern A: Uniform Structure (Canada Post, DHL Express)
+
+When all options have the **same structure**, use a filtered list comprehension:
+
+```python
+# From canadapost/shipment/create.py - all options have same structure
+options=(
+    canadapost.optionsType(
+        option=[
+            canadapost.OptionType(
+                option_code=option.code,
+                option_amount=lib.to_money(option.state),
+            )
+            for _, option in package.options.items()
+            if option.state is not False
+        ]
+    )
+    if any([option for _, option in package.options.items() if option.state is not False])
+    else None
+),
+```
+
+```python
+# From dhl_express/shipment.py - filter options first, then map
+option_items = [
+    option for _, option in options.items() if option.state is not False
+]
+
+# Then in the request tree:
+SpecialService=[
+    dhl.SpecialService(
+        SpecialServiceType=svc.code,
+        ChargeValue=lib.to_money(svc.state),
+        CurrencyCode=(currency if lib.to_money(svc.state) is not None else None),
+    )
+    for svc in option_items
+],
+```
+
+#### Pattern B: Different Structures (Spread Syntax)
+
+When services have **different structures** (some need values, some don't), use spread syntax with conditionals:
+
+```python
+# Each service type has different requirements
+Services=[
+    # COD needs Value with amount and currency
+    *(
+        [
+            ServiceType(
+                ServiceID="COD",
+                Value=AmountType(
+                    Value=str(options.cash_on_delivery.state),
+                    Currency=options.carrier_cod_currency.state or "EUR",
+                ),
+            )
+        ]
+        if options.cash_on_delivery.state
+        else []
+    ),
+    # Insurance also needs Value
+    *(
+        [
+            ServiceType(
+                ServiceID="INS",
+                Value=AmountType(
+                    Value=str(options.insurance.state),
+                    Currency=options.carrier_insurance_currency.state or "EUR",
+                ),
+            )
+        ]
+        if options.insurance.state
+        else []
+    ),
+    # Signature just needs ServiceID (no Value)
+    *([ServiceType(ServiceID="SIG")] if options.signature_required.state else []),
+    # Saturday delivery just needs ServiceID
+    *([ServiceType(ServiceID="SDO")] if options.saturday_delivery.state else []),
+    # Email notification needs Parameters (not Value)
+    *(
+        [
+            ServiceType(
+                ServiceID="MAIL",
+                Parameters=options.carrier_notification_email.state,
+            )
+        ]
+        if options.carrier_notification_email.state
+        else []
+    ),
+],
+```
+
+#### Important: Empty Lists vs None for jstruct
+
+When using jstruct JList fields, pass an **empty list `[]`** instead of `None` to avoid `[None]` serialization:
+
+```python
+# WRONG - jstruct converts None to [None]
+Services=services if services else None,  # Results in {"Services": [None]}
+
+# CORRECT - empty list gets stripped by lib.to_dict()
+Services=services,  # Empty [] gets stripped, non-empty list is kept
+```
+
+**Reference implementations:**
+- `modules/connectors/dhl_express/karrio/providers/dhl_express/shipment.py`
+- `modules/connectors/canadapost/karrio/providers/canadapost/shipment/create.py`
+- `modules/connectors/ups/karrio/providers/ups/shipment/create.py`
 
 ---
 

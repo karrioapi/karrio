@@ -15,10 +15,6 @@ class Settings(provider_utils.Settings):
     mandator_id: str
     consigner_id: str
 
-    # Optional settings
-    cep_id: str = None  # Default carrier (DHL, DPD, UPS, GLS, HERMES)
-    product_id: str = None  # Default product code
-
     # Generic properties
     id: str = None
     test_mode: bool = False
