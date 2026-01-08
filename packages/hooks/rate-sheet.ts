@@ -11,8 +11,6 @@ import {
   DELETE_RATE_SHEET,
   UPDATE_RATE_SHEET,
   CREATE_RATE_SHEET,
-  UPDATE_RATE_SHEET_ZONE_CELL,
-  BATCH_UPDATE_RATE_SHEET_CELLS,
   DELETE_RATE_SHEET_SERVICE,
   ADD_SHARED_ZONE,
   UPDATE_SHARED_ZONE,
@@ -263,70 +261,3 @@ export function useRateSheetMutation() {
 }
 
 
-export function useRateSheetCellMutation() {
-  const queryClient = useQueryClient();
-  const karrio = useKarrio();
-  const invalidateCache = () => { 
-    queryClient.invalidateQueries(['rate-sheets']);
-  };
-
-  const updateRateSheetZoneCell = useMutation(
-    (data: any) => karrio.graphql.request<any>(
-      gqlstr(UPDATE_RATE_SHEET_ZONE_CELL), { data }
-    ),
-    { 
-      onSuccess: invalidateCache,
-      // Optimistic update
-      onMutate: async (data) => {
-        await queryClient.cancelQueries(['rate-sheets', data.id]);
-        const previousData = queryClient.getQueryData(['rate-sheets', data.id]);
-        
-        queryClient.setQueryData(['rate-sheets', data.id], (old: any) => {
-          if (!old) return old;
-          // Update the specific cell optimistically
-          const updatedServices = old.rate_sheet.services.map((service: any) => {
-            if (service.id === data.service_id) {
-              const updatedZones = service.zones.map((zone: any) => {
-                // Use zone.id for zone identification
-                if (zone.id === data.zone_id) {
-                  return { ...zone, [data.field]: data.value };
-                }
-                return zone;
-              });
-              return { ...service, zones: updatedZones };
-            }
-            return service;
-          });
-          return {
-            ...old,
-            rate_sheet: {
-              ...old.rate_sheet,
-              services: updatedServices
-            }
-          };
-        });
-        
-        return { previousData };
-      },
-      onError: (err, data, context: any) => {
-        // Rollback on error with original error handling
-        if (context?.previousData) {
-          queryClient.setQueryData(['rate-sheets', data.id], context.previousData);
-        }
-        onError(err);
-      }
-    }
-  );
-
-  const batchUpdateRateSheetCells = useMutation(
-    (data: any) => karrio.graphql.request<any>(
-      gqlstr(BATCH_UPDATE_RATE_SHEET_CELLS), { data }
-    ),
-    { onSuccess: invalidateCache, onError }
-  );
-
-  return {
-    updateRateSheetZoneCell,
-    batchUpdateRateSheetCells,
-  };
-}

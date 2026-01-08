@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_server_proxy"
-version = "2025.5.7"
+version = "2026.1"
 description = "Multi-carrier shipping API Proxy module"
 readme = "README.md"
 requires-python = ">=3.11"
