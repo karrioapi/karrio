@@ -1,0 +1,14 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/bpost
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/announcement_common_v1.py" $SCHEMAS/announcement_common_v1.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/business_exception.py" $SCHEMAS/business_exception.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/common_v5.py" $SCHEMAS/common_v5.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/international_v5.py" $SCHEMAS/international_v5.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/national_v5.py" $SCHEMAS/national_v5.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/shm_deep_integration_v5.py" $SCHEMAS/shm_deep_integration_v5.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/system_exception.py" $SCHEMAS/system_exception.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_info_v1.py" $SCHEMAS/tracking_info_v1.xsd

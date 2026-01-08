@@ -5,6 +5,7 @@
 
 # Shipping Plugins
 -e ./modules/connectors/australiapost
+-e ./modules/connectors/bpost
 -e ./modules/connectors/canadapost
 -e ./modules/connectors/chronopost
 -e ./modules/connectors/dhl_express

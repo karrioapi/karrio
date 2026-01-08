@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns="http://schema.post.be/shm/deepintegration/v5/"
+    targetNamespace="http://schema.post.be/shm/deepintegration/v5/"
+    xmlns:tns="http://schema.post.be/shm/deepintegration/v5/"
+    xmlns:common="http://schema.post.be/shm/deepintegration/v5/common"
+    xmlns:national="http://schema.post.be/shm/deepintegration/v5/national"
+    xmlns:international="http://schema.post.be/shm/deepintegration/v5/international">
+
+    <xs:import namespace="http://schema.post.be/shm/deepintegration/v5/common"
+        schemaLocation="common_v5.xsd" />
+    <xs:import namespace="http://schema.post.be/shm/deepintegration/v5/national"
+        schemaLocation="national_v5.xsd" />
+    <xs:import namespace="http://schema.post.be/shm/deepintegration/v5/international"
+        schemaLocation="international_v5.xsd" />
+
+    <xs:element name="order" type="tns:OrderType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Element used for creating an order. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="orderInfo" type="tns:OrderInfoType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Element used for the response when fetching an order. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="batchLabels" type="tns:BatchLabelsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Element used for the request of creating labels in
+                bulk. This element holds the box and/or order information for making the request. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="labels" type="tns:LabelsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Element for the response when fetching labels. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="productConfiguration" type="tns:ProductConfigurationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Element used for the response of the product
+                configuration. This element holds information about the delivery method and the
+                product's options and related prices. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="orderUpdate" type="tns:OrderUpdateType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type of request for updating a product (status update). </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="invalidSelection" type="tns:InvalidSelectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type of validation error for creating order(s). If
+                invalid options are requested, invalidselection error(s) will be given. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="unknownItems" type="tns:UnknownItemsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> List of unknown items in a bulk label request </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="OrderUpdateType">
+        <xs:sequence>
+            <xs:element name="status" type="common:SetBoxStatusType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> New status of an order. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="OrderReferenceType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type for the reference of an order. This text field
+                should have at least 1 character different from white space and have from 1 to 100
+                characters. </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="100" />
+            <xs:pattern value=".*[^\s].*" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BarcodeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type for the barcode of a box. </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
+
+    <!-- u546844 for TSP-80 start -->
+    <xs:simpleType name="CrossReferenceBarcodeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type for the cross reference barcode of a box. </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
+    <!-- u546844 for TSP-80 end -->
+
+    <xs:simpleType name="OrderLineTextType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type of order line. This text field should have at
+                least 1 character different from white space and have from 1 to 255 characters. </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="255" />
+            <xs:pattern value=".*[^\s].*" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RemarkType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type for remark. This text field should have maximum 50
+                characters. </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="BaseOrderType" abstract="true">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Abstract type representing base structure of an order. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="accountId" type="common:AccountIdType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the account's id information. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reference" type="tns:OrderReferenceType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the reference of an order. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="costCenter" minOccurs="0" type="common:CostCenterType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the cost center information of
+                        an order. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="orderLine" minOccurs="0" maxOccurs="unbounded"
+                type="tns:OrderLineType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the order line information of
+                        an order. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OrderType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing an order for creation. This type
+                extends the base type and keeps additional information about boxes for the order. </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:BaseOrderType">
+                <xs:sequence>
+                    <xs:element name="box" maxOccurs="unbounded" type="tns:CreateBoxType">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en"> Element holding the box information of
+                                an order when creating an order. Multiple boxes are allowed. </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="OrderInfoType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing an order when fetched. This type
+                extends the base type and keeps additional information about boxes for the order. </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:BaseOrderType">
+                <xs:sequence>
+                    <xs:element name="box" maxOccurs="unbounded" type="tns:BoxInfoType">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en"> Element holding the box information of
+                                an order when fetching an order. Multiple boxes are allowed. </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="OrderLineType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing an order line. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="text" type="tns:OrderLineTextType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the free text information about
+                        an order line. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="nbOfItems" type="xs:int" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the amount of order lines. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BoxType" abstract="true">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Abstract type representing base structure of a box. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="sender" type="common:Party" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding information about the sender of
+                        a box. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice>
+                <xs:element name="nationalBox" type="national:NationalBoxType">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en"> Element for the national box information. </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="internationalBox" type="international:InternationalBoxType">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en"> Element for the international box
+                            information. </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+            <xs:element name="remark" minOccurs="0" type="tns:RemarkType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element for the remark on a specific box (ref 4
+                        in lci). </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="additionalCustomerReference" minOccurs="0" type="tns:RemarkType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding additional customer reference
+                        information (ref 5 in lci). </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CreateBoxType">
+        <xs:complexContent>
+            <xs:annotation>
+                <xs:documentation xml:lang="en"> Type representing a box for creation. This type
+                    extends the base type and keeps additional information about box status. </xs:documentation>
+            </xs:annotation>
+            <xs:extension base="tns:BoxType">
+                <xs:sequence>
+                    <xs:element name="status" type="common:SetBoxStatusType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en"> Element holding information about the
+                                status of a box. </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="BoxInfoType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing a box for fetching. This type extends
+                the base type and keeps additional information about the box barcode and status. </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:BoxType">
+                <xs:sequence>
+                    <xs:element name="barcode" type="tns:BarcodeType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en"> Element holding the barcode of a box. </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="additionalBarcode" type="tns:BarcodeType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en"> Element holding an additional barcode
+                                of a box. For example the barcode used by a another postal operator
+                                outside the bpost network. </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="status" type="common:BoxStatusType">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en"> Element holding the status of a box. </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BatchLabelsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type used for the request of creating labels in bulk. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="box" type="tns:BarcodeType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding information about (a) box(es)
+                        for label creation. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="order" type="tns:OrderReferenceType" minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding information about (an) order(s)
+                        for label creation. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="UnknownItemsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing an unknown item when printing labels
+                in bulk. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="box" type="tns:BarcodeType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding information about a box. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="order" type="tns:OrderReferenceType" minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding information about an order. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LabelsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing the type of a label. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="label" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding information about a label. </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:choice>
+                            <xs:element name="barcode" type="tns:BarcodeType" maxOccurs="unbounded">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding information
+                                        about a barcode of a label. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <!-- u546844 for TSP-80 start -->
+                            <xs:element name="crossReferenceBarcode"
+                                type="tns:CrossReferenceBarcodeType">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the cross
+                                        reference barcodee of a label. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <!-- u546844 for TSP-80 end -->
+                            <xs:element name="barcodeWithReference"
+                                type="tns:BarcodeWithReferenceType" maxOccurs="unbounded">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding information
+                                        about a barcode of a label with its order reference. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:choice>
+                        <xs:element name="mimeType" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding information about
+                                    the mime type of a label. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="bytes" type="xs:base64Binary">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the bytes of a
+                                    label. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="zplCode" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the zpl code of a
+                                    label. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ProductConfigurationType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing the configuration of a product. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="deliveryMethod" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the information on how a parcel
+                        will be delivered. </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="product" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the information of
+                                    a product. </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="price" maxOccurs="unbounded">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en"> The price of the
+                                                product. </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:complexType>
+                                            <xs:annotation>
+                                                <xs:documentation xml:lang="en"> Iso code of the
+                                                    country and their price zones. </xs:documentation>
+                                            </xs:annotation>
+                                            <xs:attribute name="countryIso2Code"
+                                                type="common:CountryCode"
+                                                use="required" />
+                                            <xs:attribute name="priceLessThan2"
+                                                type="common:EuroCentAmount"
+                                                use="required" />
+                                            <xs:attribute name="price2To5"
+                                                type="common:EuroCentAmount" use="required" />
+                                            <xs:attribute name="price5To10"
+                                                type="common:EuroCentAmount"
+                                                use="required" />
+                                            <xs:attribute name="price10To20"
+                                                type="common:EuroCentAmount"
+                                                use="required" />
+                                            <xs:attribute name="price20To30"
+                                                type="common:EuroCentAmount"
+                                                use="required" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en"> Options which can be
+                                                chosen for a certain product. </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:complexType>
+                                            <xs:annotation>
+                                                <xs:documentation xml:lang="en"> Name and the price
+                                                    of a certain option. </xs:documentation>
+                                            </xs:annotation>
+                                            <xs:sequence>
+                                                <xs:element name="characteristic" minOccurs="0"
+                                                    maxOccurs="unbounded">
+                                                    <xs:annotation>
+                                                        <xs:documentation xml:lang="en">
+                                                            Characteristics defined for the option. </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:complexType>
+                                                        <xs:annotation>
+                                                            <xs:documentation xml:lang="en"> Name
+                                                                and the value of a certain
+                                                                characteristic. </xs:documentation>
+                                                        </xs:annotation>
+                                                        <xs:attribute name="name" type="xs:string"
+                                                            use="required" />
+                                                        <xs:attribute name="value" type="xs:string"
+                                                            use="required" />
+                                                        <xs:attribute name="displayValue"
+                                                            type="xs:string" use="required" />
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="name" type="xs:string"
+                                                use="required" />
+                                            <xs:attribute name="price" type="common:EuroCentAmount"
+                                                use="required" />
+                                            <xs:attribute name="visiblity" type="xs:string" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="name" type="xs:string" use="required" />
+                                <xs:attribute name="default" type="xs:boolean" />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" />
+                    <xs:attribute name="visiblity" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="InvalidSelectionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing an invalid selection when choosing
+                options for a certain product. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="error" type="xs:string" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BarcodeWithReferenceType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type representing a barcode with its corresponding
+                order reference </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="barcode" type="tns:BarcodeType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding information about a barcode of
+                        a label. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <!-- u546844 for TSP-80 start -->
+            <xs:element name="crossReferenceBarcode" type="tns:CrossReferenceBarcodeType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the cross reference barcodee of
+                        a label. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <!-- u546844 for TSP-80 end -->
+            <xs:element name="reference" type="tns:OrderReferenceType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the order reference of a label. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
