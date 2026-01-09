@@ -4,7 +4,7 @@
   "Shipment": {
     "TrackingNumber": "LX210720682NL",
     "ShipperReference": "Reference_001",
-    "DisplayId": "123450000",
+    "DisplayId": "DISP123450000",
     "Service": "PPTT",
     "Carrier": "PostNL Packet Tracked",
     "CarrierTrackingNumber": "LX210720682NL",
@@ -31,8 +31,8 @@
         },
         "products": [
           {
-            "hs6code": "852349",
-            "commodityCode": "8523499000",
+            "hs6code": "8523.49",
+            "commodityCode": "85234990.00",
             "value": {
               "sourceValue": 20,
               "destinationValue": 18.15

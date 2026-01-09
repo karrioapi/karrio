@@ -4,7 +4,7 @@
   "Shipment": {
     "TrackingNumber": "LX210720682NL",
     "ShipperReference": "ref123456789",
-    "DisplayId": "123450000",
+    "DisplayId": "DISP123450000",
     "Service": "PPTT",
     "Carrier": "PostNL Packet Tracked",
     "CarrierTrackingNumber": "LX210720682NL",
@@ -29,7 +29,7 @@
         "Zip": "L5T1R8",
         "Code": 9301,
         "Description": "OUT FOR DELIVERY",
-        "CarrierCode": "202",
+        "CarrierCode": "CC202",
         "CarrierDescription": "OUT FOR DELIVERY"
       },
       {
@@ -41,7 +41,7 @@
         "Zip": "L5T1R8",
         "Code": 100,
         "Description": "DELIVERED (stc)",
-        "CarrierCode": "203",
+        "CarrierCode": "CC203",
         "CarrierDescription": "DELIVERED"
       }
     ]

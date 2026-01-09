@@ -22,7 +22,7 @@ class EventType:
     Zip: typing.Optional[str] = None
     Code: typing.Optional[int] = None
     Description: typing.Optional[str] = None
-    CarrierCode: typing.Optional[int] = None
+    CarrierCode: typing.Optional[str] = None
     CarrierDescription: typing.Optional[str] = None
 
 
@@ -30,7 +30,7 @@ class EventType:
 class ShipmentType:
     TrackingNumber: typing.Optional[str] = None
     ShipperReference: typing.Optional[str] = None
-    DisplayId: typing.Optional[int] = None
+    DisplayId: typing.Optional[str] = None
     Service: typing.Optional[str] = None
     Carrier: typing.Optional[str] = None
     CarrierTrackingNumber: typing.Optional[str] = None
