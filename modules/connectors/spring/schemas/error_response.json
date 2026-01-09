@@ -1,11 +1,4 @@
 {
-  "errorResponse": {
-    "errors": [
-      {
-        "code": "ERROR_CODE",
-        "message": "Error message description",
-        "details": "Additional error details"
-      }
-    ]
-  }
+  "ErrorLevel": 10,
+  "Error": "Invalid API key or unauthorized access"
 }

@@ -1,43 +1,96 @@
 {
-  "shipmentRequest": {
-    "shipper": {
-      "addressLine1": "123 Main St",
-      "city": "Anytown",
-      "postalCode": "12345",
-      "countryCode": "US",
-      "stateCode": "CA",
-      "personName": "John Doe",
-      "companyName": "ACME Corp",
-      "phoneNumber": "555-123-4567",
-      "email": "john@example.com"
+  "Apikey": "your-api-key",
+  "Command": "OrderShipment",
+  "Shipment": {
+    "LabelFormat": "PDF",
+    "ShipperReference": "Reference_001",
+    "OrderReference": "Order12345678",
+    "OrderDate": "2024-01-15",
+    "DisplayId": "123450000",
+    "InvoiceNumber": "678900000",
+    "Service": "TRCK",
+    "Weight": "0.85",
+    "WeightUnit": "kg",
+    "Length": "20",
+    "Width": "10",
+    "Height": "10",
+    "DimUnit": "cm",
+    "Value": "20",
+    "ShippingValue": "5",
+    "Currency": "EUR",
+    "CustomsDuty": "DDU",
+    "Description": "CD",
+    "DeclarationType": "SaleOfGoods",
+    "DangerousGoods": "N",
+    "Source": "karrio",
+    "ExportCarrierName": "",
+    "ExportAwb": "",
+    "ConsignorAddress": {
+      "Name": "Jan Janssen",
+      "Company": "Webshop JAN",
+      "AddressLine1": "Sender Street 1",
+      "AddressLine2": "",
+      "AddressLine3": "",
+      "City": "Amsterdam",
+      "State": "",
+      "Zip": "1000AA",
+      "Country": "NL",
+      "Phone": "+31-123456789",
+      "Email": "sender@example.com",
+      "Vat": "NL123456789B01",
+      "Eori": "NL123456789",
+      "NlVat": "NL000099998B57",
+      "EuEori": "NL123456789",
+      "GbEori": "GB123456789",
+      "Ioss": "IM123456789",
+      "LocalTaxNumber": "CHE123456789",
+      "Art23": ""
     },
-    "recipient": {
-      "addressLine1": "456 Oak St",
-      "city": "Somewhere",
-      "postalCode": "67890",
-      "countryCode": "US",
-      "stateCode": "NY",
-      "personName": "Jane Smith",
-      "companyName": "XYZ Inc",
-      "phoneNumber": "555-987-6543",
-      "email": "jane@example.com"
+    "ConsigneeAddress": {
+      "Name": "John Doe",
+      "Company": "",
+      "AddressLine1": "20 W 34th St",
+      "AddressLine2": "",
+      "AddressLine3": "",
+      "City": "New York",
+      "State": "NY",
+      "Zip": "10001",
+      "Country": "US",
+      "Phone": "+1-123-456-7890",
+      "Email": "john@doe.com",
+      "Vat": "",
+      "PudoLocationId": ""
     },
-    "packages": [
+    "ImporterAddress": {
+      "Name": "Importer Name",
+      "Company": "Importer Company",
+      "AddressLine1": "Importer Street 1",
+      "AddressLine2": "",
+      "AddressLine3": "",
+      "City": "Import City",
+      "State": "",
+      "Zip": "12345",
+      "Country": "US",
+      "Phone": "+1-234-567-8900",
+      "Email": "importer@example.com",
+      "Vat": ""
+    },
+    "Products": [
       {
-        "weight": 10.5,
-        "weightUnit": "KG",
-        "length": 20.0,
-        "width": 15.0,
-        "height": 10.0,
-        "dimensionUnit": "CM",
-        "packagingType": "BOX"
+        "Description": "CD: The Postal Service - Give Up",
+        "Sku": "CD1202",
+        "HsCode": "852349",
+        "OriginCountry": "GB",
+        "ImgUrl": "http://url.com/cd-thepostalservicegiveup.jpg",
+        "PurchaseUrl": "http://webshop.com/product/cd1202",
+        "Quantity": "2",
+        "Value": "20",
+        "Weight": "0.8",
+        "DaysForReturn": "30",
+        "NonReturnable": "N",
+        "PreferentialOriginTag": "N",
+        "BondedGoods": "N"
       }
-    ],
-    "service": "EXPRESS",
-    "options": {
-      "insurance": true,
-      "signature_required": false
-    },
-    "labelType": "PDF"
+    ]
   }
 }
