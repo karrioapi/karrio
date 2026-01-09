@@ -1,6 +1,8 @@
 {
-  "shipmentCancelResponse": {
-    "success": true,
-    "message": "Shipment successfully cancelled"
+  "ErrorLevel": 0,
+  "Error": "",
+  "Shipment": {
+    "TrackingNumber": "LX210720682NL",
+    "ShipperReference": "ref123456789"
   }
 }

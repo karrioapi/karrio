@@ -1,9 +1,8 @@
 {
-  "trackingRequest": {
-    "trackingNumbers": [
-      "1Z999999999999999"
-    ],
-    "languageCode": "en",
-    "reference": "ORDER123"
+  "Apikey": "your-api-key",
+  "Command": "TrackShipment",
+  "Shipment": {
+    "TrackingNumber": "LX210720682NL",
+    "ShipperReference": ""
   }
 }

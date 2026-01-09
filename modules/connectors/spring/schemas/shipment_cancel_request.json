@@ -1,5 +1,8 @@
 {
-  "shipmentCancelRequest": {
-    "shipmentIdentifier": "SHIP123456"
+  "Apikey": "your-api-key",
+  "Command": "VoidShipment",
+  "Shipment": {
+    "TrackingNumber": "",
+    "ShipperReference": "Reference_001"
   }
 }

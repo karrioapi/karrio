@@ -1,27 +1,48 @@
 {
-  "trackingResponse": {
-    "trackingInfo": [
+  "ErrorLevel": 0,
+  "Error": "",
+  "Shipment": {
+    "TrackingNumber": "LX210720682NL",
+    "ShipperReference": "ref123456789",
+    "DisplayId": "123450000",
+    "Service": "PPTT",
+    "Carrier": "PostNL Packet Tracked",
+    "CarrierTrackingNumber": "LX210720682NL",
+    "CarrierLocalTrackingNumber": "LX210720682NL",
+    "CarrierTrackingUrl": "http://tracking.carrier.com/LX210720682NL",
+    "Weight": "0.85",
+    "WeightUnit": "kg",
+    "ConsigneeAddress": {
+      "Name": "John Doe",
+      "City": "TORONTO",
+      "State": "ON",
+      "Zip": "L5T1R8",
+      "Country": "CA"
+    },
+    "Events": [
       {
-        "trackingNumber": "1Z999999999999999",
-        "status": "in_transit",
-        "statusDetails": "Package is in transit",
-        "estimatedDelivery": "2024-04-15",
-        "events": [
-          {
-            "date": "2024-04-12",
-            "time": "14:30:00",
-            "code": "PU",
-            "description": "Package picked up",
-            "location": "San Francisco, CA"
-          },
-          {
-            "date": "2024-04-13",
-            "time": "09:15:00",
-            "code": "IT",
-            "description": "In transit",
-            "location": "Los Angeles, CA"
-          }
-        ]
+        "Timestamp": 1704631125,
+        "DateTime": "2024-01-07 07:38:45",
+        "Country": "CA",
+        "City": "TORONTO",
+        "State": "ON",
+        "Zip": "L5T1R8",
+        "Code": 9301,
+        "Description": "OUT FOR DELIVERY",
+        "CarrierCode": "202",
+        "CarrierDescription": "OUT FOR DELIVERY"
+      },
+      {
+        "Timestamp": 1704640788,
+        "DateTime": "2024-01-07 10:19:48",
+        "Country": "CA",
+        "City": "TORONTO",
+        "State": "ON",
+        "Zip": "L5T1R8",
+        "Code": 100,
+        "Description": "DELIVERED (stc)",
+        "CarrierCode": "203",
+        "CarrierDescription": "DELIVERED"
       }
     ]
   }
