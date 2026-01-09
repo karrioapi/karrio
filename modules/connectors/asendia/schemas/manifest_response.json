@@ -1,0 +1,10 @@
+{
+  "id": "5gc07h86-7929-6784-d5he-4e185h88cgc8",
+  "createdAt": "2024-04-12T15:30:00Z",
+  "errorMessage": "Some error message",
+  "errorParcelIds": ["parcel-id-1", "parcel-id-2"],
+  "status": "COMPLETED",
+  "manifestDocumentLocation": "/manifests/5gc07h86-7929-6784-d5he-4e185h88cgc8/document",
+  "parcelsLocation": "/manifests/5gc07h86-7929-6784-d5he-4e185h88cgc8/parcels",
+  "manifestLocation": "/manifests/5gc07h86-7929-6784-d5he-4e185h88cgc8"
+}
