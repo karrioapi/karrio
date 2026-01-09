@@ -8,10 +8,6 @@ import karrio.providers.spring.utils as provider_utils
 class Settings(provider_utils.Settings):
     """Spring connection settings."""
 
-    # Add carrier specific API connection properties here
-    api_key: str
-    account_number: str = None
-
     # generic properties
     id: str = None
     test_mode: bool = False

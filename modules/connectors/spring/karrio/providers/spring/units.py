@@ -6,9 +6,18 @@ import karrio.core.units as units
 class ConnectionConfig(lib.Enum):
     """Carrier connection configuration options."""
 
-    shipping_options = lib.OptionEnum("shipping_options", list)
-    shipping_services = lib.OptionEnum("shipping_services", list)
-    label_type = lib.OptionEnum("label_type", str, "PDF")  # Example of label type config with PDF default
+    label_format = lib.OptionEnum("label_format", str, "PDF")
+
+
+class LabelFormat(lib.StrEnum):
+    """Spring label formats."""
+
+    PDF = "PDF"
+    PNG = "PNG"
+    ZPL300 = "ZPL300"  # ZPL 300 dpi
+    ZPL200 = "ZPL200"  # ZPL 203 dpi
+    ZPL = "ZPL"  # alias for ZPL300
+    EPL = "EPL"  # EPL 203 dpi
 
 
 class PackagingType(lib.StrEnum):
