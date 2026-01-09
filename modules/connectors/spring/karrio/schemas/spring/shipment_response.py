@@ -11,7 +11,7 @@ class CalculatedTotalType:
 
 @attr.s(auto_attribs=True)
 class ProductType:
-    hs6code: typing.Optional[int] = None
+    hs6code: typing.Optional[str] = None
     commodityCode: typing.Optional[str] = None
     value: typing.Optional[CalculatedTotalType] = jstruct.JStruct[CalculatedTotalType]
     description: typing.Optional[str] = None
@@ -56,7 +56,7 @@ class DdpInfoType:
 class ShipmentType:
     TrackingNumber: typing.Optional[str] = None
     ShipperReference: typing.Optional[str] = None
-    DisplayId: typing.Optional[int] = None
+    DisplayId: typing.Optional[str] = None
     Service: typing.Optional[str] = None
     Carrier: typing.Optional[str] = None
     CarrierTrackingNumber: typing.Optional[str] = None
