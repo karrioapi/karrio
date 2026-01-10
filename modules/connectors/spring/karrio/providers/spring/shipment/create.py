@@ -1,14 +1,5 @@
 """Karrio Spring shipment API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract shipment details from the response
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., ShipmentRequestType),
-# while XML schema types don't have this suffix (e.g., ShipmentRequest).
-
 import karrio.schemas.spring.shipment_request as spring_req
 import karrio.schemas.spring.shipment_response as spring_res
 
@@ -24,14 +15,13 @@ import karrio.providers.spring.units as provider_units
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    # Check if we have valid shipment data
-    
-    has_shipment = "shipment" in response if hasattr(response, 'get') else False
-    
+    # Check if we have valid shipment data (ErrorLevel 0 or 1 with shipment)
+    shipment_data = response.get("Shipment") if isinstance(response, dict) else None
+    has_shipment = shipment_data is not None and response.get("ErrorLevel") in (0, 1)
 
     shipment = _extract_details(response, settings) if has_shipment else None
 
@@ -42,64 +32,36 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    """
-    Extract shipment details from carrier response data
+    """Extract shipment details from Spring API response."""
+    response = lib.to_object(spring_res.ShipmentResponseType, data)
+    shipment = response.Shipment
 
-    data: The carrier-specific shipment data structure
-    settings: The carrier connection settings
+    # Get tracking number and identifiers
+    tracking_number = shipment.TrackingNumber or ""
+    shipment_identifier = shipment.ShipperReference or tracking_number
 
-    Returns a ShipmentDetails object with extracted shipment information
-    """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    response_obj = lib.to_object(spring_res.ShipmentResponseType, data)
+    # Get label data
+    label_image = shipment.LabelImage or ""
+    label_format = shipment.LabelFormat or "PDF"
 
-    # Access the shipment data
-    shipment = response_obj.shipment if hasattr(response_obj, 'shipment') else None
-
-    if shipment:
-        # Extract tracking info
-        tracking_number = shipment.trackingNumber if hasattr(shipment, 'trackingNumber') else ""
-        shipment_id = shipment.shipmentId if hasattr(shipment, 'shipmentId') else ""
-
-        # Extract label info
-        label_data = shipment.labelData if hasattr(shipment, 'labelData') else None
-        label_format = label_data.format if label_data and hasattr(label_data, 'format') else "PDF"
-        label_base64 = label_data.image if label_data and hasattr(label_data, 'image') else ""
-
-        # Extract optional invoice
-        invoice_base64 = shipment.invoiceImage if hasattr(shipment, 'invoiceImage') else ""
-
-        # Extract service code for metadata
-        service_code = shipment.serviceCode if hasattr(shipment, 'serviceCode') else ""
-    else:
-        tracking_number = ""
-        shipment_id = ""
-        label_format = "PDF"
-        label_base64 = ""
-        invoice_base64 = ""
-        service_code = ""
-    
-
-    documents = models.Documents(
-        label=label_base64,
-    )
-
-    # Add invoice if present
-    if invoice_base64:
-        documents.invoice = invoice_base64
+    # Build documents object
+    documents = models.Documents(label=label_image)
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_identifier=shipment_id,
+        shipment_identifier=shipment_identifier,
         label_type=label_format,
         docs=documents,
         meta=dict(
-            service_code=service_code,
-            # Add any other relevant metadata from the carrier's response
+            service=shipment.Service,
+            carrier=shipment.Carrier,
+            carrier_tracking_number=shipment.CarrierTrackingNumber,
+            carrier_local_tracking_number=shipment.CarrierLocalTrackingNumber,
+            carrier_tracking_url=shipment.CarrierTrackingUrl,
+            display_id=shipment.DisplayId,
+            label_type=shipment.LabelType,
         ),
     )
 
@@ -108,18 +70,11 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """
-    Create a shipment request for the carrier API
-
-    payload: The standardized ShipmentRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
-    # Convert karrio models to carrier-specific format
+    """Create a Spring OrderShipment request."""
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
+    package = packages[0]  # Spring handles one package per request
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
@@ -127,55 +82,129 @@ def shipment_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Create the carrier-specific request object
-    
-    # For JSON API request
-    request = spring_req.ShipmentRequestType(
-        # Map shipper details
-        shipper={
-            "addressLine1": shipper.address_line1,
-            "city": shipper.city,
-            "postalCode": shipper.postal_code,
-            "countryCode": shipper.country_code,
-            "stateCode": shipper.state_code,
-            "personName": shipper.person_name,
-            "companyName": shipper.company_name,
-            "phoneNumber": shipper.phone_number,
-            "email": shipper.email,
-        },
-        # Map recipient details
-        recipient={
-            "addressLine1": recipient.address_line1,
-            "city": recipient.city,
-            "postalCode": recipient.postal_code,
-            "countryCode": recipient.country_code,
-            "stateCode": recipient.state_code,
-            "personName": recipient.person_name,
-            "companyName": recipient.company_name,
-            "phoneNumber": recipient.phone_number,
-            "email": recipient.email,
-        },
-        # Map package details
-        packages=[
-            {
-                "weight": package.weight.value,
-                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
-                "length": package.length.value if package.length else None,
-                "width": package.width.value if package.width else None,
-                "height": package.height.value if package.height else None,
-                "dimensionUnit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
-                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
-            }
-            for package in packages
-        ],
-        # Add service code
-        serviceCode=service,
-        # Add account information
-        customerNumber=settings.customer_number,
-        # Add label details
-        labelFormat=payload.label_type or "PDF",
-        # Add any other required fields for this carrier's API
+    # Get customs info for international shipments
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=shipper,
+        recipient=recipient,
+        weight_unit=units.WeightUnit.KG.name,
     )
-    
+
+    # Determine label format from settings or payload
+    label_format = (
+        provider_units.LabelFormat.map(payload.label_type).value
+        or settings.connection_config.label_format.state
+        or "PDF"
+    )
+
+    # Build consignor (shipper) address
+    consignor_address = spring_req.ConsignorAddressType(
+        Name=shipper.person_name or shipper.company_name,
+        Company=shipper.company_name,
+        AddressLine1=shipper.address_line1,
+        AddressLine2=shipper.address_line2,
+        AddressLine3=None,
+        City=shipper.city,
+        State=shipper.state_code,
+        Zip=shipper.postal_code,
+        Country=shipper.country_code,
+        Phone=shipper.phone_number,
+        Email=shipper.email,
+        Vat=options.spring_consignor_vat.state or shipper.tax_id,
+        Eori=options.spring_consignor_eori.state,
+        NlVat=options.spring_consignor_nl_vat.state,
+        EuEori=options.spring_consignor_eu_eori.state,
+        GbEori=options.spring_consignor_gb_eori.state,
+        Ioss=options.spring_consignor_ioss.state,
+        LocalTaxNumber=options.spring_consignor_local_tax_number.state,
+    )
+
+    # Build consignee (recipient) address
+    consignee_address = spring_req.AddressType(
+        Name=recipient.person_name or recipient.company_name,
+        Company=recipient.company_name,
+        AddressLine1=recipient.address_line1,
+        AddressLine2=recipient.address_line2,
+        AddressLine3=None,
+        City=recipient.city,
+        State=recipient.state_code,
+        Zip=recipient.postal_code,
+        Country=recipient.country_code,
+        Phone=recipient.phone_number,
+        Email=recipient.email,
+        Vat=recipient.tax_id,
+        PudoLocationId=options.spring_pudo_location_id.state,
+    )
+
+    # Build products array (customs items)
+    products = [
+        spring_req.ProductType(
+            Description=lib.text(item.description or item.title, max=60),
+            Sku=item.sku,
+            HsCode=item.hs_code,
+            OriginCountry=item.origin_country or shipper.country_code,
+            Quantity=str(item.quantity or 1),
+            Value=str(item.value_amount or 0),
+            Weight=str(item.weight or 0),
+        )
+        for item in (customs.commodities if customs else [])
+    ]
+
+    # Calculate total value from products or use declared value
+    total_value = (
+        sum(float(p.Value or 0) for p in products)
+        if products
+        else (customs.duty.declared_value if customs and customs.duty else None)
+    )
+
+    # Get declaration type mapping
+    declaration_type = None
+    if customs and customs.content_type:
+        declaration_type = provider_units.CustomsContentType.map(
+            customs.content_type
+        ).value
+
+    # Get customs duty type
+    customs_duty = options.spring_customs_duty.state or (
+        provider_units.CustomsDuty.map(customs.incoterm).value
+        if customs and customs.incoterm
+        else "DDU"
+    )
+
+    # Build shipment object
+    shipment = spring_req.ShipmentType(
+        LabelFormat=label_format,
+        ShipperReference=payload.reference or lib.uuid(),
+        OrderReference=options.spring_order_reference.state,
+        OrderDate=options.spring_order_date.state,
+        DisplayId=options.spring_display_id.state,
+        InvoiceNumber=options.spring_invoice_number.state,
+        Service=service,
+        Weight=str(package.weight.KG),
+        WeightUnit="kg",
+        Length=str(package.length.CM) if package.length.CM else None,
+        Width=str(package.width.CM) if package.width.CM else None,
+        Height=str(package.height.CM) if package.height.CM else None,
+        DimUnit="cm" if any([package.length.CM, package.width.CM, package.height.CM]) else None,
+        Value=str(total_value) if total_value else None,
+        ShippingValue=str(options.spring_shipping_value.state) if options.spring_shipping_value.state else None,
+        Currency=customs.duty.currency if customs and customs.duty else options.currency.state,
+        CustomsDuty=customs_duty,
+        Description=package.parcel.description or customs.content_description if customs else None,
+        DeclarationType=declaration_type or options.spring_declaration_type.state,
+        DangerousGoods="Y" if options.spring_dangerous_goods.state else "N",
+        ExportCarrierName=options.spring_export_carrier_name.state,
+        ExportAwb=options.spring_export_awb.state,
+        ConsignorAddress=consignor_address,
+        ConsigneeAddress=consignee_address,
+        Products=products if products else None,
+    )
+
+    # Build the complete request
+    request = spring_req.ShipmentRequestType(
+        Apikey=settings.api_key,
+        Command="OrderShipment",
+        Shipment=shipment,
+    )
 
     return lib.Serializable(request, lib.to_dict)
