@@ -1,5 +1,7 @@
 """Karrio Spring shipment cancellation API implementation."""
 
+import karrio.schemas.spring.shipment_cancel_request as spring_req
+
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -47,10 +49,10 @@ def shipment_cancel_request(
 
     # Spring API allows either TrackingNumber or ShipperReference
     # payload.shipment_identifier could be either
-    request = dict(
+    request = spring_req.ShipmentCancelRequestType(
         Apikey=settings.api_key,
         Command="VoidShipment",
-        Shipment=dict(
+        Shipment=spring_req.ShipmentType(
             TrackingNumber=payload.shipment_identifier,
             ShipperReference="",
         ),
