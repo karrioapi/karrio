@@ -197,7 +197,8 @@ def shipment_request(
         ExportAwb=options.spring_export_awb.state,
         ConsignorAddress=consignor_address,
         ConsigneeAddress=consignee_address,
-        Products=products if products else None,
+        # Pass empty list instead of None to avoid jstruct [None] serialization bug
+        Products=products if products else [],
     )
 
     # Build the complete request
