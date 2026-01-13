@@ -1,30 +1,40 @@
 """Karrio Spring tracking API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract tracking details and events from the response to populate TrackingDetails
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., TrackingRequestType),
-# while XML schema types don't have this suffix (e.g., TrackingRequest).
-
-import karrio.schemas.spring.tracking_request as spring_req
 import karrio.schemas.spring.tracking_response as spring_res
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.spring.error as error
 import karrio.providers.spring.utils as provider_utils
 import karrio.providers.spring.units as provider_units
 
 
+def _match_status(code: str) -> typing.Optional[str]:
+    """Match code against TrackingStatus enum values."""
+    if not code:
+        return None
+    for status in list(provider_units.TrackingStatus):
+        if code in status.value:
+            return status.name
+    return None
+
+
+def _match_reason(code: str) -> typing.Optional[str]:
+    """Match code against TrackingIncidentReason enum values."""
+    if not code:
+        return None
+    for reason in list(provider_units.TrackingIncidentReason):
+        if code in reason.value:
+            return reason.name
+    return None
+
+
 def parse_tracking_response(
     _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    """Parse TrackShipment responses from Spring API."""
     responses = _response.deserialize()
 
     messages: typing.List[models.Message] = sum(
@@ -35,9 +45,11 @@ def parse_tracking_response(
         start=[],
     )
 
+    # Only extract details for successful responses (ErrorLevel 0)
     tracking_details = [
-        _extract_details(details, settings, tracking_number)
-        for tracking_number, details in responses
+        _extract_details(response, settings, tracking_number)
+        for tracking_number, response in responses
+        if response.get("ErrorLevel") == 0 and response.get("Shipment")
     ]
 
     return tracking_details, messages
@@ -48,67 +60,62 @@ def _extract_details(
     settings: provider_utils.Settings,
     tracking_number: str = None,
 ) -> models.TrackingDetails:
-    """
-    Extract tracking details from carrier response data
+    """Extract tracking details from Spring API response."""
+    response = lib.to_object(spring_res.TrackingResponseType, data)
+    shipment = response.Shipment
 
-    data: The carrier-specific tracking data structure
-    settings: The carrier connection settings
-    tracking_number: The tracking number being tracked
+    # Get events and reverse to have most recent first
+    events = list(reversed(shipment.Events or []))
 
-    Returns a TrackingDetails object with extracted tracking information
-    """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    tracking_details = lib.to_object(spring_res.TrackingResponseType, data)
-
-    # Extract tracking status and information
-    status_code = tracking_details.statusCode if hasattr(tracking_details, 'statusCode') else ""
-    status_detail = tracking_details.statusDescription if hasattr(tracking_details, 'statusDescription') else ""
-    est_delivery = tracking_details.estimatedDeliveryDate if hasattr(tracking_details, 'estimatedDeliveryDate') else None
-
-    # Extract events
-    events = []
-    if hasattr(tracking_details, 'events') and tracking_details.events:
-        for event in tracking_details.events:
-            events.append({
-                "date": event.date if hasattr(event, 'date') else "",
-                "time": event.time if hasattr(event, 'time') else "",
-                "code": event.code if hasattr(event, 'code') else "",
-                "description": event.description if hasattr(event, 'description') else "",
-                "location": event.location if hasattr(event, 'location') else "",
-                "reason": event.reason if hasattr(event, 'reason') else ""
-            })
-    
+    # Get latest event code for status mapping
+    latest_code = str(events[0].Code) if events else None
 
     # Map carrier status to karrio standard tracking status
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if status_code in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
-    )
+    status = _match_status(latest_code) or provider_units.TrackingStatus.in_transit.name
+
+    # Build location string from event address fields
+    def _build_location(event: spring_res.EventType) -> str:
+        parts = [
+            p for p in [event.City, event.State, event.Country]
+            if p
+        ]
+        return ", ".join(parts) if parts else None
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=tracking_number,
+        tracking_number=shipment.TrackingNumber or tracking_number,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event["date"]),
-                description=event["description"],
-                code=event["code"],
-                time=lib.flocaltime(event["time"]),
-                location=event["location"],
-                reason=lib.text(event["reason"]) if event.get("reason") else None,
+                date=lib.fdate(event.DateTime, "%Y-%m-%d %H:%M:%S"),
+                description=event.Description,
+                code=str(event.Code) if event.Code else None,
+                time=lib.flocaltime(event.DateTime, "%Y-%m-%d %H:%M:%S"),
+                location=_build_location(event),
+                timestamp=lib.fiso_timestamp(
+                    event.DateTime,
+                    current_format="%Y-%m-%d %H:%M:%S",
+                ),
+                status=_match_status(str(event.Code)),
+                reason=_match_reason(str(event.Code)),
             )
             for event in events
         ],
-        estimated_delivery=lib.fdate(est_delivery) if est_delivery else None,
         delivered=status == "delivered",
         status=status,
+        info=models.TrackingInfo(
+            carrier_tracking_link=shipment.CarrierTrackingUrl,
+            package_weight=shipment.Weight,
+            package_weight_unit=shipment.WeightUnit,
+        ),
+        meta=dict(
+            service=shipment.Service,
+            carrier=shipment.Carrier,
+            display_id=shipment.DisplayId,
+            shipper_reference=shipment.ShipperReference,
+            carrier_tracking_number=shipment.CarrierTrackingNumber,
+            carrier_local_tracking_number=shipment.CarrierLocalTrackingNumber,
+        ),
     )
 
 
@@ -116,29 +123,22 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    """Create TrackShipment requests for Spring API.
+
+    Spring API tracks one shipment at a time, so we create a list of requests
+    for each tracking number.
     """
-    Create a tracking request for the carrier API
+    # Create individual requests for each tracking number
+    requests = [
+        dict(
+            Apikey=settings.api_key,
+            Command="TrackShipment",
+            Shipment=dict(
+                TrackingNumber=tracking_number,
+                ShipperReference="",
+            ),
+        )
+        for tracking_number in payload.tracking_numbers
+    ]
 
-    payload: The standardized TrackingRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
-    # Extract the tracking number(s) from payload
-    tracking_numbers = payload.tracking_numbers
-    reference = payload.reference
-
-    
-    # For JSON API request
-    request = spring_req.TrackingRequestType(
-        trackingInfo={
-            "trackingNumbers": tracking_numbers,
-            "reference": reference,
-            "language": payload.language_code or "en",
-        },
-        # Add account credentials
-        accountNumber=settings.account_number,
-    )
-    
-
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(requests, lib.to_dict)
