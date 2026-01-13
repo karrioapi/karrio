@@ -20,19 +20,12 @@ def parse_shipment_cancel_response(
     # ErrorLevel 0 means success
     success = response.get("ErrorLevel") == 0 and not any(messages)
 
-    # Extract shipment info from response
-    shipment = response.get("Shipment") or {}
-
     confirmation = (
         models.ConfirmationDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             operation="Cancel Shipment",
             success=success,
-            meta=dict(
-                tracking_number=shipment.get("TrackingNumber"),
-                shipper_reference=shipment.get("ShipperReference"),
-            ),
         )
         if success
         else None
@@ -48,13 +41,12 @@ def shipment_cancel_request(
     """Create a VoidShipment request for Spring API."""
 
     # Spring API allows either TrackingNumber or ShipperReference
-    # payload.shipment_identifier could be either
+    # payload.shipment_identifier is used as TrackingNumber
     request = spring_req.ShipmentCancelRequestType(
         Apikey=settings.api_key,
         Command="VoidShipment",
         Shipment=spring_req.ShipmentType(
             TrackingNumber=payload.shipment_identifier,
-            ShipperReference="",
         ),
     )
 

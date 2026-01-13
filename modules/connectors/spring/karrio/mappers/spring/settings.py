@@ -8,6 +8,9 @@ import karrio.providers.spring.utils as provider_utils
 class Settings(provider_utils.Settings):
     """Spring connection settings."""
 
+    # Carrier-specific credentials
+    api_key: str
+
     # generic properties
     id: str = None
     test_mode: bool = False
