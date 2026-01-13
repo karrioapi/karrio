@@ -31,12 +31,26 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=self.settings.server_url,
-            data=lib.to_json(request.serialize()),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={"Content-Type": "text/json"},
+        """Track shipments using Spring TrackShipment API.
+
+        Spring tracks one shipment at a time, so we make parallel requests
+        for each tracking number and return results as (tracking_number, response) tuples.
+        """
+        responses = lib.run_asynchronously(
+            lambda req: (
+                req["Shipment"]["TrackingNumber"],
+                lib.request(
+                    url=self.settings.server_url,
+                    data=lib.to_json(req),
+                    trace=self.trace_as("json"),
+                    method="POST",
+                    headers={"Content-Type": "text/json"},
+                ),
+            ),
+            request.serialize(),
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            responses,
+            lambda __: [(tracking_number, lib.to_dict(res)) for tracking_number, res in __],
+        )
