@@ -81,26 +81,32 @@ def _extract_details(
         ]
         return ", ".join(parts) if parts else None
 
+    # Build tracking events with all required fields per CARRIER_INTEGRATION_GUIDE.md
+    tracking_events = [
+        models.TrackingEvent(
+            date=lib.fdate(event.DateTime, "%Y-%m-%d %H:%M:%S"),
+            description=event.Description,
+            code=str(event.Code) if event.Code else None,
+            time=lib.flocaltime(event.DateTime, "%Y-%m-%d %H:%M:%S"),
+            location=_build_location(event),
+            # REQUIRED: timestamp in ISO 8601 format
+            timestamp=lib.fiso_timestamp(
+                event.DateTime,
+                current_format="%Y-%m-%d %H:%M:%S",
+            ),
+            # REQUIRED: normalized status at event level
+            status=_match_status(str(event.Code)),
+            # Incident reason for exception events
+            reason=_match_reason(str(event.Code)),
+        )
+        for event in events
+    ]
+
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.TrackingNumber or tracking_number,
-        events=[
-            models.TrackingEvent(
-                date=lib.fdate(event.DateTime, "%Y-%m-%d %H:%M:%S"),
-                description=event.Description,
-                code=str(event.Code) if event.Code else None,
-                time=lib.flocaltime(event.DateTime, "%Y-%m-%d %H:%M:%S"),
-                location=_build_location(event),
-                timestamp=lib.fiso_timestamp(
-                    event.DateTime,
-                    current_format="%Y-%m-%d %H:%M:%S",
-                ),
-                status=_match_status(str(event.Code)),
-                reason=_match_reason(str(event.Code)),
-            )
-            for event in events
-        ],
+        events=tracking_events,
         delivered=status == "delivered",
         status=status,
         info=models.TrackingInfo(

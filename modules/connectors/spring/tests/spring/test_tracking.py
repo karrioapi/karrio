@@ -88,8 +88,8 @@ TrackingResponse = """{
                 "City": "Amsterdam",
                 "State": "",
                 "Zip": "1012AB",
-                "Code": 100,
-                "Description": "Shipment received at origin facility"
+                "Code": 20,
+                "Description": "Shipment accepted at origin facility"
             },
             {
                 "Timestamp": 1704196800,
@@ -98,7 +98,7 @@ TrackingResponse = """{
                 "City": "Berlin",
                 "State": "",
                 "Zip": "10115",
-                "Code": 104,
+                "Code": 100,
                 "Description": "Delivered"
             }
         ]
@@ -122,7 +122,7 @@ ParsedTrackingResponse = [
                 {
                     "date": "2024-01-02",
                     "description": "Delivered",
-                    "code": "104",
+                    "code": "100",
                     "time": "12:00 PM",
                     "location": "Berlin, DE",
                     "timestamp": "2024-01-02T12:00:00.000Z",
@@ -130,12 +130,12 @@ ParsedTrackingResponse = [
                 },
                 {
                     "date": "2024-01-01",
-                    "description": "Shipment received at origin facility",
-                    "code": "100",
+                    "description": "Shipment accepted at origin facility",
+                    "code": "20",
                     "time": "12:00 PM",
                     "location": "Amsterdam, NL",
                     "timestamp": "2024-01-01T12:00:00.000Z",
-                    "status": "delivered",
+                    "status": "in_transit",
                 },
             ],
             "info": {
