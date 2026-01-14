@@ -9,15 +9,26 @@ class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=self.settings.server_url,
-            data=lib.to_json(request.serialize()),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={"Content-Type": "text/json"},
+        """Create shipments using Spring OrderShipment API.
+
+        Spring is a per-package carrier, so we make parallel requests
+        for each package and return a list of responses.
+        """
+        responses = lib.run_asynchronously(
+            lambda req: lib.request(
+                url=self.settings.server_url,
+                data=lib.to_json(req),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={"Content-Type": "text/json"},
+            ),
+            request.serialize(),
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            responses,
+            lambda __: [lib.to_dict(res) for res in __],
+        )
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(

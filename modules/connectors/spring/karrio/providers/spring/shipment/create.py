@@ -13,17 +13,37 @@ import karrio.providers.spring.units as provider_units
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[dict],
+    _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
-    response = _response.deserialize()
-    messages = error.parse_error_response(response, settings)
+    """Parse shipment responses from Spring API.
 
-    # Check if we have valid shipment data (ErrorLevel 0 or 1 with shipment)
-    shipment_data = response.get("Shipment") if isinstance(response, dict) else None
-    has_shipment = shipment_data is not None and response.get("ErrorLevel") in (0, 1)
+    Spring is a per-package carrier, so we receive a list of responses
+    (one per package) and aggregate them using lib.to_multi_piece_shipment().
+    """
+    responses = _response.deserialize()
 
-    shipment = _extract_details(response, settings) if has_shipment else None
+    # Collect all error messages from all responses
+    messages: typing.List[models.Message] = sum(
+        [error.parse_error_response(response, settings) for response in responses],
+        start=[],
+    )
+
+    # Extract shipment details for successful responses
+    shipment_details = [
+        (
+            f"{index}",
+            (
+                _extract_details(response, settings)
+                if response.get("Shipment") and response.get("ErrorLevel") in (0, 1)
+                else None
+            ),
+        )
+        for index, response in enumerate(responses, start=1)
+    ]
+
+    # Aggregate multi-piece shipment
+    shipment = lib.to_multi_piece_shipment(shipment_details)
 
     return shipment, messages
 
@@ -70,11 +90,14 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create a Spring OrderShipment request."""
+    """Create Spring OrderShipment requests.
+
+    Spring is a per-package carrier, so we create one request per package
+    and return a list of requests to be processed in parallel.
+    """
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    package = packages[0]  # Spring handles one package per request
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
@@ -97,7 +120,7 @@ def shipment_request(
         or "PDF"
     )
 
-    # Build consignor (shipper) address
+    # Build consignor (shipper) address (same for all packages)
     consignor_address = spring_req.ConsignorAddressType(
         Name=shipper.person_name or shipper.company_name,
         Company=shipper.company_name,
@@ -119,7 +142,7 @@ def shipment_request(
         LocalTaxNumber=options.spring_consignor_local_tax_number.state,
     )
 
-    # Build consignee (recipient) address
+    # Build consignee (recipient) address (same for all packages)
     consignee_address = spring_req.AddressType(
         Name=recipient.person_name or recipient.company_name,
         Company=recipient.company_name,
@@ -136,7 +159,7 @@ def shipment_request(
         PudoLocationId=options.spring_pudo_location_id.state,
     )
 
-    # Build products array (customs items)
+    # Build products array (customs items) - same for all packages
     products = [
         spring_req.ProductType(
             Description=lib.text(item.description or item.title, max=60),
@@ -171,41 +194,49 @@ def shipment_request(
         else "DDU"
     )
 
-    # Build shipment object
-    shipment = spring_req.ShipmentType(
-        LabelFormat=label_format,
-        ShipperReference=payload.reference or lib.uuid(),
-        OrderReference=options.spring_order_reference.state,
-        OrderDate=options.spring_order_date.state,
-        DisplayId=options.spring_display_id.state,
-        InvoiceNumber=options.spring_invoice_number.state,
-        Service=service,
-        Weight=str(package.weight.KG),
-        WeightUnit="kg",
-        Length=str(package.length.CM) if package.length.CM else None,
-        Width=str(package.width.CM) if package.width.CM else None,
-        Height=str(package.height.CM) if package.height.CM else None,
-        DimUnit="cm" if any([package.length.CM, package.width.CM, package.height.CM]) else None,
-        Value=str(total_value) if total_value else None,
-        ShippingValue=str(options.spring_shipping_value.state) if options.spring_shipping_value.state else None,
-        Currency=customs.duty.currency if customs and customs.duty else options.currency.state,
-        CustomsDuty=customs_duty,
-        Description=package.parcel.description or customs.content_description if customs else None,
-        DeclarationType=declaration_type or options.spring_declaration_type.state,
-        DangerousGoods="Y" if options.spring_dangerous_goods.state else "N",
-        ExportCarrierName=options.spring_export_carrier_name.state,
-        ExportAwb=options.spring_export_awb.state,
-        ConsignorAddress=consignor_address,
-        ConsigneeAddress=consignee_address,
-        # Pass empty list instead of None to avoid jstruct [None] serialization bug
-        Products=products if products else [],
-    )
+    # Generate base reference for multi-piece shipment
+    base_reference = payload.reference or lib.uuid()
 
-    # Build the complete request
-    request = spring_req.ShipmentRequestType(
-        Apikey=settings.api_key,
-        Command="OrderShipment",
-        Shipment=shipment,
-    )
+    # Create one request per package
+    requests = [
+        spring_req.ShipmentRequestType(
+            Apikey=settings.api_key,
+            Command="OrderShipment",
+            Shipment=spring_req.ShipmentType(
+                LabelFormat=label_format,
+                # Append package index to reference for multi-piece tracking
+                ShipperReference=(
+                    f"{base_reference}-{index + 1}"
+                    if len(packages) > 1
+                    else base_reference
+                ),
+                OrderReference=options.spring_order_reference.state,
+                OrderDate=options.spring_order_date.state,
+                DisplayId=options.spring_display_id.state,
+                InvoiceNumber=options.spring_invoice_number.state,
+                Service=service,
+                Weight=str(package.weight.KG),
+                WeightUnit="kg",
+                Length=str(package.length.CM) if package.length.CM else None,
+                Width=str(package.width.CM) if package.width.CM else None,
+                Height=str(package.height.CM) if package.height.CM else None,
+                DimUnit="cm" if any([package.length.CM, package.width.CM, package.height.CM]) else None,
+                Value=str(total_value) if total_value else None,
+                ShippingValue=str(options.spring_shipping_value.state) if options.spring_shipping_value.state else None,
+                Currency=customs.duty.currency if customs and customs.duty else options.currency.state,
+                CustomsDuty=customs_duty,
+                Description=package.parcel.description or (customs.content_description if customs else None),
+                DeclarationType=declaration_type or options.spring_declaration_type.state,
+                DangerousGoods="Y" if options.spring_dangerous_goods.state else "N",
+                ExportCarrierName=options.spring_export_carrier_name.state,
+                ExportAwb=options.spring_export_awb.state,
+                ConsignorAddress=consignor_address,
+                ConsigneeAddress=consignee_address,
+                # Pass empty list instead of None to avoid jstruct [None] serialization bug
+                Products=products if products else [],
+            ),
+        )
+        for index, package in enumerate(packages)
+    ]
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(requests, lambda reqs: [lib.to_dict(r) for r in reqs])
