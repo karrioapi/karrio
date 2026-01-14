@@ -57,15 +57,14 @@ def _extract_details(
     shipment = response.Shipment
 
     # Get tracking number and identifiers
-    tracking_number = shipment.TrackingNumber or ""
+    tracking_number = shipment.TrackingNumber
     shipment_identifier = shipment.ShipperReference or tracking_number
 
-    # Get label data
-    label_image = shipment.LabelImage or ""
+    # Get label data - label_format defaults to PDF if not specified
     label_format = shipment.LabelFormat or "PDF"
 
     # Build documents object
-    documents = models.Documents(label=label_image)
+    documents = models.Documents(label=shipment.LabelImage)
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
