@@ -1,5 +1,6 @@
 """Karrio Spring tracking API implementation."""
 
+import karrio.schemas.spring.tracking_request as spring_req
 import karrio.schemas.spring.tracking_response as spring_res
 
 import typing
@@ -134,17 +135,16 @@ def tracking_request(
     Spring API tracks one shipment at a time, so we create a list of requests
     for each tracking number.
     """
-    # Create individual requests for each tracking number
+    # Create individual requests for each tracking number using generated schema types
     requests = [
-        dict(
+        spring_req.TrackingRequestType(
             Apikey=settings.api_key,
             Command="TrackShipment",
-            Shipment=dict(
+            Shipment=spring_req.ShipmentType(
                 TrackingNumber=tracking_number,
-                ShipperReference="",
             ),
         )
         for tracking_number in payload.tracking_numbers
     ]
 
-    return lib.Serializable(requests, lib.to_dict)
+    return lib.Serializable(requests, lambda reqs: [lib.to_dict(r) for r in reqs])
