@@ -74,14 +74,6 @@ def _extract_details(
     # Map carrier status to karrio standard tracking status
     status = _match_status(latest_code) or provider_units.TrackingStatus.in_transit.name
 
-    # Build location string from event address fields
-    def _build_location(event: spring_res.EventType) -> str:
-        parts = [
-            p for p in [event.City, event.State, event.Country]
-            if p
-        ]
-        return ", ".join(parts) if parts else None
-
     # Build tracking events with all required fields per CARRIER_INTEGRATION_GUIDE.md
     tracking_events = [
         models.TrackingEvent(
@@ -89,7 +81,7 @@ def _extract_details(
             description=event.Description,
             code=str(event.Code) if event.Code else None,
             time=lib.flocaltime(event.DateTime, "%Y-%m-%d %H:%M:%S"),
-            location=_build_location(event),
+            location=lib.join(event.City, event.State, event.Country, join=True, separator=", "),
             # REQUIRED: timestamp in ISO 8601 format
             timestamp=lib.fiso_timestamp(
                 event.DateTime,
