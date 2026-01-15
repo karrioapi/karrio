@@ -120,6 +120,17 @@ def rate_request(
         origin_country=shipper.country_code,
     )
     currency = options.currency.state or settings.default_currency
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=packages.weight_unit,
+    )
+    declared_value = (
+        lib.to_money(customs.duty.declared_value if customs.duty else None)
+        or options.declared_value.state
+        or 1.0
+    )
     mps_packaging = lib.identity(
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
@@ -487,7 +498,7 @@ def rate_request(
                 ),
                 InvoiceLineTotal=ups.InvoiceLineTotalType(
                     CurrencyCode=currency,
-                    MonetaryValue=str(options.declared_value.state or 1.0),
+                    MonetaryValue=str(declared_value),
                 ),
                 RatingMethodRequestedIndicator="Y",
                 TaxInformationIndicator="Y",

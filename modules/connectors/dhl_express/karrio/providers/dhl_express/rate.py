@@ -122,6 +122,17 @@ def rate_request(
         options.currency.state
         or units.CountryCurrency[payload.shipper.country_code].value
     )
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=weight_unit.value,
+    )
+    declared_value = (
+        lib.to_money(customs.duty.declared_value if customs.duty else None)
+        or options.declared_value.state
+        or 1.0
+    )
 
     request = dhl.DCTRequest(
         GetQuote=dhl.GetQuoteType(
@@ -199,7 +210,7 @@ def rate_request(
             ),
             Dutiable=(
                 dhl_global.DCTDutiable(
-                    DeclaredValue=(options.declared_value.state or 1.0),
+                    DeclaredValue=declared_value,
                     DeclaredCurrency=currency,
                 )
                 if is_dutiable
