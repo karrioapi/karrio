@@ -731,6 +731,13 @@ class RateRequest(validators.OptionDefaultSerializer):
         allow_null=True,
         help_text="The shipment reference",
     )
+    customs = CustomsData(
+        required=False,
+        allow_null=True,
+        help_text="""The customs details.<br/>
+        **Note that this is required for international shipments.**
+        """,
+    )
     carrier_ids = serializers.StringListField(
         required=False,
         allow_null=True,
