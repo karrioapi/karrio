@@ -5,6 +5,7 @@ from rest_framework import status
 from unittest.mock import patch, ANY
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
+from karrio.server.manager import serializers
 import karrio.server.manager.models as models
 
 
@@ -219,3 +220,65 @@ UPDATE_TRACKING_RESPONSE = {
         "source": None,
     },
 }
+
+
+class TestTrackerEstimatedDelivery(APITestCase):
+    """Test estimated_delivery computation and sync."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.tracker = models.Tracking.objects.create(
+            **{
+                "tracking_number": "TEST123456789",
+                "test_mode": True,
+                "delivered": False,
+                "events": [
+                    {
+                        "date": "2024-01-15",
+                        "description": "Label created",
+                        "code": "pending",
+                        "time": "10:00",
+                    }
+                ],
+                "status": "pending",
+                "estimated_delivery": "2024-01-20",
+                "created_by": self.user,
+                "tracking_carrier": self.dhl_carrier,
+                "info": {
+                    "shipping_date": "2024-01-15",
+                    "expected_delivery": "2024-01-20",
+                },
+            }
+        )
+
+    def test_update_tracker_syncs_estimated_delivery_to_info(self):
+        """Test that when estimated_delivery is updated, info.expected_delivery is also updated."""
+        tracking_details = {
+            "estimated_delivery": "2024-01-22",
+        }
+
+        serializers.tracking.update_tracker(self.tracker, tracking_details)
+        self.tracker.refresh_from_db()
+
+        self.assertEqual(self.tracker.estimated_delivery.isoformat(), "2024-01-22")
+        self.assertEqual(self.tracker.info.get("expected_delivery"), "2024-01-22")
+
+    def test_update_tracker_carrier_estimated_delivery_supersedes_info(self):
+        """Test that carrier's estimated_delivery supersedes existing info.expected_delivery."""
+        # First set a different expected_delivery in info
+        self.tracker.info = {**self.tracker.info, "expected_delivery": "2024-01-18"}
+        self.tracker.save()
+
+        # Update with carrier's estimated_delivery
+        tracking_details = {
+            "estimated_delivery": "2024-01-25",
+            "info": {"customer_name": "John Doe"},
+        }
+
+        serializers.tracking.update_tracker(self.tracker, tracking_details)
+        self.tracker.refresh_from_db()
+
+        # Carrier's estimated_delivery should supersede
+        self.assertEqual(self.tracker.estimated_delivery.isoformat(), "2024-01-25")
+        self.assertEqual(self.tracker.info.get("expected_delivery"), "2024-01-25")
+        self.assertEqual(self.tracker.info.get("customer_name"), "John Doe")
