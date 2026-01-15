@@ -654,7 +654,7 @@ class Products(typing.Iterable[Product]):
     @property
     def weight(self) -> Weight:
         return Weight(
-            sum([item.weight * item.quantity for item in self._items], 0.0),
+            sum([(item.weight or 0) * item.quantity for item in self._items], 0.0),
             self._weight_unit,
         )
 
