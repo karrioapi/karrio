@@ -50,7 +50,9 @@ CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)
 UPLOAD_DOCUMENT_TYPE = [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
 LABEL_TEMPLATE_TYPES = [("SVG", "SVG"), ("ZPL", "ZPL")]
-TRACKING_INCIDENT_REASONS = [(c.name, c.name) for c in list(units.TrackingIncidentReason)]
+TRACKING_INCIDENT_REASONS = [
+    (c.name, c.name) for c in list(units.TrackingIncidentReason)
+]
 
 
 class CarrierDetails(serializers.Serializer):
@@ -730,6 +732,18 @@ class RateRequest(validators.OptionDefaultSerializer):
         allow_blank=True,
         allow_null=True,
         help_text="The shipment reference",
+    )
+    payment = Payment(
+        required=False,
+        allow_null=True,
+        help_text="The payment details",
+    )
+    customs = CustomsData(
+        required=False,
+        allow_null=True,
+        help_text="""The customs details.<br/>
+        **Note that this is required for international shipments.**
+        """,
     )
     carrier_ids = serializers.StringListField(
         required=False,

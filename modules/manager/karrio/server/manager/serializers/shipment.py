@@ -1,5 +1,6 @@
 import uuid
 import typing
+import datetime
 import rest_framework.status as status
 import django.db.transaction as transaction
 from rest_framework.reverse import reverse
@@ -846,6 +847,28 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
         # Create shipment tracker
         try:
             pkg_weight = sum([p.weight or 0.0 for p in shipment.parcels.all()], 0.0)
+            selected_rate = shipment.selected_rate or {}
+            shipping_date_str = (
+                shipment.options.get("shipping_date")
+                or shipment.options.get("shipment_date")
+            )
+
+            # Get estimated_delivery from selected_rate or compute from transit_days
+            estimated_delivery = selected_rate.get("estimated_delivery")
+            transit_days = selected_rate.get("transit_days")
+
+            if not estimated_delivery and transit_days and shipping_date_str:
+                shipping_date = lib.to_date(
+                    shipping_date_str,
+                    current_format="%Y-%m-%dT%H:%M",
+                    try_formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S"],
+                )
+                if shipping_date:
+                    estimated_date = shipping_date + datetime.timedelta(
+                        days=int(transit_days)
+                    )
+                    estimated_delivery = lib.fdate(estimated_date)
+
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
                 delivered=False,
@@ -854,6 +877,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 test_mode=carrier.test_mode,
                 created_by=shipment.created_by,
                 status=TrackerStatus.pending.value,
+                estimated_delivery=estimated_delivery,
                 events=utils.default_tracking_event(event_at=shipment.updated_at),
                 options={shipment.tracking_number: dict(carrier=rate_provider)},
                 meta=dict(carrier=rate_provider),
@@ -867,7 +891,8 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                     shipment_destination_country=shipment.recipient.country_code,
                     shipment_destination_postal_code=shipment.recipient.postal_code,
                     shipment_service=shipment.meta.get("service_name"),
-                    shipping_date=shipment.options.get("shipment_date"),
+                    shipping_date=shipping_date_str,
+                    expected_delivery=estimated_delivery,
                     carrier_tracking_link=utils.get_carrier_tracking_link(
                         carrier, shipment.tracking_number
                     ),

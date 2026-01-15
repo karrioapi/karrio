@@ -1,3 +1,21 @@
+# Karrio 2026.1.1
+
+## Changes
+
+### Feat
+
+- feat: add payment as well on rate and update API schemas
+- feat: update rate requests to use exhaustive customs data when provided for international requests
+- feat: introduce computed estimated_delivery on tracker creation when transit day is available
+
+### Fix
+
+- fix: add missing customs field to RateRequest serializer
+- fix: affected the computed adjusted weight on all integrations
+- fix: below 3 decimal items' weight rounding causing invalid total package weight
+
+---
+
 # Karrio 2026.1
 
 ## Changes

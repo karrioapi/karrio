@@ -154,7 +154,7 @@ def rate_request(
         weight_unit=weight_unit.value,
     )
     commodities = lib.identity(
-        (customs.commodities if any(customs.commodities) else packages.items)
+        (packages.items if any(packages.items) else customs.commodities)
         if any(packages.items) or any(customs.commodities)
         else units.Products(
             [
