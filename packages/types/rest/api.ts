@@ -4981,6 +4981,14 @@ export interface RateRequest {
      */
     'reference'?: string | null;
     /**
+     * The payment details
+     */
+    'payment'?: Payment | null;
+    /**
+     * The customs details.<br/>         **Note that this is required for international shipments.**         
+     */
+    'customs'?: CustomsData | null;
+    /**
      * The list of configured carriers you wish to get rates from.
      */
     'carrier_ids'?: Array<string> | null;
