@@ -12,9 +12,9 @@ import {
   preventPropagation,
 } from "@karrio/lib";
 import {
-  OrderPreview,
-  OrderPreviewContext,
-} from "@karrio/core/components/order-preview";
+  OrderPreviewSheet,
+  OrderPreviewSheetContext,
+} from "@karrio/ui/components/order-preview-sheet";
 import { GoogleGeocodingScript } from "@karrio/ui/core/components/google-geocoding-script";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
@@ -54,7 +54,7 @@ export default function OrdersPage() {
     const { references } = useAPIMetadata();
     const documentPrinter = useDocumentPrinter();
     const modal = searchParams.get("modal") as string;
-    const { previewOrder } = useContext(OrderPreviewContext);
+    const { previewOrder } = useContext(OrderPreviewSheetContext);
     const [allChecked, setAllChecked] = React.useState(false);
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
@@ -570,9 +570,9 @@ export default function OrdersPage() {
   return (
     <>
       <GoogleGeocodingScript />
-      <OrderPreview>
+      <OrderPreviewSheet>
         <Component />
-      </OrderPreview>
+      </OrderPreviewSheet>
     </>
   );
 }
