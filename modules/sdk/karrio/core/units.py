@@ -736,7 +736,15 @@ class Package:
 
     @property
     def weight(self) -> Weight:
-        return self._compute_weight(self.parcel.weight or self.preset.weight)
+        """Return package weight, ensuring it's at least the sum of item weights."""
+        declared = self.parcel.weight or self.preset.weight
+        items_total = self.items.weight[self.weight_unit.value] if any(self.parcel.items or []) else None
+
+        # Use max of declared weight and items total weight to prevent carrier
+        # validation errors when small item weights get rounded up during conversion
+        weight_value = max(declared or 0, items_total or 0) if items_total else declared
+
+        return self._compute_weight(weight_value)
 
     @property
     def width(self) -> Dimension:
