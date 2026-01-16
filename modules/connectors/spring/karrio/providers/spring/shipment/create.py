@@ -3,6 +3,7 @@
 import karrio.schemas.spring.shipment_request as spring_req
 import karrio.schemas.spring.shipment_response as spring_res
 
+import uuid
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -194,7 +195,7 @@ def shipment_request(
     )
 
     # Generate base reference for multi-piece shipment
-    base_reference = payload.reference or lib.uuid()
+    base_reference = payload.reference or str(uuid.uuid4().hex)
 
     # Create one request per package
     requests = [
