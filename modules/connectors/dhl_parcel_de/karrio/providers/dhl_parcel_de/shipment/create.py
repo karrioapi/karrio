@@ -44,8 +44,8 @@ def _extract_details(
     label_type = lib.failsafe(lambda: "ZPL" if shipment.label.fileFormat == "ZPL2" else "PDF") or "PDF"
     invoice = lib.failsafe(lambda: shipment.customsDoc.b64 or shipment.customsDoc.zpl2)
     extra_documents = [
-        ("retrunLabel", shipment.returnLabel),
-        ("codLabel", shipment.codLabel),
+        ("return_label", shipment.returnLabel),
+        ("cod_document", shipment.codLabel),
     ]
 
     return models.ShipmentDetails(
@@ -59,13 +59,13 @@ def _extract_details(
             invoice=invoice,
             extra_documents=[
                 models.ShippingDocument(
-                    category=label,
+                    category=provider_units.ShippingDocumentCategory.map(category).name_or_key,
                     format=lib.identity("ZPL" if doc.fileFormat == "ZPL2" else "PDF"),
                     base64=lib.failsafe(lambda: doc.b64 or doc.zpl2),
                     print_format=doc.printFormat,
                     url=doc.url,
                 )
-                for label, doc in extra_documents
+                for category, doc in extra_documents
                 if doc is not None
             ],
         ),

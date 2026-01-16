@@ -339,20 +339,20 @@ class ShippingService(utils.StrEnum):
 
 class ShippingOption(utils.Enum):
     # fmt: off
-    ups_saturday_pickup_indicator = utils.OptionEnum("SaturdayPickupIndicator", bool)
+    ups_saturday_pickup_indicator = utils.OptionEnum("SaturdayPickupIndicator", bool, meta=dict(category="DELIVERY_OPTIONS"))
     ups_saturday_delivery_indicator = utils.OptionEnum(
-        "SaturdayDeliveryIndicator", bool
+        "SaturdayDeliveryIndicator", bool, meta=dict(category="DELIVERY_OPTIONS")
     )
-    ups_sunday_delivery_indicator = utils.OptionEnum("SundayDeliveryIndicator", bool)
-    ups_access_point_cod = utils.OptionEnum("AccessPointCOD", float)
+    ups_sunday_delivery_indicator = utils.OptionEnum("SundayDeliveryIndicator", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    ups_access_point_cod = utils.OptionEnum("AccessPointCOD", float, meta=dict(category="COD"))
     ups_deliver_to_addressee_only_indicator = utils.OptionEnum(
         "DeliverToAddresseeOnlyIndicator", bool
     )
     ups_direct_delivery_only_indicator = utils.OptionEnum(
         "DirectDeliveryOnlyIndicator", bool
     )
-    ups_cod = utils.OptionEnum("COD", float)
-    ups_return_of_document_indicator = utils.OptionEnum("ReturnOfDocumentIndicator", bool)
+    ups_cod = utils.OptionEnum("COD", float, meta=dict(category="COD"))
+    ups_return_of_document_indicator = utils.OptionEnum("ReturnOfDocumentIndicator", bool, meta=dict(category="RETURN"))
     ups_carbonneutral_indicator = utils.OptionEnum("UPScarbonneutralIndicator", bool)
     ups_certificate_of_origin_indicator = utils.OptionEnum(
         "CertificateOfOriginIndicator"
@@ -364,7 +364,7 @@ class ShippingOption(utils.Enum):
         "CommercialInvoiceRemovalIndicator", bool
     )
     ups_import_control = utils.OptionEnum("ImportControl", bool)
-    ups_return_service = utils.OptionEnum("ReturnService", bool)
+    ups_return_service = utils.OptionEnum("ReturnService", bool, meta=dict(category="RETURN"))
     ups_epra_indicator = utils.OptionEnum("EPRAIndicator", bool)
     ups_lift_gate_at_pickup_indicator = utils.OptionEnum(
         "LiftGateAtPickupIndicator", bool
@@ -377,7 +377,7 @@ class ShippingOption(utils.Enum):
     )
     ups_master_carton_indicator = utils.OptionEnum("MasterCartonIndicator", bool)
     ups_exchange_forward_indicator = utils.OptionEnum("ExchangeForwardIndicator", bool)
-    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool)
+    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool, meta=dict(category="PUDO"))
     ups_dropoff_at_ups_facility_indicator = utils.OptionEnum(
         "DropoffAtUPSFacilityIndicator", bool
     )
@@ -396,6 +396,7 @@ class ShippingOption(utils.Enum):
     ups_delivery_confirmation = utils.OptionEnum(
         "DeliveryConfirmation",
         units.create_enum("ConfirmationType", ["1", "2"]),
+        meta=dict(category="SIGNATURE")
     )
     ups_delivery_confirmation_level = utils.OptionEnum(
         "DeliveryConfirmationLevel",
@@ -405,16 +406,16 @@ class ShippingOption(utils.Enum):
         "InsideDelivery", units.create_enum("InsideDeliveryType", ["01", "02", "03"])
     )
 
-    ups_restricted_articles = utils.OptionEnum("RestrictedArticles", bool)
-    ups_alcoholic_beverages_indicator = utils.OptionEnum("AlcoholicBeveragesIndicator", bool)
-    ups_diagnostic_specimens_indicator = utils.OptionEnum("DiagnosticSpecimensIndicator", bool)
-    ups_perishables_indicator = utils.OptionEnum("PerishablesIndicator", bool)
-    ups_plants_indicator = utils.OptionEnum("PlantsIndicator", bool)
-    ups_seeds_indicator = utils.OptionEnum("SeedsIndicator", bool)
-    ups_special_exceptions_indicator = utils.OptionEnum("SpecialExceptionsIndicator", bool)
-    ups_tobacco_indicator = utils.OptionEnum("TobaccoIndicator", bool)
-    ups_ecigarettes_indicator = utils.OptionEnum("ECigarettesIndicator", bool)
-    ups_hemp_cbd_indicator = utils.OptionEnum("HempCBDIndicator", bool)
+    ups_restricted_articles = utils.OptionEnum("RestrictedArticles", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_alcoholic_beverages_indicator = utils.OptionEnum("AlcoholicBeveragesIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_diagnostic_specimens_indicator = utils.OptionEnum("DiagnosticSpecimensIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_perishables_indicator = utils.OptionEnum("PerishablesIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_plants_indicator = utils.OptionEnum("PlantsIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_seeds_indicator = utils.OptionEnum("SeedsIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_special_exceptions_indicator = utils.OptionEnum("SpecialExceptionsIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_tobacco_indicator = utils.OptionEnum("TobaccoIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_ecigarettes_indicator = utils.OptionEnum("ECigarettesIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_hemp_cbd_indicator = utils.OptionEnum("HempCBDIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
 
 
     ups_negotiated_rates_indicator = utils.OptionEnum("NegotiatedRatesIndicator", bool)
@@ -425,8 +426,8 @@ class ShippingOption(utils.Enum):
 
 
     """ Custom option type """
-    ups_access_point_pickup = utils.OptionEnum("01", bool)
-    ups_access_point_delivery = utils.OptionEnum("02", bool)
+    ups_access_point_pickup = utils.OptionEnum("01", bool, meta=dict(category="PUDO"))
+    ups_access_point_delivery = utils.OptionEnum("02", bool, meta=dict(category="PUDO"))
 
     """ Unified Option type mapping """
     cash_on_delivery = ups_cod
@@ -836,3 +837,14 @@ class SurchargeType(utils.StrEnum):
     ups_premier_silver = "556"
     ups_premier_platinum = "557"
     ddu_oversize = "558"
+
+
+class ShippingDocumentCategory(utils.StrEnum):
+    """UPS document category mapping to karrio unified categories."""
+
+    cod_document = "CODTurnInPage"
+    high_value_report = "HighValueReport"
+    dangerous_goods_paper = "DGPaperImage"
+    control_log_receipt = "ControlLogReceipt"
+    shipping_receipt = "ShippingReceipt"
+    commercial_invoice = "Form"

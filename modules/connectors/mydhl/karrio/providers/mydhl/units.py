@@ -86,17 +86,17 @@ class ShippingOption(lib.Enum):
     """
 
     # Delivery Services
-    mydhl_saturday_delivery = lib.OptionEnum("AA", bool)
-    mydhl_hold_for_collection = lib.OptionEnum("LX", bool)
-    mydhl_neutral_delivery = lib.OptionEnum("NN", bool)
-    mydhl_residential_delivery = lib.OptionEnum("TK", bool)
-    mydhl_scheduled_delivery = lib.OptionEnum("TT", bool)
-    mydhl_collect_from_service_point = lib.OptionEnum("TV", bool)
-    mydhl_verified_delivery = lib.OptionEnum("TF", bool)
+    mydhl_saturday_delivery = lib.OptionEnum("AA", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    mydhl_hold_for_collection = lib.OptionEnum("LX", bool, meta=dict(category="PUDO"))
+    mydhl_neutral_delivery = lib.OptionEnum("NN", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    mydhl_residential_delivery = lib.OptionEnum("TK", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    mydhl_scheduled_delivery = lib.OptionEnum("TT", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    mydhl_collect_from_service_point = lib.OptionEnum("TV", bool, meta=dict(category="PUDO"))
+    mydhl_verified_delivery = lib.OptionEnum("TF", bool, meta=dict(category="SIGNATURE"))
 
     # Signature Services
-    mydhl_direct_signature = lib.OptionEnum("SF", bool)
-    mydhl_signature_release = lib.OptionEnum("SX", bool)
+    mydhl_direct_signature = lib.OptionEnum("SF", bool, meta=dict(category="SIGNATURE"))
+    mydhl_signature_release = lib.OptionEnum("SX", bool, meta=dict(category="SIGNATURE"))
 
     # Billing/Payment Services
     mydhl_duty_tax_paid = lib.OptionEnum("DD", bool)
@@ -105,42 +105,42 @@ class ShippingOption(lib.Enum):
     mydhl_duty_tax_importer = lib.OptionEnum("DU", bool)
 
     # Insurance/Protection
-    mydhl_shipment_insurance = lib.OptionEnum("II", float)
+    mydhl_shipment_insurance = lib.OptionEnum("II", float, meta=dict(category="INSURANCE"))
 
     # Dangerous Goods
-    mydhl_dangerous_goods = lib.OptionEnum("HE", bool)
-    mydhl_dry_ice = lib.OptionEnum("HC", bool)
-    mydhl_lithium_ion_pi966_section_ii = lib.OptionEnum("HD", bool)
-    mydhl_lithium_ion_pi967_section_ii = lib.OptionEnum("HV", bool)
-    mydhl_lithium_metal_pi969_section_ii = lib.OptionEnum("HM", bool)
-    mydhl_lithium_metal_pi970_section_ii = lib.OptionEnum("HW", bool)
-    mydhl_excepted_quantities = lib.OptionEnum("HH", bool)
-    mydhl_consumer_commodities = lib.OptionEnum("HK", bool)
-    mydhl_magnetized_material = lib.OptionEnum("HX", bool)
-    mydhl_not_restricted_dangerous_goods = lib.OptionEnum("HU", bool)
-    mydhl_active_data_logger = lib.OptionEnum("HT", bool)
+    mydhl_dangerous_goods = lib.OptionEnum("HE", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_dry_ice = lib.OptionEnum("HC", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_lithium_ion_pi966_section_ii = lib.OptionEnum("HD", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_lithium_ion_pi967_section_ii = lib.OptionEnum("HV", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_lithium_metal_pi969_section_ii = lib.OptionEnum("HM", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_lithium_metal_pi970_section_ii = lib.OptionEnum("HW", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_excepted_quantities = lib.OptionEnum("HH", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_consumer_commodities = lib.OptionEnum("HK", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_magnetized_material = lib.OptionEnum("HX", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_not_restricted_dangerous_goods = lib.OptionEnum("HU", bool, meta=dict(category="DANGEROUS_GOOD"))
+    mydhl_active_data_logger = lib.OptionEnum("HT", bool, meta=dict(category="DANGEROUS_GOOD"))
 
     # Environmental Services
     mydhl_gogreen_climate_neutral = lib.OptionEnum("EE", bool)
     mydhl_gogreen_plus_carbon_reduced = lib.OptionEnum("FE", bool)
 
     # Notification Services
-    mydhl_verbal_notification = lib.OptionEnum("JA", bool)
-    mydhl_verbal_notification_alternative = lib.OptionEnum("JD", bool)
-    mydhl_broker_notification = lib.OptionEnum("WG", bool)
+    mydhl_verbal_notification = lib.OptionEnum("JA", bool, meta=dict(category="NOTIFICATION"))
+    mydhl_verbal_notification_alternative = lib.OptionEnum("JD", bool, meta=dict(category="NOTIFICATION"))
+    mydhl_broker_notification = lib.OptionEnum("WG", bool, meta=dict(category="NOTIFICATION"))
 
     # Special Handling
     mydhl_emergency_situation = lib.OptionEnum("CR", bool)
     mydhl_diplomatic_mail = lib.OptionEnum("CG", bool)
     mydhl_cold_storage = lib.OptionEnum("LG", bool)
     mydhl_sanctions_routing = lib.OptionEnum("LU", bool)
-    mydhl_courier_time_window = lib.OptionEnum("JY", bool)
+    mydhl_courier_time_window = lib.OptionEnum("JY", bool, meta=dict(category="DELIVERY_OPTIONS"))
     mydhl_dedicated_pickup = lib.OptionEnum("QA", bool)
     mydhl_non_stackable_pallet = lib.OptionEnum("YC", bool)
 
     # Customs/Clearance Services
-    mydhl_paperless_trade = lib.OptionEnum("WY", bool)
-    mydhl_export_declaration = lib.OptionEnum("WO", bool)
+    mydhl_paperless_trade = lib.OptionEnum("WY", bool, meta=dict(category="PAPERLESS"))
+    mydhl_export_declaration = lib.OptionEnum("WO", bool, meta=dict(category="PAPERLESS"))
     mydhl_clearance_authorization = lib.OptionEnum("WD", bool)
     mydhl_clearance_data_modification = lib.OptionEnum("WF", bool)
     mydhl_bonded_storage = lib.OptionEnum("WK", bool)
@@ -161,12 +161,12 @@ class ShippingOption(lib.Enum):
     mydhl_neutral_description_label = lib.OptionEnum("PP", bool)
 
     # Returns/Redirect
-    mydhl_return_to_seller = lib.OptionEnum("PH", bool)
-    mydhl_return_to_origin = lib.OptionEnum("PR", bool)
+    mydhl_return_to_seller = lib.OptionEnum("PH", bool, meta=dict(category="RETURN"))
+    mydhl_return_to_origin = lib.OptionEnum("PR", bool, meta=dict(category="RETURN"))
 
     # Surcharges (for reference, typically auto-applied)
     mydhl_fuel_surcharge = lib.OptionEnum("FF", bool)
-    mydhl_remote_area_delivery = lib.OptionEnum("OO", bool)
+    mydhl_remote_area_delivery = lib.OptionEnum("OO", bool, meta=dict(category="DELIVERY_OPTIONS"))
     mydhl_address_correction = lib.OptionEnum("MA", bool)
 
     # Packaging
@@ -205,7 +205,7 @@ class ShippingOption(lib.Enum):
     hold_at_location = mydhl_hold_for_collection
 
     """ Document upload options """
-    doc_files = lib.OptionEnum("doc_files", lib.to_dict)
+    doc_files = lib.OptionEnum("doc_files", lib.to_dict, meta=dict(category="PAPERLESS"))
 
 
 class MeasurementUnit(lib.StrEnum):

@@ -77,14 +77,14 @@ class ShippingService(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    teleship_signature_required = lib.OptionEnum("signatureRequired", bool)
-    teleship_delivery_warranty = lib.OptionEnum("deliveryWarranty", bool)
-    teleship_delivery_PUDO = lib.OptionEnum("deliveryPUDO", bool)
+    teleship_signature_required = lib.OptionEnum("signatureRequired", bool, meta=dict(category="SIGNATURE"))
+    teleship_delivery_warranty = lib.OptionEnum("deliveryWarranty", bool, meta=dict(category="INSURANCE"))
+    teleship_delivery_PUDO = lib.OptionEnum("deliveryPUDO", bool, meta=dict(category="PUDO"))
     teleship_low_carbon = lib.OptionEnum("lowCarbon", bool)
     teleship_duty_tax_calculation = lib.OptionEnum("dutyTaxCalculation", bool)
     teleship_customer_reference = lib.OptionEnum("customerReference")
     teleship_order_tracking_reference = lib.OptionEnum("orderTrackingReference")
-    teleship_commercial_invoice_reference = lib.OptionEnum("commercialInvoiceReference")
+    teleship_commercial_invoice_reference = lib.OptionEnum("commercialInvoiceReference", meta=dict(category="INVOICE"))
 
 
 def shipping_options_initializer(

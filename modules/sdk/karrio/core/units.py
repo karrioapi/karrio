@@ -150,6 +150,35 @@ class UploadDocumentType(utils.StrEnum):
     other = "other"
 
 
+class ShippingDocumentCategory(utils.StrEnum):
+    """Standardized shipping document category types.
+
+    Usage:
+        category = ShippingDocumentCategory.map("return_label").name_or_key
+        category = ShippingDocumentCategory.map("ReturnLabel").name_or_key  # Maps to return_label
+    """
+
+    # Primary labels
+    shipping_label = "ShippingLabel"
+    return_label = "ReturnLabel"
+
+    # Customs and export documents
+    export_document = "ExportDocument"
+    commercial_invoice = "CommercialInvoice"
+    customs_declaration = "CustomsDeclaration"
+    certificate_of_origin = "CertificateOfOrigin"
+
+    # Other documents
+    cod_document = "CODDocument"
+    packing_list = "PackingList"
+    dangerous_goods = "DangerousGoods"
+    proof_of_delivery = "ProofOfDelivery"
+    error_label = "ErrorLabel"
+    manifest = "Manifest"
+    receipt = "Receipt"
+    qr_code = "QRCode"
+
+
 class MeasurementOptionsType(typing.NamedTuple):
     quant: typing.Optional[float] = None
 
@@ -654,7 +683,7 @@ class Products(typing.Iterable[Product]):
     @property
     def weight(self) -> Weight:
         return Weight(
-            sum([item.weight * item.quantity for item in self._items], 0.0),
+            sum([(item.weight or 0) * item.quantity for item in self._items], 0.0),
             self._weight_unit,
         )
 
@@ -736,7 +765,15 @@ class Package:
 
     @property
     def weight(self) -> Weight:
-        return self._compute_weight(self.parcel.weight or self.preset.weight)
+        """Return package weight, ensuring it's at least the sum of item weights."""
+        declared = self.parcel.weight or self.preset.weight
+        items_total = self.items.weight[self.weight_unit.value] if any(self.parcel.items or []) else None
+
+        # Use max of declared weight and items total weight to prevent carrier
+        # validation errors when small item weights get rounded up during conversion
+        weight_value = max(declared or 0, items_total or 0) if items_total else declared
+
+        return self._compute_weight(weight_value)
 
     @property
     def width(self) -> Dimension:
@@ -1150,44 +1187,50 @@ class Options:
 class ShippingOption(utils.Enum):
     """universal shipment options (special services)"""
 
+    # fmt: off
     currency = utils.OptionEnum("currency")
-    locker_id = utils.OptionEnum("locker_id")
-    is_return = utils.OptionEnum("is_return", bool)
-    cash_on_delivery = utils.OptionEnum("COD", float)
-    shipment_note = utils.OptionEnum("shipment_note")
-    dangerous_good = utils.OptionEnum("dangerous_good", bool)
     declared_value = utils.OptionEnum("declared_value", float)
-    paperless_trade = utils.OptionEnum("paperless_trade", bool)
-    sms_notification = utils.OptionEnum("sms_notification", bool)
-    email_notification = utils.OptionEnum("email_notification", bool)
-    email_notification_to = utils.OptionEnum("email_notification_to")
-    signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
-    saturday_delivery = utils.OptionEnum("saturday_delivery", bool)
-    sunday_delivery = utils.OptionEnum("sunday_delivery", bool)
-    shipper_instructions = utils.OptionEnum("shipper_instructions")
-    recipient_instructions = utils.OptionEnum("recipient_instructions")
     shipping_charges = utils.OptionEnum("shipping_charges", float)
 
-    invoice_date = utils.OptionEnum("invoice_date")
-    invoice_number = utils.OptionEnum("invoice_number")
+    sunday_delivery = utils.OptionEnum("sunday_delivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    saturday_delivery = utils.OptionEnum("saturday_delivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
 
-    insurance = utils.OptionEnum("insurance", float)
-    insured_by = utils.OptionEnum("insured_by", str, default="carrier")
+    shipment_note = utils.OptionEnum("shipment_note", str, meta=dict(category="INSTRUCTIONS"))
+    shipper_instructions = utils.OptionEnum("shipper_instructions", str, meta=dict(category="INSTRUCTIONS"))
+    recipient_instructions = utils.OptionEnum("recipient_instructions", str, meta=dict(category="INSTRUCTIONS"))
 
-    doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
-    doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict)
+    sms_notification = utils.OptionEnum("sms_notification", bool, meta=dict(category="NOTIFICATION"))
+    email_notification = utils.OptionEnum("email_notification", bool, meta=dict(category="NOTIFICATION"))
+    email_notification_to = utils.OptionEnum("email_notification_to", str, meta=dict(category="NOTIFICATION"))
 
-    hold_at_location = utils.OptionEnum("hold_at_location", bool)
-    hold_at_location_address = utils.OptionEnum(
-        "hold_at_location_address",
-        functools.partial(utils.DP.to_object, models.Address),
-    )
+    signature_confirmation = utils.OptionEnum("signature_confirmation", bool, meta=dict(category="SIGNATURE"))
+
+    invoice_date = utils.OptionEnum("invoice_date", str, meta=dict(category="INVOICE"))
+    invoice_number = utils.OptionEnum("invoice_number", str, meta=dict(category="INVOICE"))
+
+    insurance = utils.OptionEnum("insurance", float, meta=dict(category="INSURANCE"))
+    insured_by = utils.OptionEnum("insured_by", str, default="carrier", meta=dict(category="INSURANCE"))
+
+    paperless_trade = utils.OptionEnum("paperless_trade", bool, meta=dict(category="PAPERLESS"))
+    doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict, meta=dict(category="PAPERLESS"))
+    doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict, meta=dict(category="PAPERLESS"))
+
+    cash_on_delivery = utils.OptionEnum("COD", float, meta=dict(category="COD"))
+    
+    locker_id = utils.OptionEnum("locker_id", str, meta=dict(category="LOCKER"))
+    is_return = utils.OptionEnum("is_return", bool, meta=dict(category="RETURN"))
+    
+    dangerous_good = utils.OptionEnum("dangerous_good", bool, meta=dict(category="DANGEROUS_GOOD"))
+
+    hold_at_location = utils.OptionEnum("hold_at_location", bool, meta=dict(category="PUDO"))
+    hold_at_location_address = utils.OptionEnum("hold_at_location_address", functools.partial(utils.DP.to_object, models.Address), meta=dict(category="PUDO"))
 
     """TODO: dreprecate these"""
     shipment_date = utils.OptionEnum("shipment_date")
 
     """TODO: standardize to these"""
     shipping_date = utils.OptionEnum("shipping_date")  # format: %Y-%m-%dT%H:%M
+    # fmt: on
 
 
 class ShippingOptions(Options):

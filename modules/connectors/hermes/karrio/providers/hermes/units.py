@@ -66,41 +66,41 @@ class ShippingOption(lib.Enum):
 
     # Hermes services as options
     hermes_tan_service = lib.OptionEnum("tanService", bool)
-    hermes_limited_quantities = lib.OptionEnum("limitedQuantitiesService", bool)
+    hermes_limited_quantities = lib.OptionEnum("limitedQuantitiesService", bool, meta=dict(category="DANGEROUS_GOOD"))
     hermes_bulk_goods = lib.OptionEnum("bulkGoodService", bool)
-    hermes_household_signature = lib.OptionEnum("householdSignatureService", bool)
+    hermes_household_signature = lib.OptionEnum("householdSignatureService", bool, meta=dict(category="SIGNATURE"))
     hermes_compact_parcel = lib.OptionEnum("compactParcelService", bool)
-    hermes_next_day = lib.OptionEnum("nextDayService", bool)
-    hermes_signature = lib.OptionEnum("signatureService", bool)
-    hermes_redirection_prohibited = lib.OptionEnum("redirectionProhibitedService", bool)
-    hermes_exclude_parcel_shop_auth = lib.OptionEnum("excludeParcelShopAuthorization", bool)
+    hermes_next_day = lib.OptionEnum("nextDayService", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    hermes_signature = lib.OptionEnum("signatureService", bool, meta=dict(category="SIGNATURE"))
+    hermes_redirection_prohibited = lib.OptionEnum("redirectionProhibitedService", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    hermes_exclude_parcel_shop_auth = lib.OptionEnum("excludeParcelShopAuthorization", bool, meta=dict(category="PUDO"))
     hermes_late_injection = lib.OptionEnum("lateInjectionService", bool)
 
     # Cash on delivery
-    hermes_cod_amount = lib.OptionEnum("codAmount", float)
-    hermes_cod_currency = lib.OptionEnum("codCurrency", str)
+    hermes_cod_amount = lib.OptionEnum("codAmount", float, meta=dict(category="COD"))
+    hermes_cod_currency = lib.OptionEnum("codCurrency", str, meta=dict(category="COD"))
 
     # Customer alert service
-    hermes_notification_email = lib.OptionEnum("notificationEmail", str)
-    hermes_notification_type = lib.OptionEnum("notificationType", str)  # EMAIL, SMS, EMAIL_SMS
+    hermes_notification_email = lib.OptionEnum("notificationEmail", str, meta=dict(category="NOTIFICATION"))
+    hermes_notification_type = lib.OptionEnum("notificationType", str, meta=dict(category="NOTIFICATION"))  # EMAIL, SMS, EMAIL_SMS
 
     # Stated day service
-    hermes_stated_day = lib.OptionEnum("statedDay", str)  # YYYY-MM-DD format
+    hermes_stated_day = lib.OptionEnum("statedDay", str, meta=dict(category="DELIVERY_OPTIONS"))  # YYYY-MM-DD format
 
     # Stated time service
-    hermes_time_slot = lib.OptionEnum("timeSlot", str)  # FORENOON, NOON, AFTERNOON, EVENING
+    hermes_time_slot = lib.OptionEnum("timeSlot", str, meta=dict(category="DELIVERY_OPTIONS"))  # FORENOON, NOON, AFTERNOON, EVENING
 
     # Ident service
-    hermes_ident_id = lib.OptionEnum("identID", str)
-    hermes_ident_type = lib.OptionEnum("identType", str)  # GERMAN_IDENTITY_CARD, etc.
-    hermes_ident_fsk = lib.OptionEnum("identVerifyFsk", str)  # 18
-    hermes_ident_birthday = lib.OptionEnum("identVerifyBirthday", str)  # YYYY-MM-DD
+    hermes_ident_id = lib.OptionEnum("identID", str, meta=dict(category="SIGNATURE"))
+    hermes_ident_type = lib.OptionEnum("identType", str, meta=dict(category="SIGNATURE"))  # GERMAN_IDENTITY_CARD, etc.
+    hermes_ident_fsk = lib.OptionEnum("identVerifyFsk", str, meta=dict(category="SIGNATURE"))  # 18
+    hermes_ident_birthday = lib.OptionEnum("identVerifyBirthday", str, meta=dict(category="SIGNATURE"))  # YYYY-MM-DD
 
     # Parcel shop delivery
-    hermes_parcel_shop_id = lib.OptionEnum("psID", str)
-    hermes_parcel_shop_selection_rule = lib.OptionEnum("psSelectionRule", str)  # SELECT_BY_ID, SELECT_BY_RECEIVER_ADDRESS
-    hermes_parcel_shop_customer_firstname = lib.OptionEnum("psCustomerFirstName", str)
-    hermes_parcel_shop_customer_lastname = lib.OptionEnum("psCustomerLastName", str)
+    hermes_parcel_shop_id = lib.OptionEnum("psID", str, meta=dict(category="PUDO"))
+    hermes_parcel_shop_selection_rule = lib.OptionEnum("psSelectionRule", str, meta=dict(category="PUDO"))  # SELECT_BY_ID, SELECT_BY_RECEIVER_ADDRESS
+    hermes_parcel_shop_customer_firstname = lib.OptionEnum("psCustomerFirstName", str, meta=dict(category="PUDO"))
+    hermes_parcel_shop_customer_lastname = lib.OptionEnum("psCustomerLastName", str, meta=dict(category="PUDO"))
 
     # Multipart service
     hermes_part_number = lib.OptionEnum("partNumber", int)

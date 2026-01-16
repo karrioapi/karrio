@@ -308,7 +308,7 @@ RateRequest = {
                 },
                 "groupPackageCount": 1,
                 "subPackagingType": "OTHER",
-                "weight": {"units": "LB", "value": 4.0},
+                "weight": {"units": "LB", "value": 10.0},
             }
         ],
         "shipDateStamp": ANY,
@@ -322,7 +322,7 @@ RateRequest = {
             }
         },
         "smartPostInfoDetail": {"hubId": "1000", "indicia": "PARCEL_SELECT"},
-        "totalWeight": 4.0,
+        "totalWeight": 10.0,
     },
 }
 

@@ -103,19 +103,19 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
-    australiapost_delivery_date = lib.OptionEnum("DELIVERY_DATE")
-    australiapost_delivery_time_start = lib.OptionEnum("DELIVERY_TIMES")
-    australiapost_delivery_time_end = lib.OptionEnum("DELIVERY_TIMES")
+    australiapost_delivery_date = lib.OptionEnum("DELIVERY_DATE", meta=dict(category="DELIVERY_OPTIONS"))
+    australiapost_delivery_time_start = lib.OptionEnum("DELIVERY_TIMES", meta=dict(category="DELIVERY_OPTIONS"))
+    australiapost_delivery_time_end = lib.OptionEnum("DELIVERY_TIMES", meta=dict(category="DELIVERY_OPTIONS"))
     australiapost_pickup_date = lib.OptionEnum("PICKUP_DATE")
     australiapost_pickup_time = lib.OptionEnum("PICKUP_TIME")
-    australiapost_identity_on_delivery = lib.OptionEnum("IDENTITY_ON_DELIVERY")
+    australiapost_identity_on_delivery = lib.OptionEnum("IDENTITY_ON_DELIVERY", meta=dict(category="SIGNATURE"))
     australiapost_print_at_depot = lib.OptionEnum("PRINT_AT_DEPOT", bool)
-    australiapost_transit_cover = lib.OptionEnum("TRANSIT_COVER", float)
-    australiapost_sameday_identity_on_delivery = lib.OptionEnum("SAMEDAY_IDENTITY_ON_DELIVERY")
+    australiapost_transit_cover = lib.OptionEnum("TRANSIT_COVER", float, meta=dict(category="INSURANCE"))
+    australiapost_sameday_identity_on_delivery = lib.OptionEnum("SAMEDAY_IDENTITY_ON_DELIVERY", meta=dict(category="SIGNATURE"))
 
-    australiapost_authority_to_leave = lib.OptionEnum("authority_to_leave", bool)
-    australiapost_allow_partial_delivery = lib.OptionEnum("allow_partial_delivery", bool)
-    australiapost_contains_dangerous_goods = lib.OptionEnum("contains_dangerous_goods", bool)
+    australiapost_authority_to_leave = lib.OptionEnum("authority_to_leave", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    australiapost_allow_partial_delivery = lib.OptionEnum("allow_partial_delivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    australiapost_contains_dangerous_goods = lib.OptionEnum("contains_dangerous_goods", bool, meta=dict(category="DANGEROUS_GOOD"))
 
     """ Unified Option type mapping """
 

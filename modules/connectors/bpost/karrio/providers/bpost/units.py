@@ -131,34 +131,34 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
-    bpost_info_distributed = lib.OptionEnum("infoDistributed")
-    bpost_info_next_day = lib.OptionEnum("infoNextDay")
-    bpost_info_reminder = lib.OptionEnum("infoReminder")
-    bpost_keep_me_informed = lib.OptionEnum("keepMeInformed")
-    bpost_automatic_second_presentation = lib.OptionEnum("automaticSecondPresentation", bool)
+    bpost_info_distributed = lib.OptionEnum("infoDistributed", meta=dict(category="NOTIFICATION"))
+    bpost_info_next_day = lib.OptionEnum("infoNextDay", meta=dict(category="NOTIFICATION"))
+    bpost_info_reminder = lib.OptionEnum("infoReminder", meta=dict(category="NOTIFICATION"))
+    bpost_keep_me_informed = lib.OptionEnum("keepMeInformed", meta=dict(category="NOTIFICATION"))
+    bpost_automatic_second_presentation = lib.OptionEnum("automaticSecondPresentation", bool, meta=dict(category="DELIVERY_OPTIONS"))
     bpost_fragile = lib.OptionEnum("fragile", bool)
-    bpost_insured = lib.OptionEnum("insured")
-    bpost_signed = lib.OptionEnum("signed", bool)
-    bpost_time_slot_delivery = lib.OptionEnum("timeSlotDelivery", bool)
-    bpost_saturday_delivery = lib.OptionEnum("saturdayDelivery", bool)
-    bpost_sunday_delivery = lib.OptionEnum("sundayDelivery", bool)
-    bpost_same_day_delivery = lib.OptionEnum("sameDayDelivery", bool)
-    bpost_cod = lib.OptionEnum("cod", lib.to_money)
-    bpost_preferred_delivery_window = lib.OptionEnum("preferredDeliveryWindow")
+    bpost_insured = lib.OptionEnum("insured", meta=dict(category="INSURANCE"))
+    bpost_signed = lib.OptionEnum("signed", bool, meta=dict(category="SIGNATURE"))
+    bpost_time_slot_delivery = lib.OptionEnum("timeSlotDelivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    bpost_saturday_delivery = lib.OptionEnum("saturdayDelivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    bpost_sunday_delivery = lib.OptionEnum("sundayDelivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    bpost_same_day_delivery = lib.OptionEnum("sameDayDelivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    bpost_cod = lib.OptionEnum("cod", lib.to_money, meta=dict(category="COD"))
+    bpost_preferred_delivery_window = lib.OptionEnum("preferredDeliveryWindow", meta=dict(category="DELIVERY_OPTIONS"))
     bpost_full_service = lib.OptionEnum("fullService", bool)
-    bpost_door_step_plus_service = lib.OptionEnum("doorStepPlusService")
-    bpost_ultra_late_in_evening_delivery = lib.OptionEnum("ultraLateInEveningDelivery", bool)
+    bpost_door_step_plus_service = lib.OptionEnum("doorStepPlusService", meta=dict(category="DELIVERY_OPTIONS"))
+    bpost_ultra_late_in_evening_delivery = lib.OptionEnum("ultraLateInEveningDelivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
     # fmt: on
 
     """ Custom options """
 
-    bpost_pugo_id = lib.OptionEnum("pugoId")
-    bpost_pugo_name = lib.OptionEnum("pugoName")
-    bpost_pugo_address = lib.OptionEnum("pugoAddress", lib.to_dict)
-    bpost_parcels_depot_id = lib.OptionEnum("parcelsDepotId")
-    bpost_parcels_depot_name = lib.OptionEnum("parcelsDepotName")
-    bpost_parcels_depot_address = lib.OptionEnum("parcelsDepotAddress", lib.to_dict)
-    bpost_parcel_return_instructions = lib.OptionEnum("parcelReturnInstructions")
+    bpost_pugo_id = lib.OptionEnum("pugoId", meta=dict(category="PUDO"))
+    bpost_pugo_name = lib.OptionEnum("pugoName", meta=dict(category="PUDO"))
+    bpost_pugo_address = lib.OptionEnum("pugoAddress", lib.to_dict, meta=dict(category="PUDO"))
+    bpost_parcels_depot_id = lib.OptionEnum("parcelsDepotId", meta=dict(category="PUDO"))
+    bpost_parcels_depot_name = lib.OptionEnum("parcelsDepotName", meta=dict(category="PUDO"))
+    bpost_parcels_depot_address = lib.OptionEnum("parcelsDepotAddress", lib.to_dict, meta=dict(category="PUDO"))
+    bpost_parcel_return_instructions = lib.OptionEnum("parcelReturnInstructions", meta=dict(category="RETURN"))
 
     """ Unified Option type mapping """
     insurance = bpost_insured

@@ -31,17 +31,17 @@ class ShippingService(lib.StrEnum):
 
 class ShippingOption(lib.Enum):
     """GLS Group specific options"""
-    gls_guaranteed24 = lib.OptionEnum("GUARANTEED24", bool)
-    gls_saturday_delivery = lib.OptionEnum("SaturdayService", bool)
-    gls_flex_delivery = lib.OptionEnum("FlexDeliveryService", bool)
-    gls_deposit_service = lib.OptionEnum("DepositService", bool)
-    gls_pick_and_return = lib.OptionEnum("PickAndReturnService", bool)
-    gls_shop_delivery = lib.OptionEnum("ShopDeliveryService", bool)
-    gls_addressee_only = lib.OptionEnum("AddresseeOnlyService", bool)
+    gls_guaranteed24 = lib.OptionEnum("GUARANTEED24", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    gls_saturday_delivery = lib.OptionEnum("SaturdayService", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    gls_flex_delivery = lib.OptionEnum("FlexDeliveryService", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    gls_deposit_service = lib.OptionEnum("DepositService", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    gls_pick_and_return = lib.OptionEnum("PickAndReturnService", bool, meta=dict(category="RETURN"))
+    gls_shop_delivery = lib.OptionEnum("ShopDeliveryService", bool, meta=dict(category="PUDO"))
+    gls_addressee_only = lib.OptionEnum("AddresseeOnlyService", bool, meta=dict(category="SIGNATURE"))
     gls_premium = lib.OptionEnum("PremiumService", bool)
 
     """Standard option mappings"""
-    insurance = lib.OptionEnum("insurance", float)
+    insurance = lib.OptionEnum("insurance", float, meta=dict(category="INSURANCE"))
     saturday_delivery = gls_saturday_delivery
 
 

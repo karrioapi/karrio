@@ -114,17 +114,17 @@ class ServiceType(lib.Enum):
 
 
 class ShippingOption(lib.Enum):
-    canadapost_signature = lib.OptionEnum("SO", bool)
-    canadapost_coverage = lib.OptionEnum("COV", float)
-    canadapost_collect_on_delivery = lib.OptionEnum("COD", float)
-    canadapost_proof_of_age_required_18 = lib.OptionEnum("PA18", bool)
-    canadapost_proof_of_age_required_19 = lib.OptionEnum("PA19", bool)
-    canadapost_card_for_pickup = lib.OptionEnum("HFP", bool)
-    canadapost_do_not_safe_drop = lib.OptionEnum("DNS", bool)
-    canadapost_leave_at_door = lib.OptionEnum("LAD", bool)
-    canadapost_deliver_to_post_office = lib.OptionEnum("D2PO", bool)
-    canadapost_return_at_senders_expense = lib.OptionEnum("RASE", bool)
-    canadapost_return_to_sender = lib.OptionEnum("RTS", bool)
+    canadapost_signature = lib.OptionEnum("SO", bool, meta=dict(category="SIGNATURE"))
+    canadapost_coverage = lib.OptionEnum("COV", float, meta=dict(category="INSURANCE"))
+    canadapost_collect_on_delivery = lib.OptionEnum("COD", float, meta=dict(category="COD"))
+    canadapost_proof_of_age_required_18 = lib.OptionEnum("PA18", bool, meta=dict(category="SIGNATURE"))
+    canadapost_proof_of_age_required_19 = lib.OptionEnum("PA19", bool, meta=dict(category="SIGNATURE"))
+    canadapost_card_for_pickup = lib.OptionEnum("HFP", bool, meta=dict(category="PUDO"))
+    canadapost_do_not_safe_drop = lib.OptionEnum("DNS", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    canadapost_leave_at_door = lib.OptionEnum("LAD", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    canadapost_deliver_to_post_office = lib.OptionEnum("D2PO", bool, meta=dict(category="PUDO"))
+    canadapost_return_at_senders_expense = lib.OptionEnum("RASE", bool, meta=dict(category="RETURN"))
+    canadapost_return_to_sender = lib.OptionEnum("RTS", bool, meta=dict(category="RETURN"))
     canadapost_abandon = lib.OptionEnum("ABAN", bool)
 
     """ Custom Option """

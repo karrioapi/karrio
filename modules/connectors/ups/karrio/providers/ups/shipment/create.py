@@ -54,13 +54,37 @@ def _extract_shipment(
         label = _label or label
         label_type = "ZPL" if _label is None else label_type
 
+    # Collect extra documents (category, format, base64)
+    extra_docs = [
+        ("cod_document", "PDF", lib.failsafe(lambda: shipment.CODTurnInPage.Image.GraphicImage)),
+        ("high_value_report", "PDF", lib.failsafe(lambda: shipment.HighValueReport.Image.GraphicImage)),
+    ] + [
+        ("control_log_receipt", lib.failsafe(lambda r=r: r.ImageFormat.Code) or "PDF", lib.failsafe(lambda r=r: r.GraphicImage))
+        for r in (shipment.ControlLogReceipt or [])
+    ] + [
+        ("shipping_receipt", lib.failsafe(lambda p=pkg: p.ShippingReceipt.ImageFormat.Code) or "PDF", lib.failsafe(lambda p=pkg: p.ShippingReceipt.GraphicImage))
+        for pkg in (shipment.PackageResults or [])
+    ] + [
+        ("dangerous_goods_paper", "PDF", dg)
+        for dg in (shipment.DGPaperImage or [])
+    ]
+
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
         label_type=label_type,
-        docs=models.Documents(label=label, zpl_label=zpl_label, invoice=invoice),
+        docs=models.Documents(
+            label=label,
+            zpl_label=zpl_label,
+            invoice=invoice,
+            extra_documents=[
+                models.ShippingDocument(category=category, format=fmt, base64=data)
+                for category, fmt, data in extra_docs
+                if data is not None
+            ],
+        ),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(
                 shipment.ShipmentIdentificationNumber

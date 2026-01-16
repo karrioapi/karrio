@@ -224,14 +224,14 @@ ParsedShipmentResponse = [
             "extra_documents": [
                 {
                     "base64": ANY,
-                    "category": "retrunLabel",
+                    "category": "return_label",
                     "format": "PDF",
                     "print_format": "A4",
                     "url": ANY,
                 },
                 {
                     "base64": ANY,
-                    "category": "codLabel",
+                    "category": "cod_document",
                     "format": "PDF",
                     "print_format": "A4",
                     "url": ANY,
