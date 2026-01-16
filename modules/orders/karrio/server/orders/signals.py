@@ -28,25 +28,98 @@ def register_signals():
 
 @utils.disable_for_loaddata
 def commodity_mutated(sender, instance, *args, **kwargs):
-    """Commodity mutations (added or removed)"""
-    parent = utils.failsafe(lambda: instance.parent)
+    """Commodity mutations (added or removed)
 
-    if parent is None or parent.order is None:
+    Note: With JSON-based order line_items and shipment parcels, the order-shipment
+    linking is now handled through parent_id references in the JSON data rather than
+    through M2M relations. This signal handler is kept for backward compatibility
+    but primarily relies on the JSON-based shipment_updated handler for syncing.
+    """
+    # With JSON-based storage, order-shipment syncing is handled in shipment_updated
+    # through _find_related_orders_from_json which checks parent_id links
+    pass
+
+
+def _find_related_orders_from_json(shipment_instance):
+    """Find related orders by checking JSON parent_id links in parcel items.
+
+    This handles the JSON-based approach where parcel items have parent_id
+    linking to order line items stored in line_items.
+    """
+    parent_ids = set()
+
+    # Collect all parent_ids from shipment's parcels
+    parcels = shipment_instance.parcels or []
+    for parcel in parcels:
+        if not isinstance(parcel, dict):
+            continue
+        items = parcel.get("items") or []
+        for item in items:
+            if isinstance(item, dict) and item.get("parent_id"):
+                parent_ids.add(item["parent_id"])
+
+    if not parent_ids:
+        return models.Order.objects.none()
+
+    # Find orders that have line items with matching IDs
+    # We need to query orders where any line_items[].id matches parent_ids
+    related_orders = []
+    for order in models.Order.objects.all():
+        line_items = order.line_items or []
+        for item in line_items:
+            if isinstance(item, dict) and item.get("id") in parent_ids:
+                related_orders.append(order.id)
+                break
+
+    return models.Order.objects.filter(id__in=related_orders)
+
+
+def _update_order_line_items_fulfillment(order, shipment_instance):
+    """Update order line_items unfulfilled_quantity based on shipment items.
+
+    When a shipment is purchased/fulfilled, decrement the unfulfilled_quantity
+    of the corresponding order line items.
+    """
+    if shipment_instance.status not in ["purchased", "transit", "delivered"]:
         return
 
-    order_shipments = manager.Shipment.objects.filter(
-        parcels__items__parent_id__in=parent.order.line_items.values_list(
-            "id", flat=True
-        )
-    ).distinct()
+    # Build a map of parent_id -> quantity from shipment items
+    fulfilled_quantities = {}
+    parcels = shipment_instance.parcels or []
+    for parcel in parcels:
+        if not isinstance(parcel, dict):
+            continue
+        items = parcel.get("items") or []
+        for item in items:
+            if isinstance(item, dict) and item.get("parent_id"):
+                parent_id = item["parent_id"]
+                quantity = item.get("quantity") or 1
+                fulfilled_quantities[parent_id] = (
+                    fulfilled_quantities.get(parent_id, 0) + quantity
+                )
 
-    for shipment in order_shipments:
-        if parent.order.shipments.filter(id=shipment.id).exists() == False:
-            parent.order.shipments.add(shipment)
+    if not fulfilled_quantities:
+        return
 
-    for shipment in parent.order.shipments.all():
-        if order_shipments.filter(id=shipment.id).exists() == False:
-            parent.order.shipments.remove(shipment)
+    # Update order's line_items
+    line_items = order.line_items or []
+    updated = False
+    for item in line_items:
+        if not isinstance(item, dict):
+            continue
+        item_id = item.get("id")
+        if item_id in fulfilled_quantities:
+            quantity = item.get("quantity") or 1
+            fulfilled = fulfilled_quantities[item_id]
+            current_unfulfilled = item.get("unfulfilled_quantity", quantity)
+            new_unfulfilled = max(0, current_unfulfilled - fulfilled)
+            if item.get("unfulfilled_quantity") != new_unfulfilled:
+                item["unfulfilled_quantity"] = new_unfulfilled
+                updated = True
+
+    if updated:
+        order.line_items = line_items
+        order.save(update_fields=["line_items"])
 
 
 @utils.disable_for_loaddata
@@ -57,16 +130,14 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
+    # Check if shipment has parcels with items linking to orders
+    has_json_links = bool(instance.parcels)
 
-    if not instance.parcels.filter(
-        items__parent__order_link__order__isnull=False
-    ).exists():
+    if not has_json_links:
         return
 
-    # Retrieve all orders associated with this shipment and update their status if needed
-    related_orders = models.Order.objects.filter(
-        line_items__children__commodity_parcel__parcel_shipment__id=instance.id
-    ).distinct()
+    # Retrieve all orders associated with this shipment using JSON-based lookup
+    related_orders = _find_related_orders_from_json(instance)
 
     if related_orders.exists():
         meta = {
@@ -78,6 +149,9 @@ def shipment_updated(
     for order in related_orders:
         if order.shipments.filter(id=instance.id).exists() == False:
             order.shipments.add(instance)
+
+        # Update line_items fulfillment tracking
+        _update_order_line_items_fulfillment(order, instance)
 
         if instance.status != serializers.ShipmentStatus.draft.value:
             status = compute_order_status(order)

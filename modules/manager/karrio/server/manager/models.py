@@ -86,20 +86,11 @@ class ShipmentManager(models.Manager):
             .get_queryset()
             .select_related(
                 "created_by",
-                "recipient",
-                "shipper",
-                "customs",
                 "manifest",
-                "return_address",
-                "billing_address",
                 "shipment_tracker",
                 "shipment_upload_record",
             )
             .prefetch_related(
-                "parcels",
-                "parcels__items",
-                "customs__commodities",
-                "customs__duty_billing_address",
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
@@ -113,8 +104,6 @@ class TrackingManager(models.Manager):
             .select_related(
                 "created_by",
                 "shipment",
-                "shipment__recipient",
-                "shipment__shipper",
             )
             .prefetch_related(
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -211,6 +200,20 @@ class Address(core.OwnedEntity):
     validate_location = models.BooleanField(null=True)
     validation = models.JSONField(blank=True, null=True)
 
+    # Template metadata: enables Address to serve as a reusable template
+    # Structure: {"label": "Warehouse A", "is_default": true, "usage": ["sender", "return"]}
+    meta = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value={}),
+        help_text="Template metadata: label, is_default, usage[]",
+    )
+
+    @property
+    def is_template(self) -> bool:
+        """Check if this address is a template (has meta with label)."""
+        return bool(self.meta and self.meta.get("label"))
+
     @property
     def object_type(self):
         return "address"
@@ -247,10 +250,12 @@ class Address(core.OwnedEntity):
 
 @core.register_model
 class Parcel(core.OwnedEntity):
-    HIDDEN_PROPS = (
-        "parcel_shipment",
-        *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-    )
+    """Standalone parcel model - used for parcel templates only.
+
+    Parcels attached to shipments are stored as JSON in Shipment.parcels field.
+    """
+
+    HIDDEN_PROPS = (*(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),)
     objects = ParcelManager()
 
     class Meta:
@@ -292,9 +297,23 @@ class Parcel(core.OwnedEntity):
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
 
+    # Template metadata: enables Parcel to serve as a reusable template
+    # Structure: {"label": "Standard Box", "is_default": true}
+    meta = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value={}),
+        help_text="Template metadata: label, is_default",
+    )
+
     def delete(self, *args, **kwargs):
         self.items.all().delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def is_template(self) -> bool:
+        """Check if this parcel is a template (has meta with label)."""
+        return bool(self.meta and self.meta.get("label"))
 
     @property
     def object_type(self):
@@ -302,7 +321,9 @@ class Parcel(core.OwnedEntity):
 
     @property
     def shipment(self):
-        return self.parcel_shipment.first()
+        # Standalone parcels (templates) don't have a shipment relationship
+        # Parcels attached to shipments are stored as JSON in Shipment.parcels
+        return None
 
 
 @core.register_model
@@ -363,9 +384,23 @@ class Commodity(core.OwnedEntity):
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
 
+    # Template metadata: enables Commodity to serve as a reusable template (product)
+    # Structure: {"label": "Widget Pro", "is_default": false}
+    meta = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value={}),
+        help_text="Template metadata: label, is_default",
+    )
+
     def delete(self, *args, **kwargs):
         self.children.all().delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def is_template(self) -> bool:
+        """Check if this commodity is a template/product (has meta with label)."""
+        return bool(self.meta and self.meta.get("label"))
 
     @property
     def object_type(self):
@@ -393,6 +428,23 @@ class Commodity(core.OwnedEntity):
             return self.parent.order
 
         return None
+
+
+class Product(Commodity):
+    """Product is a proxy model for Commodity, used for template/product API endpoints.
+
+    This provides a cleaner "Product" naming for the template API while using
+    the same underlying Commodity table.
+    """
+
+    class Meta:
+        proxy = True
+        verbose_name = "Product"
+        verbose_name_plural = "Products"
+
+    @property
+    def object_type(self):
+        return "product"
 
 
 @core.register_model
@@ -480,6 +532,8 @@ class Customs(core.OwnedEntity):
 
 @core.register_model
 class Pickup(core.OwnedEntity):
+    """Pickup model with embedded JSON address."""
+
     CONTEXT_RELATIONS = ["pickup_carrier"]
     DIRECT_PROPS = [
         "confirmation_number",
@@ -493,11 +547,12 @@ class Pickup(core.OwnedEntity):
         "created_by",
         "metadata",
         "meta",
+        "address",  # Embedded JSON field
     ]
     objects = PickupManager()
 
     class Meta:
-        db_table = "pickup"
+        db_table = "pickups"  # Clean plural table name
         verbose_name = "Pickup"
         verbose_name_plural = "Pickups"
         ordering = ["-created_at"]
@@ -516,17 +571,22 @@ class Pickup(core.OwnedEntity):
     instruction = models.CharField(max_length=250, null=True, blank=True)
     package_location = models.CharField(max_length=250, null=True, blank=True)
 
+    # ─────────────────────────────────────────────────────────────────
+    # EMBEDDED JSON FIELD (clean, direct name)
+    # ─────────────────────────────────────────────────────────────────
+    address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Pickup address (embedded JSON)",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # OPERATIONAL JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
     options = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
     pickup_charge = models.JSONField(blank=True, null=True)
-    address = models.ForeignKey(
-        "Address",
-        on_delete=models.CASCADE,
-        related_name="address_pickup",
-        blank=True,
-        null=True,
-    )
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
@@ -534,14 +594,15 @@ class Pickup(core.OwnedEntity):
         blank=True, default=functools.partial(utils.identity, value={})
     )
 
-    # System Reference fields
-
+    # ─────────────────────────────────────────────────────────────────
+    # CARRIER/SHIPMENT RELATIONS (kept - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
     pickup_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
     shipments = models.ManyToManyField("Shipment", related_name="shipment_pickup")
 
     def delete(self, *args, **kwargs):
-        handle = self.address or super()
-        return handle.delete(*args, **kwargs)
+        # JSON fields are deleted automatically with the model
+        return super().delete(*args, **kwargs)
 
     @classmethod
     def resolve_context_data(cls, queryset, context):
@@ -568,13 +629,20 @@ class Pickup(core.OwnedEntity):
         return typing.cast(providers.Carrier, self.pickup_carrier).data.carrier_name
 
     @property
-    def parcels(self) -> typing.List[Parcel]:
+    def parcels(self) -> typing.List[dict]:
+        """Get all parcels from related shipments as JSON data."""
+        # Handle deleted pickup (pk=None) case
+        if self.pk is None:
+            return []
         return sum(
-            [list(shipment.parcels.all()) for shipment in self.shipments.all()], []
+            [shipment.parcels or [] for shipment in self.shipments.all()], []
         )
 
     @property
     def tracking_numbers(self) -> typing.List[str]:
+        # Handle deleted pickup (pk=None) case
+        if self.pk is None:
+            return []
         return [shipment.tracking_number for shipment in self.shipments.all()]
 
 
@@ -702,6 +770,8 @@ class Tracking(core.OwnedEntity):
 
 @core.register_model
 class Shipment(core.OwnedEntity):
+    """Shipment model with embedded JSON data for addresses, parcels, and customs."""
+
     CONTEXT_RELATIONS = ["selected_rate_carrier", "carriers"]
     DIRECT_PROPS = [
         "options",
@@ -719,16 +789,16 @@ class Shipment(core.OwnedEntity):
         "metadata",
         "created_by",
         "reference",
-    ]
-    RELATIONAL_PROPS = [
+        # Embedded JSON fields (previously RELATIONAL_PROPS)
         "shipper",
         "recipient",
         "parcels",
         "customs",
-        "selected_rate",
         "return_address",
         "billing_address",
+        "selected_rate",
     ]
+    RELATIONAL_PROPS = []  # Empty - all previously relational fields are now JSON
     HIDDEN_PROPS = (
         "carriers",
         "label",
@@ -741,7 +811,7 @@ class Shipment(core.OwnedEntity):
     objects = ShipmentManager()
 
     class Meta:
-        db_table = "shipment"
+        db_table = "shipments"  # Clean plural table name
         verbose_name = "Shipment"
         verbose_name_plural = "Shipments"
         ordering = ["-created_at"]
@@ -767,25 +837,6 @@ class Shipment(core.OwnedEntity):
         default=serializers.SHIPMENT_STATUS[0][0],
         db_index=True,
     )
-
-    recipient = models.OneToOneField(
-        "Address", on_delete=models.CASCADE, related_name="recipient_shipment"
-    )
-    shipper = models.OneToOneField(
-        "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
-    )
-    return_address = models.OneToOneField(
-        "Address",
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name="return_address_shipment",
-    )
-    billing_address = models.OneToOneField(
-        "Address",
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name="billing_address_shipment",
-    )
     label_type = models.CharField(max_length=25, null=True, blank=True)
     tracking_number = models.CharField(
         max_length=100, null=True, blank=True, db_index=True
@@ -793,18 +844,54 @@ class Shipment(core.OwnedEntity):
     shipment_identifier = models.CharField(max_length=100, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
-    customs = models.OneToOneField(
-        "Customs",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="customs_shipment",
-    )
+    reference = models.CharField(max_length=100, null=True, blank=True)
 
+    # Document storage
     label = models.TextField(max_length=None, null=True, blank=True)
     invoice = models.TextField(max_length=None, null=True, blank=True)
-    reference = models.CharField(max_length=100, null=True, blank=True)
+
+    # ─────────────────────────────────────────────────────────────────
+    # EMBEDDED JSON FIELDS (clean, direct names)
+    # ─────────────────────────────────────────────────────────────────
+    shipper = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Shipper address (embedded JSON)",
+    )
+    recipient = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Recipient address (embedded JSON)",
+    )
+    return_address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Return address (embedded JSON)",
+    )
+    billing_address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Billing address (embedded JSON)",
+    )
+    parcels = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value=[]),
+        help_text="Parcels array with nested items (embedded JSON)",
+    )
+    customs = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Customs information (embedded JSON)",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # OPERATIONAL JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
     selected_rate = models.JSONField(blank=True, null=True)
+    rates = models.JSONField(
+        blank=True, null=True, default=functools.partial(utils.identity, value=[])
+    )
     payment = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=None)
     )
@@ -827,12 +914,9 @@ class Shipment(core.OwnedEntity):
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
     )
 
-    # System Reference fields
-
-    rates = models.JSONField(
-        blank=True, null=True, default=functools.partial(utils.identity, value=[])
-    )
-    parcels = models.ManyToManyField("Parcel", related_name="parcel_shipment")
+    # ─────────────────────────────────────────────────────────────────
+    # CARRIER RELATIONS (kept as FK/M2M - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
     carriers = models.ManyToManyField(
         providers.Carrier, blank=True, related_name="related_shipments"
     )
@@ -852,8 +936,7 @@ class Shipment(core.OwnedEntity):
     )
 
     def delete(self, *args, **kwargs):
-        self.parcels.all().delete()
-        self.customs and self.customs.delete()
+        # JSON fields are deleted automatically with the model
         return super().delete(*args, **kwargs)
 
     @classmethod
@@ -882,11 +965,15 @@ class Shipment(core.OwnedEntity):
     # Computed properties
 
     @property
-    def carrier_id(self) -> str:
+    def carrier_id(self) -> typing.Optional[str]:
+        if self.selected_rate_carrier is None:
+            return None
         return typing.cast(providers.Carrier, self.selected_rate_carrier).carrier_id
 
     @property
-    def carrier_name(self) -> str:
+    def carrier_name(self) -> typing.Optional[str]:
+        if self.selected_rate_carrier is None:
+            return None
         return typing.cast(providers.Carrier, self.selected_rate_carrier).carrier_name
 
     @property
@@ -948,7 +1035,6 @@ class Shipment(core.OwnedEntity):
             label=self.label,
             invoice=self.invoice,
         )
-
 
 @core.register_model
 class DocumentUploadRecord(core.OwnedEntity):
@@ -1017,6 +1103,8 @@ class DocumentUploadRecord(core.OwnedEntity):
 
 @core.register_model
 class Manifest(core.OwnedEntity):
+    """Manifest model with embedded JSON address."""
+
     DIRECT_PROPS = [
         "meta",
         "options",
@@ -1024,9 +1112,7 @@ class Manifest(core.OwnedEntity):
         "messages",
         "created_by",
         "reference",
-    ]
-    RELATIONAL_PROPS = [
-        "address",
+        "address",  # Embedded JSON field
     ]
     HIDDEN_PROPS = (
         "manifest_carrier",
@@ -1035,7 +1121,7 @@ class Manifest(core.OwnedEntity):
     objects = ManifestManager()
 
     class Meta:
-        db_table = "manifest"
+        db_table = "manifests"  # Clean plural table name
         verbose_name = "Manifest"
         verbose_name_plural = "Manifests"
         ordering = ["-created_at"]
@@ -1048,9 +1134,22 @@ class Manifest(core.OwnedEntity):
         default=functools.partial(core.uuid, prefix="manf_"),
         editable=False,
     )
-    address = models.OneToOneField(
-        "Address", on_delete=models.CASCADE, related_name="manifest"
+    reference = models.CharField(max_length=100, null=True, blank=True)
+    manifest = models.TextField(max_length=None, null=True, blank=True)
+    test_mode = models.BooleanField(null=False)
+
+    # ─────────────────────────────────────────────────────────────────
+    # EMBEDDED JSON FIELD (clean, direct name)
+    # ─────────────────────────────────────────────────────────────────
+    address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Manifest address (embedded JSON)",
     )
+
+    # ─────────────────────────────────────────────────────────────────
+    # OPERATIONAL JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
@@ -1063,12 +1162,10 @@ class Manifest(core.OwnedEntity):
     messages = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
     )
-    reference = models.CharField(max_length=100, null=True, blank=True)
-    manifest = models.TextField(max_length=None, null=True, blank=True)
-    test_mode = models.BooleanField(null=False)
 
-    # System Reference fields
-
+    # ─────────────────────────────────────────────────────────────────
+    # CARRIER RELATION (kept - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
     manifest_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
 
     @classmethod

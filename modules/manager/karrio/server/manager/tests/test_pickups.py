@@ -12,27 +12,26 @@ class TestFixture(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
 
-        self.address: models.Address = models.Address.objects.create(
-            **{
-                "postal_code": "E1C4Z8",
-                "city": "Moncton",
-                "federal_tax_id": None,
-                "state_tax_id": None,
-                "person_name": "John Poop",
-                "company_name": "A corp.",
-                "country_code": "CA",
-                "email": "john@a.com",
-                "phone_number": "514 000 0000",
-                "state_code": "NB",
-                "street_number": None,
-                "residential": False,
-                "address_line1": "125 Church St",
-                "address_line2": None,
-                "validate_location": False,
-                "validation": None,
-                "created_by": self.user,
-            }
-        )
+        # Address as dict data for JSON field (use proper JSON-generated ID format)
+        self.address_data = {
+            "id": "adr_001122334455",
+            "postal_code": "E1C4Z8",
+            "city": "Moncton",
+            "federal_tax_id": None,
+            "state_tax_id": None,
+            "person_name": "John Poop",
+            "company_name": "A corp.",
+            "country_code": "CA",
+            "email": "john@a.com",
+            "phone_number": "514 000 0000",
+            "state_code": "NB",
+            "street_number": None,
+            "residential": False,
+            "address_line1": "125 Church St",
+            "address_line2": None,
+            "validate_location": False,
+            "validation": None,
+        }
         self.shipment.tracking_number = "123456789012"
         self.shipment.selected_rate_carrier = self.carrier
         self.shipment.save()
@@ -58,7 +57,7 @@ class TestPickupDetails(TestFixture):
     def setUp(self) -> None:
         super().setUp()
         self.pickup: models.Pickup = models.Pickup.objects.create(
-            address=self.address,
+            address=self.address_data,
             pickup_carrier=self.carrier,
             created_by=self.user,
             test_mode=True,
@@ -108,6 +107,7 @@ PICKUP_DATA = {
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall",
     "address": {
+        "id": "adr_aabbccddeeff",  # JSON-generated ID format
         "address_line1": "125 Church St",
         "person_name": "John Doe",
         "company_name": "A corp.",
@@ -197,6 +197,7 @@ PICKUP_RESPONSE = {
         "address_line2": None,
         "validate_location": False,
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
@@ -217,6 +218,7 @@ PICKUP_RESPONSE = {
             "freight_class": None,
             "reference_number": ANY,
             "options": {},
+            "meta": {},
         }
     ],
     "instruction": "Should not be folded",
@@ -256,6 +258,7 @@ PICKUP_UPDATE_RESPONSE = {
         "address_line2": None,
         "validate_location": False,
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
@@ -276,6 +279,7 @@ PICKUP_UPDATE_RESPONSE = {
             "freight_class": None,
             "reference_number": ANY,
             "options": {},
+            "meta": {},
         }
     ],
     "instruction": "Should not be folded",
@@ -286,17 +290,17 @@ PICKUP_UPDATE_RESPONSE = {
 }
 
 PICKUP_CANCEL_RESPONSE = {
-    "id": ANY,
+    "id": None,  # Deleted pickup has no id
     "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
     "confirmation_number": "00110215",
     "pickup_date": "2020-10-25",
-    "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD", "id": ANY},
+    "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD", "id": None},
     "ready_time": "13:00",
     "closing_time": "17:00",
     "address": {
-        "id": ANY,
+        "id": "adr_001122334455",  # JSON address retains its id
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -314,28 +318,9 @@ PICKUP_CANCEL_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
-    "parcels": [
-        {
-            "id": ANY,
-            "weight": 1.0,
-            "width": None,
-            "height": None,
-            "length": None,
-            "packaging_type": None,
-            "package_preset": "canadapost_corrugated_small_box",
-            "description": None,
-            "content": None,
-            "is_document": False,
-            "weight_unit": "KG",
-            "dimension_unit": None,
-            "items": [],
-            "freight_class": None,
-            "reference_number": "0000000002",
-            "options": {},
-            "object_type": "parcel",
-        }
-    ],
+    "parcels": [],  # Deleted pickup has no parcels
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall",
     "options": {},

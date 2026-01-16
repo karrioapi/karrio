@@ -16,6 +16,9 @@ from karrio.server.manager.serializers.commodity import (
     CommoditySerializer,
     can_mutate_commodity,
 )
+
+# Product is a proxy of Commodity - use the same serializer
+ProductSerializer = CommoditySerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 from karrio.server.manager.serializers.tracking import (
     TrackingSerializer,

@@ -50,7 +50,9 @@ CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)
 UPLOAD_DOCUMENT_TYPE = [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
 LABEL_TEMPLATE_TYPES = [("SVG", "SVG"), ("ZPL", "ZPL")]
-TRACKING_INCIDENT_REASONS = [(c.name, c.name) for c in list(units.TrackingIncidentReason)]
+TRACKING_INCIDENT_REASONS = [
+    (c.name, c.name) for c in list(units.TrackingIncidentReason)
+]
 
 
 class CarrierDetails(serializers.Serializer):
@@ -152,6 +154,12 @@ class AddressValidation(serializers.Serializer):
 
 
 class AddressData(validators.AugmentedAddressSerializer):
+    id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A unique identifier for the address (used in JSON embedded data)",
+    )
     postal_code = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -257,6 +265,14 @@ class AddressData(validators.AugmentedAddressSerializer):
         allow_null=True,
         default=False,
         help_text="Indicate if the address should be validated",
+    )
+    meta = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default=dict,
+        help_text="""Template metadata for template identification.
+        Structure: {"label": "Warehouse A", "is_default": true, "usage": ["sender", "return"]}
+        """,
     )
 
 
@@ -367,6 +383,14 @@ class CommodityData(serializers.Serializer):
         </details>
         """,
     )
+    meta = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default=dict,
+        help_text="""Template metadata for template identification.
+        Structure: {"label": "Widget Pro", "is_default": false}
+        """,
+    )
 
 
 class Commodity(serializers.EntitySerializer, CommodityData):
@@ -468,6 +492,14 @@ class ParcelData(validators.PresetSerializer):
             "insured_by": "carrier",
         }
         </details>
+        """,
+    )
+    meta = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default=dict,
+        help_text="""Template metadata for template identification.
+        Structure: {"label": "Standard Box", "is_default": true}
         """,
     )
 
@@ -1561,12 +1593,12 @@ class ShipmentContent(serializers.Serializer):
         Destination address (ship to) for the **recipient**
         """,
     )
-    return_address = AddressData(
+    return_address = Address(
         required=False,
         allow_null=True,
         help_text="The return address for this shipment. Defaults to the shipper address.",
     )
-    billing_address = AddressData(
+    billing_address = Address(
         required=False,
         allow_null=True,
         help_text="The payor address.",

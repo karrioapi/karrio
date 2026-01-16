@@ -1,7 +1,10 @@
 from rest_framework import status
 
 from karrio.server.core.serializers import AddressData, ShipmentStatus
-from karrio.server.serializers import owned_model_serializer
+from karrio.server.serializers import (
+    owned_model_serializer,
+    process_dictionaries_mutations,
+)
 from karrio.server.core.exceptions import APIException
 from karrio.server.manager import models
 from karrio.server.core import gateway
@@ -34,8 +37,11 @@ class AddressSerializer(AddressData):
     def update(
         self, instance: models.Address, validated_data: dict, **kwargs
     ) -> models.Address:
+        # Handle dictionary mutations for meta field
+        data = process_dictionaries_mutations(["meta"], validated_data, instance)
         changes = []
-        for key, val in validated_data.items():
+
+        for key, val in data.items():
             if getattr(instance, key) != val:
                 changes.append(key)
                 setattr(instance, key, val)

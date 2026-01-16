@@ -73,6 +73,7 @@ PARCEL_RESPONSE = {
     "freight_class": None,
     "reference_number": ANY,
     "options": {},
+    "meta": {},
 }
 
 PARCEL_UPDATE_DATA = {
@@ -101,4 +102,5 @@ PARCEL_UPDATE_RESPONSE = {
     "freight_class": None,
     "reference_number": ANY,
     "options": {},
+    "meta": {},
 }

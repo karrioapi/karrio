@@ -244,30 +244,30 @@ def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
 
 
 def get_shipment_item_contexts(shipment):
-    items = order_models.LineItem.objects.filter(
-        commodity_parcel__parcel_shipment=shipment
-    )
-    distinct_items = [
-        __ for _, __ in ({item.parent_id: item for item in items}).items()
-    ]
+    """Get line items from orders related to the shipment.
 
-    return [
-        {
-            **orders_serializers.LineItem(item.parent or item).data,
-            "ship_quantity": items.filter(parent_id=item.parent_id).aggregate(
-                Sum("quantity")
-            )["quantity__sum"],
-            "order": (orders_serializers.Order(item.order).data if item.order else {}),
-        }
-        for item in distinct_items
-    ]
+    Since line_items is now a JSONField on Order, we query orders related
+    to the shipment through the M2M relationship and extract line items.
+    """
+    # Get orders related to this shipment through M2M
+    orders = order_models.Order.objects.filter(shipments=shipment)
+
+    all_items = []
+    for order in orders:
+        line_items = order.line_items or []
+        for item in line_items:
+            all_items.append({
+                **item,
+                "order": orders_serializers.Order(order).data,
+            })
+
+    return all_items
 
 
 def get_shipment_order_contexts(shipment):
+    """Get orders related to the shipment through M2M relationship."""
     return (
-        order_models.Order.objects.filter(
-            line_items__children__commodity_parcel__parcel_shipment=shipment
-        )
+        order_models.Order.objects.filter(shipments=shipment)
         .order_by("-order_date")
         .distinct()
     )

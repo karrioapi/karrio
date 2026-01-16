@@ -149,7 +149,7 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
             pieces = resources.Field()
 
             def dehydrate_pieces(self, row):
-                return len(row.parcels.all())
+                return len(row.parcels or [])
 
         if "rate" not in _exclude:
             rate = resources.Field()

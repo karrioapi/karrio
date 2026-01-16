@@ -231,19 +231,41 @@ class TestDocumentGeneratorIntegration(APITestCase):
             created_by=self.user,
         )
 
-        shipper = manager_models.Address.objects.create(
-            person_name="Shipper Inc",
-            address_line1="456 Business Ave",
-            city="Ship City",
-            country_code="CA",
-            postal_code="67890",
-            created_by=self.user,
-        )
+        # Create recipient and shipper as dict data for JSON fields
+        recipient_data = {
+            "id": "adr_recipient123",
+            "person_name": "Test Customer",
+            "address_line1": "123 Test Street",
+            "city": "Test City",
+            "country_code": "US",
+            "postal_code": "12345",
+        }
 
-        # Create a test shipment
+        shipper_data = {
+            "id": "adr_shipper456",
+            "person_name": "Shipper Inc",
+            "address_line1": "456 Business Ave",
+            "city": "Ship City",
+            "country_code": "CA",
+            "postal_code": "67890",
+        }
+
+        # Create parcel as dict data for JSON field
+        parcel_data = {
+            "id": "pcl_parcel789",
+            "weight": 2.5,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+            "width": 20,
+            "height": 15,
+            "length": 30,
+        }
+
+        # Create a test shipment with JSON field data
         shipment = manager_models.Shipment.objects.create(
-            recipient=recipient,
-            shipper=shipper,
+            recipient=recipient_data,
+            shipper=shipper_data,
+            parcels=[parcel_data],
             test_mode=True,
             status="shipped",
             tracking_number="TRACK123456",
@@ -257,18 +279,6 @@ class TestDocumentGeneratorIntegration(APITestCase):
             },
             created_by=self.user,
         )
-
-        # Create and set parcels
-        parcel = manager_models.Parcel.objects.create(
-            weight=2.5,
-            weight_unit="KG",
-            dimension_unit="CM",
-            width=20,
-            height=15,
-            length=30,
-            created_by=self.user,
-        )
-        shipment.parcels.set([parcel])
 
         url = reverse("karrio.server.documents:document-generator")
         data = {

@@ -1106,7 +1106,8 @@ class ShipmentType:
 
     @strawberry.field
     def parcels(self: manager.Shipment) -> typing.List[ParcelType]:
-        return self.parcels.all()
+        # parcels is now a JSON field, return parsed ParcelType objects
+        return [ParcelType.parse(p) for p in (self.parcels or [])]
 
     @strawberry.field
     def rates(self: manager.Shipment) -> typing.List[RateType]:

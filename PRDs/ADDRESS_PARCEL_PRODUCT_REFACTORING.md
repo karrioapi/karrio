@@ -12,6 +12,8 @@
 1. [Executive Summary](#1-executive-summary)
    - 1.4 [Coding Standards (Mandatory)](#14-coding-standards-mandatory)
    - 1.5 [Backward Compatibility Guarantee](#15-backward-compatibility-guarantee)
+   - 1.6 [JSON Object ID Pattern](#16-json-object-id-pattern)
+   - 1.7 [JSON Array Item Deletion Pattern](#17-json-array-item-deletion-pattern-stripe-style)
 2. [Current Architecture Analysis](#2-current-architecture-analysis)
 3. [Proposed Architecture](#3-proposed-architecture)
 4. [Data Model Changes](#4-data-model-changes)
@@ -25,6 +27,8 @@
 11. [Appendix](#11-appendix)
 12. [Glossary](#12-glossary)
 13. [Test Examples](#13-test-examples)
+    - 13.6 [Array Item Deletion Tests](#136-array-item-deletion-tests-stripe-pattern)
+    - 13.7 [JSON Utility Unit Tests](#137-json-utility-unit-tests)
 
 ---
 
@@ -197,6 +201,64 @@ JSON objects embedded in operational records follow this ID pattern:
 - Enable partial updates to specific items without replacing entire array
 - Support `parent_id` linking for order fulfillment tracking
 - Allow frontend to track and update specific items in the UI
+
+### 1.7 JSON Array Item Deletion Pattern (Stripe-style)
+
+Following [Stripe's API pattern](https://docs.stripe.com/api/subscriptions/update), we use **`deleted: true`** flag to remove items from arrays:
+
+**Delete a parcel:**
+```json
+{
+  "parcels": [
+    {"id": "pcl_abc123", "deleted": true}
+  ]
+}
+```
+
+**Delete an item from a parcel:**
+```json
+{
+  "parcels": [
+    {
+      "id": "pcl_abc123",
+      "items": [
+        {"id": "itm_def456", "deleted": true}
+      ]
+    }
+  ]
+}
+```
+
+**Delete a commodity from customs:**
+```json
+{
+  "customs": {
+    "commodities": [
+      {"id": "cmd_xyz789", "deleted": true}
+    ]
+  }
+}
+```
+
+**Combined operations (add, update, delete in one request):**
+```json
+{
+  "parcels": [
+    {"id": "pcl_111", "deleted": true},              // Delete this parcel
+    {"id": "pcl_222", "weight": 3.5},                // Update this parcel
+    {"weight": 1.0, "items": []}                     // Add new parcel (id generated)
+  ]
+}
+```
+
+**Comparison with current RateSheet pattern:**
+
+| Aspect | RateSheet (Current) | New JSONField Pattern |
+|--------|--------------------|-----------------------|
+| Delete specific | `remove_zone(zone_id)` method | `{"id": "x", "deleted": true}` in array |
+| Delete missing | `remove_missing=True` param | Not supported (explicit only) |
+| Consistency | Model methods | Stripe-style inline flag |
+| Atomicity | Single item per call | Batch in single request |
 
 ---
 
@@ -4548,10 +4610,13 @@ def process_json_array_mutation(
 ) -> typing.Optional[list]:
     """Process mutation for a JSON array field (parcels, items, line_items, etc.).
 
+    Follows Stripe's API pattern for array mutations.
+
     Supports:
     - Add new items (no id → generate one)
-    - Update existing items (by id match)
-    - Remove items (explicit null in array or remove_ids)
+    - Update existing items (by id match + deep merge)
+    - Delete items via {"id": "x", "deleted": true} (Stripe pattern)
+    - Clear entire array via null
     - Template ID resolution for new items
     - Nested array processing (e.g., parcel.items)
 
@@ -4565,6 +4630,20 @@ def process_json_array_mutation(
 
     Returns:
         Updated JSON array, or None if field not in payload
+
+    Examples:
+        # Delete a parcel
+        {"parcels": [{"id": "pcl_123", "deleted": true}]}
+
+        # Delete nested item from parcel
+        {"parcels": [{"id": "pcl_123", "items": [{"id": "itm_456", "deleted": true}]}]}
+
+        # Combined: delete one, update one, add one
+        {"parcels": [
+            {"id": "pcl_111", "deleted": true},
+            {"id": "pcl_222", "weight": 5.0},
+            {"weight": 1.0}  # new, id will be generated
+        ]}
     """
     if field_name not in payload:
         return getattr(instance, field_name, None)
@@ -4581,6 +4660,10 @@ def process_json_array_mutation(
 
     result = []
     for item_data in new_items:
+        # Skip items marked for deletion (Stripe pattern: {"id": "x", "deleted": true})
+        if isinstance(item_data, dict) and item_data.get('deleted') is True:
+            continue  # Don't include in result = deleted
+
         # Handle template ID resolution (string or {'id': ...})
         if isinstance(item_data, str) and model_class:
             resolved = resolve_template_to_json(item_data, model_class, include_template_ref=False)
@@ -4593,23 +4676,39 @@ def process_json_array_mutation(
 
         item_id = item_data.get('id') if isinstance(item_data, dict) else None
 
+        # Determine nested array field names to exclude from deep merge
+        nested_field_names = set(nested_arrays.keys()) if nested_arrays else set()
+
         if item_id and item_id in existing_by_id:
-            # Update existing item - deep merge
-            merged = deep_merge_remove_nulls(existing_by_id[item_id], item_data)
+            # Update existing item - deep merge (exclude 'deleted' and nested arrays)
+            clean_data = {
+                k: v for k, v in item_data.items()
+                if k != 'deleted' and k not in nested_field_names
+            }
+            merged = deep_merge_remove_nulls(existing_by_id[item_id], clean_data)
             result.append(merged)
         else:
             # New item - generate ID
-            new_item = {**item_data, 'id': generate_json_id(id_prefix)}
+            clean_data = {
+                k: v for k, v in item_data.items()
+                if k != 'deleted' and k not in nested_field_names
+            }
+            new_item = {**clean_data, 'id': generate_json_id(id_prefix)}
             result.append(new_item)
 
-        # Process nested arrays if configured
+        # Process nested arrays AFTER adding to result (handles add/update/delete correctly)
         if nested_arrays and isinstance(item_data, dict):
             for nested_field, (nested_prefix, nested_model) in nested_arrays.items():
                 if nested_field in item_data:
+                    # Get existing nested items from the ORIGINAL existing item (not merged)
+                    existing_nested = (
+                        existing_by_id.get(item_id, {}).get(nested_field, [])
+                        if item_id else []
+                    )
                     result[-1][nested_field] = process_json_array_mutation(
                         nested_field,
                         {nested_field: item_data[nested_field]},
-                        type('Obj', (), {nested_field: result[-1].get(nested_field, [])})(),
+                        type('Obj', (), {nested_field: existing_nested})(),
                         id_prefix=nested_prefix,
                         model_class=nested_model,
                     )
@@ -5503,6 +5602,174 @@ class TestDeepNestedMutation(TestCase):
         self.assertEqual(response.data['parcels'][0]['items'][0]['quantity'], 5)
 ```
 
+### 13.6 Array Item Deletion Tests (Stripe Pattern)
+
+```python
+class TestArrayItemDeletion(TestCase):
+    """Tests for Stripe-style array item deletion with deleted: true."""
+
+    def test_delete_parcel_from_shipment(self):
+        """Test deleting a parcel using deleted: true flag."""
+        shipment = self._create_shipment_with_parcels()  # Has pcl_111, pcl_222
+
+        response = self.client.patch(f'/api/shipments/{shipment.id}', data={
+            "parcels": [
+                {"id": "pcl_111", "deleted": True}  # Delete this parcel
+            ]
+        })
+        print(response)
+        self.assertResponseNoErrors(response)
+        # Verify parcel was deleted
+        parcel_ids = [p['id'] for p in response.data['parcels']]
+        self.assertNotIn('pcl_111', parcel_ids)
+        self.assertIn('pcl_222', parcel_ids)  # Other parcel still exists
+
+    def test_delete_item_from_parcel(self):
+        """Test deleting an item from parcel.items array."""
+        shipment = self._create_shipment_with_parcel_items()  # parcel has itm_111, itm_222
+
+        response = self.client.patch(f'/api/shipments/{shipment.id}', data={
+            "parcels": [{
+                "id": "pcl_abc",
+                "items": [
+                    {"id": "itm_111", "deleted": True}  # Delete this item
+                ]
+            }]
+        })
+        print(response)
+        self.assertResponseNoErrors(response)
+        # Verify item was deleted from parcel
+        parcel = response.data['parcels'][0]
+        item_ids = [i['id'] for i in parcel['items']]
+        self.assertNotIn('itm_111', item_ids)
+        self.assertIn('itm_222', item_ids)
+
+    def test_delete_commodity_from_customs(self):
+        """Test deleting a commodity from customs.commodities array."""
+        shipment = self._create_shipment_with_customs()  # Has cmd_111, cmd_222
+
+        response = self.client.patch(f'/api/shipments/{shipment.id}', data={
+            "customs": {
+                "commodities": [
+                    {"id": "cmd_111", "deleted": True}
+                ]
+            }
+        })
+        print(response)
+        self.assertResponseNoErrors(response)
+        commodity_ids = [c['id'] for c in response.data['customs']['commodities']]
+        self.assertNotIn('cmd_111', commodity_ids)
+        self.assertIn('cmd_222', commodity_ids)
+
+    def test_combined_add_update_delete(self):
+        """Test combined operations: add, update, and delete in single request."""
+        shipment = self._create_shipment_with_parcels()  # Has pcl_111, pcl_222
+
+        response = self.client.patch(f'/api/shipments/{shipment.id}', data={
+            "parcels": [
+                {"id": "pcl_111", "deleted": True},      # Delete
+                {"id": "pcl_222", "weight": 10.0},       # Update
+                {"weight": 2.5, "items": []}             # Add new (id generated)
+            ]
+        })
+        print(response)
+        self.assertResponseNoErrors(response)
+
+        parcels = response.data['parcels']
+        parcel_ids = [p['id'] for p in parcels]
+
+        # Verify delete
+        self.assertNotIn('pcl_111', parcel_ids)
+        # Verify update
+        pcl_222 = next(p for p in parcels if p['id'] == 'pcl_222')
+        self.assertEqual(pcl_222['weight'], 10.0)
+        # Verify add (new parcel with generated id)
+        self.assertEqual(len(parcels), 2)  # pcl_222 + new one
+        new_parcel = next(p for p in parcels if p['id'] != 'pcl_222')
+        self.assertTrue(new_parcel['id'].startswith('pcl_'))
+        self.assertEqual(new_parcel['weight'], 2.5)
+
+    def test_clear_entire_array_with_null(self):
+        """Test clearing entire array by setting to null."""
+        shipment = self._create_shipment_with_parcels()
+
+        response = self.client.patch(f'/api/shipments/{shipment.id}', data={
+            "parcels": None  # Clear all parcels
+        })
+        print(response)
+        self.assertResponseNoErrors(response)
+        self.assertEqual(response.data['parcels'], [])
+```
+
+### 13.7 JSON Utility Unit Tests
+
+```python
+class TestJsonUtils(TestCase):
+    """Unit tests for json_utils functions."""
+
+    def test_generate_json_id(self):
+        """Test unique ID generation."""
+        from karrio.server.serializers.json_utils import generate_json_id
+
+        id1 = generate_json_id('pcl')
+        id2 = generate_json_id('pcl')
+
+        self.assertTrue(id1.startswith('pcl_'))
+        self.assertTrue(id2.startswith('pcl_'))
+        self.assertNotEqual(id1, id2)  # Unique
+        self.assertEqual(len(id1), 16)  # pcl_ + 12 hex chars
+
+    def test_process_json_array_deletion(self):
+        """Test array mutation with deleted flag."""
+        from karrio.server.serializers.json_utils import process_json_array_mutation
+
+        class MockInstance:
+            parcels = [
+                {'id': 'pcl_111', 'weight': 1.0},
+                {'id': 'pcl_222', 'weight': 2.0},
+            ]
+
+        result = process_json_array_mutation(
+            'parcels',
+            {'parcels': [{'id': 'pcl_111', 'deleted': True}]},
+            MockInstance(),
+            id_prefix='pcl',
+        )
+
+        # Only pcl_222 should remain
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]['id'], 'pcl_222')
+
+    def test_process_nested_array_deletion(self):
+        """Test nested array deletion (item within parcel)."""
+        from karrio.server.serializers.json_utils import process_json_array_mutation
+
+        class MockInstance:
+            parcels = [{
+                'id': 'pcl_111',
+                'items': [
+                    {'id': 'itm_aaa', 'quantity': 1},
+                    {'id': 'itm_bbb', 'quantity': 2},
+                ]
+            }]
+
+        result = process_json_array_mutation(
+            'parcels',
+            {'parcels': [{
+                'id': 'pcl_111',
+                'items': [{'id': 'itm_aaa', 'deleted': True}]
+            }]},
+            MockInstance(),
+            id_prefix='pcl',
+            nested_arrays={'items': ('itm', None)},
+        )
+
+        # Parcel should remain with only itm_bbb
+        self.assertEqual(len(result), 1)
+        self.assertEqual(len(result[0]['items']), 1)
+        self.assertEqual(result[0]['items'][0]['id'], 'itm_bbb')
+```
+
 ---
 
 **Document History**
@@ -5513,4 +5780,6 @@ class TestDeepNestedMutation(TestCase):
 | 1.1 | 2026-01-15 | Engineering | Added coding standards, backward compatibility, test examples, updated to use `parent_id` pattern |
 | 1.2 | 2026-01-15 | Engineering | Clarified JSON object ID patterns: array items get generated `id`, single objects store template `id` |
 | 1.3 | 2026-01-15 | Engineering | Added serializer migration plan (§8.7): legacy code analysis, new JSON utilities, clean implementation |
+| 1.4 | 2026-01-15 | Engineering | Added Stripe-style `deleted: true` pattern for array item deletion (§1.7) |
+| 1.5 | 2026-01-15 | Engineering | Fixed nested array mutation to preserve unaffected items during deletion; added deletion tests (§13.6-13.7) |
 

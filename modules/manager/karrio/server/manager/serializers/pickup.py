@@ -89,13 +89,16 @@ class PickupSerializer(PickupRequest):
             )
 
             if data.get("address") is None and instance is None:
+                # shipper is now a JSON dict, use directly
                 address = next(
-                    (AddressData(s.shipper).data for s in self._shipments), None
+                    (s.shipper for s in self._shipments if s.shipper), None
                 )
             elif data.get("address") is None and instance is not None:
-                address = AddressData(instance.address).data
-            elif data.get("address") is str:
-                address = models.Shipment.objects.get(pk=data.get("address"))
+                # address is now a JSON dict, use directly
+                address = instance.address
+            elif isinstance(data.get("address"), str):
+                # Legacy: look up address by ID (should rarely happen with JSON addresses)
+                address = models.Address.objects.get(pk=data.get("address"))
             else:
                 address = data.get("address")
 
@@ -138,16 +141,20 @@ class PickupData(PickupSerializer):
             context=context,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
         )
-        request_data = PickupRequest(
-            {
-                **validated_data,
-                "parcels": sum([list(s.parcels.all()) for s in self._shipments], []),
-                "options": {
-                    "shipment_identifiers": shipment_identifiers,
-                    **(validated_data.get("options") or {}),
-                },
-            }
-        ).data
+
+        # Build request data directly (address is now a JSON dict)
+        # Exclude non-serializable fields from request data
+        excluded_keys = {"created_by", "carrier_filter", "tracking_numbers"}
+        filtered_data = {k: v for k, v in validated_data.items() if k not in excluded_keys}
+        parcels_list = sum([(s.parcels or []) for s in self._shipments], [])
+        request_data = {
+            **filtered_data,
+            "parcels": parcels_list,
+            "options": {
+                "shipment_identifiers": shipment_identifiers,
+                **(validated_data.get("options") or {}),
+            },
+        }
 
         response = Pickups.schedule(payload=request_data, carrier=carrier)
         payload = {
@@ -155,14 +162,14 @@ class PickupData(PickupSerializer):
             for key, value in Pickup(response.pickup).data.items()
             if key in models.Pickup.DIRECT_PROPS
         }
-        address = save_one_to_one_data(
-            "address", AddressSerializer, payload=validated_data, context=context
-        )
+
+        # Use the address from validated_data directly (JSON field)
+        address_data = validated_data.get("address") or {}
 
         pickup = models.Pickup.objects.create(
             **{
                 **payload,
-                "address": address,
+                "address": address_data,
                 "pickup_carrier": carrier,
                 "created_by": context.user,
                 "test_mode": response.pickup.test_mode,
@@ -233,36 +240,52 @@ class PickupUpdateData(PickupSerializer):
             )
         ]
 
-        request_data = PickupUpdateRequest(
-            {
-                **PickupUpdateRequest(instance).data,
-                **validated_data,
-                "address": AddressData(
-                    {**AddressData(instance.address).data, **validated_data["address"]}
-                ).data,
-                "options": {
-                    "shipment_identifiers": shipment_identifiers,
-                    **(instance.meta or {}),
-                    **(validated_data.get("options") or {}),
-                },
-            }
-        ).data
+        # Merge existing address with updates (address is now a JSON field)
+        existing_address = instance.address or {}
+        address_updates = validated_data.get("address") or {}
+        merged_address = {**existing_address, **address_updates}
+
+        # Build base data from instance fields directly (not via serializer)
+        # Convert date to string for serializer validation
+        pickup_date = (
+            str(instance.pickup_date) if instance.pickup_date else None
+        )
+        base_data = {
+            "pickup_date": pickup_date,
+            "address": existing_address,
+            "parcels": instance.parcels,
+            "confirmation_number": instance.confirmation_number,
+            "ready_time": instance.ready_time,
+            "closing_time": instance.closing_time,
+            "instruction": instance.instruction,
+            "package_location": instance.package_location,
+            "options": instance.options or {},
+        }
+
+        # Build request data directly (data comes from trusted sources)
+        request_data = {
+            **base_data,
+            **validated_data,
+            "address": merged_address,
+            "options": {
+                "shipment_identifiers": shipment_identifiers,
+                **(instance.meta or {}),
+                **(validated_data.get("options") or {}),
+            },
+        }
 
         Pickups.update(payload=request_data, carrier=instance.pickup_carrier)
 
         data = validated_data.copy()
         for key, val in data.items():
+            # Skip address - it needs special handling for merging
+            if key == "address":
+                continue
             if key in models.Pickup.DIRECT_PROPS:
                 setattr(instance, key, val)
-                validated_data.pop(key)
 
-        save_one_to_one_data(
-            "address",
-            AddressSerializer,
-            instance,
-            payload=validated_data,
-            context=context,
-        )
+        # Always set the merged address (preserves existing fields while applying updates)
+        instance.address = merged_address
 
         instance.save()
         return instance

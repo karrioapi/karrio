@@ -2,7 +2,10 @@ from rest_framework import status
 
 from karrio.server.core.exceptions import APIException
 from karrio.server.core.serializers import CommodityData, ShipmentStatus
-from karrio.server.serializers import owned_model_serializer
+from karrio.server.serializers import (
+    owned_model_serializer,
+    process_dictionaries_mutations,
+)
 import karrio.server.manager.models as models
 
 
@@ -16,14 +19,18 @@ class CommoditySerializer(CommodityData):
     def update(
         self, instance: models.Commodity, validated_data: dict, **kwargs
     ) -> models.Commodity:
+        # Handle dictionary mutations for metadata and meta fields
+        data = process_dictionaries_mutations(
+            ["metadata", "meta"], validated_data, instance
+        )
         changes = []
 
-        for key, val in validated_data.items():
+        for key, val in data.items():
             if getattr(instance, key) != val:
                 changes.append(key)
                 setattr(instance, key, val)
 
-        instance.save()
+        instance.save(update_fields=changes)
         return instance
 
 
@@ -43,7 +50,7 @@ def can_mutate_commodity(
             code="state_error",
         )
 
-    if delete and order and len(order.line_items.all()) == 1:
+    if delete and order and len(order.line_items or []) == 1:
         raise APIException(
             f"Operation not permitted. The related order needs at least one line_item.",
             status_code=status.HTTP_409_CONFLICT,

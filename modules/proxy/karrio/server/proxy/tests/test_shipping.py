@@ -185,6 +185,7 @@ SHIPPING_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "recipient": {
         "id": None,
@@ -205,6 +206,7 @@ SHIPPING_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
@@ -225,6 +227,7 @@ SHIPPING_RESPONSE = {
             "reference_number": "123456789012",
             "object_type": "parcel",
             "options": {},
+            "meta": {},
         }
     ],
     "services": [],

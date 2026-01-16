@@ -17,64 +17,72 @@ class TestShipmentFixture(APITestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.shipper: models.Address = models.Address.objects.create(
-            **{
-                "postal_code": "E1C4Z8",
-                "city": "Moncton",
-                "federal_tax_id": None,
-                "state_tax_id": None,
-                "person_name": "John Poop",
-                "company_name": "A corp.",
-                "country_code": "CA",
-                "email": None,
-                "phone_number": "514 000 0000",
-                "state_code": "NB",
-                "street_number": None,
-                "residential": False,
-                "address_line1": "125 Church St",
-                "address_line2": None,
-                "validate_location": False,
-                "validation": None,
-                "created_by": self.user,
-            }
-        )
-        self.recipient: models.Address = models.Address.objects.create(
-            **{
-                "postal_code": "V6M2V9",
-                "city": "Vancouver",
-                "federal_tax_id": None,
-                "state_tax_id": None,
-                "person_name": "Jane Doe",
-                "company_name": "B corp.",
-                "country_code": "CA",
-                "email": None,
-                "phone_number": "514 000 9999",
-                "state_code": "BC",
-                "street_number": None,
-                "residential": False,
-                "address_line1": "5840 Oak St",
-                "address_line2": None,
-                "validate_location": False,
-                "validation": None,
-                "created_by": self.user,
-            }
-        )
-        self.parcel: models.Parcel = models.Parcel.objects.create(
-            **{
-                "weight": 1.0,
-                "weight_unit": "KG",
-                "package_preset": "canadapost_corrugated_small_box",
-                "created_by": self.user,
-            }
-        )
+        # Shipper and recipient as dict data for JSON fields (use proper JSON-generated ID format)
+        self.shipper_data = {
+            "id": "adr_111122223333",
+            "postal_code": "E1C4Z8",
+            "city": "Moncton",
+            "federal_tax_id": None,
+            "state_tax_id": None,
+            "person_name": "John Poop",
+            "company_name": "A corp.",
+            "country_code": "CA",
+            "email": None,
+            "phone_number": "514 000 0000",
+            "state_code": "NB",
+            "street_number": None,
+            "residential": False,
+            "address_line1": "125 Church St",
+            "address_line2": None,
+            "validate_location": False,
+            "validation": None,
+        }
+        self.recipient_data = {
+            "id": "adr_444455556666",
+            "postal_code": "V6M2V9",
+            "city": "Vancouver",
+            "federal_tax_id": None,
+            "state_tax_id": None,
+            "person_name": "Jane Doe",
+            "company_name": "B corp.",
+            "country_code": "CA",
+            "email": None,
+            "phone_number": "514 000 9999",
+            "state_code": "BC",
+            "street_number": None,
+            "residential": False,
+            "address_line1": "5840 Oak St",
+            "address_line2": None,
+            "validate_location": False,
+            "validation": None,
+        }
+        self.parcel_data = {
+            "id": "pcl_777788889999",
+            "weight": 1.0,
+            "weight_unit": "KG",
+            "width": None,
+            "height": None,
+            "length": None,
+            "dimension_unit": None,
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
+            "description": None,
+            "content": None,
+            "is_document": False,
+            "freight_class": None,
+            "reference_number": None,
+            "items": [],
+            "options": {},
+            "meta": {},
+        }
         self.shipment: models.Shipment = models.Shipment.objects.create(
-            shipper=self.shipper,
-            recipient=self.recipient,
+            shipper=self.shipper_data,
+            recipient=self.recipient_data,
+            parcels=[self.parcel_data],
             created_by=self.user,
             test_mode=True,
             payment={"currency": "CAD", "paid_by": "sender"},
         )
-        self.shipment.parcels.set([self.parcel])
 
 
 class TestShipments(APITestCase):
@@ -463,6 +471,7 @@ SHIPMENT_RESPONSE = {
         "address_line2": None,
         "validate_location": False,
         "validation": None,
+        "meta": {},
     },
     "recipient": {
         "id": ANY,
@@ -483,6 +492,7 @@ SHIPMENT_RESPONSE = {
         "address_line2": None,
         "validate_location": False,
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
@@ -503,6 +513,7 @@ SHIPMENT_RESPONSE = {
             "freight_class": None,
             "reference_number": ANY,
             "options": {},
+            "meta": {},
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
@@ -602,7 +613,7 @@ PURCHASED_SHIPMENT = {
     "object_type": "shipment",
     "tracking_url": "/v1/trackers/canadapost/123456789012",
     "shipper": {
-        "id": ANY,
+        "id": "adr_111122223333",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -620,9 +631,10 @@ PURCHASED_SHIPMENT = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "recipient": {
-        "id": ANY,
+        "id": "adr_444455556666",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -640,26 +652,28 @@ PURCHASED_SHIPMENT = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
-            "id": ANY,
+            "id": "pcl_777788889999",
             "weight": 1.0,
-            "width": None,
-            "height": None,
-            "length": None,
+            "width": 42.0,
+            "height": 32.0,
+            "length": 32.0,
             "packaging_type": None,
             "package_preset": "canadapost_corrugated_small_box",
             "description": None,
             "content": None,
             "is_document": False,
             "weight_unit": "KG",
-            "dimension_unit": None,
+            "dimension_unit": "CM",
             "items": [],
             "freight_class": None,
             "reference_number": ANY,
             "object_type": "parcel",
             "options": {},
+            "meta": {},
         }
     ],
     "services": [],
@@ -670,25 +684,25 @@ PURCHASED_SHIPMENT = {
     "customs": None,
     "rates": [
         {
-            "id": ANY,
+            "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
             "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": ANY,
+            "estimated_delivery": None,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
             "extra_charges": [
-                {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": ANY},
-                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": ANY},
-                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": ANY},
-                {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": ANY},
+                {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+                {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
                 {
                     "name": "Duties and taxes",
                     "amount": 13.92,
                     "currency": "CAD",
-                    "id": ANY,
+                    "id": None,
                 },
             ],
             "meta": {
@@ -712,21 +726,21 @@ PURCHASED_SHIPMENT = {
     "tracking_number": "123456789012",
     "shipment_identifier": "123456789012",
     "selected_rate": {
-        "id": ANY,
+        "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
         "object_type": "rate",
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
         "currency": "CAD",
-        "estimated_delivery": ANY,
+        "estimated_delivery": None,
         "service": "canadapost_priority",
         "total_charge": 106.71,
         "transit_days": 2,
         "extra_charges": [
-            {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": ANY},
-            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": ANY},
-            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": ANY},
-            {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": ANY},
-            {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": ANY},
+            {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+            {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
+            {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": None},
         ],
         "meta": {
             "ext": "canadapost",
@@ -744,7 +758,7 @@ PURCHASED_SHIPMENT = {
         "service_name": "CANADAPOST PRIORITY",
     },
     "service": "canadapost_priority",
-    "selected_rate_id": ANY,
+    "selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
     "test_mode": True,
     "label_url": ANY,
     "invoice_url": None,
@@ -763,7 +777,7 @@ CANCEL_RESPONSE = {
     "object_type": "shipment",
     "tracking_url": None,
     "shipper": {
-        "id": ANY,
+        "id": "adr_111122223333",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -781,9 +795,10 @@ CANCEL_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "recipient": {
-        "id": ANY,
+        "id": "adr_444455556666",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -801,10 +816,11 @@ CANCEL_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
-            "id": ANY,
+            "id": "pcl_777788889999",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -818,9 +834,10 @@ CANCEL_RESPONSE = {
             "dimension_unit": None,
             "items": [],
             "freight_class": None,
-            "reference_number": "0000000002",
+            "reference_number": ANY,
             "object_type": "parcel",
             "options": {},
+            "meta": {},
         }
     ],
     "services": [],
@@ -831,12 +848,12 @@ CANCEL_RESPONSE = {
     "customs": None,
     "rates": [
         {
-            "id": ANY,
+            "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
             "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": ANY,
+            "estimated_delivery": None,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
@@ -902,7 +919,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "object_type": "shipment",
     "tracking_url": None,
     "shipper": {
-        "id": ANY,
+        "id": "adr_111122223333",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -920,9 +937,10 @@ CANCEL_PURCHASED_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "recipient": {
-        "id": ANY,
+        "id": "adr_444455556666",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -940,10 +958,11 @@ CANCEL_PURCHASED_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
-            "id": ANY,
+            "id": "pcl_777788889999",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -957,9 +976,10 @@ CANCEL_PURCHASED_RESPONSE = {
             "dimension_unit": None,
             "items": [],
             "freight_class": None,
-            "reference_number": "0000000002",
+            "reference_number": ANY,
             "object_type": "parcel",
             "options": {},
+            "meta": {},
         }
     ],
     "services": [],
@@ -970,12 +990,12 @@ CANCEL_PURCHASED_RESPONSE = {
     "customs": None,
     "rates": [
         {
-            "id": ANY,
+            "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
             "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": ANY,
+            "estimated_delivery": None,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,

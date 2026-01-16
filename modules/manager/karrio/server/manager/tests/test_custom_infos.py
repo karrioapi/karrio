@@ -60,6 +60,7 @@ CUSTOMS_RESPONSE = {
             "variant_id": None,
             "quantity": 1,
             "metadata": {},
+            "meta": {},
             "sku": "cc",
             "hs_code": None,
             "value_amount": None,

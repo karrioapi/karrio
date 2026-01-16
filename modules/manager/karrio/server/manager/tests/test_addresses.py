@@ -80,6 +80,7 @@ ADDRESS_RESPONSE = {
     "address_line2": None,
     "validate_location": False,
     "validation": None,
+    "meta": {},
 }
 
 ADDRESS_UPDATE_DATA = {
@@ -107,4 +108,5 @@ ADDRESS_UPDATE_RESPONSE = {
     "address_line2": None,
     "validate_location": False,
     "validation": None,
+    "meta": {},
 }

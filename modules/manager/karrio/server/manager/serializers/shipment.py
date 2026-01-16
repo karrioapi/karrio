@@ -22,12 +22,13 @@ from karrio.server.serializers import (
     ChoiceField,
     BooleanField,
     owned_model_serializer,
-    save_one_to_one_data,
-    save_many_to_many_data,
     link_org,
     Context,
     PlainDictField,
     StringListField,
+    process_json_object_mutation,
+    process_json_array_mutation,
+    process_customs_mutation,
 )
 from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
@@ -43,11 +44,9 @@ from karrio.server.core.serializers import (
     Payment,
     Message,
     Rate,
+    Parcel,
 )
 from karrio.server.manager.serializers.document import DocumentUploadSerializer
-from karrio.server.manager.serializers.address import AddressSerializer
-from karrio.server.manager.serializers.customs import CustomsSerializer
-from karrio.server.manager.serializers.parcel import ParcelSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
 
@@ -68,64 +67,8 @@ class ShipmentSerializer(ShipmentData):
     docs = Documents(required=False)
     meta = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False, default=[])
-
-    def __init__(self, instance: models.Shipment = None, **kwargs):
-        data = kwargs.get("data") or {}
-        context = getattr(self, "__context", None) or kwargs.get("context")
-        is_update = instance is not None
-
-        if is_update and ("parcels" in data):
-            save_many_to_many_data(
-                "parcels",
-                ParcelSerializer,
-                instance,
-                payload=data,
-                context=context,
-                partial=True,
-            )
-        if is_update and ("customs" in data):
-            instance.customs = save_one_to_one_data(
-                "customs",
-                CustomsSerializer,
-                instance,
-                payload=data,
-                context=context,
-                partial=instance.customs is not None,
-            )
-        if is_update and ("recipient" in data):
-            instance.recipient = save_one_to_one_data(
-                "recipient",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-        if is_update and ("return_address" in data):
-            instance.return_address = save_one_to_one_data(
-                "return_address",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-        if is_update and ("billing_address" in data):
-            instance.billing_address = save_one_to_one_data(
-                "billing_address",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-        if is_update and ("shipper" in data):
-            instance.shipper = save_one_to_one_data(
-                "shipper",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-
-        super().__init__(instance, **kwargs)
+    # Override parcels to use Parcel (with id) instead of ParcelData (without id)
+    parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
 
     @transaction.atomic
     def create(
@@ -195,6 +138,46 @@ class ShipmentSerializer(ShipmentData):
                 context=context,
             )
 
+        # Process JSON fields for addresses, parcels, and customs
+        json_fields = {}
+
+        if "shipper" in validated_data:
+            json_fields.update(shipper=process_json_object_mutation(
+                "shipper", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "recipient" in validated_data:
+            json_fields.update(recipient=process_json_object_mutation(
+                "recipient", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "return_address" in validated_data:
+            json_fields.update(return_address=process_json_object_mutation(
+                "return_address", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "billing_address" in validated_data:
+            json_fields.update(billing_address=process_json_object_mutation(
+                "billing_address", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        json_fields.update(parcels=process_json_array_mutation(
+            "parcels", validated_data, None,
+            id_prefix="pcl", model_class=models.Parcel,
+            nested_arrays={"items": ("itm", models.Commodity)},
+            object_type="parcel", data_field_name="parcels",
+        ))
+
+        if "customs" in validated_data:
+            json_fields.update(customs=process_customs_mutation(
+                validated_data, None,
+                address_model=models.Address, product_model=models.Commodity,
+            ))
+
         shipment = models.Shipment.objects.create(
             **{
                 **{
@@ -202,36 +185,7 @@ class ShipmentSerializer(ShipmentData):
                     for key, value in validated_data.items()
                     if key in models.Shipment.DIRECT_PROPS and value is not None
                 },
-                "customs": save_one_to_one_data(
-                    "customs",
-                    CustomsSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "shipper": save_one_to_one_data(
-                    "shipper",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "recipient": save_one_to_one_data(
-                    "recipient",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "return_address": save_one_to_one_data(
-                    "return_address",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "billing_address": save_one_to_one_data(
-                    "billing_address",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
+                **json_fields,
                 "rates": rates,
                 "payment": payment,
                 "services": services,
@@ -241,14 +195,6 @@ class ShipmentSerializer(ShipmentData):
         )
 
         shipment.carriers.set(carriers if any(carrier_ids) else [])
-
-        save_many_to_many_data(
-            "parcels",
-            ParcelSerializer,
-            shipment,
-            payload=validated_data,
-            context=context,
-        )
 
         # Buy label if preferred service is selected, shipping method applied, shipping rules applied, or skip rate fetching
         if (service and fetch_rates) or apply_shipping_method_flag or apply_shipping_rules or skip_rate_fetching:
@@ -281,6 +227,50 @@ class ShipmentSerializer(ShipmentData):
                     prop.delete(keep_parents=True)
                     setattr(instance, key, None)
                     validated_data.pop(key)
+
+        if "shipper" in data:
+            instance.shipper = process_json_object_mutation(
+                "shipper", data, instance,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            )
+            changes.append("shipper")
+
+        if "recipient" in data:
+            instance.recipient = process_json_object_mutation(
+                "recipient", data, instance,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            )
+            changes.append("recipient")
+
+        if "return_address" in data:
+            instance.return_address = process_json_object_mutation(
+                "return_address", data, instance,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            )
+            changes.append("return_address")
+
+        if "billing_address" in data:
+            instance.billing_address = process_json_object_mutation(
+                "billing_address", data, instance,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            )
+            changes.append("billing_address")
+
+        if "parcels" in data:
+            instance.parcels = process_json_array_mutation(
+                "parcels", data, instance,
+                id_prefix="pcl", model_class=models.Parcel,
+                nested_arrays={"items": ("itm", models.Commodity)},
+                object_type="parcel", data_field_name="parcels",
+            )
+            changes.append("parcels")
+
+        if "customs" in data:
+            instance.customs = process_customs_mutation(
+                data, instance,
+                address_model=models.Address, product_model=models.Commodity,
+            )
+            changes.append("customs")
 
         if "docs" in validated_data:
             changes.append("label")
@@ -694,11 +684,22 @@ def buy_shipment_label(
         .instance
     )
 
+    # Merge response parcel data with existing parcel data to preserve all fields (weight, etc.)
+    existing_parcels = shipment.parcels or []
+    merged_parcels = []
+    for idx, response_parcel in enumerate(response.parcels):
+        existing_parcel = existing_parcels[idx] if idx < len(existing_parcels) else {}
+        merged_parcels.append(
+            {
+                **existing_parcel,  # Keep existing data (weight, weight_unit, etc.)
+                "id": response_parcel.id or existing_parcel.get("id"),
+                "reference_number": response_parcel.reference_number
+                or existing_parcel.get("reference_number"),
+            }
+        )
+
     extra.update(
-        parcels=[
-            dict(id=parcel.id, reference_number=parcel.reference_number)
-            for parcel in response.parcels
-        ],
+        parcels=merged_parcels,
         docs={**lib.to_dict(response.docs), **invoice},
     )
 
@@ -713,6 +714,12 @@ def buy_shipment_label(
             else {}
         ),
     }
+
+    # Set selected_rate and carrier directly on shipment before update
+    # (This is more reliable than depending on serializer validation)
+    shipment.selected_rate = selected_rate
+    shipment.selected_rate_carrier = carrier
+    shipment.save(update_fields=["selected_rate", "selected_rate_carrier"])
 
     purchased_shipment = lib.identity(
         ShipmentSerializer.map(
@@ -845,7 +852,12 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
     if carrier is not None and "get_tracking" in carrier.gateway.proxy_methods:
         # Create shipment tracker
         try:
-            pkg_weight = sum([p.weight or 0.0 for p in shipment.parcels.all()], 0.0)
+            # Use JSON fields for data access
+            parcels = shipment.parcels or []
+            shipper = shipment.shipper or {}
+            recipient = shipment.recipient or {}
+
+            pkg_weight = sum([p.get("weight") or 0.0 for p in parcels], 0.0)
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
                 delivered=False,
@@ -860,12 +872,12 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 info=dict(
                     source="api",
                     shipment_weight=str(pkg_weight),
-                    shipment_package_count=str(shipment.parcels.count()),
-                    customer_name=shipment.recipient.person_name,
-                    shipment_origin_country=shipment.shipper.country_code,
-                    shipment_origin_postal_code=shipment.shipper.postal_code,
-                    shipment_destination_country=shipment.recipient.country_code,
-                    shipment_destination_postal_code=shipment.recipient.postal_code,
+                    shipment_package_count=str(len(parcels)),
+                    customer_name=recipient.get("person_name"),
+                    shipment_origin_country=shipper.get("country_code"),
+                    shipment_origin_postal_code=shipper.get("postal_code"),
+                    shipment_destination_country=recipient.get("country_code"),
+                    shipment_destination_postal_code=recipient.get("postal_code"),
                     shipment_service=shipment.meta.get("service_name"),
                     shipping_date=shipment.options.get("shipment_date"),
                     carrier_tracking_link=utils.get_carrier_tracking_link(

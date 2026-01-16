@@ -52,7 +52,8 @@ class OrderType:
 
     @strawberry.field
     def line_items(self: models.Order) -> typing.List[LineItemType]:
-        return self.line_items.all()
+        # line_items is now a JSON field, return parsed LineItemType objects
+        return [LineItemType.parse(item) for item in (self.line_items or [])]
 
     @strawberry.field
     def shipments(self: models.Order) -> typing.List[base.types.ShipmentType]:
