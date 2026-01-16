@@ -57,9 +57,8 @@ def _extract_details(
     response = lib.to_object(spring_res.ShipmentResponseType, data)
     shipment = response.Shipment
 
-    # Get tracking number and identifiers
+    # Get tracking number - used as shipment_identifier for cancel operations
     tracking_number = shipment.TrackingNumber
-    shipment_identifier = shipment.ShipperReference or tracking_number
 
     # Get label data - label_format defaults to PDF if not specified
     label_format = shipment.LabelFormat or "PDF"
@@ -71,12 +70,13 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_identifier=shipment_identifier,
+        shipment_identifier=tracking_number,
         label_type=label_format,
         docs=documents,
         meta=dict(
             service=shipment.Service,
             carrier=shipment.Carrier,
+            shipper_reference=shipment.ShipperReference,
             carrier_tracking_number=shipment.CarrierTrackingNumber,
             carrier_local_tracking_number=shipment.CarrierLocalTrackingNumber,
             carrier_tracking_url=shipment.CarrierTrackingUrl,
