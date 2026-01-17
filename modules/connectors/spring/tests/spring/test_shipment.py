@@ -121,11 +121,11 @@ class TestSpringMultiPieceShipment(unittest.TestCase):
                 set(result[0]["meta"]["tracking_numbers"]),
                 {"LXAB00000001NL", "LXAB00000002NL"}
             )
-            # Should have multiple shipment identifiers in meta
+            # Should have multiple shipment identifiers in meta (tracking numbers for cancellation)
             self.assertIn("shipment_identifiers", result[0]["meta"])
             self.assertEqual(
                 set(result[0]["meta"]["shipment_identifiers"]),
-                {"ORDER-MULTI-1", "ORDER-MULTI-2"}
+                {"LXAB00000001NL", "LXAB00000002NL"}
             )
 
 
@@ -333,7 +333,7 @@ ParsedShipmentResponse = [
         "carrier_id": "spring",
         "carrier_name": "spring",
         "tracking_number": "LXAB00000000NL",
-        "shipment_identifier": "ORDER-12345",
+        "shipment_identifier": "LXAB00000000NL",
         "label_type": "PDF",
         "docs": {
             "label": "JVBERi0xLjQKJeLjz9MKMyAwIG9iago=",
@@ -341,6 +341,7 @@ ParsedShipmentResponse = [
         "meta": {
             "service": "PPTT",
             "carrier": "PostNL",
+            "shipper_reference": "ORDER-12345",
             "carrier_tracking_number": "3STEST1234567890",
             "carrier_tracking_url": "https://tracking.postnl.nl/track/3STEST1234567890",
             "display_id": "LXAB00000000NL",
