@@ -1,0 +1,49 @@
+{
+  "ErrorLevel": 0,
+  "Error": "",
+  "Shipment": {
+    "TrackingNumber": "LX210720682NL",
+    "ShipperReference": "ref123456789",
+    "DisplayId": "DISP123450000",
+    "Service": "PPTT",
+    "Carrier": "PostNL Packet Tracked",
+    "CarrierTrackingNumber": "LX210720682NL",
+    "CarrierLocalTrackingNumber": "LX210720682NL",
+    "CarrierTrackingUrl": "http://tracking.carrier.com/LX210720682NL",
+    "Weight": "0.85",
+    "WeightUnit": "kg",
+    "ConsigneeAddress": {
+      "Name": "John Doe",
+      "City": "TORONTO",
+      "State": "ON",
+      "Zip": "L5T1R8",
+      "Country": "CA"
+    },
+    "Events": [
+      {
+        "Timestamp": 1704631125,
+        "DateTime": "2024-01-07 07:38:45",
+        "Country": "CA",
+        "City": "TORONTO",
+        "State": "ON",
+        "Zip": "L5T1R8",
+        "Code": 9301,
+        "Description": "OUT FOR DELIVERY",
+        "CarrierCode": "CC202",
+        "CarrierDescription": "OUT FOR DELIVERY"
+      },
+      {
+        "Timestamp": 1704640788,
+        "DateTime": "2024-01-07 10:19:48",
+        "Country": "CA",
+        "City": "TORONTO",
+        "State": "ON",
+        "Zip": "L5T1R8",
+        "Code": 100,
+        "Description": "DELIVERED (stc)",
+        "CarrierCode": "CC203",
+        "CarrierDescription": "DELIVERED"
+      }
+    ]
+  }
+}

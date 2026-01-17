@@ -1,0 +1,81 @@
+{
+  "ErrorLevel": 0,
+  "Error": "",
+  "Shipment": {
+    "TrackingNumber": "LX210720682NL",
+    "ShipperReference": "Reference_001",
+    "DisplayId": "DISP123450000",
+    "Service": "PPTT",
+    "Carrier": "PostNL Packet Tracked",
+    "CarrierTrackingNumber": "LX210720682NL",
+    "CarrierLocalTrackingNumber": "LX210720682NL",
+    "CarrierTrackingUrl": "http://tracking.carrier.com/LX210720682NL",
+    "LabelFormat": "PDF",
+    "LabelType": "Label",
+    "LabelImage": "<base64-encoded-string>",
+    "DdpInfo": {
+      "requestId": "5520bcc4-6548-41c4-8194-63a04c5fbde1",
+      "landedCost": {
+        "requestId": "fbe09fad-dca4-499a-b4a7-ba240583f28e",
+        "sourceCountry": "ES",
+        "sourceCurrency": "EUR",
+        "destinationCountry": "GB",
+        "destinationCurrency": "GBP",
+        "convertCurrency": true,
+        "currencyExchange": "EUR:GBP",
+        "exchangeRate": 0.9075492625,
+        "rateLastUpdated": "2020-12-29T09:09:57.314Z",
+        "shippingValue": {
+          "sourceValue": 6,
+          "destinationValue": 5.45
+        },
+        "products": [
+          {
+            "hs6code": "8523.49",
+            "commodityCode": "85234990.00",
+            "value": {
+              "sourceValue": 20,
+              "destinationValue": 18.15
+            },
+            "description": "CD: THE POSTAL SERVICE - GIVE UP",
+            "percentageDutyRate": 0,
+            "taxRate": 0.2,
+            "dutyValue": {
+              "sourceValue": 0,
+              "destinationValue": 0
+            },
+            "taxValue": {
+              "sourceValue": 5.2,
+              "destinationValue": 4.72
+            },
+            "productTotal": {
+              "sourceValue": 31.2,
+              "destinationValue": 28.32
+            },
+            "hs6codeDescription": "electric chicago blues"
+          }
+        ],
+        "productRawTotal": {
+          "sourceValue": 20,
+          "destinationValue": 18.15
+        },
+        "calculatedTotal": {
+          "sourceValue": 31.2,
+          "destinationValue": 28.32
+        },
+        "totalTax": {
+          "sourceValue": 5.2,
+          "destinationValue": 4.72
+        },
+        "totalDuty": {
+          "sourceValue": 0,
+          "destinationValue": 0
+        },
+        "isError": false,
+        "errorCode": 0,
+        "notes": "",
+        "generatedDate": "2020-12-29T10:09:54.221Z"
+      }
+    }
+  }
+}
