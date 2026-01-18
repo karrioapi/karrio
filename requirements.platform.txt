@@ -80,6 +80,7 @@ karrio-purolator==2026.1
 karrio-sapient==2026.1
 karrio-seko==2026.1
 karrio-sendle==2026.1
+karrio-spring==2026.1
 karrio-server==2026.1
 karrio-server-admin==2026.1
 karrio-server-apps==2026.1
