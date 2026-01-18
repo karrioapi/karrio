@@ -36,7 +36,7 @@ def _extract_details(
     shipment: ups.ShipmentType = lib.to_object(ups.ShipmentType, detail)
     package: ups.PackageType = shipment.package[0]
     origin = next(
-        (p for p in package.packageAddress or [] if p.type == "DESTINATION"), None
+        (p for p in package.packageAddress or [] if p.type == "ORIGIN"), None
     )
     destination = next(
         (p for p in package.packageAddress or [] if p.type == "DESTINATION"), None
@@ -98,6 +98,11 @@ def _extract_details(
             carrier_tracking_link=settings.tracking_url.format(package.trackingNumber),
             signed_by=getattr(package.deliveryInformation, "receivedBy", None),
             shipment_service=getattr(package.service, "description", None),
+            shipment_pickup_date=(
+                lib.fdate(shipment.pickupDate, "%Y%m%d")
+                if getattr(shipment, "pickupDate", None)
+                else None
+            ),
             package_weight=getattr(package.weight, "weight", None),
             package_weight_unit=getattr(package.weight, "unitOfMeasurement", None),
             shipment_origin_country=(
@@ -107,10 +112,10 @@ def _extract_details(
                 getattr(origin.address, "postalCode", None) if origin else None
             ),
             shipment_destination_country=(
-                getattr(destination.address, "country", None) if origin else None
+                getattr(destination.address, "country", None) if destination else None
             ),
             shipment_destination_postal_code=(
-                getattr(destination.address, "postalCode", None) if origin else None
+                getattr(destination.address, "postalCode", None) if destination else None
             ),
             customer_name=(
                 destination.attentionName or destination.name if destination else None
