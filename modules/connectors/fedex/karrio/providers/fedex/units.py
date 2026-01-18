@@ -482,7 +482,8 @@ class DocumentUploadOption(lib.Enum):
 class TrackingStatus(lib.Enum):
     on_hold = ["DE", "SE"]
     delivered = ["DL"]
-    picked_up = ["PU", "PX", "OC", "OF"]
+    pending = ["OC"] # OC = Order Created, "Label created and ready for shipment"
+    picked_up = ["PU", "PX", "OF"]
     in_transit = ["IT", "IX"]
     delivery_failed = ["CA", "RS"]
     delivery_delayed = ["DY", "DD"]
