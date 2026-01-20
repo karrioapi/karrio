@@ -16,6 +16,7 @@ class TestAsendiaTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
+        print(request.serialize())
         self.assertEqual(request.serialize(), TrackingRequest)
 
     def test_get_tracking(self):
@@ -23,6 +24,7 @@ class TestAsendiaTracking(unittest.TestCase):
             with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
                 mock.return_value = TrackingResponse
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
+                print(mock.call_args[1]["url"])
                 self.assertEqual(
                     mock.call_args[1]["url"],
                     f"{gateway.settings.server_url}/api/customers/CUST123/tracking/ASENDIA123456789"
@@ -37,6 +39,17 @@ class TestAsendiaTracking(unittest.TestCase):
                 )
                 print(parsed_response)
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
+
+
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
+            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+                mock.return_value = ErrorResponse
+                parsed_response = (
+                    karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                )
+                print(lib.to_dict(parsed_response))
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -119,4 +132,30 @@ ParsedTrackingResponse = [
         }
     ],
     [],
+]
+
+ErrorResponse = """{
+  "type": "https://www.asendia-sync.com/problem/constraint-violation",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "Tracking number not found",
+  "path": "/api/customers/CUST123/tracking/INVALID123",
+  "message": "error.tracking.not_found"
+}"""
+
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "asendia",
+            "carrier_name": "asendia",
+            "code": "404",
+            "details": {
+                "path": "/api/customers/CUST123/tracking/INVALID123",
+                "tracking_number": "ASENDIA123456789",
+                "type": "https://www.asendia-sync.com/problem/constraint-violation",
+            },
+            "message": "Tracking number not found",
+        }
+    ],
 ]

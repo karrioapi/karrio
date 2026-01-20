@@ -18,6 +18,7 @@ class TestAsendiaManifest(unittest.TestCase):
 
     def test_create_manifest_request(self):
         request = gateway.mapper.create_manifest_request(self.ManifestRequest)
+        print(lib.to_dict(request.serialize()))
         self.assertEqual(lib.to_dict(request.serialize()), ManifestRequest)
 
     def test_create_manifest(self):
@@ -25,6 +26,7 @@ class TestAsendiaManifest(unittest.TestCase):
             with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
                 mock.return_value = "{}"
                 karrio.Manifest.create(self.ManifestRequest).from_(gateway)
+                print(mock.call_args[1]["url"])
                 self.assertEqual(
                     mock.call_args[1]["url"],
                     f"{gateway.settings.server_url}/api/manifests"
@@ -39,7 +41,20 @@ class TestAsendiaManifest(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
+                print(lib.to_dict(parsed_response))
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedManifestResponse)
+
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
+            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+                mock.return_value = ErrorResponse
+                parsed_response = (
+                    karrio.Manifest.create(self.ManifestRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(lib.to_dict(parsed_response))
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -89,4 +104,40 @@ ParsedManifestResponse = [
         },
     },
     []
+]
+
+ErrorResponse = """{
+  "type": "https://www.asendia-sync.com/problem/constraint-violation",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Invalid parcel IDs",
+  "path": "/api/manifests",
+  "message": "error.manifest.invalid_parcels",
+  "errorMessage": "One or more parcel IDs are invalid",
+  "errorParcelIds": ["invalid-parcel-id"]
+}"""
+
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "asendia",
+            "carrier_name": "asendia",
+            "code": "400",
+            "details": {"path": "/api/manifests", "type": "https://www.asendia-sync.com/problem/constraint-violation"},
+            "message": "Invalid parcel IDs",
+        },
+        {
+            "carrier_id": "asendia",
+            "carrier_name": "asendia",
+            "code": "MANIFEST_ERROR",
+            "message": "One or more parcel IDs are invalid",
+        },
+        {
+            "carrier_id": "asendia",
+            "carrier_name": "asendia",
+            "code": "PARCEL_ERROR",
+            "message": "Failed to include parcel: invalid-parcel-id",
+        },
+    ],
 ]

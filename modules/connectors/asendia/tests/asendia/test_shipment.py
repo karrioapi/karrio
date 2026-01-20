@@ -21,6 +21,7 @@ class TestAsendiaShipment(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         # Request is now a list (one per package) for Pattern B
+        print(lib.to_dict(request.serialize()))
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
@@ -33,6 +34,7 @@ class TestAsendiaShipment(unittest.TestCase):
                 ]
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
                 # Verify the async function was called twice (create + fetch labels)
+                print(f"Async call count: {mock_async.call_count}")
                 self.assertEqual(mock_async.call_count, 2)
 
     def test_parse_shipment_response(self):
@@ -48,10 +50,12 @@ class TestAsendiaShipment(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
+                print(lib.to_dict(parsed_response))
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_cancel_request(self):
         request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
+        print(request.serialize())
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
@@ -59,6 +63,7 @@ class TestAsendiaShipment(unittest.TestCase):
             with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
                 mock.return_value = "{}"
                 karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
+                print(mock.call_args[1]["url"])
                 self.assertEqual(
                     mock.call_args[1]["url"],
                     f"{gateway.settings.server_url}/api/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6"
@@ -73,6 +78,7 @@ class TestAsendiaShipment(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
+                print(lib.to_dict(parsed_response))
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
     def test_create_multi_piece_shipment_request(self):
@@ -110,6 +116,23 @@ class TestAsendiaShipment(unittest.TestCase):
                     result[0]["meta"]["shipment_identifiers"] = sorted(result[0]["meta"]["shipment_identifiers"])
                     result[0]["meta"]["tracking_numbers"] = sorted(result[0]["meta"]["tracking_numbers"])
                     self.assertListEqual(result, ParsedMultiPieceShipmentResponse)
+
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.asendia.proxy.lib.run_asynchronously") as mock_async:
+            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+                # Mock error response from create parcel
+                error_dict = lib.to_dict(ErrorResponse)
+                mock_async.side_effect = [
+                    [ErrorResponse],  # First call: create parcel returns error
+                    [{"parcel": error_dict, "label": None}],  # Second call: return error with no label
+                ]
+                parsed_response = (
+                    karrio.Shipment.create(self.ShipmentRequest)
+                    .from_(gateway)
+                    .parse()
+                )
+                print(lib.to_dict(parsed_response))
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -366,4 +389,33 @@ ParsedMultiPieceShipmentResponse = [
         "tracking_number": "ASENDIA111111111",
     },
     []
+]
+
+ErrorResponse = """{
+  "type": "https://www.asendia-sync.com/problem/constraint-violation",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Validation failed",
+  "path": "/api/parcels",
+  "message": "error.validation",
+  "fieldErrors": [
+    {
+      "objectName": "parcel",
+      "field": "weight",
+      "message": "Weight must be greater than 0"
+    }
+  ]
+}"""
+
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "asendia",
+            "carrier_name": "asendia",
+            "code": "400",
+            "details": {"field": "weight", "objectName": "parcel"},
+            "message": "weight: Weight must be greater than 0",
+        }
+    ],
 ]
