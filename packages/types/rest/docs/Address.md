@@ -21,6 +21,7 @@ Name | Type | Description | Notes
 **address_line1** | **string** | The address line with street number &lt;br/&gt;         **(required for shipment purchase)**          | [optional] [default to undefined]
 **address_line2** | **string** | The address line with suite number | [optional] [default to undefined]
 **validate_location** | **boolean** | Indicate if the address should be validated | [optional] [default to false]
+**meta** | **{ [key: string]: any; }** | Template metadata for template identification.         Structure: {\&quot;label\&quot;: \&quot;Warehouse A\&quot;, \&quot;is_default\&quot;: true, \&quot;usage\&quot;: [\&quot;sender\&quot;, \&quot;return\&quot;]}          | [optional] [default to undefined]
 **object_type** | **string** | Specifies the object type | [optional] [default to 'address']
 **validation** | [**AddressValidation**](AddressValidation.md) | Specify address validation result | [optional] [default to undefined]
 
@@ -46,6 +47,7 @@ const instance: Address = {
     address_line1,
     address_line2,
     validate_location,
+    meta,
     object_type,
     validation,
 };

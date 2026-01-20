@@ -21,6 +21,7 @@ Name | Type | Description | Notes
 **variant_id** | **string** | The variant id | [optional] [default to undefined]
 **parent_id** | **string** | The id of the related order line item. | [optional] [default to undefined]
 **metadata** | **{ [key: string]: any; }** | &lt;details&gt;         &lt;summary&gt;Commodity user references metadata.&lt;/summary&gt;          {             \&quot;part_number\&quot;: \&quot;5218487281\&quot;,             \&quot;reference1\&quot;: \&quot;# ref 1\&quot;,             \&quot;reference2\&quot;: \&quot;# ref 2\&quot;,             \&quot;reference3\&quot;: \&quot;# ref 3\&quot;,             ...         }         &lt;/details&gt;          | [optional] [default to undefined]
+**meta** | **{ [key: string]: any; }** | Template metadata for template identification.         Structure: {\&quot;label\&quot;: \&quot;Widget Pro\&quot;, \&quot;is_default\&quot;: false}          | [optional] [default to undefined]
 
 ## Example
 
@@ -44,6 +45,7 @@ const instance: CommodityData = {
     variant_id,
     parent_id,
     metadata,
+    meta,
 };
 ```
 

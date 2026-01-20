@@ -135,6 +135,7 @@ apps/api/karrio/server/staticfiles/*
 
 .karrio/
 packages/karriojs/api/generated
+packages/types/rest/docs
 !docker/.env
 
 # Karrio plugins
