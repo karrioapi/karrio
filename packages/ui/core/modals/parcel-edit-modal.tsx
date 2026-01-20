@@ -1,11 +1,11 @@
 "use client";
 import {
-  CreateParcelTemplateInput,
+  CreateParcelInput,
   DEFAULT_PARCEL_CONTENT,
-  UpdateParcelTemplateInput,
+  UpdateParcelInput2,
 } from "@karrio/types";
 import { NotificationType, ParcelTemplateType } from "@karrio/types";
-import { useParcelTemplateMutation } from "@karrio/hooks/parcel";
+import { useParcelMutation } from "@karrio/hooks/parcel";
 import { CheckBoxField } from "../components/checkbox-field";
 import { Notifier, Notify } from "../components/notifier";
 import { InputField } from "../components/input-field";
@@ -41,7 +41,7 @@ export const ParcelEditModal = ({
   children,
 }: ParcelEditModalComponent): JSX.Element => {
   const { notify } = useContext(Notify);
-  const mutation = useParcelTemplateMutation();
+  const mutation = useParcelMutation();
   const { setLoading, loading } = useContext(Loading);
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -52,7 +52,12 @@ export const ParcelEditModal = ({
   const [isValid, setIsValid] = React.useState<boolean>(true);
 
   const computeDisable = (isValid: boolean, template: ParcelTemplateType) => {
-    const defaultValue = operation?.parcelTemplate || DEFAULT_TEMPLATE_CONTENT;
+    const parcelTemplate = operation?.parcelTemplate;
+    const defaultValue = parcelTemplate ? {
+      ...parcelTemplate,
+      label: parcelTemplate.meta?.label || parcelTemplate.label || "",
+      is_default: parcelTemplate.meta?.is_default || parcelTemplate.is_default || false,
+    } : DEFAULT_TEMPLATE_CONTENT;
 
     return (
       !isValid ||
@@ -63,7 +68,13 @@ export const ParcelEditModal = ({
   };
 
   const editParcel = (operation?: OperationType) => {
-    const template = operation?.parcelTemplate || DEFAULT_TEMPLATE_CONTENT;
+    const parcelTemplate = operation?.parcelTemplate;
+    // Extract label and is_default from meta if present (new format), fallback to top-level (legacy)
+    const template = parcelTemplate ? {
+      ...parcelTemplate,
+      label: parcelTemplate.meta?.label || parcelTemplate.label || "",
+      is_default: parcelTemplate.meta?.is_default || parcelTemplate.is_default || false,
+    } : DEFAULT_TEMPLATE_CONTENT;
 
     setIsActive(true);
     setOperation(operation);
@@ -87,16 +98,16 @@ export const ParcelEditModal = ({
     try {
       setLoading(true);
       if (isNew) {
-        await mutation.createParcelTemplate.mutateAsync(
-          template as CreateParcelTemplateInput,
+        await mutation.createParcel.mutateAsync(
+          template as CreateParcelInput,
         );
         notify({
           type: NotificationType.success,
           message: "Parcel successfully added!",
         });
       } else {
-        await mutation.updateParcelTemplate.mutateAsync(
-          template as UpdateParcelTemplateInput,
+        await mutation.updateParcel.mutateAsync(
+          template as UpdateParcelInput2,
         );
         notify({
           type: NotificationType.success,

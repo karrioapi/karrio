@@ -44,9 +44,9 @@ export const GET_SYSTEM_USAGE = gql`
   }
 `;
 
-export const GET_ADDRESS_TEMPLATES = gql`
-  query get_address_templates($filter: AddressFilter) {
-    address_templates(filter: $filter) {
+export const GET_ADDRESSES = gql`
+  query get_addresses($filter: AddressFilter) {
+    addresses(filter: $filter) {
       page_info {
         count
         has_next_page
@@ -57,77 +57,7 @@ export const GET_ADDRESS_TEMPLATES = gql`
       edges {
         node {
           id
-          is_default
-          label
-          address {
-            company_name
-            person_name
-            street_number
-            address_line1
-            address_line2
-            postal_code
-            residential
-            city
-            state_code
-            country_code
-            email
-            phone_number
-            federal_tax_id
-            state_tax_id
-            validate_location
-          }
-        }
-      }
-    }
-  }
-`;
-
-export const GET_CUSTOMS_TEMPLATES = gql`
-  query get_customs_info_templates($filter: TemplateFilter) {
-    customs_templates(filter: $filter) {
-      page_info {
-        count
-        has_next_page
-        has_previous_page
-        start_cursor
-        end_cursor
-      }
-      edges {
-        node {
-          id
-          label
-          is_default
-          customs {
-            incoterm
-            content_type
-            commercial_invoice
-            content_description
-            duty {
-              paid_by
-              currency
-              account_number
-              declared_value
-            }
-            invoice
-            invoice_date
-            signer
-            certify
-            options
-          }
-        }
-      }
-    }
-  }
-`;
-
-export const GET_DEFAULT_TEMPLATES = gql`
-  query get_default_templates {
-    default_templates {
-      default_address {
-        id
-        is_default
-        label
-        address {
+          object_type
           company_name
           person_name
           street_number
@@ -143,45 +73,49 @@ export const GET_DEFAULT_TEMPLATES = gql`
           federal_tax_id
           state_tax_id
           validate_location
+          meta
         }
       }
-      default_customs {
+    }
+  }
+`;
+
+export const GET_DEFAULT_TEMPLATES = gql`
+  query get_default_templates {
+    default_templates {
+      default_address {
         id
-        label
-        is_default
-        customs {
-          incoterm
-          content_type
-          commercial_invoice
-          content_description
-          duty {
-            paid_by
-            currency
-            account_number
-            declared_value
-          }
-          invoice
-          invoice_date
-          signer
-          certify
-          options
-        }
+        object_type
+        company_name
+        person_name
+        street_number
+        address_line1
+        address_line2
+        postal_code
+        residential
+        city
+        state_code
+        country_code
+        email
+        phone_number
+        federal_tax_id
+        state_tax_id
+        validate_location
+        meta
       }
       default_parcel {
         id
-        is_default
-        label
-        parcel {
-          width
-          height
-          length
-          dimension_unit
-          weight
-          weight_unit
-          packaging_type
-          package_preset
-          is_document
-        }
+        object_type
+        width
+        height
+        length
+        dimension_unit
+        weight
+        weight_unit
+        packaging_type
+        package_preset
+        is_document
+        meta
       }
     }
   }
@@ -408,7 +342,6 @@ export const GET_SHIPMENT = gql`
       service
       reference
       customs {
-        id
         certify
         commercial_invoice
         content_type
@@ -417,45 +350,41 @@ export const GET_SHIPMENT = gql`
         invoice
         invoice_date
         signer
+        options
         duty {
           paid_by
           currency
           account_number
           declared_value
-        }
-        options
-        commodities {
-          id
-          weight
-          weight_unit
-          title
-          description
-          quantity
-          sku
-          hs_code
-          value_amount
-          value_currency
-          origin_country
-          metadata
-          parent_id
+          bill_to {
+            city
+            state_code
+            country_code
+            postal_code
+            address_line1
+            address_line2
+          }
         }
         duty_billing_address {
-          id
-          postal_code
           city
-          person_name
-          company_name
-          country_code
-          email
-          phone_number
           state_code
-          residential
-          street_number
+          country_code
+          postal_code
           address_line1
           address_line2
-          federal_tax_id
-          state_tax_id
-          validate_location
+        }
+        commodities {
+          id
+          sku
+          hs_code
+          quantity
+          description
+          value_amount
+          value_currency
+          weight
+          weight_unit
+          origin_country
+          metadata
         }
       }
       payment {
@@ -702,7 +631,6 @@ export const GET_SHIPMENTS = gql`
           service
           reference
           customs {
-            id
             certify
             commercial_invoice
             content_type
@@ -711,45 +639,41 @@ export const GET_SHIPMENTS = gql`
             invoice
             invoice_date
             signer
+            options
             duty {
               paid_by
               currency
               account_number
               declared_value
-            }
-            options
-            commodities {
-              id
-              weight
-              weight_unit
-              title
-              description
-              quantity
-              sku
-              hs_code
-              value_amount
-              value_currency
-              origin_country
-              metadata
-              parent_id
+              bill_to {
+                city
+                state_code
+                country_code
+                postal_code
+                address_line1
+                address_line2
+              }
             }
             duty_billing_address {
-              id
-              postal_code
               city
-              person_name
-              company_name
-              country_code
-              email
-              phone_number
               state_code
-              residential
-              street_number
+              country_code
+              postal_code
               address_line1
               address_line2
-              federal_tax_id
-              state_tax_id
-              validate_location
+            }
+            commodities {
+              id
+              sku
+              hs_code
+              quantity
+              description
+              value_amount
+              value_currency
+              weight
+              weight_unit
+              origin_country
+              metadata
             }
           }
           payment {
@@ -923,7 +847,6 @@ export const GET_SHIPMENT_DATA = gql`
       service
       reference
       customs {
-        id
         certify
         commercial_invoice
         content_type
@@ -932,45 +855,41 @@ export const GET_SHIPMENT_DATA = gql`
         invoice
         invoice_date
         signer
+        options
         duty {
           paid_by
           currency
           account_number
           declared_value
-        }
-        options
-        commodities {
-          id
-          weight
-          weight_unit
-          title
-          description
-          quantity
-          sku
-          hs_code
-          value_amount
-          value_currency
-          origin_country
-          metadata
-          parent_id
+          bill_to {
+            city
+            state_code
+            country_code
+            postal_code
+            address_line1
+            address_line2
+          }
         }
         duty_billing_address {
-          id
-          postal_code
           city
-          person_name
-          company_name
-          country_code
-          email
-          phone_number
           state_code
-          residential
-          street_number
+          country_code
+          postal_code
           address_line1
           address_line2
-          federal_tax_id
-          state_tax_id
-          validate_location
+        }
+        commodities {
+          id
+          sku
+          hs_code
+          quantity
+          description
+          value_amount
+          value_currency
+          weight
+          weight_unit
+          origin_country
+          metadata
         }
       }
       payment {
@@ -1120,7 +1039,6 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
         service
         reference
         customs {
-          id
           certify
           commercial_invoice
           content_type
@@ -1129,45 +1047,41 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
           invoice
           invoice_date
           signer
+          options
           duty {
             paid_by
             currency
             account_number
             declared_value
-          }
-          options
-          commodities {
-            id
-            weight
-            weight_unit
-            title
-            description
-            quantity
-            sku
-            hs_code
-            value_amount
-            value_currency
-            origin_country
-            metadata
-            parent_id
+            bill_to {
+              city
+              state_code
+              country_code
+              postal_code
+              address_line1
+              address_line2
+            }
           }
           duty_billing_address {
-            id
-            postal_code
             city
-            person_name
-            company_name
-            country_code
-            email
-            phone_number
             state_code
-            residential
-            street_number
+            country_code
+            postal_code
             address_line1
             address_line2
-            federal_tax_id
-            state_tax_id
-            validate_location
+          }
+          commodities {
+            id
+            sku
+            hs_code
+            quantity
+            description
+            value_amount
+            value_currency
+            weight
+            weight_unit
+            origin_country
+            metadata
           }
         }
         payment {
@@ -1444,9 +1358,9 @@ export const GET_WEBHOOKS = gql`
   }
 `;
 
-export const GET_PARCEL_TEMPLATES = gql`
-  query get_parcel_templates($filter: TemplateFilter) {
-    parcel_templates(filter: $filter) {
+export const GET_PARCELS = gql`
+  query get_parcels($filter: TemplateFilter) {
+    parcels(filter: $filter) {
       page_info {
         count
         has_next_page
@@ -1457,19 +1371,17 @@ export const GET_PARCEL_TEMPLATES = gql`
       edges {
         node {
           id
-          is_default
-          label
-          parcel {
-            width
-            height
-            length
-            dimension_unit
-            weight
-            weight_unit
-            packaging_type
-            package_preset
-            is_document
-          }
+          object_type
+          width
+          height
+          length
+          dimension_unit
+          weight
+          weight_unit
+          packaging_type
+          package_preset
+          is_document
+          meta
         }
       }
     }
@@ -1515,46 +1427,26 @@ export const MUTATE_SYSTEM_CONNECTION = gql`
   }
 `;
 
-export const CREATE_CUSTOMS_TEMPLATE = gql`
-  mutation create_customs_template($data: CreateCustomsTemplateInput!) {
-    create_customs_template(input: $data) {
-      template {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-export const UPDATE_CUSTOMS_TEMPLATE = gql`
-  mutation update_customs_template($data: UpdateCustomsTemplateInput!) {
-    update_customs_template(input: $data) {
-      template {
-        id
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-export const DELETE_TEMPLATE = gql`
-  mutation delete_template($data: DeleteMutationInput!) {
-    delete_template(input: $data) {
+export const DELETE_ADDRESS = gql`
+  mutation delete_address($data: DeleteMutationInput!) {
+    delete_address(input: $data) {
       id
     }
   }
 `;
 
-export const CREATE_PARCEL_TEMPLATE = gql`
-  mutation create_parcel_template($data: CreateParcelTemplateInput!) {
-    create_parcel_template(input: $data) {
-      template {
+export const DELETE_PARCEL = gql`
+  mutation delete_parcel($data: DeleteMutationInput!) {
+    delete_parcel(input: $data) {
+      id
+    }
+  }
+`;
+
+export const CREATE_PARCEL = gql`
+  mutation create_parcel($data: CreateParcelInput!) {
+    create_parcel(input: $data) {
+      parcel {
         id
       }
       errors {
@@ -1565,10 +1457,10 @@ export const CREATE_PARCEL_TEMPLATE = gql`
   }
 `;
 
-export const UPDATE_PARCEL_TEMPLATE = gql`
-  mutation update_parcel_template($data: UpdateParcelTemplateInput!) {
-    update_parcel_template(input: $data) {
-      template {
+export const UPDATE_PARCEL = gql`
+  mutation update_parcel($data: UpdateParcelInput2!) {
+    update_parcel(input: $data) {
+      parcel {
         id
       }
       errors {
@@ -1579,10 +1471,10 @@ export const UPDATE_PARCEL_TEMPLATE = gql`
   }
 `;
 
-export const CREATE_ADDRESS_TEMPLATE = gql`
-  mutation create_address_template($data: CreateAddressTemplateInput!) {
-    create_address_template(input: $data) {
-      template {
+export const CREATE_ADDRESS = gql`
+  mutation create_address($data: CreateAddressInput!) {
+    create_address(input: $data) {
+      address {
         id
       }
       errors {
@@ -1593,16 +1485,86 @@ export const CREATE_ADDRESS_TEMPLATE = gql`
   }
 `;
 
-export const UPDATE_ADDRESS_TEMPLATE = gql`
-  mutation update_address_template($data: UpdateAddressTemplateInput!) {
-    update_address_template(input: $data) {
-      template {
+export const UPDATE_ADDRESS = gql`
+  mutation update_address($data: UpdateAddressInput2!) {
+    update_address(input: $data) {
+      address {
         id
       }
       errors {
         field
         messages
       }
+    }
+  }
+`;
+
+export const GET_PRODUCTS = gql`
+  query get_products($filter: ProductFilter) {
+    products(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          object_type
+          weight
+          weight_unit
+          quantity
+          sku
+          title
+          hs_code
+          description
+          value_amount
+          value_currency
+          origin_country
+          metadata
+          meta
+          created_at
+          updated_at
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_PRODUCT = gql`
+  mutation create_product($data: CreateProductInput!) {
+    create_product(input: $data) {
+      product {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UPDATE_PRODUCT = gql`
+  mutation update_product($data: UpdateProductInput!) {
+    update_product(input: $data) {
+      product {
+        id
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_PRODUCT = gql`
+  mutation delete_product($data: DeleteMutationInput!) {
+    delete_product(input: $data) {
+      id
     }
   }
 `;
@@ -1610,14 +1572,6 @@ export const UPDATE_ADDRESS_TEMPLATE = gql`
 export const DISCARD_COMMODITY = gql`
   mutation discard_commodity($data: DeleteMutationInput!) {
     discard_commodity(input: $data) {
-      id
-    }
-  }
-`;
-
-export const DISCARD_CUSTOMS = gql`
-  mutation discard_customs($data: DeleteMutationInput!) {
-    discard_customs(input: $data) {
       id
     }
   }
@@ -2047,7 +2001,6 @@ export const GET_ORDER = gql`
         service
         reference
         customs {
-          id
           certify
           commercial_invoice
           content_type
@@ -2056,45 +2009,41 @@ export const GET_ORDER = gql`
           invoice
           invoice_date
           signer
+          options
           duty {
             paid_by
             currency
             account_number
             declared_value
-          }
-          options
-          commodities {
-            id
-            weight
-            weight_unit
-            title
-            description
-            quantity
-            sku
-            hs_code
-            value_amount
-            value_currency
-            origin_country
-            metadata
-            parent_id
+            bill_to {
+              city
+              state_code
+              country_code
+              postal_code
+              address_line1
+              address_line2
+            }
           }
           duty_billing_address {
-            id
-            postal_code
             city
-            person_name
-            company_name
-            country_code
-            email
-            phone_number
             state_code
-            residential
-            street_number
+            country_code
+            postal_code
             address_line1
             address_line2
-            federal_tax_id
-            state_tax_id
-            validate_location
+          }
+          commodities {
+            id
+            sku
+            hs_code
+            quantity
+            description
+            value_amount
+            value_currency
+            weight
+            weight_unit
+            origin_country
+            metadata
           }
         }
         payment {
@@ -2455,7 +2404,6 @@ export const GET_ORDERS = gql`
             service
             reference
             customs {
-              id
               certify
               commercial_invoice
               content_type
@@ -2464,45 +2412,41 @@ export const GET_ORDERS = gql`
               invoice
               invoice_date
               signer
+              options
               duty {
                 paid_by
                 currency
                 account_number
                 declared_value
-              }
-              options
-              commodities {
-                id
-                weight
-                weight_unit
-                title
-                description
-                quantity
-                sku
-                hs_code
-                value_amount
-                value_currency
-                origin_country
-                metadata
-                parent_id
+                bill_to {
+                  city
+                  state_code
+                  country_code
+                  postal_code
+                  address_line1
+                  address_line2
+                }
               }
               duty_billing_address {
-                id
-                postal_code
                 city
-                person_name
-                company_name
-                country_code
-                email
-                phone_number
                 state_code
-                residential
-                street_number
+                country_code
+                postal_code
                 address_line1
                 address_line2
-                federal_tax_id
-                state_tax_id
-                validate_location
+              }
+              commodities {
+                id
+                sku
+                hs_code
+                quantity
+                description
+                value_amount
+                value_currency
+                weight
+                weight_unit
+                origin_country
+                metadata
               }
             }
             payment {

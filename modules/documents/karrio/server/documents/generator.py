@@ -160,7 +160,7 @@ class Documents:
         # Handle PDF generation errors
         try:
             buffer = io.BytesIO()
-            html = weasyprint.HTML(string=content, encoding="utf-8")
+            html = weasyprint.HTML(string=content)
             html.write_pdf(
                 buffer,
                 stylesheets=STYLESHEETS,

@@ -38,16 +38,25 @@ class Query:
     )
 
     default_templates: types.DefaultTemplatesType = strawberry.field(
-        resolver=types.DefaultTemplatesType.resolve
+        resolver=types.resolve_default_templates
     )
-    address_templates: utils.Connection[types.AddressTemplateType] = strawberry.field(
-        resolver=types.AddressTemplateType.resolve_list
+    addresses: utils.Connection[types.AddressTemplateType] = strawberry.field(
+        resolver=types.resolve_addresses
     )
-    customs_templates: utils.Connection[types.CustomsTemplateType] = strawberry.field(
-        resolver=types.CustomsTemplateType.resolve_list
+    address: typing.Optional[types.AddressTemplateType] = strawberry.field(
+        resolver=types.resolve_address
     )
-    parcel_templates: utils.Connection[types.ParcelTemplateType] = strawberry.field(
-        resolver=types.ParcelTemplateType.resolve_list
+    parcels: utils.Connection[types.ParcelTemplateType] = strawberry.field(
+        resolver=types.resolve_parcels
+    )
+    parcel: typing.Optional[types.ParcelTemplateType] = strawberry.field(
+        resolver=types.resolve_parcel
+    )
+    products: utils.Connection[types.ProductTemplateType] = strawberry.field(
+        resolver=types.resolve_products
+    )
+    product: typing.Optional[types.ProductTemplateType] = strawberry.field(
+        resolver=types.resolve_product
     )
 
     log: typing.Optional[types.LogType] = strawberry.field(
@@ -200,40 +209,51 @@ class Mutation:
         return mutations.DisableMultiFactorMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_address_template(
-        self, info: Info, input: inputs.CreateAddressTemplateInput
-    ) -> mutations.CreateAddressTemplateMutation:
-        return mutations.CreateAddressTemplateMutation.mutate(info, **input.to_dict())
+    def create_address(
+        self, info: Info, input: inputs.CreateAddressInput
+    ) -> mutations.CreateAddressMutation:
+        return mutations.CreateAddressMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_address_template(
-        self, info: Info, input: inputs.UpdateAddressTemplateInput
-    ) -> mutations.UpdateAddressTemplateMutation:
-        return mutations.UpdateAddressTemplateMutation.mutate(info, **input.to_dict())
+    def update_address(
+        self, info: Info, input: inputs.UpdateAddressInput2
+    ) -> mutations.UpdateAddressMutation:
+        return mutations.UpdateAddressMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_customs_template(
-        self, info: Info, input: inputs.CreateCustomsTemplateInput
-    ) -> mutations.CreateCustomsTemplateMutation:
-        return mutations.CreateCustomsTemplateMutation.mutate(info, **input.to_dict())
+    def create_parcel(
+        self, info: Info, input: inputs.CreateParcelInput
+    ) -> mutations.CreateParcelMutation:
+        return mutations.CreateParcelMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_customs_template(
-        self, info: Info, input: inputs.UpdateCustomsTemplateInput
-    ) -> mutations.UpdateCustomsTemplateMutation:
-        return mutations.UpdateCustomsTemplateMutation.mutate(info, **input.to_dict())
+    def update_parcel(
+        self, info: Info, input: inputs.UpdateParcelInput2
+    ) -> mutations.UpdateParcelMutation:
+        return mutations.UpdateParcelMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_parcel_template(
-        self, info: Info, input: inputs.CreateParcelTemplateInput
-    ) -> mutations.CreateParcelTemplateMutation:
-        return mutations.CreateParcelTemplateMutation.mutate(info, **input.to_dict())
+    def create_product(
+        self, info: Info, input: inputs.CreateProductInput
+    ) -> mutations.CreateProductMutation:
+        return mutations.CreateProductMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_parcel_template(
-        self, info: Info, input: inputs.UpdateParcelTemplateInput
-    ) -> mutations.UpdateParcelTemplateMutation:
-        return mutations.UpdateParcelTemplateMutation.mutate(info, **input.to_dict())
+    def update_product(
+        self, info: Info, input: inputs.UpdateProductInput
+    ) -> mutations.UpdateProductMutation:
+        return mutations.UpdateProductMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_product(
+        self, info: Info, input: inputs.DeleteMutationInput
+    ) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(
+            info,
+            model=manager.Commodity,
+            validator=manager_serializers.can_mutate_commodity,
+            **input.to_dict()
+        )
 
     @strawberry.mutation
     def create_carrier_connection(
@@ -280,12 +300,16 @@ class Mutation:
         return mutations.ChangeShipmentStatusMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_template(
+    def delete_address(
         self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(
-            info, model=graph.Template, **input.to_dict()
-        )
+    ) -> mutations.DeleteAddressMutation:
+        return mutations.DeleteAddressMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_parcel(
+        self, info: Info, input: inputs.DeleteMutationInput
+    ) -> mutations.DeleteParcelMutation:
+        return mutations.DeleteParcelMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def discard_commodity(
@@ -295,17 +319,6 @@ class Mutation:
             info,
             model=manager.Commodity,
             validator=manager_serializers.can_mutate_commodity,
-            **input.to_dict()
-        )
-
-    @strawberry.mutation
-    def discard_customs(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(
-            info,
-            model=manager.Customs,
-            validator=manager_serializers.can_mutate_customs,
             **input.to_dict()
         )
 

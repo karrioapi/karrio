@@ -38,15 +38,15 @@ export const AppLink = ({
   };
 
   return (
-    <Link href={p`${basePath}${href}`} {...props} legacyBehavior>
-      <a
-        {...(style ? { style } : {})}
-        {...(target ? { target } : {})}
-        onClick={handleClick}
-        {...(className ? { className } : {})}
-      >
-        {children}
-      </a>
+    <Link
+      href={p`${basePath}${href}`}
+      {...props}
+      style={style}
+      target={target}
+      onClick={handleClick}
+      className={className}
+    >
+      {children}
     </Link>
   );
 };

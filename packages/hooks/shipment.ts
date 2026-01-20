@@ -4,11 +4,9 @@ import {
   DISCARD_COMMODITY,
   PartialShipmentMutationInput,
   PARTIAL_UPDATE_SHIPMENT,
-  DELETE_TEMPLATE,
   get_shipment,
   partial_shipment_update,
   discard_commodity,
-  discard_customs,
   discard_parcel,
   GET_SHIPMENTS,
   GET_SHIPMENT,
@@ -236,13 +234,6 @@ export function useShipmentMutation(id?: string) {
       ),
     { onSuccess: invalidateCache },
   );
-  const discardCustoms = useMutation(
-    (data: { id: string }) =>
-      karrio.graphql.request<discard_customs>(gqlstr(DELETE_TEMPLATE), {
-        data,
-      }),
-    { onSuccess: invalidateCache, onError },
-  );
   const discardCommodity = useMutation(
     (data: { id: string }) =>
       karrio.graphql.request<discard_commodity>(gqlstr(DISCARD_COMMODITY), {
@@ -273,7 +264,6 @@ export function useShipmentMutation(id?: string) {
     updateShipment,
     discardCommodity,
     duplicateShipment,
-    discardCustoms,
     discardParcel,
   };
 }

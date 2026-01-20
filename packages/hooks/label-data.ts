@@ -542,12 +542,8 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
         queue();
       };
   const updateCustoms =
-    (customs_id?: string) =>
+    (_customs_id?: string) =>
       async (data: CustomsType | null, change?: ChangeType) => {
-        if (!isLocalDraft(state.shipment.id) && !!customs_id && data === null) {
-          await mutation.discardCustoms.mutateAsync({ id: customs_id as string });
-        }
-
         updateShipment({ customs: data }, change);
       };
   const addCommodities = async (

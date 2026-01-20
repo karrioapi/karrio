@@ -33,12 +33,19 @@ import { ConfirmationDialog } from "./confirmation-dialog";
 import { ParcelForm, ParcelFormRef } from "./parcel-form";
 import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
 import {
-  useParcelTemplateMutation,
-  useParcelTemplates,
+  useParcelMutation,
+  useParcels,
 } from "@karrio/hooks/parcel";
 import { ParcelType, NotificationType } from "@karrio/types";
 import { useSearchParams } from "next/navigation";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
+
+// Helper function to extract parcel fields from template (exclude template metadata)
+const extractParcelFromTemplate = (template: any) => {
+  if (!template) return {};
+  const { id, label, is_default, object_type, meta, created_at, updated_at, created_by, ...parcelData } = template;
+  return parcelData;
+};
 
 interface ParcelEditDialogProps {
   open: boolean;
@@ -54,7 +61,7 @@ function ParcelEditDialog({
   onSave
 }: ParcelEditDialogProps) {
   const notifier = useNotifier();
-  const { createParcelTemplate, updateParcelTemplate } = useParcelTemplateMutation();
+  const { createParcel, updateParcel } = useParcelMutation();
   const [formData, setFormData] = React.useState({
     label: "",
     is_default: false,
@@ -65,9 +72,9 @@ function ParcelEditDialog({
   React.useEffect(() => {
     if (parcelTemplate) {
       setFormData({
-        label: parcelTemplate.label || "",
-        is_default: parcelTemplate.is_default || false,
-        parcel: parcelTemplate.parcel || {},
+        label: parcelTemplate.meta?.label || "",
+        is_default: parcelTemplate.meta?.is_default || false,
+        parcel: extractParcelFromTemplate(parcelTemplate),
       });
     } else {
       setFormData({
@@ -90,9 +97,9 @@ function ParcelEditDialog({
       };
 
       if (parcelTemplate) {
-        const { update_parcel_template } = await updateParcelTemplate.mutateAsync({ ...payload, id: parcelTemplate.id } as any);
-        if (update_parcel_template.errors && update_parcel_template.errors.length > 0) {
-          const errorMessage = update_parcel_template.errors.map(e => `${e.field}: ${e.messages.join(', ')}`).join('\n');
+        const { update_parcel } = await updateParcel.mutateAsync({ ...payload, id: parcelTemplate.id } as any);
+        if (update_parcel.errors && update_parcel.errors.length > 0) {
+          const errorMessage = update_parcel.errors.map(e => `${e.field}: ${e.messages.join(', ')}`).join('\n');
           notifier.notify({
             type: NotificationType.error,
             message: errorMessage,
@@ -101,12 +108,12 @@ function ParcelEditDialog({
         }
         notifier.notify({
           type: NotificationType.success,
-          message: "Parcel template updated successfully!",
+          message: "Parcel updated successfully!",
         });
       } else {
-        const { create_parcel_template } = await createParcelTemplate.mutateAsync(payload as any);
-        if (create_parcel_template.errors && create_parcel_template.errors.length > 0) {
-          const errorMessage = create_parcel_template.errors.map(e => `${e.field}: ${e.messages.join(', ')}`).join('\n');
+        const { create_parcel } = await createParcel.mutateAsync(payload as any);
+        if (create_parcel.errors && create_parcel.errors.length > 0) {
+          const errorMessage = create_parcel.errors.map(e => `${e.field}: ${e.messages.join(', ')}`).join('\n');
           notifier.notify({
             type: NotificationType.error,
             message: errorMessage,
@@ -115,7 +122,7 @@ function ParcelEditDialog({
         }
         notifier.notify({
           type: NotificationType.success,
-          message: "Parcel template created successfully!",
+          message: "Parcel created successfully!",
         });
       }
 
@@ -125,7 +132,7 @@ function ParcelEditDialog({
       const detailed = error?.data || error?.response?.data || error;
       notifier.notify({
         type: NotificationType.error,
-        message: detailed || { message: error?.message || "Failed to save parcel template" },
+        message: detailed || { message: error?.message || "Failed to save parcel" },
       });
     }
   };
@@ -139,12 +146,12 @@ function ParcelEditDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {parcelTemplate ? "Edit Parcel Template" : "Create Parcel Template"}
+            {parcelTemplate ? "Edit Parcel" : "Create Parcel"}
           </DialogTitle>
           <DialogDescription>
             {parcelTemplate
-              ? "Update the parcel template details."
-              : "Create a new parcel template for reuse."
+              ? "Update the parcel details."
+              : "Create a new parcel for reuse."
             }
           </DialogDescription>
         </DialogHeader>
@@ -153,7 +160,7 @@ function ParcelEditDialog({
           <div className="space-y-3">
             <div className="space-y-1">
               <Label htmlFor="label" className="text-xs text-slate-700">
-                Template Label <span className="text-red-500">*</span>
+                Label <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="label"
@@ -171,7 +178,7 @@ function ParcelEditDialog({
                 checked={formData.is_default}
                 onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_default: !!checked }))}
               />
-              <Label htmlFor="is_default" className="text-xs text-slate-700">Set as default parcel template</Label>
+              <Label htmlFor="is_default" className="text-xs text-slate-700">Set as default parcel</Label>
             </div>
 
             <div className="border-t pt-3">
@@ -192,7 +199,7 @@ function ParcelEditDialog({
             Cancel
           </Button>
           <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim()}>
-            {parcelTemplate ? "Update Template" : "Create Template"}
+            {parcelTemplate ? "Update Parcel" : "Create Parcel"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -229,17 +236,17 @@ function ParcelDescription({ parcel }: { parcel: any }) {
 export function ParcelsManagement() {
   const searchParams = useSearchParams();
   const modal = searchParams.get("modal") as string;
-  const mutation = useParcelTemplateMutation();
+  const mutation = useParcelMutation();
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
   const [selectedParcel, setSelectedParcel] = React.useState<any>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
   const [parcelToDelete, setParcelToDelete] = React.useState<any>(null);
 
   const {
-    query: { data: { parcel_templates } = {}, ...query },
+    query: { data: { parcels } = {}, ...query },
     filter,
     setFilter,
-  } = useParcelTemplates({
+  } = useParcels({
     setVariablesToURL: true,
   });
 
@@ -260,7 +267,7 @@ export function ParcelsManagement() {
 
   const confirmDelete = async () => {
     if (parcelToDelete) {
-      await mutation.deleteParcelTemplate.mutateAsync({ id: parcelToDelete.id });
+      await mutation.deleteParcel.mutateAsync({ id: parcelToDelete.id });
       setDeleteConfirmOpen(false);
       setParcelToDelete(null);
     }
@@ -271,11 +278,11 @@ export function ParcelsManagement() {
     query.refetch();
   };
 
-  const parcels = parcel_templates?.edges || [];
+  const parcelList = parcels?.edges || [];
 
   return (
     <div className="space-y-6">
-      {parcels.length > 0 && (
+      {parcelList.length > 0 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             Manage your parcel templates for shipping packages.
@@ -288,7 +295,7 @@ export function ParcelsManagement() {
       )}
       
       <div>
-        {parcels.length === 0 ? (
+        {parcelList.length === 0 ? (
           <div className="text-center py-12">
             <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium text-muted-foreground mb-2">
@@ -314,12 +321,12 @@ export function ParcelsManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {parcels.map(({ node: template }) => (
+                {parcelList.map(({ node: template }) => (
                   <TableRow key={template.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        {template.label}
-                        {template.is_default && (
+                        {template.meta?.label}
+                        {template.meta?.is_default && (
                           <Badge variant="secondary" className="text-xs">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Default
@@ -328,7 +335,7 @@ export function ParcelsManagement() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <ParcelDescription parcel={template.parcel} />
+                      <ParcelDescription parcel={template} />
                     </TableCell>
                     <TableCell>
                       <Button
@@ -368,17 +375,17 @@ export function ParcelsManagement() {
           </div>
         )}
 
-        {parcels.length > 0 && (
+        {parcelList.length > 0 && (
           <div className="flex items-center justify-between pt-4">
             <div className="text-sm text-muted-foreground">
-              {parcels.length} parcel{parcels.length !== 1 ? 's' : ''}
+              {parcelList.length} parcel{parcelList.length !== 1 ? 's' : ''}
             </div>
 
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                disabled={!parcel_templates?.page_info.has_previous_page}
+                disabled={!parcels?.page_info.has_previous_page}
                 onClick={() => setFilter({
                   ...filter,
                   offset: Math.max(0, (filter.offset || 0) - 20)
@@ -389,7 +396,7 @@ export function ParcelsManagement() {
               <Button
                 variant="outline"
                 size="sm"
-                disabled={!parcel_templates?.page_info.has_next_page}
+                disabled={!parcels?.page_info.has_next_page}
                 onClick={() => setFilter({
                   ...filter,
                   offset: (filter.offset || 0) + 20
@@ -412,8 +419,8 @@ export function ParcelsManagement() {
       <ConfirmationDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
-        title="Delete Parcel Template"
-        description={`Are you sure you want to delete "${parcelToDelete?.label}"? This action cannot be undone.`}
+        title="Delete Parcel"
+        description={`Are you sure you want to delete "${parcelToDelete?.meta?.label}"? This action cannot be undone.`}
         onConfirm={confirmDelete}
       />
     </div>

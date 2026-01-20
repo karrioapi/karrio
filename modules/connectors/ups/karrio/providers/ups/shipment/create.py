@@ -201,7 +201,7 @@ def shipment_request(
                 ),
             ),
             Shipment=ups.ShipmentType(
-                Description=packages.description,
+                Description=lib.text(packages.description, max=50),
                 ReturnService=None,
                 DocumentsOnlyIndicator=("Y" if packages.is_document else None),
                 Shipper=ups.ShipperType(
@@ -732,7 +732,7 @@ def shipment_request(
                 ShipmentDate=lib.fdate(shipment_date, "%Y%m%d"),
                 Package=[
                     ups.PackageType(
-                        Description=package.description,
+                        Description=lib.text(package.description, max=50),
                         Packaging=ups.LabelImageFormatType(
                             Code=(
                                 mps_packaging

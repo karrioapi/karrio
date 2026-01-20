@@ -54,19 +54,6 @@ class CommodityManager(models.Manager):
         )
 
 
-class CustomsManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .select_related("duty_billing_address")
-            .prefetch_related(
-                "commodities",
-                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-            )
-        )
-
-
 class PickupManager(models.Manager):
     def get_queryset(self):
         return (
@@ -145,16 +132,10 @@ class ManifestManager(models.Manager):
 
 @core.register_model
 class Address(core.OwnedEntity):
+    # Note: shipper_shipment, recipient_shipment, billing_address_shipment removed
+    # as shipment addresses are now stored as JSON fields
     HIDDEN_PROPS = (
-        "shipper_shipment",
-        "recipient_shipment",
-        "billing_address_shipment",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-        *(
-            ("shipper_order", "recipient_order")
-            if conf.settings.ORDERS_MANAGEMENT
-            else tuple()
-        ),
     )
     objects = AddressManager()
 
@@ -215,6 +196,16 @@ class Address(core.OwnedEntity):
         return bool(self.meta and self.meta.get("label"))
 
     @property
+    def label(self) -> typing.Optional[str]:
+        """Template label from meta field."""
+        return (self.meta or {}).get("label")
+
+    @property
+    def is_default(self) -> bool:
+        """Whether this is the default template."""
+        return (self.meta or {}).get("is_default", False)
+
+    @property
     def object_type(self):
         return "address"
 
@@ -226,13 +217,6 @@ class Address(core.OwnedEntity):
             return self.recipient_shipment
         if hasattr(self, "billing_address_shipment"):
             return self.billing_address_shipment
-
-        return None
-
-    @property
-    def customs(self):
-        if hasattr(self, "duty_billing_address_customs"):
-            return self.duty_billing_address_customs
 
         return None
 
@@ -316,6 +300,16 @@ class Parcel(core.OwnedEntity):
         return bool(self.meta and self.meta.get("label"))
 
     @property
+    def label(self) -> typing.Optional[str]:
+        """Template label from meta field."""
+        return (self.meta or {}).get("label")
+
+    @property
+    def is_default(self) -> bool:
+        """Whether this is the default template."""
+        return (self.meta or {}).get("is_default", False)
+
+    @property
     def object_type(self):
         return "parcel"
 
@@ -331,7 +325,6 @@ class Commodity(core.OwnedEntity):
     HIDDEN_PROPS = (
         "children",
         "commodity_parcel",
-        "commodity_customs",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = CommodityManager()
@@ -403,6 +396,16 @@ class Commodity(core.OwnedEntity):
         return bool(self.meta and self.meta.get("label"))
 
     @property
+    def label(self) -> typing.Optional[str]:
+        """Template label from meta field."""
+        return (self.meta or {}).get("label")
+
+    @property
+    def is_default(self) -> bool:
+        """Whether this is the default template."""
+        return (self.meta or {}).get("is_default", False)
+
+    @property
     def object_type(self):
         return "commodity"
 
@@ -411,14 +414,8 @@ class Commodity(core.OwnedEntity):
         return self.commodity_parcel.first()
 
     @property
-    def customs(self):
-        return self.commodity_customs.first()
-
-    @property
     def shipment(self):
-        related = self.customs or self.parcel
-
-        return getattr(related, "shipment", None)
+        return getattr(self.parcel, "shipment", None)
 
     @property
     def order(self):
@@ -445,89 +442,6 @@ class Product(Commodity):
     @property
     def object_type(self):
         return "product"
-
-
-@core.register_model
-class Customs(core.OwnedEntity):
-    DIRECT_PROPS = [
-        "content_description",
-        "content_type",
-        "incoterm",
-        "commercial_invoice",
-        "certify",
-        "duty",
-        "created_by",
-        "signer",
-        "invoice",
-        "invoice_date",
-        "options",
-    ]
-    RELATIONAL_PROPS = ["commodities", "duty_billing_address"]
-    HIDDEN_PROPS = (
-        "customs_shipment",
-        *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-    )
-    objects = CustomsManager()
-
-    class Meta:
-        db_table = "customs"
-        verbose_name = "Customs Info"
-        verbose_name_plural = "Customs Info"
-        ordering = ["-created_at"]
-
-    id = models.CharField(
-        max_length=50,
-        primary_key=True,
-        default=functools.partial(core.uuid, prefix="cst_"),
-        editable=False,
-    )
-
-    certify = models.BooleanField(null=True)
-    commercial_invoice = models.BooleanField(null=True)
-    content_type = models.CharField(
-        max_length=100, null=True, blank=True, db_index=True
-    )
-    content_description = models.CharField(max_length=250, null=True, blank=True)
-    incoterm = models.CharField(
-        max_length=50, choices=serializers.INCOTERMS, db_index=True
-    )
-    invoice = models.CharField(max_length=100, null=True, blank=True)
-    invoice_date = models.CharField(max_length=100, null=True, blank=True)
-    signer = models.CharField(max_length=100, null=True, blank=True)
-
-    duty = models.JSONField(
-        blank=True, null=True, default=functools.partial(utils.identity, value=None)
-    )
-    options = models.JSONField(
-        blank=True, null=True, default=functools.partial(utils.identity, value={})
-    )
-
-    # System Reference fields
-
-    commodities = models.ManyToManyField(
-        "Commodity", blank=True, related_name="commodity_customs"
-    )
-    duty_billing_address = models.OneToOneField(
-        "Address",
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name="duty_billing_address_customs",
-    )
-
-    def delete(self, *args, **kwargs):
-        self.commodities.all().delete()
-        return super().delete(*args, **kwargs)
-
-    @property
-    def object_type(self):
-        return "customs_info"
-
-    @property
-    def shipment(self):
-        if hasattr(self, "customs_shipment"):
-            return self.customs_shipment
-
-        return None
 
 
 @core.register_model

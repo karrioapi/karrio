@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django_email_verification import confirm as email_verification
 from django_otp.plugins.otp_email import models as otp
 from django.utils.translation import gettext_lazy as _
-from django.db import transaction
+from django.db import transaction, models
 
 from karrio.server.core.utils import ConfirmationToken, send_email
 from karrio.server.user.serializers import TokenSerializer
@@ -987,72 +987,330 @@ class ChangeShipmentStatusMutation(utils.BaseMutation):
         return ChangeShipmentStatusMutation(shipment=shipment)  # type:ignore
 
 
-def create_template_mutation(name: str, template_type: str) -> typing.Type:
-    _type: typing.Any = dict(
-        address=types.AddressTemplateType,
-        customs=types.CustomsTemplateType,
-        parcel=types.ParcelTemplateType,
-    ).get(template_type)
+def _clear_default_address_templates(info, exclude_id=None):
+    """Clear is_default flag on all address templates except the specified one."""
+    queryset = manager.Address.access_by(info.context.request).filter(
+        meta__is_default=True,
+        meta__label__isnull=False,
+    )
+    if exclude_id:
+        queryset = queryset.exclude(id=exclude_id)
 
-    @strawberry.type
-    class _Mutation(utils.BaseMutation):
-        template: typing.Optional[_type] = None
+    for address in queryset:
+        address.meta = {**(address.meta or {}), "is_default": False}
+        address.save(update_fields=["meta"])
 
-        @staticmethod
-        @utils.authentication_required
-        @transaction.atomic
-        def mutate(info: Info, **input) -> name:  # type:ignore
-            data = input.copy()
-            instance = (
-                graph.Template.access_by(info.context.request).get(id=input["id"])
-                if "id" in input
-                else None
+
+def _clear_default_parcel_templates(info, exclude_id=None):
+    """Clear is_default flag on all parcel templates except the specified one."""
+    queryset = manager.Parcel.access_by(info.context.request).filter(
+        meta__is_default=True,
+        meta__label__isnull=False,
+    )
+    if exclude_id:
+        queryset = queryset.exclude(id=exclude_id)
+
+    for parcel in queryset:
+        parcel.meta = {**(parcel.meta or {}), "is_default": False}
+        parcel.save(update_fields=["meta"])
+
+
+@strawberry.type
+class CreateAddressMutation(utils.BaseMutation):
+    """Create a saved address using Address model with meta.label."""
+
+    address: typing.Optional[types.AddressTemplateType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @transaction.atomic
+    def mutate(info: Info, **input) -> "CreateAddressMutation":
+        data = input.copy()
+        label = data.pop("label")
+        is_default = data.pop("is_default", False)
+
+        # Extract address data (might be nested under 'address' key or at top level)
+        address_data = data.pop("address", data)
+
+        # If setting as default, clear existing default
+        if is_default:
+            _clear_default_address_templates(info)
+
+        # Create meta field with template metadata
+        meta = {"label": label, "is_default": is_default}
+
+        serializer = serializers.AddressModelSerializer(
+            data={**address_data, "meta": meta},
+            context=info.context.request,
+        )
+        serializer.is_valid(raise_exception=True)
+        address = serializer.save()
+
+        return CreateAddressMutation(address=address)  # type:ignore
+
+
+@strawberry.type
+class UpdateAddressMutation(utils.BaseMutation):
+    """Update a saved address."""
+
+    address: typing.Optional[types.AddressTemplateType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @transaction.atomic
+    def mutate(info: Info, **input) -> "UpdateAddressMutation":
+        data = input.copy()
+        id = data.pop("id")
+        label = data.pop("label", None)
+        is_default = data.pop("is_default", None)
+
+        # Extract address data (might be nested under 'address' key or at top level)
+        address_data = data.pop("address", data)
+
+        instance = manager.Address.access_by(info.context.request).get(id=id)
+
+        # Verify this is a template (has meta.label)
+        if not (instance.meta or {}).get("label"):
+            raise utils.ValidationError(
+                "This address is not a template. Only templates can be updated here."
             )
-            customs_data = data.get("customs", {})
 
-            if "commodities" in customs_data and instance is not None:
-                save_many_to_many_data(
-                    "commodities",
-                    serializers.CommodityModelSerializer,
-                    getattr(instance, "customs", None),
-                    payload=customs_data,
-                    context=info.context.request,
-                )
+        # Update meta field
+        meta = instance.meta or {}
+        if label is not None:
+            meta["label"] = label
+        if is_default is not None:
+            # If setting as default, clear existing default
+            if is_default:
+                _clear_default_address_templates(info, exclude_id=id)
+            meta["is_default"] = is_default
 
-            serializer = serializers.TemplateModelSerializer(
-                instance,
-                data=data,
-                context=info.context.request,
-                partial=(instance is not None),
+        serializer = serializers.AddressModelSerializer(
+            instance,
+            data={**address_data, "meta": meta},
+            context=info.context.request,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        address = serializer.save()
+
+        return UpdateAddressMutation(address=address)  # type:ignore
+
+
+@strawberry.type
+class CreateParcelMutation(utils.BaseMutation):
+    """Create a saved parcel using Parcel model with meta.label."""
+
+    parcel: typing.Optional[types.ParcelTemplateType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @transaction.atomic
+    def mutate(info: Info, **input) -> "CreateParcelMutation":
+        data = input.copy()
+        label = data.pop("label")
+        is_default = data.pop("is_default", False)
+
+        # Extract parcel data (might be nested under 'parcel' key or at top level)
+        parcel_data = data.pop("parcel", data)
+
+        # If setting as default, clear existing default
+        if is_default:
+            _clear_default_parcel_templates(info)
+
+        # Create meta field with template metadata
+        meta = {"label": label, "is_default": is_default}
+
+        serializer = serializers.ParcelModelSerializer(
+            data={**parcel_data, "meta": meta},
+            context=info.context.request,
+        )
+        serializer.is_valid(raise_exception=True)
+        parcel = serializer.save()
+
+        return CreateParcelMutation(parcel=parcel)  # type:ignore
+
+
+@strawberry.type
+class UpdateParcelMutation(utils.BaseMutation):
+    """Update a saved parcel."""
+
+    parcel: typing.Optional[types.ParcelTemplateType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @transaction.atomic
+    def mutate(info: Info, **input) -> "UpdateParcelMutation":
+        data = input.copy()
+        id = data.pop("id")
+        label = data.pop("label", None)
+        is_default = data.pop("is_default", None)
+
+        # Extract parcel data (might be nested under 'parcel' key or at top level)
+        parcel_data = data.pop("parcel", data)
+
+        instance = manager.Parcel.access_by(info.context.request).get(id=id)
+
+        # Verify this is a template (has meta.label)
+        if not (instance.meta or {}).get("label"):
+            raise utils.ValidationError(
+                "This parcel is not a template. Only templates can be updated here."
             )
 
-            serializer.is_valid(raise_exception=True)
-            template = serializer.save()
+        # Update meta field
+        meta = instance.meta or {}
+        if label is not None:
+            meta["label"] = label
+        if is_default is not None:
+            # If setting as default, clear existing default
+            if is_default:
+                _clear_default_parcel_templates(info, exclude_id=id)
+            meta["is_default"] = is_default
 
-            return _Mutation(template=template)  # type:ignore
+        serializer = serializers.ParcelModelSerializer(
+            instance,
+            data={**parcel_data, "meta": meta},
+            context=info.context.request,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        parcel = serializer.save()
 
-    return strawberry.type(type(name, (_Mutation,), {}))
+        return UpdateParcelMutation(parcel=parcel)  # type:ignore
 
 
-CreateAddressTemplateMutation = create_template_mutation(
-    "CreateAddressTemplateMutation", "address"
-)
-UpdateAddressTemplateMutation = create_template_mutation(
-    "UpdateAddressTemplateMutation",
-    "address",
-)
-CreateCustomsTemplateMutation = create_template_mutation(
-    "CreateCustomsTemplateMutation", "customs"
-)
-UpdateCustomsTemplateMutation = create_template_mutation(
-    "UpdateCustomsTemplateMutation", "customs"
-)
-CreateParcelTemplateMutation = create_template_mutation(
-    "CreateParcelTemplateMutation", "parcel"
-)
-UpdateParcelTemplateMutation = create_template_mutation(
-    "UpdateParcelTemplateMutation", "parcel"
-)
+@strawberry.type
+class DeleteAddressMutation(utils.BaseMutation):
+    """Delete a saved address."""
+
+    id: str = strawberry.UNSET
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, **input) -> "DeleteAddressMutation":
+        id = input.get("id")
+        instance = manager.Address.access_by(info.context.request).get(id=id)
+
+        # Verify this is a saved address (has meta.label)
+        if not (instance.meta or {}).get("label"):
+            raise utils.ValidationError(
+                "This address is not a saved address. Only saved addresses can be deleted here."
+            )
+
+        instance.delete(keep_parents=True)
+        return DeleteAddressMutation(id=id)  # type:ignore
+
+
+@strawberry.type
+class DeleteParcelMutation(utils.BaseMutation):
+    """Delete a saved parcel."""
+
+    id: str = strawberry.UNSET
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, **input) -> "DeleteParcelMutation":
+        id = input.get("id")
+        instance = manager.Parcel.access_by(info.context.request).get(id=id)
+
+        # Verify this is a saved parcel (has meta.label)
+        if not (instance.meta or {}).get("label"):
+            raise utils.ValidationError(
+                "This parcel is not a saved parcel. Only saved parcels can be deleted here."
+            )
+
+        instance.delete(keep_parents=True)
+        return DeleteParcelMutation(id=id)  # type:ignore
+
+
+def _clear_default_product_templates(info, exclude_id=None):
+    """Clear is_default flag on all product templates except the specified one."""
+    queryset = manager.Commodity.access_by(info.context.request).filter(
+        meta__is_default=True,
+        meta__label__isnull=False,
+    )
+    if exclude_id:
+        queryset = queryset.exclude(id=exclude_id)
+
+    for commodity in queryset:
+        commodity.meta = {**(commodity.meta or {}), "is_default": False}
+        commodity.save(update_fields=["meta"])
+
+
+@strawberry.type
+class CreateProductMutation(utils.BaseMutation):
+    """Create a saved product using Commodity model with meta.label."""
+
+    product: typing.Optional[types.ProductTemplateType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @transaction.atomic
+    def mutate(info: Info, **input) -> "CreateProductMutation":
+        data = input.copy()
+        label = data.pop("label")
+        is_default = data.pop("is_default", False)
+
+        # If setting as default, clear existing default
+        if is_default:
+            _clear_default_product_templates(info)
+
+        # Create meta field with template metadata
+        meta = {"label": label, "is_default": is_default}
+
+        serializer = serializers.CommodityModelSerializer(
+            data={**data, "meta": meta},
+            context=info.context.request,
+        )
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
+
+        return CreateProductMutation(product=product)  # type:ignore
+
+
+@strawberry.type
+class UpdateProductMutation(utils.BaseMutation):
+    """Update a saved product."""
+
+    product: typing.Optional[types.ProductTemplateType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @transaction.atomic
+    def mutate(info: Info, **input) -> "UpdateProductMutation":
+        data = input.copy()
+        id = data.pop("id")
+        label = data.pop("label", None)
+        is_default = data.pop("is_default", None)
+
+        instance = manager.Commodity.access_by(info.context.request).get(id=id)
+
+        # Verify this is a template (has meta.label)
+        if not instance.is_template:
+            raise utils.ValidationError(
+                "This commodity is not a template. Only templates can be updated here."
+            )
+
+        # Update meta field
+        meta = instance.meta or {}
+        if label is not None:
+            meta["label"] = label
+        if is_default is not None:
+            # If setting as default, clear existing default
+            if is_default:
+                _clear_default_product_templates(info, exclude_id=id)
+            meta["is_default"] = is_default
+
+        serializer = serializers.CommodityModelSerializer(
+            instance,
+            data={**data, "meta": meta},
+            context=info.context.request,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
+
+        return UpdateProductMutation(product=product)  # type:ignore
 
 
 @strawberry.type

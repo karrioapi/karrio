@@ -559,12 +559,6 @@ class Duty(serializers.Serializer):
     )
 
 
-@serializers.allow_model_id(
-    [
-        ("commodities", "karrio.server.manager.models.Commodity"),
-        ("duty_billing_address", "karrio.server.manager.models.Address"),
-    ]
-)
 class CustomsData(serializers.Serializer):
     commodities = CommodityData(
         many=True, allow_empty=False, help_text="The parcel content items"
@@ -637,18 +631,6 @@ class CustomsData(serializers.Serializer):
         }
         </details>
         """,
-    )
-
-
-class Customs(serializers.EntitySerializer, CustomsData):
-    object_type = serializers.CharField(
-        default="customs_info", help_text="Specifies the object type"
-    )
-    commodities = Commodity(
-        required=False, many=True, help_text="The parcel content items"
-    )
-    duty_billing_address = Address(
-        required=False, allow_null=True, help_text="The duty payor address."
     )
 
 
@@ -1357,7 +1339,6 @@ class Rate(serializers.EntitySerializer):
         ("shipper", "karrio.server.manager.models.Address"),
         ("recipient", "karrio.server.manager.models.Address"),
         ("parcels", "karrio.server.manager.models.Parcel"),
-        ("customs", "karrio.server.manager.models.Customs"),
         ("return_address", "karrio.server.manager.models.Address"),
         ("billing_address", "karrio.server.manager.models.Address"),
     ]
@@ -1666,7 +1647,7 @@ class ShipmentContent(serializers.Serializer):
         default={},
         help_text="The payment details",
     )
-    customs = Customs(
+    customs = CustomsData(
         required=False,
         allow_null=True,
         help_text="""The customs details.<br/>

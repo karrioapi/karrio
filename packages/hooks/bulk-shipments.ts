@@ -546,18 +546,8 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
         };
   const updateCustoms =
     (shipment_index: number) =>
-      (customs_id?: string) =>
+      (_customs_id?: string) =>
         async (data: CustomsType | null, change?: ChangeType) => {
-          if (
-            !isLocalDraft(batch.shipments[shipment_index].id) &&
-            !!customs_id &&
-            data === null
-          ) {
-            await shipmentMutation.discardCustoms.mutateAsync({
-              id: customs_id as string,
-            });
-          }
-
           updateShipment(shipment_index)({ customs: data }, change);
         };
   const addCommodities =

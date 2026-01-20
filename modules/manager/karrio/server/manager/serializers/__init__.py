@@ -8,10 +8,6 @@ from karrio.server.manager.serializers.parcel import (
     ParcelSerializer,
     can_mutate_parcel,
 )
-from karrio.server.manager.serializers.customs import (
-    CustomsSerializer,
-    can_mutate_customs,
-)
 from karrio.server.manager.serializers.commodity import (
     CommoditySerializer,
     can_mutate_commodity,

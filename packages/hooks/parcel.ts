@@ -1,4 +1,4 @@
-import { TemplateFilter, CreateParcelTemplateInput, CREATE_PARCEL_TEMPLATE, DELETE_TEMPLATE, get_parcel_templates, GET_PARCEL_TEMPLATES, UpdateParcelTemplateInput, UPDATE_PARCEL_TEMPLATE, create_parcel_template, update_parcel_template, delete_template } from "@karrio/types";
+import { TemplateFilter, CreateParcelInput, CREATE_PARCEL, DELETE_PARCEL, get_parcels, GET_PARCELS, UpdateParcelInput2, UPDATE_PARCEL, create_parcel, update_parcel, delete_parcel } from "@karrio/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useAuthenticatedQuery, useKarrio } from "./karrio";
@@ -8,12 +8,12 @@ const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = TemplateFilter & { setVariablesToURL?: boolean };
 
-export function useParcelTemplates({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
+export function useParcels({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<TemplateFilter>({ ...PAGINATION, ...initialData });
-  const fetch = (variables: { filter: TemplateFilter }) => karrio.graphql.request<get_parcel_templates>(
-    gqlstr(GET_PARCEL_TEMPLATES), { variables }
+  const fetch = (variables: { filter: TemplateFilter }) => karrio.graphql.request<get_parcels>(
+    gqlstr(GET_PARCELS), { variables }
   );
 
   // Queries
@@ -53,10 +53,10 @@ export function useParcelTemplates({ setVariablesToURL = false, ...initialData }
   }
 
   React.useEffect(() => {
-    if (query.data?.parcel_templates.page_info.has_next_page) {
+    if (query.data?.parcels.page_info.has_next_page) {
       const _filter = { ...filter, offset: filter.offset as number + 20 };
       queryClient.prefetchQuery(
-        ['addresses', _filter],
+        ['parcels', _filter],
         () => fetch({ filter: _filter }),
       )
     }
@@ -71,7 +71,7 @@ export function useParcelTemplates({ setVariablesToURL = false, ...initialData }
 }
 
 
-export function useParcelTemplateMutation() {
+export function useParcelMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
@@ -83,28 +83,28 @@ export function useParcelTemplateMutation() {
   };
 
   // Mutations
-  const createParcelTemplate = useMutation(
-    (data: CreateParcelTemplateInput) => karrio.graphql.request<create_parcel_template>(
-      gqlstr(CREATE_PARCEL_TEMPLATE), { data }
+  const createParcel = useMutation(
+    (data: CreateParcelInput) => karrio.graphql.request<create_parcel>(
+      gqlstr(CREATE_PARCEL), { data }
     ),
     { onSuccess: invalidateCache, onError }
   );
-  const updateParcelTemplate = useMutation(
-    (data: UpdateParcelTemplateInput) => karrio.graphql.request<update_parcel_template>(
-      gqlstr(UPDATE_PARCEL_TEMPLATE), { data }
+  const updateParcel = useMutation(
+    (data: UpdateParcelInput2) => karrio.graphql.request<update_parcel>(
+      gqlstr(UPDATE_PARCEL), { data }
     ),
     { onSuccess: invalidateCache, onError }
   );
-  const deleteParcelTemplate = useMutation(
-    (data: { id: string }) => karrio.graphql.request<delete_template>(
-      gqlstr(DELETE_TEMPLATE), { data }
+  const deleteParcel = useMutation(
+    (data: { id: string }) => karrio.graphql.request<delete_parcel>(
+      gqlstr(DELETE_PARCEL), { data }
     ),
     { onSuccess: invalidateCache, onError }
   );
 
   return {
-    createParcelTemplate,
-    updateParcelTemplate,
-    deleteParcelTemplate,
+    createParcel,
+    updateParcel,
+    deleteParcel,
   };
 }

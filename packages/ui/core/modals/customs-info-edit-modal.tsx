@@ -1,6 +1,5 @@
-import { CreateCustomsTemplateInput, DEFAULT_CUSTOMS_CONTENT, UpdateCustomsTemplateInput } from '@karrio/types';
-import { CustomsTemplateType, CustomsType, NotificationType } from '@karrio/types';
-import { useCustomsTemplateMutation } from '@karrio/hooks/customs';
+import { DEFAULT_CUSTOMS_CONTENT } from '@karrio/types';
+import { CustomsType, NotificationType } from '@karrio/types';
 import { CustomsInfoForm } from '../forms/customs-info-form';
 import { CheckBoxField } from '../components/checkbox-field';
 import { Notifier, Notify } from '../components/notifier';
@@ -8,6 +7,16 @@ import { InputField } from '../components/input-field';
 import React, { useContext, useState } from 'react';
 import { isNone, useLocation } from '@karrio/lib';
 import { Loading } from '../components/loader';
+
+/**
+ * @deprecated Customs templates have been deprecated.
+ */
+type CustomsTemplateType = {
+  id?: string;
+  label: string;
+  is_default: boolean;
+  customs: CustomsType;
+};
 
 const DEFAULT_TEMPLATE_CONTENT = {
   label: '',
@@ -30,10 +39,12 @@ interface CustomsInfoEditModalComponent {
   children?: React.ReactNode;
 }
 
+/**
+ * @deprecated Customs templates have been deprecated. This modal is no longer functional.
+ */
 export const CustomsInfoEditModal= ({ children }): JSX.Element =>  {
   const { notify } = useContext(Notify);
   const { setLoading } = useContext(Loading);
-  const mutation = useCustomsTemplateMutation();
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`customs-info-${Date.now()}`);
@@ -69,20 +80,12 @@ export const CustomsInfoEditModal= ({ children }): JSX.Element =>  {
 
     setTemplate({ ...template, [name]: value } as CustomsTemplateType);
   };
-  const handleSubmit = async (customs: CustomsType) => {
-    const payload = { ...template, customs };
-
+  const handleSubmit = async (_customs: CustomsType) => {
     try {
       setLoading(true);
-      if (isNew) {
-        await mutation.createCustomsTemplate.mutateAsync(payload as CreateCustomsTemplateInput);
-        notify({ type: NotificationType.success, message: 'Customs info successfully added!' });
-      }
-      else {
-        await mutation.updateCustomsTemplate.mutateAsync(payload as UpdateCustomsTemplateInput);
-        notify({ type: NotificationType.success, message: 'Customs info successfully updated!' });
-      }
-      setTimeout(() => close(undefined, true), 2000);
+      // Customs templates are deprecated - just show info message
+      notify({ type: NotificationType.info, message: 'Customs templates are no longer supported.' });
+      setTimeout(() => close(undefined, false), 2000);
     } catch (message: any) {
       notify({ type: NotificationType.error, message });
     }

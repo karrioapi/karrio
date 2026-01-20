@@ -56,6 +56,7 @@ export function notEmptyJSON(value?: string | null): boolean {
 }
 
 export function formatAddress(address: AddressType): string {
+  if (!address) return "";
   return [
     address.person_name || address.company_name,
     address.city,
@@ -66,6 +67,7 @@ export function formatAddress(address: AddressType): string {
 }
 
 export function formatAddressShort(address: AddressType): string {
+  if (!address) return "";
   return [address.person_name || address.company_name, address.city]
     .filter((a) => !isNone(a) && a !== "")
     .join(", ");
@@ -75,6 +77,7 @@ export function formatFullAddress(
   address: AddressType,
   countries?: { [country_code: string]: string },
 ): string {
+  if (!address) return "";
   const country =
     countries === undefined
       ? address.country_code
@@ -95,6 +98,7 @@ export function formatAddressLocation(
   address: AddressType,
   countries?: { [country_code: string]: string },
 ): string {
+  if (!address) return "";
   const country =
     countries === undefined
       ? address.country_code
@@ -108,6 +112,7 @@ export function formatAddressLocationShort(
   address: AddressType,
   countries?: { [country_code: string]: string },
 ): string {
+  if (!address) return "";
   const country =
     countries === undefined
       ? address.country_code

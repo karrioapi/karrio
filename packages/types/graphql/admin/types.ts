@@ -2013,7 +2013,7 @@ export interface GetSystemShipments_shipments_edges_node_recipient {
   city: string | null;
   state_code: string | null;
   postal_code: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface GetSystemShipments_shipments_edges_node_shipper {
@@ -2023,7 +2023,7 @@ export interface GetSystemShipments_shipments_edges_node_shipper {
   city: string | null;
   state_code: string | null;
   postal_code: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface GetSystemShipments_shipments_edges_node_selected_rate {
@@ -2035,7 +2035,7 @@ export interface GetSystemShipments_shipments_edges_node_selected_rate {
 }
 
 export interface GetSystemShipments_shipments_edges_node_parcels {
-  id: string;
+  id: string | null;
   weight: number | null;
   width: number | null;
   height: number | null;

@@ -107,6 +107,10 @@ export interface Address {
      */
     'validate_location'?: boolean | null;
     /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Warehouse A\", \"is_default\": true, \"usage\": [\"sender\", \"return\"]}         
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
      * Specifies the object type
      */
     'object_type'?: string;
@@ -363,6 +367,10 @@ export type AddressCountryCodeEnum = typeof AddressCountryCodeEnum[keyof typeof 
 
 export interface AddressData {
     /**
+     * A unique identifier for the address (used in JSON embedded data)
+     */
+    'id'?: string | null;
+    /**
      * The address postal code         **(required for shipment purchase)**         
      */
     'postal_code'?: string | null;
@@ -422,6 +430,10 @@ export interface AddressData {
      * Indicate if the address should be validated
      */
     'validate_location'?: boolean | null;
+    /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Warehouse A\", \"is_default\": true, \"usage\": [\"sender\", \"return\"]}         
+     */
+    'meta'?: { [key: string]: any; } | null;
 }
 
 export const AddressDataCountryCodeEnum = {
@@ -1236,6 +1248,10 @@ export interface Commodity {
      */
     'metadata'?: { [key: string]: any; } | null;
     /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Widget Pro\", \"is_default\": false}         
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
      * Specifies the object type
      */
     'object_type'?: string;
@@ -1707,6 +1723,10 @@ export interface CommodityData {
      * <details>         <summary>Commodity user references metadata.</summary>          {             \"part_number\": \"5218487281\",             \"reference1\": \"# ref 1\",             \"reference2\": \"# ref 2\",             \"reference3\": \"# ref 3\",             ...         }         </details>         
      */
     'metadata'?: { [key: string]: any; } | null;
+    /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Widget Pro\", \"is_default\": false}         
+     */
+    'meta'?: { [key: string]: any; } | null;
 }
 
 export const CommodityDataWeightUnitEnum = {
@@ -2114,86 +2134,6 @@ export type CommodityDataOriginCountryEnum = typeof CommodityDataOriginCountryEn
  * @type ConnectionCredentialsField
  */
 export type ConnectionCredentialsField = Aramex | AsendiaUs | Australiapost | Boxknight | Bpost | Canadapost | Canpar | Chronopost | Colissimo | DhlExpress | DhlParcelDe | DhlPoland | DhlUniversal | Dicom | Dpd | DpdMeta | Dtdc | Easypost | Easyship | Eshipper | Fedex | Freightcom | Generic | Geodis | Gls | HayPost | Hermes | Landmark | Laposte | Locate2u | Mydhl | Nationex | Parcelone | Postat | Purolator | Roadie | Royalmail | Sapient | Seko | Sendle | Shipengine | Teleship | Tge | Tnt | Ups | Usps | UspsInternational | Veho | Zoom2u;
-
-export interface Customs {
-    /**
-     * A unique identifier
-     */
-    'id'?: string;
-    /**
-     * The parcel content items
-     */
-    'commodities'?: Array<Commodity>;
-    /**
-     * The payment details.<br/>         **Note that this is required for a Dutiable parcel shipped internationally.**         
-     */
-    'duty'?: Duty | null;
-    /**
-     * The duty payor address.
-     */
-    'duty_billing_address'?: Address | null;
-    'content_type'?: CustomsContentTypeEnum | null;
-    'content_description'?: string | null;
-    /**
-     * The customs \'term of trade\' also known as \'incoterm\'
-     */
-    'incoterm'?: CustomsIncotermEnum | null;
-    /**
-     * The invoice reference number
-     */
-    'invoice'?: string | null;
-    /**
-     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
-     */
-    'invoice_date'?: string | null;
-    /**
-     * Indicates if the shipment is commercial
-     */
-    'commercial_invoice'?: boolean | null;
-    /**
-     * Indicate that signer certified confirmed all
-     */
-    'certify'?: boolean | null;
-    'signer'?: string | null;
-    /**
-     * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         </details>         
-     */
-    'options'?: { [key: string]: any; };
-    /**
-     * Specifies the object type
-     */
-    'object_type'?: string;
-}
-
-export const CustomsContentTypeEnum = {
-    Documents: 'documents',
-    Gift: 'gift',
-    Sample: 'sample',
-    Merchandise: 'merchandise',
-    ReturnMerchandise: 'return_merchandise',
-    Other: 'other',
-    Empty: ''
-} as const;
-
-export type CustomsContentTypeEnum = typeof CustomsContentTypeEnum[keyof typeof CustomsContentTypeEnum];
-export const CustomsIncotermEnum = {
-    Cfr: 'CFR',
-    Cif: 'CIF',
-    Cip: 'CIP',
-    Cpt: 'CPT',
-    Dap: 'DAP',
-    Daf: 'DAF',
-    Ddp: 'DDP',
-    Ddu: 'DDU',
-    Deq: 'DEQ',
-    Des: 'DES',
-    Exw: 'EXW',
-    Fas: 'FAS',
-    Fca: 'FCA',
-    Fob: 'FOB'
-} as const;
-
-export type CustomsIncotermEnum = typeof CustomsIncotermEnum[keyof typeof CustomsIncotermEnum];
 
 export interface CustomsData {
     /**
@@ -2931,6 +2871,10 @@ export interface LineItem {
      * <details>         <summary>Commodity user references metadata.</summary>          {             \"part_number\": \"5218487281\",             \"reference1\": \"# ref 1\",             \"reference2\": \"# ref 2\",             \"reference3\": \"# ref 3\",             ...         }         </details>         
      */
     'metadata'?: { [key: string]: any; } | null;
+    /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Widget Pro\", \"is_default\": false}         
+     */
+    'meta'?: { [key: string]: any; } | null;
     /**
      * Specifies the object type
      */
@@ -3779,6 +3723,10 @@ export interface Parcel {
      */
     'options'?: { [key: string]: any; };
     /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Standard Box\", \"is_default\": true}         
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
      * Specifies the object type
      */
     'object_type'?: string;
@@ -3860,6 +3808,10 @@ export interface ParcelData {
      * <details>         <summary>Parcel specific options.</summary>          {             \"insurance\": \"100.00\",             \"insured_by\": \"carrier\",         }         </details>         
      */
     'options'?: { [key: string]: any; };
+    /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Standard Box\", \"is_default\": true}         
+     */
+    'meta'?: { [key: string]: any; } | null;
 }
 
 export const ParcelDataWeightUnitEnum = {
@@ -3891,6 +3843,10 @@ export interface Parcelone {
     'account_country_code'?: string | null;
 }
 export interface PatchedAddressData {
+    /**
+     * A unique identifier for the address (used in JSON embedded data)
+     */
+    'id'?: string | null;
     /**
      * The address postal code         **(required for shipment purchase)**         
      */
@@ -3951,6 +3907,10 @@ export interface PatchedAddressData {
      * Indicate if the address should be validated
      */
     'validate_location'?: boolean | null;
+    /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Warehouse A\", \"is_default\": true, \"usage\": [\"sender\", \"return\"]}         
+     */
+    'meta'?: { [key: string]: any; } | null;
 }
 
 export const PatchedAddressDataCountryCodeEnum = {
@@ -4283,6 +4243,478 @@ export const PatchedCarrierConnectionDataCarrierNameEnum = {
 
 export type PatchedCarrierConnectionDataCarrierNameEnum = typeof PatchedCarrierConnectionDataCarrierNameEnum[keyof typeof PatchedCarrierConnectionDataCarrierNameEnum];
 
+export interface PatchedCommodityData {
+    /**
+     * The commodity\'s weight
+     */
+    'weight'?: number;
+    /**
+     * The commodity\'s weight unit
+     */
+    'weight_unit'?: PatchedCommodityDataWeightUnitEnum;
+    /**
+     * A description of the commodity
+     */
+    'title'?: string | null;
+    /**
+     * A description of the commodity
+     */
+    'description'?: string | null;
+    /**
+     * The commodity\'s quantity (number or item)
+     */
+    'quantity'?: number;
+    /**
+     * The commodity\'s sku number
+     */
+    'sku'?: string | null;
+    /**
+     * The commodity\'s hs_code number
+     */
+    'hs_code'?: string | null;
+    /**
+     * The monetary value of the commodity
+     */
+    'value_amount'?: number | null;
+    /**
+     * The currency of the commodity value amount
+     */
+    'value_currency'?: PatchedCommodityDataValueCurrencyEnum | null;
+    /**
+     * The origin or manufacture country
+     */
+    'origin_country'?: PatchedCommodityDataOriginCountryEnum | null;
+    /**
+     * The product url
+     */
+    'product_url'?: string | null;
+    /**
+     * The image url
+     */
+    'image_url'?: string | null;
+    /**
+     * The product id
+     */
+    'product_id'?: string | null;
+    /**
+     * The variant id
+     */
+    'variant_id'?: string | null;
+    /**
+     * The id of the related order line item.
+     */
+    'parent_id'?: string | null;
+    /**
+     * <details>         <summary>Commodity user references metadata.</summary>          {             \"part_number\": \"5218487281\",             \"reference1\": \"# ref 1\",             \"reference2\": \"# ref 2\",             \"reference3\": \"# ref 3\",             ...         }         </details>         
+     */
+    'metadata'?: { [key: string]: any; } | null;
+    /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Widget Pro\", \"is_default\": false}         
+     */
+    'meta'?: { [key: string]: any; } | null;
+}
+
+export const PatchedCommodityDataWeightUnitEnum = {
+    Kg: 'KG',
+    Lb: 'LB',
+    Oz: 'OZ',
+    G: 'G'
+} as const;
+
+export type PatchedCommodityDataWeightUnitEnum = typeof PatchedCommodityDataWeightUnitEnum[keyof typeof PatchedCommodityDataWeightUnitEnum];
+export const PatchedCommodityDataValueCurrencyEnum = {
+    Eur: 'EUR',
+    Aed: 'AED',
+    Usd: 'USD',
+    Xcd: 'XCD',
+    Amd: 'AMD',
+    Ang: 'ANG',
+    Aoa: 'AOA',
+    Ars: 'ARS',
+    Aud: 'AUD',
+    Awg: 'AWG',
+    Azn: 'AZN',
+    Bam: 'BAM',
+    Bbd: 'BBD',
+    Bdt: 'BDT',
+    Xof: 'XOF',
+    Bgn: 'BGN',
+    Bhd: 'BHD',
+    Bif: 'BIF',
+    Bmd: 'BMD',
+    Bnd: 'BND',
+    Bob: 'BOB',
+    Brl: 'BRL',
+    Bsd: 'BSD',
+    Btn: 'BTN',
+    Bwp: 'BWP',
+    Byn: 'BYN',
+    Bzd: 'BZD',
+    Cad: 'CAD',
+    Cdf: 'CDF',
+    Xaf: 'XAF',
+    Chf: 'CHF',
+    Nzd: 'NZD',
+    Clp: 'CLP',
+    Cny: 'CNY',
+    Cop: 'COP',
+    Crc: 'CRC',
+    Cuc: 'CUC',
+    Cve: 'CVE',
+    Czk: 'CZK',
+    Djf: 'DJF',
+    Dkk: 'DKK',
+    Dop: 'DOP',
+    Dzd: 'DZD',
+    Egp: 'EGP',
+    Ern: 'ERN',
+    Etb: 'ETB',
+    Fjd: 'FJD',
+    Gbp: 'GBP',
+    Gel: 'GEL',
+    Ghs: 'GHS',
+    Gmd: 'GMD',
+    Gnf: 'GNF',
+    Gtq: 'GTQ',
+    Gyd: 'GYD',
+    Hkd: 'HKD',
+    Hnl: 'HNL',
+    Hrk: 'HRK',
+    Htg: 'HTG',
+    Huf: 'HUF',
+    Idr: 'IDR',
+    Ils: 'ILS',
+    Inr: 'INR',
+    Irr: 'IRR',
+    Isk: 'ISK',
+    Jmd: 'JMD',
+    Jod: 'JOD',
+    Jpy: 'JPY',
+    Kes: 'KES',
+    Kgs: 'KGS',
+    Khr: 'KHR',
+    Kmf: 'KMF',
+    Kpw: 'KPW',
+    Krw: 'KRW',
+    Kwd: 'KWD',
+    Kyd: 'KYD',
+    Kzt: 'KZT',
+    Lak: 'LAK',
+    Lkr: 'LKR',
+    Lrd: 'LRD',
+    Lsl: 'LSL',
+    Lyd: 'LYD',
+    Mad: 'MAD',
+    Mdl: 'MDL',
+    Mga: 'MGA',
+    Mkd: 'MKD',
+    Mmk: 'MMK',
+    Mnt: 'MNT',
+    Mop: 'MOP',
+    Mro: 'MRO',
+    Mur: 'MUR',
+    Mvr: 'MVR',
+    Mwk: 'MWK',
+    Mxn: 'MXN',
+    Myr: 'MYR',
+    Mzn: 'MZN',
+    Nad: 'NAD',
+    Xpf: 'XPF',
+    Ngn: 'NGN',
+    Nio: 'NIO',
+    Nok: 'NOK',
+    Npr: 'NPR',
+    Omr: 'OMR',
+    Pen: 'PEN',
+    Pgk: 'PGK',
+    Php: 'PHP',
+    Pkr: 'PKR',
+    Pln: 'PLN',
+    Pyg: 'PYG',
+    Qar: 'QAR',
+    Ron: 'RON',
+    Rsd: 'RSD',
+    Rub: 'RUB',
+    Rwf: 'RWF',
+    Sar: 'SAR',
+    Sbd: 'SBD',
+    Scr: 'SCR',
+    Sdg: 'SDG',
+    Sek: 'SEK',
+    Sgd: 'SGD',
+    Shp: 'SHP',
+    Sll: 'SLL',
+    Sos: 'SOS',
+    Srd: 'SRD',
+    Ssp: 'SSP',
+    Std: 'STD',
+    Syp: 'SYP',
+    Szl: 'SZL',
+    Thb: 'THB',
+    Tjs: 'TJS',
+    Tnd: 'TND',
+    Top: 'TOP',
+    Try: 'TRY',
+    Ttd: 'TTD',
+    Twd: 'TWD',
+    Tzs: 'TZS',
+    Uah: 'UAH',
+    Uyu: 'UYU',
+    Uzs: 'UZS',
+    Vef: 'VEF',
+    Vnd: 'VND',
+    Vuv: 'VUV',
+    Wst: 'WST',
+    Yer: 'YER',
+    Zar: 'ZAR'
+} as const;
+
+export type PatchedCommodityDataValueCurrencyEnum = typeof PatchedCommodityDataValueCurrencyEnum[keyof typeof PatchedCommodityDataValueCurrencyEnum];
+export const PatchedCommodityDataOriginCountryEnum = {
+    Ac: 'AC',
+    Ad: 'AD',
+    Ae: 'AE',
+    Af: 'AF',
+    Ag: 'AG',
+    Ai: 'AI',
+    Al: 'AL',
+    Am: 'AM',
+    An: 'AN',
+    Ao: 'AO',
+    Ar: 'AR',
+    As: 'AS',
+    At: 'AT',
+    Au: 'AU',
+    Aw: 'AW',
+    Az: 'AZ',
+    Ba: 'BA',
+    Bb: 'BB',
+    Bd: 'BD',
+    Be: 'BE',
+    Bf: 'BF',
+    Bg: 'BG',
+    Bh: 'BH',
+    Bi: 'BI',
+    Bj: 'BJ',
+    Bm: 'BM',
+    Bn: 'BN',
+    Bo: 'BO',
+    Br: 'BR',
+    Bs: 'BS',
+    Bt: 'BT',
+    Bw: 'BW',
+    By: 'BY',
+    Bz: 'BZ',
+    Ca: 'CA',
+    Cd: 'CD',
+    Cf: 'CF',
+    Cg: 'CG',
+    Ch: 'CH',
+    Ci: 'CI',
+    Ck: 'CK',
+    Cl: 'CL',
+    Cm: 'CM',
+    Cn: 'CN',
+    Co: 'CO',
+    Cr: 'CR',
+    Cu: 'CU',
+    Cv: 'CV',
+    Cy: 'CY',
+    Cz: 'CZ',
+    De: 'DE',
+    Dj: 'DJ',
+    Dk: 'DK',
+    Dm: 'DM',
+    Do: 'DO',
+    Dz: 'DZ',
+    Ec: 'EC',
+    Ee: 'EE',
+    Eg: 'EG',
+    Er: 'ER',
+    Es: 'ES',
+    Et: 'ET',
+    Fi: 'FI',
+    Fj: 'FJ',
+    Fk: 'FK',
+    Fm: 'FM',
+    Fo: 'FO',
+    Fr: 'FR',
+    Ga: 'GA',
+    Gb: 'GB',
+    Gd: 'GD',
+    Ge: 'GE',
+    Gf: 'GF',
+    Gg: 'GG',
+    Gh: 'GH',
+    Gi: 'GI',
+    Gl: 'GL',
+    Gm: 'GM',
+    Gn: 'GN',
+    Gp: 'GP',
+    Gq: 'GQ',
+    Gr: 'GR',
+    Gt: 'GT',
+    Gu: 'GU',
+    Gw: 'GW',
+    Gy: 'GY',
+    Hk: 'HK',
+    Hn: 'HN',
+    Hr: 'HR',
+    Ht: 'HT',
+    Hu: 'HU',
+    Ic: 'IC',
+    Id: 'ID',
+    Ie: 'IE',
+    Il: 'IL',
+    In: 'IN',
+    Iq: 'IQ',
+    Ir: 'IR',
+    Is: 'IS',
+    It: 'IT',
+    Je: 'JE',
+    Jm: 'JM',
+    Jo: 'JO',
+    Jp: 'JP',
+    Ke: 'KE',
+    Kg: 'KG',
+    Kh: 'KH',
+    Ki: 'KI',
+    Km: 'KM',
+    Kn: 'KN',
+    Kp: 'KP',
+    Kr: 'KR',
+    Kv: 'KV',
+    Kw: 'KW',
+    Ky: 'KY',
+    Kz: 'KZ',
+    La: 'LA',
+    Lb: 'LB',
+    Lc: 'LC',
+    Li: 'LI',
+    Lk: 'LK',
+    Lr: 'LR',
+    Ls: 'LS',
+    Lt: 'LT',
+    Lu: 'LU',
+    Lv: 'LV',
+    Ly: 'LY',
+    Ma: 'MA',
+    Mc: 'MC',
+    Md: 'MD',
+    Me: 'ME',
+    Mg: 'MG',
+    Mh: 'MH',
+    Mk: 'MK',
+    Ml: 'ML',
+    Mm: 'MM',
+    Mn: 'MN',
+    Mo: 'MO',
+    Mp: 'MP',
+    Mq: 'MQ',
+    Mr: 'MR',
+    Ms: 'MS',
+    Mt: 'MT',
+    Mu: 'MU',
+    Mv: 'MV',
+    Mw: 'MW',
+    Mx: 'MX',
+    My: 'MY',
+    Mz: 'MZ',
+    Na: 'NA',
+    Nc: 'NC',
+    Ne: 'NE',
+    Ng: 'NG',
+    Ni: 'NI',
+    Nl: 'NL',
+    No: 'NO',
+    Np: 'NP',
+    Nr: 'NR',
+    Nu: 'NU',
+    Nz: 'NZ',
+    Om: 'OM',
+    Pa: 'PA',
+    Pe: 'PE',
+    Pf: 'PF',
+    Pg: 'PG',
+    Ph: 'PH',
+    Pk: 'PK',
+    Pl: 'PL',
+    Pr: 'PR',
+    Pt: 'PT',
+    Pw: 'PW',
+    Py: 'PY',
+    Qa: 'QA',
+    Re: 'RE',
+    Ro: 'RO',
+    Rs: 'RS',
+    Ru: 'RU',
+    Rw: 'RW',
+    Sa: 'SA',
+    Sb: 'SB',
+    Sc: 'SC',
+    Sd: 'SD',
+    Se: 'SE',
+    Sg: 'SG',
+    Sh: 'SH',
+    Si: 'SI',
+    Sk: 'SK',
+    Sl: 'SL',
+    Sm: 'SM',
+    Sn: 'SN',
+    So: 'SO',
+    Sr: 'SR',
+    Ss: 'SS',
+    St: 'ST',
+    Sv: 'SV',
+    Sy: 'SY',
+    Sz: 'SZ',
+    Tc: 'TC',
+    Td: 'TD',
+    Tg: 'TG',
+    Th: 'TH',
+    Tj: 'TJ',
+    Tl: 'TL',
+    Tn: 'TN',
+    To: 'TO',
+    Tr: 'TR',
+    Tt: 'TT',
+    Tv: 'TV',
+    Tw: 'TW',
+    Tz: 'TZ',
+    Ua: 'UA',
+    Ug: 'UG',
+    Us: 'US',
+    Uy: 'UY',
+    Uz: 'UZ',
+    Va: 'VA',
+    Vc: 'VC',
+    Ve: 'VE',
+    Vg: 'VG',
+    Vi: 'VI',
+    Vn: 'VN',
+    Vu: 'VU',
+    Ws: 'WS',
+    Xb: 'XB',
+    Xc: 'XC',
+    Xe: 'XE',
+    Xm: 'XM',
+    Xn: 'XN',
+    Xs: 'XS',
+    Xy: 'XY',
+    Ye: 'YE',
+    Yt: 'YT',
+    Za: 'ZA',
+    Zm: 'ZM',
+    Zw: 'ZW',
+    Eh: 'EH',
+    Im: 'IM',
+    Bl: 'BL',
+    Mf: 'MF',
+    Sx: 'SX'
+} as const;
+
+export type PatchedCommodityDataOriginCountryEnum = typeof PatchedCommodityDataOriginCountryEnum[keyof typeof PatchedCommodityDataOriginCountryEnum];
+
 export interface PatchedDocumentTemplateData {
     /**
      * The template name
@@ -4387,6 +4819,10 @@ export interface PatchedParcelData {
      * <details>         <summary>Parcel specific options.</summary>          {             \"insurance\": \"100.00\",             \"insured_by\": \"carrier\",         }         </details>         
      */
     'options'?: { [key: string]: any; };
+    /**
+     * Template metadata for template identification.         Structure: {\"label\": \"Standard Box\", \"is_default\": true}         
+     */
+    'meta'?: { [key: string]: any; } | null;
 }
 
 export const PatchedParcelDataWeightUnitEnum = {
@@ -4886,6 +5322,12 @@ export interface Postat {
     'org_unit_guid': string;
     'account_country_code'?: string | null;
 }
+export interface ProductList {
+    'count'?: number | null;
+    'next'?: string | null;
+    'previous'?: string | null;
+    'results': Array<Commodity>;
+}
 export interface Purolator {
     'username': string;
     'password': string;
@@ -5130,11 +5572,11 @@ export interface Shipment {
     /**
      * The return address for this shipment. Defaults to the shipper address.
      */
-    'return_address'?: AddressData | null;
+    'return_address'?: Address | null;
     /**
      * The payor address.
      */
-    'billing_address'?: AddressData | null;
+    'billing_address'?: Address | null;
     /**
      * The shipment\'s parcels
      */
@@ -5154,7 +5596,7 @@ export interface Shipment {
     /**
      * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
      */
-    'customs'?: Customs | null;
+    'customs'?: CustomsData | null;
     /**
      * The list for shipment rates fetched previously
      */
@@ -5615,11 +6057,11 @@ export interface ShippingResponse {
     /**
      * The return address for this shipment. Defaults to the shipper address.
      */
-    'return_address'?: AddressData | null;
+    'return_address'?: Address | null;
     /**
      * The payor address.
      */
-    'billing_address'?: AddressData | null;
+    'billing_address'?: Address | null;
     /**
      * The shipment\'s parcels
      */
@@ -5639,7 +6081,7 @@ export interface ShippingResponse {
     /**
      * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
      */
-    'customs'?: Customs | null;
+    'customs'?: CustomsData | null;
     /**
      * The list for shipment rates fetched previously
      */
@@ -11842,6 +12284,479 @@ export class PickupsApi extends BaseAPI {
      */
     public update(requestParameters: PickupsApiUpdateRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).update(requestParameters.id, requestParameters.pickupUpdateData, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ProductsApi - axios parameter creator
+ */
+export const ProductsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         *          Create a new product template.          Products must include a `meta.label` to be identified as templates.         
+         * @summary Create a product
+         * @param {CommodityData} commodityData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (commodityData: CommodityData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'commodityData' is not null or undefined
+            assertParamExists('create', 'commodityData', commodityData)
+            const localVarPath = `/v1/products`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(commodityData, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Delete a product template.
+         * @summary Remove a product
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        discard: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('discard', 'id', id)
+            const localVarPath = `/v1/products/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         * @summary List all products
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/products`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve a product template by ID.
+         * @summary Retrieve a product
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieve', 'id', id)
+            const localVarPath = `/v1/products/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update an existing product template.
+         * @summary Update a product
+         * @param {string} id 
+         * @param {PatchedCommodityData} [patchedCommodityData] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        update: async (id: string, patchedCommodityData?: PatchedCommodityData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('update', 'id', id)
+            const localVarPath = `/v1/products/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(patchedCommodityData, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ProductsApi - functional programming interface
+ */
+export const ProductsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ProductsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         *          Create a new product template.          Products must include a `meta.label` to be identified as templates.         
+         * @summary Create a product
+         * @param {CommodityData} commodityData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(commodityData: CommodityData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Commodity>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(commodityData, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProductsApi.create']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Delete a product template.
+         * @summary Remove a product
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async discard(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Commodity>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.discard(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProductsApi.discard']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         * @summary List all products
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProductList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProductsApi.list']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Retrieve a product template by ID.
+         * @summary Retrieve a product
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Commodity>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProductsApi.retrieve']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update an existing product template.
+         * @summary Update a product
+         * @param {string} id 
+         * @param {PatchedCommodityData} [patchedCommodityData] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async update(id: string, patchedCommodityData?: PatchedCommodityData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Commodity>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, patchedCommodityData, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProductsApi.update']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ProductsApi - factory interface
+ */
+export const ProductsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ProductsApiFp(configuration)
+    return {
+        /**
+         *          Create a new product template.          Products must include a `meta.label` to be identified as templates.         
+         * @summary Create a product
+         * @param {ProductsApiCreateRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(requestParameters: ProductsApiCreateRequest, options?: AxiosRequestConfig): AxiosPromise<Commodity> {
+            return localVarFp.create(requestParameters.commodityData, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Delete a product template.
+         * @summary Remove a product
+         * @param {ProductsApiDiscardRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        discard(requestParameters: ProductsApiDiscardRequest, options?: AxiosRequestConfig): AxiosPromise<Commodity> {
+            return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         * @summary List all products
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(options?: AxiosRequestConfig): AxiosPromise<ProductList> {
+            return localVarFp.list(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve a product template by ID.
+         * @summary Retrieve a product
+         * @param {ProductsApiRetrieveRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve(requestParameters: ProductsApiRetrieveRequest, options?: AxiosRequestConfig): AxiosPromise<Commodity> {
+            return localVarFp.retrieve(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update an existing product template.
+         * @summary Update a product
+         * @param {ProductsApiUpdateRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        update(requestParameters: ProductsApiUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<Commodity> {
+            return localVarFp.update(requestParameters.id, requestParameters.patchedCommodityData, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for create operation in ProductsApi.
+ */
+export interface ProductsApiCreateRequest {
+    readonly commodityData: CommodityData
+}
+
+/**
+ * Request parameters for discard operation in ProductsApi.
+ */
+export interface ProductsApiDiscardRequest {
+    readonly id: string
+}
+
+/**
+ * Request parameters for retrieve operation in ProductsApi.
+ */
+export interface ProductsApiRetrieveRequest {
+    readonly id: string
+}
+
+/**
+ * Request parameters for update operation in ProductsApi.
+ */
+export interface ProductsApiUpdateRequest {
+    readonly id: string
+
+    readonly patchedCommodityData?: PatchedCommodityData
+}
+
+/**
+ * ProductsApi - object-oriented interface
+ */
+export class ProductsApi extends BaseAPI {
+    /**
+     *          Create a new product template.          Products must include a `meta.label` to be identified as templates.         
+     * @summary Create a product
+     * @param {ProductsApiCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public create(requestParameters: ProductsApiCreateRequest, options?: AxiosRequestConfig) {
+        return ProductsApiFp(this.configuration).create(requestParameters.commodityData, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Delete a product template.
+     * @summary Remove a product
+     * @param {ProductsApiDiscardRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public discard(requestParameters: ProductsApiDiscardRequest, options?: AxiosRequestConfig) {
+        return ProductsApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+     * @summary List all products
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public list(options?: AxiosRequestConfig) {
+        return ProductsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve a product template by ID.
+     * @summary Retrieve a product
+     * @param {ProductsApiRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public retrieve(requestParameters: ProductsApiRetrieveRequest, options?: AxiosRequestConfig) {
+        return ProductsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update an existing product template.
+     * @summary Update a product
+     * @param {ProductsApiUpdateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public update(requestParameters: ProductsApiUpdateRequest, options?: AxiosRequestConfig) {
+        return ProductsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedCommodityData, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
