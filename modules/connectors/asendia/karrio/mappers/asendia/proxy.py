@@ -12,9 +12,14 @@ class Proxy(proxy.Proxy):
         """Create parcels and retrieve labels.
 
         Asendia uses per-package requests (Pattern B).
-        Runs requests asynchronously for each package in the list.
+        Like Canada Post, we:
+        1. Create parcels asynchronously (one per package)
+        2. Fetch labels for each parcel (one more call per package)
         """
-        responses = lib.run_asynchronously(
+        label_type = request.ctx.get("label_type", "PDF")
+
+        # Step 1: Create parcels
+        parcel_responses = lib.run_asynchronously(
             lambda payload: lib.request(
                 url=f"{self.settings.server_url}/api/parcels",
                 data=lib.to_json(payload),
@@ -28,9 +33,37 @@ class Proxy(proxy.Proxy):
             request.serialize(),
         )
 
+        # Step 2: Fetch labels for each parcel
+        responses = lib.run_asynchronously(
+            lambda data: dict(
+                parcel=data["parcel"],
+                label=(
+                    lib.request(
+                        url=f"{self.settings.server_url}/api/parcels/{data['parcel_id']}/label",
+                        trace=self.trace_as("json"),
+                        method="GET",
+                        headers={
+                            "Accept": f"application/{label_type.lower()}",
+                            "Authorization": f"Bearer {self.settings.access_token}",
+                        },
+                        decoder=lib.encode_base64,
+                    )
+                    if data["parcel_id"] is not None
+                    else None
+                ),
+            ),
+            [
+                dict(
+                    parcel=lib.to_dict(res),
+                    parcel_id=lib.to_dict(res).get("id"),
+                )
+                for res in parcel_responses
+            ],
+        )
+
         return lib.Deserializable(
             responses,
-            lambda res: [lib.to_dict(r) for r in res],
+            lambda res: [(r["parcel"], r["label"]) for r in res],
             request.ctx,
         )
 

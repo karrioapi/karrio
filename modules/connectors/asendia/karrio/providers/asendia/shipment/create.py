@@ -12,32 +12,32 @@ import karrio.schemas.asendia.shipment_response as asendia_res
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[typing.List[typing.Tuple[dict, str]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
     """Parse shipment response from Asendia API.
 
-    Asendia uses per-package requests, so we receive a list of responses.
-    Use lib.to_multi_piece_shipment() to aggregate multiple package responses.
+    Asendia uses per-package requests (Pattern B), like Canada Post.
+    Proxy fetches labels for each parcel, so we can use lib.to_multi_piece_shipment().
+    Response format: [(parcel_dict, label_base64), ...]
     """
     responses = _response.deserialize()
 
     # Aggregate errors from all responses using sum()
     messages: typing.List[models.Message] = sum(
-        [error.parse_error_response(response, settings) for response in responses],
+        [error.parse_error_response(parcel, settings) for parcel, _ in responses],
         start=[],
     )
 
-    # Extract shipment details from each response
+    # Extract shipment details from each valid response
     shipment = lib.to_multi_piece_shipment(
         [
             (
                 f"{idx}",
-                _extract_details(response, settings, _response.ctx)
-                if response.get("trackingNumber")
-                else None,
+                _extract_details(parcel, label, settings, _response.ctx),
             )
-            for idx, response in enumerate(responses, start=1)
+            for idx, (parcel, label) in enumerate(responses, start=1)
+            if parcel.get("trackingNumber")
         ]
     )
 
@@ -46,6 +46,7 @@ def parse_shipment_response(
 
 def _extract_details(
     data: dict,
+    label: typing.Optional[str],
     settings: provider_utils.Settings,
     ctx: dict = None,
 ) -> models.ShipmentDetails:
@@ -54,11 +55,8 @@ def _extract_details(
     ctx = ctx or {}
     label_type = ctx.get("label_type", "PDF")
 
-    # Get label from context if proxy fetched it
-    label = ctx.get("label")
-
-    # Build documents
-    docs = models.Documents(label=label) if label else None
+    # Label is fetched by proxy and passed directly
+    docs = models.Documents(label=label)
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
@@ -68,6 +66,7 @@ def _extract_details(
         label_type=label_type,
         docs=docs,
         meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(shipment.trackingNumber),
             label_location=shipment.labelLocation,
             return_label_location=shipment.returnLabelLocation,
             return_tracking_number=shipment.returnTrackingNumber,
