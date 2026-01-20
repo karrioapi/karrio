@@ -9,6 +9,26 @@ import karrio.providers.asendia.units as provider_units
 import karrio.schemas.asendia.tracking_response as asendia_res
 
 
+def _match_status(code: str) -> typing.Optional[str]:
+    """Match code against TrackingStatus enum values."""
+    if not code:
+        return None
+    for status in list(provider_units.TrackingStatus):
+        if code in status.value:
+            return status.name
+    return None
+
+
+def _match_reason(code: str) -> typing.Optional[str]:
+    """Match code against TrackingIncidentReason enum values."""
+    if not code:
+        return None
+    for reason in list(provider_units.TrackingIncidentReason):
+        if code in reason.value:
+            return reason.name
+    return None
+
+
 def parse_tracking_response(
     _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
@@ -49,61 +69,42 @@ def _extract_details(
         reverse=True,
     )
 
-    # Get latest event for overall status
-    latest_event = next(iter(sorted_events), None)
+    # Build events list
+    events = [
+        models.TrackingEvent(
+            date=lib.fdate(event.time, "%Y-%m-%dT%H:%M:%SZ"),
+            time=lib.flocaltime(event.time, "%Y-%m-%dT%H:%M:%SZ"),
+            description=event.carrierEventDescription,
+            code=event.code,
+            location=lib.join(
+                event.locationName,
+                event.locationCountry,
+                join=True,
+                separator=", ",
+            ),
+            # REQUIRED: ISO 8601 timestamp
+            timestamp=lib.fiso_timestamp(
+                event.time,
+                current_format="%Y-%m-%dT%H:%M:%SZ",
+            ),
+            # REQUIRED: Normalized status at event level
+            status=_match_status(event.code),
+            # Incident reason for delivery exceptions
+            reason=_match_reason(event.code),
+        )
+        for event in sorted_events
+    ]
 
-    # Determine overall status using next() pattern
-    status = next(
-        (
-            s.name
-            for s in list(provider_units.TrackingStatus)
-            if latest_event and latest_event.code in s.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
-    )
+    # Determine overall status from latest event
+    latest_event = events[0] if events else None
+    status = latest_event.status if latest_event else None
+    status = status or provider_units.TrackingStatus.in_transit.name
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=number,
-        events=[
-            models.TrackingEvent(
-                date=lib.fdate(event.time, "%Y-%m-%dT%H:%M:%SZ"),
-                time=lib.flocaltime(event.time, "%Y-%m-%dT%H:%M:%SZ"),
-                description=event.carrierEventDescription,
-                code=event.code,
-                location=lib.join(
-                    event.locationName,
-                    event.locationCountry,
-                    join=True,
-                    separator=", ",
-                ),
-                # REQUIRED: ISO 8601 timestamp
-                timestamp=lib.fiso_timestamp(
-                    event.time,
-                    current_format="%Y-%m-%dT%H:%M:%SZ",
-                ),
-                # REQUIRED: Normalized status at event level
-                status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.code in s.value
-                    ),
-                    None,
-                ),
-                # REQUIRED: Incident reason for delivery exceptions
-                reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.code in r.value
-                    ),
-                    None,
-                ),
-            )
-            for event in sorted_events
-        ],
+        events=events,
         delivered=status == "delivered",
         status=status,
     )

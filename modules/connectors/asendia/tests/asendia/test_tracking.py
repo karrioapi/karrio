@@ -35,6 +35,7 @@ class TestAsendiaTracking(unittest.TestCase):
                 parsed_response = (
                     karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
                 )
+                print(parsed_response)
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
 
@@ -108,7 +109,7 @@ ParsedTrackingResponse = [
                     "date": "2024-04-12",
                     "description": "Package picked up",
                     "location": "Bern, CH",
-                    "status": "ready_for_pickup",
+                    "status": "picked_up",
                     "time": "14:30 PM",
                     "timestamp": "2024-04-12T14:30:00.000Z",
                 },

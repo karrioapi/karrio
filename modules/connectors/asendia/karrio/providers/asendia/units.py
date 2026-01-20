@@ -149,7 +149,7 @@ class TrackingStatus(lib.Enum):
     """Maps Asendia tracking status codes to normalized Karrio statuses."""
 
     pending = ["PENDING", "CREATED", "ACCEPTED", "LABEL_PRINTED"]
-    picked_up = ["PICKED_UP", "COLLECTED", "COLLECTION"]
+    picked_up = ["PICKED_UP", "COLLECTED", "COLLECTION", "PU"]
     in_transit = [
         "IN_TRANSIT",
         "IT",
@@ -162,7 +162,7 @@ class TrackingStatus(lib.Enum):
     ]
     out_for_delivery = ["OUT_FOR_DELIVERY", "OFD", "WITH_COURIER"]
     delivered = ["DELIVERED", "DL", "DELIVERY_CONFIRMED"]
-    ready_for_pickup = ["READY_FOR_PICKUP", "PICKUP", "PU", "AT_LOCATION"]
+    ready_for_pickup = ["READY_FOR_PICKUP", "PICKUP", "AT_LOCATION"]
     on_hold = ["ON_HOLD", "HELD", "AWAITING"]
     delivery_delayed = ["DELAYED", "DELAY", "RESCHEDULED"]
     delivery_failed = [
