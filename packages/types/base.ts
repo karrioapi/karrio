@@ -466,6 +466,7 @@ export const CARRIER_IMAGES: Collection = {
   fedex_smartpost: "fedex",
   firstmile: "generic",
   globegistics: "generic",
+  gls: "gls",
   gso: "generic",
   hermes: "hermes",
   hermes_parcel: "hermes",
