@@ -1259,6 +1259,103 @@ class TestShipmentCancelIdempotent(APITestCase):
         self.assertEqual(response_data["status"], "cancelled")
 
 
+class TestComputeEstimatedDelivery(APITestCase):
+    """Test compute_estimated_delivery utility function."""
+
+    def test_returns_estimated_delivery_from_rate(self):
+        """Test that estimated_delivery is returned directly from selected_rate."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"estimated_delivery": "2024-01-20", "transit_days": 5}
+        options = {"shipping_date": "2024-01-15"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-20")
+        self.assertEqual(shipping_date_str, "2024-01-15")
+
+    def test_computes_from_transit_days_when_no_estimated_delivery(self):
+        """Test that estimated_delivery is computed from transit_days when not provided."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 5}
+        options = {"shipping_date": "2024-01-15"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-20")
+        self.assertEqual(shipping_date_str, "2024-01-15")
+
+    def test_uses_shipment_date_option_as_fallback(self):
+        """Test that shipment_date is used when shipping_date is not available."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 3}
+        options = {"shipment_date": "2024-01-10"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-13")
+        self.assertEqual(shipping_date_str, "2024-01-10")
+
+    def test_returns_none_when_no_transit_days_or_estimated_delivery(self):
+        """Test that None is returned when neither estimated_delivery nor transit_days are available."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {}
+        options = {"shipping_date": "2024-01-15"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertIsNone(estimated_delivery)
+        self.assertEqual(shipping_date_str, "2024-01-15")
+
+    def test_returns_none_when_no_shipping_date(self):
+        """Test that None is returned when no shipping date is available."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 5}
+        options = {}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertIsNone(estimated_delivery)
+        self.assertIsNone(shipping_date_str)
+
+    def test_handles_none_inputs(self):
+        """Test that None inputs are handled gracefully."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(None, None)
+
+        self.assertIsNone(estimated_delivery)
+        self.assertIsNone(shipping_date_str)
+
+    def test_handles_datetime_format_shipping_date(self):
+        """Test that datetime format shipping_date is handled correctly."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 2}
+        options = {"shipping_date": "2024-01-15T10:30"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-17")
+        self.assertEqual(shipping_date_str, "2024-01-15T10:30")
+
+
 LABEL_DOCUMENT_RESPONSE = {
     "category": "label",
     "format": "PDF",

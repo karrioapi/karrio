@@ -225,45 +225,67 @@ class ShipmentSerializer(ShipmentData):
 
         if "shipper" in data:
             instance.shipper = process_json_object_mutation(
-                "shipper", data, instance,
-                model_class=models.Address, object_type="address", id_prefix="adr",
+                "shipper",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
             )
             changes.append("shipper")
 
         if "recipient" in data:
             instance.recipient = process_json_object_mutation(
-                "recipient", data, instance,
-                model_class=models.Address, object_type="address", id_prefix="adr",
+                "recipient",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
             )
             changes.append("recipient")
 
         if "return_address" in data:
             instance.return_address = process_json_object_mutation(
-                "return_address", data, instance,
-                model_class=models.Address, object_type="address", id_prefix="adr",
+                "return_address",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
             )
             changes.append("return_address")
 
         if "billing_address" in data:
             instance.billing_address = process_json_object_mutation(
-                "billing_address", data, instance,
-                model_class=models.Address, object_type="address", id_prefix="adr",
+                "billing_address",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
             )
             changes.append("billing_address")
 
         if "parcels" in data:
             instance.parcels = process_json_array_mutation(
-                "parcels", data, instance,
-                id_prefix="pcl", model_class=models.Parcel,
+                "parcels",
+                data,
+                instance,
+                id_prefix="pcl",
+                model_class=models.Parcel,
                 nested_arrays={"items": ("itm", models.Commodity)},
-                object_type="parcel", data_field_name="parcels",
+                object_type="parcel",
+                data_field_name="parcels",
             )
             changes.append("parcels")
 
         if "customs" in data:
             instance.customs = process_customs_mutation(
-                data, instance,
-                address_model=models.Address, product_model=models.Commodity,
+                data,
+                instance,
+                address_model=models.Address,
+                product_model=models.Commodity,
             )
             changes.append("customs")
 
@@ -822,6 +844,44 @@ def can_mutate_shipment(
         )
 
 
+def compute_estimated_delivery(
+    selected_rate: typing.Optional[dict],
+    options: typing.Optional[dict],
+) -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
+    """Compute estimated delivery date from rate and shipment options.
+
+    This function extracts the estimated delivery date from the selected rate,
+    or computes it from transit days and shipping date if not directly available.
+
+    Args:
+        selected_rate: The selected shipping rate dictionary
+        options: The shipment options dictionary
+
+    Returns:
+        A tuple of (estimated_delivery, shipping_date_str) where:
+        - estimated_delivery: The estimated delivery date string (YYYY-MM-DD format) or None
+        - shipping_date_str: The shipping date string from options or None
+    """
+    _rate = selected_rate or {}
+    _options = options or {}
+
+    shipping_date_str = _options.get("shipping_date") or _options.get("shipment_date")
+    estimated_delivery = _rate.get("estimated_delivery")
+    transit_days = _rate.get("transit_days")
+
+    if not estimated_delivery and transit_days and shipping_date_str:
+        shipping_date = lib.to_date(
+            shipping_date_str,
+            current_format="%Y-%m-%dT%H:%M",
+            try_formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S"],
+        )
+        if shipping_date:
+            estimated_date = shipping_date + datetime.timedelta(days=int(transit_days))
+            estimated_delivery = lib.fdate(estimated_date)
+
+    return estimated_delivery, shipping_date_str
+
+
 def remove_shipment_tracker(shipment: models.Shipment):
     if hasattr(shipment, "shipment_tracker"):
         shipment.shipment_tracker.delete()
@@ -871,6 +931,10 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
             recipient = shipment.recipient or {}
 
             pkg_weight = sum([p.get("weight") or 0.0 for p in parcels], 0.0)
+            estimated_delivery, shipping_date_str = compute_estimated_delivery(
+                shipment.selected_rate, shipment.options
+            )
+
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
                 delivered=False,

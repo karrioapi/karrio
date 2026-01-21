@@ -7,6 +7,7 @@ from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
 import karrio.server.manager.models as models
+import karrio.server.manager.serializers as serializers
 
 
 class TestTrackers(APITestCase):
@@ -243,7 +244,7 @@ class TestTrackerEstimatedDelivery(APITestCase):
                 "status": "pending",
                 "estimated_delivery": "2024-01-20",
                 "created_by": self.user,
-                "tracking_carrier": self.dhl_carrier,
+                "carrier": create_carrier_snapshot(self.dhl_carrier),
                 "info": {
                     "shipping_date": "2024-01-15",
                     "expected_delivery": "2024-01-20",

@@ -1,4 +1,5 @@
 import typing
+from django.db import transaction
 from django.utils import timezone
 
 import karrio.lib as lib
@@ -8,7 +9,9 @@ from karrio.server.core.logging import logger
 from karrio.server.core.gateway import Shipments, Connections
 from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 from karrio.server.core.serializers import (
+    TRACKER_STATUS,
     TrackingDetails,
+    TrackingEvent,
     TrackingRequest,
     ShipmentStatus,
     TrackerStatus,
@@ -40,6 +43,7 @@ class TrackingSerializer(TrackingDetails):
         help_text="The carrier user metadata.",
     )
 
+    @transaction.atomic
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
         options = validated_data["options"]
         metadata = validated_data["metadata"]
@@ -91,6 +95,7 @@ class TrackingSerializer(TrackingDetails):
             signature_image=getattr(response.tracking.images, "signature_image", None),
         )
 
+    @transaction.atomic
     def update(
         self, instance: models.Tracking, validated_data: dict, context, **kwargs
     ) -> models.Tracking:
@@ -158,6 +163,7 @@ class TrackerUpdateData(serializers.Serializer):
         required=False, help_text="User metadata for the tracker"
     )
 
+    @transaction.atomic
     def update(
         self, instance: models.Tracking, validated_data: dict, **kwargs
     ) -> models.Tracking:
@@ -215,6 +221,7 @@ def update_shipment_tracker(tracker: models.Tracking):
         logger.exception("Failed to update the tracked shipment", error=str(e), tracker_id=tracker.id, tracking_number=tracker.tracking_number)
 
 
+@transaction.atomic
 def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.Tracking:
     """Update tracker with new tracking details from webhook or external source.
 
@@ -338,3 +345,29 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
             tracking_number=tracker.tracking_number,
         )
         return tracker
+
+
+class TrackerEventInjectRequest(serializers.Serializer):
+    """Request payload for injecting tracking events."""
+
+    events = TrackingEvent(
+        many=True,
+        required=True,
+        help_text="List of tracking events to inject into the tracker",
+    )
+    status = serializers.ChoiceField(
+        required=False,
+        allow_null=True,
+        choices=TRACKER_STATUS,
+        help_text="Optional: Override the tracker status",
+    )
+    delivered = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="Optional: Mark the tracker as delivered",
+    )
+    estimated_delivery = serializers.DateField(
+        required=False,
+        allow_null=True,
+        help_text="Optional: Set the estimated delivery date",
+    )

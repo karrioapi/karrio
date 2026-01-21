@@ -19,6 +19,7 @@ from karrio.server.manager.serializers.rate import RateSerializer
 from karrio.server.manager.serializers.tracking import (
     TrackingSerializer,
     TrackerUpdateData,
+    TrackerEventInjectRequest,
     update_shipment_tracker,
     can_mutate_tracker,
     update_tracker,
@@ -36,6 +37,7 @@ from karrio.server.manager.serializers.shipment import (
     can_mutate_shipment,
     buy_shipment_label,
     fetch_shipment_rates,
+    compute_estimated_delivery,
 )
 from karrio.server.manager.serializers.pickup import (
     PickupData,
