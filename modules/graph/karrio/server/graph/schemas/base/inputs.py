@@ -495,6 +495,7 @@ class CreateRateSheetMutationInput(utils.BaseInput):
     surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
     service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+    origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
@@ -507,6 +508,7 @@ class UpdateRateSheetMutationInput(utils.BaseInput):
     surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
     service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+    origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
     remove_missing_services: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 

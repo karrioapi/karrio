@@ -9,6 +9,7 @@ from karrio.core.models import (
     ConfirmationDetails,
 )
 from karrio.server.core.tests import APITestCase
+from karrio.server.core.utils import create_carrier_snapshot
 import karrio.server.manager.models as models
 import karrio.server.providers.models as providers
 
@@ -132,7 +133,7 @@ class TestShipmentDetails(TestShipmentFixture):
 class TestShipmentPurchase(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
-        carrier = providers.Carrier.objects.get(carrier_id="canadapost")
+        carrier = providers.CarrierConnection.objects.get(carrier_id="canadapost")
         self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
@@ -203,7 +204,14 @@ class TestShipmentPurchase(TestShipmentFixture):
         )
         self.shipment.status = "purchased"
         self.shipment.shipment_identifier = "123456789012"
-        self.shipment.selected_rate_carrier = self.carrier
+        # Set selected_rate with carrier snapshot in meta
+        self.shipment.selected_rate = {
+            **self.shipment.rates[0],
+            "meta": {
+                **self.shipment.rates[0].get("meta", {}),
+                **create_carrier_snapshot(self.carrier),
+            },
+        }
         self.shipment.save()
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
@@ -1046,10 +1054,39 @@ CANCEL_PURCHASED_RESPONSE = {
     "carrier_id": "canadapost",
     "tracking_number": None,
     "shipment_identifier": "123456789012",
-    "selected_rate": None,
+    "selected_rate": {
+        "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
+        "object_type": "rate",
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "currency": "CAD",
+        "estimated_delivery": None,
+        "service": "canadapost_priority",
+        "total_charge": 106.71,
+        "transit_days": 2,
+        "extra_charges": [
+            {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+            {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
+            {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": None},
+        ],
+        "meta": {
+            "carrier_connection_id": ANY,
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "carrier_code": "canadapost",
+            "connection_id": ANY,
+            "connection_type": "account",
+            "rate_provider": "canadapost",
+            "service_name": "CANADAPOST PRIORITY",
+            "test_mode": True,
+        },
+        "test_mode": True,
+    },
     "meta": {},
-    "service": None,
-    "selected_rate_id": None,
+    "service": "canadapost_priority",
+    "selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
     "test_mode": True,
     "label_url": None,
     "invoice_url": None,

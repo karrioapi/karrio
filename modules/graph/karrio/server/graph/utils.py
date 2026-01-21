@@ -82,7 +82,7 @@ MetafieldTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 
 
 class MetadataObjectType(lib.Enum):
-    carrier = providers.Carrier
+    carrier = providers.CarrierConnection
     commodity = manager.Commodity
     shipment = manager.Shipment
     tracker = manager.Tracking

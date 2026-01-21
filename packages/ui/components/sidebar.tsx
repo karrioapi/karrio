@@ -102,8 +102,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/shippers/accounts",
         },
         {
-          title: "Addons",
-          url: "/shippers/addons",
+          title: "Markups",
+          url: "/shippers/markups",
         },
       ],
     }] : []),

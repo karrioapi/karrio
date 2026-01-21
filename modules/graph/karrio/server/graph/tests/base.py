@@ -52,7 +52,7 @@ class GraphTestCase(BaseAPITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
         # Setup test carrier connections.
-        self.carrier = providers.Carrier.objects.create(
+        self.carrier = providers.CarrierConnection.objects.create(
             carrier_code="canadapost",
             carrier_id="canadapost",
             test_mode=False,
@@ -65,7 +65,7 @@ class GraphTestCase(BaseAPITestCase):
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )
-        self.ups_carrier = providers.Carrier.objects.create(
+        self.ups_carrier = providers.CarrierConnection.objects.create(
             carrier_code="ups",
             carrier_id="ups_package",
             test_mode=False,
@@ -77,10 +77,11 @@ class GraphTestCase(BaseAPITestCase):
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )
-        self.fedex_carrier = providers.Carrier.objects.create(
+        self.fedex_carrier = providers.CarrierConnection.objects.create(
             carrier_code="fedex",
             carrier_id="fedex_express",
             test_mode=False,
+            created_by=self.user,
             credentials=dict(
                 api_key="test",
                 secret_key="password",
@@ -89,18 +90,44 @@ class GraphTestCase(BaseAPITestCase):
                 track_secret_key="password",
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
-            is_system=True,
         )
-        self.dhl_carrier = providers.Carrier.objects.create(
+        self.dhl_carrier = providers.CarrierConnection.objects.create(
             carrier_code="dhl_universal",
             carrier_id="dhl_universal",
             test_mode=False,
-            is_system=True,
+            created_by=self.user,
             credentials=dict(
                 consumer_key="test",
                 consumer_secret="password",
             ),
             capabilities=["tracking"],
+        )
+
+        # Setup system connections for system_connections queries
+        self.dhl_system_connection = providers.SystemConnection.objects.create(
+            carrier_code="dhl_universal",
+            carrier_id="dhl_universal",
+            test_mode=False,
+            active=True,
+            credentials=dict(
+                consumer_key="system_test",
+                consumer_secret="system_password",
+            ),
+            capabilities=["tracking"],
+        )
+        self.fedex_system_connection = providers.SystemConnection.objects.create(
+            carrier_code="fedex",
+            carrier_id="fedex_express",
+            test_mode=False,
+            active=True,
+            credentials=dict(
+                api_key="system_test",
+                secret_key="system_password",
+                account_number="000000",
+                track_api_key="system_test",
+                track_secret_key="system_password",
+            ),
+            capabilities=["pickup", "rating", "tracking", "shipping"],
         )
 
     def query(

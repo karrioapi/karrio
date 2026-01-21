@@ -268,11 +268,11 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
         if (!customs) return changes;
 
         const declared_value =
-          options.declared_value || customs!.duty.declared_value;
+          options.declared_value || customs!.duty?.declared_value;
         const duty = { ...customs!.duty, declared_value };
 
         // ignore if duty hasn't changed
-        if (isEqual(duty, customs.duty)) return changes;
+        if (isEqual(duty, customs?.duty)) return changes;
 
         return { ...changes, customs: { ...customs, duty } as any };
       };
@@ -449,7 +449,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
             ],
           };
 
-          updateParcel(shipment_index)(parcel_index, parcel_id)(update, {
+          updateParcel(shipment_index)(parcel_index, parcel_id)(update as any, {
             created: true,
           });
         };
@@ -463,7 +463,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
             ) || batch.shipments[shipment_index].parcels[parcel_index];
           const update = {
             ...parcel,
-            items: parcel.items.map((item, index) =>
+            items: (parcel.items || []).map((item, index) =>
               index !== item_index ? item : { ...item, ...data },
             ),
           };
@@ -502,14 +502,14 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
           const parcel = batch.shipments[shipment_index].parcels[parcel_index];
           const update = {
             ...parcel,
-            items: parcel.items.filter(({ id }, index) =>
+            items: (parcel.items || []).filter(({ id }, index) =>
               !!item_id ? id !== item_id : index !== item_index,
             ),
           };
 
           // If shipment is persisted on the server
           if (!isLocalDraft(batch.shipments[shipment_index].id) && !!item_id) {
-            const item = parcel.items.find(
+            const item = (parcel.items || []).find(
               ({ id }) => id === item_id,
             ) as CommodityType;
             const commodity = (
@@ -523,7 +523,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
                 ),
             );
             // send a request to remove item/commodity
-            await shipmentMutation.discardCommodity.mutateAsync({ id: item!.id });
+            await shipmentMutation.discardCommodity.mutateAsync({ id: item_id as string });
             if (
               !!commodity?.id &&
               (batch.shipments[shipment_index].customs?.commodities || []).length >
@@ -537,7 +537,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
                 removeCommodity(shipment_index)(
                   -1,
                   batch.shipments[shipment_index].customs?.id,
-                )(commodity.id);
+                )(commodity.id ?? undefined);
             }
           }
 
@@ -548,7 +548,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
     (shipment_index: number) =>
       (_customs_id?: string) =>
         async (data: CustomsType | null, change?: ChangeType) => {
-          updateShipment(shipment_index)({ customs: data }, change);
+          updateShipment(shipment_index)({ customs: data as any }, change);
         };
   const addCommodities =
     (shipment_index: number) =>
@@ -584,7 +584,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
 
           updateCustoms(shipment_index)(
             batch.shipments[shipment_index].customs?.id,
-          )(update, change);
+          )(update as CustomsType, change);
         };
   const removeCommodity =
     (shipment_index: number) =>
@@ -608,7 +608,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
 
           updateCustoms(shipment_index)(
             batch.shipments[shipment_index].customs?.id,
-          )(update, change);
+          )(update as CustomsType, change);
         };
 
   // Requests

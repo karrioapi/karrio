@@ -111,7 +111,7 @@ export const ParcelForm = ({
     if (name === "parcel_type") {
       const template = (query.data?.parcels.edges || []).find(
         (p) => p.node.id === value,
-      )?.node?.parcel;
+      )?.node as any;
       const preset = {
         ...parcel,
         package_preset: undefined,

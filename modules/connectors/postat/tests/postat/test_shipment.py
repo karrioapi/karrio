@@ -17,7 +17,6 @@ class TestPostATShipment(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         serialized = request.serialize()
-        print(serialized)
         # Verify key elements in the XML request
         self.assertIn("ImportShipmentType", serialized)
         self.assertIn("Teststrasse", serialized)
@@ -27,7 +26,6 @@ class TestPostATShipment(unittest.TestCase):
         with patch("karrio.mappers.postat.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            print(mock.call_args)
             self.assertEqual(
                 mock.call_args[1]["url"],
                 gateway.settings.server_url
@@ -41,13 +39,11 @@ class TestPostATShipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_shipment_cancel_request(self):
         request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
         serialized = request.serialize()
-        print(serialized)
         # Verify key elements in the XML request
         self.assertIn("VoidShipmentType", serialized)
         self.assertIn("1000000500113230110301", serialized)
@@ -56,7 +52,6 @@ class TestPostATShipment(unittest.TestCase):
         with patch("karrio.mappers.postat.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            print(mock.call_args)
             self.assertEqual(
                 mock.call_args[1]["url"],
                 gateway.settings.server_url
@@ -70,7 +65,6 @@ class TestPostATShipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
 

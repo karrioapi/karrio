@@ -233,8 +233,8 @@ export function CarrierConnectionDialog({
     if (open) {
       const initial = selectedConnection
         ? {
-          // If the connection has a custom_carrier_name in credentials, it's a generic carrier
-          carrier_name: selectedConnection.credentials?.custom_carrier_name ? "generic" : selectedConnection.carrier_name || "",
+          // Generic carriers have carrier_name === "generic"
+          carrier_name: selectedConnection.carrier_name || "",
           carrier_id: selectedConnection.carrier_id || "",
           active: selectedConnection.active || false,
           credentials: selectedConnection.credentials || {},

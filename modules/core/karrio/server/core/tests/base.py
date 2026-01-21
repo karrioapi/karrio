@@ -23,7 +23,7 @@ class APITestCase(BaseAPITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
         # Setup test carrier connections.
-        self.carrier = providers.Carrier.objects.create(
+        self.carrier = providers.CarrierConnection.objects.create(
             carrier_code="canadapost",
             carrier_id="canadapost",
             test_mode=True,
@@ -36,7 +36,7 @@ class APITestCase(BaseAPITestCase):
                 password="0bfa9fcb9853d1f51ee57a",
             ),
         )
-        self.ups_carrier = providers.Carrier.objects.create(
+        self.ups_carrier = providers.CarrierConnection.objects.create(
             carrier_code="ups",
             carrier_id="ups_package",
             test_mode=True,
@@ -48,7 +48,7 @@ class APITestCase(BaseAPITestCase):
                 account_number="000000",
             ),
         )
-        self.fedex_carrier = providers.Carrier.objects.create(
+        self.fedex_carrier = providers.CarrierConnection.objects.create(
             carrier_code="fedex",
             carrier_id="fedex_express",
             test_mode=True,
@@ -62,7 +62,7 @@ class APITestCase(BaseAPITestCase):
                 track_secret_key="password",
             ),
         )
-        self.dhl_carrier = providers.Carrier.objects.create(
+        self.dhl_carrier = providers.CarrierConnection.objects.create(
             carrier_code="dhl_express",
             carrier_id="dhl_express",
             test_mode=True,

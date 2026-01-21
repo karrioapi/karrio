@@ -422,6 +422,7 @@ class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
     def setUp(self):
         super().setUp()
         from karrio.server.manager.models import Shipment, Manifest
+        from karrio.server.core.utils import create_carrier_snapshot
 
         # Create test addresses (JSON data for embedded fields)
         self.shipper_data = {
@@ -480,7 +481,7 @@ class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
             test_mode=True,
             address=self.manifest_address_data,
             manifest="JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/AFQAZQBzAHQpCj4+CmVuZG9iagoyIDAgb2JqCjw8Cj4+CmVuZG9iagozIDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA2OCAwMDAwMCBuIAowMDAwMDAwMDg5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNAo+PgpzdGFydHhyZWYKMTEwCiUlRU9GCg==",  # Base64 encoded minimal PDF
-            manifest_carrier=self.carrier,
+            carrier=create_carrier_snapshot(self.carrier),
         )
 
     def test_shipment_label_download_with_api_token(self):

@@ -10,7 +10,7 @@ import {
   MetadataEditorContext,
 } from "../forms/metadata-editor";
 import { isEqual, isNone, validationMessage, validityCheck } from "@karrio/lib";
-import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
+import { CommodityType, CustomsCommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import React, { useContext, useReducer, useState } from "react";
 import { TextAreaField } from "../components/textarea-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -22,8 +22,8 @@ import { Loading } from "../components/loader";
 import { useOrders } from "@karrio/hooks/order";
 
 type OperationType = {
-  commodity?: CommodityType;
-  onSubmit: (commodity: CommodityType) => Promise<any>;
+  commodity?: CommodityType | CustomsCommodityType;
+  onSubmit: (commodity: CommodityType | CustomsCommodityType) => Promise<any>;
 };
 type CommodityStateContextType = {
   editCommodity: (operation: OperationType) => void;

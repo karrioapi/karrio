@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
 from karrio.server.manager.tests.test_shipments import TestShipmentFixture
+from karrio.server.core.utils import create_carrier_snapshot
 import karrio.server.manager.models as models
 
 
@@ -33,7 +34,13 @@ class TestFixture(TestShipmentFixture):
             "validation": None,
         }
         self.shipment.tracking_number = "123456789012"
-        self.shipment.selected_rate_carrier = self.carrier
+        # Set selected_rate with carrier snapshot in meta
+        self.shipment.selected_rate = {
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "service": "canadapost_priority",
+            "meta": create_carrier_snapshot(self.carrier),
+        }
         self.shipment.save()
 
 
@@ -58,7 +65,7 @@ class TestPickupDetails(TestFixture):
         super().setUp()
         self.pickup: models.Pickup = models.Pickup.objects.create(
             address=self.address_data,
-            pickup_carrier=self.carrier,
+            carrier=create_carrier_snapshot(self.carrier),
             created_by=self.user,
             test_mode=True,
             pickup_date="2020-10-25",

@@ -99,7 +99,7 @@ class RateSheet(core.OwnedEntity):
     def carriers(self):
         import karrio.server.providers.models as providers
 
-        return providers.Carrier.objects.filter(
+        return providers.CarrierConnection.objects.filter(
             carrier_code=self.carrier_name, rate_sheet__id=self.id
         )
 

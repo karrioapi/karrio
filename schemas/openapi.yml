@@ -5515,6 +5515,11 @@ components:
       - trackers
     CarrierConnection:
       type: object
+      description: |-
+        Response serializer for carrier connections.
+
+        Note: Credentials are write-only and never returned in API responses.
+        Use CarrierConnectionData for create and CarrierConnectionUpdateData for update.
       properties:
         id:
           type: string
@@ -5583,10 +5588,7 @@ components:
         carrier_id:
           type: string
           description: A carrier connection friendly name.
-        credentials:
-          allOf:
-          - $ref: '#/components/schemas/ConnectionCredentialsField'
-          description: Carrier connection credentials.
+          readOnly: true
         capabilities:
           type: array
           items:
@@ -5606,6 +5608,7 @@ components:
         is_system:
           type: boolean
           description: The carrier connection is provided by the system admin.
+          readOnly: true
         active:
           type: boolean
           description: The active flag indicates whether the carrier account is active

@@ -20,7 +20,7 @@ CarrierConnectionList = serializers.PaginatedResult(
 
 
 class CarrierConnectionListView(api.GenericAPIView):
-    model = models.Carrier
+    model = models.CarrierConnection
     serializer_class = serializers.CarrierConnection
     filterset_class = filters.CarrierConnectionFilter
     filter_backends = (drf.DjangoFilterBackend,)
@@ -48,21 +48,17 @@ class CarrierConnectionListView(api.GenericAPIView):
             "context": request,
         }
 
-        # fmt: off
         connections = gateway.Carriers.list(**filter)
-        response = self.paginate_queryset(
+        # Note: Credentials are no longer returned (write-only field)
+        # Metadata is masked for system connections (BrokeredConnection)
+        paginated = self.paginate_queryset(
             [
-                {
-                    **_,
-                    "metadata": None if _["is_system"] else _["metadata"],
-                    "credentials": None if _["is_system"] else _["credentials"]
-                }
+                {**_, "metadata": None if _["is_system"] else _["metadata"]}
                 for _ in serializers.CarrierConnection(connections, many=True).data
             ]
         )
-        # fmt: on
 
-        return self.get_paginated_response(response)
+        return self.get_paginated_response(paginated)
 
     @openapi.extend_schema(
         tags=["Connections"],
@@ -108,7 +104,7 @@ class CarrierConnectionDetail(api.APIView):
     )
     def get(self, request: request.Request, pk: str):
         """Retrieve carrier connection."""
-        connection = models.Carrier.access_by(request).get(pk=pk)
+        connection = models.CarrierConnection.access_by(request).get(pk=pk)
         return response.Response(serializers.CarrierConnection(connection).data)
 
     @openapi.extend_schema(
@@ -126,7 +122,7 @@ class CarrierConnectionDetail(api.APIView):
     )
     def patch(self, request: request.Request, pk: str):
         """Update a carrier connection."""
-        connection = models.Carrier.access_by(request).get(pk=pk)
+        connection = models.CarrierConnection.access_by(request).get(pk=pk)
         update = lib.identity(
             serializers.CarrierConnectionModelSerializer.map(
                 connection,
@@ -153,7 +149,7 @@ class CarrierConnectionDetail(api.APIView):
     )
     def delete(self, request: request.Request, pk: str):
         """Remove a carrier connection."""
-        connection = models.Carrier.access_by(request).get(pk=pk)
+        connection = models.CarrierConnection.access_by(request).get(pk=pk)
 
         connection.delete(keep_parents=True)
 
@@ -176,7 +172,7 @@ class ConnectionWebhookRegister(api.APIView):
     )
     def post(self, request: request.Request, pk: str):
         """Register a webhook endpoint for a carrier connection."""
-        connection = models.Carrier.access_by(request).get(pk=pk)
+        connection = models.CarrierConnection.access_by(request).get(pk=pk)
         webhook_url = request.build_absolute_uri(f"/v1/connections/webhook/{pk}/events")
 
         webhook_details = (
@@ -233,7 +229,7 @@ class ConnectionWebhookDeregister(api.APIView):
     )
     def post(self, request: request.Request, pk: str):
         """Deregister a webhook endpoint from a carrier connection."""
-        connection = models.Carrier.access_by(request).get(pk=pk)
+        connection = models.CarrierConnection.access_by(request).get(pk=pk)
 
         serializers.WebhookDeregisterSerializer.map(
             connection,
@@ -284,7 +280,7 @@ class ConnectionWebhookDisconnect(api.APIView):
     )
     def post(self, request: request.Request, pk: str):
         """Force disconnect a webhook from a carrier connection (local only)."""
-        connection = models.Carrier.access_by(request).get(pk=pk)
+        connection = models.CarrierConnection.access_by(request).get(pk=pk)
 
         updated = lib.identity(
             serializers.CarrierConnectionModelSerializer.map(

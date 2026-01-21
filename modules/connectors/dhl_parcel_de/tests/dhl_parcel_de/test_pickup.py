@@ -49,7 +49,6 @@ class TestDHLParcelDEPickup(unittest.TestCase):
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
 
-            print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_cancel_pickup_response(self):
@@ -59,7 +58,6 @@ class TestDHLParcelDEPickup(unittest.TestCase):
                 karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
 
-            print(parsed_response)
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedCancelPickupResponse
             )

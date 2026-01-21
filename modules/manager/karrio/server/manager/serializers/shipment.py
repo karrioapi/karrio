@@ -9,7 +9,7 @@ import karrio.core.units as units
 import karrio.server.conf as conf
 import karrio.server.core.utils as utils
 import karrio.server.core.gateway as gateway
-
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 import karrio.server.core.dataunits as dataunits
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
@@ -97,7 +97,7 @@ class ShipmentSerializer(ShipmentData):
             )
         )
 
-        carriers = gateway.Carriers.list(
+        carriers = gateway.Connections.list(
             context=context,
             carrier_ids=carrier_ids,
             **({"carrier_name": resolved_carrier_name} if resolved_carrier_name else {}),
@@ -194,7 +194,7 @@ class ShipmentSerializer(ShipmentData):
             }
         )
 
-        shipment.carriers.set(carriers if any(carrier_ids) else [])
+        # carriers M2M removed - carrier info now in selected_rate JSON
 
         # Buy label if preferred service is selected, shipping method applied, shipping rules applied, or skip rate fetching
         if (service and fetch_rates) or apply_shipping_method_flag or apply_shipping_rules or skip_rate_fetching:
@@ -220,13 +220,7 @@ class ShipmentSerializer(ShipmentData):
                 changes.append(key)
                 validated_data.pop(key)
 
-            if key in models.Shipment.RELATIONAL_PROPS and val is None:
-                prop = getattr(instance, key)
-                # Delete related data from database if payload set to null
-                if hasattr(prop, "delete"):
-                    prop.delete(keep_parents=True)
-                    setattr(instance, key, None)
-                    validated_data.pop(key)
+            # Note: RELATIONAL_PROPS handling removed - FK relationships converted to JSONFields
 
         if "shipper" in data:
             instance.shipper = process_json_object_mutation(
@@ -286,30 +280,27 @@ class ShipmentSerializer(ShipmentData):
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
-            carrier = providers.Carrier.objects.filter(
+            # Try to find carrier for connection metadata
+            carrier = providers.CarrierConnection.objects.filter(
                 carrier_id=selected_rate.get("carrier_id")
             ).first()
             instance.test_mode = selected_rate.get("test_mode", instance.test_mode)
 
+            # Build carrier snapshot for selected_rate.meta
+            carrier_snapshot = create_carrier_snapshot(carrier) if carrier else {}
             instance.selected_rate = {
                 **selected_rate,
                 "meta": {
                     **selected_rate.get("meta", {}),
-                    **(
-                        {"carrier_connection_id": carrier.id}
-                        if carrier is not None
-                        else {}
-                    ),
+                    **carrier_snapshot,
                 },
             }
-            instance.selected_rate_carrier = carrier
-            changes += ["selected_rate", "selected_rate_carrier"]
+            changes += ["selected_rate"]
 
         if any(changes):
             instance.save(update_fields=changes)
 
-        if "carrier_ids" in validated_data:
-            instance.carriers.set(carriers)
+        # carriers M2M removed - carrier info now in selected_rate JSON
 
         return instance
 
@@ -557,9 +548,12 @@ class ShipmentPurchaseSerializer(Shipment):
 
 class ShipmentCancelSerializer(Shipment):
     def update(
-        self, instance: models.Shipment, validated_data: dict, **kwargs
+        self, instance: models.Shipment, validated_data: dict, context=None, **kwargs
     ) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
+            # Resolve carrier from selected_rate meta
+            carrier_snapshot = (instance.selected_rate or {}).get("meta", {})
+            carrier = resolve_carrier(carrier_snapshot, context)
             gateway.Shipments.cancel(
                 payload={
                     **ShipmentCancelRequest(instance).data,
@@ -569,7 +563,7 @@ class ShipmentCancelSerializer(Shipment):
                         **(validated_data.get("options") or {}),
                     },
                 },
-                carrier=instance.selected_rate_carrier,
+                carrier=carrier,
             )
 
         instance.status = ShipmentStatus.cancelled.value
@@ -594,9 +588,10 @@ def fetch_shipment_rates(
     context: typing.Any,
     data: dict = dict(),
 ) -> models.Shipment:
-    carrier_ids = data["carrier_ids"] if "carrier_ids" in data else shipment.carrier_ids
+    # carrier_ids can be passed in data, or default to empty list (query all carriers)
+    carrier_ids = data.get("carrier_ids", [])
 
-    carriers = gateway.Carriers.list(
+    carriers = gateway.Connections.list(
         active=True,
         capability="shipping",
         context=context,
@@ -642,7 +637,7 @@ def buy_shipment_label(
     invoice_template = shipment.options.get("invoice_template")
 
     payload = {**data, "selected_rate_id": selected_rate.get("id")}
-    carrier = gateway.Carriers.first(
+    carrier = gateway.Connections.first(
         carrier_id=selected_rate.get("carrier_id"),
         test_mode=selected_rate.get("test_mode"),
         context=context,
@@ -656,8 +651,14 @@ def buy_shipment_label(
 
     # Generate invoice in advance if is_paperless_trade
     if pre_purchase_generation:
-        shipment.selected_rate = selected_rate
-        shipment.selected_rate_carrier = carrier
+        # Embed carrier snapshot in selected_rate meta
+        shipment.selected_rate = {
+            **selected_rate,
+            "meta": {
+                **selected_rate.get("meta", {}),
+                **create_carrier_snapshot(carrier),
+            },
+        }
         document = generate_custom_invoice(invoice_template, shipment)
         invoice = dict(invoice=document["doc_file"])
 
@@ -715,11 +716,16 @@ def buy_shipment_label(
         ),
     }
 
-    # Set selected_rate and carrier directly on shipment before update
+    # Set selected_rate with carrier snapshot directly on shipment before update
     # (This is more reliable than depending on serializer validation)
-    shipment.selected_rate = selected_rate
-    shipment.selected_rate_carrier = carrier
-    shipment.save(update_fields=["selected_rate", "selected_rate_carrier"])
+    shipment.selected_rate = {
+        **selected_rate,
+        "meta": {
+            **selected_rate.get("meta", {}),
+            **create_carrier_snapshot(carrier),
+        },
+    }
+    shipment.save(update_fields=["selected_rate"])
 
     purchased_shipment = lib.identity(
         ShipmentSerializer.map(
@@ -822,21 +828,27 @@ def remove_shipment_tracker(shipment: models.Shipment):
 
 def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context):
     rate_provider = (shipment.meta or {}).get("rate_provider") or shipment.carrier_name
-    carrier = shipment.selected_rate_carrier
+    # Resolve carrier from selected_rate.meta snapshot
+    carrier_snapshot = (shipment.selected_rate or {}).get("meta", {})
+    carrier = resolve_carrier(carrier_snapshot, context)
 
     # Get rate provider carrier if supported instead of carrier account
     if (
         rate_provider != shipment.carrier_name
     ) and rate_provider in dataunits.CARRIER_NAMES:
         carrier = (
-            providers.Carrier.access_by(context)
+            providers.CarrierConnection.access_by(context)
             .filter(carrier_code=rate_provider)
             .first()
         )
 
-    # Handle hub extension tracking
-    if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:
-        carrier = shipment.selected_rate_carrier
+    # Handle hub extension tracking - resolve from snapshot if carrier is None
+    if carrier and carrier.gateway.is_hub:
+        # Keep the hub carrier
+        pass
+    elif carrier is None and carrier_snapshot:
+        # Try to resolve again if carrier is None
+        carrier = resolve_carrier(carrier_snapshot, context)
 
     # Get dhl universal account if a dhl integration doesn't support tracking API
     if (
@@ -844,7 +856,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
         and "dhl" in carrier.carrier_name
         and "get_tracking" not in carrier.gateway.proxy_methods
     ):
-        carrier = gateway.Carriers.first(
+        carrier = gateway.Connections.first(
             carrier_name="dhl_universal",
             context=context,
         )
@@ -862,7 +874,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 tracking_number=shipment.tracking_number,
                 delivered=False,
                 shipment=shipment,
-                tracking_carrier=carrier,
+                carrier=create_carrier_snapshot(carrier),
                 test_mode=carrier.test_mode,
                 created_by=shipment.created_by,
                 status=TrackerStatus.pending.value,

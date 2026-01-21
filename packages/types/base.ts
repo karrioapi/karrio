@@ -4,7 +4,7 @@ import * as ee from "./graphql/ee/index";
 
 export {
   CreateCarrierNameEnum,
-  CustomsIncotermEnum,
+  CustomsDataIncotermEnum as CustomsIncotermEnum,
   WebhookEnabledEventsEnum,
   OrderStatusEnum,
 } from "./rest/api";
@@ -19,6 +19,8 @@ export type CommodityType = (
 ) & {
   unfulfilled_quantity?: number | null;
 };
+
+export type CustomsCommodityType = graph.get_shipment_shipment_customs_commodities;
 export type DutyType = {
   paid_by?: string | null;
   currency?: string | null;
@@ -41,9 +43,7 @@ export type CustomsType = {
   signer?: string | null;
   options?: Record<string, any> | null;
 };
-export type ParcelType = graph.get_shipment_shipment_parcels & {
-  items: CommodityType[];
-};
+export type ParcelType = graph.get_shipment_shipment_parcels;
 export type ManifestType = graph.GetManifests_manifests_edges_node;
 export type TrackingEventType = graph.get_tracker_tracker_events;
 export type TrackerType = graph.get_tracker_tracker & {
@@ -171,7 +171,7 @@ export const CARRIER_NAMES: string[] = Array.from(
 );
 
 export const INCOTERMS: string[] = Array.from(
-  new Set(Object.values(api.CustomsIncotermEnum)),
+  new Set(Object.values(api.CustomsDataIncotermEnum)),
 );
 
 export const CUSTOMS_CONTENT_TYPES: string[] = Array.from(

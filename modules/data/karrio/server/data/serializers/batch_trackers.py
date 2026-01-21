@@ -3,6 +3,7 @@ from django.db import transaction
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.core.gateway as gateway
+import karrio.server.core.utils as utils
 import karrio.server.manager.models as models
 import karrio.server.serializers as serializers
 import karrio.server.core.exceptions as exceptions
@@ -98,9 +99,9 @@ class BatchTrackerData(serializers.Serializer):
                         status="unknown",
                         test_mode=context.test_mode,
                         created_by_id=context.user.id,
-                        tracking_carrier_id=carrier.id,
+                        carrier=utils.create_carrier_snapshot(carrier),
                         tracking_number=tracker_data["tracking_number"],
-                        events = utils.default_tracking_event(
+                        events = base.default_tracking_event(
                             description="Awaiting update from carrier...",
                             code="UNKNOWN",
                         ),

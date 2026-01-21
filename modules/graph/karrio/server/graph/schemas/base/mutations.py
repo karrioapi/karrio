@@ -514,6 +514,7 @@ class CreateRateSheetMutation(utils.BaseMutation):
         zones_data = data.pop("zones", [])
         surcharges_data = data.pop("surcharges", [])
         service_rates_data = data.pop("service_rates", [])
+        origin_countries = data.pop("origin_countries", [])  # Pop but store in metadata if needed
         services_data = [
             (svc.copy() if isinstance(svc, dict) else dict(svc))
             for svc in data.get("services", [])
@@ -542,7 +543,7 @@ class CreateRateSheetMutation(utils.BaseMutation):
 
         # Link carriers
         if any(carriers):
-            providers.Carrier.access_by(info.context.request).filter(
+            providers.CarrierConnection.access_by(info.context.request).filter(
                 carrier_code=rate_sheet.carrier_name,
                 id__in=carriers,
             ).update(rate_sheet=rate_sheet)
@@ -573,6 +574,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         )
         data = input.copy()
         carriers = data.pop("carriers", [])
+        origin_countries = data.pop("origin_countries", [])  # Pop but not used yet
 
         serializer = serializers.RateSheetModelSerializer(
             instance,
@@ -595,7 +597,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
 
         # Link/unlink carriers
         if any(carriers):
-            carrier_qs = providers.Carrier.access_by(info.context.request).filter(
+            carrier_qs = providers.CarrierConnection.access_by(info.context.request).filter(
                 carrier_code=rate_sheet.carrier_name
             )
             carrier_qs.filter(id__in=carriers).update(rate_sheet=rate_sheet)
@@ -1347,7 +1349,7 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
     def mutate(info: Info, **input) -> "UpdateCarrierConnectionMutation":
         data = input.copy()
         id = data.get("id")
-        instance = providers.Carrier.access_by(info.context.request).get(id=id)
+        instance = providers.CarrierConnection.access_by(info.context.request).get(id=id)
         connection = lib.identity(
             providers_serializers.CarrierConnectionModelSerializer.map(
                 instance,
@@ -1373,37 +1375,43 @@ class SystemCarrierMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.SystemCarrierMutationInput
     ) -> "SystemCarrierMutation":
+        from django.conf import settings as django_settings
+
         pk = input.get("id")
         context = info.context.request
-        carrier = providers.Carrier.system_carriers.get(pk=pk)
+        system_connection = providers.SystemConnection.objects.get(pk=pk)
+
+        # Get or create the BrokeredConnection for this user/org
+        if django_settings.MULTI_ORGANIZATIONS:
+            org = getattr(context, "org", None)
+            brokered, _ = providers.BrokeredConnection.objects.get_or_create(
+                system_connection=system_connection,
+                defaults={"created_by": context.user},
+            )
+            # Ensure link exists for this org
+            from karrio.server.orgs.models import BrokeredConnectionLink
+            link, _ = BrokeredConnectionLink.objects.get_or_create(
+                item=brokered,
+                org=org,
+            )
+        else:
+            brokered, _ = providers.BrokeredConnection.objects.get_or_create(
+                system_connection=system_connection,
+                created_by=context.user,
+            )
 
         if "enable" in input:
-            if input.get("enable"):
-                if hasattr(carrier, "active_orgs"):
-                    carrier.active_orgs.add(info.context.request.org)
-                else:
-                    carrier.active_users.add(info.context.request.user)
-            else:
-                if hasattr(carrier, "active_orgs"):
-                    carrier.active_orgs.remove(info.context.request.org)
-                else:
-                    carrier.active_users.remove(info.context.request.user)
+            brokered.is_enabled = input.get("enable")
+            brokered.save(update_fields=["is_enabled"])
 
         if "config" in input:
-            config = providers.Carrier.resolve_config(carrier, is_user_config=True)
-            serializers.CarrierConfigModelSerializer.map(
-                instance=config,
-                context=context,
-                data={
-                    "carrier": carrier.pk,
-                    "config": process_dictionaries_mutations(
-                        ["config"], (input["config"] or {}), config
-                    ),
-                },
-            ).save()
+            brokered.config = process_dictionaries_mutations(
+                ["config"], {"config": input["config"] or {}}, brokered
+            ).get("config", {})
+            brokered.save(update_fields=["config"])
 
         return SystemCarrierMutation(
-            carrier=providers.Carrier.system_carriers.get(pk=pk)
+            carrier=system_connection
         )  # type: ignore
 
 

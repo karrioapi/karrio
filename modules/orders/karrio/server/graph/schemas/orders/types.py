@@ -1,6 +1,7 @@
 import typing
 import datetime
 import strawberry
+import uuid
 
 import karrio.server.graph.utils as utils
 import karrio.server.graph.schemas.base as base
@@ -11,11 +12,11 @@ import karrio.server.orders.models as models
 
 @strawberry.type
 class LineItemType:
-    id: str
-    object_type: str
+    object_type: str = "line_item"
+    id: typing.Optional[str] = None
     quantity: int = 1
     weight: float = 0.0
-    metadata: utils.JSON = None
+    metadata: typing.Optional[utils.JSON] = None
     sku: typing.Optional[str] = None
     title: typing.Optional[str] = None
     hs_code: typing.Optional[str] = None
@@ -35,11 +36,12 @@ class LineItemType:
     def parse(item: dict) -> typing.Optional["LineItemType"]:
         if not item:
             return None
+        # Generate an id if not present
+        item_id = item.get("id") or f"item_{uuid.uuid4().hex[:8]}"
         return LineItemType(
-            **{
-                "object_type": item.get("object_type", "line_item"),
-                **{k: v for k, v in item.items() if k in LineItemType.__annotations__},
-            }
+            id=item_id,
+            object_type=item.get("object_type", "line_item"),
+            **{k: v for k, v in item.items() if k in LineItemType.__annotations__ and k not in ("id", "object_type")},
         )
 
 

@@ -5,6 +5,7 @@ import karrio.server.serializers as serialiazers
 import karrio.server.core.exceptions as exceptions
 import karrio.server.core.serializers as core
 import karrio.server.core.gateway as gateway
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 import karrio.server.manager.models as models
 
 
@@ -17,9 +18,12 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         **kwargs,
     ) -> models.DocumentUploadRecord:
         shipment = validated_data.get("shipment")
-        carrier = validated_data.get("carrier") or getattr(
-            shipment, "selected_rate_carrier", None
-        )
+        # Resolve carrier from validated_data or from shipment's selected_rate.meta
+        carrier = validated_data.get("carrier")
+        if carrier is None and shipment:
+            carrier_snapshot = (getattr(shipment, "selected_rate", None) or {}).get("meta", {})
+            carrier = resolve_carrier(carrier_snapshot, context)
+
         tracking_number = getattr(shipment, "tracking_number", None)
         reference = validated_data.get("reference") or tracking_number
 
@@ -55,7 +59,7 @@ class DocumentUploadSerializer(core.DocumentUploadData):
             options=response.options,
             meta=response.meta,
             shipment=shipment,
-            upload_carrier=carrier,
+            carrier=create_carrier_snapshot(carrier),
             created_by=context.user,
         )
 
@@ -70,12 +74,15 @@ class DocumentUploadSerializer(core.DocumentUploadData):
     ) -> models.DocumentUploadRecord:
         changes = []
 
+        # Resolve carrier from instance.carrier snapshot
+        carrier = resolve_carrier(instance.carrier, context)
+
         response = gateway.Documents.upload(
             {
                 "reference": getattr(instance.shipment, "tracking_number", None),
                 **core.DocumentUploadData(validated_data).data,
             },
-            carrier=instance.upload_carrier,
+            carrier=carrier,
             context=context,
         )
 
@@ -92,9 +99,11 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         return instance
 
 
-def can_upload_shipment_document(shipment: models.Shipment):
-    carrier = getattr(shipment, "selected_rate_carrier", None)
-    capabilities = getattr(carrier, "capabilities", [])
+def can_upload_shipment_document(shipment: models.Shipment, context=None):
+    # Resolve carrier from selected_rate.meta
+    carrier_snapshot = (getattr(shipment, "selected_rate", None) or {}).get("meta", {})
+    carrier = resolve_carrier(carrier_snapshot, context) if carrier_snapshot else None
+    capabilities = getattr(carrier, "capabilities", []) if carrier else []
 
     if shipment is None:
         raise exceptions.APIException(

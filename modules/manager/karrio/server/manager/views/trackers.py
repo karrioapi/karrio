@@ -42,7 +42,8 @@ class TrackerList(GenericAPIView):
         carrier_name = query_params.get("carrier_name")
 
         if carrier_name is not None:
-            _filters += (Q(tracking_carrier__carrier_code=carrier_name),)
+            # Filter by carrier_code in the carrier JSON snapshot
+            _filters += (Q(carrier__carrier_code=carrier_name),)
 
         return queryset.filter(*_filters)
 

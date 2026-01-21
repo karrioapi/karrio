@@ -213,7 +213,7 @@ export default function Page() {
                       </td>
                       <td
                         className="carrier is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey"
-                        title={manifest.carrier_name}
+                        title={manifest.carrier_name ?? undefined}
                       >
                         <div className="icon-text">
                           <CarrierImage

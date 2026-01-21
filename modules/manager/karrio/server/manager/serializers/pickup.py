@@ -7,8 +7,9 @@ from karrio.server.serializers import (
     Context,
     PlainDictField,
 )
-from karrio.server.core.gateway import Pickups, Carriers
+from karrio.server.core.gateway import Pickups, Connections
 from karrio.server.core.datatypes import Confirmation
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 from karrio.server.core.serializers import (
     Pickup,
     AddressData,
@@ -137,7 +138,7 @@ class PickupData(PickupSerializer):
                 ]
             )
         ]
-        carrier = Carriers.first(
+        carrier = Connections.first(
             context=context,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
         )
@@ -170,7 +171,7 @@ class PickupData(PickupSerializer):
             **{
                 **payload,
                 "address": address_data,
-                "pickup_carrier": carrier,
+                "carrier": create_carrier_snapshot(carrier),
                 "created_by": context.user,
                 "test_mode": response.pickup.test_mode,
                 "confirmation_number": response.pickup.confirmation_number,
@@ -274,7 +275,9 @@ class PickupUpdateData(PickupSerializer):
             },
         }
 
-        Pickups.update(payload=request_data, carrier=instance.pickup_carrier)
+        # Resolve carrier from snapshot for API call
+        carrier = resolve_carrier(instance.carrier, context)
+        Pickups.update(payload=request_data, carrier=carrier)
 
         data = validated_data.copy()
         for key, val in data.items():
@@ -297,12 +300,14 @@ class PickupCancelData(serializers.Serializer):
     )
 
     def update(
-        self, instance: models.Pickup, validated_data: dict, **kwargs
+        self, instance: models.Pickup, validated_data: dict, context: Context = None, **kwargs
     ) -> Confirmation:
         request = PickupCancelRequest(
             {**PickupCancelRequest(instance).data, **validated_data}
         )
-        Pickups.cancel(payload=request.data, carrier=instance.pickup_carrier)
+        # Resolve carrier from snapshot for API call
+        carrier = resolve_carrier(instance.carrier, context)
+        Pickups.cancel(payload=request.data, carrier=carrier)
         instance.delete()
 
         return instance

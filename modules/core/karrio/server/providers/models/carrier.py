@@ -1,14 +1,20 @@
+"""
+Carrier Model - User/Organization-owned carrier connections.
+
+This model represents carrier connections owned by users or organizations.
+System-wide connections are handled by SystemConnection model.
+Users can enable system connections via BrokeredConnection.
+"""
 import typing
 import functools
 import django.conf as conf
 import django.forms as forms
 import django.db.models as models
-from django.db.models import Q, OuterRef, Subquery, Case, When, IntegerField
+import django.core.cache as caching
 
 import karrio.lib as lib
 import karrio.sdk as karrio
 import karrio.core.units as units
-import django.core.cache as caching
 import karrio.api.gateway as gateway
 import karrio.server.core.models as core
 import karrio.server.core.fields as fields
@@ -22,112 +28,65 @@ DIMENSION_UNITS = [(c.name, c.name) for c in units.DimensionUnit]
 CAPABILITIES_CHOICES = [(c, c) for c in units.CarrierCapabilities.get_capabilities()]
 
 
-class CarrierQuerySet(models.QuerySet):
-    def resolve_config_for(self, context):
-        from karrio.server.providers.models.config import CarrierConfig
+class CarrierConnectionQuerySet(models.QuerySet):
+    """QuerySet for CarrierConnection with common filters."""
 
-        if context is None:
-            return self
+    def active(self):
+        return self.filter(active=True)
 
-        user = getattr(context, "user", None)
-        org = getattr(context, "org", None)
-
-        if isinstance(context, dict):
-            user = user or context.get("user")
-            org = org or context.get("org")
-
-        # 1. Define what "My Config" looks like (User or Org specific)
-        my_config_filter = Q()
-        if org:
-            my_config_filter = Q(org=org)
-        elif user and getattr(user, "is_authenticated", False):
-            my_config_filter = Q(created_by=user)
-
-        # 2. Define what "System Default" looks like
-        system_default_filter = Q(created_by__is_staff=True)
-        if hasattr(CarrierConfig, "org"):
-            system_default_filter &= Q(org__isnull=True)
-
-        # 3. Build the Subquery - only use priority if we have a user/org filter
-        config_filter = (
-            my_config_filter | system_default_filter
-            if my_config_filter
-            else system_default_filter
-        )
-
-        config_query = CarrierConfig.objects.filter(carrier=OuterRef("pk")).filter(
-            config_filter
-        )
-
-        if my_config_filter:
-            # Prioritize user/org config over system default
-            config_query = config_query.annotate(
-                priority=Case(
-                    When(my_config_filter, then=0),
-                    default=1,
-                    output_field=IntegerField(),
-                )
-            ).order_by("priority")
-
-        # 4. Annotate the queryset
-        return self.annotate(
-            _computed_config=Subquery(config_query.values("config")[:1])
-        )
+    def for_carrier(self, carrier_code: str):
+        return self.filter(carrier_code=carrier_code)
 
 
-class Manager(models.Manager):
+class CarrierConnectionManager(models.Manager):
+    """Manager for user/org-owned carrier connections."""
+
     def get_queryset(self):
         return (
-            CarrierQuerySet(self.model, using=self._db)
+            CarrierConnectionQuerySet(self.model, using=self._db)
             .select_related(
                 "created_by",
                 "rate_sheet",
                 *(("link",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
-            .prefetch_related(
-                "active_users",
-                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-            )
         )
 
-    def resolve_config_for(self, context):
-        return self.get_queryset().resolve_config_for(context)
+    def active(self):
+        return self.get_queryset().active()
 
-
-class CarrierManager(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_system=False)
-
-
-class SystemCarrierManager(models.Manager):
-    def get_queryset(self):
-        return (
-            CarrierQuerySet(self.model, using=self._db)
-            .prefetch_related(
-                *(("active_orgs",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-            )
-            .select_related(
-                "created_by",
-                *(("link",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-            )
-            .filter(is_system=True)
-        )
-
-    def resolve_config_for(self, context):
-        return self.get_queryset().resolve_config_for(context)
+    def for_carrier(self, carrier_code: str):
+        return self.get_queryset().for_carrier(carrier_code)
 
 
 @core.register_model
-class Carrier(core.OwnedEntity):
+class CarrierConnection(core.OwnedEntity):
+    """
+    User/Organization-owned carrier connections.
+
+    Key characteristics:
+    - Created and managed by users/orgs
+    - Full access to credentials and config
+    - Visibility:
+      - OSS: Accessible to ALL users (system-wide shared)
+      - Insiders: Scoped to organization members via CarrierLink
+    """
+
     class Meta:
+        db_table = "CarrierConnection"
+        verbose_name = "Carrier Connection"
+        verbose_name_plural = "Carrier Connections"
         ordering = ["test_mode", "-created_at"]
+        indexes = [
+            models.Index(fields=["carrier_code", "active"]),
+        ]
 
     CONTEXT_RELATIONS = ["rate_sheet"]
 
-    objects = Manager()
-    user_carriers = CarrierManager()
-    system_carriers = SystemCarrierManager()
+    objects = CarrierConnectionManager()
 
+    # ─────────────────────────────────────────────────────────────────
+    # IDENTITY
+    # ─────────────────────────────────────────────────────────────────
     id = models.CharField(
         max_length=50,
         primary_key=True,
@@ -138,37 +97,43 @@ class Carrier(core.OwnedEntity):
         max_length=100,
         db_index=True,
         default="generic",
-        help_text="eg. dhl_express, fedex, ups, usps, ...",
+        help_text="Carrier identifier (e.g., 'dhl_express', 'fedex')",
     )
     carrier_id = models.CharField(
         max_length=150,
         db_index=True,
-        help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
+        help_text="User-defined connection identifier",
     )
+
+    # ─────────────────────────────────────────────────────────────────
+    # CREDENTIALS (User-managed)
+    # ─────────────────────────────────────────────────────────────────
     credentials = models.JSONField(
         default=core.field_default({}),
-        help_text="Carrier connection credentials",
+        help_text="Carrier API credentials",
     )
+
+    # ─────────────────────────────────────────────────────────────────
+    # CONFIGURATION (Full control)
+    # ─────────────────────────────────────────────────────────────────
+    config = models.JSONField(
+        default=core.field_default({}),
+        blank=True,
+        help_text="Operational configuration",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # CAPABILITIES & STATUS
+    # ─────────────────────────────────────────────────────────────────
     capabilities = fields.MultiChoiceField(
         choices=datatypes.CAPABILITIES_CHOICES,
         default=core.field_default([]),
-        help_text="Select the capabilities of the carrier that you want to enable",
-    )
-    metadata = models.JSONField(
-        blank=True,
-        null=True,
-        default=core.field_default({}),
-        help_text="User defined metadata",
+        help_text="Enabled carrier capabilities",
     )
     active = models.BooleanField(
         default=True,
         db_index=True,
-        help_text="Disable/Hide carrier from clients",
-    )
-    is_system = models.BooleanField(
-        default=False,
-        db_index=True,
-        help_text="Determine that the carrier connection is available system wide.",
+        help_text="Enable/disable carrier connection",
     )
     test_mode = models.BooleanField(
         default=True,
@@ -176,6 +141,9 @@ class Carrier(core.OwnedEntity):
         help_text="Toggle carrier connection mode",
     )
 
+    # ─────────────────────────────────────────────────────────────────
+    # OWNERSHIP
+    # ─────────────────────────────────────────────────────────────────
     created_by = models.ForeignKey(
         conf.settings.AUTH_USER_MODEL,
         blank=True,
@@ -183,25 +151,36 @@ class Carrier(core.OwnedEntity):
         on_delete=models.CASCADE,
         editable=False,
     )
-    active_users = models.ManyToManyField(
-        conf.settings.AUTH_USER_MODEL,
-        blank=True,
-        related_name="connection_users",
-    )
+
+    # NOTE: Organization linking is handled via CarrierLink in orgs package (Insiders only)
+
+    # ─────────────────────────────────────────────────────────────────
+    # RATE SHEET
+    # ─────────────────────────────────────────────────────────────────
     rate_sheet = models.ForeignKey(
         "RateSheet",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        related_name="carrier_connections",
     )
 
-    @classmethod
-    def resolve_context_data(cls, queryset, context):
-        """Apply context-aware carrier config resolution."""
-        return queryset.resolve_config_for(context)
+    # ─────────────────────────────────────────────────────────────────
+    # METADATA
+    # ─────────────────────────────────────────────────────────────────
+    metadata = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default({}),
+        help_text="User defined metadata",
+    )
 
     def __str__(self):
         return self.carrier_id
+
+    # ─────────────────────────────────────────────────────────────────
+    # COMPUTED PROPERTIES
+    # ─────────────────────────────────────────────────────────────────
 
     @property
     def object_type(self):
@@ -209,6 +188,7 @@ class Carrier(core.OwnedEntity):
 
     @property
     def ext(self) -> str:
+        """Get carrier extension name for SDK lookup."""
         return (
             "generic"
             if "custom_carrier_name" in self.credentials
@@ -216,86 +196,63 @@ class Carrier(core.OwnedEntity):
         )
 
     @property
-    def carrier_name(self):
-        return (
-            "generic"
-            if "custom_carrier_name" in self.credentials
-            else lib.failsafe(lambda: self.carrier_code) or "generic"
-        )
+    def carrier_name(self) -> str:
+        """Alias for ext - the carrier type name."""
+        return self.ext
 
     @property
-    def display_name(self):
+    def display_name(self) -> str:
+        """Get human-readable display name."""
         import karrio.references as references
 
         return (
             self.credentials.get("display_name")
-            or references.REFERENCES["carriers"].get(self.ext)
-            or "generic"
+            or references.REFERENCES.get("carriers", {}).get(self.ext)
+            or self.carrier_id
         )
 
     @property
-    def carrier_config(self):
-        return self.__class__.resolve_config(self)
-
-    @property
-    def config(self) -> dict:
-        if hasattr(self, "_computed_config"):
-            annotated_config = self._computed_config
-            if annotated_config is not None:
-                return annotated_config
-            # If the annotation didn't resolve (eg. context missing), fall back to DB lookup.
-        resolved_config = getattr(self.carrier_config, "config", None)
-        if resolved_config is not None:
-            return resolved_config
-        # Return empty dict if no config is found - do NOT fallback to credentials
-        return {}
-
-    @property
-    def services(self) -> typing.Optional[typing.List[dict]]:
-
+    def services(self) -> typing.Optional[typing.List]:
+        """Get services from linked rate sheet."""
         if self.rate_sheet is None:
             return None
-
         return self.rate_sheet.services.all()
+
+    # ─────────────────────────────────────────────────────────────────
+    # SDK INTEGRATION
+    # ─────────────────────────────────────────────────────────────────
 
     @property
     def data(self) -> datatypes.CarrierSettings:
+        """Build CarrierSettings for SDK gateway creation."""
         _computed_data: typing.Dict = dict(
             id=self.id,
-            config=self.config,
+            config=self.config or {},
             test_mode=self.test_mode,
-            metadata=self.metadata,
+            metadata=self.metadata or {},
             carrier_id=self.carrier_id,
             carrier_name=self.ext,
             display_name=self.display_name,
         )
 
+        # Include services from rate sheet
         if any(self.services or []):
             _computed_data.update(
                 services=[
                     {
                         **forms.model_to_dict(s),
-                        "zones": s.zones,  # Include computed zones property
-                        "surcharges": s.surcharges,  # Include computed surcharges property
+                        "zones": s.zones,
+                        "surcharges": s.surcharges,
                     }
                     for s in self.services
                 ]
             )
 
-        # override the config with the system config
-        if self.is_system and self.carrier_config is None:
-            _config = self.__class__.resolve_config(self, is_system_config=True)
-            _computed_data.update(config=getattr(_config, "config", None))
-
-        return datatypes.CarrierSettings.create(
-            {
-                **self.credentials,
-                **_computed_data,
-            }
-        )
+        return datatypes.CarrierSettings.create({**self.credentials, **_computed_data})
 
     @property
     def gateway(self) -> gateway.Gateway:
+        """Create SDK gateway instance for this connection."""
         import karrio.server.core.middleware as middleware
         import karrio.server.core.config as system_config
 
@@ -311,70 +268,17 @@ class Carrier(core.OwnedEntity):
             _config,
         )
 
-    @staticmethod
-    def resolve_config(
-        carrier, is_user_config: bool = False, is_system_config: bool = False
-    ):
-        import karrio.server.serializers as serializers
-        import karrio.server.core.middleware as middleware
-        from django.contrib.auth.models import AnonymousUser
-        from karrio.server.providers.models.config import CarrierConfig
 
-        if carrier.id is None:
-            return None
+def create_carrier_proxy(carrier_name: str, display_name: str):
+    """Create a proxy model for a specific carrier type."""
 
-        _ctx = serializers.get_object_context(carrier)
-        ctx = lib.identity(
-            _ctx
-            if (_ctx.user or _ctx.org)
-            else lib.failsafe(lambda: middleware.SessionContext.get_current_request())
-        )
-        has_ctx_user = lib.identity(
-            ctx and ((ctx.user and not isinstance(ctx.user, AnonymousUser)) or ctx.org)
-        )
-
-        queryset = lib.identity(
-            CarrierConfig.objects.filter(carrier=carrier)
-            if carrier.is_system
-            else CarrierConfig.access_by(ctx).filter(carrier=carrier)
-        )
-
-        if carrier.is_system:
-            _config = queryset.filter(
-                created_by__is_staff=True,
-                **({"org": None} if hasattr(carrier, "org") else {}),
-            ).first()
-
-            if has_ctx_user:
-                return queryset.filter(
-                    **(
-                        {"org": (None if is_system_config else ctx.org)}
-                        if hasattr(carrier, "org")
-                        else {"created_by": ctx.user}
-                    )
-                ).first() or (None if is_user_config else _config)
-
-            return _config
-
-        return queryset.first()
-
-
-def create_carrier_proxy(carrier_name: str, display_name):
-    class _Manager(Manager):
-        def get_queryset(self):
-            return super().get_queryset().filter(carrier_code=carrier_name)
-
-    class _CarrierManager(CarrierManager):
-        def get_queryset(self):
-            return super().get_queryset().filter(carrier_code=carrier_name)
-
-    class _SystemCarrierManager(SystemCarrierManager):
+    class _CarrierConnectionManager(CarrierConnectionManager):
         def get_queryset(self):
             return super().get_queryset().filter(carrier_code=carrier_name)
 
     return type(
         f"{carrier_name}Connection",
-        (Carrier,),
+        (CarrierConnection,),
         {
             "Meta": type(
                 "Meta",
@@ -387,8 +291,6 @@ def create_carrier_proxy(carrier_name: str, display_name):
                 },
             ),
             "__module__": __name__,
-            "objects": _Manager(),
-            "user_carriers": _CarrierManager(),
-            "system_carriers": _SystemCarrierManager(),
+            "objects": _CarrierConnectionManager(),
         },
     )

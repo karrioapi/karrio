@@ -197,8 +197,8 @@ export const TrackingPreview = ({
                           }
                           width={48}
                           height={48}
-                          text_color={tracker?.tracking_carrier?.config?.text_color}
-                          background={tracker?.tracking_carrier?.config?.brand_color}
+                          text_color={(tracker?.tracking_carrier as any)?.config?.text_color}
+                          background={(tracker?.tracking_carrier as any)?.config?.brand_color}
                         />
                       </div>
                     </div>

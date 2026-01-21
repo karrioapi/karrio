@@ -4,6 +4,7 @@ import {
   MetadataObjectTypeEnum,
   CURRENCY_OPTIONS,
   NotificationType,
+  CustomsCommodityType,
   CommodityType,
   ShipmentType,
   AddressType,
@@ -247,10 +248,11 @@ export default function Page() {
         shipment.recipient.country_code !== shipment.shipper.country_code
       );
     };
-    const isPackedItem = (cdt: CommodityType, shipment: ShipmentType) => {
+    const isPackedItem = (cdt: CommodityType | CustomsCommodityType, shipment: ShipmentType) => {
+      const parentId = "parent_id" in cdt ? cdt.parent_id : null;
       const item = getShipmentCommodities(shipment).find(
         (item) =>
-          (!!cdt.parent_id && cdt.parent_id === item.parent_id) ||
+          (!!parentId && parentId === item.parent_id) ||
           (!!cdt.hs_code && cdt.hs_code === cdt.hs_code) ||
           (!!cdt.sku && cdt.sku === item.sku),
       );
@@ -284,7 +286,7 @@ export default function Page() {
     const getItems = (orders: OrderType[]) => {
       return (orders || []).map(({ line_items }) => line_items).flat();
     };
-    const getParent = (orders: OrderType[], id: string | null) => {
+    const getParent = (orders: OrderType[], id: string | null | undefined) => {
       return getItems(orders).find((item) => item.id === id);
     };
     const getOrder = (orders: OrderType[], item_id?: string | null) => {
@@ -1169,7 +1171,7 @@ export default function Page() {
                                                 header="Edit package"
                                                 onSubmit={mutation.updateParcel(
                                                   shipment_index,
-                                                )(pkg_index, pkg.id)}
+                                                )(pkg_index, pkg.id ?? undefined)}
                                                 parcel={pkg}
                                                 shipment={shipment}
                                                 trigger={
@@ -1191,7 +1193,7 @@ export default function Page() {
                                                 }
                                                 onClick={mutation.removeParcel(
                                                   shipment_index,
-                                                )(pkg_index, pkg.id)}
+                                                )(pkg_index, pkg.id ?? undefined)}
                                               >
                                                 <span className="icon is-small">
                                                   <i className="fas fa-times"></i>
@@ -1265,7 +1267,7 @@ export default function Page() {
                                                               )(
                                                                 pkg_index,
                                                                 item_index,
-                                                                pkg.id,
+                                                                pkg.id ?? undefined,
                                                               )({
                                                                 quantity:
                                                                   parseInt(
@@ -1333,8 +1335,8 @@ export default function Page() {
                                                                 )(
                                                                   pkg_index,
                                                                   item_index,
-                                                                  pkg.id,
-                                                                )(_),
+                                                                  pkg.id ?? undefined,
+                                                                )(_ as CommodityType),
                                                             })
                                                           }
                                                         >
@@ -1352,7 +1354,7 @@ export default function Page() {
                                                       )(
                                                         pkg_index,
                                                         item_index,
-                                                        item.id,
+                                                        item.id ?? undefined,
                                                       )}
                                                     >
                                                       <span className="icon is-small">
@@ -1385,7 +1387,7 @@ export default function Page() {
                                                           shipment_index,
                                                         )(
                                                           pkg_index,
-                                                          pkg.id,
+                                                          pkg.id ?? undefined,
                                                         )([_] as any),
                                                     })
                                                   }
@@ -2068,7 +2070,7 @@ export default function Page() {
                                                                   shipment
                                                                     .customs
                                                                     ?.id,
-                                                                )(_),
+                                                                )(_ as CommodityType),
                                                             })
                                                           }
                                                         >
@@ -2092,7 +2094,7 @@ export default function Page() {
                                                         )(
                                                           index,
                                                           shipment.customs?.id,
-                                                        )(commodity.id)
+                                                        )(commodity.id ?? undefined)
                                                       }
                                                     >
                                                       <span className="icon is-small">

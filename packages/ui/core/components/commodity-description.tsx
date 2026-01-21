@@ -1,9 +1,9 @@
 import { formatWeight, isNoneOrEmpty } from "@karrio/lib";
-import { CommodityType } from "@karrio/types";
+import { CommodityType, CustomsCommodityType } from "@karrio/types";
 import React from "react";
 
 interface CommodityDescriptionComponent extends React.HTMLAttributes<any> {
-  commodity: CommodityType;
+  commodity: CommodityType | CustomsCommodityType;
   prefix?: string;
   suffix?: string;
   comments?: string;
@@ -20,7 +20,7 @@ export const CommodityDescription = ({
     <div className={`is-flex ${className || ""}`}>
       <div className="is-flex-grow-3 p-0 text-ellipsis">
         <p className="is-size-7 my-1 has-text-weight-semibold">
-          {prefix} {`${commodity.title || commodity.description || "Item"}`}{" "}
+          {prefix} {`${"title" in commodity ? (commodity.title || commodity.description || "Item") : (commodity.description || "Item")}`}{" "}
           {suffix}
         </p>
         <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">

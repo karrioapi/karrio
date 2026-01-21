@@ -278,7 +278,7 @@ class Mutation:
         self, info: Info, input: inputs.DeleteMutationInput
     ) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
-            info, model=providers.Carrier, **input.to_dict()
+            info, model=providers.CarrierConnection, **input.to_dict()
         )
 
     @strawberry.mutation

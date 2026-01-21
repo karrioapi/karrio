@@ -1,18 +1,23 @@
+"""
+Pricing module serializers.
+
+This module provides simple constants and enums for markup types.
+The old enum-based CARRIERS and SERVICES are no longer used - markups
+now use plain string lists for carrier_codes and service_codes.
+"""
+
 import enum
-import karrio.server.core.dataunits as dataunits
-from karrio.server.core.serializers import (
-    CARRIERS,
-)
 
 
-class SurchargeType(enum.Enum):
+class MarkupType(enum.Enum):
+    """Type of markup to apply."""
     AMOUNT = "AMOUNT"
     PERCENTAGE = "PERCENTAGE"
 
 
-CARRIER_SERVICES = [
-    dataunits.REFERENCE_MODELS["services"][name]
-    for name in sorted(dataunits.REFERENCE_MODELS["services"].keys())
-]
-SERVICES = [(code, code) for services in CARRIER_SERVICES for code in services]
-SURCHAGE_TYPE = [(c.name, c.name) for c in list(SurchargeType)]
+# Markup type choices for Django model field
+MARKUP_TYPE = [(c.name, c.name) for c in list(MarkupType)]
+
+# Legacy aliases for backward compatibility
+SurchargeType = MarkupType
+SURCHAGE_TYPE = MARKUP_TYPE

@@ -1,29 +1,44 @@
+"""
+Tests for the Pricing module (Markup and Fee models).
+
+These tests cover:
+1. Markup application to shipping rates (amount and percentage types)
+2. Fee capture after shipment label creation
+3. Various filter combinations (carrier_codes, service_codes, connection_ids)
+"""
+
 import json
 import logging
 from unittest.mock import patch, ANY
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from karrio.core.models import RateDetails, ChargeDetails
 from karrio.server.core.tests import APITestCase
 import karrio.server.pricing.models as models
+import karrio.server.pricing.signals as signals
 
 logging.disable(logging.CRITICAL)
 
 
-class TestPricing(APITestCase):
+class TestMarkupApplication(APITestCase):
+    """Test markup application to shipping rates."""
+
     def setUp(self) -> None:
         super().setUp()
 
-        self.charge: models.Surcharge = models.Surcharge.objects.create(
+        # Create a markup targeting specific carriers and services
+        self.markup: models.Markup = models.Markup.objects.create(
             **{
                 "amount": 1.0,
                 "name": "brokerage",
-                "carriers": ["canadapost"],
-                "services": ["canadapost_priority", "canadapost_regular_parcel"],
+                "carrier_codes": ["canadapost"],
+                "service_codes": ["canadapost_priority", "canadapost_regular_parcel"],
             }
         )
 
-    def test_apply_surcharge_amount_to_shipment_rates(self):
+    def test_apply_markup_amount_to_shipment_rates(self):
+        """Test applying fixed amount markup to rates."""
         url = reverse("karrio.server.proxy:shipment-rates")
         data = RATING_DATA
 
@@ -35,10 +50,11 @@ class TestPricing(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, RATING_RESPONSE)
 
-    def test_apply_surcharge_percentage_to_shipment_rates(self):
-        self.charge.amount = 2.0
-        self.charge.surcharge_type = "PERCENTAGE"
-        self.charge.save()
+    def test_apply_markup_percentage_to_shipment_rates(self):
+        """Test applying percentage markup to rates."""
+        self.markup.amount = 2.0
+        self.markup.markup_type = "PERCENTAGE"
+        self.markup.save()
         url = reverse("karrio.server.proxy:shipment-rates")
         data = RATING_DATA
 
@@ -50,6 +66,371 @@ class TestPricing(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, RATING_WITH_PERCENTAGE_RESPONSE)
 
+
+class TestMarkupFilters(TestCase):
+    """Test markup filter logic."""
+
+    def test_carrier_codes_filter(self):
+        """Test that markup only applies to specified carrier codes."""
+        markup = models.Markup.objects.create(
+            name="fedex_markup",
+            amount=5.0,
+            markup_type="AMOUNT",
+            carrier_codes=["fedex"],
+        )
+
+        # Create mock rate for FedEx
+        from karrio.server.core.datatypes import Rate, RateResponse
+
+        fedex_rate = Rate(
+            id="rate_1",
+            carrier_id="fedex",
+            carrier_name="fedex",
+            service="fedex_ground",
+            total_charge=10.0,
+            currency="USD",
+            extra_charges=[],
+            meta={"carrier_connection_id": "car_123"},
+        )
+
+        ups_rate = Rate(
+            id="rate_2",
+            carrier_id="ups",
+            carrier_name="ups",
+            service="ups_ground",
+            total_charge=12.0,
+            currency="USD",
+            extra_charges=[],
+            meta={"carrier_connection_id": "car_456"},
+        )
+
+        response = RateResponse(
+            rates=[fedex_rate, ups_rate],
+            messages=[],
+        )
+
+        result = markup.apply_charge(response)
+
+        # FedEx rate should have markup applied
+        fedex_result = next(r for r in result.rates if r.carrier_name == "fedex")
+        self.assertEqual(fedex_result.total_charge, 15.0)  # 10 + 5
+
+        # UPS rate should NOT have markup applied
+        ups_result = next(r for r in result.rates if r.carrier_name == "ups")
+        self.assertEqual(ups_result.total_charge, 12.0)  # unchanged
+
+    def test_service_codes_filter(self):
+        """Test that markup only applies to specified service codes."""
+        markup = models.Markup.objects.create(
+            name="express_markup",
+            amount=10.0,
+            markup_type="PERCENTAGE",
+            service_codes=["fedex_overnight"],
+        )
+
+        from karrio.server.core.datatypes import Rate, RateResponse
+
+        overnight_rate = Rate(
+            id="rate_1",
+            carrier_id="fedex",
+            carrier_name="fedex",
+            service="fedex_overnight",
+            total_charge=100.0,
+            currency="USD",
+            extra_charges=[],
+            meta={"carrier_connection_id": "car_123"},
+        )
+
+        ground_rate = Rate(
+            id="rate_2",
+            carrier_id="fedex",
+            carrier_name="fedex",
+            service="fedex_ground",
+            total_charge=50.0,
+            currency="USD",
+            extra_charges=[],
+            meta={"carrier_connection_id": "car_123"},
+        )
+
+        response = RateResponse(
+            rates=[overnight_rate, ground_rate],
+            messages=[],
+        )
+
+        result = markup.apply_charge(response)
+
+        # Overnight rate should have 10% markup applied
+        overnight_result = next(r for r in result.rates if r.service == "fedex_overnight")
+        self.assertEqual(overnight_result.total_charge, 110.0)  # 100 + 10%
+
+        # Ground rate should NOT have markup applied
+        ground_result = next(r for r in result.rates if r.service == "fedex_ground")
+        self.assertEqual(ground_result.total_charge, 50.0)  # unchanged
+
+    def test_connection_ids_filter(self):
+        """Test that markup only applies to specified connection IDs."""
+        markup = models.Markup.objects.create(
+            name="specific_connection_markup",
+            amount=3.0,
+            markup_type="AMOUNT",
+            connection_ids=["car_special_123"],
+        )
+
+        from karrio.server.core.datatypes import Rate, RateResponse
+
+        special_rate = Rate(
+            id="rate_1",
+            carrier_id="fedex",
+            carrier_name="fedex",
+            service="fedex_ground",
+            total_charge=25.0,
+            currency="USD",
+            extra_charges=[],
+            meta={"carrier_connection_id": "car_special_123"},
+        )
+
+        regular_rate = Rate(
+            id="rate_2",
+            carrier_id="fedex",
+            carrier_name="fedex",
+            service="fedex_ground",
+            total_charge=25.0,
+            currency="USD",
+            extra_charges=[],
+            meta={"carrier_connection_id": "car_regular_456"},
+        )
+
+        response = RateResponse(
+            rates=[special_rate, regular_rate],
+            messages=[],
+        )
+
+        result = markup.apply_charge(response)
+
+        # Rate with special connection should have markup
+        special_result = next(
+            r for r in result.rates
+            if r.meta.get("carrier_connection_id") == "car_special_123"
+        )
+        self.assertEqual(special_result.total_charge, 28.0)  # 25 + 3
+
+        # Rate with regular connection should NOT have markup
+        regular_result = next(
+            r for r in result.rates
+            if r.meta.get("carrier_connection_id") == "car_regular_456"
+        )
+        self.assertEqual(regular_result.total_charge, 25.0)  # unchanged
+
+    def test_empty_filters_apply_to_all(self):
+        """Test that markup with no filters applies to all rates."""
+        markup = models.Markup.objects.create(
+            name="global_markup",
+            amount=1.0,
+            markup_type="AMOUNT",
+            carrier_codes=[],
+            service_codes=[],
+            connection_ids=[],
+        )
+
+        from karrio.server.core.datatypes import Rate, RateResponse
+
+        rate1 = Rate(
+            id="rate_1",
+            carrier_id="fedex",
+            carrier_name="fedex",
+            service="fedex_ground",
+            total_charge=10.0,
+            currency="USD",
+            extra_charges=[],
+            meta={},
+        )
+
+        rate2 = Rate(
+            id="rate_2",
+            carrier_id="ups",
+            carrier_name="ups",
+            service="ups_ground",
+            total_charge=12.0,
+            currency="USD",
+            extra_charges=[],
+            meta={},
+        )
+
+        response = RateResponse(
+            rates=[rate1, rate2],
+            messages=[],
+        )
+
+        result = markup.apply_charge(response)
+
+        # Both rates should have markup applied
+        for rate in result.rates:
+            if rate.carrier_name == "fedex":
+                self.assertEqual(rate.total_charge, 11.0)  # 10 + 1
+            elif rate.carrier_name == "ups":
+                self.assertEqual(rate.total_charge, 13.0)  # 12 + 1
+
+
+class TestFeeCapture(TestCase):
+    """Test fee capture after shipment creation."""
+
+    def setUp(self):
+        """Set up test data."""
+        # Create a markup
+        self.markup = models.Markup.objects.create(
+            name="test_markup",
+            amount=5.0,
+            markup_type="AMOUNT",
+        )
+
+    def test_capture_fees_from_shipment(self):
+        """Test that fees are captured from shipment's selected_rate via signal.
+
+        When a shipment is saved with status='purchased' and a selected_rate,
+        the fee capture signal should automatically capture fees.
+        """
+        from django.contrib.auth import get_user_model
+        import karrio.server.manager.models as manager
+
+        User = get_user_model()
+        user = User.objects.create_user(
+            email="test@example.com",
+            password="testpass123",
+        )
+
+        # Create a shipment with markup in extra_charges
+        # The signal should automatically capture fees on save
+        shipment = manager.Shipment.objects.create(
+            status="purchased",
+            test_mode=True,
+            shipper={"city": "Montreal"},
+            recipient={"city": "Toronto"},
+            parcels=[{"weight": 1}],
+            selected_rate={
+                "carrier_name": "fedex",
+                "carrier_id": "fedex",
+                "service": "fedex_ground",
+                "total_charge": 15.0,
+                "currency": "USD",
+                "extra_charges": [
+                    {"id": self.markup.id, "name": "test_markup", "amount": 5.0, "currency": "USD"},
+                ],
+                "meta": {"carrier_connection_id": "car_123"},
+            },
+            created_by=user,
+        )
+
+        # Verify fee was captured by the signal (don't call manually)
+        fees = models.Fee.objects.filter(shipment=shipment)
+        self.assertEqual(fees.count(), 1)
+
+        fee = fees.first()
+        self.assertEqual(fee.markup, self.markup)
+        self.assertEqual(fee.name, "test_markup")
+        self.assertEqual(fee.amount, 5.0)
+        self.assertEqual(fee.currency, "USD")
+        self.assertEqual(fee.carrier_code, "fedex")
+        self.assertEqual(fee.service_code, "fedex_ground")
+        self.assertEqual(fee.connection_id, "car_123")
+
+    def test_capture_fees_function_directly(self):
+        """Test the capture_fees_for_shipment function in isolation.
+
+        Create shipment with status='created' (so signal won't fire),
+        then manually call capture function.
+        """
+        from django.contrib.auth import get_user_model
+        import karrio.server.manager.models as manager
+
+        User = get_user_model()
+        user = User.objects.create_user(
+            email="test_direct@example.com",
+            password="testpass123",
+        )
+
+        # Create shipment with status that won't trigger signal
+        shipment = manager.Shipment.objects.create(
+            status="created",  # Signal won't fire for this status
+            test_mode=True,
+            shipper={"city": "Montreal"},
+            recipient={"city": "Toronto"},
+            parcels=[{"weight": 1}],
+            selected_rate={
+                "carrier_name": "fedex",
+                "carrier_id": "fedex",
+                "service": "fedex_ground",
+                "total_charge": 15.0,
+                "currency": "USD",
+                "extra_charges": [
+                    {"id": self.markup.id, "name": "test_markup", "amount": 5.0, "currency": "USD"},
+                ],
+                "meta": {"carrier_connection_id": "car_123"},
+            },
+            created_by=user,
+        )
+
+        # No fees should exist yet
+        self.assertEqual(models.Fee.objects.filter(shipment=shipment).count(), 0)
+
+        # Manually capture fees
+        signals.capture_fees_for_shipment(shipment)
+
+        # Verify fee was captured
+        fees = models.Fee.objects.filter(shipment=shipment)
+        self.assertEqual(fees.count(), 1)
+
+        fee = fees.first()
+        self.assertEqual(fee.markup, self.markup)
+        self.assertEqual(fee.amount, 5.0)
+
+    def test_no_duplicate_fee_capture(self):
+        """Test that fees are not captured twice for the same shipment.
+
+        Signal should check if fees exist before capturing.
+        """
+        from django.contrib.auth import get_user_model
+        import karrio.server.manager.models as manager
+
+        User = get_user_model()
+        user = User.objects.create_user(
+            email="test2@example.com",
+            password="testpass123",
+        )
+
+        # Create shipment - signal will capture fee
+        shipment = manager.Shipment.objects.create(
+            status="purchased",
+            test_mode=True,
+            shipper={"city": "Montreal"},
+            recipient={"city": "Toronto"},
+            parcels=[{"weight": 1}],
+            selected_rate={
+                "carrier_name": "fedex",
+                "carrier_id": "fedex",
+                "service": "fedex_ground",
+                "total_charge": 15.0,
+                "currency": "USD",
+                "extra_charges": [
+                    {"id": self.markup.id, "name": "test_markup", "amount": 5.0, "currency": "USD"},
+                ],
+                "meta": {"carrier_connection_id": "car_123"},
+            },
+            created_by=user,
+        )
+
+        # Fee should already exist from signal
+        fees = models.Fee.objects.filter(shipment=shipment)
+        self.assertEqual(fees.count(), 1)
+
+        # Save again - signal should not create duplicate
+        shipment.save()
+
+        # Still only one fee
+        fees = models.Fee.objects.filter(shipment=shipment)
+        self.assertEqual(fees.count(), 1)
+
+
+# Test data fixtures
 
 RATING_DATA = {
     "shipper": {

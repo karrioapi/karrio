@@ -12,7 +12,6 @@ class TestAddresses(APITestCase):
         data = ADDRESS_DATA
 
         response = self.client.post(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -38,7 +37,6 @@ class TestAddresses(APITestCase):
 
         url = reverse("karrio.server.manager:address-list")
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -71,7 +69,6 @@ class TestAddressDetails(APITestCase):
         )
 
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -85,7 +82,6 @@ class TestAddressDetails(APITestCase):
         data = ADDRESS_UPDATE_DATA
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -98,7 +94,6 @@ class TestAddressDetails(APITestCase):
         )
 
         response = self.client.delete(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

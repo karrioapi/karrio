@@ -180,10 +180,10 @@ export default function TrackersPage(pageProps: any) {
                             height={28}
                             width={28}
                             text_color={
-                              tracker.tracking_carrier?.config?.text_color
+                              (tracker.tracking_carrier as any)?.config?.text_color
                             }
                             background={
-                              tracker.tracking_carrier?.config?.brand_color
+                              (tracker.tracking_carrier as any)?.config?.brand_color
                             }
                           />
                           <div

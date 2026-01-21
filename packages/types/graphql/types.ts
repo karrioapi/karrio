@@ -573,11 +573,12 @@ export interface get_shipment_shipment_messages {
 }
 
 export interface get_shipment_shipment_selected_rate_carrier {
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_shipment_shipment_tracker_events {
@@ -623,8 +624,8 @@ export interface get_shipment_shipment_tracker_messages {
 export interface get_shipment_shipment_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   status: TrackerStatusEnum;
   events: get_shipment_shipment_tracker_events[];
   delivered: boolean | null;
@@ -919,9 +920,12 @@ export interface get_shipments_shipments_edges_node_messages {
 }
 
 export interface get_shipments_shipments_edges_node_selected_rate_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_shipments_shipments_edges_node {
@@ -1537,9 +1541,12 @@ export interface get_tracker_tracker_created_by {
 }
 
 export interface get_tracker_tracker_tracking_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_tracker_tracker_shipment_shipper {
@@ -1564,8 +1571,8 @@ export interface get_tracker_tracker_shipment {
 export interface get_tracker_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   status: TrackerStatusEnum;
   events: get_tracker_tracker_events[];
   delivered: boolean | null;
@@ -1652,9 +1659,12 @@ export interface get_trackers_trackers_edges_node_messages {
 }
 
 export interface get_trackers_trackers_edges_node_tracking_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_trackers_trackers_edges_node_shipment_shipper {
@@ -1689,8 +1699,8 @@ export interface get_trackers_trackers_edges_node {
   test_mode: boolean;
   info: get_trackers_trackers_edges_node_info | null;
   messages: get_trackers_trackers_edges_node_messages[];
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   meta: any | null;
   metadata: any;
   tracking_carrier: get_trackers_trackers_edges_node_tracking_carrier | null;
@@ -2968,8 +2978,8 @@ export interface get_order_order_shipments_messages {
 export interface get_order_order_shipments_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
 }
 
 export interface get_order_order_shipments {
@@ -3452,8 +3462,8 @@ export interface get_orders_orders_edges_node_shipments_messages {
 export interface get_orders_orders_edges_node_shipments_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
 }
 
 export interface get_orders_orders_edges_node_shipments {
@@ -4819,9 +4829,12 @@ export interface GetManifests_manifests_edges_node_address {
 }
 
 export interface GetManifests_manifests_edges_node_manifest_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface GetManifests_manifests_edges_node_messages {
@@ -4831,8 +4844,8 @@ export interface GetManifests_manifests_edges_node_messages {
 
 export interface GetManifests_manifests_edges_node {
   id: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   manifest_url: string | null;
   shipment_identifiers: string[];
   reference: string | null;
@@ -4894,8 +4907,8 @@ export interface GetManifest_manifest_messages {
 
 export interface GetManifest_manifest {
   id: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   manifest_url: string | null;
   shipment_identifiers: string[];
   reference: string | null;

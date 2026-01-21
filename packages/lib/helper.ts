@@ -79,7 +79,7 @@ export function formatFullAddress(
 ): string {
   if (!address) return "";
   const country =
-    countries === undefined
+    countries === undefined || !address.country_code
       ? address.country_code
       : countries[address.country_code];
   return [
@@ -100,7 +100,7 @@ export function formatAddressLocation(
 ): string {
   if (!address) return "";
   const country =
-    countries === undefined
+    countries === undefined || !address.country_code
       ? address.country_code
       : countries[address.country_code];
   return [address.city, address.state_code, address.postal_code, country]
@@ -114,7 +114,7 @@ export function formatAddressLocationShort(
 ): string {
   if (!address) return "";
   const country =
-    countries === undefined
+    countries === undefined || !address.country_code
       ? address.country_code
       : countries[address.country_code];
   return [address.state_code, address.postal_code, country]

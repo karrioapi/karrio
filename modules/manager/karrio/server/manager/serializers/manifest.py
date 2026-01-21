@@ -1,10 +1,12 @@
 import typing
+from django.db.models import Q
 
 import karrio.server.core.gateway as gateway
 import karrio.server.manager.models as models
 import karrio.server.core.serializers as core
 import karrio.server.serializers as serializers
 import karrio.server.manager.serializers as manager
+from karrio.server.core.utils import create_carrier_snapshot
 
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="manifest")
 
@@ -17,16 +19,17 @@ class ManifestSerializer(core.ManifestData):
         data = validated_data.copy()
         shipment_ids = list(set(data.pop("shipment_ids")))
         carrier_name = data["carrier_name"]
-        carrier = gateway.Carriers.first(
+        carrier = gateway.Connections.first(
             context=context,
             carrier_name=carrier_name,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER},
         )
 
+        # Filter shipments by carrier_code in selected_rate.meta JSON
         shipments = models.Shipment.access_by(context).filter(
             id__in=shipment_ids,
             manifest__isnull=True,
-            selected_rate_carrier__carrier_code=carrier_name,
+            selected_rate__meta__carrier_code=carrier_name,
         )
         shipment_identifiers = [_.shipment_identifier for _ in shipments]
 
@@ -74,7 +77,7 @@ class ManifestSerializer(core.ManifestData):
                 **payload,
                 "address": address,
                 "created_by": context.user,
-                "manifest_carrier": carrier,
+                "carrier": create_carrier_snapshot(carrier),
                 "options": data.get("options", {}),
                 "test_mode": response.manifest.test_mode,
                 "manifest": response.manifest.doc.manifest,

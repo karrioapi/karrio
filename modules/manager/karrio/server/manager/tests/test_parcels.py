@@ -12,7 +12,6 @@ class TestParcels(APITestCase):
         data = PARCEL_DATA
 
         response = self.client.post(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -34,7 +33,6 @@ class TestParcels(APITestCase):
 
         url = reverse("karrio.server.manager:parcel-list")
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,7 +61,6 @@ class TestParcelDetails(APITestCase):
         )
 
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -77,7 +74,6 @@ class TestParcelDetails(APITestCase):
         data = PARCEL_UPDATE_DATA
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -90,7 +86,6 @@ class TestParcelDetails(APITestCase):
         )
 
         response = self.client.delete(url)
-        print(response.content)
 
         # Note: The API has a known issue where serializing after deletion fails
         # because the ManyToMany 'items' field requires a valid pk. The deletion

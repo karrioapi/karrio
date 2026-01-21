@@ -39,7 +39,6 @@ class TestAddress(GraphTestCase):
 
     def test_create_address(self):
         response = self._create_address()
-        print(response)
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response.data, ADDRESS_RESPONSE)
 
@@ -81,7 +80,6 @@ class TestAddress(GraphTestCase):
                 },
             },
         )
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response.data, ADDRESS_UPDATE_RESPONSE)
@@ -101,7 +99,6 @@ class TestAddress(GraphTestCase):
             operation_name="delete_address",
             variables=delete_data,
         )
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertEqual(response.data["data"]["delete_address"]["id"], address_id)
@@ -139,7 +136,6 @@ class TestParcel(GraphTestCase):
 
     def test_create_parcel(self):
         response = self._create_parcel()
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response.data, PARCEL_RESPONSE)
@@ -177,7 +173,6 @@ class TestParcel(GraphTestCase):
                 },
             },
         )
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response.data, PARCEL_UPDATE_RESPONSE)
@@ -197,7 +192,6 @@ class TestParcel(GraphTestCase):
             operation_name="delete_parcel",
             variables=delete_data,
         )
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertEqual(response.data["data"]["delete_parcel"]["id"], parcel_id)
@@ -376,7 +370,6 @@ class TestProduct(GraphTestCase):
 
     def test_create_product(self):
         response = self._create_product()
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response.data, PRODUCT_RESPONSE)
@@ -416,7 +409,6 @@ class TestProduct(GraphTestCase):
                 },
             },
         )
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response.data, PRODUCT_UPDATE_RESPONSE)
@@ -436,7 +428,6 @@ class TestProduct(GraphTestCase):
             operation_name="delete_product",
             variables=delete_data,
         )
-        print(response)
 
         self.assertResponseNoErrors(response)
         self.assertEqual(response.data["data"]["delete_product"]["id"], product_id)

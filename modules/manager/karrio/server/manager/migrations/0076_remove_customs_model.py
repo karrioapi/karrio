@@ -6,7 +6,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("manager", "0075_populate_template_meta"),
         ("graph", "0003_remove_template_customs"),  # Remove template.customs FK first
-        ("orgs", "0024_remove_organization_customs"),  # Remove orgs customs M2M first
+        # Note: orgs.0024_remove_organization_customs (insiders) uses run_before to ensure proper ordering
     ]
 
     operations = [

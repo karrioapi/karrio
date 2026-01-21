@@ -18,7 +18,7 @@ class CarrierConfig(core.OwnedEntity):
         default=functools.partial(core.uuid, prefix="cfg_"),
     )
     carrier = models.ForeignKey(
-        "Carrier",
+        "CarrierConnection",
         null=False,
         related_name="configs",
         on_delete=models.CASCADE,

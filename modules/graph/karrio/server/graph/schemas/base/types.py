@@ -458,12 +458,11 @@ class LogType:
         if User.objects.filter(
             id=info.context.request.user.id, is_staff=False
         ).exists():
-            # exclude system carriers records if user is not staff
-            system_carriers = [
-                item["id"]
-                for item in providers.Carrier.system_carriers.all().values("id")
-            ]
-            queryset = queryset.exclude(meta__carrier_account_id__in=system_carriers)
+            # exclude system connection records if user is not staff
+            system_connection_ids = list(
+                providers.SystemConnection.objects.values_list("id", flat=True)
+            )
+            queryset = queryset.exclude(meta__carrier_account_id__in=system_connection_ids)
 
         return queryset
 
@@ -1171,6 +1170,33 @@ class TrackingInfoType:
 
 
 @strawberry.type
+class CarrierSnapshotType:
+    """Represents a carrier snapshot stored at the time of operation."""
+
+    connection_id: typing.Optional[str] = None
+    connection_type: typing.Optional[str] = None
+    carrier_code: typing.Optional[str] = None
+    carrier_id: typing.Optional[str] = None
+    carrier_name: typing.Optional[str] = None
+    test_mode: typing.Optional[bool] = None
+
+    @staticmethod
+    def parse(
+        snapshot: typing.Optional[dict],
+    ) -> typing.Optional["CarrierSnapshotType"]:
+        if not snapshot:
+            return None
+        return CarrierSnapshotType(
+            connection_id=snapshot.get("connection_id"),
+            connection_type=snapshot.get("connection_type"),
+            carrier_code=snapshot.get("carrier_code"),
+            carrier_id=snapshot.get("carrier_id"),
+            carrier_name=snapshot.get("carrier_name"),
+            test_mode=snapshot.get("test_mode"),
+        )
+
+
+@strawberry.type
 class TrackerType:
     id: str
     object_type: str
@@ -1190,12 +1216,12 @@ class TrackerType:
     created_by: UserType
 
     @strawberry.field
-    def carrier_id(self: manager.Tracking) -> str:
-        return getattr(self.tracking_carrier, "carrier_id", None)
+    def carrier_id(self: manager.Tracking) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Tracking) -> str:
-        return getattr(self.tracking_carrier, "carrier_name", None)
+    def carrier_name(self: manager.Tracking) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_name")
 
     @strawberry.field
     def info(self: manager.Tracking) -> typing.Optional[TrackingInfoType]:
@@ -1212,8 +1238,8 @@ class TrackerType:
     @strawberry.field
     def tracking_carrier(
         self: manager.Tracking,
-    ) -> typing.Optional["CarrierConnectionType"]:
-        return self.tracking_carrier
+    ) -> typing.Optional[CarrierSnapshotType]:
+        return CarrierSnapshotType.parse(self.carrier)
 
     @staticmethod
     @utils.authentication_required
@@ -1249,12 +1275,12 @@ class ManifestType:
     updated_at: datetime.datetime
 
     @strawberry.field
-    def carrier_id(self: manager.Manifest) -> str:
-        return getattr(self.manifest_carrier, "carrier_id", None)
+    def carrier_id(self: manager.Manifest) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Manifest) -> str:
-        return getattr(self.manifest_carrier, "carrier_name", None)
+    def carrier_name(self: manager.Manifest) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_name")
 
     @strawberry.field
     def messages(self: manager.Manifest) -> typing.List[MessageType]:
@@ -1263,8 +1289,8 @@ class ManifestType:
     @strawberry.field
     def manifest_carrier(
         self: manager.Manifest,
-    ) -> typing.Optional["CarrierConnectionType"]:
-        return self.manifest_carrier
+    ) -> typing.Optional[CarrierSnapshotType]:
+        return CarrierSnapshotType.parse(self.carrier)
 
     @staticmethod
     @utils.authentication_required
@@ -1306,7 +1332,6 @@ class ShipmentType:
     reference: typing.Optional[str]
     services: typing.Optional[typing.List[str]]
     service: typing.Optional[str]
-    carrier_ids: typing.List[str]
     selected_rate_id: typing.Optional[str]
     tracker_id: typing.Optional[str]
     label_url: typing.Optional[str]
@@ -1338,11 +1363,19 @@ class ShipmentType:
 
     @strawberry.field
     def carrier_id(self: manager.Shipment) -> typing.Optional[str]:
-        return getattr(self.selected_rate_carrier, "carrier_id", None)
+        if self.selected_rate is None:
+            return None
+        return self.selected_rate.get("carrier_id")
 
     @strawberry.field
     def carrier_name(self: manager.Shipment) -> typing.Optional[str]:
-        return getattr(self.selected_rate_carrier, "carrier_name", None)
+        if self.selected_rate is None:
+            return None
+        return self.selected_rate.get("carrier_name")
+
+    @strawberry.field
+    def carrier_ids(self: manager.Shipment) -> typing.List[str]:
+        return self.carrier_ids or []
 
     @strawberry.field
     def parcels(self: manager.Shipment) -> typing.List[ParcelType]:
@@ -1360,8 +1393,11 @@ class ShipmentType:
     @strawberry.field
     def selected_rate_carrier(
         self: manager.Shipment,
-    ) -> typing.Optional["CarrierConnectionType"]:
-        return self.selected_rate_carrier
+    ) -> typing.Optional[CarrierSnapshotType]:
+        if self.selected_rate is None:
+            return None
+        meta = self.selected_rate.get("meta") or {}
+        return CarrierSnapshotType.parse(meta)
 
     @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
@@ -1642,29 +1678,61 @@ class RateSheetType:
 
 @strawberry.type
 class SystemConnectionType:
+    """Represents a SystemConnection that can be enabled by users via BrokeredConnection."""
+
     id: str
-    active: bool
     carrier_id: str
+    carrier_code: str
     display_name: str
     test_mode: bool
     capabilities: typing.List[str]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
 
-    @strawberry.field
-    def carrier_name(self: providers.Carrier) -> str:
-        return getattr(self, "settings", self).carrier_name
+    active: bool
 
     @strawberry.field
-    def enabled(self: providers.Carrier, info: Info) -> bool:
-        if hasattr(self, "active_orgs"):
-            return self.active_orgs.filter(id=info.context.request.org.id).exists()
-
-        return self.active_users.filter(id=info.context.request.user.id).exists()
+    def carrier_name(self: providers.SystemConnection) -> str:
+        return self.carrier_code
 
     @strawberry.field
-    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
-        return getattr(self, "config", None)
+    def enabled(self: providers.SystemConnection, info: Info) -> bool:
+        """Check if this SystemConnection is enabled for the current user/org."""
+        if settings.MULTI_ORGANIZATIONS:
+            org_id = getattr(info.context.request, "org", None)
+            org_id = org_id.id if org_id else None
+            return providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                is_enabled=True,
+                link__org__id=org_id,
+            ).exists()
+        else:
+            user_id = getattr(info.context.request, "user", None)
+            user_id = user_id.id if user_id else None
+            return providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                is_enabled=True,
+                created_by__id=user_id,
+            ).exists()
+
+    @strawberry.field
+    def config(self: providers.SystemConnection, info: Info) -> typing.Optional[utils.JSON]:
+        """Get the user's config for this SystemConnection from their BrokeredConnection."""
+        if settings.MULTI_ORGANIZATIONS:
+            org_id = getattr(info.context.request, "org", None)
+            org_id = org_id.id if org_id else None
+            brokered = providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                link__org__id=org_id,
+            ).first()
+        else:
+            user_id = getattr(info.context.request, "user", None)
+            user_id = user_id.id if user_id else None
+            brokered = providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                created_by__id=user_id,
+            ).first()
+        return brokered.config if brokered else None
 
     @staticmethod
     @utils.authentication_required
@@ -1673,41 +1741,44 @@ class SystemConnectionType:
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> utils.Connection["SystemConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
-        connections = filters.CarrierFilters(
-            _filter.to_dict(),
-            providers.Carrier.system_carriers.resolve_config_for(
-                info.context.request
-            ).filter(
-                active=True,
-                test_mode=getattr(info.context.request, "test_mode", False),
-            ),
-        ).qs
-        return utils.paginated_connection(connections, **_filter.pagination())
+        queryset = providers.SystemConnection.objects.filter(
+            active=True,
+            test_mode=getattr(info.context.request, "test_mode", False),
+        )
+        # Apply carrier filter if specified
+        if _filter.carrier_name:
+            queryset = queryset.filter(carrier_code=_filter.carrier_name)
+        return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type
 class CarrierConnectionType:
+    """GraphQL type for carrier connections."""
+
     id: str
     carrier_id: str
+    carrier_code: str
     carrier_name: str
     display_name: str
     active: bool
-    is_system: bool
     test_mode: bool
-    credentials: utils.JSON
     capabilities: typing.List[str]
 
     @strawberry.field
-    def metadata(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+    def credentials(self: providers.CarrierConnection, info: Info) -> utils.JSON:
+        return self.credentials
+
+    @strawberry.field
+    def metadata(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
         return getattr(self, "metadata", None)
 
     @strawberry.field
-    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+    def config(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
         return getattr(self, "config", None)
 
     @strawberry.field
     def rate_sheet(
-        self: providers.Carrier, info: Info
+        self: providers.CarrierConnection, info: Info
     ) -> typing.Optional[RateSheetType]:
         # Access rate_sheet FK from the Django model
         return getattr(self, "rate_sheet", None)
@@ -1720,9 +1791,10 @@ class CarrierConnectionType:
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> typing.List["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        # Carrier model now only contains user/org-owned connections (no is_system filter needed)
         connections = filters.CarrierFilters(
             _filter.to_dict(),
-            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+            providers.CarrierConnection.access_by(info.context.request),
         ).qs
         return connections
 
@@ -1734,7 +1806,7 @@ class CarrierConnectionType:
         id: str,
     ) -> typing.Optional["CarrierConnectionType"]:
         connection = (
-            providers.Carrier.access_by(info.context.request).filter(id=id).first()
+            providers.CarrierConnection.access_by(info.context.request).filter(id=id).first()
         )
         return connection
 
@@ -1746,9 +1818,10 @@ class CarrierConnectionType:
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> utils.Connection["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        # Carrier model now only contains user/org-owned connections (no is_system filter needed)
         queryset = filters.CarrierFilters(
             _filter.to_dict(),
-            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+            providers.CarrierConnection.access_by(info.context.request),
         ).qs
         connections = utils.paginated_connection(queryset, **_filter.pagination())
 

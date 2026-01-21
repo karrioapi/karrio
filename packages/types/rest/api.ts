@@ -844,6 +844,9 @@ export const CanparLanguageEnum = {
 
 export type CanparLanguageEnum = typeof CanparLanguageEnum[keyof typeof CanparLanguageEnum];
 
+/**
+ * Response serializer for carrier connections.  Note: Credentials are write-only and never returned in API responses. Use CarrierConnectionData for create and CarrierConnectionUpdateData for update.
+ */
 export interface CarrierConnection {
     /**
      * A unique carrier connection identifier
@@ -865,10 +868,6 @@ export interface CarrierConnection {
      * A carrier connection friendly name.
      */
     'carrier_id': string;
-    /**
-     * Carrier connection credentials.
-     */
-    'credentials'?: ConnectionCredentialsField;
     /**
      * The carrier enabled capabilities.
      */

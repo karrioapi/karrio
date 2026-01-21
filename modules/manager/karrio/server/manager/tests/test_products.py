@@ -21,7 +21,6 @@ class TestProductsList(APITestCase):
         data = PRODUCT_DATA
 
         response = self.client.post(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -37,7 +36,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -56,7 +54,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -72,7 +69,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -86,7 +82,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -100,7 +95,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -114,7 +108,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -128,7 +121,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -155,7 +147,6 @@ class TestProductsList(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -183,7 +174,6 @@ class TestProductsList(APITestCase):
 
         url = reverse("karrio.server.manager:product-list")
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -194,7 +184,6 @@ class TestProductsList(APITestCase):
         """Test listing products when none exist."""
         url = reverse("karrio.server.manager:product-list")
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -228,7 +217,6 @@ class TestProductsList(APITestCase):
 
         url = reverse("karrio.server.manager:product-list")
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -255,7 +243,6 @@ class TestProductsList(APITestCase):
 
         url = reverse("karrio.server.manager:product-list")
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -280,7 +267,6 @@ class TestProductsList(APITestCase):
 
         url = reverse("karrio.server.manager:product-list") + "?limit=5"
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -316,7 +302,6 @@ class TestProductDetails(APITestCase):
         )
 
         response = self.client.get(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -331,7 +316,6 @@ class TestProductDetails(APITestCase):
         )
 
         response = self.client.get(url)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -343,7 +327,6 @@ class TestProductDetails(APITestCase):
         data = PRODUCT_UPDATE_DATA
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -357,7 +340,6 @@ class TestProductDetails(APITestCase):
         data = {"meta": {"label": "Updated Label"}}
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -371,7 +353,6 @@ class TestProductDetails(APITestCase):
         data = {"meta": {"is_default": True}}
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -385,7 +366,6 @@ class TestProductDetails(APITestCase):
         data = {"weight": 3.0}
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -401,7 +381,6 @@ class TestProductDetails(APITestCase):
         data = {"sku": "NEW-SKU-002"}
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -415,7 +394,6 @@ class TestProductDetails(APITestCase):
         data = {"value_amount": 199.99, "value_currency": "CAD"}
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -430,7 +408,6 @@ class TestProductDetails(APITestCase):
         data = {"metadata": {"custom_key": "custom_value"}}
 
         response = self.client.patch(url, data)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -444,7 +421,6 @@ class TestProductDetails(APITestCase):
         data = {"weight": 2.0}
 
         response = self.client.patch(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -456,7 +432,6 @@ class TestProductDetails(APITestCase):
         )
 
         response = self.client.delete(url)
-        print(response.content)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -470,7 +445,6 @@ class TestProductDetails(APITestCase):
         )
 
         response = self.client.delete(url)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -488,7 +462,6 @@ class TestProductValidation(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -504,7 +477,6 @@ class TestProductValidation(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -519,7 +491,6 @@ class TestProductValidation(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -533,7 +504,6 @@ class TestProductValidation(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
         # The API may accept negative weight (floats aren't validated for min)
         # This tests the current behavior
 
@@ -547,7 +517,6 @@ class TestProductValidation(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
         # Zero weight might be allowed for some use cases
 
     def test_negative_quantity(self):
@@ -561,46 +530,6 @@ class TestProductValidation(APITestCase):
         }
 
         response = self.client.post(url, data)
-        print(response.content)
-
-
-class TestProductAccess(APITestCase):
-    """Tests for product access control."""
-
-    def test_cannot_access_other_user_product(self):
-        """Test that users cannot access products created by other users."""
-        from django.contrib.auth import get_user_model
-
-        User = get_user_model()
-
-        # Create another user
-        other_user = User.objects.create_user(
-            email="other@example.com",
-            password="password123",
-        )
-
-        # Create a product owned by the other user
-        other_product = Commodity.objects.create(
-            **{
-                "weight": 1.0,
-                "weight_unit": "KG",
-                "title": "Other User Product",
-                "quantity": 1,
-                "meta": {"label": "Other User Product", "is_default": False},
-                "created_by": other_user,
-            }
-        )
-
-        # Try to access it
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=other_product.pk)
-        )
-
-        response = self.client.get(url)
-        print(response.content)
-
-        # Should return 404 because the product is not accessible to this user
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 # Test data

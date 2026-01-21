@@ -437,11 +437,12 @@ export const GET_SHIPMENT = gql`
         details
       }
       selected_rate_carrier {
-        id
+        connection_id
+        connection_type
+        carrier_code
         carrier_id
         carrier_name
-        display_name
-        config
+        test_mode
       }
       tracker {
         id
@@ -726,9 +727,12 @@ export const GET_SHIPMENTS = gql`
             details
           }
           selected_rate_carrier {
+            connection_id
+            connection_type
+            carrier_code
             carrier_id
             carrier_name
-            config
+            test_mode
           }
         }
       }
@@ -1195,9 +1199,12 @@ export const GET_TRACKER = gql`
       }
       test_mode
       tracking_carrier {
+        connection_id
+        connection_type
+        carrier_code
         carrier_id
         carrier_name
-        config
+        test_mode
       }
       shipment {
         id
@@ -1283,9 +1290,12 @@ export const GET_TRACKERS = gql`
           meta
           metadata
           tracking_carrier {
+            connection_id
+            connection_type
+            carrier_code
             carrier_id
             carrier_name
-            config
+            test_mode
           }
           shipment {
             id
@@ -3299,9 +3309,12 @@ export const GET_MANIFESTS = gql`
             address_line2
           }
           manifest_carrier {
+            connection_id
+            connection_type
+            carrier_code
             carrier_id
             carrier_name
-            config
+            test_mode
           }
           messages {
             message
