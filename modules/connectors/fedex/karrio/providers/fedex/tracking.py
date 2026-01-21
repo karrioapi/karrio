@@ -74,6 +74,10 @@ def _extract_details(
         )
     )
 
+    signed_by = lib.failsafe(lambda: detail.deliveryDetails.signedByName)
+    if delivered and not signed_by:
+        signed_by = lib.failsafe(lambda: detail.deliveryDetails.receivedByName)
+
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -123,7 +127,7 @@ def _extract_details(
             shipment_origin_country=lib.failsafe(
                 lambda: detail.originLocation.locationContactAndAddress.address.countryCode
             ),
-            signed_by=lib.failsafe(lambda: detail.deliveryDetails.signedByName),
+            signed_by=signed_by,
         ),
         images=lib.identity(models.Images(signature_image=img) if img else None),
         estimated_delivery=estimated_delivery,

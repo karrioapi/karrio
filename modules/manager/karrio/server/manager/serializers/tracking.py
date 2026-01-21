@@ -295,6 +295,14 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
             )["info"]
             changes.append("info")
 
+        # Sync estimated_delivery to info.expected_delivery if updated
+        if estimated_delivery is not None:
+            current_expected = (tracker.info or {}).get("expected_delivery")
+            if current_expected != estimated_delivery:
+                tracker.info = {**(tracker.info or {}), "expected_delivery": estimated_delivery}
+                if "info" not in changes:
+                    changes.append("info")
+
         # Update images
         images = tracking_details.get("images") or {}
         delivery_image = images.get("delivery_image") if isinstance(images, dict) else getattr(images, "delivery_image", None)

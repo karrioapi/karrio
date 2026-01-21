@@ -8,7 +8,7 @@ cffi==2.0.0
 charset-normalizer==3.4.4
 click==8.3.1
 croniter==6.0.0
-cross-web==0.4.0
+cross-web==0.4.1
 cryptography==46.0.3
 cssselect2==0.8.0
 deprecation==2.1.0
@@ -25,8 +25,8 @@ django-extensions==4.1
 django-filter==25.2
 django-formtools==2.5.1
 django-health-check==3.20.8
-django-import-export==4.3.14
-django-oauth-toolkit==3.1.0
+django-import-export==4.4.0
+django-oauth-toolkit==3.2.0
 django-organizations==2.5.0
 django-otp==1.7.0
 django-phonenumber-field==8.4.0
@@ -127,8 +127,8 @@ opentelemetry-util-http==0.60b1
 packaging==25.0
 phonenumbers==9.0.21
 pillow==12.1.0
-posthog==7.5.0
-protobuf==6.33.2
+posthog==7.5.1
+protobuf==6.33.4
 psutil==7.2.1
 psycopg2-binary==2.9.11
 py_soap @ file://${PWD}/modules/soap
@@ -148,10 +148,10 @@ redis==7.1.0
 referencing==0.37.0
 requests==2.32.5
 rpds-py==0.30.0
-sentry-sdk==2.48.0
+sentry-sdk==2.49.0
 six==1.17.0
 sqlparse==0.5.5
-strawberry-graphql==0.288.2
+strawberry-graphql==0.289.0
 tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.0.0

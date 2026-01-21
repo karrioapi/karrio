@@ -1,5 +1,6 @@
 import uuid
 import typing
+import datetime
 import rest_framework.status as status
 import django.db.transaction as transaction
 from rest_framework.reverse import reverse
@@ -878,6 +879,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 test_mode=carrier.test_mode,
                 created_by=shipment.created_by,
                 status=TrackerStatus.pending.value,
+                estimated_delivery=estimated_delivery,
                 events=utils.default_tracking_event(event_at=shipment.updated_at),
                 options={shipment.tracking_number: dict(carrier=rate_provider)},
                 meta=dict(carrier=rate_provider),
@@ -891,7 +893,8 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                     shipment_destination_country=recipient.get("country_code"),
                     shipment_destination_postal_code=recipient.get("postal_code"),
                     shipment_service=shipment.meta.get("service_name"),
-                    shipping_date=shipment.options.get("shipment_date"),
+                    shipping_date=shipping_date_str,
+                    expected_delivery=estimated_delivery,
                     carrier_tracking_link=utils.get_carrier_tracking_link(
                         carrier, shipment.tracking_number
                     ),

@@ -73,7 +73,7 @@ def rate_request(
         weight_unit="KG",
     )
     commodities = lib.identity(
-        customs.commodities if any(customs.commodities) else packages.items
+        packages.items if any(packages.items) else customs.commodities
     )
 
     # map data to convert karrio model to seko specific type

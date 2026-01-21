@@ -1,5 +1,6 @@
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.core.utils as utils
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -479,29 +480,75 @@ class DocumentUploadOption(lib.Enum):
     pre_shipment = lib.OptionEnum("pre_shipment", bool)
 
 
-class TrackingStatus(lib.Enum):
-    on_hold = ["DE", "SE"]
+class TrackingStatus(utils.Enum):
+    # Based on FedEx API event/status codes.
+    # https://developer.fedex.com/api/en-us/guides/api-reference.html#trackingstatuscodes
+
+    # Pending/manifest statuses - shipment info received, awaiting pickup
+    pending = ["OC", "OX", "EP", "MD"]
+    # OC = Order Created,  OX = Shipment info sent to USPS, EP = Enroute to Pickup, MD = Manifest Data
+
+    # Picked up - package physically picked up by carrier (NEW)
+    picked_up = ["PU", "PX", "OF", "AP"]
+    # PU = Picked Up, PX = Picked Up (see details), OF = At FedEx origin facility, AP = At Pickup
+
+    # Delivered statuses
     delivered = ["DL"]
-    picked_up = ["PU", "PX", "OC", "OF"]
-    in_transit = ["IT", "IX"]
-    delivery_failed = ["CA", "RS"]
-    delivery_delayed = ["DY", "DD"]
+    # DL = Delivered
+
+    # In-transit/processing statuses
+    in_transit = ["IT", "IX", "AA", "AC", "AF", "AR", "AX", "DP", "EA", "EO", "FD", "LO", "Ow", "PF", "PL", "PM", "SF", "TR"]
+    # IT = In Transit, IX = In Transit (see details), AA = At Airport, AC = At Canada Post facility
+    # AF = At local FedEx facility, AR = Arrived at FedEx location, AX = At USPS facility, DP = Departed
+    # EA = Enroute to Airport, EO = Enroute to Origin Airport, FD = At FedEx destination, LO = Left Origin
+    # Ow = On the way, PF = Plane in Flight, PL = Plane Landed, PM = In Progress, SF = At Sort Facility
+    # TR = Transfer
+
+    # Out for delivery
     out_for_delivery = ["AD", "ED", "OD"]
-    ready_for_pickup = ["HL"]
+    # AD = At Delivery, ED = Enroute to Delivery, OD = Out for Delivery
+
+    # On hold/exception statuses
+    on_hold = ["CD", "SE", "HA"]
+    # SE = Shipment Exception, CD = Customs Delay, HA = Hold at Location Requested
+    
+    # Delivery failed/returned statuses
+    delivery_failed = ["DE"]
+    # I assume these get a DE status
+    # DE = Delivery Exception
+
+    # Cancelled/void statuses
+    cancelled = ["CA", "RD"]
+    # CA = Shipment Cancelled, RD = Return label link expired
+
+    # Ready for pickup
+    ready_for_pickup = ["HL", "HP"]
+    # HL = Hold at Location, HP = Ready for Recipient Pickup
+
+    # Delivery delayed
+    delivery_delayed = ["DY", "DD", "PY"]
+    # DY = Delay, DD = Delivery Delay, PY = Pickup Delay
+
+    # Return to sender
+    return_to_sender = ["RS", "RT"]
+    # RS = Return to Shipper, RT = Return to Shipper Requested
+
+    # Unknown/unrecognized statuses
+    unknown = []  # For any unrecognized status codes
 
 
-class TrackingIncidentReason(lib.Enum):
+class TrackingIncidentReason(utils.Enum):
     """Maps FedEx exception codes to normalized TrackingIncidentReason.
 
     Based on FedEx API exception/status codes.
     """
     # Carrier-caused issues
-    carrier_damaged_parcel = ["DA", "DM", "DMG"]  # Damaged
+    carrier_damaged_parcel = []  # Damaged
     carrier_sorting_error = ["MR", "MSR"]  # Misrouted
     carrier_address_not_found = ["NA", "ANF"]  # Address not found
-    carrier_parcel_lost = ["LO", "LT", "LP"]  # Lost
-    carrier_not_enough_time = ["NT"]  # No time
-    carrier_vehicle_issue = ["ME", "VB"]  # Mechanical, vehicle breakdown
+    carrier_parcel_lost = []  # Lost
+    carrier_not_enough_time = []  # No time
+    carrier_vehicle_issue = ["DR"]  # Mechanical, vehicle breakdown
 
     # Consignee-caused issues
     consignee_refused = ["RF", "RJ", "RE"]  # Refused
@@ -512,9 +559,9 @@ class TrackingIncidentReason(lib.Enum):
     consignee_access_restricted = ["NS", "SC"]  # No safe location, security issue
 
     # Customs-related issues
-    customs_delay = ["CD", "CH", "CI"]  # Customs delay/hold/inspection
-    customs_documentation = ["CM", "CP"]  # Customs missing docs, paperwork
-    customs_duties_unpaid = ["CU", "DU"]  # Customs unpaid, duties unpaid
+    customs_delay = ["CD", "CP"]  # Customs delay/hold/inspection
+    customs_documentation = []  # Customs missing docs, paperwork
+    customs_duties_unpaid = []  # Customs unpaid, duties unpaid
 
     # Weather/Force majeure
     weather_delay = ["WE", "WD", "PMX"]  # Weather
