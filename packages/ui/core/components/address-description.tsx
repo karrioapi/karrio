@@ -19,10 +19,10 @@ export const AddressDescription = ({
       <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">
         {formatFullAddress(address, references.countries as Collection)}
       </p>
-      <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">
+      <p className="is-size-7 my-1 has-text-weight-semibold text-blue-600">
         {address.email}
       </p>
-      <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">
+      <p className="is-size-7 my-1 has-text-weight-semibold text-blue-600">
         {address.phone_number}
       </p>
     </>
