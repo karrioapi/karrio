@@ -1,0 +1,8 @@
+{
+  "Apikey": "your-api-key",
+  "Command": "TrackShipment",
+  "Shipment": {
+    "TrackingNumber": "LX210720682NL",
+    "ShipperReference": ""
+  }
+}
