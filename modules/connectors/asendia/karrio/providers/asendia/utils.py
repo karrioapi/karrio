@@ -86,11 +86,3 @@ def login(settings: Settings) -> dict:
         "id_token": response.get("id_token"),
         "expiry": lib.fdatetime(expiry),
     }
-
-
-class ConnectionConfig(lib.Enum):
-    """Asendia connection configuration options."""
-
-    label_type = lib.OptionEnum("label_type", str)
-    shipping_options = lib.OptionEnum("shipping_options", list)
-    shipping_services = lib.OptionEnum("shipping_services", list)

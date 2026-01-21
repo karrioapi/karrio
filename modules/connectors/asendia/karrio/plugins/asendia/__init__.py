@@ -20,7 +20,7 @@ METADATA = PluginMetadata(
     is_hub=False,
     options=units.ShippingOption,
     services=units.ShippingService,
-    connection_configs=utils.ConnectionConfig,
+    connection_configs=units.ConnectionConfig,
     # Extra info
     website="https://www.asendia.com",
     documentation="https://www.asendia-sync.com/swagger-ui/index.html",
