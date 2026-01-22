@@ -2,7 +2,6 @@
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.hermes.error as error
 import karrio.providers.hermes.utils as provider_utils
@@ -111,11 +110,7 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-
-    # Build customs for international shipments (shared across all packages)
-    customs = None
-    if payload.customs:
-        customs = _build_customs(payload.customs, shipper)
+    customs = payload.customs
 
     # Split names for Hermes API
     recipient_firstname, recipient_lastname = _split_name(recipient.person_name)
@@ -125,30 +120,9 @@ def shipment_request(
     is_multi_piece = len(packages) > 1
     number_of_parts = len(packages) if is_multi_piece else None
 
-    # Create a request for each package
-    requests = []
-    for index, package in enumerate(packages, start=1):
-        # Determine product type for this package
-        product_type = provider_units.PackagingType.map(
-            package.packaging_type or "your_packaging"
-        ).value
-
-        # Build services object based on options
-        # For multi-piece: add multipartService with partNumber and numberOfParts
-        service = _build_service(
-            options,
-            is_multi_piece=is_multi_piece,
-            part_number=index if is_multi_piece else None,
-            number_of_parts=number_of_parts,
-            # parentShipmentOrderID will be injected by proxy for packages 2+
-        )
-
-        # Create the request using generated schema types
-        # Field length limits per OpenAPI spec:
-        # - street: 50, houseNumber: 5, town: 30
-        # - addressAddition: 50, addressAddition2: 20, addressAddition3: 20
-        # - clientReference: 20, clientReference2: 20, phone: 20
-        request = hermes_req.ShipmentRequestType(
+    # Create a request for each package - single tree instantiation
+    requests = [
+        hermes_req.ShipmentRequestType(
             clientReference=lib.text(payload.reference, max=20) or "",
             clientReference2=lib.text((payload.options or {}).get("clientReference2"), max=20),
             # Receiver name
@@ -208,190 +182,188 @@ def shipment_request(
             ),
             # Parcel details (weight in grams)
             parcel=hermes_req.ParcelType(
-                parcelClass=None,  # Optional, calculated from dimensions
-                parcelHeight=lib.to_int(package.height.MM) if package.height else None,
-                parcelWidth=lib.to_int(package.width.MM) if package.width else None,
-                parcelDepth=lib.to_int(package.length.MM) if package.length else None,
-                parcelWeight=lib.to_int(package.weight.G),  # Weight in grams
-                parcelVolume=None,  # Optional
-                productType=product_type,
+                parcelClass=None,
+                parcelHeight=lib.to_int(package.height.MM),
+                parcelWidth=lib.to_int(package.width.MM),
+                parcelDepth=lib.to_int(package.length.MM),
+                parcelWeight=lib.to_int(package.weight.G),
+                parcelVolume=None,
+                productType=provider_units.PackagingType.map(
+                    package.packaging_type or "your_packaging"
+                ).value,
             ),
-            # Services (includes multipartService for multi-piece shipments)
-            service=service if any([
-                getattr(service, attr) for attr in dir(service)
-                if not attr.startswith('_') and getattr(service, attr) is not None
-            ]) else None,
-            # Customs for international (same for all packages)
-            customsAndTaxes=customs,
+            # Services - single tree instantiation with all options inline
+            service=lib.identity(
+                hermes_req.ServiceType(
+                    tanService=options.hermes_tan_service.state,
+                    # Multipart service for multi-piece shipments
+                    multipartService=(
+                        hermes_req.MultipartServiceType(
+                            partNumber=index,
+                            numberOfParts=number_of_parts,
+                            parentShipmentOrderID=None,  # Injected by proxy for parts 2+
+                        )
+                        if is_multi_piece
+                        else (
+                            hermes_req.MultipartServiceType(
+                                partNumber=options.hermes_part_number.state or 1,
+                                numberOfParts=options.hermes_number_of_parts.state,
+                                parentShipmentOrderID=options.hermes_parent_shipment_order_id.state,
+                            )
+                            if options.hermes_number_of_parts.state
+                            else None
+                        )
+                    ),
+                    limitedQuantitiesService=options.hermes_limited_quantities.state,
+                    # Cash on delivery service
+                    cashOnDeliveryService=(
+                        hermes_req.CashOnDeliveryServiceType(
+                            amount=options.hermes_cod_amount.state,
+                            currency=options.hermes_cod_currency.state or "EUR",
+                            bankTransferAmount=options.hermes_cod_amount.state,
+                            bankTransferCurrency=options.hermes_cod_currency.state or "EUR",
+                        )
+                        if options.hermes_cod_amount.state
+                        else None
+                    ),
+                    bulkGoodService=options.hermes_bulk_goods.state,
+                    # Stated time service
+                    statedTimeService=(
+                        hermes_req.StatedTimeServiceType(
+                            timeSlot=options.hermes_time_slot.state,
+                        )
+                        if options.hermes_time_slot.state
+                        else None
+                    ),
+                    householdSignatureService=options.hermes_household_signature.state,
+                    # Customer alert service
+                    customerAlertService=(
+                        hermes_req.CustomerAlertServiceType(
+                            notificationType=options.hermes_notification_type.state or "EMAIL",
+                            notificationEmail=options.hermes_notification_email.state,
+                            notificationNumber=None,
+                        )
+                        if options.hermes_notification_email.state
+                        else None
+                    ),
+                    # Parcel shop delivery service
+                    parcelShopDeliveryService=(
+                        hermes_req.ParcelShopDeliveryServiceType(
+                            psCustomerFirstName=options.hermes_parcel_shop_customer_firstname.state,
+                            psCustomerLastName=options.hermes_parcel_shop_customer_lastname.state,
+                            psID=options.hermes_parcel_shop_id.state,
+                            psSelectionRule=options.hermes_parcel_shop_selection_rule.state or "SELECT_BY_ID",
+                        )
+                        if options.hermes_parcel_shop_id.state
+                        else None
+                    ),
+                    compactParcelService=options.hermes_compact_parcel.state,
+                    # Ident service
+                    identService=(
+                        hermes_req.IdentServiceType(
+                            identID=options.hermes_ident_id.state,
+                            identType=options.hermes_ident_type.state,
+                            identVerifyFsk=options.hermes_ident_fsk.state,
+                            identVerifyBirthday=options.hermes_ident_birthday.state,
+                        )
+                        if options.hermes_ident_fsk.state or options.hermes_ident_id.state
+                        else None
+                    ),
+                    # Stated day service
+                    statedDayService=(
+                        hermes_req.StatedDayServiceType(
+                            statedDay=options.hermes_stated_day.state,
+                        )
+                        if options.hermes_stated_day.state
+                        else None
+                    ),
+                    nextDayService=options.hermes_next_day.state,
+                    signatureService=options.hermes_signature.state,
+                    redirectionProhibitedService=options.hermes_redirection_prohibited.state,
+                    excludeParcelShopAuthorization=options.hermes_exclude_parcel_shop_auth.state,
+                    lateInjectionService=options.hermes_late_injection.state,
+                )
+                if any([
+                    options.hermes_tan_service.state,
+                    is_multi_piece,
+                    options.hermes_number_of_parts.state,
+                    options.hermes_limited_quantities.state,
+                    options.hermes_cod_amount.state,
+                    options.hermes_bulk_goods.state,
+                    options.hermes_time_slot.state,
+                    options.hermes_household_signature.state,
+                    options.hermes_notification_email.state,
+                    options.hermes_parcel_shop_id.state,
+                    options.hermes_compact_parcel.state,
+                    options.hermes_ident_fsk.state,
+                    options.hermes_ident_id.state,
+                    options.hermes_stated_day.state,
+                    options.hermes_next_day.state,
+                    options.hermes_signature.state,
+                    options.hermes_redirection_prohibited.state,
+                    options.hermes_exclude_parcel_shop_auth.state,
+                    options.hermes_late_injection.state,
+                ])
+                else None
+            ),
+            # Customs for international shipments - inline
+            customsAndTaxes=(
+                hermes_req.CustomsAndTaxesType(
+                    currency=lib.identity(customs.duty.currency if customs.duty else "EUR"),
+                    shipmentCost=None,
+                    items=[
+                        hermes_req.ItemType(
+                            sku=item.sku,
+                            category=None,
+                            countryCodeOfManufacture=item.origin_country,
+                            value=lib.to_int(item.value_amount * 100) if item.value_amount else None,
+                            weight=lib.to_int(item.weight * 1000) if item.weight else None,
+                            quantity=item.quantity or 1,
+                            description=item.description or item.title,
+                            exportDescription=None,
+                            exportHsCode=None,
+                            hsCode=item.hs_code,
+                            url=None,
+                        )
+                        for item in (customs.commodities or [])
+                    ] or None,
+                    invoiceReferences=None,
+                    value=None,
+                    exportCustomsClearance=None,
+                    client=None,
+                    shipmentOriginAddress=lib.identity(
+                        hermes_req.ShipmentOriginAddressType(
+                            title=None,
+                            firstname=shipper_firstname,
+                            lastname=shipper_lastname,
+                            company=shipper.company_name,
+                            street=shipper.street_name,
+                            houseNumber=shipper.street_number or "",
+                            zipCode=shipper.postal_code,
+                            town=shipper.city,
+                            state=shipper.state_code,
+                            countryCode=shipper.country_code,
+                            addressAddition=shipper.address_line2,
+                            addressAddition2=None,
+                            addressAddition3=None,
+                            phone=shipper.phone_number,
+                            fax=None,
+                            mobile=None,
+                            mail=shipper.email,
+                        )
+                        if shipper
+                        else None
+                    ),
+                )
+                if customs
+                else None
+            ),
         )
-        requests.append(request)
+        for index, package in enumerate(packages, start=1)
+    ]
 
     return lib.Serializable(
         requests,
         lambda reqs: [lib.to_dict(req) for req in reqs],
         dict(is_multi_piece=is_multi_piece),
-    )
-
-
-def _build_service(
-    options: units.ShippingOptions,
-    is_multi_piece: bool = False,
-    part_number: typing.Optional[int] = None,
-    number_of_parts: typing.Optional[int] = None,
-) -> hermes_req.ServiceType:
-    """Build Hermes service object from shipping options.
-
-    For multi-piece shipments:
-    - is_multi_piece: True if shipment has multiple packages
-    - part_number: 1, 2, 3, ... for each package
-    - number_of_parts: Total number of packages
-    - parentShipmentOrderID: Injected by proxy for packages 2+ (not passed here)
-    """
-    # Cash on delivery
-    cod_service = None
-    if options.hermes_cod_amount.state:
-        cod_service = hermes_req.CashOnDeliveryServiceType(
-            amount=options.hermes_cod_amount.state,
-            currency=options.hermes_cod_currency.state or "EUR",
-            bankTransferAmount=options.hermes_cod_amount.state,
-            bankTransferCurrency=options.hermes_cod_currency.state or "EUR",
-        )
-
-    # Customer alert service
-    alert_service = None
-    if options.hermes_notification_email.state:
-        alert_service = hermes_req.CustomerAlertServiceType(
-            notificationType=options.hermes_notification_type.state or "EMAIL",
-            notificationEmail=options.hermes_notification_email.state,
-            notificationNumber=None,
-        )
-
-    # Ident service
-    ident_service = None
-    if options.hermes_ident_fsk.state or options.hermes_ident_id.state:
-        ident_service = hermes_req.IdentServiceType(
-            identID=options.hermes_ident_id.state,
-            identType=options.hermes_ident_type.state,
-            identVerifyFsk=options.hermes_ident_fsk.state,
-            identVerifyBirthday=options.hermes_ident_birthday.state,
-        )
-
-    # Parcel shop delivery
-    parcel_shop_service = None
-    if options.hermes_parcel_shop_id.state:
-        parcel_shop_service = hermes_req.ParcelShopDeliveryServiceType(
-            psCustomerFirstName=options.hermes_parcel_shop_customer_firstname.state,
-            psCustomerLastName=options.hermes_parcel_shop_customer_lastname.state,
-            psID=options.hermes_parcel_shop_id.state,
-            psSelectionRule=options.hermes_parcel_shop_selection_rule.state or "SELECT_BY_ID",
-        )
-
-    # Stated day service
-    stated_day_service = None
-    if options.hermes_stated_day.state:
-        stated_day_service = hermes_req.StatedDayServiceType(
-            statedDay=options.hermes_stated_day.state,
-        )
-
-    # Stated time service
-    stated_time_service = None
-    if options.hermes_time_slot.state:
-        stated_time_service = hermes_req.StatedTimeServiceType(
-            timeSlot=options.hermes_time_slot.state,
-        )
-
-    # Multipart service - built from multi-piece parameters or manual options
-    multipart_service = None
-    if is_multi_piece and part_number is not None and number_of_parts is not None:
-        # Automatic multi-piece handling
-        # Note: parentShipmentOrderID is injected by proxy for part_number > 1
-        multipart_service = hermes_req.MultipartServiceType(
-            partNumber=part_number,
-            numberOfParts=number_of_parts,
-            parentShipmentOrderID=None,  # Will be injected by proxy for parts 2+
-        )
-    elif options.hermes_number_of_parts.state:
-        # Manual multi-piece via options (legacy support)
-        multipart_service = hermes_req.MultipartServiceType(
-            partNumber=options.hermes_part_number.state or 1,
-            numberOfParts=options.hermes_number_of_parts.state,
-            parentShipmentOrderID=options.hermes_parent_shipment_order_id.state,
-        )
-
-    return hermes_req.ServiceType(
-        tanService=options.hermes_tan_service.state,
-        multipartService=multipart_service,
-        limitedQuantitiesService=options.hermes_limited_quantities.state,
-        cashOnDeliveryService=cod_service,
-        bulkGoodService=options.hermes_bulk_goods.state,
-        statedTimeService=stated_time_service,
-        householdSignatureService=options.hermes_household_signature.state,
-        customerAlertService=alert_service,
-        parcelShopDeliveryService=parcel_shop_service,
-        compactParcelService=options.hermes_compact_parcel.state,
-        identService=ident_service,
-        statedDayService=stated_day_service,
-        nextDayService=options.hermes_next_day.state,
-        signatureService=options.hermes_signature.state,
-        redirectionProhibitedService=options.hermes_redirection_prohibited.state,
-        excludeParcelShopAuthorization=options.hermes_exclude_parcel_shop_auth.state,
-        lateInjectionService=options.hermes_late_injection.state,
-    )
-
-
-def _build_customs(
-    customs: models.Customs,
-    shipper,
-) -> hermes_req.CustomsAndTaxesType:
-    """Build customs and taxes for international shipments."""
-    items = [
-        hermes_req.ItemType(
-            sku=item.sku,
-            category=None,
-            countryCodeOfManufacture=item.origin_country,
-            value=lib.to_int(item.value_amount * 100) if item.value_amount else None,  # In cents
-            weight=lib.to_int(item.weight * 1000) if item.weight else None,  # In grams
-            quantity=item.quantity or 1,
-            description=item.description or item.title,
-            exportDescription=None,
-            exportHsCode=None,
-            hsCode=item.hs_code,
-            url=None,
-        )
-        for item in customs.commodities or []
-    ]
-
-    shipper_firstname, shipper_lastname = _split_name(shipper.person_name) if shipper else (None, None)
-
-    return hermes_req.CustomsAndTaxesType(
-        currency=lib.identity(customs.duty.currency if customs.duty else "EUR"),
-        shipmentCost=None,
-        items=items or None,
-        invoiceReferences=None,
-        value=None,
-        exportCustomsClearance=None,
-        client=None,
-        shipmentOriginAddress=lib.identity(
-            hermes_req.ShipmentOriginAddressType(
-                title=None,
-                firstname=shipper_firstname,
-                lastname=shipper_lastname,
-                company=shipper.company_name,
-                street=shipper.street_name,
-                houseNumber=shipper.street_number or "",
-                zipCode=shipper.postal_code,
-                town=shipper.city,
-                state=shipper.state_code,
-                countryCode=shipper.country_code,
-                addressAddition=shipper.address_line2,
-                addressAddition2=None,
-                addressAddition3=None,
-                phone=shipper.phone_number,
-                fax=None,
-                mobile=None,
-                mail=shipper.email,
-            )
-            if shipper
-            else None
-        ),
     )
