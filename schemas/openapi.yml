@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: '2026.1.1'
+  version: 2026.1.1
 paths:
   /:
     get:
@@ -1036,14 +1036,15 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1077,14 +1078,15 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1129,14 +1131,15 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1202,14 +1205,15 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -1793,14 +1797,15 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2910,6 +2915,7 @@ paths:
           type: string
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -2950,6 +2956,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -3010,6 +3017,7 @@ paths:
           type: string
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -3050,6 +3058,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -3110,6 +3119,7 @@ paths:
           type: string
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -3150,6 +3160,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -3303,6 +3314,7 @@ paths:
           type: string
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -3343,6 +3355,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -3448,6 +3461,7 @@ paths:
           type: string
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -3481,6 +3495,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - spring
           - teleship
           - tge
           - tnt
@@ -3604,14 +3619,15 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -4087,14 +4103,15 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia_us`,
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
           `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
           `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
           `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u`'
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -4219,6 +4236,7 @@ paths:
           type: string
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -4252,6 +4270,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - spring
           - teleship
           - tge
           - tnt
@@ -4434,6 +4453,56 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: removeTracker
+  /v1/trackers/{tracker_id}/inject-events:
+    post:
+      operationId: $$$$$$inject
+      description: Inject tracking events into an existing tracker for testing purposes.
+      summary: Inject tracking events
+      parameters:
+      - in: path
+        name: tracker_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Trackers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackerEventInjectRequest'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: injectTrackingEvents
   /v1/webhooks:
     get:
       operationId: $$$$$$$list
@@ -5531,6 +5600,7 @@ components:
         carrier_name:
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -5571,6 +5641,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -5580,7 +5651,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0d68c1190102c3c1
+          x-spec-enum-id: fba052f05fc9e3a2
           description: A carrier connection type.
         display_name:
           type: string
@@ -5630,6 +5701,7 @@ components:
         carrier_name:
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -5670,6 +5742,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -5679,7 +5752,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0d68c1190102c3c1
+          x-spec-enum-id: fba052f05fc9e3a2
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5739,6 +5812,7 @@ components:
         carrier_name:
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -5779,6 +5853,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -5788,7 +5863,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0d68c1190102c3c1
+          x-spec-enum-id: fba052f05fc9e3a2
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -6821,6 +6896,7 @@ components:
     ConnectionCredentialsField:
       oneOf:
       - $ref: '#/components/schemas/aramex'
+      - $ref: '#/components/schemas/asendia'
       - $ref: '#/components/schemas/asendia_us'
       - $ref: '#/components/schemas/australiapost'
       - $ref: '#/components/schemas/boxknight'
@@ -6861,6 +6937,7 @@ components:
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
       - $ref: '#/components/schemas/shipengine'
+      - $ref: '#/components/schemas/spring'
       - $ref: '#/components/schemas/teleship'
       - $ref: '#/components/schemas/tge'
       - $ref: '#/components/schemas/tnt'
@@ -8959,6 +9036,7 @@ components:
         carrier_name:
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -8999,6 +9077,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - spring
           - teleship
           - tge
           - tnt
@@ -9008,7 +9087,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0d68c1190102c3c1
+          x-spec-enum-id: fba052f05fc9e3a2
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -11511,6 +11590,45 @@ components:
       - carrier_name
       - test_mode
       - tracking_number
+    TrackerEventInjectRequest:
+      type: object
+      description: Request payload for injecting tracking events.
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingEvent'
+          description: List of tracking events to inject into the tracker
+        status:
+          enum:
+          - pending
+          - picked_up
+          - unknown
+          - on_hold
+          - cancelled
+          - delivered
+          - in_transit
+          - delivery_delayed
+          - out_for_delivery
+          - ready_for_pickup
+          - delivery_failed
+          - return_to_sender
+          - null
+          type: string
+          x-spec-enum-id: 74b67d0ba94b1fa9
+          nullable: true
+          description: 'Optional: Override the tracker status'
+        delivered:
+          type: boolean
+          default: false
+          description: 'Optional: Mark the tracker as delivered'
+        estimated_delivery:
+          type: string
+          format: date
+          nullable: true
+          description: 'Optional: Set the estimated delivery date'
+      required:
+      - events
     TrackerList:
       type: object
       properties:
@@ -11552,6 +11670,7 @@ components:
         carrier_name:
           enum:
           - aramex
+          - asendia
           - asendia_us
           - australiapost
           - boxknight
@@ -11585,6 +11704,7 @@ components:
           - royalmail
           - seko
           - sendle
+          - spring
           - teleship
           - tge
           - tnt
@@ -11594,7 +11714,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: 0285c1be6a235fba
+          x-spec-enum-id: aab0f690054e0465
           description: The tracking carrier
         account_number:
           type: string
@@ -12085,6 +12205,22 @@ components:
       - account_entity
       - account_number
       - account_pin
+      - password
+      - username
+    asendia:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        customer_id:
+          type: string
+          nullable: true
+        account_country_code:
+          type: string
+          nullable: true
+      required:
       - password
       - username
     asendia_us:
@@ -12812,6 +12948,16 @@ components:
           nullable: true
       required:
       - api_key
+    spring:
+      type: object
+      properties:
+        api_key:
+          type: string
+        account_country_code:
+          type: string
+          nullable: true
+      required:
+      - api_key
     teleship:
       type: object
       properties:
@@ -13092,6 +13238,7 @@ tags:
     | Carrier Name | Display Name |
     | ------------ | ------------ |
     | aramex | Aramex |
+    | asendia | Asendia |
     | asendia_us | Asendia US |
     | australiapost | Australia Post |
     | boxknight | BoxKnight |
@@ -13123,7 +13270,7 @@ tags:
     | mydhl | MyDHL Express |
     | nationex | Nationex |
     | parcelone | ParcelOne |
-    | postat | PostAT |
+    | postat | Austrian Post |
     | purolator | Purolator |
     | roadie | Roadie |
     | royalmail | Royal Mail |
@@ -13131,6 +13278,7 @@ tags:
     | seko | SEKO Logistics |
     | sendle | Sendle |
     | shipengine | ShipEngine |
+    | spring | Spring |
     | teleship | Teleship |
     | tge | TGE |
     | tnt | TNT |
@@ -13146,6 +13294,22 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
+    ### Asendia
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | asendia_epaq_standard | EPAQSTD |
+    | asendia_epaq_standard_cup | EPAQSTD_CUP |
+    | asendia_epaq_plus | EPAQPLUS |
+    | asendia_epaq_plus_cup | EPAQPLUS_CUP |
+    | asendia_epaq_elite | EPAQELITE |
+    | asendia_epaq_elite_cup | EPAQELITE_CUP |
+    | asendia_epaq_returns | EPAQRET |
+    | asendia_epaq_returns_domestic | EPAQRETDOM |
+    | asendia_country_road | CROAD |
+    | asendia_country_road_plus | CROADPLUS |
+    | asendia_priority | PRIORITY |
+    | asendia_priority_tracked | PRIORITYTRK |
+
     ### Asendia US
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -14532,7 +14696,7 @@ tags:
     | parcelone_ups_express | UPS_EXPRESS |
     | parcelone_ups_express_saver | UPS_EXPSAVER |
 
-    ### PostAT
+    ### Austrian Post
     | Code         | Service Name |
     | ------------ | ------------ |
     | postat_standard_domestic | 10 |
@@ -14840,6 +15004,69 @@ tags:
     | ups_2nd_day_air | UPS 2nd Day Air |
     | ups_next_day_air | UPS Next Day Air |
     | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
+
+    ### Spring
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | spring_tracked | TRCK |
+    | spring_signature | SIGN |
+    | spring_untracked | UNTR |
+    | spring_collect | CLLCT |
+    | spring_express | EXPR |
+    | spring_import | IMPRT |
+    | spring_back_returns | BACK |
+    | spring_back_tracked | BACKT |
+    | spring_no_label | NOLABEL |
+    | spring_postnl_parcel_eu | PPLEU |
+    | spring_postnl_parcel_benelux | PPND |
+    | spring_postnl_parcel_benelux_sign | PPNDS |
+    | spring_postnl_parcel_benelux_no_neighbor | PPHD |
+    | spring_postnl_parcel_benelux_sign_no_neighbor | PPHDS |
+    | spring_postnl_parcel_benelux_upu | PPLUP |
+    | spring_postnl_parcel_globalpack_ems | PPLGE |
+    | spring_postnl_parcel_globalpack_upu | PPLGU |
+    | spring_postnl_parcel_epg | PPLEP |
+    | spring_postnl_parcel_epg_noneu | PPNEU |
+    | spring_postnl_lightweight_china | PPLLW |
+    | spring_postnl_collect_service | PPLCS |
+    | spring_postnl_packet_tracked | PPTT |
+    | spring_postnl_packet_registered | PPTR |
+    | spring_postnl_packet_non_tracked | PPNT |
+    | spring_postnl_packet_boxable_bag_trace | PPBBT |
+    | spring_postnl_packet_bag_trace | PPBT |
+    | spring_postnl_packet_boxable_tracked | PPBTT |
+    | spring_postnl_packet_boxable_non_tracked | PPBNT |
+    | spring_royal_mail_tracked_24 | RM24 |
+    | spring_royal_mail_tracked_24_sign | RM24S |
+    | spring_royal_mail_tracked_48 | RM48 |
+    | spring_royal_mail_tracked_48_2 | RM482 |
+    | spring_royal_mail_tracked_48_sign | RM48S |
+    | spring_sending_mainland | SEND |
+    | spring_sending_islands | SEND2 |
+    | spring_italian_post_crono | ITCR |
+    | spring_italian_post_crono_express | ITCRX |
+    | spring_dpd_de | DPDDE |
+    | spring_hermes_sign | HEHDS |
+    | spring_hermes_collect | HEDCS |
+    | spring_colis_prive | CPHD |
+    | spring_colis_prive_sign | CPHDS |
+    | spring_com_standard | SCST |
+    | spring_com_standard_sign | SCSTS |
+    | spring_com_express | SCEX |
+    | spring_com_express_sign | SCEXS |
+    | spring_usa_parcel_ground | UPGR |
+    | spring_usa_parcel_ground_sign | UPGRS |
+    | spring_usa_parcel_express | UPEX |
+    | spring_usa_parcel_express_sign | UPEXS |
+    | spring_usa_parcel_max | UPMA |
+    | spring_usa_parcel_max_sign | UPMAS |
+    | spring_usa_parcel_ground_dg | UPDG |
+    | spring_usa_parcel_ground_dg_sign | UDGS |
+    | spring_usa_parcel_plus_ground_dg | UPPDG |
+    | spring_usa_parcel_plus_ground_dg_sign | UPDGS |
+    | spring_packeta | PACHD |
+    | spring_mailalliance_boxable | MABNT |
+    | spring_austrian_post | ATEHD |
 
     ### Teleship
     | Code         | Service Name |

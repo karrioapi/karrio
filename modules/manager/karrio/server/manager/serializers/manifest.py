@@ -25,11 +25,11 @@ class ManifestSerializer(core.ManifestData):
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER},
         )
 
-        # Filter shipments by carrier_code in selected_rate.meta JSON
+        # Filter shipments by carrier_code in carrier JSON snapshot
         shipments = models.Shipment.access_by(context).filter(
             id__in=shipment_ids,
             manifest__isnull=True,
-            selected_rate__meta__carrier_code=carrier_name,
+            carrier__carrier_code=carrier_name,
         )
         shipment_identifiers = [_.shipment_identifier for _ in shipments]
 

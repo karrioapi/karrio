@@ -374,6 +374,7 @@ export interface GetRateSheets_rate_sheets_edges_node {
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   metadata: any | null;
   zones: GetRateSheets_rate_sheets_edges_node_zones[] | null;
   surcharges: GetRateSheets_rate_sheets_edges_node_surcharges[] | null;
@@ -486,6 +487,7 @@ export interface GetRateSheet_rate_sheet {
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   metadata: any | null;
   zones: GetRateSheet_rate_sheet_zones[] | null;
   surcharges: GetRateSheet_rate_sheet_surcharges[] | null;
@@ -2262,6 +2264,7 @@ export interface GetAccountCarrierConnectionsVariables {
 
 export enum CarrierNameEnum {
   aramex = "aramex",
+  asendia = "asendia",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
   boxknight = "boxknight",
@@ -2302,6 +2305,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  spring = "spring",
   teleship = "teleship",
   tge = "tge",
   tnt = "tnt",
@@ -2956,6 +2960,7 @@ export interface InstanceConfigMutationInput {
   ALLIED_EXPRESS_LOCAL_ENABLED?: boolean | null;
   AMAZON_SHIPPING_ENABLED?: boolean | null;
   ARAMEX_ENABLED?: boolean | null;
+  ASENDIA_ENABLED?: boolean | null;
   ASENDIA_US_ENABLED?: boolean | null;
   AUSTRALIAPOST_ENABLED?: boolean | null;
   BOXKNIGHT_ENABLED?: boolean | null;
@@ -2997,6 +3002,7 @@ export interface InstanceConfigMutationInput {
   SEKO_ENABLED?: boolean | null;
   SENDLE_ENABLED?: boolean | null;
   SHIPENGINE_ENABLED?: boolean | null;
+  SPRING_ENABLED?: boolean | null;
   TELESHIP_ENABLED?: boolean | null;
   TGE_ENABLED?: boolean | null;
   TNT_ENABLED?: boolean | null;
@@ -3047,6 +3053,7 @@ export interface CreateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   metadata?: any | null;
 }
 
@@ -3124,6 +3131,7 @@ export interface UpdateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   remove_missing_services?: boolean | null;
   metadata?: any | null;
 }

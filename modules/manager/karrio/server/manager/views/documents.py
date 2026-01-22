@@ -74,7 +74,7 @@ class DocumentList(GenericAPIView):
             models.Shipment.access_by(request)
             .filter(
                 pk=request.data.get("shipment_id"),
-                selected_rate__isnull=False,  # Carrier info is now in selected_rate.meta
+                selected_rate__isnull=False,  # Ensure shipment was purchased (has carrier info)
             )
             .first()
         )

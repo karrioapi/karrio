@@ -584,6 +584,17 @@ class Tracking(core.OwnedEntity):
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["created_at"], name="tracking_created_at_idx"),
+            # JSONField indexes for carrier snapshot queries
+            models.Index(
+                fields.json.KeyTextTransform("carrier_code", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="tracking_carrier_code_idx",
+            ),
+            models.Index(
+                fields.json.KeyTextTransform("connection_id", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="tracking_connection_id_idx",
+            ),
         ]
 
     id = models.CharField(
@@ -724,6 +735,7 @@ class Shipment(core.OwnedEntity):
         "return_address",
         "billing_address",
         "selected_rate",
+        "carrier",  # Carrier snapshot
     ]
     HIDDEN_PROPS = (
         "label",
@@ -746,6 +758,12 @@ class Shipment(core.OwnedEntity):
                 name="shipment_service_idx",
             ),
             models.Index(fields=["created_at"], name="shipment_created_at_idx"),
+            # JSONField index for carrier snapshot queries
+            models.Index(
+                fields.json.KeyTextTransform("carrier_code", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="shipment_carrier_code_idx",
+            ),
         ]
 
     id = models.CharField(
@@ -811,9 +829,8 @@ class Shipment(core.OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     # OPERATIONAL JSON FIELDS
     # ─────────────────────────────────────────────────────────────────
-    # selected_rate contains carrier snapshot:
-    # {id, carrier_id, carrier_name, service, currency, total_charge, test_mode,
-    #  meta: {connection_id, connection_type, carrier_code, ...}}
+    # selected_rate contains rate details:
+    # {id, carrier_id, carrier_name, service, currency, total_charge, test_mode, meta: {...}}
     selected_rate = models.JSONField(blank=True, null=True)
     rates = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
@@ -845,6 +862,16 @@ class Shipment(core.OwnedEntity):
     )
 
     # ─────────────────────────────────────────────────────────────────
+    # CARRIER SNAPSHOT (consistent with Tracking, Pickup, Manifest, DocumentUploadRecord)
+    # ─────────────────────────────────────────────────────────────────
+    # Structure: {connection_id, connection_type, carrier_code, carrier_id, carrier_name, test_mode}
+    carrier = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Carrier snapshot at time of label purchase",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
     # MANIFEST RELATION (kept - operational necessity)
     # ─────────────────────────────────────────────────────────────────
     manifest = models.ForeignKey(
@@ -862,26 +889,25 @@ class Shipment(core.OwnedEntity):
     def object_type(self):
         return "shipment"
 
-    # Computed properties from selected_rate
+    # Computed properties from carrier snapshot
 
     @property
     def carrier_id(self) -> typing.Optional[str]:
-        if self.selected_rate is None:
+        if self.carrier is None:
             return None
-        return self.selected_rate.get("carrier_id")
+        return self.carrier.get("carrier_id")
 
     @property
     def carrier_name(self) -> typing.Optional[str]:
-        if self.selected_rate is None:
+        if self.carrier is None:
             return None
-        return self.selected_rate.get("carrier_name")
+        return self.carrier.get("carrier_name")
 
     @property
     def carrier_code(self) -> typing.Optional[str]:
-        if self.selected_rate is None:
+        if self.carrier is None:
             return None
-        meta = self.selected_rate.get("meta") or {}
-        return meta.get("carrier_code")
+        return self.carrier.get("carrier_code")
 
     @property
     def tracker_id(self) -> typing.Optional[str]:
@@ -1041,6 +1067,14 @@ class Manifest(core.OwnedEntity):
         verbose_name = "Manifest"
         verbose_name_plural = "Manifests"
         ordering = ["-created_at"]
+        indexes = [
+            # JSONField index for carrier snapshot queries
+            models.Index(
+                fields.json.KeyTextTransform("carrier_code", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="manifest_carrier_code_idx",
+            ),
+        ]
 
     id = models.CharField(
         max_length=50,

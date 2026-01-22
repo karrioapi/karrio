@@ -37,7 +37,7 @@ def populate_carrier_snapshots(apps, schema_editor):
     - Tracking.tracking_carrier -> Tracking.carrier
     - DocumentUploadRecord.upload_carrier -> DocumentUploadRecord.carrier
     - Manifest.manifest_carrier -> Manifest.carrier
-    - Shipment.selected_rate_carrier -> Shipment.selected_rate.meta (if not already set)
+    - Shipment.selected_rate_carrier -> Shipment.carrier (dedicated field, consistent with other models)
     """
     Pickup = apps.get_model("manager", "Pickup")
     Tracking = apps.get_model("manager", "Tracking")
@@ -69,25 +69,11 @@ def populate_carrier_snapshots(apps, schema_editor):
             manifest.carrier = create_carrier_snapshot(manifest.manifest_carrier)
             manifest.save(update_fields=["carrier"])
 
-    # Populate Shipment.selected_rate.meta with carrier snapshot
-    # The selected_rate already contains carrier_id and carrier_name,
-    # we just need to ensure meta has connection_id and connection_type
+    # Populate Shipment.carrier from selected_rate_carrier FK (consistent with other models)
     for shipment in Shipment.objects.select_related("selected_rate_carrier").all():
-        if shipment.selected_rate and shipment.selected_rate_carrier:
-            selected_rate = dict(shipment.selected_rate)
-            meta = dict(selected_rate.get("meta") or {})
-
-            # Only update if connection info is missing
-            if "connection_id" not in meta:
-                carrier = shipment.selected_rate_carrier
-                meta.update({
-                    "connection_id": carrier.id,
-                    "connection_type": "account",
-                    "carrier_code": carrier.carrier_code,
-                })
-                selected_rate["meta"] = meta
-                shipment.selected_rate = selected_rate
-                shipment.save(update_fields=["selected_rate"])
+        if shipment.selected_rate_carrier and not shipment.carrier:
+            shipment.carrier = create_carrier_snapshot(shipment.selected_rate_carrier)
+            shipment.save(update_fields=["carrier"])
 
 
 def reverse_migration(apps, schema_editor):
@@ -100,11 +86,13 @@ def reverse_migration(apps, schema_editor):
     Tracking = apps.get_model("manager", "Tracking")
     DocumentUploadRecord = apps.get_model("manager", "DocumentUploadRecord")
     Manifest = apps.get_model("manager", "Manifest")
+    Shipment = apps.get_model("manager", "Shipment")
 
     Pickup.objects.update(carrier=None)
     Tracking.objects.update(carrier=None)
     DocumentUploadRecord.objects.update(carrier=None)
     Manifest.objects.update(carrier=None)
+    Shipment.objects.update(carrier=None)
 
 
 class Migration(migrations.Migration):

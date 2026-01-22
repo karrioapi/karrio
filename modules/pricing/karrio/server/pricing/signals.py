@@ -44,7 +44,7 @@ def apply_custom_markups(context: Context, result):
         # 2. Have the current organization in their organization_ids list
         _filters = (
             Q(active=True, organization_ids=[])
-            | Q(active=True, organization_ids__contains=org_id),
+            | Q(active=True, organization_ids__icontains=org_id),
         )
     else:
         # No organization context - only apply system-wide markups
@@ -76,9 +76,10 @@ def capture_fees_for_shipment(shipment):
 
     selected_rate = shipment.selected_rate
     extra_charges = selected_rate.get("extra_charges", [])
-    carrier_code = selected_rate.get("carrier_name", "")
+    carrier_snapshot = getattr(shipment, "carrier", None) or {}
+    carrier_code = carrier_snapshot.get("carrier_code") or selected_rate.get("carrier_name", "")
     service_code = selected_rate.get("service", "")
-    connection_id = (selected_rate.get("meta") or {}).get("carrier_connection_id", "")
+    connection_id = carrier_snapshot.get("connection_id", "")
     currency = selected_rate.get("currency", "USD")
 
     for charge in extra_charges:

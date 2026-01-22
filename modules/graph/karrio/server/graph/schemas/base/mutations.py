@@ -514,7 +514,7 @@ class CreateRateSheetMutation(utils.BaseMutation):
         zones_data = data.pop("zones", [])
         surcharges_data = data.pop("surcharges", [])
         service_rates_data = data.pop("service_rates", [])
-        origin_countries = data.pop("origin_countries", [])  # Pop but store in metadata if needed
+        # Note: origin_countries stays in data - saved via serializer
         services_data = [
             (svc.copy() if isinstance(svc, dict) else dict(svc))
             for svc in data.get("services", [])
@@ -574,7 +574,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         )
         data = input.copy()
         carriers = data.pop("carriers", [])
-        origin_countries = data.pop("origin_countries", [])  # Pop but not used yet
+        # Note: origin_countries stays in data - saved via serializer
 
         serializer = serializers.RateSheetModelSerializer(
             instance,
@@ -1375,40 +1375,32 @@ class SystemCarrierMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.SystemCarrierMutationInput
     ) -> "SystemCarrierMutation":
-        from django.conf import settings as django_settings
+        from karrio.server.providers.serializers import BrokeredConnectionModelSerializer
 
         pk = input.get("id")
         context = info.context.request
         system_connection = providers.SystemConnection.objects.get(pk=pk)
 
-        # Get or create the BrokeredConnection for this user/org
-        if django_settings.MULTI_ORGANIZATIONS:
-            org = getattr(context, "org", None)
-            brokered, _ = providers.BrokeredConnection.objects.get_or_create(
-                system_connection=system_connection,
-                defaults={"created_by": context.user},
-            )
-            # Ensure link exists for this org
-            from karrio.server.orgs.models import BrokeredConnectionLink
-            link, _ = BrokeredConnectionLink.objects.get_or_create(
-                item=brokered,
-                org=org,
-            )
-        else:
-            brokered, _ = providers.BrokeredConnection.objects.get_or_create(
-                system_connection=system_connection,
-                created_by=context.user,
-            )
+        # Build serializer data from input
+        # Map 'config' to 'config_overrides' and 'enable' to 'is_enabled'
+        data = {"system_connection_id": pk}
 
         if "enable" in input:
-            brokered.is_enabled = input.get("enable")
-            brokered.save(update_fields=["is_enabled"])
+            data["is_enabled"] = input.get("enable")
 
         if "config" in input:
-            brokered.config = process_dictionaries_mutations(
-                ["config"], {"config": input["config"] or {}}, brokered
-            ).get("config", {})
-            brokered.save(update_fields=["config"])
+            data["config_overrides"] = input.get("config") or {}
+
+        # Use the serializer to create or update the BrokeredConnection
+        # The @owned_model_serializer decorator handles org linking automatically
+        brokered = (
+            BrokeredConnectionModelSerializer.map(
+                data=data,
+                context=context,
+            )
+            .save()
+            .instance
+        )
 
         return SystemCarrierMutation(
             carrier=system_connection

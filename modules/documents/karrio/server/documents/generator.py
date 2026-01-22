@@ -191,10 +191,8 @@ class Documents:
     @staticmethod
     def generate_shipment_document(slug: str, shipment, **kwargs) -> dict:
         template = document_models.DocumentTemplate.objects.get(slug=slug)
-        # Get carrier from kwargs or from selected_rate.meta (JSON snapshot)
-        carrier = kwargs.get("carrier") or (
-            (shipment.selected_rate or {}).get("meta", {}) if shipment.selected_rate else None
-        )
+        # Get carrier from kwargs or from shipment.carrier (JSON snapshot)
+        carrier = kwargs.get("carrier") or getattr(shipment, "carrier", None)
         params = dict(
             shipments_context=[
                 dict(
@@ -235,10 +233,8 @@ def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
         dict(
             shipment=manager_serializers.Shipment(shipment).data,
             line_items=get_shipment_item_contexts(shipment),
-            # Get carrier from selected_rate.meta (JSON snapshot)
-            carrier=get_carrier_context(
-                (shipment.selected_rate or {}).get("meta", {}) if shipment.selected_rate else None
-            ),
+            # Get carrier from shipment.carrier (JSON snapshot)
+            carrier=get_carrier_context(getattr(shipment, "carrier", None)),
             orders=orders_serializers.Order(
                 get_shipment_order_contexts(shipment), many=True
             ).data,

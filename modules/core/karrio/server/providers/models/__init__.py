@@ -1,6 +1,5 @@
 
 from karrio.server.providers.models.sheet import RateSheet
-from karrio.server.providers.models.config import CarrierConfig
 from karrio.server.providers.models.service import ServiceLevel
 from karrio.server.providers.models.template import LabelTemplate
 from karrio.server.providers.models.utils import has_rate_sheet

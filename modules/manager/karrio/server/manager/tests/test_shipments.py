@@ -204,14 +204,11 @@ class TestShipmentPurchase(TestShipmentFixture):
         )
         self.shipment.status = "purchased"
         self.shipment.shipment_identifier = "123456789012"
-        # Set selected_rate with carrier snapshot in meta
+        # Set selected_rate and carrier snapshot
         self.shipment.selected_rate = {
             **self.shipment.rates[0],
-            "meta": {
-                **self.shipment.rates[0].get("meta", {}),
-                **create_carrier_snapshot(self.carrier),
-            },
         }
+        self.shipment.carrier = create_carrier_snapshot(self.carrier)
         self.shipment.save()
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
@@ -1073,14 +1070,8 @@ CANCEL_PURCHASED_RESPONSE = {
         ],
         "meta": {
             "carrier_connection_id": ANY,
-            "carrier_id": "canadapost",
-            "carrier_name": "canadapost",
-            "carrier_code": "canadapost",
-            "connection_id": ANY,
-            "connection_type": "account",
             "rate_provider": "canadapost",
             "service_name": "CANADAPOST PRIORITY",
-            "test_mode": True,
         },
         "test_mode": True,
     },

@@ -46,14 +46,6 @@ class ConnectionCredentialsField(serializers.DictField):
     pass
 
 
-@serializers.owned_model_serializer
-class CarrierConfigModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = providers.CarrierConfig
-        exclude = ["created_at", "updated_at", "created_by"]
-        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
-
-
 class CarrierConnectionData(serializers.Serializer):
 
     carrier_name = serializers.ChoiceField(
@@ -364,6 +356,130 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
                 instance,
             )
             validated_data["config"] = data["config"]
+
+        return super().update(instance, validated_data, **kwargs)
+
+
+@serializers.owned_model_serializer
+class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
+    """
+    Serializer for BrokeredConnection (user's enabled instance of SystemConnection).
+
+    Each org gets its own BrokeredConnection per SystemConnection. This is handled
+    by the @owned_model_serializer decorator which calls link_org() after creation.
+
+    Key behaviors:
+    - Creates a new BrokeredConnection per org (not shared across orgs)
+    - Links to org via BrokeredConnectionLink (handled by link_org)
+    - Validates that system_connection exists and is active
+    """
+
+    class Meta:
+        model = providers.BrokeredConnection
+        exclude = ["created_at", "updated_at", "created_by", "system_connection"]
+
+    system_connection_id = serializers.CharField(
+        required=True,
+        help_text="The SystemConnection ID to enable.",
+    )
+    carrier_id = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Optional user-defined carrier identifier (overrides system).",
+    )
+    config_overrides = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default={},
+        help_text="User-specific config overrides (merged with system config).",
+    )
+    capabilities_overrides = serializers.StringListField(
+        required=False,
+        allow_null=True,
+        default=[],
+        help_text="Override capabilities (if empty, uses system capabilities).",
+    )
+    is_enabled = serializers.BooleanField(
+        required=False,
+        default=True,
+        help_text="Whether this brokered connection is enabled.",
+    )
+
+    @transaction.atomic
+    @utils.error_wrapper
+    def create(
+        self,
+        validated_data: dict,
+        context: serializers.Context,
+        **kwargs,
+    ) -> providers.BrokeredConnection:
+        system_connection_id = validated_data.pop("system_connection_id")
+
+        # Validate system connection exists and is active
+        try:
+            system_connection = providers.SystemConnection.objects.get(
+                pk=system_connection_id,
+                active=True,
+            )
+        except providers.SystemConnection.DoesNotExist:
+            raise serializers.ValidationError(
+                {"system_connection_id": "SystemConnection not found or not active."}
+            )
+
+        # Check if user/org already has a BrokeredConnection for this SystemConnection
+        # In multi-org mode, check via link; in OSS mode, check via created_by
+        from django.conf import settings as django_settings
+
+        existing_filter = {"system_connection": system_connection}
+
+        if django_settings.MULTI_ORGANIZATIONS and context.org:
+            existing = providers.BrokeredConnection.objects.filter(
+                **existing_filter,
+                link__org=context.org,
+            ).first()
+        else:
+            existing = providers.BrokeredConnection.objects.filter(
+                **existing_filter,
+                created_by=context.user,
+            ).first()
+
+        if existing:
+            # Update existing instead of creating new
+            return self.update(existing, validated_data)
+
+        # Create new BrokeredConnection
+        validated_data["system_connection"] = system_connection
+        validated_data.setdefault("is_enabled", True)
+        validated_data.setdefault("config_overrides", {})
+        validated_data.setdefault("capabilities_overrides", [])
+        # Copy carrier_id from SystemConnection as default
+        validated_data.setdefault("carrier_id", system_connection.carrier_id)
+
+        instance = super().create(validated_data, context=context, **kwargs)
+
+        return instance
+
+    @transaction.atomic
+    @utils.error_wrapper
+    def update(
+        self,
+        instance: providers.BrokeredConnection,
+        validated_data: dict,
+        **kwargs,
+    ) -> providers.BrokeredConnection:
+        # Handle config_overrides as dictionary mutation
+        if "config_overrides" in validated_data:
+            data = serializers.process_dictionaries_mutations(
+                ["config_overrides"],
+                dict(config_overrides=validated_data.pop("config_overrides")),
+                instance,
+            )
+            validated_data["config_overrides"] = data["config_overrides"]
+
+        # Remove system_connection_id if present (can't change after creation)
+        validated_data.pop("system_connection_id", None)
+        validated_data.pop("system_connection", None)
 
         return super().update(instance, validated_data, **kwargs)
 

@@ -315,7 +315,14 @@ class TestFeeCapture(TestCase):
                 "extra_charges": [
                     {"id": self.markup.id, "name": "test_markup", "amount": 5.0, "currency": "USD"},
                 ],
-                "meta": {"carrier_connection_id": "car_123"},
+            },
+            carrier={
+                "connection_id": "car_123",
+                "connection_type": "account",
+                "carrier_code": "fedex",
+                "carrier_id": "fedex",
+                "carrier_name": "fedex",
+                "test_mode": True,
             },
             created_by=user,
         )
@@ -364,7 +371,14 @@ class TestFeeCapture(TestCase):
                 "extra_charges": [
                     {"id": self.markup.id, "name": "test_markup", "amount": 5.0, "currency": "USD"},
                 ],
-                "meta": {"carrier_connection_id": "car_123"},
+            },
+            carrier={
+                "connection_id": "car_123",
+                "connection_type": "account",
+                "carrier_code": "fedex",
+                "carrier_id": "fedex",
+                "carrier_name": "fedex",
+                "test_mode": True,
             },
             created_by=user,
         )

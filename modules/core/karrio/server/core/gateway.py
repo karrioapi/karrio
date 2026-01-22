@@ -195,6 +195,25 @@ class Connections:
             brokered = list(brokered_queryset.distinct())
             connections = carriers + brokered
 
+        # ─────────────────────────────────────────────────────────────────
+        # FILTER OUT NON-EXISTENT EXTENSIONS
+        # ─────────────────────────────────────────────────────────────────
+        # Some connections may reference carrier extensions that no longer
+        # exist (e.g., deprecated carriers like 'fedex_ws'). Filter these
+        # out to prevent "Unknown provider" errors when accessing .gateway
+        available_providers = set(karrio.gateway.providers.keys())
+        valid_connections = []
+        for conn in connections:
+            if conn.ext in available_providers:
+                valid_connections.append(conn)
+            else:
+                logger.warning(
+                    "Skipping connection with non-existent extension",
+                    carrier_id=conn.carrier_id,
+                    extension=conn.ext,
+                )
+        connections = valid_connections
+
         # Raise error if no connections found
         if list_filter.get("raise_not_found") and len(connections) == 0:
             raise NotFound("No active carrier connection found to process the request")
@@ -722,7 +741,10 @@ class Rates:
             )
 
         def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
-            carrier = next((c for c in carriers if c.carrier_id == rate.carrier_id))
+            # Use effective_carrier_id for BrokeredConnection, fall back to carrier_id for Carrier
+            carrier = next(
+                (c for c in carriers if getattr(c, "effective_carrier_id", c.carrier_id) == rate.carrier_id)
+            )
             rate_provider = (
                 (rate.meta or {}).get("rate_provider")
                 or getattr(carrier, "custom_carrier_name", None)

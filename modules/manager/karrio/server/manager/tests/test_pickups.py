@@ -34,13 +34,13 @@ class TestFixture(TestShipmentFixture):
             "validation": None,
         }
         self.shipment.tracking_number = "123456789012"
-        # Set selected_rate with carrier snapshot in meta
+        # Set selected_rate and carrier snapshot
         self.shipment.selected_rate = {
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "service": "canadapost_priority",
-            "meta": create_carrier_snapshot(self.carrier),
         }
+        self.shipment.carrier = create_carrier_snapshot(self.carrier)
         self.shipment.save()
 
 

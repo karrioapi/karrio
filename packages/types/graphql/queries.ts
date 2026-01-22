@@ -2987,6 +2987,7 @@ export const GET_RATE_SHEET = gql`
       id
       name
       carrier_name
+      origin_countries
       zones {
         id
         label
@@ -3067,6 +3068,7 @@ export const GET_RATE_SHEETS = gql`
           id
           name
           carrier_name
+          origin_countries
           zones {
             id
             label

@@ -309,15 +309,12 @@ class ShipmentSerializer(ShipmentData):
             ).first()
             instance.test_mode = selected_rate.get("test_mode", instance.test_mode)
 
-            # Build carrier snapshot for selected_rate.meta
-            carrier_snapshot = create_carrier_snapshot(carrier) if carrier else {}
-            instance.selected_rate = {
-                **selected_rate,
-                "meta": {
-                    **selected_rate.get("meta", {}),
-                    **carrier_snapshot,
-                },
-            }
+            # Store carrier snapshot in dedicated field (consistent with Tracking, Pickup, etc.)
+            if carrier:
+                instance.carrier = create_carrier_snapshot(carrier)
+                changes += ["carrier"]
+
+            instance.selected_rate = selected_rate
             changes += ["selected_rate"]
 
         if any(changes):
@@ -574,9 +571,8 @@ class ShipmentCancelSerializer(Shipment):
         self, instance: models.Shipment, validated_data: dict, context=None, **kwargs
     ) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
-            # Resolve carrier from selected_rate meta
-            carrier_snapshot = (instance.selected_rate or {}).get("meta", {})
-            carrier = resolve_carrier(carrier_snapshot, context)
+            # Resolve carrier from carrier snapshot
+            carrier = resolve_carrier(instance.carrier or {}, context)
             gateway.Shipments.cancel(
                 payload={
                     **ShipmentCancelRequest(instance).data,
@@ -674,14 +670,9 @@ def buy_shipment_label(
 
     # Generate invoice in advance if is_paperless_trade
     if pre_purchase_generation:
-        # Embed carrier snapshot in selected_rate meta
-        shipment.selected_rate = {
-            **selected_rate,
-            "meta": {
-                **selected_rate.get("meta", {}),
-                **create_carrier_snapshot(carrier),
-            },
-        }
+        # Set carrier snapshot on shipment (consistent with other models)
+        shipment.carrier = create_carrier_snapshot(carrier)
+        shipment.selected_rate = selected_rate
         document = generate_custom_invoice(invoice_template, shipment)
         invoice = dict(invoice=document["doc_file"])
 
@@ -741,14 +732,10 @@ def buy_shipment_label(
 
     # Set selected_rate with carrier snapshot directly on shipment before update
     # (This is more reliable than depending on serializer validation)
-    shipment.selected_rate = {
-        **selected_rate,
-        "meta": {
-            **selected_rate.get("meta", {}),
-            **create_carrier_snapshot(carrier),
-        },
-    }
-    shipment.save(update_fields=["selected_rate"])
+    # Set carrier snapshot on shipment (consistent with other models)
+    shipment.carrier = create_carrier_snapshot(carrier)
+    shipment.selected_rate = selected_rate
+    shipment.save(update_fields=["carrier", "selected_rate"])
 
     purchased_shipment = lib.identity(
         ShipmentSerializer.map(
@@ -889,8 +876,8 @@ def remove_shipment_tracker(shipment: models.Shipment):
 
 def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context):
     rate_provider = (shipment.meta or {}).get("rate_provider") or shipment.carrier_name
-    # Resolve carrier from selected_rate.meta snapshot
-    carrier_snapshot = (shipment.selected_rate or {}).get("meta", {})
+    # Resolve carrier from carrier snapshot
+    carrier_snapshot = shipment.carrier or {}
     carrier = resolve_carrier(carrier_snapshot, context)
 
     # Get rate provider carrier if supported instead of carrier account

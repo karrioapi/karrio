@@ -218,6 +218,7 @@ export const GET_RATE_SHEETS = gql`
           name
           slug
           carrier_name
+          origin_countries
           metadata
           zones {
             id
@@ -286,6 +287,7 @@ export const GET_RATE_SHEET = gql`
       name
       slug
       carrier_name
+      origin_countries
       metadata
       zones {
         id

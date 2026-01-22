@@ -18,11 +18,10 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         **kwargs,
     ) -> models.DocumentUploadRecord:
         shipment = validated_data.get("shipment")
-        # Resolve carrier from validated_data or from shipment's selected_rate.meta
+        # Resolve carrier from validated_data or from shipment's carrier snapshot
         carrier = validated_data.get("carrier")
         if carrier is None and shipment:
-            carrier_snapshot = (getattr(shipment, "selected_rate", None) or {}).get("meta", {})
-            carrier = resolve_carrier(carrier_snapshot, context)
+            carrier = resolve_carrier(getattr(shipment, "carrier", None) or {}, context)
 
         tracking_number = getattr(shipment, "tracking_number", None)
         reference = validated_data.get("reference") or tracking_number
@@ -100,8 +99,8 @@ class DocumentUploadSerializer(core.DocumentUploadData):
 
 
 def can_upload_shipment_document(shipment: models.Shipment, context=None):
-    # Resolve carrier from selected_rate.meta
-    carrier_snapshot = (getattr(shipment, "selected_rate", None) or {}).get("meta", {})
+    # Resolve carrier from carrier snapshot
+    carrier_snapshot = getattr(shipment, "carrier", None) or {}
     carrier = resolve_carrier(carrier_snapshot, context) if carrier_snapshot else None
     capabilities = getattr(carrier, "capabilities", []) if carrier else []
 

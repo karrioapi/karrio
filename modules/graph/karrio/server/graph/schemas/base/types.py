@@ -1394,10 +1394,9 @@ class ShipmentType:
     def selected_rate_carrier(
         self: manager.Shipment,
     ) -> typing.Optional[CarrierSnapshotType]:
-        if self.selected_rate is None:
+        if self.carrier is None:
             return None
-        meta = self.selected_rate.get("meta") or {}
-        return CarrierSnapshotType.parse(meta)
+        return CarrierSnapshotType.parse(self.carrier)
 
     @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
@@ -1611,6 +1610,10 @@ class RateSheetType:
     name: str
     slug: str
     carrier_name: utils.CarrierNameEnum
+
+    @strawberry.field
+    def origin_countries(self: providers.RateSheet) -> typing.Optional[typing.List[str]]:
+        return self.origin_countries or []
 
     @strawberry.field
     def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:

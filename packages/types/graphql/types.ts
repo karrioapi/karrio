@@ -2733,7 +2733,7 @@ export interface get_order_order_billing_address {
 }
 
 export interface get_order_order_line_items {
-  id: string;
+  id: string | null;
   weight: number;
   title: string | null;
   description: string | null;
@@ -2745,7 +2745,7 @@ export interface get_order_order_line_items {
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
@@ -3110,7 +3110,7 @@ export interface get_order_data_order_billing_address {
 }
 
 export interface get_order_data_order_line_items {
-  id: string;
+  id: string | null;
   weight: number;
   title: string | null;
   description: string | null;
@@ -3121,7 +3121,7 @@ export interface get_order_data_order_line_items {
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
@@ -3217,7 +3217,7 @@ export interface get_orders_orders_edges_node_billing_address {
 }
 
 export interface get_orders_orders_edges_node_line_items {
-  id: string;
+  id: string | null;
   weight: number;
   title: string | null;
   description: string | null;
@@ -3229,7 +3229,7 @@ export interface get_orders_orders_edges_node_line_items {
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
@@ -4412,6 +4412,7 @@ export interface GetRateSheet_rate_sheet {
   id: string;
   name: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   zones: GetRateSheet_rate_sheet_zones[] | null;
   surcharges: GetRateSheet_rate_sheet_surcharges[] | null;
   service_rates: GetRateSheet_rate_sheet_service_rates[] | null;
@@ -4507,6 +4508,7 @@ export interface GetRateSheets_rate_sheets_edges_node {
   id: string;
   name: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   zones: GetRateSheets_rate_sheets_edges_node_zones[] | null;
   surcharges: GetRateSheets_rate_sheets_edges_node_surcharges[] | null;
   service_rates: GetRateSheets_rate_sheets_edges_node_service_rates[] | null;
@@ -5368,6 +5370,7 @@ export enum WeightUnitEnum {
 
 export enum CarrierNameEnum {
   aramex = "aramex",
+  asendia = "asendia",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
   boxknight = "boxknight",
@@ -5408,6 +5411,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  spring = "spring",
   teleship = "teleship",
   tge = "tge",
   tnt = "tnt",
@@ -6177,6 +6181,7 @@ export interface CreateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   metadata?: any | null;
 }
 
@@ -6254,6 +6259,7 @@ export interface UpdateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   remove_missing_services?: boolean | null;
   metadata?: any | null;
 }

@@ -459,10 +459,8 @@ class ShipmentFilters(filters.FilterSet):
         )
 
     def carrier_filter(self, queryset, name, values):
-        # Filter by carrier_code in selected_rate.meta JSON
-        _filters = [
-            models.Q(selected_rate__meta__carrier_code=value) for value in values
-        ]
+        # Filter by carrier_code in carrier JSON snapshot
+        _filters = [models.Q(carrier__carrier_code=value) for value in values]
         query = models.Q(meta__rate_provider__in=values)
 
         for item in _filters:

@@ -5,12 +5,70 @@ from django.db import migrations
 from django.conf import settings
 
 
+def cleanup_orgs_carrier_references(apps, schema_editor, carrier):
+    """
+    Clean up orgs link tables that reference a carrier before deleting it.
+    This handles the case where the database was created in insiders mode but migrations
+    are running in OSS mode.
+
+    In insiders mode, the orgs migrations handle this cleanup properly.
+    This is a fallback for OSS mode with insiders DB.
+    """
+    # Try to get orgs link models and clean them up using Django ORM
+    try:
+        CarrierLink = apps.get_model("orgs", "CarrierLink")
+        CarrierLink.objects.filter(item_id=carrier.id).delete()
+    except LookupError:
+        # Model not registered - check if table exists using Django introspection
+        connection = schema_editor.connection
+        table_names = connection.introspection.table_names()
+        if "orgs_carrierlink" in table_names:
+            with connection.cursor() as cursor:
+                cursor.execute("DELETE FROM orgs_carrierlink WHERE item_id = %s", [carrier.id])
+
+    # Clear the M2M relationship if it exists
+    try:
+        if hasattr(carrier, "active_orgs"):
+            carrier.active_orgs.clear()
+    except Exception:
+        # M2M table might exist without the model - clean up directly
+        connection = schema_editor.connection
+        table_names = connection.introspection.table_names()
+        if "orgs_organization_system_carriers" in table_names:
+            with connection.cursor() as cursor:
+                cursor.execute("DELETE FROM orgs_organization_system_carriers WHERE carrier_id = %s", [carrier.id])
+
+
+def cleanup_all_orgs_carrier_references(schema_editor):
+    """
+    Clean up ALL orgs carrier references before migration starts.
+    This handles the case where the database was created in insiders mode but migrations
+    are running in OSS mode.
+    """
+    connection = schema_editor.connection
+    table_names = connection.introspection.table_names()
+
+    # Clean up all orgs tables that might reference carriers or carrier configs
+    tables_to_clean = [
+        "orgs_carrierlink",
+        "orgs_carrierconfiglink",
+        "orgs_organization_system_carriers",
+        "orgs_organization_carrier_configs",
+    ]
+
+    for table in tables_to_clean:
+        if table in table_names:
+            with connection.cursor() as cursor:
+                cursor.execute(f"DELETE FROM {table}")
+
+
 def migrate_system_carriers(apps, schema_editor):
     """
     Migrate carriers with is_system=True to SystemConnection.
     Create BrokeredConnections for users/orgs that had access.
 
     Steps:
+    0. Clean up orgs references first (handles insiders DB in OSS mode)
     1. Find all carriers where is_system=True
     2. Create SystemConnection for each
     3. Get CarrierConfig for system config (if any)
@@ -19,6 +77,9 @@ def migrate_system_carriers(apps, schema_editor):
     5. Copy user/org-specific CarrierConfig to BrokeredConnection.config_overrides
     6. Delete the original Carrier record
     """
+    # Step 0: Clean up orgs references first
+    cleanup_all_orgs_carrier_references(schema_editor)
+
     Carrier = apps.get_model("providers", "Carrier")
     SystemConnection = apps.get_model("providers", "SystemConnection")
     BrokeredConnection = apps.get_model("providers", "BrokeredConnection")
@@ -84,7 +145,7 @@ def migrate_system_carriers(apps, schema_editor):
 
                     brokered = BrokeredConnection.objects.create(
                         system_connection=system_conn,
-                        carrier_id=None,  # Use system's carrier_id
+                        carrier_id=system_conn.carrier_id,  # Copy from system connection
                         config_overrides=org_config.config if org_config else {},
                         capabilities_overrides=[],
                         is_enabled=True,
@@ -111,7 +172,7 @@ def migrate_system_carriers(apps, schema_editor):
 
                     BrokeredConnection.objects.create(
                         system_connection=system_conn,
-                        carrier_id=None,  # Use system's carrier_id
+                        carrier_id=system_conn.carrier_id,  # Copy from system connection
                         config_overrides=user_config.config if user_config else {},
                         capabilities_overrides=[],
                         is_enabled=True,
@@ -121,7 +182,7 @@ def migrate_system_carriers(apps, schema_editor):
             except Exception:
                 pass  # active_users may not exist in schema yet
 
-        # 4. Delete the original Carrier record (per decision #15: MOVE)
+        # 4. Delete the original Carrier record (orgs refs already cleaned up at start)
         carrier.delete()
 
 

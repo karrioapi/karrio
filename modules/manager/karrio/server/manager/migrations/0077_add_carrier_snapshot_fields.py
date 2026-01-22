@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     """
-    Step 1: Add carrier JSONField to Pickup, Tracking, DocumentUploadRecord, Manifest.
+    Step 1: Add carrier JSONField to Pickup, Tracking, DocumentUploadRecord, Manifest, Shipment.
     Also adds carrier_ids JSONField to Shipment.
 
     This migration adds the new carrier snapshot fields but does NOT remove the old FK fields yet.
@@ -57,6 +57,16 @@ class Migration(migrations.Migration):
                 blank=True,
                 null=True,
                 help_text="Carrier snapshot at time of manifest creation",
+            ),
+        ),
+        # Add carrier field to Shipment (consistent with other models)
+        migrations.AddField(
+            model_name="shipment",
+            name="carrier",
+            field=models.JSONField(
+                blank=True,
+                null=True,
+                help_text="Carrier snapshot at time of label purchase",
             ),
         ),
         # Add carrier_ids field to Shipment
