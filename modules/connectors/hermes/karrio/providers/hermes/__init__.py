@@ -10,6 +10,10 @@ from karrio.providers.hermes.pickup import (
     pickup_cancel_request,
     pickup_request,
 )
+from karrio.providers.hermes.tracking import (
+    parse_tracking_response,
+    tracking_request,
+)
 
 # Note: Hermes API does not support:
 # - shipment cancellation (no DELETE endpoint for shipments)

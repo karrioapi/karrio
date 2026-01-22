@@ -112,3 +112,23 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
+
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Get tracking information for shipments.
+
+        Endpoint: GET /shipmentinfo?shipmentID=...
+        Accepts up to 100 shipment IDs per request.
+        """
+        tracking_numbers = request.serialize()
+
+        # Build query string with multiple shipmentID params
+        query_params = "&".join([f"shipmentID={num}" for num in tracking_numbers])
+
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipmentinfo?{query_params}",
+            trace=self.trace_as("json"),
+            method="GET",
+            headers=self._get_headers(),
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
