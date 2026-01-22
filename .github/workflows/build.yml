@@ -139,3 +139,27 @@ jobs:
           docker push karrio/dashboard:${{ env.tag }}
           docker tag karrio/dashboard:${{ env.tag }} karrio/dashboard:latest-rc
           docker push karrio/dashboard:latest-rc
+
+  create-release:
+    # Create a GitHub release after all builds complete successfully
+    # This job is idempotent - it will skip if the release already exists
+    needs: [python-packages, server-build, dashboard-build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MARK_LATEST: "1"
+        run: |
+          echo 'Creating GitHub release for version ${{ env.tag }}...'
+          ./bin/create-github-release ${{ env.tag }}
