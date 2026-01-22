@@ -1,3 +1,39 @@
+# Karrio 2026.1.2
+
+## Changes
+
+### Feat
+
+- feat(asendia): add Asendia carrier integration with shipping, tracking, manifest support and multi-package handling
+- feat(spring): add Spring carrier integration with shipping, tracking, cancellation and CSV-based rating
+- feat: add event injection API for programmatic tracking event creation
+- feat: introduce products GraphQL API with JSONField optimization for better query performance
+- feat: add options meta and document category unified enum
+- feat: add carrier icons for new integrations
+- feat: improve address, parcel and products templates with database structure optimization
+
+### Fix
+
+- fix(dhl_parcel_de): correct addressHouse parsing
+- fix(fedex): update signed_by fallback for B2B shipments
+- fix(fedex): OC status should not be considered picked up
+- fix(fedex): update TrackingStatus to new format
+- fix(ups): correct shipment_origin values and add pickup date to trackers
+- fix(frontend): add GLS to carrier images
+
+### Refactor
+
+- refactor: migrate order details page to shadcn components with sidebar layout
+- refactor: connections management for better data normalization and optimized reads
+- refactor: enhance tracking events with TrackingIncidentReason
+
+### Chore
+
+- chore: QA improvements and migration integrity fixes
+- test: add comprehensive tracking tests
+
+---
+
 # Karrio 2026.1.1
 
 ## Changes

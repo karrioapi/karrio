@@ -5,6 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@karrio/ui/components/ui/card";
 import { Switch } from "@karrio/ui/components/ui/switch";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -88,6 +89,41 @@ const defaultConfig: ConfigData = {
 
 type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 'features' | 'platform' | null;
 
+function SettingRow({ label, description, enabled }: { label: string; description?: string; enabled: boolean }) {
+  return (
+    <div className="flex items-center justify-between py-2">
+      <div className="space-y-0.5">
+        <p className="text-sm font-medium">{label}</p>
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
+      </div>
+      {enabled ? (
+        <Check className="h-4 w-4 text-green-500" />
+      ) : (
+        <X className="h-4 w-4 text-muted-foreground" />
+      )}
+    </div>
+  );
+}
+
+function EndpointRow({ label, value, onCopy, onOpen }: { label: string; value: string; onCopy: () => void; onOpen: () => void }) {
+  return (
+    <div className="py-2">
+      <p className="text-xs text-muted-foreground mb-1">{label}</p>
+      <div className="flex items-center gap-2 group">
+        <p className="text-sm font-medium truncate flex-1">{value}</p>
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onCopy}>
+            <Copy className="h-3.5 w-3.5" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onOpen}>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PlatformDetails() {
   const { toast } = useToast();
   const { metadata } = useAPIMetadata();
@@ -113,6 +149,11 @@ export default function PlatformDetails() {
     });
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text || "");
+    toast({ title: "Copied to clipboard" });
+  };
+
   const currentConfig = configs ? {
     ...defaultConfig,
     ...Object.fromEntries(
@@ -121,533 +162,228 @@ export default function PlatformDetails() {
   } as ConfigData : defaultConfig;
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Platform Overview
-        </h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-semibold tracking-tight">Platform Overview</h1>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border shadow-none">
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">Total Users</p>
+            <p className="text-2xl font-semibold">{usage?.user_count?.toLocaleString() || 0}</p>
+          </CardContent>
+        </Card>
+        <Card className="border shadow-none">
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">Organizations</p>
+            <p className="text-2xl font-semibold">{usage?.organization_count?.toLocaleString() || 0}</p>
+          </CardContent>
+        </Card>
+        <Card className="border shadow-none">
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">Total Shipments</p>
+            <p className="text-2xl font-semibold">{usage?.total_shipments?.toLocaleString() || 0}</p>
+          </CardContent>
+        </Card>
+        <Card className="border shadow-none">
+          <CardContent className="p-4">
+            <p className="text-sm text-muted-foreground">API Requests</p>
+            <p className="text-2xl font-semibold">{usage?.total_requests?.toLocaleString() || 0}</p>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="space-y-8">
-        {/* System Statistics Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border shadow-none">
-            <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Total Users</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {usage?.user_count?.toLocaleString() || 0}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border shadow-none">
-            <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Organizations</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {usage?.organization_count?.toLocaleString() || 0}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border shadow-none">
-            <CardContent className="p-4">
-              <p className="text-sm text-gray-600">Total Shipments</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {usage?.total_shipments?.toLocaleString() || 0}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border shadow-none">
-            <CardContent className="p-4">
-              <p className="text-sm text-gray-600">API Requests</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {usage?.total_requests?.toLocaleString() || 0}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Platform Config */}
-        <Card>
-          <CardHeader className="space-y-2">
-            <CardTitle>Platform Details</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Overview of your platform configuration and API endpoints.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm mb-6">
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Platform Name</Label>
-                    <p className="text-sm font-medium mt-1">{currentConfig.APP_NAME || metadata?.APP_NAME}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setEditSection('platform')}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Platform Website</Label>
-                  <div className="flex items-center gap-2 mt-1 group">
-                    <p className="text-sm font-medium">{currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE}</p>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => {
-                          navigator.clipboard.writeText(currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE || "");
-                          toast({ title: "Copied to clipboard" });
-                        }}
-                      >
-                        <Copy className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => window.open(currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE, '_blank')}
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="p-6 space-y-4">
-                <div>
-                  <Label className="text-xs text-muted-foreground">API Host</Label>
-                  <div className="flex items-center gap-2 mt-1 group">
-                    <p className="text-sm font-medium">{metadata?.HOST}</p>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => {
-                          navigator.clipboard.writeText(metadata?.HOST || "");
-                          toast({ title: "Copied to clipboard" });
-                        }}
-                      >
-                        <Copy className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => window.open(metadata?.HOST, '_blank')}
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Shipping API</Label>
-                  <div className="flex items-center gap-2 mt-1 group">
-                    <p className="text-sm font-medium">{metadata?.OPENAPI}</p>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => {
-                          navigator.clipboard.writeText(metadata?.OPENAPI || "");
-                          toast({ title: "Copied to clipboard" });
-                        }}
-                      >
-                        <Copy className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => window.open(metadata?.OPENAPI, '_blank')}
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">GraphQL Endpoint</Label>
-                  <div className="flex items-center gap-2 mt-1 group">
-                    <p className="text-sm font-medium">{metadata?.GRAPHQL}</p>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => {
-                          navigator.clipboard.writeText(metadata?.GRAPHQL || "");
-                          toast({ title: "Copied to clipboard" });
-                        }}
-                      >
-                        <Copy className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => window.open(metadata?.GRAPHQL, '_blank')}
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">AdminGraphQL Endpoint</Label>
-                  <div className="flex items-center gap-2 mt-1 group">
-                    <p className="text-sm font-medium">{url$`${metadata?.HOST}/admin/graphql`}</p>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => {
-                          navigator.clipboard.writeText(url$`${metadata?.HOST}/admin/graphql` || "");
-                          toast({ title: "Copied to clipboard" });
-                        }}
-                      >
-                        <Copy className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => window.open(url$`${metadata?.HOST}/admin/graphql`, '_blank')}
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Administration */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <div className="space-y-2">
-              <CardTitle>Administration</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Configure user access and platform behavior settings.
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setEditSection('administration')}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="p-6 space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Allow Signup</Label>
-                    <p className="text-sm text-muted-foreground">Allow user signup</p>
-                  </div>
-                  {currentConfig.ALLOW_SIGNUP ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Admin Approved Signup</Label>
-                    <p className="text-sm text-muted-foreground">User signup requires admin approval</p>
-                  </div>
-                  {currentConfig.ALLOW_ADMIN_APPROVED_SIGNUP ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Audit Logging</Label>
-                    <p className="text-sm text-muted-foreground">Enable audit logging for system activities</p>
-                  </div>
-                  {currentConfig.AUDIT_LOGGING ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Features */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      {/* Platform Details & API Endpoints */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        <Card className="border shadow-none">
+          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
             <div>
-              <CardTitle>Features</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Configure platform features and capabilities.
-              </p>
+              <CardTitle className="text-base">Platform Details</CardTitle>
+              <CardDescription>Branding and identity</CardDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setEditSection('features')}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('platform')}>
               <Pencil className="h-4 w-4" />
             </Button>
           </CardHeader>
-          <CardContent>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="p-6 space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Multi Account</Label>
-                    <p className="text-sm text-muted-foreground">Allow users to have multiple accounts</p>
+          <CardContent className="space-y-1">
+            <div className="py-2">
+              <p className="text-xs text-muted-foreground mb-1">Platform Name</p>
+              <p className="text-sm font-medium">{currentConfig.APP_NAME || metadata?.APP_NAME || 'Not configured'}</p>
+            </div>
+            <div className="py-2">
+              <p className="text-xs text-muted-foreground mb-1">Platform Website</p>
+              <div className="flex items-center gap-2 group">
+                <p className="text-sm font-medium truncate flex-1">{currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE || 'Not configured'}</p>
+                {(currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE) && (
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE || "")}>
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => window.open(currentConfig.APP_WEBSITE || metadata?.APP_WEBSITE, '_blank')}>
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
                   </div>
-                  {currentConfig.ALLOW_MULTI_ACCOUNT ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Admin Dashboard</Label>
-                    <p className="text-sm text-muted-foreground">Enable admin dashboard access</p>
-                  </div>
-                  {currentConfig.ADMIN_DASHBOARD ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Multi Organizations</Label>
-                    <p className="text-sm text-muted-foreground">Enable multi-organization support</p>
-                  </div>
-                  {currentConfig.MULTI_ORGANIZATIONS ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Documents Management</Label>
-                    <p className="text-sm text-muted-foreground">Enable documents management</p>
-                  </div>
-                  {currentConfig.DOCUMENTS_MANAGEMENT ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Data Import/Export</Label>
-                    <p className="text-sm text-muted-foreground">Enable data import/export</p>
-                  </div>
-                  {currentConfig.DATA_IMPORT_EXPORT ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Persist SDK Tracing</Label>
-                    <p className="text-sm text-muted-foreground">Persist SDK tracing</p>
-                  </div>
-                  {currentConfig.PERSIST_SDK_TRACING ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Orders Management</Label>
-                    <p className="text-sm text-muted-foreground">Enable orders management functionality</p>
-                  </div>
-                  {currentConfig.ORDERS_MANAGEMENT ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Apps Management</Label>
-                    <p className="text-sm text-muted-foreground">Enable apps management functionality</p>
-                  </div>
-                  {currentConfig.APPS_MANAGEMENT ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Shipping Rules</Label>
-                    <p className="text-sm text-muted-foreground">Enable shipping rules functionality</p>
-                  </div>
-                  {currentConfig.SHIPPING_RULES ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Workflow Management</Label>
-                    <p className="text-sm text-muted-foreground">Enable workflow management</p>
-                  </div>
-                  {currentConfig.WORKFLOW_MANAGEMENT ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Email Config */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="border shadow-none">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">API Endpoints</CardTitle>
+            <CardDescription>Integration URLs</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-1">
+            <EndpointRow
+              label="API Host"
+              value={metadata?.HOST || ''}
+              onCopy={() => copyToClipboard(metadata?.HOST || "")}
+              onOpen={() => window.open(metadata?.HOST, '_blank')}
+            />
+            <EndpointRow
+              label="GraphQL"
+              value={metadata?.GRAPHQL || ''}
+              onCopy={() => copyToClipboard(metadata?.GRAPHQL || "")}
+              onOpen={() => window.open(metadata?.GRAPHQL, '_blank')}
+            />
+            <EndpointRow
+              label="Admin GraphQL"
+              value={url$`${metadata?.HOST}/admin/graphql`}
+              onCopy={() => copyToClipboard(url$`${metadata?.HOST}/admin/graphql`)}
+              onOpen={() => window.open(url$`${metadata?.HOST}/admin/graphql`, '_blank')}
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Administration & Features */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        <Card className="border shadow-none">
+          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
             <div>
-              <CardTitle>Email Configuration</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Configure SMTP settings for sending system emails and notifications.
-              </p>
+              <CardTitle className="text-base">Administration</CardTitle>
+              <CardDescription>User access and signup settings</CardDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setEditSection('email')}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('administration')}>
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent className="divide-y">
+            <SettingRow label="Allow Signup" description="Allow user signup" enabled={currentConfig.ALLOW_SIGNUP} />
+            <SettingRow label="Admin Approved Signup" description="Require admin approval" enabled={currentConfig.ALLOW_ADMIN_APPROVED_SIGNUP} />
+            <SettingRow label="Audit Logging" description="Track system activities" enabled={currentConfig.AUDIT_LOGGING} />
+          </CardContent>
+        </Card>
+
+        <Card className="border shadow-none">
+          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle className="text-base">Features</CardTitle>
+              <CardDescription>Platform capabilities</CardDescription>
+            </div>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('features')}>
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent className="divide-y">
+            <SettingRow label="Multi Organizations" enabled={currentConfig.MULTI_ORGANIZATIONS} />
+            <SettingRow label="Orders Management" enabled={currentConfig.ORDERS_MANAGEMENT} />
+            <SettingRow label="Workflow Management" enabled={currentConfig.WORKFLOW_MANAGEMENT} />
+            <SettingRow label="Shipping Rules" enabled={currentConfig.SHIPPING_RULES} />
+            <SettingRow label="Documents Management" enabled={currentConfig.DOCUMENTS_MANAGEMENT} />
+            <SettingRow label="Apps Management" enabled={currentConfig.APPS_MANAGEMENT} />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Email & Data Retention */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        <Card className="border shadow-none">
+          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle className="text-base">Email Configuration</CardTitle>
+              <CardDescription>SMTP settings for notifications</CardDescription>
+            </div>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('email')}>
               <Pencil className="h-4 w-4" />
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Email Host</Label>
-                    <p className="text-sm text-muted-foreground">{currentConfig.EMAIL_HOST || 'Not configured'}</p>
-                  </div>
-                  <div>
-                    <Label>Email Port</Label>
-                    <p className="text-sm text-muted-foreground">{currentConfig.EMAIL_PORT || 'Not configured'}</p>
-                  </div>
-                  <div>
-                    <Label>Email User</Label>
-                    <p className="text-sm text-muted-foreground">{currentConfig.EMAIL_HOST_USER || 'Not configured'}</p>
-                  </div>
-                  <div>
-                    <Label>From Address</Label>
-                    <p className="text-sm text-muted-foreground">{currentConfig.EMAIL_FROM_ADDRESS || 'Not configured'}</p>
-                  </div>
-                </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              <div className="py-2">
+                <p className="text-xs text-muted-foreground mb-1">Host</p>
+                <p className="text-sm font-medium">{currentConfig.EMAIL_HOST || 'Not configured'}</p>
+              </div>
+              <div className="py-2">
+                <p className="text-xs text-muted-foreground mb-1">Port</p>
+                <p className="text-sm font-medium">{currentConfig.EMAIL_PORT || 'Not configured'}</p>
+              </div>
+              <div className="py-2">
+                <p className="text-xs text-muted-foreground mb-1">User</p>
+                <p className="text-sm font-medium truncate">{currentConfig.EMAIL_HOST_USER || 'Not configured'}</p>
+              </div>
+              <div className="py-2">
+                <p className="text-xs text-muted-foreground mb-1">From Address</p>
+                <p className="text-sm font-medium truncate">{currentConfig.EMAIL_FROM_ADDRESS || 'Not configured'}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Data Retention */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="border shadow-none">
+          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
             <div>
-              <CardTitle>Data Retention</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Set retention periods for different types of data before automatic cleanup.
-              </p>
+              <CardTitle className="text-base">Data Retention</CardTitle>
+              <CardDescription>Automatic cleanup periods</CardDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setEditSection('data_retention')}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('data_retention')}>
               <Pencil className="h-4 w-4" />
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="p-6 space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Orders Retention</Label>
-                    <p className="text-sm text-muted-foreground">{currentConfig.ORDER_DATA_RETENTION || 90} days</p>
-                  </div>
-                  <div>
-                    <Label>Shipments Retention</Label>
-                    <p className="text-sm text-muted-foreground">{currentConfig.SHIPMENT_DATA_RETENTION || 90} days</p>
-                  </div>
-                  <div>
-                    <Label>API Logs Retention</Label>
-                    <p className="text-sm text-muted-foreground">{currentConfig.API_LOGS_DATA_RETENTION || 30} days</p>
-                  </div>
-                </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="py-2">
+                <p className="text-xs text-muted-foreground mb-1">Orders</p>
+                <p className="text-sm font-medium">{currentConfig.ORDER_DATA_RETENTION || 90} days</p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* API Keys */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div>
-              <CardTitle>Address Validation & Autocomplete</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Configure third-party services for address validation and autocomplete functionality.
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setEditSection('api_keys')}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="p-6 space-y-6">
-                <div>
-                  <Label>Google Cloud API Key</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {currentConfig.GOOGLE_CLOUD_API_KEY ? '••••••••' : 'Not configured'}
-                  </p>
-                </div>
-                <div>
-                  <Label>Canada Post Address Complete API Key</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {currentConfig.CANADAPOST_ADDRESS_COMPLETE_API_KEY ? '••••••••' : 'Not configured'}
-                  </p>
-                </div>
+              <div className="py-2">
+                <p className="text-xs text-muted-foreground mb-1">Shipments</p>
+                <p className="text-sm font-medium">{currentConfig.SHIPMENT_DATA_RETENTION || 90} days</p>
+              </div>
+              <div className="py-2">
+                <p className="text-xs text-muted-foreground mb-1">API Logs</p>
+                <p className="text-sm font-medium">{currentConfig.API_LOGS_DATA_RETENTION || 30} days</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* API Keys */}
+      <Card className="border shadow-none">
+        <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle className="text-base">Address Validation</CardTitle>
+            <CardDescription>Third-party API keys for address services</CardDescription>
+          </div>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('api_keys')}>
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="grid lg:grid-cols-2 gap-4">
+            <div className="py-2">
+              <p className="text-xs text-muted-foreground mb-1">Google Cloud API Key</p>
+              <p className="text-sm font-medium">{currentConfig.GOOGLE_CLOUD_API_KEY ? '••••••••••••' : 'Not configured'}</p>
+            </div>
+            <div className="py-2">
+              <p className="text-xs text-muted-foreground mb-1">Canada Post Address Complete</p>
+              <p className="text-sm font-medium">{currentConfig.CANADAPOST_ADDRESS_COMPLETE_API_KEY ? '••••••••••••' : 'Not configured'}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <EditDialog
         section={editSection}
@@ -733,8 +469,8 @@ function EditDialog({
     switch (section) {
       case 'administration':
         return (
-          <div className="space-y-4 p-4 pb-8">
-            <div className="flex items-center justify-between">
+          <div className="divide-y">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Allow Signup</Label>
                 <p className="text-sm text-muted-foreground">Allow user signup</p>
@@ -744,7 +480,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange('ALLOW_SIGNUP', checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Admin Approved Signup</Label>
                 <p className="text-sm text-muted-foreground">User signup requires admin approval</p>
@@ -754,7 +490,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange('ALLOW_ADMIN_APPROVED_SIGNUP', checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Audit Logging</Label>
                 <p className="text-sm text-muted-foreground">Enable audit logging for system activities</p>
@@ -769,28 +505,30 @@ function EditDialog({
 
       case 'email':
         return (
-          <div className="space-y-4 p-4 pb-8">
-            <div className="space-y-2">
-              <Label htmlFor="EMAIL_HOST">Email Host</Label>
-              <Input
-                id="EMAIL_HOST"
-                placeholder="smtp.example.com"
-                value={formData.EMAIL_HOST || ""}
-                onChange={(e) => handleChange("EMAIL_HOST", e.target.value)}
-              />
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="EMAIL_HOST">Host</Label>
+                <Input
+                  id="EMAIL_HOST"
+                  placeholder="smtp.example.com"
+                  value={formData.EMAIL_HOST || ""}
+                  onChange={(e) => handleChange("EMAIL_HOST", e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="EMAIL_PORT">Port</Label>
+                <Input
+                  id="EMAIL_PORT"
+                  type="number"
+                  placeholder="587"
+                  value={formData.EMAIL_PORT || ""}
+                  onChange={(e) => handleChange("EMAIL_PORT", Number(e.target.value))}
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="EMAIL_PORT">Email Port</Label>
-              <Input
-                id="EMAIL_PORT"
-                type="number"
-                placeholder="587"
-                value={formData.EMAIL_PORT || ""}
-                onChange={(e) => handleChange("EMAIL_PORT", Number(e.target.value))}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="EMAIL_HOST_USER">Email User</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="EMAIL_HOST_USER">Username</Label>
               <Input
                 id="EMAIL_HOST_USER"
                 type="email"
@@ -799,8 +537,8 @@ function EditDialog({
                 onChange={(e) => handleChange("EMAIL_HOST_USER", e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="EMAIL_HOST_PASSWORD">Email Password</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="EMAIL_HOST_PASSWORD">Password</Label>
               <Input
                 id="EMAIL_HOST_PASSWORD"
                 type="password"
@@ -808,7 +546,7 @@ function EditDialog({
                 onChange={(e) => handleChange("EMAIL_HOST_PASSWORD", e.target.value)}
               />
             </div>
-            <div className="space-y-2">
+            <div className="grid gap-2">
               <Label htmlFor="EMAIL_FROM_ADDRESS">From Address</Label>
               <Input
                 id="EMAIL_FROM_ADDRESS"
@@ -818,22 +556,22 @@ function EditDialog({
                 onChange={(e) => handleChange("EMAIL_FROM_ADDRESS", e.target.value)}
               />
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between pt-2 border-t">
+              <Label htmlFor="EMAIL_USE_TLS">Use TLS Encryption</Label>
               <Switch
                 id="EMAIL_USE_TLS"
                 checked={formData.EMAIL_USE_TLS}
                 onCheckedChange={(checked) => handleChange("EMAIL_USE_TLS", checked)}
               />
-              <Label htmlFor="EMAIL_USE_TLS">Use TLS</Label>
             </div>
           </div>
         );
 
       case 'data_retention':
         return (
-          <div className="space-y-4 p-4 pb-8">
-            <div className="space-y-2">
-              <Label htmlFor="ORDER_DATA_RETENTION">Orders Retention (days)</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="ORDER_DATA_RETENTION">Orders (days)</Label>
               <Input
                 id="ORDER_DATA_RETENTION"
                 type="number"
@@ -842,8 +580,8 @@ function EditDialog({
                 onChange={(e) => handleChange("ORDER_DATA_RETENTION", Number(e.target.value))}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="SHIPMENT_DATA_RETENTION">Shipments Retention (days)</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="SHIPMENT_DATA_RETENTION">Shipments (days)</Label>
               <Input
                 id="SHIPMENT_DATA_RETENTION"
                 type="number"
@@ -852,8 +590,18 @@ function EditDialog({
                 onChange={(e) => handleChange("SHIPMENT_DATA_RETENTION", Number(e.target.value))}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="API_LOGS_DATA_RETENTION">API Logs Retention (days)</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="TRACKER_DATA_RETENTION">Trackers (days)</Label>
+              <Input
+                id="TRACKER_DATA_RETENTION"
+                type="number"
+                min={1}
+                value={formData.TRACKER_DATA_RETENTION || ""}
+                onChange={(e) => handleChange("TRACKER_DATA_RETENTION", Number(e.target.value))}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="API_LOGS_DATA_RETENTION">API Logs (days)</Label>
               <Input
                 id="API_LOGS_DATA_RETENTION"
                 type="number"
@@ -867,32 +615,36 @@ function EditDialog({
 
       case 'api_keys':
         return (
-          <div className="space-y-4 p-4 pb-8">
-            <div className="space-y-2">
+          <div className="space-y-4">
+            <div className="grid gap-2">
               <Label htmlFor="GOOGLE_CLOUD_API_KEY">Google Cloud API Key</Label>
               <Input
                 id="GOOGLE_CLOUD_API_KEY"
                 type="text"
+                placeholder="Enter API key"
                 value={formData.GOOGLE_CLOUD_API_KEY || ""}
                 onChange={(e) => handleChange("GOOGLE_CLOUD_API_KEY", e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">Used for address validation services</p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="CANADAPOST_ADDRESS_COMPLETE_API_KEY">Canada Post Address Complete API Key</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="CANADAPOST_ADDRESS_COMPLETE_API_KEY">Canada Post Address Complete</Label>
               <Input
                 id="CANADAPOST_ADDRESS_COMPLETE_API_KEY"
                 type="text"
+                placeholder="Enter API key"
                 value={formData.CANADAPOST_ADDRESS_COMPLETE_API_KEY || ""}
                 onChange={(e) => handleChange("CANADAPOST_ADDRESS_COMPLETE_API_KEY", e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">Used for Canadian address autocomplete</p>
             </div>
           </div>
         );
 
       case 'features':
         return (
-          <div className="space-y-4 p-4 pb-8">
-            <div className="flex items-center justify-between">
+          <div className="divide-y max-h-[60vh] overflow-y-auto">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Multi Account</Label>
                 <p className="text-sm text-muted-foreground">Allow users to have multiple accounts</p>
@@ -902,7 +654,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("ALLOW_MULTI_ACCOUNT", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Admin Dashboard</Label>
                 <p className="text-sm text-muted-foreground">Enable admin dashboard access</p>
@@ -912,7 +664,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("ADMIN_DASHBOARD", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Multi Organizations</Label>
                 <p className="text-sm text-muted-foreground">Enable multi-organization support</p>
@@ -922,7 +674,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("MULTI_ORGANIZATIONS", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Documents Management</Label>
                 <p className="text-sm text-muted-foreground">Enable documents management</p>
@@ -932,7 +684,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("DOCUMENTS_MANAGEMENT", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Data Import/Export</Label>
                 <p className="text-sm text-muted-foreground">Enable data import/export</p>
@@ -942,7 +694,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("DATA_IMPORT_EXPORT", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Persist SDK Tracing</Label>
                 <p className="text-sm text-muted-foreground">Persist SDK tracing</p>
@@ -952,7 +704,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("PERSIST_SDK_TRACING", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Workflow Management</Label>
                 <p className="text-sm text-muted-foreground">Enable workflow management</p>
@@ -962,7 +714,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("WORKFLOW_MANAGEMENT", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Orders Management</Label>
                 <p className="text-sm text-muted-foreground">Enable orders management functionality</p>
@@ -972,7 +724,7 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("ORDERS_MANAGEMENT", checked)}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-3">
               <div className="space-y-0.5">
                 <Label>Apps Management</Label>
                 <p className="text-sm text-muted-foreground">Enable apps management functionality</p>
@@ -982,13 +734,23 @@ function EditDialog({
                 onCheckedChange={(checked) => handleChange("APPS_MANAGEMENT", checked)}
               />
             </div>
+            <div className="flex items-center justify-between py-3">
+              <div className="space-y-0.5">
+                <Label>Shipping Rules</Label>
+                <p className="text-sm text-muted-foreground">Enable shipping rules functionality</p>
+              </div>
+              <Switch
+                checked={formData.SHIPPING_RULES}
+                onCheckedChange={(checked) => handleChange("SHIPPING_RULES", checked)}
+              />
+            </div>
           </div>
         );
 
       case 'platform':
         return (
-          <div className="space-y-4 p-4 pb-8">
-            <div className="space-y-2">
+          <div className="space-y-4">
+            <div className="grid gap-2">
               <Label htmlFor="APP_NAME">Platform Name</Label>
               <Input
                 id="APP_NAME"
@@ -997,7 +759,7 @@ function EditDialog({
                 onChange={(e) => handleChange("APP_NAME", e.target.value)}
               />
             </div>
-            <div className="space-y-2">
+            <div className="grid gap-2">
               <Label htmlFor="APP_WEBSITE">Platform Website</Label>
               <Input
                 id="APP_WEBSITE"
@@ -1027,16 +789,15 @@ function EditDialog({
 
   return (
     <Dialog open={!!section} onOpenChange={() => onClose()}>
-      <DialogContent className="sm:max-w-[500px] bg-background">
-        <DialogHeader className="space-y-2">
-          <DialogTitle>{titles[section]}</DialogTitle>
-          <DialogDescription>
-            Update your platform settings.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="mt-4">
+      <DialogContent className="sm:max-w-[500px]">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <DialogHeader>
+            <DialogTitle>{titles[section]}</DialogTitle>
+            <DialogDescription>Update your platform settings.</DialogDescription>
+          </DialogHeader>
           {renderContent()}
-          <DialogFooter className="mt-8">
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
             <Button type="submit">Save Changes</Button>
           </DialogFooter>
         </form>

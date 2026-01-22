@@ -96,7 +96,7 @@ karrio-server-orders==2026.1.1
 karrio-server-orgs==2026.1.1
 karrio-server-pricing==2026.1.1
 karrio-server-proxy==2026.1.1
--e git+https://github.com/karrioapi/karrio-platform.git@4a3b055b6d00afc9ef824d9113819e3fbc524329#egg=karrio_server_tenants&subdirectory=ee/platform/modules/tenants
+-e git+https://github.com/karrioapi/karrio-platform.git@52a23a65bc74da2531beda786ec84d7b7f9eaef9#egg=karrio_server_tenants&subdirectory=ee/platform/modules/tenants
 karrio-spring==2026.1.1
 karrio-teleship==2026.1.1
 karrio-ups==2026.1.1
@@ -152,7 +152,7 @@ rpds-py==0.30.0
 sentry-sdk==2.50.0
 six==1.17.0
 sqlparse==0.5.5
-strawberry-graphql==0.289.2
+strawberry-graphql==0.289.3
 tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.0.0

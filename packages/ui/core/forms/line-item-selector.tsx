@@ -230,14 +230,14 @@ export const LineItemSelector = ({
                     </span>
                   </label>
 
-                  {order.line_items.map((item) => (
+                  {order.line_items.filter((item) => item.id !== null).map((item) => (
                     <label
                       className="panel-block pl-5 is-size-7 has-text-weight-semibold columns m-0"
                       key={item.id}
                     >
                       <input
                         type="checkbox"
-                        name={item.id}
+                        name={item.id || undefined}
                         checked={selection.includes(item.id as string)}
                         onChange={handleChange([item.id as string])}
                       />

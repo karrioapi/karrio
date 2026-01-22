@@ -1,7 +1,3 @@
-export { AdminCloseButton } from "./components/admin-close-button";
-export { AdminHeader } from "./components/admin-header";
-export { AdminSidebar } from "./components/admin-sidebar";
-
 // Staff management components
 export { StaffInviteModal } from "./components/staff-invite-modal";
 export { StaffEditModal } from "./components/staff-edit-modal";

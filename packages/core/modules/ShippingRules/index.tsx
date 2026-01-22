@@ -28,8 +28,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@karrio/ui/components/ui/dropdown-menu";
-import { AppLink } from "@karrio/ui/core/components/app-link";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShippingRuleTemplatePicker } from "@karrio/core/components/shipping-rule-template-picker";
 import { ShippingRuleTemplate } from "@karrio/hooks/shipping-rule-templates";
@@ -40,7 +38,6 @@ const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
-    const { metadata } = useAPIMetadata();
     const { user_connections } = useCarrierConnections();
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -168,12 +165,7 @@ export default function Page(pageProps: any) {
       <>
         {/* Header */}
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-0 pb-0 pt-4">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-semibold">Automation</span>
-            <span className="inline-flex items-center px-2 py-1 text-xs font-bold text-orange-800 bg-orange-100 rounded">
-              PREVIEW
-            </span>
-          </div>
+          <span className="text-2xl font-semibold">Shipping Rules</span>
           <ShippingRuleTemplatePicker
             onSelectTemplate={(template) => {
               setSelectedTemplate(template);
@@ -186,27 +178,6 @@ export default function Page(pageProps: any) {
             </Button>
           </ShippingRuleTemplatePicker>
         </header>
-
-        <div className="tabs">
-          <ul>
-            <li className={`is-capitalized has-text-weight-semibold is-active`}>
-              <AppLink href="/shipping-rules" shallow={false} prefetch={false}>
-                <span>Shipping Rules</span>
-              </AppLink>
-            </li>
-            <li className={`is-capitalized has-text-weight-semibold ${metadata?.WORKFLOW_MANAGEMENT ? "" : "is-disabled"}`}
-              onClick={() => {
-                if (!metadata?.WORKFLOW_MANAGEMENT) {
-                  alert("Workflow management is not enabled in your API configuration.");
-                }
-              }}
-            >
-              <AppLink href="/workflows" shallow={false} prefetch={false}>
-                <span>Workflows</span>
-              </AppLink>
-            </li>
-          </ul>
-        </div>
 
         <div className="py-4">
           {/* Shipping Rules Info Banner */}
