@@ -1,0 +1,72 @@
+{
+  "shipmentinfo": [
+    {
+      "shipmentID": "H9746130018743501086",
+      "partNumber": "78810030",
+      "clientID": "4711",
+      "clientReference": "AC/DC-42",
+      "clientReference2": "1023456",
+      "internationalShipmentID": "00340633031105567586",
+      "trackingLink": "https://example.com/tracking/00340633031105567586",
+      "result": {
+        "code": "i001",
+        "message": "Success"
+      },
+      "receiverAddress": {
+        "city": "Hamburg",
+        "zipCode": "22083",
+        "countryCode": "DEU"
+      },
+      "deliveryForecast": {
+        "fixed": true,
+        "date": "2020-06-06",
+        "timeSlot": {
+          "from": "10:00",
+          "to": "18:00"
+        }
+      },
+      "status": [
+        {
+          "timestamp": "2020-12-04T07:58:24+01:00",
+          "code": "3500",
+          "description": "The shipment has been delivered.",
+          "scanningUnit": {
+            "name": "Hermes Germany",
+            "city": "Hamburg",
+            "countryCode": "DEU"
+          }
+        },
+        {
+          "timestamp": "2020-12-04T06:30:00+01:00",
+          "code": "3000",
+          "description": "The shipment has gone out on a delivery route. Delivery is expected today.",
+          "scanningUnit": {
+            "name": "Hermes Germany",
+            "city": "Hamburg",
+            "countryCode": "DEU"
+          }
+        },
+        {
+          "timestamp": "2020-12-03T14:22:15+01:00",
+          "code": "2000",
+          "description": "The shipment has arrived at the Hermes distribution center.",
+          "scanningUnit": {
+            "name": "Hermes Germany",
+            "city": "Hamburg",
+            "countryCode": "DEU"
+          }
+        },
+        {
+          "timestamp": "2020-12-02T10:15:30+01:00",
+          "code": "0000",
+          "description": "The shipment has been notified to Hermes electronically.",
+          "scanningUnit": {
+            "name": "Hermes Germany",
+            "city": "Berlin",
+            "countryCode": "DEU"
+          }
+        }
+      ]
+    }
+  ]
+}
