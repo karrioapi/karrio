@@ -129,13 +129,16 @@ def shipment_request(
                     name3=None,
                     addressStreet=lib.identity(
                         shipper.street_name
-                        if payload.shipper.street_number
+                        if shipper.street_number
                         else shipper.address_line1
                     ),
-                    addressHouse=lib.identity(
-                        payload.shipper.street_number
-                        if payload.shipper.street_number
-                        else shipper.address_line2
+                    addressHouse=lib.text(
+                        (
+                            shipper.street_number
+                            if shipper.street_number
+                            else shipper.address_line2
+                        ),
+                        max=10,
                     ),
                     postalCode=shipper.postal_code,
                     city=shipper.city,
@@ -150,13 +153,16 @@ def shipment_request(
                     dispatchingInformation=None,
                     addressStreet=lib.identity(
                         recipient.street_name
-                        if payload.recipient.street_number
+                        if recipient.street_number
                         else recipient.address_line1
                     ),
-                    addressHouse=lib.identity(
-                        recipient.street_number
-                        if payload.recipient.street_number
-                        else recipient.address_line2
+                    addressHouse=lib.text(
+                        (
+                            recipient.street_number
+                            if recipient.street_number
+                            else recipient.address_line2
+                        ),
+                        max=10,
                     ),
                     additionalAddressInformation1=None,
                     additionalAddressInformation2=None,
