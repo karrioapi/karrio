@@ -22,18 +22,31 @@ def _split_name(name: typing.Optional[str]) -> typing.Tuple[str, str]:
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[dict],
+    _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
-    """Parse Hermes shipment response."""
-    response = _response.deserialize()
-    messages = error.parse_error_response(response, settings)
+    """Parse Hermes shipment response for single or multi-piece shipments."""
+    responses = _response.deserialize()
 
-    # Check if we have valid shipment data (shipmentID indicates success)
-    # Only proceed if response is a dict
-    shipment = None
-    if isinstance(response, dict) and (response.get("shipmentID") or response.get("shipmentOrderID")):
-        shipment = _extract_details(response, settings)
+    # Collect all messages from all responses
+    messages: typing.List[models.Message] = sum(
+        [error.parse_error_response(response, settings) for response in responses],
+        start=[],
+    )
+
+    # Extract shipment details from each valid response
+    shipment_details = [
+        (
+            f"{idx}",
+            _extract_details(response, settings),
+        )
+        for idx, response in enumerate(responses, start=1)
+        if isinstance(response, dict)
+        and (response.get("shipmentID") or response.get("shipmentOrderID"))
+    ]
+
+    # Use lib.to_multi_piece_shipment() to aggregate multi-piece shipments
+    shipment = lib.to_multi_piece_shipment(shipment_details) if shipment_details else None
 
     return shipment, messages
 
@@ -55,8 +68,9 @@ def _extract_details(
     # Commercial invoice for international shipments
     invoice_image = response.commInvoiceImage or ""
 
-    # Label media type
-    label_type = response.labelMediatype or "PDF"
+    # Label media type - convert MIME type to format (e.g., "application/pdf" -> "PDF")
+    label_mediatype = response.labelMediatype or "application/pdf"
+    label_type = label_mediatype.split("/")[-1].upper() if "/" in label_mediatype else label_mediatype
 
     documents = models.Documents(label=label_image)
     if invoice_image:
@@ -80,26 +94,25 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create a Hermes shipment request."""
+    """Create Hermes shipment request(s) for single or multi-piece shipments.
+
+    For multi-piece shipments (Pattern B - Per-Package Request):
+    - First package: partNumber=1, numberOfParts=N, no parentShipmentOrderID
+    - Subsequent packages: partNumber=2,3,..., numberOfParts=N, parentShipmentOrderID=<first shipmentOrderID>
+
+    The proxy handles the sequential API calls and injects parentShipmentOrderID
+    from the first response into subsequent requests.
+    """
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
-    package = packages.single  # Hermes handles one parcel per request
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Determine product type
-    product_type = provider_units.PackagingType.map(
-        package.packaging_type or "your_packaging"
-    ).value
-
-    # Build services object based on options
-    service = _build_service(options)
-
-    # Build customs for international shipments
+    # Build customs for international shipments (shared across all packages)
     customs = None
     if payload.customs:
         customs = _build_customs(payload.customs, shipper)
@@ -108,93 +121,132 @@ def shipment_request(
     recipient_firstname, recipient_lastname = _split_name(recipient.person_name)
     shipper_firstname, shipper_lastname = _split_name(shipper.person_name)
 
-    # Create the request using generated schema types
-    # Field length limits per OpenAPI spec:
-    # - street: 50, houseNumber: 5, town: 30
-    # - addressAddition: 50, addressAddition2: 20, addressAddition3: 20
-    # - clientReference: 20, clientReference2: 20, phone: 20
-    request = hermes_req.ShipmentRequestType(
-        clientReference=lib.text(payload.reference, max=20) or "",
-        clientReference2=lib.text((payload.options or {}).get("clientReference2"), max=20),
-        # Receiver name
-        receiverName=hermes_req.ErNameType(
-            title=None,
-            gender=None,
-            firstname=recipient_firstname,
-            middlename=None,
-            lastname=recipient_lastname,
-        ),
-        # Receiver address
-        receiverAddress=hermes_req.ErAddressType(
-            street=lib.text(recipient.street_name, max=50),
-            houseNumber=lib.text(recipient.street_number, max=5) or "",
-            zipCode=recipient.postal_code,
-            town=lib.text(recipient.city, max=30),
-            countryCode=recipient.country_code,
-            addressAddition=lib.text(recipient.address_line2, max=50),
-            addressAddition2=None,
-            addressAddition3=lib.text(recipient.company_name, max=20),
-        ),
-        # Receiver contact
-        receiverContact=lib.identity(
-            hermes_req.ReceiverContactType(
-                phone=lib.text(recipient.phone_number, max=20),
-                mobile=None,
-                mail=recipient.email,
-            )
-            if recipient.phone_number or recipient.email
-            else None
-        ),
-        # Sender (divergent sender if different from account default)
-        senderName=lib.identity(
-            hermes_req.ErNameType(
+    # Determine if this is a multi-piece shipment
+    is_multi_piece = len(packages) > 1
+    number_of_parts = len(packages) if is_multi_piece else None
+
+    # Create a request for each package
+    requests = []
+    for index, package in enumerate(packages, start=1):
+        # Determine product type for this package
+        product_type = provider_units.PackagingType.map(
+            package.packaging_type or "your_packaging"
+        ).value
+
+        # Build services object based on options
+        # For multi-piece: add multipartService with partNumber and numberOfParts
+        service = _build_service(
+            options,
+            is_multi_piece=is_multi_piece,
+            part_number=index if is_multi_piece else None,
+            number_of_parts=number_of_parts,
+            # parentShipmentOrderID will be injected by proxy for packages 2+
+        )
+
+        # Create the request using generated schema types
+        # Field length limits per OpenAPI spec:
+        # - street: 50, houseNumber: 5, town: 30
+        # - addressAddition: 50, addressAddition2: 20, addressAddition3: 20
+        # - clientReference: 20, clientReference2: 20, phone: 20
+        request = hermes_req.ShipmentRequestType(
+            clientReference=lib.text(payload.reference, max=20) or "",
+            clientReference2=lib.text((payload.options or {}).get("clientReference2"), max=20),
+            # Receiver name
+            receiverName=hermes_req.ErNameType(
                 title=None,
                 gender=None,
-                firstname=shipper_firstname,
+                firstname=recipient_firstname,
                 middlename=None,
-                lastname=shipper_lastname,
-            )
-            if shipper.person_name
-            else None
-        ),
-        senderAddress=lib.identity(
-            hermes_req.ErAddressType(
-                street=lib.text(shipper.street_name, max=50),
-                houseNumber=lib.text(shipper.street_number, max=5) or "",
-                zipCode=shipper.postal_code,
-                town=lib.text(shipper.city, max=30),
-                countryCode=shipper.country_code,
-                addressAddition=lib.text(shipper.address_line2, max=50),
+                lastname=recipient_lastname,
+            ),
+            # Receiver address
+            receiverAddress=hermes_req.ErAddressType(
+                street=lib.text(recipient.street_name, max=50),
+                houseNumber=lib.text(recipient.street_number, max=5) or "",
+                zipCode=recipient.postal_code,
+                town=lib.text(recipient.city, max=30),
+                countryCode=recipient.country_code,
+                addressAddition=lib.text(recipient.address_line2, max=50),
                 addressAddition2=None,
-                addressAddition3=lib.text(shipper.company_name, max=20),
-            )
-            if shipper.street
-            else None
-        ),
-        # Parcel details (weight in grams)
-        parcel=hermes_req.ParcelType(
-            parcelClass=None,  # Optional, calculated from dimensions
-            parcelHeight=lib.to_int(package.height.MM) if package.height else None,
-            parcelWidth=lib.to_int(package.width.MM) if package.width else None,
-            parcelDepth=lib.to_int(package.length.MM) if package.length else None,
-            parcelWeight=lib.to_int(package.weight.G),  # Weight in grams
-            parcelVolume=None,  # Optional
-            productType=product_type,
-        ),
-        # Services
-        service=service if any([
-            getattr(service, attr) for attr in dir(service)
-            if not attr.startswith('_') and getattr(service, attr) is not None
-        ]) else None,
-        # Customs for international
-        customsAndTaxes=customs,
+                addressAddition3=lib.text(recipient.company_name, max=20),
+            ),
+            # Receiver contact
+            receiverContact=lib.identity(
+                hermes_req.ReceiverContactType(
+                    phone=lib.text(recipient.phone_number, max=20),
+                    mobile=None,
+                    mail=recipient.email,
+                )
+                if recipient.phone_number or recipient.email
+                else None
+            ),
+            # Sender (divergent sender if different from account default)
+            senderName=lib.identity(
+                hermes_req.ErNameType(
+                    title=None,
+                    gender=None,
+                    firstname=shipper_firstname,
+                    middlename=None,
+                    lastname=shipper_lastname,
+                )
+                if shipper.person_name
+                else None
+            ),
+            senderAddress=lib.identity(
+                hermes_req.ErAddressType(
+                    street=lib.text(shipper.street_name, max=50),
+                    houseNumber=lib.text(shipper.street_number, max=5) or "",
+                    zipCode=shipper.postal_code,
+                    town=lib.text(shipper.city, max=30),
+                    countryCode=shipper.country_code,
+                    addressAddition=lib.text(shipper.address_line2, max=50),
+                    addressAddition2=None,
+                    addressAddition3=lib.text(shipper.company_name, max=20),
+                )
+                if shipper.street
+                else None
+            ),
+            # Parcel details (weight in grams)
+            parcel=hermes_req.ParcelType(
+                parcelClass=None,  # Optional, calculated from dimensions
+                parcelHeight=lib.to_int(package.height.MM) if package.height else None,
+                parcelWidth=lib.to_int(package.width.MM) if package.width else None,
+                parcelDepth=lib.to_int(package.length.MM) if package.length else None,
+                parcelWeight=lib.to_int(package.weight.G),  # Weight in grams
+                parcelVolume=None,  # Optional
+                productType=product_type,
+            ),
+            # Services (includes multipartService for multi-piece shipments)
+            service=service if any([
+                getattr(service, attr) for attr in dir(service)
+                if not attr.startswith('_') and getattr(service, attr) is not None
+            ]) else None,
+            # Customs for international (same for all packages)
+            customsAndTaxes=customs,
+        )
+        requests.append(request)
+
+    return lib.Serializable(
+        requests,
+        lambda reqs: [lib.to_dict(req) for req in reqs],
+        dict(is_multi_piece=is_multi_piece),
     )
 
-    return lib.Serializable(request, lib.to_dict)
 
+def _build_service(
+    options: units.ShippingOptions,
+    is_multi_piece: bool = False,
+    part_number: typing.Optional[int] = None,
+    number_of_parts: typing.Optional[int] = None,
+) -> hermes_req.ServiceType:
+    """Build Hermes service object from shipping options.
 
-def _build_service(options: units.ShippingOptions) -> hermes_req.ServiceType:
-    """Build Hermes service object from shipping options."""
+    For multi-piece shipments:
+    - is_multi_piece: True if shipment has multiple packages
+    - part_number: 1, 2, 3, ... for each package
+    - number_of_parts: Total number of packages
+    - parentShipmentOrderID: Injected by proxy for packages 2+ (not passed here)
+    """
     # Cash on delivery
     cod_service = None
     if options.hermes_cod_amount.state:
@@ -248,9 +300,18 @@ def _build_service(options: units.ShippingOptions) -> hermes_req.ServiceType:
             timeSlot=options.hermes_time_slot.state,
         )
 
-    # Multipart service
+    # Multipart service - built from multi-piece parameters or manual options
     multipart_service = None
-    if options.hermes_number_of_parts.state:
+    if is_multi_piece and part_number is not None and number_of_parts is not None:
+        # Automatic multi-piece handling
+        # Note: parentShipmentOrderID is injected by proxy for part_number > 1
+        multipart_service = hermes_req.MultipartServiceType(
+            partNumber=part_number,
+            numberOfParts=number_of_parts,
+            parentShipmentOrderID=None,  # Will be injected by proxy for parts 2+
+        )
+    elif options.hermes_number_of_parts.state:
+        # Manual multi-piece via options (legacy support)
         multipart_service = hermes_req.MultipartServiceType(
             partNumber=options.hermes_part_number.state or 1,
             numberOfParts=options.hermes_number_of_parts.state,
