@@ -446,7 +446,8 @@ karrio test --failfast karrio.server.<module>.tests  # single module
 
 ### Django Test Writing Style (Important!)
 
-- **Always add `print(response)` before `self.assertResponseNoErrors(response)`** for easier debugging
+- **When debugging failing tests**, add `print(response)` before assertions to see the actual response
+- **Remove print statements once tests pass**—keep test output clean
 - **Create objects via API requests**, not direct model manipulation
 - **Use `self.assertResponseNoErrors(response)` first**, then:
 - **Single comprehensive assertion**: `self.assertDictEqual` or `self.assertListEqual` with full response data
@@ -459,7 +460,7 @@ from unittest import mock
 
 def test_create_shipment(self):
     response = self.client.post('/api/shipments', data={...})
-    print(response)  # Always add this for debugging!
+    # print(response)  # Uncomment for debugging, remove when tests pass
     self.assertResponseNoErrors(response)
     self.assertDictEqual(
         response.data,

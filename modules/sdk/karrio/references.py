@@ -518,6 +518,7 @@ def collect_references(
                     type=parse_type(c.value.type),
                     default=c.value.default,
                     help=c.value.help,
+                    meta=c.value.meta,
                     enum=lib.identity(
                         None
                         if "enum" not in str(c.value.type).lower()

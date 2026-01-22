@@ -374,6 +374,7 @@ export interface GetRateSheets_rate_sheets_edges_node {
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   metadata: any | null;
   zones: GetRateSheets_rate_sheets_edges_node_zones[] | null;
   surcharges: GetRateSheets_rate_sheets_edges_node_surcharges[] | null;
@@ -486,6 +487,7 @@ export interface GetRateSheet_rate_sheet {
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   metadata: any | null;
   zones: GetRateSheet_rate_sheet_zones[] | null;
   surcharges: GetRateSheet_rate_sheet_surcharges[] | null;
@@ -507,41 +509,34 @@ export interface GetRateSheetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetAddons
+// GraphQL query operation: GetMarkups
 // ====================================================
 
-export interface GetAddons_addons_edges_node_carrier_accounts_usage {
+export interface GetMarkups_markups_edges_node_usage {
   total_shipments: number | null;
   total_addons_charges: number | null;
 }
 
-export interface GetAddons_addons_edges_node_carrier_accounts {
-  id: string;
-  usage: GetAddons_addons_edges_node_carrier_accounts_usage;
-}
-
-export interface GetAddons_addons_edges_node_usage {
-  total_shipments: number | null;
-  total_addons_charges: number | null;
-}
-
-export interface GetAddons_addons_edges_node {
+export interface GetMarkups_markups_edges_node {
   id: string;
   name: string;
   active: boolean;
   amount: number;
-  surcharge_type: string;
-  carriers: string[];
-  services: string[];
-  carrier_accounts: GetAddons_addons_edges_node_carrier_accounts[];
-  usage: GetAddons_addons_edges_node_usage;
+  markup_type: string;
+  is_visible: boolean;
+  carrier_codes: string[];
+  service_codes: string[];
+  connection_ids: string[];
+  organization_ids: string[];
+  metadata: any | null;
+  usage: GetMarkups_markups_edges_node_usage;
 }
 
-export interface GetAddons_addons_edges {
-  node: GetAddons_addons_edges_node;
+export interface GetMarkups_markups_edges {
+  node: GetMarkups_markups_edges_node;
 }
 
-export interface GetAddons_addons_page_info {
+export interface GetMarkups_markups_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -549,17 +544,17 @@ export interface GetAddons_addons_page_info {
   end_cursor: string | null;
 }
 
-export interface GetAddons_addons {
-  edges: GetAddons_addons_edges[];
-  page_info: GetAddons_addons_page_info;
+export interface GetMarkups_markups {
+  edges: GetMarkups_markups_edges[];
+  page_info: GetMarkups_markups_page_info;
 }
 
-export interface GetAddons {
-  addons: GetAddons_addons;
+export interface GetMarkups {
+  markups: GetMarkups_markups;
 }
 
-export interface GetAddonsVariables {
-  filter?: AddonFilter | null;
+export interface GetMarkupsVariables {
+  filter?: MarkupFilter | null;
   usageFilter?: UsageFilter | null;
 }
 
@@ -568,35 +563,34 @@ export interface GetAddonsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetAddon
+// GraphQL query operation: GetMarkup
 // ====================================================
 
-export interface GetAddon_addon_carrier_accounts_usage {
+export interface GetMarkup_markup_usage {
   total_shipments: number | null;
   total_addons_charges: number | null;
 }
 
-export interface GetAddon_addon_carrier_accounts {
-  id: string;
-  usage: GetAddon_addon_carrier_accounts_usage;
-}
-
-export interface GetAddon_addon {
+export interface GetMarkup_markup {
   id: string;
   name: string;
   active: boolean;
   amount: number;
-  surcharge_type: string;
-  carriers: string[];
-  services: string[];
-  carrier_accounts: GetAddon_addon_carrier_accounts[];
+  markup_type: string;
+  is_visible: boolean;
+  carrier_codes: string[];
+  service_codes: string[];
+  connection_ids: string[];
+  organization_ids: string[];
+  metadata: any | null;
+  usage: GetMarkup_markup_usage;
 }
 
-export interface GetAddon {
-  addon: GetAddon_addon | null;
+export interface GetMarkup {
+  markup: GetMarkup_markup | null;
 }
 
-export interface GetAddonVariables {
+export interface GetMarkupVariables {
   id: string;
 }
 
@@ -897,8 +891,8 @@ export interface GetTrackers_trackers_edges_node {
   id: string;
   tracking_number: string;
   status: TrackerStatusEnum;
-  carrier_name: string;
-  carrier_id: string;
+  carrier_name: string | null;
+  carrier_id: string | null;
   created_at: any;
   updated_at: any;
 }
@@ -1759,35 +1753,38 @@ export interface UpdateServiceSurchargeIdsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CreateAddon
+// GraphQL mutation operation: CreateMarkup
 // ====================================================
 
-export interface CreateAddon_create_addon_errors {
+export interface CreateMarkup_create_markup_errors {
   field: string;
   messages: string[];
 }
 
-export interface CreateAddon_create_addon_addon {
+export interface CreateMarkup_create_markup_markup {
   id: string;
   name: string;
   active: boolean;
   amount: number;
-  surcharge_type: string;
-  carriers: string[];
-  services: string[];
+  markup_type: string;
+  is_visible: boolean;
+  carrier_codes: string[];
+  service_codes: string[];
+  connection_ids: string[];
+  metadata: any | null;
 }
 
-export interface CreateAddon_create_addon {
-  errors: CreateAddon_create_addon_errors[] | null;
-  addon: CreateAddon_create_addon_addon | null;
+export interface CreateMarkup_create_markup {
+  errors: CreateMarkup_create_markup_errors[] | null;
+  markup: CreateMarkup_create_markup_markup | null;
 }
 
-export interface CreateAddon {
-  create_addon: CreateAddon_create_addon;
+export interface CreateMarkup {
+  create_markup: CreateMarkup_create_markup;
 }
 
-export interface CreateAddonVariables {
-  input: CreateAddonMutationInput;
+export interface CreateMarkupVariables {
+  input: CreateMarkupMutationInput;
 }
 
 
@@ -1795,35 +1792,38 @@ export interface CreateAddonVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: UpdateAddon
+// GraphQL mutation operation: UpdateMarkup
 // ====================================================
 
-export interface UpdateAddon_update_addon_errors {
+export interface UpdateMarkup_update_markup_errors {
   field: string;
   messages: string[];
 }
 
-export interface UpdateAddon_update_addon_addon {
+export interface UpdateMarkup_update_markup_markup {
   id: string;
   name: string;
   active: boolean;
   amount: number;
-  surcharge_type: string;
-  carriers: string[];
-  services: string[];
+  markup_type: string;
+  is_visible: boolean;
+  carrier_codes: string[];
+  service_codes: string[];
+  connection_ids: string[];
+  metadata: any | null;
 }
 
-export interface UpdateAddon_update_addon {
-  errors: UpdateAddon_update_addon_errors[] | null;
-  addon: UpdateAddon_update_addon_addon | null;
+export interface UpdateMarkup_update_markup {
+  errors: UpdateMarkup_update_markup_errors[] | null;
+  markup: UpdateMarkup_update_markup_markup | null;
 }
 
-export interface UpdateAddon {
-  update_addon: UpdateAddon_update_addon;
+export interface UpdateMarkup {
+  update_markup: UpdateMarkup_update_markup;
 }
 
-export interface UpdateAddonVariables {
-  input: UpdateAddonMutationInput;
+export interface UpdateMarkupVariables {
+  input: UpdateMarkupMutationInput;
 }
 
 
@@ -1831,24 +1831,24 @@ export interface UpdateAddonVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: DeleteAddon
+// GraphQL mutation operation: DeleteMarkup
 // ====================================================
 
-export interface DeleteAddon_delete_addon_errors {
+export interface DeleteMarkup_delete_markup_errors {
   field: string;
   messages: string[];
 }
 
-export interface DeleteAddon_delete_addon {
-  errors: DeleteAddon_delete_addon_errors[] | null;
+export interface DeleteMarkup_delete_markup {
+  errors: DeleteMarkup_delete_markup_errors[] | null;
   id: string;
 }
 
-export interface DeleteAddon {
-  delete_addon: DeleteAddon_delete_addon;
+export interface DeleteMarkup {
+  delete_markup: DeleteMarkup_delete_markup;
 }
 
-export interface DeleteAddonVariables {
+export interface DeleteMarkupVariables {
   input: DeleteMutationInput;
 }
 
@@ -2013,7 +2013,7 @@ export interface GetSystemShipments_shipments_edges_node_recipient {
   city: string | null;
   state_code: string | null;
   postal_code: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface GetSystemShipments_shipments_edges_node_shipper {
@@ -2023,7 +2023,7 @@ export interface GetSystemShipments_shipments_edges_node_shipper {
   city: string | null;
   state_code: string | null;
   postal_code: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface GetSystemShipments_shipments_edges_node_selected_rate {
@@ -2035,7 +2035,7 @@ export interface GetSystemShipments_shipments_edges_node_selected_rate {
 }
 
 export interface GetSystemShipments_shipments_edges_node_parcels {
-  id: string;
+  id: string | null;
   weight: number | null;
   width: number | null;
   height: number | null;
@@ -2161,8 +2161,8 @@ export interface GetSystemTrackers_trackers_edges_node_shipment {
 export interface GetSystemTrackers_trackers_edges_node {
   id: string;
   tracking_number: string;
-  carrier_name: string;
-  carrier_id: string;
+  carrier_name: string | null;
+  carrier_id: string | null;
   status: TrackerStatusEnum;
   delivered: boolean | null;
   test_mode: boolean;
@@ -2264,6 +2264,7 @@ export interface GetAccountCarrierConnectionsVariables {
 
 export enum CarrierNameEnum {
   aramex = "aramex",
+  asendia = "asendia",
   asendia_us = "asendia_us",
   australiapost = "australiapost",
   boxknight = "boxknight",
@@ -2304,6 +2305,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  spring = "spring",
   teleship = "teleship",
   tge = "tge",
   tnt = "tnt",
@@ -2473,7 +2475,7 @@ export enum WeightUnitEnum {
   OZ = "OZ",
 }
 
-export enum SurchargeTypeEnum {
+export enum MarkupTypeEnum {
   AMOUNT = "AMOUNT",
   PERCENTAGE = "PERCENTAGE",
 }
@@ -2800,13 +2802,13 @@ export interface RateSheetFilter {
 }
 
 // null
-export interface AddonFilter {
+export interface MarkupFilter {
   offset?: number | null;
   first?: number | null;
   id?: string | null;
   name?: string | null;
   active?: boolean | null;
-  surcharge_type?: SurchargeTypeEnum | null;
+  markup_type?: MarkupTypeEnum | null;
 }
 
 // null
@@ -2958,6 +2960,7 @@ export interface InstanceConfigMutationInput {
   ALLIED_EXPRESS_LOCAL_ENABLED?: boolean | null;
   AMAZON_SHIPPING_ENABLED?: boolean | null;
   ARAMEX_ENABLED?: boolean | null;
+  ASENDIA_ENABLED?: boolean | null;
   ASENDIA_US_ENABLED?: boolean | null;
   AUSTRALIAPOST_ENABLED?: boolean | null;
   BOXKNIGHT_ENABLED?: boolean | null;
@@ -2999,6 +3002,7 @@ export interface InstanceConfigMutationInput {
   SEKO_ENABLED?: boolean | null;
   SENDLE_ENABLED?: boolean | null;
   SHIPENGINE_ENABLED?: boolean | null;
+  SPRING_ENABLED?: boolean | null;
   TELESHIP_ENABLED?: boolean | null;
   TGE_ENABLED?: boolean | null;
   TNT_ENABLED?: boolean | null;
@@ -3049,6 +3053,7 @@ export interface CreateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   metadata?: any | null;
 }
 
@@ -3126,6 +3131,7 @@ export interface UpdateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   remove_missing_services?: boolean | null;
   metadata?: any | null;
 }
@@ -3246,32 +3252,32 @@ export interface UpdateServiceSurchargeIdsMutationInput {
 }
 
 // null
-export interface CreateAddonMutationInput {
+export interface CreateMarkupMutationInput {
   name: string;
   amount: number;
-  surcharge_type: SurchargeTypeEnum;
+  markup_type: MarkupTypeEnum;
   active?: boolean | null;
   is_visible?: boolean | null;
-  carriers?: string[] | null;
-  services?: string[] | null;
+  carrier_codes?: string[] | null;
+  service_codes?: string[] | null;
+  connection_ids?: string[] | null;
   organizations?: string[] | null;
-  carrier_accounts?: string[] | null;
   metadata?: any | null;
 }
 
 // null
-export interface UpdateAddonMutationInput {
+export interface UpdateMarkupMutationInput {
+  id: string;
   name?: string | null;
   amount?: number | null;
-  surcharge_type?: SurchargeTypeEnum | null;
+  markup_type?: MarkupTypeEnum | null;
   active?: boolean | null;
   is_visible?: boolean | null;
-  carriers?: string[] | null;
-  services?: string[] | null;
+  carrier_codes?: string[] | null;
+  service_codes?: string[] | null;
+  connection_ids?: string[] | null;
   organizations?: string[] | null;
-  carrier_accounts?: string[] | null;
   metadata?: any | null;
-  id: string;
 }
 
 // null

@@ -17,6 +17,32 @@ class TestAddresses(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertDictEqual(response_data, ADDRESS_RESPONSE)
 
+    def test_list_addresses(self):
+        # Create an address first
+        Address.objects.create(
+            **{
+                "address_line1": "5205 rue riviera",
+                "person_name": "Old town Daniel",
+                "phone_number": "438 222 2222",
+                "city": "Montreal",
+                "country_code": "CA",
+                "postal_code": "H8Z2Z3",
+                "residential": True,
+                "state_code": "QC",
+                "validate_location": False,
+                "validation": None,
+                "created_by": self.user,
+            }
+        )
+
+        url = reverse("karrio.server.manager:address-list")
+        response = self.client.get(url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("results", response_data)
+        self.assertGreaterEqual(len(response_data["results"]), 1)
+
 
 class TestAddressDetails(APITestCase):
     def setUp(self) -> None:
@@ -37,6 +63,18 @@ class TestAddressDetails(APITestCase):
             }
         )
 
+    def test_retrieve_address(self):
+        url = reverse(
+            "karrio.server.manager:address-details", kwargs=dict(pk=self.address.pk)
+        )
+
+        response = self.client.get(url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_data["id"], self.address.pk)
+        self.assertEqual(response_data["object_type"], "address")
+
     def test_update_address(self):
         url = reverse(
             "karrio.server.manager:address-details", kwargs=dict(pk=self.address.pk)
@@ -48,6 +86,19 @@ class TestAddressDetails(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, ADDRESS_UPDATE_RESPONSE)
+
+    def test_delete_address(self):
+        address_pk = self.address.pk
+        url = reverse(
+            "karrio.server.manager:address-details", kwargs=dict(pk=address_pk)
+        )
+
+        response = self.client.delete(url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_data["object_type"], "address")
+        self.assertFalse(Address.objects.filter(pk=address_pk).exists())
 
 
 ADDRESS_DATA = {
@@ -80,6 +131,7 @@ ADDRESS_RESPONSE = {
     "address_line2": None,
     "validate_location": False,
     "validation": None,
+    "meta": {},
 }
 
 ADDRESS_UPDATE_DATA = {
@@ -107,4 +159,5 @@ ADDRESS_UPDATE_RESPONSE = {
     "address_line2": None,
     "validate_location": False,
     "validation": None,
+    "meta": {},
 }

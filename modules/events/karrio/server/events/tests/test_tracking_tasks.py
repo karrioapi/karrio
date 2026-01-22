@@ -6,6 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
+from karrio.server.core.utils import create_carrier_snapshot
 from karrio.server.manager import models
 from karrio.server.events.task_definitions.base import tracking
 
@@ -32,7 +33,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
                 ],
                 "status": "in_transit",
                 "created_by": self.user,
-                "tracking_carrier": self.ups_carrier,
+                "carrier": create_carrier_snapshot(self.ups_carrier),
                 "info": {
                     "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1Z12345E6205277936/trackdetails",
                     "shipment_service": "UPS Ground",
@@ -53,7 +54,7 @@ class TestTrackersBackgroundUpdate(APITestCase):
                 ],
                 "status": "in_transit",
                 "created_by": self.user,
-                "tracking_carrier": self.dhl_carrier,
+                "carrier": create_carrier_snapshot(self.dhl_carrier),
                 "info": {
                     "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=00340434292135100124",
                     "package_weight": 0.74,

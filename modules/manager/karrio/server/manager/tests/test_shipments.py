@@ -9,6 +9,7 @@ from karrio.core.models import (
     ConfirmationDetails,
 )
 from karrio.server.core.tests import APITestCase
+from karrio.server.core.utils import create_carrier_snapshot
 import karrio.server.manager.models as models
 import karrio.server.providers.models as providers
 
@@ -17,64 +18,72 @@ class TestShipmentFixture(APITestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.shipper: models.Address = models.Address.objects.create(
-            **{
-                "postal_code": "E1C4Z8",
-                "city": "Moncton",
-                "federal_tax_id": None,
-                "state_tax_id": None,
-                "person_name": "John Poop",
-                "company_name": "A corp.",
-                "country_code": "CA",
-                "email": None,
-                "phone_number": "514 000 0000",
-                "state_code": "NB",
-                "street_number": None,
-                "residential": False,
-                "address_line1": "125 Church St",
-                "address_line2": None,
-                "validate_location": False,
-                "validation": None,
-                "created_by": self.user,
-            }
-        )
-        self.recipient: models.Address = models.Address.objects.create(
-            **{
-                "postal_code": "V6M2V9",
-                "city": "Vancouver",
-                "federal_tax_id": None,
-                "state_tax_id": None,
-                "person_name": "Jane Doe",
-                "company_name": "B corp.",
-                "country_code": "CA",
-                "email": None,
-                "phone_number": "514 000 9999",
-                "state_code": "BC",
-                "street_number": None,
-                "residential": False,
-                "address_line1": "5840 Oak St",
-                "address_line2": None,
-                "validate_location": False,
-                "validation": None,
-                "created_by": self.user,
-            }
-        )
-        self.parcel: models.Parcel = models.Parcel.objects.create(
-            **{
-                "weight": 1.0,
-                "weight_unit": "KG",
-                "package_preset": "canadapost_corrugated_small_box",
-                "created_by": self.user,
-            }
-        )
+        # Shipper and recipient as dict data for JSON fields (use proper JSON-generated ID format)
+        self.shipper_data = {
+            "id": "adr_111122223333",
+            "postal_code": "E1C4Z8",
+            "city": "Moncton",
+            "federal_tax_id": None,
+            "state_tax_id": None,
+            "person_name": "John Poop",
+            "company_name": "A corp.",
+            "country_code": "CA",
+            "email": None,
+            "phone_number": "514 000 0000",
+            "state_code": "NB",
+            "street_number": None,
+            "residential": False,
+            "address_line1": "125 Church St",
+            "address_line2": None,
+            "validate_location": False,
+            "validation": None,
+        }
+        self.recipient_data = {
+            "id": "adr_444455556666",
+            "postal_code": "V6M2V9",
+            "city": "Vancouver",
+            "federal_tax_id": None,
+            "state_tax_id": None,
+            "person_name": "Jane Doe",
+            "company_name": "B corp.",
+            "country_code": "CA",
+            "email": None,
+            "phone_number": "514 000 9999",
+            "state_code": "BC",
+            "street_number": None,
+            "residential": False,
+            "address_line1": "5840 Oak St",
+            "address_line2": None,
+            "validate_location": False,
+            "validation": None,
+        }
+        self.parcel_data = {
+            "id": "pcl_777788889999",
+            "weight": 1.0,
+            "weight_unit": "KG",
+            "width": None,
+            "height": None,
+            "length": None,
+            "dimension_unit": None,
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
+            "description": None,
+            "content": None,
+            "is_document": False,
+            "freight_class": None,
+            "reference_number": None,
+            "items": [],
+            "options": {},
+            "meta": {},
+        }
         self.shipment: models.Shipment = models.Shipment.objects.create(
-            shipper=self.shipper,
-            recipient=self.recipient,
+            shipper=self.shipper_data,
+            recipient=self.recipient_data,
+            parcels=[self.parcel_data],
             created_by=self.user,
             test_mode=True,
             payment={"currency": "CAD", "paid_by": "sender"},
         )
-        self.shipment.parcels.set([self.parcel])
 
 
 class TestShipments(APITestCase):
@@ -124,7 +133,7 @@ class TestShipmentDetails(TestShipmentFixture):
 class TestShipmentPurchase(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
-        carrier = providers.Carrier.objects.get(carrier_id="canadapost")
+        carrier = providers.CarrierConnection.objects.get(carrier_id="canadapost")
         self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
@@ -195,7 +204,11 @@ class TestShipmentPurchase(TestShipmentFixture):
         )
         self.shipment.status = "purchased"
         self.shipment.shipment_identifier = "123456789012"
-        self.shipment.selected_rate_carrier = self.carrier
+        # Set selected_rate and carrier snapshot
+        self.shipment.selected_rate = {
+            **self.shipment.rates[0],
+        }
+        self.shipment.carrier = create_carrier_snapshot(self.carrier)
         self.shipment.save()
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
@@ -463,6 +476,7 @@ SHIPMENT_RESPONSE = {
         "address_line2": None,
         "validate_location": False,
         "validation": None,
+        "meta": {},
     },
     "recipient": {
         "id": ANY,
@@ -483,6 +497,7 @@ SHIPMENT_RESPONSE = {
         "address_line2": None,
         "validate_location": False,
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
@@ -503,6 +518,7 @@ SHIPMENT_RESPONSE = {
             "freight_class": None,
             "reference_number": ANY,
             "options": {},
+            "meta": {},
         }
     ],
     "payment": {"account_number": None, "currency": "CAD", "paid_by": "sender"},
@@ -602,7 +618,7 @@ PURCHASED_SHIPMENT = {
     "object_type": "shipment",
     "tracking_url": "/v1/trackers/canadapost/123456789012",
     "shipper": {
-        "id": ANY,
+        "id": "adr_111122223333",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -620,9 +636,10 @@ PURCHASED_SHIPMENT = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "recipient": {
-        "id": ANY,
+        "id": "adr_444455556666",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -640,26 +657,28 @@ PURCHASED_SHIPMENT = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
-            "id": ANY,
+            "id": "pcl_777788889999",
             "weight": 1.0,
-            "width": None,
-            "height": None,
-            "length": None,
+            "width": 42.0,
+            "height": 32.0,
+            "length": 32.0,
             "packaging_type": None,
             "package_preset": "canadapost_corrugated_small_box",
             "description": None,
             "content": None,
             "is_document": False,
             "weight_unit": "KG",
-            "dimension_unit": None,
+            "dimension_unit": "CM",
             "items": [],
             "freight_class": None,
             "reference_number": ANY,
             "object_type": "parcel",
             "options": {},
+            "meta": {},
         }
     ],
     "services": [],
@@ -670,25 +689,25 @@ PURCHASED_SHIPMENT = {
     "customs": None,
     "rates": [
         {
-            "id": ANY,
+            "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
             "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": ANY,
+            "estimated_delivery": None,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
             "extra_charges": [
-                {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": ANY},
-                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": ANY},
-                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": ANY},
-                {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": ANY},
+                {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+                {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+                {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+                {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
                 {
                     "name": "Duties and taxes",
                     "amount": 13.92,
                     "currency": "CAD",
-                    "id": ANY,
+                    "id": None,
                 },
             ],
             "meta": {
@@ -712,21 +731,21 @@ PURCHASED_SHIPMENT = {
     "tracking_number": "123456789012",
     "shipment_identifier": "123456789012",
     "selected_rate": {
-        "id": ANY,
+        "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
         "object_type": "rate",
         "carrier_name": "canadapost",
         "carrier_id": "canadapost",
         "currency": "CAD",
-        "estimated_delivery": ANY,
+        "estimated_delivery": None,
         "service": "canadapost_priority",
         "total_charge": 106.71,
         "transit_days": 2,
         "extra_charges": [
-            {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": ANY},
-            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": ANY},
-            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": ANY},
-            {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": ANY},
-            {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": ANY},
+            {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+            {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
+            {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": None},
         ],
         "meta": {
             "ext": "canadapost",
@@ -744,7 +763,7 @@ PURCHASED_SHIPMENT = {
         "service_name": "CANADAPOST PRIORITY",
     },
     "service": "canadapost_priority",
-    "selected_rate_id": ANY,
+    "selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
     "test_mode": True,
     "label_url": ANY,
     "invoice_url": None,
@@ -763,7 +782,7 @@ CANCEL_RESPONSE = {
     "object_type": "shipment",
     "tracking_url": None,
     "shipper": {
-        "id": ANY,
+        "id": "adr_111122223333",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -781,9 +800,10 @@ CANCEL_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "recipient": {
-        "id": ANY,
+        "id": "adr_444455556666",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -801,10 +821,11 @@ CANCEL_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
-            "id": ANY,
+            "id": "pcl_777788889999",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -818,9 +839,10 @@ CANCEL_RESPONSE = {
             "dimension_unit": None,
             "items": [],
             "freight_class": None,
-            "reference_number": "0000000002",
+            "reference_number": ANY,
             "object_type": "parcel",
             "options": {},
+            "meta": {},
         }
     ],
     "services": [],
@@ -831,12 +853,12 @@ CANCEL_RESPONSE = {
     "customs": None,
     "rates": [
         {
-            "id": ANY,
+            "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
             "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": ANY,
+            "estimated_delivery": None,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
@@ -902,7 +924,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "object_type": "shipment",
     "tracking_url": None,
     "shipper": {
-        "id": ANY,
+        "id": "adr_111122223333",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -920,9 +942,10 @@ CANCEL_PURCHASED_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "recipient": {
-        "id": ANY,
+        "id": "adr_444455556666",
         "postal_code": "V6M2V9",
         "city": "Vancouver",
         "federal_tax_id": None,
@@ -940,10 +963,11 @@ CANCEL_PURCHASED_RESPONSE = {
         "validate_location": False,
         "object_type": "address",
         "validation": None,
+        "meta": {},
     },
     "parcels": [
         {
-            "id": ANY,
+            "id": "pcl_777788889999",
             "weight": 1.0,
             "width": None,
             "height": None,
@@ -957,9 +981,10 @@ CANCEL_PURCHASED_RESPONSE = {
             "dimension_unit": None,
             "items": [],
             "freight_class": None,
-            "reference_number": "0000000002",
+            "reference_number": ANY,
             "object_type": "parcel",
             "options": {},
+            "meta": {},
         }
     ],
     "services": [],
@@ -970,12 +995,12 @@ CANCEL_PURCHASED_RESPONSE = {
     "customs": None,
     "rates": [
         {
-            "id": ANY,
+            "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
             "object_type": "rate",
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": ANY,
+            "estimated_delivery": None,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,
@@ -1026,10 +1051,33 @@ CANCEL_PURCHASED_RESPONSE = {
     "carrier_id": "canadapost",
     "tracking_number": None,
     "shipment_identifier": "123456789012",
-    "selected_rate": None,
+    "selected_rate": {
+        "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
+        "object_type": "rate",
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "currency": "CAD",
+        "estimated_delivery": None,
+        "service": "canadapost_priority",
+        "total_charge": 106.71,
+        "transit_days": 2,
+        "extra_charges": [
+            {"name": "Base charge", "amount": 101.83, "currency": "CAD", "id": None},
+            {"name": "Fuel surcharge", "amount": 2.7, "currency": "CAD", "id": None},
+            {"name": "SMB Savings", "amount": -11.74, "currency": "CAD", "id": None},
+            {"name": "Discount", "amount": -9.04, "currency": "CAD", "id": None},
+            {"name": "Duties and taxes", "amount": 13.92, "currency": "CAD", "id": None},
+        ],
+        "meta": {
+            "carrier_connection_id": ANY,
+            "rate_provider": "canadapost",
+            "service_name": "CANADAPOST PRIORITY",
+        },
+        "test_mode": True,
+    },
     "meta": {},
-    "service": None,
-    "selected_rate_id": None,
+    "service": "canadapost_priority",
+    "selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
     "test_mode": True,
     "label_url": None,
     "invoice_url": None,
@@ -1200,6 +1248,103 @@ class TestShipmentCancelIdempotent(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertEqual(response_data["status"], "cancelled")
+
+
+class TestComputeEstimatedDelivery(APITestCase):
+    """Test compute_estimated_delivery utility function."""
+
+    def test_returns_estimated_delivery_from_rate(self):
+        """Test that estimated_delivery is returned directly from selected_rate."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"estimated_delivery": "2024-01-20", "transit_days": 5}
+        options = {"shipping_date": "2024-01-15"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-20")
+        self.assertEqual(shipping_date_str, "2024-01-15")
+
+    def test_computes_from_transit_days_when_no_estimated_delivery(self):
+        """Test that estimated_delivery is computed from transit_days when not provided."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 5}
+        options = {"shipping_date": "2024-01-15"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-20")
+        self.assertEqual(shipping_date_str, "2024-01-15")
+
+    def test_uses_shipment_date_option_as_fallback(self):
+        """Test that shipment_date is used when shipping_date is not available."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 3}
+        options = {"shipment_date": "2024-01-10"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-13")
+        self.assertEqual(shipping_date_str, "2024-01-10")
+
+    def test_returns_none_when_no_transit_days_or_estimated_delivery(self):
+        """Test that None is returned when neither estimated_delivery nor transit_days are available."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {}
+        options = {"shipping_date": "2024-01-15"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertIsNone(estimated_delivery)
+        self.assertEqual(shipping_date_str, "2024-01-15")
+
+    def test_returns_none_when_no_shipping_date(self):
+        """Test that None is returned when no shipping date is available."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 5}
+        options = {}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertIsNone(estimated_delivery)
+        self.assertIsNone(shipping_date_str)
+
+    def test_handles_none_inputs(self):
+        """Test that None inputs are handled gracefully."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(None, None)
+
+        self.assertIsNone(estimated_delivery)
+        self.assertIsNone(shipping_date_str)
+
+    def test_handles_datetime_format_shipping_date(self):
+        """Test that datetime format shipping_date is handled correctly."""
+        from karrio.server.manager.serializers import compute_estimated_delivery
+
+        selected_rate = {"transit_days": 2}
+        options = {"shipping_date": "2024-01-15T10:30"}
+
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(
+            selected_rate, options
+        )
+
+        self.assertEqual(estimated_delivery, "2024-01-17")
+        self.assertEqual(shipping_date_str, "2024-01-15T10:30")
 
 
 LABEL_DOCUMENT_RESPONSE = {

@@ -12,32 +12,6 @@ import karrio.server.providers.models as providers
 from karrio.server.orders.serializers.base import ORDER_STATUS
 
 
-class LineItem(manager.Commodity):
-    class Meta:
-        proxy = True
-
-    @property
-    def unfulfilled_quantity(self):
-        quantity = self.quantity - sum(
-            [
-                child.quantity or 0
-                for child in list(
-                    self.children.exclude(
-                        commodity_parcel__parcel_shipment__status__in=[
-                            "cancelled",
-                            "draft",
-                        ]
-                    ).filter(
-                        commodity_parcel__isnull=False,
-                        commodity_customs__isnull=True,
-                    )
-                )
-            ],
-            0,
-        )
-        return quantity if quantity > 0 else 0
-
-
 class OrderManager(models.Manager):
     def get_queryset(self):
         from django.db.models import Prefetch
@@ -53,14 +27,9 @@ class OrderManager(models.Manager):
         queryset = (
             super()
             .get_queryset()
-            .select_related(
-                "created_by",
-                "shipping_to",
-                "shipping_from",
-                "billing_address",
-            )
+            .select_related("created_by")
             .prefetch_related(
-                "line_items",
+                *(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
 
@@ -79,6 +48,8 @@ class OrderManager(models.Manager):
 
 @register_model
 class Order(OwnedEntity):
+    """Order model with embedded JSON data for addresses and line items."""
+
     HIDDEN_PROPS = (*(("org",) if settings.MULTI_ORGANIZATIONS else tuple()),)
     DIRECT_PROPS = [
         "order_id",
@@ -89,11 +60,16 @@ class Order(OwnedEntity):
         "metadata",
         "test_mode",
         "created_by",
+        # Embedded JSON fields
+        "shipping_to",
+        "shipping_from",
+        "billing_address",
+        "line_items",
     ]
     objects = OrderManager()
 
     class Meta:
-        db_table = "order"
+        db_table = "orders"  # Clean plural table name
         verbose_name = "Order"
         verbose_name_plural = "Orders"
         ordering = ["-created_at"]
@@ -101,8 +77,6 @@ class Order(OwnedEntity):
             # Index for archiving queries based on creation date
             models.Index(fields=["created_at"], name="order_created_at_idx"),
         ]
-
-    # CONTEXT_RELATIONS = ["shipments"]  # Temporarily disabled - causes issues during deletion
 
     id = models.CharField(
         max_length=50,
@@ -116,27 +90,36 @@ class Order(OwnedEntity):
     status = models.CharField(
         max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0], db_index=True
     )
-    shipping_to = models.OneToOneField(
-        "manager.Address", on_delete=models.CASCADE, related_name="recipient_order"
-    )
-    shipping_from = models.OneToOneField(
-        "manager.Address",
+    test_mode = models.BooleanField()
+
+    # ─────────────────────────────────────────────────────────────────
+    # EMBEDDED JSON FIELDS (clean, direct names)
+    # ─────────────────────────────────────────────────────────────────
+    shipping_to = models.JSONField(
+        blank=True,
         null=True,
-        on_delete=models.CASCADE,
-        related_name="shipper_order",
+        help_text="Shipping destination address (embedded JSON)",
     )
-    billing_address = models.OneToOneField(
-        "manager.Address",
+    shipping_from = models.JSONField(
+        blank=True,
         null=True,
-        on_delete=models.CASCADE,
-        related_name="bill_to_order",
+        help_text="Shipping origin address (embedded JSON)",
     )
-    line_items = models.ManyToManyField(
-        LineItem, related_name="commodity_order", through="OrderLineItemLink"
+    billing_address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Billing address (embedded JSON)",
     )
-    shipments = models.ManyToManyField(
-        "manager.Shipment", related_name="shipment_order"
+    line_items = models.JSONField(
+        blank=True,
+        null=True,
+        default=partial(identity, value=[]),
+        help_text="Line items array with fulfillment tracking (embedded JSON)",
     )
+
+    # ─────────────────────────────────────────────────────────────────
+    # OPERATIONAL JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
     options = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
@@ -144,14 +127,20 @@ class Order(OwnedEntity):
         blank=True, null=True, default=partial(identity, value={})
     )
     meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
-    test_mode = models.BooleanField()
+
+    # ─────────────────────────────────────────────────────────────────
+    # SHIPMENT RELATION (kept as M2M - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
+    shipments = models.ManyToManyField(
+        "manager.Shipment", related_name="shipment_order"
+    )
 
     @property
     def object_type(self):
         return "order"
 
 
-"""Models orders linking (for reverse OneToMany relations)"""
+"""Models for order management"""
 
 
 @register_model
@@ -309,12 +298,3 @@ class OrderKey(models.Model):
         """
         self.order = order
         self.save(update_fields=["order", "updated_at"])
-
-
-class OrderLineItemLink(models.Model):
-    order = models.ForeignKey(
-        Order, on_delete=models.CASCADE, related_name="line_item_links"
-    )
-    item = models.OneToOneField(
-        LineItem, on_delete=models.CASCADE, related_name="order_link"
-    )

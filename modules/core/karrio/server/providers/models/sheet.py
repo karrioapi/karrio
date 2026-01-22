@@ -36,6 +36,12 @@ class RateSheet(core.OwnedEntity):
     slug = models.CharField(_("slug"), max_length=50, db_index=True)
     carrier_name = models.CharField(max_length=50, db_index=True)
     is_system = models.BooleanField(default=False, db_index=True)
+    origin_countries = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default([]),
+        help_text="List of origin country codes this rate sheet applies to",
+    )
     services = models.ManyToManyField(
         "ServiceLevel", blank=True, related_name="service_sheet"
     )
@@ -99,7 +105,7 @@ class RateSheet(core.OwnedEntity):
     def carriers(self):
         import karrio.server.providers.models as providers
 
-        return providers.Carrier.objects.filter(
+        return providers.CarrierConnection.objects.filter(
             carrier_code=self.carrier_name, rate_sheet__id=self.id
         )
 

@@ -234,30 +234,30 @@ class CustomsContentType(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    dpd_meta_saturday_delivery = lib.OptionEnum("saturday_delivery", bool)
+    dpd_meta_saturday_delivery = lib.OptionEnum("saturday_delivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
     dpd_meta_label_format = lib.OptionEnum("label_format", str)
     dpd_meta_label_paper_format = lib.OptionEnum("label_paper_format", str)
     dpd_meta_label_printer_position = lib.OptionEnum("label_printer_position", str)
-    dpd_meta_dropoff_type = lib.OptionEnum("dropoff_type", str)
+    dpd_meta_dropoff_type = lib.OptionEnum("dropoff_type", str, meta=dict(category="PUDO"))
     dpd_meta_simulate = lib.OptionEnum("simulate", bool)
     dpd_meta_extra_barcode = lib.OptionEnum("extra_barcode", bool)
     dpd_meta_with_document = lib.OptionEnum("with_document", bool)
-    dpd_meta_notification_email = lib.OptionEnum("notification_email", str)
-    dpd_meta_notification_sms = lib.OptionEnum("notification_sms", str)
-    dpd_meta_delivery_date_from = lib.OptionEnum("delivery_date_from", str)
-    dpd_meta_delivery_date_to = lib.OptionEnum("delivery_date_to", str)
-    dpd_meta_delivery_time_from = lib.OptionEnum("delivery_time_from", str)
-    dpd_meta_delivery_time_to = lib.OptionEnum("delivery_time_to", str)
+    dpd_meta_notification_email = lib.OptionEnum("notification_email", str, meta=dict(category="NOTIFICATION"))
+    dpd_meta_notification_sms = lib.OptionEnum("notification_sms", str, meta=dict(category="NOTIFICATION"))
+    dpd_meta_delivery_date_from = lib.OptionEnum("delivery_date_from", str, meta=dict(category="DELIVERY_OPTIONS"))
+    dpd_meta_delivery_date_to = lib.OptionEnum("delivery_date_to", str, meta=dict(category="DELIVERY_OPTIONS"))
+    dpd_meta_delivery_time_from = lib.OptionEnum("delivery_time_from", str, meta=dict(category="DELIVERY_OPTIONS"))
+    dpd_meta_delivery_time_to = lib.OptionEnum("delivery_time_to", str, meta=dict(category="DELIVERY_OPTIONS"))
 
     """COD options"""
-    dpd_meta_cod_collect_type = lib.OptionEnum("cod_collect_type", str)
-    dpd_meta_cod_bank_code = lib.OptionEnum("cod_bank_code", str)
-    dpd_meta_cod_bank_name = lib.OptionEnum("cod_bank_name", str)
-    dpd_meta_cod_bank_account_number = lib.OptionEnum("cod_bank_account_number", str)
-    dpd_meta_cod_bank_account_name = lib.OptionEnum("cod_bank_account_name", str)
-    dpd_meta_cod_iban = lib.OptionEnum("cod_iban", str)
-    dpd_meta_cod_bic = lib.OptionEnum("cod_bic", str)
-    dpd_meta_cod_purpose = lib.OptionEnum("cod_purpose", str)
+    dpd_meta_cod_collect_type = lib.OptionEnum("cod_collect_type", str, meta=dict(category="COD"))
+    dpd_meta_cod_bank_code = lib.OptionEnum("cod_bank_code", str, meta=dict(category="COD"))
+    dpd_meta_cod_bank_name = lib.OptionEnum("cod_bank_name", str, meta=dict(category="COD"))
+    dpd_meta_cod_bank_account_number = lib.OptionEnum("cod_bank_account_number", str, meta=dict(category="COD"))
+    dpd_meta_cod_bank_account_name = lib.OptionEnum("cod_bank_account_name", str, meta=dict(category="COD"))
+    dpd_meta_cod_iban = lib.OptionEnum("cod_iban", str, meta=dict(category="COD"))
+    dpd_meta_cod_bic = lib.OptionEnum("cod_bic", str, meta=dict(category="COD"))
+    dpd_meta_cod_purpose = lib.OptionEnum("cod_purpose", str, meta=dict(category="COD"))
 
     """Unified Option type mapping"""
     saturday_delivery = dpd_meta_saturday_delivery
@@ -268,8 +268,8 @@ class ShippingOption(lib.Enum):
     simulate = dpd_meta_simulate
     extra_barcode = dpd_meta_extra_barcode
     with_document = dpd_meta_with_document
-    cash_on_delivery = lib.OptionEnum("cash_on_delivery", float)
-    insurance = lib.OptionEnum("insurance", float)
+    cash_on_delivery = lib.OptionEnum("cash_on_delivery", float, meta=dict(category="COD"))
+    insurance = lib.OptionEnum("insurance", float, meta=dict(category="INSURANCE"))
     declared_value = lib.OptionEnum("declared_value", float)
     currency = lib.OptionEnum("currency", str)
 
@@ -299,6 +299,17 @@ class TrackingStatus(lib.Enum):
     delivery_delayed = ["delivery_delayed"]
     out_for_delivery = ["out_for_delivery"]
     ready_for_pickup = ["ready_for_pickup"]
+
+
+class ShippingDocumentCategory(lib.StrEnum):
+    """Carrier specific document category types.
+
+    Maps DPD META document types to standard ShippingDocumentCategory.
+    Values match the exact syntax used by DPD META API.
+    """
+
+    shipping_label = "shippingLabel"
+    qr_code = "qrcode"
 
 
 def load_services_from_csv() -> list:

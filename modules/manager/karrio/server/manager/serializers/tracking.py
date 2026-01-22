@@ -1,13 +1,17 @@
 import typing
+from django.db import transaction
 from django.utils import timezone
 
 import karrio.lib as lib
 import karrio.server.serializers as serializers
 import karrio.server.core.utils as utils
 from karrio.server.core.logging import logger
-from karrio.server.core.gateway import Shipments, Carriers
+from karrio.server.core.gateway import Shipments, Connections
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 from karrio.server.core.serializers import (
+    TRACKER_STATUS,
     TrackingDetails,
+    TrackingEvent,
     TrackingRequest,
     ShipmentStatus,
     TrackerStatus,
@@ -39,6 +43,7 @@ class TrackingSerializer(TrackingDetails):
         help_text="The carrier user metadata.",
     )
 
+    @transaction.atomic
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
         options = validated_data["options"]
         metadata = validated_data["metadata"]
@@ -48,7 +53,7 @@ class TrackingSerializer(TrackingDetails):
         info = validated_data.get("info")
         reference = validated_data.get("reference")
         pending_pickup = validated_data.get("pending_pickup")
-        carrier = Carriers.first(
+        carrier = Connections.first(
             context=context,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter}
         )
@@ -78,7 +83,7 @@ class TrackingSerializer(TrackingDetails):
             test_mode=response.tracking.test_mode,
             delivered=response.tracking.delivered,
             status=response.tracking.status,
-            tracking_carrier=carrier,
+            carrier=create_carrier_snapshot(carrier),
             estimated_delivery=response.tracking.estimated_delivery,
             messages=lib.to_dict(response.messages),
             info=lib.to_dict(response.tracking.info),
@@ -90,6 +95,7 @@ class TrackingSerializer(TrackingDetails):
             signature_image=getattr(response.tracking.images, "signature_image", None),
         )
 
+    @transaction.atomic
     def update(
         self, instance: models.Tracking, validated_data: dict, context, **kwargs
     ) -> models.Tracking:
@@ -110,12 +116,10 @@ class TrackingSerializer(TrackingDetails):
                     ),
                 }
             }
-            carrier = (
-                Carriers.first(
-                    context=context, **{**DEFAULT_CARRIER_FILTER, **carrier_filter}
-                )
-                or instance.tracking_carrier
-            )
+            # Try to get carrier from filter, fall back to resolved carrier from snapshot
+            carrier = Connections.first(
+                context=context, **{**DEFAULT_CARRIER_FILTER, **carrier_filter}
+            ) or resolve_carrier(instance.carrier, context)
 
             response = Shipments.track(
                 payload=TrackingRequest(
@@ -125,9 +129,10 @@ class TrackingSerializer(TrackingDetails):
             )
 
             # Handle carrier change separately (not part of tracking_details)
-            if carrier.id != instance.tracking_carrier.id:
-                instance.tracking_carrier = carrier
-                instance.save(update_fields=["tracking_carrier"])
+            current_carrier_id = (instance.carrier or {}).get("connection_id")
+            if carrier and carrier.id != current_carrier_id:
+                instance.carrier = create_carrier_snapshot(carrier)
+                instance.save(update_fields=["carrier"])
 
             # Use update_tracker for the rest of the tracking details
             update_tracker(
@@ -158,6 +163,7 @@ class TrackerUpdateData(serializers.Serializer):
         required=False, help_text="User metadata for the tracker"
     )
 
+    @transaction.atomic
     def update(
         self, instance: models.Tracking, validated_data: dict, **kwargs
     ) -> models.Tracking:
@@ -215,6 +221,7 @@ def update_shipment_tracker(tracker: models.Tracking):
         logger.exception("Failed to update the tracked shipment", error=str(e), tracker_id=tracker.id, tracking_number=tracker.tracking_number)
 
 
+@transaction.atomic
 def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.Tracking:
     """Update tracker with new tracking details from webhook or external source.
 
@@ -338,3 +345,29 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
             tracking_number=tracker.tracking_number,
         )
         return tracker
+
+
+class TrackerEventInjectRequest(serializers.Serializer):
+    """Request payload for injecting tracking events."""
+
+    events = TrackingEvent(
+        many=True,
+        required=True,
+        help_text="List of tracking events to inject into the tracker",
+    )
+    status = serializers.ChoiceField(
+        required=False,
+        allow_null=True,
+        choices=TRACKER_STATUS,
+        help_text="Optional: Override the tracker status",
+    )
+    delivered = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="Optional: Mark the tracker as delivered",
+    )
+    estimated_delivery = serializers.DateField(
+        required=False,
+        allow_null=True,
+        help_text="Optional: Set the estimated delivery date",
+    )

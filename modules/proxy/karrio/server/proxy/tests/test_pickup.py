@@ -195,6 +195,7 @@ PICKUP_RESPONSE = {
             "address_line2": None,
             "validate_location": False,
             "validation": None,
+            "meta": {},
         },
         "parcels": [
             {
@@ -215,6 +216,7 @@ PICKUP_RESPONSE = {
                 "freight_class": None,
                 "reference_number": None,
                 "options": {},
+                "meta": {},
             }
         ],
         "instruction": "Should not be folded",
@@ -257,6 +259,7 @@ PICKUP_UPDATE_RESPONSE = {
             "address_line2": None,
             "validate_location": False,
             "validation": None,
+            "meta": {},
         },
         "parcels": [
             {
@@ -277,6 +280,7 @@ PICKUP_UPDATE_RESPONSE = {
                 "freight_class": None,
                 "reference_number": None,
                 "options": {},
+                "meta": {},
             }
         ],
         "instruction": "Should not be folded",

@@ -99,53 +99,6 @@ class CommodityModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
-class CustomsModelSerializer(serializers.ModelSerializer):
-    NESTED_FIELDS = ["commodities"]
-
-    incoterm = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-    commodities = serializers.make_fields_optional(CommodityModelSerializer)(
-        many=True, allow_null=True, required=False
-    )
-
-    class Meta:
-        model = manager.Customs
-        exclude = ["created_at", "updated_at", "created_by"]
-        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
-
-    @transaction.atomic
-    def create(self, validated_data: dict, context: dict):
-        data = {
-            name: value
-            for name, value in validated_data.items()
-            if name not in self.NESTED_FIELDS
-        }
-
-        instance = super().create(data)
-
-        serializers.save_many_to_many_data(
-            "commodities",
-            CommodityModelSerializer,
-            instance,
-            payload=validated_data,
-            context=context,
-        )
-
-        return instance
-
-    @transaction.atomic
-    def update(
-        self, instance: manager.Customs, validated_data: dict, **kwargs
-    ) -> manager.Customs:
-        data = {
-            name: value
-            for name, value in validated_data.items()
-            if name not in self.NESTED_FIELDS
-        }
-
-        return super().update(instance, data)
-
-
-@serializers.owned_model_serializer
 class ParcelModelSerializer(validators.PresetSerializer, serializers.ModelSerializer):
     weight_unit = serializers.CharField(
         required=False, allow_null=True, allow_blank=True
@@ -163,7 +116,6 @@ class ParcelModelSerializer(validators.PresetSerializer, serializers.ModelSerial
 @serializers.owned_model_serializer
 class TemplateModelSerializer(serializers.ModelSerializer):
     address = serializers.make_fields_optional(AddressModelSerializer)(required=False)
-    customs = serializers.make_fields_optional(CustomsModelSerializer)(required=False)
     parcel = serializers.make_fields_optional(ParcelModelSerializer)(required=False)
 
     class Meta:
@@ -178,12 +130,6 @@ class TemplateModelSerializer(serializers.ModelSerializer):
             "address": serializers.save_one_to_one_data(
                 "address",
                 AddressModelSerializer,
-                payload=validated_data,
-                context=context,
-            ),
-            "customs": serializers.save_one_to_one_data(
-                "customs",
-                CustomsModelSerializer,
                 payload=validated_data,
                 context=context,
             ),
@@ -203,14 +149,11 @@ class TemplateModelSerializer(serializers.ModelSerializer):
         data = {
             key: value
             for key, value in validated_data.items()
-            if key not in ["address", "customs", "parcel"]
+            if key not in ["address", "parcel"]
         }
 
         serializers.save_one_to_one_data(
             "address", AddressModelSerializer, instance, payload=validated_data
-        )
-        serializers.save_one_to_one_data(
-            "customs", CustomsModelSerializer, instance, payload=validated_data
         )
         serializers.save_one_to_one_data(
             "parcel", ParcelModelSerializer, instance, payload=validated_data

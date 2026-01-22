@@ -124,7 +124,6 @@ class TestRateSheets(GraphTestCase):
         )
         response_data = response.data
 
-        print(response)  # Debug print as per AGENTS.md guidelines
         self.assertResponseNoErrors(response)
         self.assertDictEqual(
             lib.to_dict(response_data, clear_empty=False),

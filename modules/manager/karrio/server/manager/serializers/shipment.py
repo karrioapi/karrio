@@ -10,7 +10,7 @@ import karrio.core.units as units
 import karrio.server.conf as conf
 import karrio.server.core.utils as utils
 import karrio.server.core.gateway as gateway
-
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 import karrio.server.core.dataunits as dataunits
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
@@ -23,12 +23,13 @@ from karrio.server.serializers import (
     ChoiceField,
     BooleanField,
     owned_model_serializer,
-    save_one_to_one_data,
-    save_many_to_many_data,
     link_org,
     Context,
     PlainDictField,
     StringListField,
+    process_json_object_mutation,
+    process_json_array_mutation,
+    process_customs_mutation,
 )
 from karrio.server.core.serializers import (
     SHIPMENT_STATUS,
@@ -44,11 +45,9 @@ from karrio.server.core.serializers import (
     Payment,
     Message,
     Rate,
+    Parcel,
 )
 from karrio.server.manager.serializers.document import DocumentUploadSerializer
-from karrio.server.manager.serializers.address import AddressSerializer
-from karrio.server.manager.serializers.customs import CustomsSerializer
-from karrio.server.manager.serializers.parcel import ParcelSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
 import karrio.server.manager.models as models
 
@@ -69,64 +68,8 @@ class ShipmentSerializer(ShipmentData):
     docs = Documents(required=False)
     meta = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False, default=[])
-
-    def __init__(self, instance: models.Shipment = None, **kwargs):
-        data = kwargs.get("data") or {}
-        context = getattr(self, "__context", None) or kwargs.get("context")
-        is_update = instance is not None
-
-        if is_update and ("parcels" in data):
-            save_many_to_many_data(
-                "parcels",
-                ParcelSerializer,
-                instance,
-                payload=data,
-                context=context,
-                partial=True,
-            )
-        if is_update and ("customs" in data):
-            instance.customs = save_one_to_one_data(
-                "customs",
-                CustomsSerializer,
-                instance,
-                payload=data,
-                context=context,
-                partial=instance.customs is not None,
-            )
-        if is_update and ("recipient" in data):
-            instance.recipient = save_one_to_one_data(
-                "recipient",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-        if is_update and ("return_address" in data):
-            instance.return_address = save_one_to_one_data(
-                "return_address",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-        if is_update and ("billing_address" in data):
-            instance.billing_address = save_one_to_one_data(
-                "billing_address",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-        if is_update and ("shipper" in data):
-            instance.shipper = save_one_to_one_data(
-                "shipper",
-                AddressSerializer,
-                instance,
-                payload=data,
-                context=context,
-            )
-
-        super().__init__(instance, **kwargs)
+    # Override parcels to use Parcel (with id) instead of ParcelData (without id)
+    parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
 
     @transaction.atomic
     def create(
@@ -155,7 +98,7 @@ class ShipmentSerializer(ShipmentData):
             )
         )
 
-        carriers = gateway.Carriers.list(
+        carriers = gateway.Connections.list(
             context=context,
             carrier_ids=carrier_ids,
             **({"carrier_name": resolved_carrier_name} if resolved_carrier_name else {}),
@@ -196,6 +139,46 @@ class ShipmentSerializer(ShipmentData):
                 context=context,
             )
 
+        # Process JSON fields for addresses, parcels, and customs
+        json_fields = {}
+
+        if "shipper" in validated_data:
+            json_fields.update(shipper=process_json_object_mutation(
+                "shipper", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "recipient" in validated_data:
+            json_fields.update(recipient=process_json_object_mutation(
+                "recipient", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "return_address" in validated_data:
+            json_fields.update(return_address=process_json_object_mutation(
+                "return_address", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "billing_address" in validated_data:
+            json_fields.update(billing_address=process_json_object_mutation(
+                "billing_address", validated_data, None,
+                model_class=models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        json_fields.update(parcels=process_json_array_mutation(
+            "parcels", validated_data, None,
+            id_prefix="pcl", model_class=models.Parcel,
+            nested_arrays={"items": ("itm", models.Commodity)},
+            object_type="parcel", data_field_name="parcels",
+        ))
+
+        if "customs" in validated_data:
+            json_fields.update(customs=process_customs_mutation(
+                validated_data, None,
+                address_model=models.Address, product_model=models.Commodity,
+            ))
+
         shipment = models.Shipment.objects.create(
             **{
                 **{
@@ -203,36 +186,7 @@ class ShipmentSerializer(ShipmentData):
                     for key, value in validated_data.items()
                     if key in models.Shipment.DIRECT_PROPS and value is not None
                 },
-                "customs": save_one_to_one_data(
-                    "customs",
-                    CustomsSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "shipper": save_one_to_one_data(
-                    "shipper",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "recipient": save_one_to_one_data(
-                    "recipient",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "return_address": save_one_to_one_data(
-                    "return_address",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
-                "billing_address": save_one_to_one_data(
-                    "billing_address",
-                    AddressSerializer,
-                    payload=validated_data,
-                    context=context,
-                ),
+                **json_fields,
                 "rates": rates,
                 "payment": payment,
                 "services": services,
@@ -241,15 +195,7 @@ class ShipmentSerializer(ShipmentData):
             }
         )
 
-        shipment.carriers.set(carriers if any(carrier_ids) else [])
-
-        save_many_to_many_data(
-            "parcels",
-            ParcelSerializer,
-            shipment,
-            payload=validated_data,
-            context=context,
-        )
+        # carriers M2M removed - carrier info now in selected_rate JSON
 
         # Buy label if preferred service is selected, shipping method applied, shipping rules applied, or skip rate fetching
         if (service and fetch_rates) or apply_shipping_method_flag or apply_shipping_rules or skip_rate_fetching:
@@ -275,13 +221,73 @@ class ShipmentSerializer(ShipmentData):
                 changes.append(key)
                 validated_data.pop(key)
 
-            if key in models.Shipment.RELATIONAL_PROPS and val is None:
-                prop = getattr(instance, key)
-                # Delete related data from database if payload set to null
-                if hasattr(prop, "delete"):
-                    prop.delete(keep_parents=True)
-                    setattr(instance, key, None)
-                    validated_data.pop(key)
+            # Note: RELATIONAL_PROPS handling removed - FK relationships converted to JSONFields
+
+        if "shipper" in data:
+            instance.shipper = process_json_object_mutation(
+                "shipper",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
+            )
+            changes.append("shipper")
+
+        if "recipient" in data:
+            instance.recipient = process_json_object_mutation(
+                "recipient",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
+            )
+            changes.append("recipient")
+
+        if "return_address" in data:
+            instance.return_address = process_json_object_mutation(
+                "return_address",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
+            )
+            changes.append("return_address")
+
+        if "billing_address" in data:
+            instance.billing_address = process_json_object_mutation(
+                "billing_address",
+                data,
+                instance,
+                model_class=models.Address,
+                object_type="address",
+                id_prefix="adr",
+            )
+            changes.append("billing_address")
+
+        if "parcels" in data:
+            instance.parcels = process_json_array_mutation(
+                "parcels",
+                data,
+                instance,
+                id_prefix="pcl",
+                model_class=models.Parcel,
+                nested_arrays={"items": ("itm", models.Commodity)},
+                object_type="parcel",
+                data_field_name="parcels",
+            )
+            changes.append("parcels")
+
+        if "customs" in data:
+            instance.customs = process_customs_mutation(
+                data,
+                instance,
+                address_model=models.Address,
+                product_model=models.Commodity,
+            )
+            changes.append("customs")
 
         if "docs" in validated_data:
             changes.append("label")
@@ -297,30 +303,24 @@ class ShipmentSerializer(ShipmentData):
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
-            carrier = providers.Carrier.objects.filter(
+            # Try to find carrier for connection metadata
+            carrier = providers.CarrierConnection.objects.filter(
                 carrier_id=selected_rate.get("carrier_id")
             ).first()
             instance.test_mode = selected_rate.get("test_mode", instance.test_mode)
 
-            instance.selected_rate = {
-                **selected_rate,
-                "meta": {
-                    **selected_rate.get("meta", {}),
-                    **(
-                        {"carrier_connection_id": carrier.id}
-                        if carrier is not None
-                        else {}
-                    ),
-                },
-            }
-            instance.selected_rate_carrier = carrier
-            changes += ["selected_rate", "selected_rate_carrier"]
+            # Store carrier snapshot in dedicated field (consistent with Tracking, Pickup, etc.)
+            if carrier:
+                instance.carrier = create_carrier_snapshot(carrier)
+                changes += ["carrier"]
+
+            instance.selected_rate = selected_rate
+            changes += ["selected_rate"]
 
         if any(changes):
             instance.save(update_fields=changes)
 
-        if "carrier_ids" in validated_data:
-            instance.carriers.set(carriers)
+        # carriers M2M removed - carrier info now in selected_rate JSON
 
         return instance
 
@@ -568,9 +568,11 @@ class ShipmentPurchaseSerializer(Shipment):
 
 class ShipmentCancelSerializer(Shipment):
     def update(
-        self, instance: models.Shipment, validated_data: dict, **kwargs
+        self, instance: models.Shipment, validated_data: dict, context=None, **kwargs
     ) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
+            # Resolve carrier from carrier snapshot
+            carrier = resolve_carrier(instance.carrier or {}, context)
             gateway.Shipments.cancel(
                 payload={
                     **ShipmentCancelRequest(instance).data,
@@ -580,7 +582,7 @@ class ShipmentCancelSerializer(Shipment):
                         **(validated_data.get("options") or {}),
                     },
                 },
-                carrier=instance.selected_rate_carrier,
+                carrier=carrier,
             )
 
         instance.status = ShipmentStatus.cancelled.value
@@ -605,9 +607,10 @@ def fetch_shipment_rates(
     context: typing.Any,
     data: dict = dict(),
 ) -> models.Shipment:
-    carrier_ids = data["carrier_ids"] if "carrier_ids" in data else shipment.carrier_ids
+    # carrier_ids can be passed in data, or default to empty list (query all carriers)
+    carrier_ids = data.get("carrier_ids", [])
 
-    carriers = gateway.Carriers.list(
+    carriers = gateway.Connections.list(
         active=True,
         capability="shipping",
         context=context,
@@ -653,7 +656,7 @@ def buy_shipment_label(
     invoice_template = shipment.options.get("invoice_template")
 
     payload = {**data, "selected_rate_id": selected_rate.get("id")}
-    carrier = gateway.Carriers.first(
+    carrier = gateway.Connections.first(
         carrier_id=selected_rate.get("carrier_id"),
         test_mode=selected_rate.get("test_mode"),
         context=context,
@@ -667,8 +670,9 @@ def buy_shipment_label(
 
     # Generate invoice in advance if is_paperless_trade
     if pre_purchase_generation:
+        # Set carrier snapshot on shipment (consistent with other models)
+        shipment.carrier = create_carrier_snapshot(carrier)
         shipment.selected_rate = selected_rate
-        shipment.selected_rate_carrier = carrier
         document = generate_custom_invoice(invoice_template, shipment)
         invoice = dict(invoice=document["doc_file"])
 
@@ -695,11 +699,22 @@ def buy_shipment_label(
         .instance
     )
 
+    # Merge response parcel data with existing parcel data to preserve all fields (weight, etc.)
+    existing_parcels = shipment.parcels or []
+    merged_parcels = []
+    for idx, response_parcel in enumerate(response.parcels):
+        existing_parcel = existing_parcels[idx] if idx < len(existing_parcels) else {}
+        merged_parcels.append(
+            {
+                **existing_parcel,  # Keep existing data (weight, weight_unit, etc.)
+                "id": response_parcel.id or existing_parcel.get("id"),
+                "reference_number": response_parcel.reference_number
+                or existing_parcel.get("reference_number"),
+            }
+        )
+
     extra.update(
-        parcels=[
-            dict(id=parcel.id, reference_number=parcel.reference_number)
-            for parcel in response.parcels
-        ],
+        parcels=merged_parcels,
         docs={**lib.to_dict(response.docs), **invoice},
     )
 
@@ -714,6 +729,13 @@ def buy_shipment_label(
             else {}
         ),
     }
+
+    # Set selected_rate with carrier snapshot directly on shipment before update
+    # (This is more reliable than depending on serializer validation)
+    # Set carrier snapshot on shipment (consistent with other models)
+    shipment.carrier = create_carrier_snapshot(carrier)
+    shipment.selected_rate = selected_rate
+    shipment.save(update_fields=["carrier", "selected_rate"])
 
     purchased_shipment = lib.identity(
         ShipmentSerializer.map(
@@ -809,6 +831,44 @@ def can_mutate_shipment(
         )
 
 
+def compute_estimated_delivery(
+    selected_rate: typing.Optional[dict],
+    options: typing.Optional[dict],
+) -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
+    """Compute estimated delivery date from rate and shipment options.
+
+    This function extracts the estimated delivery date from the selected rate,
+    or computes it from transit days and shipping date if not directly available.
+
+    Args:
+        selected_rate: The selected shipping rate dictionary
+        options: The shipment options dictionary
+
+    Returns:
+        A tuple of (estimated_delivery, shipping_date_str) where:
+        - estimated_delivery: The estimated delivery date string (YYYY-MM-DD format) or None
+        - shipping_date_str: The shipping date string from options or None
+    """
+    _rate = selected_rate or {}
+    _options = options or {}
+
+    shipping_date_str = _options.get("shipping_date") or _options.get("shipment_date")
+    estimated_delivery = _rate.get("estimated_delivery")
+    transit_days = _rate.get("transit_days")
+
+    if not estimated_delivery and transit_days and shipping_date_str:
+        shipping_date = lib.to_date(
+            shipping_date_str,
+            current_format="%Y-%m-%dT%H:%M",
+            try_formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S"],
+        )
+        if shipping_date:
+            estimated_date = shipping_date + datetime.timedelta(days=int(transit_days))
+            estimated_delivery = lib.fdate(estimated_date)
+
+    return estimated_delivery, shipping_date_str
+
+
 def remove_shipment_tracker(shipment: models.Shipment):
     if hasattr(shipment, "shipment_tracker"):
         shipment.shipment_tracker.delete()
@@ -816,21 +876,27 @@ def remove_shipment_tracker(shipment: models.Shipment):
 
 def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context):
     rate_provider = (shipment.meta or {}).get("rate_provider") or shipment.carrier_name
-    carrier = shipment.selected_rate_carrier
+    # Resolve carrier from carrier snapshot
+    carrier_snapshot = shipment.carrier or {}
+    carrier = resolve_carrier(carrier_snapshot, context)
 
     # Get rate provider carrier if supported instead of carrier account
     if (
         rate_provider != shipment.carrier_name
     ) and rate_provider in dataunits.CARRIER_NAMES:
         carrier = (
-            providers.Carrier.access_by(context)
+            providers.CarrierConnection.access_by(context)
             .filter(carrier_code=rate_provider)
             .first()
         )
 
-    # Handle hub extension tracking
-    if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:
-        carrier = shipment.selected_rate_carrier
+    # Handle hub extension tracking - resolve from snapshot if carrier is None
+    if carrier and carrier.gateway.is_hub:
+        # Keep the hub carrier
+        pass
+    elif carrier is None and carrier_snapshot:
+        # Try to resolve again if carrier is None
+        carrier = resolve_carrier(carrier_snapshot, context)
 
     # Get dhl universal account if a dhl integration doesn't support tracking API
     if (
@@ -838,7 +904,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
         and "dhl" in carrier.carrier_name
         and "get_tracking" not in carrier.gateway.proxy_methods
     ):
-        carrier = gateway.Carriers.first(
+        carrier = gateway.Connections.first(
             carrier_name="dhl_universal",
             context=context,
         )
@@ -846,34 +912,21 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
     if carrier is not None and "get_tracking" in carrier.gateway.proxy_methods:
         # Create shipment tracker
         try:
-            pkg_weight = sum([p.weight or 0.0 for p in shipment.parcels.all()], 0.0)
-            selected_rate = shipment.selected_rate or {}
-            shipping_date_str = (
-                shipment.options.get("shipping_date")
-                or shipment.options.get("shipment_date")
+            # Use JSON fields for data access
+            parcels = shipment.parcels or []
+            shipper = shipment.shipper or {}
+            recipient = shipment.recipient or {}
+
+            pkg_weight = sum([p.get("weight") or 0.0 for p in parcels], 0.0)
+            estimated_delivery, shipping_date_str = compute_estimated_delivery(
+                shipment.selected_rate, shipment.options
             )
-
-            # Get estimated_delivery from selected_rate or compute from transit_days
-            estimated_delivery = selected_rate.get("estimated_delivery")
-            transit_days = selected_rate.get("transit_days")
-
-            if not estimated_delivery and transit_days and shipping_date_str:
-                shipping_date = lib.to_date(
-                    shipping_date_str,
-                    current_format="%Y-%m-%dT%H:%M",
-                    try_formats=["%Y-%m-%d", "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S"],
-                )
-                if shipping_date:
-                    estimated_date = shipping_date + datetime.timedelta(
-                        days=int(transit_days)
-                    )
-                    estimated_delivery = lib.fdate(estimated_date)
 
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
                 delivered=False,
                 shipment=shipment,
-                tracking_carrier=carrier,
+                carrier=create_carrier_snapshot(carrier),
                 test_mode=carrier.test_mode,
                 created_by=shipment.created_by,
                 status=TrackerStatus.pending.value,
@@ -884,12 +937,12 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 info=dict(
                     source="api",
                     shipment_weight=str(pkg_weight),
-                    shipment_package_count=str(shipment.parcels.count()),
-                    customer_name=shipment.recipient.person_name,
-                    shipment_origin_country=shipment.shipper.country_code,
-                    shipment_origin_postal_code=shipment.shipper.postal_code,
-                    shipment_destination_country=shipment.recipient.country_code,
-                    shipment_destination_postal_code=shipment.recipient.postal_code,
+                    shipment_package_count=str(len(parcels)),
+                    customer_name=recipient.get("person_name"),
+                    shipment_origin_country=shipper.get("country_code"),
+                    shipment_origin_postal_code=shipper.get("postal_code"),
+                    shipment_destination_country=recipient.get("country_code"),
+                    shipment_destination_postal_code=recipient.get("postal_code"),
                     shipment_service=shipment.meta.get("service_name"),
                     shipping_date=shipping_date_str,
                     expected_delivery=estimated_delivery,

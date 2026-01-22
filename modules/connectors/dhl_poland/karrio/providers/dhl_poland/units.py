@@ -65,16 +65,16 @@ class Service(lib.Enum):
 
 
 class ShippingOption(lib.Enum):
-    dhl_poland_delivery_in_18_22_hours = lib.OptionEnum("1722", bool)
-    dhl_poland_delivery_on_saturday = lib.OptionEnum("SATURDAY", bool)
-    dhl_poland_pickup_on_staturday = lib.OptionEnum("NAD_SOBOTA", bool)
-    dhl_poland_insuration = lib.OptionEnum("UBEZP", float)
-    dhl_poland_collect_on_delivery = lib.OptionEnum("COD", float)
-    dhl_poland_information_to_receiver = lib.OptionEnum("PDI")
-    dhl_poland_return_of_document = lib.OptionEnum("ROD", bool)
-    dhl_poland_proof_of_delivery = lib.OptionEnum("POD", bool)
-    dhl_poland_delivery_to_neighbour = lib.OptionEnum("SAS", bool)
-    dhl_poland_self_collect = lib.OptionEnum("ODB", bool)
+    dhl_poland_delivery_in_18_22_hours = lib.OptionEnum("1722", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    dhl_poland_delivery_on_saturday = lib.OptionEnum("SATURDAY", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    dhl_poland_pickup_on_staturday = lib.OptionEnum("NAD_SOBOTA", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    dhl_poland_insuration = lib.OptionEnum("UBEZP", float, meta=dict(category="INSURANCE"))
+    dhl_poland_collect_on_delivery = lib.OptionEnum("COD", float, meta=dict(category="COD"))
+    dhl_poland_information_to_receiver = lib.OptionEnum("PDI", meta=dict(category="NOTIFICATION"))
+    dhl_poland_return_of_document = lib.OptionEnum("ROD", bool, meta=dict(category="RETURN"))
+    dhl_poland_proof_of_delivery = lib.OptionEnum("POD", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    dhl_poland_delivery_to_neighbour = lib.OptionEnum("SAS", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    dhl_poland_self_collect = lib.OptionEnum("ODB", bool, meta=dict(category="PUDO"))
 
     """ Unified Option type mapping """
     insurance = dhl_poland_insuration

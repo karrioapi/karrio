@@ -1,0 +1,891 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://schema.post.be/announcement/common/v1/"
+           targetNamespace="http://schema.post.be/announcement/common/v1/"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xs:complexType name="addressType">
+        <xs:all>
+            <xs:element name="streetName">
+                <xs:annotation>
+                    <xs:documentation>Mandatory according to the LCI-in user manual???</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="streetName2" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Used for the second line of the street name.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="houseNumber" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="8"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="boxNumber" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="8"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="postalCode">
+                <xs:annotation>
+                    <xs:documentation>If the addressee is located in Belgium, the 4 digit postal code should be used.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="8"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="city">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="geographicalSanction" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="50"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="pdpId" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="10"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="pdpSuffix" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="6"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="countryCode">
+                <xs:annotation>
+                    <xs:documentation>The country according to ISO alpha 2 (e.g. BE for Belgium)</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="2"/>
+                        <xs:pattern value="[A-Za-z]{2}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="contactDetailType">
+        <xs:all>
+            <xs:element name="emailAddress" minOccurs="0" type="emailAddressType" />
+            <xs:element name="telephoneNumber" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="20"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="mobilePhone" minOccurs="0" type="mobilePhoneType" />
+            <xs:element name="language" minOccurs="0" type="languageType" />
+        </xs:all>
+    </xs:complexType>
+
+    <xs:simpleType name="mobilePhoneType">
+      <xs:restriction base="xs:string">
+          <xs:maxLength value="20"/>
+      </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="emailAddressType">
+      <xs:restriction base="xs:string">
+          <xs:maxLength value="50"/>
+      </xs:restriction>
+    </xs:simpleType>
+ 
+    <xs:simpleType name="desiredDeliveryPlaceType">
+      <xs:annotation>
+        <xs:documentation>Some instructions for the postman to refine the delivery place in addition to the address.</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="50" />
+      </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="itemCodeType">
+        <xs:annotation>
+            <xs:documentation>bar-code</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="11"/>
+            <xs:maxLength value="30"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="pickupCodeType">
+        <xs:annotation>
+            <xs:documentation>pickup code</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="10"/>
+            <xs:maxLength value="30"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="announcementTypeType">
+        <xs:annotation>
+            <xs:documentation>The type of announcement. See documentation for allowed types.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="bbanType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="12"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="belgianIbanType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{2}[0-9]{14}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="bicType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z0-9]{8}|[A-Z0-9]{11}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="bankTransferMessageType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="productCodeType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="weightInGramsType">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="9999999"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="customerReferenceType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="crossReferenceBarcodeType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="freeTextCustomerReference">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="costCenterType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="notificationType">
+        <xs:choice>
+            <xs:element name="emailAddress">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="50"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="smsNumber">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="20"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="voiceNumber">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="20"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="messageType">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:enumeration value="EMAIL"/>
+                      <xs:enumeration value="SMS"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:choice>
+        <xs:attribute name="language" use="required" type="languageType"/>
+    </xs:complexType>	
+
+    <xs:simpleType name="languageType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="EN"/>
+          <xs:enumeration value="NL"/>
+          <xs:enumeration value="FR"/>
+          <xs:enumeration value="DE"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="clientType">
+        <xs:all>
+            <xs:element name="name">
+                <xs:annotation>
+                    <xs:documentation>The Name, most often the company name</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="addressDepartment" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="addressContactName" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="addressPlace" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A specific place, e.g. 'desk 405'</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="address" type="addressType"/>
+            <xs:element name="contactDetail" type="contactDetailType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:simpleType name="accountIdType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="6"/>
+            <xs:maxLength value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="insuranceType">
+        <xs:choice>
+            <xs:element name="basicInsurance" type="basicInsuranceType"/>
+            <xs:element name="additionalInsurance" type="additionalInsuranceType">
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="basicInsuranceType"/>
+
+    <xs:complexType name="additionalInsuranceType">
+        <xs:annotation>
+            <xs:documentation>
+                The range in which the insurance amount is situated
+                1 = basic insurance up to 500 EUR
+                2 = additional up to 2.500EUR
+                3 = additional up to 5.000 EUR
+                4 = additional up to 7.500 EUR
+                5 = additional up to 10.000 EUR
+                6 = additional up to 12.500 EUR
+                7 = additional up to 15.000 EUR
+                8 = additional up to 17.500 EUR
+                9 = additional up to 20.000 EUR
+                10 = additional up to 22.500 EUR
+                11 = additional up to 25.000 EUR
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="maxAmount">
+            <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                    <xs:enumeration value="1"/>
+                    <xs:enumeration value="2"/>
+                    <xs:enumeration value="3"/>
+                    <xs:enumeration value="4"/>
+                    <xs:enumeration value="5"/>
+                    <xs:enumeration value="6"/>
+                    <xs:enumeration value="7"/>
+                    <xs:enumeration value="8"/>
+                    <xs:enumeration value="9"/>
+                    <xs:enumeration value="10"/>
+                    <xs:enumeration value="11"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="signatureType"/>
+    <xs:complexType name="signaturePlusType"/>
+
+    <xs:simpleType name="itemCategoryType">
+        <xs:annotation>
+            <xs:documentation>Indicates the category of the item</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="GIFT"/>
+            <xs:enumeration value="DOCUMENTS"/>
+            <xs:enumeration value="SAMPLE"/>
+            <xs:enumeration value="GOODS"/>
+            <xs:enumeration value="RETURNED GOODS"/>
+            <xs:enumeration value="OTHER"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="nonDeliveryInstructionsType">
+        <xs:annotation>
+            <xs:documentation>Indication of what needs to be done with the parcel in case it could not be delivered.
+                RTS = return to sender via road transport
+                RTA = return to sender via air transport
+                ABANDONED = destroyed
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="value" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="RTS"/>
+                    <xs:enumeration value="RTA"/>
+                    <xs:enumeration value="ABANDONED"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:simpleType name="parcelContentType">
+        <xs:annotation>
+            <xs:documentation>Free description of the parcel's content</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="valueCurrencySenderType">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:fractionDigits value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="cashOnDeliveryType">
+        <xs:sequence>
+            <xs:element name="amountTotalInEuroCents" type="xs:positiveInteger">
+                <xs:annotation>
+                    <xs:documentation>The value that the receiver must pay (in euro cents).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice>
+                <xs:element name="bban" type="bbanType">
+                    <xs:annotation>
+                        <xs:documentation>National Bank account number (12 digits).</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:sequence>
+                    <xs:element name="iban" type="belgianIbanType">
+                        <xs:annotation>
+                            <xs:documentation>
+                                International Bank account number.
+                                Only Belgian IBANs can be used.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="bic" type="bicType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Bank identification code, 8 or 11 characters.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:choice>
+            <xs:element name="bankTransferMessage" type="bankTransferMessageType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <!-- TODO fill the documentation -->
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="atHomeType"></xs:complexType>
+
+    <xs:complexType name="atShopType">
+        <xs:complexContent>
+            <xs:extension base="notificationType">
+                <xs:sequence>
+                    <xs:element name="pickupLocatorId">
+                        <xs:annotation>
+                            <xs:documentation>The Taxipost Pick-up locator ID</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                            	<xs:pattern value = "[A-Za-z0-9]*"/>  <!-- SHM data has alphanumeric pick up locator Id-->
+                                <xs:minLength value="1"/>
+                                <xs:maxLength value="20"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="shopHandlingInstruction" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Free text message that will be shown in the shop point on the Mobile App</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:minLength value="1"/>
+                                <xs:maxLength value="50"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+	
+	<xs:complexType name="atIntlHomeType" />        
+
+	<xs:complexType name="atIntlShopType">
+		<xs:sequence>
+			<xs:element name="emailAddress" type="emailAddressType" />
+			<xs:element name="pickupLocatorId">
+				<xs:annotation>
+					<xs:documentation>The id of the partner pickup point</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>                    
+		</xs:sequence>  
+		<xs:attribute name="language" use="required" type="languageType"/>		
+    </xs:complexType>
+	
+	<xs:complexType name="atIntlParcelDepotType">
+		<xs:sequence>
+			<xs:element name="emailAddress" type="emailAddressType" />
+			<xs:element name="smsNumber">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="20"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+			<xs:element name="parcelsDepotId">
+				<xs:annotation>
+					<xs:documentation>The id of the partner parcel locker</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>                    
+		</xs:sequence>     
+		<xs:attribute name="language" use="required" type="languageType"/>
+    </xs:complexType>
+
+    <xs:complexType name="at24-7Type">
+        <xs:sequence>
+            <xs:element name="parcelsDepotId">
+                <xs:annotation>
+                    <xs:documentation>ID of the pack station</xs:documentation> <!-- TODO modify this description -->
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="20"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="memberId" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>type, length ???</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="20"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="messageLanguage" minOccurs="0" type="languageType" />
+            <xs:element name="mobilePhone" minOccurs="0" type="mobilePhoneType" />
+            <xs:element name="email" minOccurs="0" type="emailAddressType" />
+            <xs:element name="reducedMobilityZone" minOccurs="0" type="xs:boolean" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="deliveryMethodType">
+        <xs:choice>
+            <xs:element name="atHome" type="atHomeType"/>
+            <xs:element name="atShop" type="atShopType"/>
+            <xs:element name="at24-7" type="at24-7Type"/>
+			
+			<xs:element name="atIntlHome" type="atIntlHomeType"/>
+			<xs:element name="atIntlShop" type="atIntlShopType"/>
+			<xs:element name="atIntlParcelDepot" type="atIntlParcelDepotType"/>			
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="multicolliType">
+		<xs:sequence>
+			<xs:element name="multicolliId">
+				<xs:annotation>
+					<xs:documentation>Multicolli ID sent from senders for deliverying the items in group</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+						<xs:restriction base="xs:string">
+						<xs:minLength value="1" />
+						<xs:maxLength value="10" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:simpleType name="multicolliId">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="7"/>
+            <xs:maxLength value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+	
+    <xs:complexType name="automaticSecondPresentationType">
+        <xs:annotation> 
+            <xs:documentation>The item will be presented </xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="desktopDeliveryType">
+        <xs:annotation>
+            <xs:documentation><!-- TODO fill in documentation --></xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="repairLogisticsType">
+        <xs:annotation>
+            <xs:documentation><!-- TODO fill in documentation --></xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="labelPrintedBybPost" default="false" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:simpleType name="openingHoursType">
+      <xs:annotation>
+        <xs:documentation>One range (e.g. 09:00-17:00): HH:MM-HH:MM, Two ranges (e.g. 09:00-12:00/13:00-17:30): HH:MM-HH:MM/HH:MM-HH:MM, Closed: -/- or -, Unknown: empty field</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="23" />
+      </xs:restriction>
+    </xs:simpleType>
+
+        <xs:complexType name="optionsType">
+            <xs:sequence>
+                <xs:choice minOccurs="0">
+                    <xs:element name="signature" type="signatureType"/>
+                    <xs:element name="signaturePlus" type="signaturePlusType"/>
+                </xs:choice>
+                <xs:element name="insurance" type="insuranceType" minOccurs="0"/>
+                <xs:element name="cashOnDelivery" type="cashOnDeliveryType" minOccurs="0"/>
+                <xs:element name="infoDistributed" type="notificationType" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation><!-- TODO fill in documentation --></xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="infoNextDay" type="notificationType" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation><!-- TODO fill in documentation --></xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="infoReminder" type="notificationType" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation><!-- TODO fill in documentation --></xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="startRoundNotification" type="notificationType" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Send a message to the receiver with an estimated delivery time when the round starts</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="multicolli" type="multicolliType" minOccurs="0"/>
+                <xs:element name="automaticSecondPresentation" type="automaticSecondPresentationType" minOccurs="0"/>
+                <xs:element name="desktopDelivery" type="desktopDeliveryType" minOccurs="0"/>
+                <xs:element name="repairLogistics" type="repairLogisticsType" minOccurs="0"/>
+                <xs:element name="morningDelivery" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="saturdayDelivery" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="sundayDelivery" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="timeslotDelivery" type="timeslotDeliveryType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="sameDayEveningDelivery" type="samedayEveningDeliveryType" minOccurs="0" maxOccurs="1"/>			
+				<xs:element name="ultraLateInEveningDelivery" type="ultraLateInEveningDeliveryType" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="pickupDate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="timeWindow" type="timeWindowType"  minOccurs="0" maxOccurs="1"/>
+                <xs:element name="fragile" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="eveningPickup" type="eveningPickupType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="printLabelAtOffice" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="preferredDelivery" type="preferredDeliveryType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="deliveryWindow"   type="deliveryTimeFrame" minOccurs="0"/>
+                <xs:element name="deliveryService" type="xs:string" minOccurs="0"/>    
+                <xs:element name="proofOfDelivery" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="RP" type="xs:boolean" minOccurs="0" maxOccurs="1"/> 
+                <xs:element name="shippingCost" type="xs:decimal" minOccurs="0" maxOccurs="1"/> 
+                <xs:element name="dayPickup" type="dayPickupType" minOccurs="0" maxOccurs="1"/> 
+                <xs:element name="estimatedDropOff" type="estimatedDropOffType" minOccurs="0" maxOccurs="1"/>         
+            </xs:sequence>
+        </xs:complexType>
+        
+        <xs:complexType name="eveningPickupType"></xs:complexType>
+
+		<xs:complexType name="ultraLateInEveningDeliveryType">
+			<xs:sequence>
+				<xs:element name="notificationOptions" type="notificationType" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	
+        <xs:simpleType name="unitCepType" >
+          <xs:restriction base="xs:string">
+             <xs:minLength value="0"/>
+             <xs:maxLength value="8"/>
+          </xs:restriction>
+        </xs:simpleType>
+
+        <xs:complexType name="timeslotDeliveryType" >
+            <xs:sequence>
+                <xs:element name="deliveryTimeslot" type="deliveryTimeslotType"/>
+                <xs:element name="notificationOptions" type="notificationType"/>
+            </xs:sequence>
+        </xs:complexType>
+
+      <xs:complexType name="samedayEveningDeliveryType">
+		<xs:sequence>
+			<xs:element name="requestedDeliveryDate" type="xs:date"/>
+		</xs:sequence>
+	  </xs:complexType>
+
+      <xs:complexType name="preferredDeliveryType">
+        <xs:sequence>
+            <xs:element name="preferredDeliveryDate" type="xs:date"/>
+        </xs:sequence>
+      </xs:complexType>
+      
+      <xs:complexType name="estimatedDropOffType">
+        <xs:sequence>
+            <xs:element name="estimatedDropOffStartDate" type="xs:date" minOccurs="0"/>
+            <xs:element name="estimatedDropOffEndDate" type="xs:date" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>      
+          
+
+        <xs:simpleType name="deliveryTimeslotType" >
+            <xs:restriction base="xs:string">
+            <xs:enumeration value="AM"/>
+            <xs:enumeration value="PM"/>
+            <xs:enumeration value="PMPLUS"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:complexType name="prepaidCharacteristicsType">
+            <xs:sequence>
+                <xs:element name="ogonePaymentReference" type="xs:string"/>
+                <xs:element name="totalItemsPriceInEuroCent" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="ParcelContentDetails">
+          <xs:sequence>
+              <xs:annotation>
+                <xs:documentation xml:lang="en">Parcel Content Detail list </xs:documentation>
+              </xs:annotation>
+              <xs:element name="parcelContent" type="ParcelContentDetail" minOccurs="0" maxOccurs="10" />
+          </xs:sequence>
+        </xs:complexType>
+        
+        <xs:complexType name="ParcelContentDetail">
+          <xs:sequence>
+            <xs:element name="numberOfItemType" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>Number of pieces of the same type</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="valueOfItems" type="xs:decimal">
+              <xs:annotation>
+                <xs:documentation>Value of all pieces of the same type</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="itemDescription" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>Description of the pieces</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="nettoWeight" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>The weight of all pieces of the same type</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="hsTariffCode" type="xs:integer" minOccurs="0" maxOccurs="1" default="999999999">
+              <xs:annotation>
+                <xs:documentation>Harmonized System Tariff code indicating the type of goods for this piece. It should be a text
+                  field instead of select option</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="originOfGoods">
+              <xs:annotation>
+                <xs:documentation>Country of origin of the goods (iso code)</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:minLength value="2"/>
+                  <xs:maxLength value="2"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+
+        <xs:simpleType name="dimensionType">
+            <xs:restriction base="xs:int">
+                <xs:minInclusive value="1"/>
+                <xs:maxInclusive value="9999"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:complexType name="dimensionsType">
+            <xs:sequence>
+                <xs:element name="widthInMm" type="dimensionType"/>
+                <xs:element name="heightInMm" type="dimensionType"/>
+                <xs:element name="lengthInMm" type="dimensionType"/>
+            </xs:sequence>
+        </xs:complexType>
+         <xs:simpleType name="deliveryTimeFrame" >
+            <xs:restriction base="xs:string">
+            <xs:enumeration value="AM"/>
+            <xs:enumeration value="PM"/>
+            <xs:enumeration value="PMPLUS"/>
+            <xs:enumeration value="OFFICE"/>
+            </xs:restriction>
+        </xs:simpleType>
+        <xs:complexType name="dayPickupType">
+        <xs:sequence>
+            <xs:element name="pickupDate" type="xs:date"/>
+            <xs:element name="timeWindow" type="timeWindowType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="pickupLocation" type="pickupLocationType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+      </xs:complexType>
+    <xs:simpleType name="timeWindowType">
+        <xs:annotation>
+            <xs:documentation>One range (e.g. 09:00-17:00): HH:MM-HH:MM, Closed: -/- or -, Unknown: empty field</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="11"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="pickupLocationType">
+        <xs:all>
+        	<xs:element name="pickUpName" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="streetName" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Mandatory according to the LCI-in user manual???</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="houseNumber" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="8"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="boxNumber" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="8"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="postalCode" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If the addressee is located in Belgium, the 4 digit postal code should be used.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="8"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="city" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="40"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="countryCode" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The country according to ISO alpha 2 (e.g. BE for Belgium)</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="2"/>
+                        <xs:pattern value="[A-Za-z]{2}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="emailAddress" minOccurs="0" type="emailAddressType" />
+            <xs:element name="mobileNumber" minOccurs="0" type="mobilePhoneType" />
+        </xs:all>
+    </xs:complexType>
+</xs:schema>

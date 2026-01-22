@@ -1,4 +1,4 @@
-import { AddressFilter, CreateAddressTemplateInput, create_address_template, CREATE_ADDRESS_TEMPLATE, delete_template, DELETE_TEMPLATE, get_address_templates, GET_ADDRESS_TEMPLATES, UpdateAddressTemplateInput, update_address_template, UPDATE_ADDRESS_TEMPLATE } from "@karrio/types";
+import { AddressFilter, CreateAddressInput, create_address, CREATE_ADDRESS, delete_address, DELETE_ADDRESS, get_addresses, GET_ADDRESSES, UpdateAddressInput2, update_address, UPDATE_ADDRESS } from "@karrio/types";
 import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import { gqlstr, insertUrlParam, isNoneOrEmpty } from "@karrio/lib";
 import { useQueryClient } from "@tanstack/react-query";
@@ -8,12 +8,12 @@ const PAGE_SIZE = 25;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = AddressFilter & { setVariablesToURL?: boolean, isDisabled?: boolean; preloadNextPage?: boolean; };
 
-export function useAddressTemplates({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, ...initialData }: FilterType = {}) {
+export function useAddresses({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<AddressFilter>({ ...PAGINATION, ...initialData });
-  const fetch = (variables: { filter: AddressFilter }) => karrio.graphql.request<get_address_templates>(
-    gqlstr(GET_ADDRESS_TEMPLATES), { variables }
+  const fetch = (variables: { filter: AddressFilter }) => karrio.graphql.request<get_addresses>(
+    gqlstr(GET_ADDRESSES), { variables }
   );
 
   const query = useAuthenticatedQuery({
@@ -53,7 +53,7 @@ export function useAddressTemplates({ setVariablesToURL = false, isDisabled = fa
 
   React.useEffect(() => {
     if (preloadNextPage === false) return;
-    if (query.data?.address_templates.page_info.has_next_page) {
+    if (query.data?.addresses.page_info.has_next_page) {
       const _filter = { ...filter, offset: filter.offset as number + 20 };
       queryClient.prefetchQuery(
         ['addresses', _filter],
@@ -69,7 +69,7 @@ export function useAddressTemplates({ setVariablesToURL = false, isDisabled = fa
   };
 }
 
-export function useAddressTemplateMutation() {
+export function useAddressMutation() {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => {
@@ -80,28 +80,28 @@ export function useAddressTemplateMutation() {
     queryClient.refetchQueries({ queryKey: ['addresses'] });
   };
 
-  const createAddressTemplate = useAuthenticatedMutation({
-    mutationFn: (data: CreateAddressTemplateInput) => karrio.graphql.request<create_address_template>(
-      gqlstr(CREATE_ADDRESS_TEMPLATE), { data }
+  const createAddress = useAuthenticatedMutation({
+    mutationFn: (data: CreateAddressInput) => karrio.graphql.request<create_address>(
+      gqlstr(CREATE_ADDRESS), { data }
     ),
     onSuccess: invalidateCache,
   });
 
-  const updateAddressTemplate = useAuthenticatedMutation({
-    mutationFn: (data: UpdateAddressTemplateInput) => karrio.graphql.request<update_address_template>(
-      gqlstr(UPDATE_ADDRESS_TEMPLATE), { data }
+  const updateAddress = useAuthenticatedMutation({
+    mutationFn: (data: UpdateAddressInput2) => karrio.graphql.request<update_address>(
+      gqlstr(UPDATE_ADDRESS), { data }
     ),
     onSuccess: invalidateCache,
   });
 
-  const deleteAddressTemplate = useAuthenticatedMutation({
-    mutationFn: (data: { id: string }) => karrio.graphql.request<delete_template>(gqlstr(DELETE_TEMPLATE), { data }),
+  const deleteAddress = useAuthenticatedMutation({
+    mutationFn: (data: { id: string }) => karrio.graphql.request<delete_address>(gqlstr(DELETE_ADDRESS), { data }),
     onSuccess: invalidateCache,
   });
 
   return {
-    createAddressTemplate,
-    updateAddressTemplate,
-    deleteAddressTemplate,
+    createAddress,
+    updateAddress,
+    deleteAddress,
   };
 }

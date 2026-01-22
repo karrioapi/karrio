@@ -20,6 +20,7 @@ Name | Type | Description | Notes
 **reference_number** | **string** | The parcel reference number.&lt;br/&gt;         (can be used as tracking number for custom carriers)          | [optional] [default to undefined]
 **freight_class** | **string** | The parcel\&#39;s freight class for pallet and freight shipments. | [optional] [default to undefined]
 **_options** | **{ [key: string]: any; }** | &lt;details&gt;         &lt;summary&gt;Parcel specific options.&lt;/summary&gt;          {             \&quot;insurance\&quot;: \&quot;100.00\&quot;,             \&quot;insured_by\&quot;: \&quot;carrier\&quot;,         }         &lt;/details&gt;          | [optional] [default to undefined]
+**meta** | **{ [key: string]: any; }** | Template metadata for template identification.         Structure: {\&quot;label\&quot;: \&quot;Standard Box\&quot;, \&quot;is_default\&quot;: true}          | [optional] [default to undefined]
 
 ## Example
 
@@ -42,6 +43,7 @@ const instance: PatchedParcelData = {
     reference_number,
     freight_class,
     _options,
+    meta,
 };
 ```
 

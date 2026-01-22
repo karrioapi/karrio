@@ -38,17 +38,24 @@ import {
   isEqual,
 } from "@karrio/lib";
 import {
-  useAddressTemplateMutation,
-  useAddressTemplates,
+  useAddressMutation,
+  useAddresses,
 } from "@karrio/hooks/address";
 import { AddressType } from "@karrio/types";
 import { useSearchParams } from "next/navigation";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 
+// Helper function to extract address fields from template (exclude template metadata)
+const extractAddressFromTemplate = (template: any) => {
+  if (!template) return {};
+  const { id, label, is_default, object_type, validate_location, meta, created_at, updated_at, created_by, ...addressData } = template;
+  return addressData;
+};
+
 // Helper function to normalize address for comparison (exclude metadata)
 const normalizeAddressForComparison = (address: any) => {
   if (!address) return {};
-  const { id, validate_location, ...addressData } = address;
+  const { id, validate_location, meta, created_at, updated_at, created_by, ...addressData } = address;
   return addressData;
 };
 
@@ -76,7 +83,7 @@ function AddressEditDialog({
   existingTemplates = []
 }: AddressEditDialogProps) {
   const { toast } = useToast();
-  const { createAddressTemplate, updateAddressTemplate } = useAddressTemplateMutation();
+  const { createAddress, updateAddress } = useAddressMutation();
   const [formData, setFormData] = React.useState({
     label: "",
     is_default: false,
@@ -88,9 +95,9 @@ function AddressEditDialog({
   React.useEffect(() => {
     if (addressTemplate) {
       setFormData({
-        label: addressTemplate.label || "",
-        is_default: addressTemplate.is_default || false,
-        address: addressTemplate.address || {},
+        label: addressTemplate.meta?.label || "",
+        is_default: addressTemplate.meta?.is_default || false,
+        address: extractAddressFromTemplate(addressTemplate),
       });
     } else {
       setFormData({
@@ -119,11 +126,11 @@ function AddressEditDialog({
 
     // Check for duplicate label (case-insensitive)
     const duplicateLabel = templatesToCheck.find(
-      template => template.label?.trim().toLowerCase() === trimmedLabel.toLowerCase()
+      template => template.meta?.label?.trim().toLowerCase() === trimmedLabel.toLowerCase()
     );
 
     if (duplicateLabel) {
-      setLabelError("A template with this label already exists");
+      setLabelError("An address with this label already exists");
     } else {
       setLabelError("");
     }
@@ -144,9 +151,9 @@ function AddressEditDialog({
       template => !addressTemplate || template.id !== addressTemplate.id
     );
 
-    // Validation: Check for identical address content
+    // Validation: Check for identical address content (extract address from template since fields are now direct)
     const duplicateAddress = templatesToCheck.find(
-      template => areAddressesIdentical(template.address, address)
+      template => areAddressesIdentical(extractAddressFromTemplate(template), address)
     );
 
     if (duplicateAddress) {
@@ -165,16 +172,16 @@ function AddressEditDialog({
       };
 
       if (addressTemplate) {
-        await updateAddressTemplate.mutateAsync({ ...payload, id: addressTemplate.id });
+        await updateAddress.mutateAsync({ ...payload, id: addressTemplate.id });
         toast({
           title: "Success",
-          description: "Address template updated successfully!",
+          description: "Address updated successfully!",
         });
       } else {
-        await createAddressTemplate.mutateAsync(payload);
+        await createAddress.mutateAsync(payload);
         toast({
           title: "Success",
-          description: "Address template created successfully!",
+          description: "Address created successfully!",
         });
       }
 
@@ -187,7 +194,7 @@ function AddressEditDialog({
         title: "Error",
         description: typeof detailed === 'string'
           ? detailed
-          : (detailed?.message || error?.message || "Failed to save address template"),
+          : (detailed?.message || error?.message || "Failed to save address"),
       });
     }
   };
@@ -201,12 +208,12 @@ function AddressEditDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {addressTemplate ? "Edit Address Template" : "Create Address Template"}
+            {addressTemplate ? "Edit Address" : "Create Address"}
           </DialogTitle>
           <DialogDescription>
             {addressTemplate
-              ? "Update the address template details."
-              : "Create a new address template for reuse."
+              ? "Update the address details."
+              : "Create a new address for reuse."
             }
           </DialogDescription>
         </DialogHeader>
@@ -215,7 +222,7 @@ function AddressEditDialog({
           <div className="space-y-3">
             <div className="space-y-1">
               <Label htmlFor="label" className="text-xs text-slate-700">
-                Template Label <span className="text-red-500">*</span>
+                Label <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="label"
@@ -236,7 +243,7 @@ function AddressEditDialog({
                 checked={formData.is_default}
                 onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_default: !!checked }))}
               />
-              <Label htmlFor="is_default" className="text-xs text-slate-700">Set as default address template</Label>
+              <Label htmlFor="is_default" className="text-xs text-slate-700">Set as default address</Label>
             </div>
 
             <div className="border-t pt-3">
@@ -256,7 +263,7 @@ function AddressEditDialog({
             Cancel
           </Button>
           <Button size="sm" onClick={handleSaveClick} disabled={!formData.label.trim() || !!labelError}>
-            {addressTemplate ? "Update Template" : "Create Template"}
+            {addressTemplate ? "Update Address" : "Create Address"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -267,17 +274,17 @@ function AddressEditDialog({
 export function AddressesManagement() {
   const searchParams = useSearchParams();
   const modal = searchParams.get("modal") as string;
-  const { deleteAddressTemplate } = useAddressTemplateMutation();
+  const { deleteAddress } = useAddressMutation();
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
   const [selectedAddress, setSelectedAddress] = React.useState<any>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
   const [addressToDelete, setAddressToDelete] = React.useState<any>(null);
 
   const {
-    query: { data: { address_templates } = {}, ...query },
+    query: { data: { addresses } = {}, ...query },
     filter,
     setFilter,
-  } = useAddressTemplates({
+  } = useAddresses({
     setVariablesToURL: true,
   });
 
@@ -298,7 +305,7 @@ export function AddressesManagement() {
 
   const confirmDelete = async () => {
     if (addressToDelete) {
-      await deleteAddressTemplate.mutateAsync({ id: addressToDelete.id });
+      await deleteAddress.mutateAsync({ id: addressToDelete.id });
       setDeleteConfirmOpen(false);
       setAddressToDelete(null);
     }
@@ -309,11 +316,11 @@ export function AddressesManagement() {
     query.refetch();
   };
 
-  const addresses = address_templates?.edges || [];
+  const addressList = addresses?.edges || [];
 
   return (
     <div className="space-y-6">
-      {addresses.length > 0 && (
+      {addressList.length > 0 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             Manage your address templates for shipping and billing.
@@ -326,7 +333,7 @@ export function AddressesManagement() {
       )}
       
       <div>
-        {addresses.length === 0 ? (
+        {addressList.length === 0 ? (
           <div className="text-center py-12">
             <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium text-muted-foreground mb-2">
@@ -353,12 +360,12 @@ export function AddressesManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {addresses.map(({ node: template }) => (
+                {addressList.map(({ node: template }) => (
                   <TableRow key={template.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        {template.label}
-                        {template.is_default && (
+                        {template.meta?.label}
+                        {template.meta?.is_default && (
                           <Badge variant="secondary" className="text-xs">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Default
@@ -369,21 +376,21 @@ export function AddressesManagement() {
                     <TableCell>
                       <div className="space-y-1">
                         <div className="text-sm">
-                          {formatAddressShort(template.address as AddressType)}
+                          {formatAddressShort(template as AddressType)}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {formatAddressLocationShort(template.address as AddressType)}
+                          {formatAddressLocationShort(template as AddressType)}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        {template.address.email && (
-                          <div className="text-sm">{template.address.email}</div>
+                        {template.email && (
+                          <div className="text-sm">{template.email}</div>
                         )}
-                        {template.address.phone_number && (
+                        {template.phone_number && (
                           <div className="text-xs text-muted-foreground">
-                            {template.address.phone_number}
+                            {template.phone_number}
                           </div>
                         )}
                       </div>
@@ -426,10 +433,10 @@ export function AddressesManagement() {
           </div>
         )}
 
-        {addresses.length > 0 && (
+        {addressList.length > 0 && (
           <div className="flex items-center justify-between pt-4">
             <div className="text-sm text-muted-foreground">
-              {addresses.length} address{addresses.length !== 1 ? 'es' : ''}
+              {addressList.length} address{addressList.length !== 1 ? 'es' : ''}
             </div>
 
             {/* Pagination would go here if needed */}
@@ -437,7 +444,7 @@ export function AddressesManagement() {
               <Button
                 variant="outline"
                 size="sm"
-                disabled={!address_templates?.page_info.has_previous_page}
+                disabled={!addresses?.page_info.has_previous_page}
                 onClick={() => setFilter({
                   ...filter,
                   offset: Math.max(0, (filter.offset || 0) - 20)
@@ -448,7 +455,7 @@ export function AddressesManagement() {
               <Button
                 variant="outline"
                 size="sm"
-                disabled={!address_templates?.page_info.has_next_page}
+                disabled={!addresses?.page_info.has_next_page}
                 onClick={() => setFilter({
                   ...filter,
                   offset: (filter.offset || 0) + 20
@@ -466,14 +473,14 @@ export function AddressesManagement() {
         onOpenChange={setEditDialogOpen}
         addressTemplate={selectedAddress}
         onSave={handleSave}
-        existingTemplates={addresses.map(({ node }: any) => node)}
+        existingTemplates={addressList.map(({ node }: any) => node)}
       />
 
       <ConfirmationDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
-        title="Delete Address Template"
-        description={`Are you sure you want to delete "${addressToDelete?.label}"? This action cannot be undone.`}
+        title="Delete Address"
+        description={`Are you sure you want to delete "${addressToDelete?.meta?.label}"? This action cannot be undone.`}
         onConfirm={confirmDelete}
       />
     </div>

@@ -16,7 +16,7 @@ import {
 } from "@karrio/ui/components/ui/popover";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
-import { useAddressTemplates } from "@karrio/hooks/address";
+import { useAddresses } from "@karrio/hooks/address";
 import { AddressType } from "@karrio/types";
 
 interface AddressComboboxProps {
@@ -62,20 +62,20 @@ export const AddressCombobox = React.forwardRef<
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const {
-    query: { data: { address_templates } = {} },
-  } = useAddressTemplates();
+    query: { data: { addresses } = {} },
+  } = useAddresses();
 
   const templateOptions = React.useMemo((): TemplateOption[] => {
     if (disableSuggestion) return [];
 
-    const templates = address_templates?.edges?.map(({ node }) => node) || [];
+    const templates = addresses?.edges?.map(({ node }) => node) || [];
     return templates.map((template: any) => ({
-      value: template.address?.person_name || template.label || "",
-      label: template.address?.person_name || template.label || "",
-      address: template.address as AddressType,
-      searchText: `${template.address?.person_name || template.label || ""} ${formatAddress(template.address)}`.toLowerCase(),
+      value: template.meta?.label || template.person_name || "",
+      label: template.meta?.label || template.person_name || "",
+      address: template as AddressType,
+      searchText: `${template.meta?.label || ""} ${template.person_name || ""} ${formatAddress(template)}`.toLowerCase(),
     }));
-  }, [address_templates, disableSuggestion]);
+  }, [addresses, disableSuggestion]);
 
   // Filter templates based on input
   const filteredTemplates = React.useMemo(() => {

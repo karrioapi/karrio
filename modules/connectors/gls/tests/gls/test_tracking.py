@@ -15,14 +15,12 @@ class TestGLSGroupTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
-        print(request.serialize())
         self.assertIsInstance(request.serialize(), list)
 
     def test_get_tracking(self):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
-            print(mock.call_args)
             # Verify that the URL uses the T&T API endpoint
             self.assertIn("/track-and-trace-v1/tracking/simple/trackids/", str(mock.call_args))
 
@@ -34,7 +32,6 @@ class TestGLSGroupTracking(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
@@ -45,7 +42,6 @@ class TestGLSGroupTracking(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingErrorResponse)
 
 

@@ -121,8 +121,8 @@ SYSTEM_CONNECTIONS = {
                 {
                     "node": {
                         "active": True,
-                        "carrier_id": "dhl_universal",
-                        "carrier_name": "dhl_universal",
+                        "carrier_id": "fedex_express",
+                        "carrier_name": "fedex",
                         "id": ANY,
                         "test_mode": False,
                     }
@@ -130,8 +130,8 @@ SYSTEM_CONNECTIONS = {
                 {
                     "node": {
                         "active": True,
-                        "carrier_id": "fedex_express",
-                        "carrier_name": "fedex",
+                        "carrier_id": "dhl_universal",
+                        "carrier_name": "dhl_universal",
                         "id": ANY,
                         "test_mode": False,
                     }
@@ -145,6 +145,35 @@ USER_CONNECTIONS = {
     "data": {
         "user_connections": {
             "edges": [
+                {
+                    "node": {
+                        "active": True,
+                        "carrier_id": "dhl_universal",
+                        "carrier_name": "dhl_universal",
+                        "credentials": {
+                            "consumer_key": "test",
+                            "consumer_secret": "password",
+                        },
+                        "id": ANY,
+                        "test_mode": False,
+                    }
+                },
+                {
+                    "node": {
+                        "active": True,
+                        "carrier_id": "fedex_express",
+                        "carrier_name": "fedex",
+                        "credentials": {
+                            "account_number": "000000",
+                            "api_key": "test",
+                            "secret_key": "password",
+                            "track_api_key": "test",
+                            "track_secret_key": "password",
+                        },
+                        "id": ANY,
+                        "test_mode": False,
+                    }
+                },
                 {
                     "node": {
                         "active": True,

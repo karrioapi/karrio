@@ -77,6 +77,11 @@ class UpdateOrderMutation(utils.BaseMutation):
         **input: inputs.UpdateOrderMutationInput,
     ) -> "UpdateOrderMutation":
         data = lib.to_dict(input)
+
+        # Include line_items in data if provided (JSON field mutation)
+        if any(line_items or ""):
+            data["line_items"] = [lib.to_dict(item) for item in line_items]
+
         order = models.Order.access_by(info.context.request).get(
             id=input.get("id"),
             source="draft",
@@ -90,19 +95,9 @@ class UpdateOrderMutation(utils.BaseMutation):
             partial=True,
         )
         serializer.is_valid(raise_exception=True)
-
-        if any(line_items or ""):
-            serializers.save_many_to_many_data(
-                "line_items",
-                model_serializers.LineItemModelSerializer,
-                order,
-                payload=dict(line_items=line_items),
-                context=info.context.request,
-            )
-
         serializer.save()
 
-        # refetch the shipment to get the updated state with signals processed
+        # refetch the order to get the updated state with signals processed
         update = models.Order.access_by(info.context.request).get(id=input.get("id"))
 
         return UpdateOrderMutation(errors=None, order=update)  # type:ignore

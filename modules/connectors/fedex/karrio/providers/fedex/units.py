@@ -1,5 +1,6 @@
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.core.utils as utils
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -281,15 +282,15 @@ class ShippingService(lib.Enum):
 
 class ShippingOption(lib.Enum):
     # fmt: off
-    fedex_appointment = lib.OptionEnum("APPOINTMENT", bool)
+    fedex_appointment = lib.OptionEnum("APPOINTMENT", bool, meta=dict(category="DELIVERY_OPTIONS"))
     fedex_broker_select_option = lib.OptionEnum("BROKER_SELECT_OPTION", bool)
-    fedex_call_before_delivery = lib.OptionEnum("CALL_BEFORE_DELIVERY", bool)
-    fedex_cod = lib.OptionEnum("COD", float)
-    fedex_custom_delivery_window = lib.OptionEnum("CUSTOM_DELIVERY_WINDOW", bool)
+    fedex_call_before_delivery = lib.OptionEnum("CALL_BEFORE_DELIVERY", bool, meta=dict(category="NOTIFICATION"))
+    fedex_cod = lib.OptionEnum("COD", float, meta=dict(category="COD"))
+    fedex_custom_delivery_window = lib.OptionEnum("CUSTOM_DELIVERY_WINDOW", bool, meta=dict(category="DELIVERY_OPTIONS"))
     fedex_cut_flowers = lib.OptionEnum("CUT_FLOWERS", bool)
     fedex_do_not_break_down_pallets = lib.OptionEnum("DO_NOT_BREAK_DOWN_PALLETS", bool)
     fedex_do_not_stack_pallets = lib.OptionEnum("DO_NOT_STACK_PALLETS", bool)
-    fedex_dry_ice = lib.OptionEnum("DRY_ICE", bool)
+    fedex_dry_ice = lib.OptionEnum("DRY_ICE", bool, meta=dict(category="DANGEROUS_GOOD"))
     fedex_east_coast_special = lib.OptionEnum("EAST_COAST_SPECIAL", bool)
     fedex_exclude_from_consolidation = lib.OptionEnum("EXCLUDE_FROM_CONSOLIDATION", bool)
     fedex_extreme_length = lib.OptionEnum("EXTREME_LENGTH", bool)
@@ -297,10 +298,10 @@ class ShippingOption(lib.Enum):
     fedex_inside_pickup = lib.OptionEnum("INSIDE_PICKUP", bool)
     fedex_international_controlled_export_service = lib.OptionEnum("INTERNATIONAL_CONTROLLED_EXPORT_SERVICE", bool)
     fedex_third_party_consignee = lib.OptionEnum("THIRD_PARTY_CONSIGNEE", bool)
-    fedex_electronic_trade_documents = lib.OptionEnum("ELECTRONIC_TRADE_DOCUMENTS", bool)
+    fedex_electronic_trade_documents = lib.OptionEnum("ELECTRONIC_TRADE_DOCUMENTS", bool, meta=dict(category="PAPERLESS"))
     fedex_food = lib.OptionEnum("FOOD", bool)
-    fedex_future_day_shipment = lib.OptionEnum("FUTURE_DAY_SHIPMENT", bool)
-    fedex_hold_at_location = lib.OptionEnum("HOLD_AT_LOCATION", bool)
+    fedex_future_day_shipment = lib.OptionEnum("FUTURE_DAY_SHIPMENT", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    fedex_hold_at_location = lib.OptionEnum("HOLD_AT_LOCATION", bool, meta=dict(category="PUDO"))
     fedex_international_traffic_in_arms_regulations = lib.OptionEnum("INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS", bool)
     fedex_liftgate_delivery = lib.OptionEnum("LIFTGATE_DELIVERY", bool)
     fedex_liftgate_pickup = lib.OptionEnum("LIFTGATE_PICKUP", bool)
@@ -309,35 +310,35 @@ class ShippingOption(lib.Enum):
     fedex_over_length = lib.OptionEnum("OVER_LENGTH", bool)
     fedex_pending_shipment = lib.OptionEnum("PENDING_SHIPMENT", bool)
     fedex_pharmacy_delivery = lib.OptionEnum("PHARMACY_DELIVERY", bool)
-    fedex_poison = lib.OptionEnum("POISON", bool)
+    fedex_poison = lib.OptionEnum("POISON", bool, meta=dict(category="DANGEROUS_GOOD"))
     fedex_home_delivery_premium = lib.OptionEnum("HOME_DELIVERY_PREMIUM", bool)
     fedex_protection_from_freezing = lib.OptionEnum("PROTECTION_FROM_FREEZING", bool)
-    fedex_returns_clearance = lib.OptionEnum("RETURNS_CLEARANCE", bool)
-    fedex_return_shipment = lib.OptionEnum("RETURN_SHIPMENT", bool)
-    fedex_saturday_pickup = lib.OptionEnum("SATURDAY_PICKUP", bool)
-    fedex_event_notification = lib.OptionEnum("EVENT_NOTIFICATION", bool)
+    fedex_returns_clearance = lib.OptionEnum("RETURNS_CLEARANCE", bool, meta=dict(category="RETURN"))
+    fedex_return_shipment = lib.OptionEnum("RETURN_SHIPMENT", bool, meta=dict(category="RETURN"))
+    fedex_saturday_pickup = lib.OptionEnum("SATURDAY_PICKUP", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    fedex_event_notification = lib.OptionEnum("EVENT_NOTIFICATION", bool, meta=dict(category="NOTIFICATION"))
     fedex_delivery_on_invoice_acceptance = lib.OptionEnum("DELIVERY_ON_INVOICE_ACCEPTANCE", bool)
     fedex_top_load = lib.OptionEnum("TOP_LOAD", bool)
 
     """ Rating Options """
     fedex_one_rate = lib.OptionEnum("FEDEX_ONE_RATE", bool)
     fedex_freight_guarantee = lib.OptionEnum("FREIGHT_GUARANTEE", bool)
-    fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool)
+    fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool, meta=dict(category="DELIVERY_OPTIONS"))
     fedex_smart_post_hub_id = lib.OptionEnum("SMART_POST_HUB_ID")
     fedex_smart_post_allowed_indicia = lib.OptionEnum("SMART_POST_ALLOWED_INDICIA")
 
     """ Package Options """
 
-    fedex_alcohol = lib.OptionEnum("ALCOHOL", bool)
-    fedex_battery = lib.OptionEnum("BATTERY", bool)
-    fedex_dangerous_goods = lib.OptionEnum("DANGEROUS_GOODS", bool)
-    fedex_priority_alert = lib.OptionEnum("PRIORITY_ALERT", bool)
-    fedex_priority_alert_plus = lib.OptionEnum("PRIORITY_ALERT_PLUS", bool)
+    fedex_alcohol = lib.OptionEnum("ALCOHOL", bool, meta=dict(category="DANGEROUS_GOOD"))
+    fedex_battery = lib.OptionEnum("BATTERY", bool, meta=dict(category="DANGEROUS_GOOD"))
+    fedex_dangerous_goods = lib.OptionEnum("DANGEROUS_GOODS", bool, meta=dict(category="DANGEROUS_GOOD"))
+    fedex_priority_alert = lib.OptionEnum("PRIORITY_ALERT", bool, meta=dict(category="NOTIFICATION"))
+    fedex_priority_alert_plus = lib.OptionEnum("PRIORITY_ALERT_PLUS", bool, meta=dict(category="NOTIFICATION"))
     fedex_non_standard_container = lib.OptionEnum("NON_STANDARD_CONTAINER", bool)
     fedex_piece_count_verification = lib.OptionEnum("PIECE_COUNT_VERIFICATION", bool)
-    fedex_signature_option = lib.OptionEnum("SIGNATURE_OPTION")
-    fedex_evening = lib.OptionEnum("EVENING", bool)
-    fedex_date_certain = lib.OptionEnum("DATE_CERTAIN", bool)
+    fedex_signature_option = lib.OptionEnum("SIGNATURE_OPTION", meta=dict(category="SIGNATURE"))
+    fedex_evening = lib.OptionEnum("EVENING", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    fedex_date_certain = lib.OptionEnum("DATE_CERTAIN", bool, meta=dict(category="DELIVERY_OPTIONS"))
 
     """ Unified Option type mapping """
     cash_on_delivery = fedex_cod
@@ -345,10 +346,10 @@ class ShippingOption(lib.Enum):
     notification = fedex_event_notification
     saturday_delivery = fedex_saturday_delivery
     paperless_trade = fedex_electronic_trade_documents
-    doc_files = lib.OptionEnum("doc_files", lib.to_dict)
-    doc_references = lib.OptionEnum("doc_references", lib.to_dict)
-    shipper_instructions = lib.OptionEnum("shipper_instructions")
-    recipient_instructions = lib.OptionEnum("recipient_instructions")
+    doc_files = lib.OptionEnum("doc_files", lib.to_dict, meta=dict(category="PAPERLESS"))
+    doc_references = lib.OptionEnum("doc_references", lib.to_dict, meta=dict(category="PAPERLESS"))
+    shipper_instructions = lib.OptionEnum("shipper_instructions", meta=dict(category="INSTRUCTIONS"))
+    recipient_instructions = lib.OptionEnum("recipient_instructions", meta=dict(category="INSTRUCTIONS"))
     # fmt: on
 
 
@@ -479,29 +480,75 @@ class DocumentUploadOption(lib.Enum):
     pre_shipment = lib.OptionEnum("pre_shipment", bool)
 
 
-class TrackingStatus(lib.Enum):
-    on_hold = ["DE", "SE"]
+class TrackingStatus(utils.Enum):
+    # Based on FedEx API event/status codes.
+    # https://developer.fedex.com/api/en-us/guides/api-reference.html#trackingstatuscodes
+
+    # Pending/manifest statuses - shipment info received, awaiting pickup
+    pending = ["OC", "OX", "EP", "MD"]
+    # OC = Order Created,  OX = Shipment info sent to USPS, EP = Enroute to Pickup, MD = Manifest Data
+
+    # Picked up - package physically picked up by carrier (NEW)
+    picked_up = ["PU", "PX", "OF", "AP"]
+    # PU = Picked Up, PX = Picked Up (see details), OF = At FedEx origin facility, AP = At Pickup
+
+    # Delivered statuses
     delivered = ["DL"]
-    picked_up = ["PU", "PX", "OC", "OF"]
-    in_transit = ["IT", "IX"]
-    delivery_failed = ["CA", "RS"]
-    delivery_delayed = ["DY", "DD"]
+    # DL = Delivered
+
+    # In-transit/processing statuses
+    in_transit = ["IT", "IX", "AA", "AC", "AF", "AR", "AX", "DP", "EA", "EO", "FD", "LO", "Ow", "PF", "PL", "PM", "SF", "TR"]
+    # IT = In Transit, IX = In Transit (see details), AA = At Airport, AC = At Canada Post facility
+    # AF = At local FedEx facility, AR = Arrived at FedEx location, AX = At USPS facility, DP = Departed
+    # EA = Enroute to Airport, EO = Enroute to Origin Airport, FD = At FedEx destination, LO = Left Origin
+    # Ow = On the way, PF = Plane in Flight, PL = Plane Landed, PM = In Progress, SF = At Sort Facility
+    # TR = Transfer
+
+    # Out for delivery
     out_for_delivery = ["AD", "ED", "OD"]
-    ready_for_pickup = ["HL"]
+    # AD = At Delivery, ED = Enroute to Delivery, OD = Out for Delivery
+
+    # On hold/exception statuses
+    on_hold = ["CD", "SE", "HA"]
+    # SE = Shipment Exception, CD = Customs Delay, HA = Hold at Location Requested
+    
+    # Delivery failed/returned statuses
+    delivery_failed = ["DE"]
+    # I assume these get a DE status
+    # DE = Delivery Exception
+
+    # Cancelled/void statuses
+    cancelled = ["CA", "RD"]
+    # CA = Shipment Cancelled, RD = Return label link expired
+
+    # Ready for pickup
+    ready_for_pickup = ["HL", "HP"]
+    # HL = Hold at Location, HP = Ready for Recipient Pickup
+
+    # Delivery delayed
+    delivery_delayed = ["DY", "DD", "PY"]
+    # DY = Delay, DD = Delivery Delay, PY = Pickup Delay
+
+    # Return to sender
+    return_to_sender = ["RS", "RT"]
+    # RS = Return to Shipper, RT = Return to Shipper Requested
+
+    # Unknown/unrecognized statuses
+    unknown = []  # For any unrecognized status codes
 
 
-class TrackingIncidentReason(lib.Enum):
+class TrackingIncidentReason(utils.Enum):
     """Maps FedEx exception codes to normalized TrackingIncidentReason.
 
     Based on FedEx API exception/status codes.
     """
     # Carrier-caused issues
-    carrier_damaged_parcel = ["DA", "DM", "DMG"]  # Damaged
+    carrier_damaged_parcel = []  # Damaged
     carrier_sorting_error = ["MR", "MSR"]  # Misrouted
     carrier_address_not_found = ["NA", "ANF"]  # Address not found
-    carrier_parcel_lost = ["LO", "LT", "LP"]  # Lost
-    carrier_not_enough_time = ["NT"]  # No time
-    carrier_vehicle_issue = ["ME", "VB"]  # Mechanical, vehicle breakdown
+    carrier_parcel_lost = []  # Lost
+    carrier_not_enough_time = []  # No time
+    carrier_vehicle_issue = ["DR"]  # Mechanical, vehicle breakdown
 
     # Consignee-caused issues
     consignee_refused = ["RF", "RJ", "RE"]  # Refused
@@ -512,9 +559,9 @@ class TrackingIncidentReason(lib.Enum):
     consignee_access_restricted = ["NS", "SC"]  # No safe location, security issue
 
     # Customs-related issues
-    customs_delay = ["CD", "CH", "CI"]  # Customs delay/hold/inspection
-    customs_documentation = ["CM", "CP"]  # Customs missing docs, paperwork
-    customs_duties_unpaid = ["CU", "DU"]  # Customs unpaid, duties unpaid
+    customs_delay = ["CD", "CP"]  # Customs delay/hold/inspection
+    customs_documentation = []  # Customs missing docs, paperwork
+    customs_duties_unpaid = []  # Customs unpaid, duties unpaid
 
     # Weather/Force majeure
     weather_delay = ["WE", "WD", "PMX"]  # Weather
@@ -526,3 +573,17 @@ class TrackingIncidentReason(lib.Enum):
 
     # Other issues
     unknown = []  # Unrecognized codes
+
+
+class ShippingDocumentCategory(lib.StrEnum):
+    """FedEx document category mapping to karrio unified categories."""
+
+    commercial_invoice = "COMMERCIAL_INVOICE"
+    return_label = "RETURN"
+    customs_document = "CUSTOMS"
+    dangerous_goods_document = "DANGEROUS_GOODS"
+    certificate_of_origin = "CERTIFICATE_OF_ORIGIN"
+    etd_document = "ETD"
+    packing_list = "PACKING_LIST"
+    shipping_label = "LABEL"
+    other = "OTHER"

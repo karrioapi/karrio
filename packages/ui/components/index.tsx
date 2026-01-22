@@ -36,6 +36,7 @@ export * from "./address-edit-dialog";
 export * from "./textarea-field";
 export * from "./country-select";
 export * from "./address-combobox";
+export * from "./product-combobox";
 export * from "./enhanced-select";
 export * from "./date-input";
 export * from "./enhanced-metadata-editor";

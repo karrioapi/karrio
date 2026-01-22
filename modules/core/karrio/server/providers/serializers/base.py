@@ -46,14 +46,6 @@ class ConnectionCredentialsField(serializers.DictField):
     pass
 
 
-@serializers.owned_model_serializer
-class CarrierConfigModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = providers.CarrierConfig
-        exclude = ["created_at", "updated_at", "created_by"]
-        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
-
-
 class CarrierConnectionData(serializers.Serializer):
 
     carrier_name = serializers.ChoiceField(
@@ -121,6 +113,12 @@ class CarrierConnectionUpdateData(serializers.Serializer):
 
 
 class CarrierConnection(serializers.Serializer):
+    """Response serializer for carrier connections.
+
+    Note: Credentials are write-only and never returned in API responses.
+    Use CarrierConnectionData for create and CarrierConnectionUpdateData for update.
+    """
+
     id = serializers.CharField(
         required=True,
         help_text="A unique carrier connection identifier",
@@ -138,14 +136,10 @@ class CarrierConnection(serializers.Serializer):
         required=False,
         help_text="The carrier connection type verbose name.",
     )
-    carrier_id = serializers.CharField(
-        required=True,
+    carrier_id = serializers.SerializerMethodField(
         help_text="A carrier connection friendly name.",
     )
-    credentials = ConnectionCredentialsField(
-        required=False,
-        help_text="Carrier connection credentials.",
-    )
+    # Note: credentials field removed - write-only (accepted on POST/PATCH, never returned)
     capabilities = serializers.StringListField(
         required=False,
         allow_null=True,
@@ -161,8 +155,7 @@ class CarrierConnection(serializers.Serializer):
         default={},
         help_text="User metadata for the carrier.",
     )
-    is_system = serializers.BooleanField(
-        required=True,
+    is_system = serializers.SerializerMethodField(
         help_text="The carrier connection is provided by the system admin.",
     )
     active = serializers.BooleanField(
@@ -174,11 +167,21 @@ class CarrierConnection(serializers.Serializer):
         help_text="The test flag indicates whether to use a carrier configured for test.",
     )
 
+    def get_carrier_id(self, obj) -> str:
+        """Get carrier_id, using effective_carrier_id for BrokeredConnection."""
+        if isinstance(obj, providers.BrokeredConnection):
+            return obj.effective_carrier_id
+        return obj.carrier_id
+
+    def get_is_system(self, obj) -> bool:
+        """Return True for BrokeredConnection (system connections), False for Carrier (user-owned)."""
+        return isinstance(obj, providers.BrokeredConnection)
+
 
 @serializers.owned_model_serializer
 class CarrierConnectionModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = providers.Carrier
+        model = providers.CarrierConnection
         exclude = ["created_at", "updated_at", "created_by"]
 
     carrier_name = serializers.ChoiceField(
@@ -202,8 +205,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
         validated_data: dict,
         context: serializers.Context,
         **kwargs,
-    ) -> providers.Carrier:
-        config = validated_data.pop("config", None)
+    ) -> providers.CarrierConnection:
         carrier_name = validated_data.pop("carrier_name")
         default_capabilities = references.get_carrier_capabilities(carrier_name)
         capabilities = lib.identity(
@@ -222,25 +224,21 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             .map(data=validated_data["credentials"])
             .data
         )
+        # Config is stored directly on Carrier model (no longer using CarrierConfig)
+        validated_data.setdefault("config", {})
 
         instance = super().create(validated_data, context=context, **kwargs)
 
-        if config is not None:
-            CarrierConfigModelSerializer.map(
-                context=context,
-                data={"carrier": instance.pk, "config": config},
-            ).save()
-
-        return providers.Carrier.objects.get(pk=instance.pk)
+        return instance
 
     @transaction.atomic
     @utils.error_wrapper
     def update(
         self,
-        instance: providers.Carrier,
+        instance: providers.CarrierConnection,
         validated_data: dict,
         **kwargs,
-    ) -> providers.Carrier:
+    ) -> providers.CarrierConnection:
         if any(validated_data.get("capabilities") or []):
             default_capabilities = references.get_carrier_capabilities(instance.ext)
             capabilities = validated_data.get("capabilities")
@@ -261,20 +259,227 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             )
 
         if "config" in validated_data:
+            # Config is stored directly on Carrier model
             data = serializers.process_dictionaries_mutations(
                 ["config"],
                 dict(config=validated_data.pop("config")),
                 instance,
             )
-            lib.identity(
-                CarrierConfigModelSerializer.map(
-                    instance=instance.carrier_config,
-                    context=kwargs.get("context"),
-                    data={"carrier": instance.pk, **data},
-                )
-                .save()
-                .instance
+            validated_data["config"] = data["config"]
+
+        return super().update(instance, validated_data, **kwargs)
+
+
+class SystemConnectionModelSerializer(serializers.ModelSerializer):
+    """Serializer for SystemConnection (admin-managed platform connections)."""
+
+    class Meta:
+        model = providers.SystemConnection
+        exclude = ["created_at", "updated_at", "created_by", "carrier_code"]
+
+    carrier_name = serializers.ChoiceField(
+        required=True, choices=CARRIERS, help_text="Indicates a carrier (type)"
+    )
+    capabilities = serializers.StringListField(
+        required=False,
+        allow_null=True,
+        help_text="""The carrier enabled capabilities.""",
+    )
+    config = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="Carrier connection custom config.",
+    )
+
+    @transaction.atomic
+    @utils.error_wrapper
+    def create(
+        self,
+        validated_data: dict,
+    ) -> providers.SystemConnection:
+        context = self.context
+        carrier_name = validated_data.pop("carrier_name")
+        default_capabilities = references.get_carrier_capabilities(carrier_name)
+        capabilities = lib.identity(
+            validated_data.get("capabilities")
+            if any(validated_data.get("capabilities") or [])
+            else default_capabilities
+        )
+
+        validated_data.update(test_mode=context.test_mode)
+        validated_data.update(carrier_code=carrier_name)
+        validated_data.update(
+            capabilities=[_ for _ in capabilities if _ in default_capabilities]
+        )
+        validated_data.update(
+            credentials=CONNECTION_SERIALIZERS[carrier_name]
+            .map(data=validated_data["credentials"])
+            .data
+        )
+        validated_data.setdefault("config", {})
+
+        instance = super().create(validated_data)
+
+        return instance
+
+    @transaction.atomic
+    @utils.error_wrapper
+    def update(
+        self,
+        instance: providers.SystemConnection,
+        validated_data: dict,
+        **kwargs,
+    ) -> providers.SystemConnection:
+        if any(validated_data.get("capabilities") or []):
+            default_capabilities = references.get_carrier_capabilities(instance.carrier_code)
+            capabilities = validated_data.get("capabilities")
+            instance.capabilities = [
+                _ for _ in capabilities if _ in default_capabilities
+            ]
+
+        if "credentials" in validated_data:
+            data = serializers.process_dictionaries_mutations(
+                ["credentials"],
+                validated_data,
+                instance,
             )
+            validated_data.update(
+                credentials=CONNECTION_SERIALIZERS[instance.carrier_code]
+                .map(data=data["credentials"])
+                .data
+            )
+
+        if "config" in validated_data:
+            data = serializers.process_dictionaries_mutations(
+                ["config"],
+                dict(config=validated_data.pop("config")),
+                instance,
+            )
+            validated_data["config"] = data["config"]
+
+        return super().update(instance, validated_data, **kwargs)
+
+
+@serializers.owned_model_serializer
+class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
+    """
+    Serializer for BrokeredConnection (user's enabled instance of SystemConnection).
+
+    Each org gets its own BrokeredConnection per SystemConnection. This is handled
+    by the @owned_model_serializer decorator which calls link_org() after creation.
+
+    Key behaviors:
+    - Creates a new BrokeredConnection per org (not shared across orgs)
+    - Links to org via BrokeredConnectionLink (handled by link_org)
+    - Validates that system_connection exists and is active
+    """
+
+    class Meta:
+        model = providers.BrokeredConnection
+        exclude = ["created_at", "updated_at", "created_by", "system_connection"]
+
+    system_connection_id = serializers.CharField(
+        required=True,
+        help_text="The SystemConnection ID to enable.",
+    )
+    carrier_id = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Optional user-defined carrier identifier (overrides system).",
+    )
+    config_overrides = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default={},
+        help_text="User-specific config overrides (merged with system config).",
+    )
+    capabilities_overrides = serializers.StringListField(
+        required=False,
+        allow_null=True,
+        default=[],
+        help_text="Override capabilities (if empty, uses system capabilities).",
+    )
+    is_enabled = serializers.BooleanField(
+        required=False,
+        default=True,
+        help_text="Whether this brokered connection is enabled.",
+    )
+
+    @transaction.atomic
+    @utils.error_wrapper
+    def create(
+        self,
+        validated_data: dict,
+        context: serializers.Context,
+        **kwargs,
+    ) -> providers.BrokeredConnection:
+        system_connection_id = validated_data.pop("system_connection_id")
+
+        # Validate system connection exists and is active
+        try:
+            system_connection = providers.SystemConnection.objects.get(
+                pk=system_connection_id,
+                active=True,
+            )
+        except providers.SystemConnection.DoesNotExist:
+            raise serializers.ValidationError(
+                {"system_connection_id": "SystemConnection not found or not active."}
+            )
+
+        # Check if user/org already has a BrokeredConnection for this SystemConnection
+        # In multi-org mode, check via link; in OSS mode, check via created_by
+        from django.conf import settings as django_settings
+
+        existing_filter = {"system_connection": system_connection}
+
+        if django_settings.MULTI_ORGANIZATIONS and context.org:
+            existing = providers.BrokeredConnection.objects.filter(
+                **existing_filter,
+                link__org=context.org,
+            ).first()
+        else:
+            existing = providers.BrokeredConnection.objects.filter(
+                **existing_filter,
+                created_by=context.user,
+            ).first()
+
+        if existing:
+            # Update existing instead of creating new
+            return self.update(existing, validated_data)
+
+        # Create new BrokeredConnection
+        validated_data["system_connection"] = system_connection
+        validated_data.setdefault("is_enabled", True)
+        validated_data.setdefault("config_overrides", {})
+        validated_data.setdefault("capabilities_overrides", [])
+        # Copy carrier_id from SystemConnection as default
+        validated_data.setdefault("carrier_id", system_connection.carrier_id)
+
+        instance = super().create(validated_data, context=context, **kwargs)
+
+        return instance
+
+    @transaction.atomic
+    @utils.error_wrapper
+    def update(
+        self,
+        instance: providers.BrokeredConnection,
+        validated_data: dict,
+        **kwargs,
+    ) -> providers.BrokeredConnection:
+        # Handle config_overrides as dictionary mutation
+        if "config_overrides" in validated_data:
+            data = serializers.process_dictionaries_mutations(
+                ["config_overrides"],
+                dict(config_overrides=validated_data.pop("config_overrides")),
+                instance,
+            )
+            validated_data["config_overrides"] = data["config_overrides"]
+
+        # Remove system_connection_id if present (can't change after creation)
+        validated_data.pop("system_connection_id", None)
+        validated_data.pop("system_connection", None)
 
         return super().update(instance, validated_data, **kwargs)
 
@@ -327,7 +532,7 @@ class WebhookRegisterSerializer(serializers.Serializer):
     )
 
     @utils.error_wrapper
-    def update(self, connection: providers.Carrier, validated_data: dict, **kwargs):
+    def update(self, connection: providers.CarrierConnection, validated_data: dict, **kwargs):
         import karrio.server.core.gateway as gateway
 
         webhook_url = validated_data["webhook_url"]
@@ -359,7 +564,7 @@ class WebhookDeregisterSerializer(serializers.Serializer):
     )
 
     @utils.error_wrapper
-    def update(self, connection: providers.Carrier, validated_data: dict, **kwargs):
+    def update(self, connection: providers.CarrierConnection, validated_data: dict, **kwargs):
         import karrio.server.core.gateway as gateway
 
         confirmation, messages = gateway.Webhooks.unregister(
@@ -491,8 +696,8 @@ class WebhookEventSerializer(serializers.Serializer):
         import karrio.server.core.gateway as gateway
 
         try:
-            connection = providers.Carrier.objects.get(pk=pk)
-        except providers.Carrier.DoesNotExist:
+            connection = providers.CarrierConnection.objects.get(pk=pk)
+        except providers.CarrierConnection.DoesNotExist:
             return (
                 dict(
                     operation="Webhook event",
@@ -518,7 +723,7 @@ class WebhookEventSerializer(serializers.Serializer):
 
             tracker = manager_models.Tracking.objects.filter(
                 django.Q(tracking_number=event.tracking.tracking_number)
-                | django.Q(tracking_carrier=connection)
+                | django.Q(carrier__connection_id=str(connection.id))
             ).first()
 
             if tracker:

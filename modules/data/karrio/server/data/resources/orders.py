@@ -1,3 +1,8 @@
+"""Order data export/import resources.
+
+With JSON-based line_items storage, exports now iterate over Orders
+and denormalize line items into rows.
+"""
 from django.db.models import Q
 from import_export import resources
 
@@ -61,82 +66,75 @@ DEFAULT_HEADERS = {
 }
 
 
-def order_export_resource(query_params: dict, context, **kwargs):
-    queryset = models.LineItem.access_by(context)
-    _exclude = query_params.get("exclude", "").split(",")
-    _fields = (
-        "description",
-        "quantity",
-        "weight",
-        "weight_unit",
-        "sku",
-        "hs_code",
-        "value_amount",
-        "value_currency",
-        "metadata",
-    )
+def _get_address_field(address_data, field_name, default=None):
+    """Safely get a field from address JSON data."""
+    if not address_data or not isinstance(address_data, dict):
+        return default
+    return address_data.get(field_name, default)
 
+
+def order_export_resource(query_params: dict, context, **kwargs):
+    """Create export resource for orders with JSON-based line items.
+
+    With JSON storage, we export at the Order level and denormalize
+    line items into the export data.
+    """
+    _exclude = query_params.get("exclude", "").split(",")
+
+    # Base queryset filtering
+    base_qs = models.Order.access_by(context)
     if "status" not in query_params:
-        queryset = queryset.filter(
-            Q(commodity_order__status__in=["fulfilled", "delivered"]),
+        base_qs = base_qs.filter(
+            Q(status__in=["fulfilled", "delivered"]),
         )
 
     class Resource(resources.ModelResource):
         class Meta:
-            model = models.LineItem
-            fields = _fields
+            model = models.Order
+            fields = (
+                "id",
+                "order_id",
+                "order_date",
+                "source",
+                "status",
+            )
             exclude = _exclude
             export_order = [k for k in DEFAULT_HEADERS.keys() if k not in _exclude]
 
         def get_queryset(self):
-            orders = OrderFilters(query_params, models.Order.access_by(context)).qs
-            return queryset.filter(commodity_order__in=orders)
+            return OrderFilters(query_params, base_qs).qs
 
         def get_export_headers(self, **kwargs):
             headers = super().get_export_headers(**kwargs)
             return [DEFAULT_HEADERS.get(k, k) for k in headers]
 
-        if "id" not in _exclude:
-            id = resources.Field()
+        # Order fields
+        if "order_source" not in _exclude:
+            order_source = resources.Field()
 
-            def dehydrate_id(self, row):
-                return row.order.id
-
-        if "order_id" not in _exclude:
-            order_id = resources.Field()
-
-            def dehydrate_order_id(self, row):
-                return row.order.order_id
-
-        if "order_date" not in _exclude:
-            order_date = resources.Field()
-
-            def dehydrate_order_date(self, row):
-                return row.order.order_date
+            def dehydrate_order_source(self, row):
+                return row.source
 
         if "order_status" not in _exclude:
             order_status = resources.Field()
 
             def dehydrate_order_status(self, row):
-                return row.order.status
-
-        if "order_source" not in _exclude:
-            order_source = resources.Field()
-
-            def dehydrate_order_source(self, row):
-                return row.order.source
+                return row.status
 
         if "order_created_at" not in _exclude:
             order_created_at = resources.Field()
 
             def dehydrate_order_created_at(self, row):
-                return row.order.created_at
+                return row.created_at
 
         if "order_currency" not in _exclude:
             order_currency = resources.Field()
 
             def dehydrate_order_currency(self, row):
-                return row.value_currency
+                line_items = row.line_items or []
+                if line_items:
+                    return line_items[0].get("value_currency")
+                return None
 
         if "order_total" not in _exclude:
             order_total = resources.Field()
@@ -144,8 +142,8 @@ def order_export_resource(query_params: dict, context, **kwargs):
             def dehydrate_order_total(self, row):
                 return sum(
                     [
-                        lib.to_decimal(li.value_amount) or 0.0
-                        for li in row.order.line_items.all()
+                        lib.to_decimal(li.get("value_amount")) or 0.0
+                        for li in (row.line_items or [])
                     ],
                     0.0,
                 )
@@ -154,166 +152,234 @@ def order_export_resource(query_params: dict, context, **kwargs):
             options = resources.Field()
 
             def dehydrate_options(self, row):
-                return row.order.options
+                return row.options
 
+        # Line item fields (uses first line item for export)
+        if "description" not in _exclude:
+            description = resources.Field()
+
+            def dehydrate_description(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("description") if line_items else None
+
+        if "quantity" not in _exclude:
+            quantity = resources.Field()
+
+            def dehydrate_quantity(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("quantity") if line_items else None
+
+        if "sku" not in _exclude:
+            sku = resources.Field()
+
+            def dehydrate_sku(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("sku") if line_items else None
+
+        if "hs_code" not in _exclude:
+            hs_code = resources.Field()
+
+            def dehydrate_hs_code(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("hs_code") if line_items else None
+
+        if "value_amount" not in _exclude:
+            value_amount = resources.Field()
+
+            def dehydrate_value_amount(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("value_amount") if line_items else None
+
+        if "value_currency" not in _exclude:
+            value_currency = resources.Field()
+
+            def dehydrate_value_currency(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("value_currency") if line_items else None
+
+        if "weight" not in _exclude:
+            weight = resources.Field()
+
+            def dehydrate_weight(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("weight") if line_items else None
+
+        if "weight_unit" not in _exclude:
+            weight_unit = resources.Field()
+
+            def dehydrate_weight_unit(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("weight_unit") if line_items else None
+
+        if "metadata" not in _exclude:
+            metadata = resources.Field()
+
+            def dehydrate_metadata(self, row):
+                line_items = row.line_items or []
+                return line_items[0].get("metadata") if line_items else None
+
+        # Shipping to (JSON address)
         if "shipping_to_name" not in _exclude:
             shipping_to_name = resources.Field()
 
             def dehydrate_shipping_to_name(self, row):
-                return row.order.shipping_to.person_name
+                return _get_address_field(row.shipping_to, "person_name")
 
         if "shipping_to_company" not in _exclude:
             shipping_to_company = resources.Field()
 
             def dehydrate_shipping_to_company(self, row):
-                return row.order.shipping_to.company_name
+                return _get_address_field(row.shipping_to, "company_name")
 
         if "shipping_to_address1" not in _exclude:
             shipping_to_address1 = resources.Field()
 
             def dehydrate_shipping_to_address1(self, row):
-                return row.order.shipping_to.address_line1
+                return _get_address_field(row.shipping_to, "address_line1")
 
         if "shipping_to_address2" not in _exclude:
             shipping_to_address2 = resources.Field()
 
             def dehydrate_shipping_to_address2(self, row):
-                return row.order.shipping_to.address_line2
+                return _get_address_field(row.shipping_to, "address_line2")
 
         if "shipping_to_city" not in _exclude:
             shipping_to_city = resources.Field()
 
             def dehydrate_shipping_to_city(self, row):
-                return row.order.shipping_to.city
+                return _get_address_field(row.shipping_to, "city")
 
         if "shipping_to_state" not in _exclude:
             shipping_to_state = resources.Field()
 
             def dehydrate_shipping_to_state(self, row):
-                return row.order.shipping_to.state_code
+                return _get_address_field(row.shipping_to, "state_code")
 
         if "shipping_to_postal_code" not in _exclude:
             shipping_to_postal_code = resources.Field()
 
             def dehydrate_shipping_to_postal_code(self, row):
-                return row.order.shipping_to.postal_code
+                return _get_address_field(row.shipping_to, "postal_code")
 
         if "shipping_to_country" not in _exclude:
             shipping_to_country = resources.Field()
 
             def dehydrate_shipping_to_country(self, row):
-                return row.order.shipping_to.country_code
+                return _get_address_field(row.shipping_to, "country_code")
 
         if "shipping_to_residential" not in _exclude:
             shipping_to_residential = resources.Field()
 
             def dehydrate_shipping_to_residential(self, row):
-                return "yes" if row.order.shipping_to.residential else "no"
+                residential = _get_address_field(row.shipping_to, "residential")
+                return "yes" if residential else "no"
 
+        # Shipping from (JSON address)
         if "shipping_from_name" not in _exclude:
             shipping_from_name = resources.Field()
 
             def dehydrate_shipping_from_name(self, row):
-                return getattr(row.order.shipping_from, "person_name", None)
+                return _get_address_field(row.shipping_from, "person_name")
 
         if "shipping_from_company" not in _exclude:
             shipping_from_company = resources.Field()
 
             def dehydrate_shipping_from_company(self, row):
-                return getattr(row.order.shipping_from, "company_name", None)
+                return _get_address_field(row.shipping_from, "company_name")
 
         if "shipping_from_address1" not in _exclude:
             shipping_from_address1 = resources.Field()
 
             def dehydrate_shipping_from_address1(self, row):
-                return getattr(row.order.shipping_from, "address_line1", None)
+                return _get_address_field(row.shipping_from, "address_line1")
 
         if "shipping_from_address2" not in _exclude:
             shipping_from_address2 = resources.Field()
 
             def dehydrate_shipping_from_address2(self, row):
-                return getattr(row.order.shipping_from, "address_line2", None)
+                return _get_address_field(row.shipping_from, "address_line2")
 
         if "shipping_from_city" not in _exclude:
             shipping_from_city = resources.Field()
 
             def dehydrate_shipping_from_city(self, row):
-                return getattr(row.order.shipping_from, "city", None)
+                return _get_address_field(row.shipping_from, "city")
 
         if "shipping_from_state" not in _exclude:
             shipping_from_state = resources.Field()
 
             def dehydrate_shipping_from_state(self, row):
-                return getattr(row.order.shipping_from, "state_code", None)
+                return _get_address_field(row.shipping_from, "state_code")
 
         if "shipping_from_postal_code" not in _exclude:
             shipping_from_postal_code = resources.Field()
 
             def dehydrate_shipping_from_postal_code(self, row):
-                return getattr(row.order.shipping_from, "postal_code", None)
+                return _get_address_field(row.shipping_from, "postal_code")
 
         if "shipping_from_country" not in _exclude:
             shipping_from_country = resources.Field()
 
             def dehydrate_shipping_from_country(self, row):
-                return getattr(row.order.shipping_from, "country_code", None)
+                return _get_address_field(row.shipping_from, "country_code")
 
         if "shipping_from_residential" not in _exclude:
             shipping_from_residential = resources.Field()
 
             def dehydrate_shipping_from_residential(self, row):
-                if getattr(row.order.shipping_from, "country_code", None) is None:
+                if _get_address_field(row.shipping_from, "country_code") is None:
                     return None
+                residential = _get_address_field(row.shipping_from, "residential")
+                return "yes" if residential else "no"
 
-                return "yes" if row.order.shipping_from.residential else "no"
-
+        # Billing address (JSON)
         if "billing_name" not in _exclude:
             billing_name = resources.Field()
 
             def dehydrate_billing_name(self, row):
-                return getattr(row.order.billing_address, "person_name", None)
+                return _get_address_field(row.billing_address, "person_name")
 
         if "billing_company" not in _exclude:
             billing_company = resources.Field()
 
             def dehydrate_billing_company(self, row):
-                return getattr(row.order.billing_address, "company_name", None)
+                return _get_address_field(row.billing_address, "company_name")
 
         if "billing_address1" not in _exclude:
             billing_address1 = resources.Field()
 
             def dehydrate_billing_address1(self, row):
-                return getattr(row.order.billing_address, "address_line1", None)
+                return _get_address_field(row.billing_address, "address_line1")
 
         if "billing_address2" not in _exclude:
             billing_address2 = resources.Field()
 
             def dehydrate_billing_address2(self, row):
-                return getattr(row.order.billing_address, "address_line2", None)
+                return _get_address_field(row.billing_address, "address_line2")
 
         if "billing_city" not in _exclude:
             billing_city = resources.Field()
 
             def dehydrate_billing_city(self, row):
-                return getattr(row.order.billing_address, "city", None)
+                return _get_address_field(row.billing_address, "city")
 
         if "billing_state" not in _exclude:
             billing_state = resources.Field()
 
             def dehydrate_billing_state(self, row):
-                return getattr(row.order.billing_address, "state_code", None)
+                return _get_address_field(row.billing_address, "state_code")
 
         if "billing_postal_code" not in _exclude:
             billing_postal_code = resources.Field()
 
             def dehydrate_billing_postal_code(self, row):
-                return getattr(row.order.billing_address, "postal_code", None)
+                return _get_address_field(row.billing_address, "postal_code")
 
         if "billing_country" not in _exclude:
             billing_country = resources.Field()
 
             def dehydrate_billing_country(self, row):
-                return getattr(row.order.billing_address, "country_code", None)
+                return _get_address_field(row.billing_address, "country_code")
 
     return Resource()
 

@@ -20,17 +20,34 @@ import karrio.server.serializers as base_serializers
 import karrio.server.core.serializers as serializers
 
 
-class Carriers:
+class Connections:
+    """
+    Unified connection resolver for all connection types.
+
+    Queries from:
+    1. Carrier - User/org-owned connections
+    2. BrokeredConnection - User enablement of SystemConnection
+    """
+
     @staticmethod
-    def list(context=None, **kwargs) -> typing.List[providers.Carrier]:
+    def list(context=None, **kwargs) -> typing.List[typing.Any]:
+        """
+        List all accessible connections (Carrier + BrokeredConnection).
+
+        Args:
+            context: Request context with user/org info
+            **kwargs: Filters (test_mode, active, carrier_id, capability, etc.)
+
+        Returns:
+            Combined list of Carrier and BrokeredConnection instances.
+            Both implement compatible interfaces (.carrier_id, .gateway, etc.)
+        """
         list_filter = kwargs.copy()
         user_filter = core.get_access_filter(context) if context is not None else []
-
         test_mode = list_filter.get("test_mode") or getattr(context, "test_mode", None)
         system_only = list_filter.get("system_only") is True
-        active_key = lib.identity(
-            "active_orgs__id" if settings.MULTI_ORGANIZATIONS else "active_users__id"
-        )
+
+        # Get user/org access ID for brokered connections
         access_id = getattr(
             getattr(context, "org" if settings.MULTI_ORGANIZATIONS else "user", None),
             "id",
@@ -45,59 +62,102 @@ class Carriers:
             else Q()
         )
 
-        _user_carriers = providers.Carrier.user_carriers.filter(
+        # ─────────────────────────────────────────────────────────────────
+        # QUERY 1: User/Org-owned CarrierConnection connections
+        # ─────────────────────────────────────────────────────────────────
+        carrier_queryset = providers.CarrierConnection.objects.filter(
             user_filter if len(user_filter) > 0 else Q() | creator_filter
         )
-        _system_carriers = providers.Carrier.system_carriers.filter(
-            Q(
-                **{
-                    "active": True,
-                    **({active_key: access_id} if access_id is not None else {}),
-                }
+
+        # ─────────────────────────────────────────────────────────────────
+        # QUERY 2: Brokered connections (enabled system connections)
+        # ─────────────────────────────────────────────────────────────────
+        if settings.MULTI_ORGANIZATIONS:
+            # Insiders: Filter by org via BrokeredConnectionLink
+            brokered_queryset = providers.BrokeredConnection.objects.enabled().filter(
+                Q(link__org__id=access_id) if access_id else Q()
             )
-        )
-        _queryset = lib.identity(
-            _system_carriers if system_only else _user_carriers | _system_carriers
-        )
+        else:
+            # OSS: Filter by created_by user
+            brokered_queryset = providers.BrokeredConnection.objects.enabled().filter(
+                Q(created_by__id=access_id) if access_id else Q()
+            )
 
-        # Check if the test filter is specified then set it otherwise return all carriers live and test mode
+        # ─────────────────────────────────────────────────────────────────
+        # APPLY COMMON FILTERS
+        # ─────────────────────────────────────────────────────────────────
+
+        # Test mode filter
         if test_mode is not None:
-            _queryset = _queryset.filter(test_mode=test_mode)
+            carrier_queryset = carrier_queryset.filter(test_mode=test_mode)
+            brokered_queryset = brokered_queryset.filter(
+                system_connection__test_mode=test_mode
+            )
 
-        # Check if the active flag is specified and return all active carrier is active is not set to false
+        # Active filter
         if list_filter.get("active") is not None:
             active = False if list_filter["active"] is False else True
-            _queryset = _queryset.filter(Q(active=active))
+            carrier_queryset = carrier_queryset.filter(active=active)
+            brokered_queryset = brokered_queryset.filter(
+                is_enabled=active, system_connection__active=active
+            )
 
-        # Check if a specific carrier_id is provided, to add it to the query
+        # Carrier ID filter - matches by id (primary key) OR carrier_id (friendly name)
         if "carrier_id" in list_filter:
-            _queryset = _queryset.filter(carrier_id=list_filter["carrier_id"])
+            filter_value = list_filter["carrier_id"]
+            carrier_queryset = carrier_queryset.filter(
+                Q(id=filter_value) | Q(carrier_id=filter_value)
+            )
+            # Brokered: check id, user override carrier_id, or system carrier_id
+            brokered_queryset = brokered_queryset.filter(
+                Q(id=filter_value)
+                | Q(carrier_id=filter_value)
+                | Q(
+                    carrier_id__isnull=True,
+                    system_connection__carrier_id=filter_value,
+                )
+            )
 
-        # Check if a specific carrier_id is provided, to add it to the query
+        # Capability filter
         if "capability" in list_filter:
-            _queryset = _queryset.filter(
+            carrier_queryset = carrier_queryset.filter(
                 capabilities__icontains=list_filter["capability"]
             )
-
-        # Check if a metadata key is provided, to add it to the query
-        if "metadata_key" in list_filter:
-            _queryset = _queryset.filter(metadata__has_key=list_filter["metadata_key"])
-
-        # Check if a metadata value is provided, to add it to the query
-        if "metadata_value" in list_filter:
-            _value = list_filter["metadata_value"]
-            _queryset = _queryset.filter(
-                id__in=[
-                    _["id"]
-                    for _ in _queryset.values("id", "metadata")
-                    if _value in (_.get("metadata") or {}).values()
-                ]
+            # Brokered: check overrides first, then system
+            brokered_queryset = brokered_queryset.filter(
+                Q(capabilities_overrides__icontains=list_filter["capability"])
+                | Q(
+                    capabilities_overrides=[],
+                    system_connection__capabilities__icontains=list_filter["capability"],
+                )
             )
 
-        # Check if a list of carrier_ids are provided, to add the list to the query
-        if any(list_filter.get("carrier_ids", [])):
-            _queryset = _queryset.filter(carrier_id__in=list_filter["carrier_ids"])
+        # Metadata key filter
+        if "metadata_key" in list_filter:
+            carrier_queryset = carrier_queryset.filter(
+                metadata__has_key=list_filter["metadata_key"]
+            )
+            brokered_queryset = brokered_queryset.filter(
+                metadata__has_key=list_filter["metadata_key"]
+            )
 
+        # Carrier IDs filter (list) - matches by id (primary key) OR carrier_id (friendly name)
+        if any(list_filter.get("carrier_ids", [])):
+            ids_list = list_filter["carrier_ids"]
+            carrier_queryset = carrier_queryset.filter(
+                Q(id__in=ids_list) | Q(carrier_id__in=ids_list)
+            )
+            # Brokered: check id, user override carrier_id, or system carrier_id
+            brokered_queryset = brokered_queryset.filter(
+                Q(id__in=ids_list)
+                | Q(carrier_id__in=ids_list)
+                | Q(
+                    carrier_id__isnull=True,
+                    system_connection__carrier_id__in=ids_list,
+                )
+            )
+
+        # Services filter
         if any(list_filter.get("services", [])):
             carrier_names = [
                 name
@@ -108,24 +168,66 @@ class Carriers:
                     service in list_filter["services"] for service in services.keys()
                 )
             ]
-
             if len(carrier_names) > 0:
-                _queryset = _queryset.filter(carrier_code__in=carrier_names)
+                carrier_queryset = carrier_queryset.filter(carrier_code__in=carrier_names)
+                brokered_queryset = brokered_queryset.filter(
+                    system_connection__carrier_code__in=carrier_names
+                )
+
+        # Carrier name (carrier_code) filter
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
-            _queryset = _queryset.filter(carrier_code=carrier_name)
+            carrier_queryset = carrier_queryset.filter(carrier_code=carrier_name)
+            brokered_queryset = brokered_queryset.filter(
+                system_connection__carrier_code=carrier_name
+            )
 
-        carriers = _queryset.distinct()
+        # ─────────────────────────────────────────────────────────────────
+        # COMBINE RESULTS
+        # ─────────────────────────────────────────────────────────────────
 
-        # Raise an error if no carrier is found
-        if list_filter.get("raise_not_found") and len(carriers) == 0:
+        if system_only:
+            # Only brokered connections (system connection enablements)
+            connections = list(brokered_queryset.distinct())
+        else:
+            # Combine both types
+            carriers = list(carrier_queryset.distinct())
+            brokered = list(brokered_queryset.distinct())
+            connections = carriers + brokered
+
+        # ─────────────────────────────────────────────────────────────────
+        # FILTER OUT NON-EXISTENT EXTENSIONS
+        # ─────────────────────────────────────────────────────────────────
+        # Some connections may reference carrier extensions that no longer
+        # exist (e.g., deprecated carriers like 'fedex_ws'). Filter these
+        # out to prevent "Unknown provider" errors when accessing .gateway
+        available_providers = set(karrio.gateway.providers.keys())
+        valid_connections = []
+        for conn in connections:
+            if conn.ext in available_providers:
+                valid_connections.append(conn)
+            else:
+                logger.warning(
+                    "Skipping connection with non-existent extension",
+                    carrier_id=conn.carrier_id,
+                    extension=conn.ext,
+                )
+        connections = valid_connections
+
+        # Raise error if no connections found
+        if list_filter.get("raise_not_found") and len(connections) == 0:
             raise NotFound("No active carrier connection found to process the request")
 
-        return carriers
+        return connections
 
     @staticmethod
-    def first(**kwargs) -> providers.Carrier:
-        return next(iter(Carriers.list(**kwargs)), None)
+    def first(**kwargs) -> typing.Any:
+        """Get first matching connection."""
+        return next(iter(Connections.list(**kwargs)), None)
+
+
+# Alias for backwards compatibility
+Carriers = Connections
 
 
 class Address:
@@ -133,7 +235,7 @@ class Address:
     @utils.with_telemetry("address_validate")
     def validate(
         payload: dict,
-        provider: providers.Carrier = None,
+        provider: providers.CarrierConnection = None,
         **carrier_filters,
     ) -> datatypes.AddressValidation:
         provider = provider or Carriers.first(
@@ -163,7 +265,7 @@ class Shipments:
     @utils.require_selected_rate
     def create(
         payload: dict,
-        carrier: providers.Carrier = None,
+        carrier: providers.CarrierConnection = None,
         selected_rate: typing.Union[datatypes.Rate, dict] = None,
         resolve_tracking_url: typing.Callable[[str, str], str] = None,
         context: base_serializers.Context = None,
@@ -216,7 +318,8 @@ class Shipments:
             rate_provider = (
                 (parent.meta or {}).get("rate_provider") or carrier.carrier_name
             ).lower()
-            custom_carrier_name = carrier.credentials.get("custom_carrier_name")
+            # BrokeredConnection.credentials returns None (security feature)
+            custom_carrier_name = (carrier.credentials or {}).get("custom_carrier_name")
 
             return {
                 **(parent.meta or {}),
@@ -320,7 +423,7 @@ class Shipments:
     @staticmethod
     @utils.with_telemetry("shipment_cancel")
     def cancel(
-        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
     ) -> datatypes.ConfirmationResponse:
         carrier_id = lib.identity(
             dict(carrier_id=payload.pop("carrier_id"))
@@ -372,7 +475,7 @@ class Shipments:
     @utils.with_telemetry("tracking_fetch")
     def track(
         payload: dict,
-        carrier: providers.Carrier = None,
+        carrier: providers.CarrierConnection = None,
         raise_on_error: bool = True,
         **carrier_filters,
     ) -> datatypes.TrackingResponse:
@@ -461,7 +564,7 @@ class Pickups:
     @staticmethod
     @utils.with_telemetry("pickup_schedule")
     def schedule(
-        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
     ) -> datatypes.PickupResponse:
         carrier = carrier or Carriers.first(
             **{
@@ -511,7 +614,7 @@ class Pickups:
     @staticmethod
     @utils.with_telemetry("pickup_update")
     def update(
-        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
     ) -> datatypes.PickupResponse:
         carrier = carrier or Carriers.first(
             **{
@@ -552,7 +655,7 @@ class Pickups:
     @staticmethod
     @utils.with_telemetry("pickup_cancel")
     def cancel(
-        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
     ) -> datatypes.ConfirmationResponse:
         carrier = carrier or Carriers.first(
             **{
@@ -602,7 +705,7 @@ class Rates:
     @utils.with_telemetry("rates_fetch")
     def fetch(
         payload: dict,
-        carriers: typing.List[providers.Carrier] = None,
+        carriers: typing.List[providers.CarrierConnection] = None,
         raise_on_error: bool = True,
         **carrier_filters,
     ) -> datatypes.RateResponse:
@@ -638,7 +741,10 @@ class Rates:
             )
 
         def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
-            carrier = next((c for c in carriers if c.carrier_id == rate.carrier_id))
+            # Use effective_carrier_id for BrokeredConnection, fall back to carrier_id for Carrier
+            carrier = next(
+                (c for c in carriers if getattr(c, "effective_carrier_id", c.carrier_id) == rate.carrier_id)
+            )
             rate_provider = (
                 (rate.meta or {}).get("rate_provider")
                 or getattr(carrier, "custom_carrier_name", None)
@@ -681,7 +787,7 @@ class Documents:
     @utils.with_telemetry("document_upload")
     def upload(
         payload: dict,
-        carrier: providers.Carrier = None,
+        carrier: providers.CarrierConnection = None,
         **carrier_filters,
     ) -> datatypes.DocumentUploadResponse:
         carrier = carrier or Carriers.first(
@@ -728,7 +834,7 @@ class Manifests:
     @staticmethod
     @utils.with_telemetry("manifest_create")
     def create(
-        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
     ) -> datatypes.ManifestResponse:
         carrier = carrier or Carriers.first(
             **{
@@ -780,7 +886,7 @@ class Insurance:
     @staticmethod
     @utils.with_telemetry("insurance_apply")
     def apply(
-        payload: dict, provider: providers.Carrier = None, **provider_filters
+        payload: dict, provider: providers.CarrierConnection = None, **provider_filters
     ) -> datatypes.InsuranceDetails:
         provider = provider or Carriers.first(
             **{
@@ -836,7 +942,7 @@ class Duties:
     @utils.with_telemetry("duties_calculate")
     def calculate(
         payload: dict,
-        provider: providers.Carrier = None,
+        provider: providers.CarrierConnection = None,
         **provider_filters,
     ) -> datatypes.DutiesResponse:
         provider = provider or Carriers.first(
@@ -875,7 +981,7 @@ class Webhooks:
     @utils.with_telemetry("webhook_register")
     def register(
         payload: dict,
-        carrier: providers.Carrier = None,
+        carrier: providers.CarrierConnection = None,
         **carrier_filters,
     ) -> datatypes.DocumentUploadResponse:
         carrier = carrier or Carriers.first(
@@ -902,7 +1008,7 @@ class Webhooks:
     @utils.with_telemetry("webhook_unregister")
     def unregister(
         payload: dict,
-        carrier: providers.Carrier = None,
+        carrier: providers.CarrierConnection = None,
         **carrier_filters,
     ) -> datatypes.ConfirmationResponse:
         carrier = carrier or Carriers.first(
@@ -955,7 +1061,7 @@ class Hooks:
     @staticmethod
     @utils.with_telemetry("hook_webhook_event")
     def on_webhook_event(
-        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
     ) -> typing.Tuple[datatypes.WebhookEventDetails, typing.List[datatypes.Message]]:
         carrier = carrier or Carriers.first(
             **{
@@ -978,7 +1084,7 @@ class Hooks:
     @utils.with_telemetry("hook_oauth_authorize")
     def on_oauth_authorize(
         payload: dict,
-        carrier: providers.Carrier = None,
+        carrier: providers.CarrierConnection = None,
         carrier_name: str = None,
         test_mode: bool = False,
         **kwargs,
@@ -998,7 +1104,7 @@ class Hooks:
         payload: dict,
         carrier_name: str = None,
         test_mode: bool = False,
-        carrier: providers.Carrier = None,
+        carrier: providers.CarrierConnection = None,
         **kwargs,
     ) -> typing.Tuple[typing.List[typing.Dict], typing.List[datatypes.Message]]:
         gateway = lib.identity(

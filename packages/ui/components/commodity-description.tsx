@@ -1,10 +1,10 @@
 import { formatWeight, isNoneOrEmpty } from "@karrio/lib";
-import { CommodityType } from "@karrio/types";
+import { CommodityType, CustomsCommodityType } from "@karrio/types";
 import React from "react";
 import { cn } from "@karrio/ui/lib/utils";
 
 interface CommodityDescriptionComponent extends React.HTMLAttributes<any> {
-  commodity: CommodityType;
+  commodity: CommodityType | CustomsCommodityType;
   prefix?: string;
   suffix?: string;
   comments?: string;
@@ -22,7 +22,7 @@ export const CommodityDescription = ({
     <div className={cn("flex items-center", className)} {...props}>
       <div className="flex-1 min-w-0 p-0">
         <p className="text-xs my-1 font-semibold truncate">
-          {prefix} {`${commodity.title || commodity.description || "Item"}`}{" "}
+          {prefix} {`${"title" in commodity ? (commodity.title || commodity.description || "Item") : (commodity.description || "Item")}`}{" "}
           {suffix}
         </p>
         <p className="text-xs my-1 font-semibold text-muted-foreground truncate">

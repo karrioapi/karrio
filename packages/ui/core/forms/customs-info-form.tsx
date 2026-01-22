@@ -19,7 +19,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { TextAreaField } from "../components/textarea-field";
 import { CheckBoxField } from "../components/checkbox-field";
@@ -63,11 +62,8 @@ export const CustomsInfoForm = ({
   const {
     query: { data: { user } = {} },
   } = useUser();
-  const {
-    query: { data: { default_templates } = {} },
-  } = useDefaultTemplates();
   const default_value = {
-    ...(default_templates?.default_customs?.customs || DEFAULT_CUSTOMS_CONTENT),
+    ...DEFAULT_CUSTOMS_CONTENT,
     options: workspace_config.customsOptions,
   } as CustomsType;
   const [customs, dispatch] = useReducer(

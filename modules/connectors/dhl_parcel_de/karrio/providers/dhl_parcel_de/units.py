@@ -78,6 +78,28 @@ class LabelType(lib.Enum):
     PNG = PDF_A4
 
 
+class ShippingDocumentCategory(lib.StrEnum):
+    """Carrier specific document category types.
+
+    Maps DHL Parcel DE document types to standard ShippingDocumentCategory.
+    Values match the exact syntax used by DHL Parcel DE API.
+    """
+
+    shipping_label = "shippingLabel"
+    return_label = "returnLabel"
+    export_document = "exportDocument"
+    receipt = "receipt"
+    cod_document = "codLabel"
+    enclosed_return_label = "enclosedReturnLabel"
+    harmonized_label = "harmonizedLabel"
+    international_shipping_label = "internationalShippingLabel"
+    warenpost_national = "warenpostNational"
+    return_label_international = "returnLabelInternational"
+    warenpost_international = "warenpostInternational"
+    error_label = "errorLabel"
+    qr_code = "qrCode"
+
+
 class ConnectionConfig(lib.Enum):
     profile = lib.OptionEnum("profile")
     cost_center = lib.OptionEnum("cost_center")
@@ -111,20 +133,59 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
-    dhl_parcel_de_preferred_neighbour = lib.OptionEnum("preferredNeighbour")
-    dhl_parcel_de_preferred_location = lib.OptionEnum("preferredLocation")
-    dhl_parcel_de_named_person_only = lib.OptionEnum("namedPersonOnly", bool)
-    dhl_parcel_de_signed_for_by_recipient = lib.OptionEnum("signedForByRecipient", bool)
-    dhl_parcel_de_preferred_day = lib.OptionEnum("preferredDay")
-    dhl_parcel_de_no_neighbour_delivery = lib.OptionEnum("noNeighbourDelivery", bool)
-    dhl_parcel_de_additional_insurance = lib.OptionEnum("additionalInsurance", float)
-    dhl_parcel_de_bulky_goods = lib.OptionEnum("bulkyGoods", bool)
-    dhl_parcel_de_cash_on_delivery = lib.OptionEnum("cashOnDelivery", float)
+    dhl_parcel_de_preferred_neighbour = lib.OptionEnum(
+        "preferredNeighbour",
+        meta=dict(compatible_services=["V01PAK"])
+    )
+    dhl_parcel_de_preferred_location = lib.OptionEnum(
+        "preferredLocation",
+        meta=dict(compatible_services=["V01PAK"])
+    )
+    dhl_parcel_de_named_person_only = lib.OptionEnum(
+        "namedPersonOnly", bool,
+        meta=dict(compatible_services=["V01PAK"])
+    )
+    dhl_parcel_de_signed_for_by_recipient = lib.OptionEnum(
+        "signedForByRecipient", bool,
+        meta=dict(category="SIGNATURE", compatible_services=["V01PAK"])
+    )
+    dhl_parcel_de_preferred_day = lib.OptionEnum(
+        "preferredDay",
+        meta=dict(category="DELIVERY_OPTIONS", compatible_services=["V01PAK"])
+    )
+    dhl_parcel_de_no_neighbour_delivery = lib.OptionEnum(
+        "noNeighbourDelivery", bool,
+        meta=dict(category="DELIVERY_OPTIONS", compatible_services=["V01PAK"])
+    )
+    dhl_parcel_de_additional_insurance = lib.OptionEnum(
+        "additionalInsurance", float,
+        meta=dict(category="INSURANCE", compatible_services=["V01PAK", "V53WPAK", "V54EPAK", "V62KP"])
+    )
+    dhl_parcel_de_bulky_goods = lib.OptionEnum(
+        "bulkyGoods", bool,
+        meta=dict(compatible_services=["V01PAK", "V62KP"])
+    )
+    dhl_parcel_de_cash_on_delivery = lib.OptionEnum(
+        "cashOnDelivery", float,
+        meta=dict(category="COD", compatible_services=["V01PAK", "V62KP"])
+    )
     dhl_parcel_de_individual_sender_requirement = lib.OptionEnum("individualSenderRequirement")
-    dhl_parcel_de_premium = lib.OptionEnum("premium", bool)
-    dhl_parcel_de_closest_drop_point = lib.OptionEnum("closestDropPoint", bool)
-    dhl_parcel_de_parcel_outlet_routing = lib.OptionEnum("parcelOutletRouting")
-    dhl_parcel_de_postal_delivery_duty_paid = lib.OptionEnum("postalDeliveryDutyPaid", bool)
+    dhl_parcel_de_premium = lib.OptionEnum(
+        "premium", bool,
+        meta=dict(compatible_services=["V53WPAK", "V66WPI"])
+    )
+    dhl_parcel_de_closest_drop_point = lib.OptionEnum(
+        "closestDropPoint", bool,
+        meta=dict(category="PUDO", compatible_services=["V01PAK", "V53WPAK", "V62KP"])
+    )
+    dhl_parcel_de_parcel_outlet_routing = lib.OptionEnum(
+        "parcelOutletRouting",
+        meta=dict(compatible_services=["V01PAK", "V53WPAK", "V62KP"])
+    )
+    dhl_parcel_de_postal_delivery_duty_paid = lib.OptionEnum(
+        "postalDeliveryDutyPaid", bool,
+        meta=dict(compatible_services=["V53WPAK"])
+    )
     dhl_parcel_de_postal_charges = lib.OptionEnum("postalCharges", float)
     dhl_parcel_de_post_number = lib.OptionEnum("postNumber")
     dhl_parcel_de_retail_id = lib.OptionEnum("retailID")
@@ -135,18 +196,29 @@ class ShippingOption(lib.Enum):
     dhl_parcel_de_attestation_no = lib.OptionEnum("attestationNo")
     dhl_parcel_de_has_electronic_export_notification = lib.OptionEnum("hasElectronicExportNotification")
     dhl_parcel_de_MRN = lib.OptionEnum("MRN")
-    dhl_parcel_de_locker_id = lib.OptionEnum("lockerID", lib.to_int)
+    dhl_parcel_de_locker_id = lib.OptionEnum(
+        "lockerID", lib.to_int,
+        meta=dict(category="LOCKER", compatible_services=["V01PAK", "V62KP"])
+    )
 
-    dhl_parcel_de_ident_check = lib.OptionEnum("identCheck", ship_req.IdentCheckType)
-    dhl_parcel_de_dhl_retoure = lib.OptionEnum("dhlRetoure", ship_req.DhlRetoureType)
+    dhl_parcel_de_ident_check = lib.OptionEnum(
+        "identCheck", ship_req.IdentCheckType,
+        meta=dict(compatible_services=["V01PAK"])
+    )
+    dhl_parcel_de_dhl_retoure = lib.OptionEnum(
+        "dhlRetoure", ship_req.DhlRetoureType,
+        meta=dict(category="RETURN", compatible_services=["V01PAK", "V62KP"])
+    )
     dhl_parcel_de_visual_check_of_age = lib.OptionEnum(
         "visualCheckOfAge",
-        lib.units.create_enum("VisualCheckOfAge", ["A16", "A18"])  # type: ignore
+        lib.units.create_enum("VisualCheckOfAge", ["A16", "A18"]),  # type: ignore
+        meta=dict(compatible_services=["V01PAK"])
     )
     dhl_parcel_de_endorsement = lib.OptionEnum(
         "endorsement",
         lib.units.create_enum("endorsement", ["RETURN", "SIGNATURE"]),  # type: ignore
-        default="RETURN"
+        default="RETURN",
+        meta=dict(compatible_services=["V01PAK", "V53WPAK", "V62KP", "V66WPI"])
     )
 
     """ Unified Option type mapping """
@@ -198,7 +270,11 @@ class TrackingIncidentReason(lib.Enum):
     # Carrier-caused issues
     carrier_damaged_parcel = ["damaged", "package_damaged", "parcel_damaged"]
     carrier_sorting_error = ["misrouted", "sorting_error", "wrong_route"]
-    carrier_address_not_found = ["address_not_found", "invalid_address", "unknown_address"]
+    carrier_address_not_found = [
+        "address_not_found",
+        "invalid_address",
+        "unknown_address",
+    ]
     carrier_parcel_lost = ["lost", "missing", "not_found"]
     carrier_not_enough_time = ["time_constraint", "insufficient_time"]
     carrier_vehicle_issue = ["vehicle_issue", "transport_problem", "mechanical_issue"]
@@ -206,14 +282,27 @@ class TrackingIncidentReason(lib.Enum):
     # Consignee-caused issues
     consignee_refused = ["refused", "delivery_refused", "recipient_refused"]
     consignee_business_closed = ["business_closed", "closed", "shop_closed"]
-    consignee_not_available = ["not_available", "recipient_not_available", "unavailable"]
+    consignee_not_available = [
+        "not_available",
+        "recipient_not_available",
+        "unavailable",
+    ]
     consignee_not_home = ["not_home", "nobody_home", "recipient_absent"]
     consignee_incorrect_address = ["incorrect_address", "wrong_address", "bad_address"]
     consignee_access_restricted = ["access_restricted", "no_access", "restricted"]
 
     # Customs-related issues
-    customs_delay = ["customs_delay", "customs_hold", "customs_processing", "clearance_delay"]
-    customs_documentation = ["customs_documents", "missing_documents", "documentation_required"]
+    customs_delay = [
+        "customs_delay",
+        "customs_hold",
+        "customs_processing",
+        "clearance_delay",
+    ]
+    customs_documentation = [
+        "customs_documents",
+        "missing_documents",
+        "documentation_required",
+    ]
     customs_duties_unpaid = ["duties_unpaid", "customs_fees", "payment_required"]
 
     # Weather/Force majeure
@@ -222,7 +311,11 @@ class TrackingIncidentReason(lib.Enum):
 
     # Delivery exceptions
     delivery_exception_hold = ["hold", "held", "on_hold", "depot_hold"]
-    delivery_exception_undeliverable = ["undeliverable", "cannot_deliver", "delivery_impossible"]
+    delivery_exception_undeliverable = [
+        "undeliverable",
+        "cannot_deliver",
+        "delivery_impossible",
+    ]
 
     # Other issues
     unknown = []

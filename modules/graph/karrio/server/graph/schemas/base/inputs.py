@@ -79,6 +79,12 @@ class AddressFilter(TemplateFilter):
 
 
 @strawberry.input
+class ProductFilter(TemplateFilter):
+    sku: typing.Optional[str] = strawberry.UNSET
+    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+
+
+@strawberry.input
 class CarrierFilter(utils.Paginated):
     active: typing.Optional[bool] = strawberry.UNSET
     metadata_key: typing.Optional[str] = strawberry.UNSET
@@ -301,30 +307,6 @@ class UpdateDutyInput(DutyInput):
 
 
 @strawberry.input
-class CustomsInput:
-    commodities: typing.List[CommodityInput]
-    certify: typing.Optional[bool] = strawberry.UNSET
-    commercial_invoice: typing.Optional[bool] = strawberry.UNSET
-    content_type: typing.Optional[utils.CustomsContentTypeEnum] = strawberry.UNSET
-    content_description: typing.Optional[str] = strawberry.UNSET
-    incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
-    invoice: typing.Optional[str] = strawberry.UNSET
-    invoice_date: typing.Optional[str] = strawberry.UNSET
-    signer: typing.Optional[str] = strawberry.UNSET
-    duty: typing.Optional[DutyInput] = strawberry.UNSET
-    duty_billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    options: typing.Optional[utils.JSON] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateCustomsInput(CustomsInput):
-    id: typing.Optional[str] = strawberry.UNSET
-    duty: typing.Optional[UpdateDutyInput] = strawberry.UNSET
-    duty_billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    commodities: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET  # type: ignore
-
-
-@strawberry.input
 class PaymentInput:
     account_number: typing.Optional[str] = strawberry.UNSET
     paid_by: typing.Optional[utils.PaidByEnum] = strawberry.UNSET
@@ -338,7 +320,7 @@ class PartialShipmentMutationInput(utils.BaseInput):
     shipper: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     return_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    customs: typing.Optional[UpdateCustomsInput] = strawberry.UNSET
+    customs: typing.Optional[utils.JSON] = strawberry.UNSET
     parcels: typing.Optional[typing.List[UpdateParcelInput]] = strawberry.UNSET
     payment: typing.Optional[PaymentInput] = strawberry.UNSET
     label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
@@ -354,47 +336,67 @@ class ChangeShipmentStatusMutationInput(utils.BaseInput):
 
 
 @strawberry.input
-class CreateAddressTemplateInput(utils.BaseInput):
+class CreateAddressInput(utils.BaseInput):
     label: str
     address: AddressInput
     is_default: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
-class UpdateAddressTemplateInput(CreateAddressTemplateInput):
+class UpdateAddressInput2(CreateAddressInput):
     id: str  # type: ignore
     label: typing.Optional[str]
     address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
 
 
 @strawberry.input
-class CreateCustomsTemplateInput(utils.BaseInput):
-    label: str
-    customs: CustomsInput
-    is_default: typing.Optional[bool] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateCustomsTemplateInput(CreateCustomsTemplateInput):
-    id: str  # type: ignore
-    label: typing.Optional[str] = strawberry.UNSET
-    is_default: typing.Optional[bool] = strawberry.UNSET
-    customs: typing.Optional[UpdateCustomsInput] = strawberry.UNSET  # type: ignore
-
-
-@strawberry.input
-class CreateParcelTemplateInput(utils.BaseInput):
+class CreateParcelInput(utils.BaseInput):
     label: str
     parcel: ParcelInput
     is_default: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
-class UpdateParcelTemplateInput(CreateParcelTemplateInput):
+class UpdateParcelInput2(CreateParcelInput):
     id: str  # type: ignore
     label: typing.Optional[str] = strawberry.UNSET
     is_default: typing.Optional[bool] = strawberry.UNSET
     parcel: typing.Optional[UpdateParcelInput] = strawberry.UNSET
+
+
+@strawberry.input
+class CreateProductInput(utils.BaseInput):
+    label: str
+    weight: float
+    weight_unit: utils.WeightUnitEnum
+    quantity: typing.Optional[int] = 1
+    sku: typing.Optional[str] = strawberry.UNSET
+    title: typing.Optional[str] = strawberry.UNSET
+    hs_code: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    value_amount: typing.Optional[float] = strawberry.UNSET
+    value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    is_default: typing.Optional[bool] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateProductInput(utils.BaseInput):
+    id: str
+    label: typing.Optional[str] = strawberry.UNSET
+    weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    quantity: typing.Optional[int] = strawberry.UNSET
+    sku: typing.Optional[str] = strawberry.UNSET
+    title: typing.Optional[str] = strawberry.UNSET
+    hs_code: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    value_amount: typing.Optional[float] = strawberry.UNSET
+    value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    is_default: typing.Optional[bool] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -493,6 +495,7 @@ class CreateRateSheetMutationInput(utils.BaseInput):
     surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
     service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+    origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
@@ -505,6 +508,7 @@ class UpdateRateSheetMutationInput(utils.BaseInput):
     surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
     service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+    origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
     remove_missing_services: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 

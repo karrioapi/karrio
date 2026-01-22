@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://schema.post.be/shm/deepintegration/v5/international"
+  targetNamespace="http://schema.post.be/shm/deepintegration/v5/international"
+  xmlns:tns="http://schema.post.be/shm/deepintegration/v5/international"
+  xmlns:common="http://schema.post.be/shm/deepintegration/v5/common">
+
+  <xs:import namespace="http://schema.post.be/shm/deepintegration/v5/common"
+    schemaLocation="common_v5.xsd" />
+
+  <xs:simpleType name="ShipmentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SAMPLE" />
+      <xs:enumeration value="GIFT" />
+      <xs:enumeration value="GOODS" />
+      <xs:enumeration value="OTHER" />
+      <xs:enumeration value="DOCUMENTS" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ParcelReturnInstructionsType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ABANDONED" />
+      <xs:enumeration value="RTA" />
+      <xs:enumeration value="RTS" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ContentDescriptionType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="50" />
+      <xs:pattern value=".*[^\s].*" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="RequestedDeliveryDateType">
+    <xs:restriction base="xs:date">
+      <xs:annotation>
+        <xs:documentation xml:lang="en"> Element holding the date when the parcel is expected to be
+          delivered. The format is the standard XML date format of yyyy-mm-dd. The date chosen must
+          be a normal delivery day of bpost and the parcel must be deposited with bpost before the
+          cutoff the day before this date. If the date provided is a Saturday then the Saturday
+          Delivery service is automatically added. </xs:documentation>
+      </xs:annotation>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:complexType name="CustomsType">
+    <xs:sequence>
+      <xs:element name="parcelValue" type="common:EuroCentAmount" minOccurs="0" />
+      <xs:element name="contentDescription" type="tns:ContentDescriptionType" minOccurs="0" />
+      <xs:element name="shipmentType" type="tns:ShipmentType" minOccurs="0" />
+      <xs:element name="parcelReturnInstructions" type="tns:ParcelReturnInstructionsType" />
+      <xs:element name="privateAddress" type="xs:boolean" />
+      <xs:element name="currency" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Currency (iso code) of the value of the piece</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="3" />
+            <xs:maxLength value="3" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="amtPostagePaidByAddresse" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Amount postage paid by Addresse</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:decimal">
+            <xs:maxInclusive value="999.99" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InternationalBoxType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"> Type for an international box. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="international" type="tns:InternationalDeliveryMethodType" />
+        <xs:element name="atIntlHome" type="tns:InternationalDeliveryMethodType" />
+        <xs:element ref="atIntlPugo" />
+        <xs:element ref="atIntlParcelDepot" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InternationalDeliveryMethodType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"> Type for an international delivery method. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="product" type="xs:string" />
+      <xs:element name="options" type="common:OptionsType" minOccurs="0" />
+      <xs:element name="receiver" type="common:Party" />
+      <xs:element name="parcelWeight" type="common:WeightInGrams" />
+      <xs:element name="parcelHeight" type="common:HeightInCm" minOccurs="0" />
+      <xs:element name="parcelLength" type="common:LengthInCm" minOccurs="0" />
+      <xs:element name="parcelWidth" type="common:WidthInCm" minOccurs="0" />
+      <xs:element name="customsInfo" type="tns:CustomsType" minOccurs="0" />
+      <xs:element name="parcelContents" type="tns:ParcelContentDetails" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="atIntlPugo">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="InternationalDeliveryMethodType">
+          <xs:sequence>
+            <xs:element name="pugoId" type="common:RcCode" minOccurs="0" />
+            <xs:element name="pugoName" type="common:ReceiverNameType" />
+            <xs:element name="pugoAddress" type="common:AddressType" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="atIntlParcelDepot">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="InternationalDeliveryMethodType">
+          <xs:sequence>
+            <xs:element name="parcelsDepotId" type="common:RcCode" />
+            <xs:element name="parcelsDepotName" type="common:ReceiverNameType" />
+            <xs:element name="parcelsDepotAddress" type="common:AddressType" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="ParcelContentDetails">
+    <xs:sequence>
+      <xs:annotation>
+        <xs:documentation xml:lang="en">Parcel Content Detail list </xs:documentation>
+      </xs:annotation>
+      <xs:element name="parcelContent" type="tns:ParcelContentDetail" minOccurs="0" maxOccurs="10" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ParcelContentDetail">
+    <xs:sequence>
+      <xs:element name="numberOfItemType" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>Number of pieces of the same type</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="valueOfItem" type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>Value of all pieces of the same type</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="itemDescription" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Description of the pieces</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="nettoWeight" type="xs:decimal">
+        <xs:annotation>
+          <xs:documentation>The weight of all pieces of the same type</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="hsTariffCode">
+        <xs:annotation>
+          <xs:documentation>Harmonized System Tariff code indicating the type of goods for this
+            piece. It should be a text field instead of select option</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1" />
+            <xs:maxInclusive value="999999999" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="originOfGoods">
+        <xs:annotation>
+          <xs:documentation>Country of origin of the goods (iso code)</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="2" />
+            <xs:maxLength value="2" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

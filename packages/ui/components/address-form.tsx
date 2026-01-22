@@ -1,18 +1,77 @@
 import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 import { EnhancedSelect } from "./enhanced-select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
-import { ChevronDown, ChevronUp, MapPin } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { AddressType, DEFAULT_ADDRESS_CONTENT } from "@karrio/types";
 import { COUNTRY_WITH_POSTAL_CODE, isEqual } from "@karrio/lib";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { AddressCombobox } from "@karrio/ui/components/address-combobox";
 import { CountrySelect } from "@karrio/ui/components/country-select";
+
+/**
+ * AddressForm - React Hook Form Implementation
+ *
+ * This form uses react-hook-form for performance optimization, avoiding
+ * re-renders on every keystroke. Key features:
+ *
+ * - Zod schema validation with conditional required fields (postal_code, state_code)
+ * - Template selection via AddressCombobox that can populate all fields
+ * - Country-dependent state/province selector (dropdown vs input)
+ * - Postal code format validation per country
+ * - Phone number formatting
+ * - Advanced options (tax IDs) in collapsible section
+ * - Imperative handle for external form submission
+ *
+ * The form uses uncontrolled inputs where possible to minimize re-renders,
+ * with controlled components only where necessary (selects, checkboxes).
+ */
+
+// Postal code validation patterns by country
+const POSTAL_CODE_PATTERNS: Record<string, RegExp> = {
+  US: /^\d{5}(-\d{4})?$/,
+  CA: /^[A-Za-z]\d[A-Za-z] ?\d[A-Za-z]\d$/,
+  GB: /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i,
+  DE: /^\d{5}$/,
+  FR: /^\d{5}$/,
+  AU: /^\d{4}$/,
+  JP: /^\d{3}-\d{4}$/,
+};
+
+// Zod schema for address validation
+// Note: postal_code and state_code requirements are validated dynamically
+const addressSchema = z.object({
+  person_name: z.string().min(1, "Contact person is required"),
+  company_name: z.string().optional(),
+  country_code: z.string().min(1, "Country is required"),
+  address_line1: z.string().min(1, "Street address is required"),
+  address_line2: z.string().optional(),
+  city: z.string().min(1, "City is required"),
+  state_code: z.string().optional(),
+  postal_code: z.string().optional(),
+  email: z.string().email("Invalid email format").optional().or(z.literal("")),
+  phone_number: z.string().optional(),
+  residential: z.boolean().optional(),
+  federal_tax_id: z.string().max(20, "Max 20 characters").optional(),
+  state_tax_id: z.string().max(20, "Max 20 characters").optional(),
+});
+
+type AddressFormValues = z.infer<typeof addressSchema>;
 
 interface AddressFormProps {
   value?: Partial<AddressType>;
@@ -28,6 +87,33 @@ export interface AddressFormRef {
   submit: () => Promise<void>;
 }
 
+/**
+ * Phone number formatting helper
+ * Formats US/CA phone numbers, leaves others unchanged
+ */
+const formatPhoneNumber = (phone: string, country: string): string => {
+  if (!phone) return phone;
+  const digits = phone.replace(/\D/g, "");
+
+  if (country === "US" || country === "CA") {
+    if (digits.length === 10) {
+      return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    } else if (digits.length === 11 && digits[0] === "1") {
+      return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+    }
+  }
+  return phone;
+};
+
+/**
+ * Validates postal code format based on country
+ */
+const validatePostalCode = (postal: string, country: string, isRequired: boolean): boolean => {
+  if (!postal) return !isRequired;
+  const pattern = POSTAL_CODE_PATTERNS[country];
+  return pattern ? pattern.test(postal) : true;
+};
+
 export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
   value = DEFAULT_ADDRESS_CONTENT,
   onChange,
@@ -38,109 +124,152 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
   className = "",
 }, ref) => {
   const { references } = useAPIMetadata();
-  const [address, setAddress] = React.useState<Partial<AddressType>>(value || DEFAULT_ADDRESS_CONTENT);
   const [advancedExpanded, setAdvancedExpanded] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [formKey, setFormKey] = React.useState<string>(`form-${Date.now()}`);
   const { toast } = useToast();
 
+  // Initialize form with react-hook-form
+  const form = useForm<AddressFormValues>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      person_name: value?.person_name || "",
+      company_name: value?.company_name || "",
+      country_code: value?.country_code || "",
+      address_line1: value?.address_line1 || "",
+      address_line2: value?.address_line2 || "",
+      city: value?.city || "",
+      state_code: value?.state_code || "",
+      postal_code: value?.postal_code || "",
+      email: value?.email || "",
+      phone_number: value?.phone_number || "",
+      residential: value?.residential || false,
+      federal_tax_id: value?.federal_tax_id || "",
+      state_tax_id: value?.state_tax_id || "",
+    },
+    mode: "onBlur", // Validate on blur for better UX
+  });
+
+  const countryCode = form.watch("country_code");
+  const postalCode = form.watch("postal_code");
+
+  // Derived validation requirements based on country
+  const isPostalRequired = COUNTRY_WITH_POSTAL_CODE.includes(countryCode || "");
+  const isStateRequired = Object.keys(references.states || {}).includes(countryCode || "");
+
+  // Reset form when value prop changes (e.g., template selection from parent)
   React.useEffect(() => {
-    setAddress(value || DEFAULT_ADDRESS_CONTENT);
-  }, [value]);
+    if (value) {
+      form.reset({
+        person_name: value.person_name || "",
+        company_name: value.company_name || "",
+        country_code: value.country_code || "",
+        address_line1: value.address_line1 || "",
+        address_line2: value.address_line2 || "",
+        city: value.city || "",
+        state_code: value.state_code || "",
+        postal_code: value.postal_code || "",
+        email: value.email || "",
+        phone_number: value.phone_number || "",
+        residential: value.residential || false,
+        federal_tax_id: value.federal_tax_id || "",
+        state_tax_id: value.state_tax_id || "",
+      });
+    }
+  }, [value, form]);
 
-  const handleChange = (field: string, fieldValue: string | boolean) => {
-    const updatedAddress = { ...address, [field]: fieldValue };
-    setAddress(updatedAddress);
-    onChange?.(updatedAddress);
-  };
+  // Notify parent of changes (debounced via form subscription)
+  React.useEffect(() => {
+    const subscription = form.watch((data) => {
+      onChange?.(data as Partial<AddressType>);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onChange]);
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  // Handle form submission
+  const handleSubmit = async (data: AddressFormValues) => {
     if (!onSubmit) return;
+
+    // Additional validation for country-dependent required fields
+    if (isPostalRequired && !data.postal_code) {
+      form.setError("postal_code", { message: "Postal code is required" });
+      return;
+    }
+
+    if (isStateRequired && !data.state_code) {
+      form.setError("state_code", { message: "State/Province is required" });
+      return;
+    }
+
+    // Validate postal code format
+    if (data.postal_code && !validatePostalCode(data.postal_code, data.country_code, isPostalRequired)) {
+      form.setError("postal_code", { message: "Invalid postal code format" });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      await onSubmit(address);
+      await onSubmit(data as Partial<AddressType>);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  React.useImperativeHandle(ref, () => ({
-    submit: () => handleSubmit(),
-  }));
-
-  const isPostalRequired = COUNTRY_WITH_POSTAL_CODE.includes(address.country_code || "");
-  const isStateRequired = Object.keys(references.states || {}).includes(address.country_code || "");
-  
-  const missingRequired = !address.person_name || !address.country_code || !address.address_line1 || !address.city || (isPostalRequired && !address.postal_code) || (isStateRequired && !address.state_code);
-  
-  // Allow saving if there are changes OR if address has meaningful content (for new addresses)
-  const hasChanges = !isEqual(value, address) || (
-    address.person_name || address.country_code || address.address_line1 || address.city
-  );
-
-
-  // Enhanced postal code validation
-  const validatePostalCode = (postal: string, country: string) => {
-    if (!postal || !isPostalRequired) return true;
-
-    const patterns: Record<string, RegExp> = {
-      US: /^\d{5}(-\d{4})?$/,
-      CA: /^[A-Za-z]\d[A-Za-z] ?\d[A-Za-z]\d$/,
-      GB: /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i,
-      DE: /^\d{5}$/,
-      FR: /^\d{5}$/,
-      AU: /^\d{4}$/,
-      JP: /^\d{3}-\d{4}$/,
-    };
-
-    return patterns[country]?.test(postal) ?? true;
-  };
-
-  // Phone number formatting helper
-  const formatPhoneNumber = (phone: string, country: string) => {
-    if (!phone) return phone;
-
-    // Remove all non-digits
-    const digits = phone.replace(/\D/g, '');
-
-    // Format based on country
-    if (country === 'US' || country === 'CA') {
-      if (digits.length === 10) {
-        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-      } else if (digits.length === 11 && digits[0] === '1') {
-        return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+  // Handle template selection from AddressCombobox
+  const handleTemplateSelection = (addressData: Partial<AddressType>, isTemplateSelection: boolean) => {
+    if (isTemplateSelection) {
+      // Full template selection - reset entire form
+      form.reset({
+        person_name: addressData.person_name || "",
+        company_name: addressData.company_name || "",
+        country_code: addressData.country_code || "",
+        address_line1: addressData.address_line1 || "",
+        address_line2: addressData.address_line2 || "",
+        city: addressData.city || "",
+        state_code: addressData.state_code || "",
+        postal_code: addressData.postal_code || "",
+        email: addressData.email || "",
+        phone_number: addressData.phone_number || "",
+        residential: addressData.residential || false,
+        federal_tax_id: addressData.federal_tax_id || "",
+        state_tax_id: addressData.state_tax_id || "",
+      });
+    } else {
+      // Just person_name change from typing
+      if (addressData.person_name !== undefined) {
+        form.setValue("person_name", addressData.person_name || "");
       }
     }
-
-    return phone; // Return original if no formatting applied
   };
 
+  // Expose submit method via ref for external triggering
+  React.useImperativeHandle(ref, () => ({
+    submit: async () => {
+      const isValid = await form.trigger();
+      if (isValid) {
+        const data = form.getValues();
+        await handleSubmit(data);
+      }
+    },
+  }));
+
+  // Check for form validity and changes
+  const formValues = form.watch();
+  const hasChanges = !isEqual(value, formValues);
+  const missingRequired = !formValues.person_name || !formValues.country_code ||
+    !formValues.address_line1 || !formValues.city ||
+    (isPostalRequired && !formValues.postal_code) ||
+    (isStateRequired && !formValues.state_code);
 
   return (
-    <form key={formKey} onSubmit={handleSubmit} className={`space-y-4 ${className}`}>
-      {/* Contact Information */}
-      <div className="space-y-4">
-        <div className="space-y-2">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className={`space-y-3 ${className}`}>
+        {/* Contact Person - full width with template autocomplete */}
+        <div className="space-y-1">
           <AddressCombobox
             name="person_name"
             label="Contact Person"
-            value={address.person_name || ""}
-            onValueChange={(addressData, isTemplateSelection) => {
-              if (isTemplateSelection) {
-                // Full address template selected, populate all fields atomically
-                const updatedAddress = { ...address, ...addressData };
-                setAddress(updatedAddress);
-                onChange?.(updatedAddress);
-                setFormKey(`form-${Date.now()}`);
-              } else {
-                // User typed in the field, only update person_name
-                if (addressData.person_name !== undefined) {
-                  handleChange("person_name", addressData.person_name || "");
-                }
-              }
-            }}
+            value={formValues.person_name || ""}
+            onValueChange={handleTemplateSelection}
             placeholder="Full name"
             required
             disabled={disabled}
@@ -148,221 +277,301 @@ export const AddressForm = React.forwardRef<AddressFormRef, AddressFormProps>(({
             wrapperClass="p-0"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="company_name">Company</Label>
-          <Input
-            id="company_name"
-            value={address.company_name || ""}
-            onChange={(e) => handleChange("company_name", e.target.value)}
-            placeholder="Company name"
-            disabled={disabled}
-            className="h-8"
-          />
-        </div>
-      </div>
 
-      {/* Country */}
-      <div className="space-y-1">
-        <Label htmlFor="country_code">
-          Country <span className="text-red-500">*</span>
-        </Label>
-        <CountrySelect
-          value={address.country_code || ""}
-          onValueChange={(value) => handleChange("country_code", value)}
-          disabled={disabled}
-          noWrapper={true}
+        {/* Company - full width */}
+        <FormField
+          control={form.control}
+          name="company_name"
+          render={({ field }) => (
+            <FormItem className="space-y-1">
+              <FormLabel className="text-xs">Company</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Company name"
+                  disabled={disabled}
+                  className="h-8"
+                />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
         />
-      </div>
 
-      {/* Address Lines */}
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="address_line1">
-            Street Address <span className="text-red-500">*</span>
+        {/* Country - full width */}
+        <div className="space-y-1">
+          <Label htmlFor="country_code" className="text-xs">
+            Country <span className="text-red-500">*</span>
           </Label>
-          <Input
-            id="address_line1"
-            value={address.address_line1 || ""}
-            onChange={(e) => handleChange("address_line1", e.target.value)}
-            placeholder="Start typing your address..."
-            required
+          <CountrySelect
+            value={formValues.country_code || ""}
+            onValueChange={(val) => form.setValue("country_code", val, { shouldValidate: true })}
             disabled={disabled}
-            className="h-8"
+            noWrapper={true}
           />
+          {form.formState.errors.country_code && (
+            <p className="text-xs text-red-500">{form.formState.errors.country_code.message}</p>
+          )}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="address_line2">Address Line 2</Label>
-          <Input
-            id="address_line2"
-            value={address.address_line2 || ""}
-            onChange={(e) => handleChange("address_line2", e.target.value)}
-            placeholder="Apartment, suite, etc. (optional)"
-            disabled={disabled}
-            className="h-8"
-          />
-        </div>
-      </div>
 
-      {/* City, State, Postal */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="city">
-            City <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="city"
-            value={address.city || ""}
-            onChange={(e) => handleChange("city", e.target.value)}
-            placeholder="City"
-            required
-            disabled={disabled}
-            className="h-8"
+        {/* Street Address - full width */}
+        <FormField
+          control={form.control}
+          name="address_line1"
+          render={({ field }) => (
+            <FormItem className="space-y-1">
+              <FormLabel className="text-xs">
+                Street Address <span className="text-red-500">*</span>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Street address"
+                  disabled={disabled}
+                  className="h-8"
+                />
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        {/* Address Line 2 + City - 2 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="address_line2"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-xs">Address Line 2</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Apt, suite, etc. (optional)"
+                    disabled={disabled}
+                    className="h-8"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-xs">
+                  City <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="City"
+                    disabled={disabled}
+                    className="h-8"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
           />
         </div>
-          {address.country_code && references.states?.[address.country_code] ? (
+
+        {/* State/Province + Postal Code - 2 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {countryCode && references.states?.[countryCode] ? (
             <EnhancedSelect
               name="state_code"
               label="State/Province"
-              value={address.state_code || ""}
-              onValueChange={(value) => handleChange("state_code", value)}
+              value={formValues.state_code || ""}
+              onValueChange={(val) => form.setValue("state_code", val, { shouldValidate: true })}
               placeholder="Select state"
               required={isStateRequired}
               disabled={disabled}
               className="h-8"
-              labelClassName=""
-              options={Object.entries(references.states[address.country_code] || {}).map(([code, name]) => ({
+              labelClassName="text-xs"
+              options={Object.entries(references.states[countryCode] || {}).map(([code, name]) => ({
                 value: code,
                 label: String(name)
               }))}
             />
           ) : (
-            <div className="space-y-2">
-              <Label htmlFor="state_code">
-                State/Province {isStateRequired && <span className="text-red-500">*</span>}
-              </Label>
-              <Input
-                id="state_code"
-                value={address.state_code || ""}
-                onChange={(e) => handleChange("state_code", e.target.value)}
-                placeholder="State/Province"
-                required={isStateRequired}
-                disabled={disabled}
-                className="h-8"
-              />
-            </div>
-          )}
-        <div className="space-y-2">
-          <Label htmlFor="postal_code">
-            Postal Code {isPostalRequired && <span className="text-red-500">*</span>}
-          </Label>
-          <div className="relative">
-            <Input
-              id="postal_code"
-              value={address.postal_code || ""}
-              onChange={(e) => handleChange("postal_code", e.target.value)}
-              placeholder="Postal code"
-              required={isPostalRequired}
-              disabled={disabled}
-              className={`h-8 ${address.postal_code && !validatePostalCode(address.postal_code, address.country_code || "")
-                ? "border-red-500 focus:border-red-500"
-                : ""
-                }`}
+            <FormField
+              control={form.control}
+              name="state_code"
+              render={({ field }) => (
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-xs">
+                    State/Province {isStateRequired && <span className="text-red-500">*</span>}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="State/Province"
+                      disabled={disabled}
+                      className="h-8"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
             />
-            {address.postal_code && !validatePostalCode(address.postal_code, address.country_code || "") && (
-              <p className="text-xs text-red-500 mt-1">
-                Please enter a valid postal code for {references.countries?.[address.country_code || ""] || "this country"}
-              </p>
+          )}
+          <FormField
+            control={form.control}
+            name="postal_code"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-xs">
+                  Postal Code {isPostalRequired && <span className="text-red-500">*</span>}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Postal code"
+                    disabled={disabled}
+                    className={`h-8 ${
+                      postalCode && !validatePostalCode(postalCode, countryCode || "", isPostalRequired)
+                        ? "border-red-500 focus:border-red-500"
+                        : ""
+                    }`}
+                  />
+                </FormControl>
+                {postalCode && !validatePostalCode(postalCode, countryCode || "", isPostalRequired) && (
+                  <p className="text-xs text-red-500 mt-1">Invalid postal code format</p>
+                )}
+                <FormMessage className="text-xs" />
+              </FormItem>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Details */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={address.email || ""}
-            onChange={(e) => handleChange("email", e.target.value)}
-            placeholder="contact@company.com"
-            disabled={disabled}
-            className="h-8"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="phone_number">Phone</Label>
-          <Input
-            id="phone_number"
-            value={address.phone_number || ""}
-            onChange={(e) => {
-              const formatted = formatPhoneNumber(e.target.value, address.country_code || "");
-              handleChange("phone_number", formatted);
-            }}
-            placeholder="+1 (555) 123-4567"
-            disabled={disabled}
-            className="h-8"
+
+        {/* Email + Phone - 2 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-xs">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="email"
+                    placeholder="contact@company.com"
+                    disabled={disabled}
+                    className="h-8"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone_number"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-xs">Phone</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="+1 (555) 123-4567"
+                    disabled={disabled}
+                    className="h-8"
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value, countryCode || "");
+                      field.onChange(formatted);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
           />
         </div>
-      </div>
 
-      {/* Residential Checkbox */}
-      <div className="flex items-center space-x-2 pt-4">
-        <Checkbox
-          id="residential"
-          checked={address.residential || false}
-          onCheckedChange={(checked) => handleChange("residential", !!checked)}
-          disabled={disabled}
+        {/* Residential Checkbox */}
+        <FormField
+          control={form.control}
+          name="residential"
+          render={({ field }) => (
+            <FormItem className="flex items-center space-x-2 pt-2">
+              <FormControl>
+                <Checkbox
+                  id="residential"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  disabled={disabled}
+                />
+              </FormControl>
+              <Label htmlFor="residential" className="text-xs">Residential address</Label>
+            </FormItem>
+          )}
         />
-        <Label htmlFor="residential">Residential address</Label>
-      </div>
 
-      {/* Advanced Fields */}
-      <Collapsible open={advancedExpanded} onOpenChange={setAdvancedExpanded}>
-        <CollapsibleTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 p-0 h-auto"
-          >
-            Advanced Options
-            {advancedExpanded ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="space-y-6 mt-2 pl-4 border-l-2 border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <Label htmlFor="federal_tax_id">Federal Tax ID</Label>
-              <Input
-                id="federal_tax_id"
-                value={address.federal_tax_id || ""}
-                onChange={(e) => handleChange("federal_tax_id", e.target.value)}
-                placeholder="Federal tax ID"
-                maxLength={20}
-                disabled={disabled}
+        {/* Advanced Fields */}
+        <Collapsible open={advancedExpanded} onOpenChange={setAdvancedExpanded}>
+          <CollapsibleTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              className="flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 p-0 h-auto"
+            >
+              Advanced Options
+              {advancedExpanded ? (
+                <ChevronUp className="h-3 w-3" />
+              ) : (
+                <ChevronDown className="h-3 w-3" />
+              )}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-3 mt-2 pl-3 border-l-2 border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="federal_tax_id"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-xs">Federal Tax ID</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Federal tax ID"
+                        maxLength={20}
+                        disabled={disabled}
+                        className="h-8"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="state_tax_id"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-xs">State Tax ID</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="State tax ID"
+                        maxLength={20}
+                        disabled={disabled}
+                        className="h-8"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
               />
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="state_tax_id">State Tax ID</Label>
-              <Input
-                id="state_tax_id"
-                value={address.state_tax_id || ""}
-                onChange={(e) => handleChange("state_tax_id", e.target.value)}
-                placeholder="State tax ID"
-                maxLength={20}
-                disabled={disabled}
-              />
-            </div>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-    </form>
+          </CollapsibleContent>
+        </Collapsible>
+      </form>
+    </Form>
   );
 });
 

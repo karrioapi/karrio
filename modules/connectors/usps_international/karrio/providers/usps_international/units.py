@@ -175,13 +175,13 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
-    usps_hazardous_materials_class_7_radioactive_materials = lib.OptionEnum("813", bool)
-    usps_hazardous_materials_class_9_unmarked_lithium_batteries = lib.OptionEnum("820", bool)
-    usps_hazardous_materials_division_6_2_biological_materials = lib.OptionEnum("826", bool)
-    usps_hazardous_materials = lib.OptionEnum("857", bool)
-    usps_insurance_below_500 = lib.OptionEnum("930", float)
-    usps_insurance_above_500 = lib.OptionEnum("931", float)
-    usps_return_receipt = lib.OptionEnum("955", bool)
+    usps_hazardous_materials_class_7_radioactive_materials = lib.OptionEnum("813", bool, meta=dict(category="DANGEROUS_GOOD"))
+    usps_hazardous_materials_class_9_unmarked_lithium_batteries = lib.OptionEnum("820", bool, meta=dict(category="DANGEROUS_GOOD"))
+    usps_hazardous_materials_division_6_2_biological_materials = lib.OptionEnum("826", bool, meta=dict(category="DANGEROUS_GOOD"))
+    usps_hazardous_materials = lib.OptionEnum("857", bool, meta=dict(category="DANGEROUS_GOOD"))
+    usps_insurance_below_500 = lib.OptionEnum("930", float, meta=dict(category="INSURANCE"))
+    usps_insurance_above_500 = lib.OptionEnum("931", float, meta=dict(category="INSURANCE"))
+    usps_return_receipt = lib.OptionEnum("955", bool, meta=dict(category="RETURN"))
     # fmt: on
 
     """ Custom Options """
@@ -189,11 +189,11 @@ class ShippingOption(lib.Enum):
     usps_facility_id = lib.OptionEnum("facilityId")
     usps_machinable_piece = lib.OptionEnum("machinable", bool)
     usps_price_type = lib.OptionEnum("priceType", PriceTypeEnum)
-    usps_hold_for_pickup = lib.OptionEnum("holdForPickup", bool)
-    usps_carrier_release = lib.OptionEnum("carrierRelease", bool)
+    usps_hold_for_pickup = lib.OptionEnum("holdForPickup", bool, meta=dict(category="PUDO"))
+    usps_carrier_release = lib.OptionEnum("carrierRelease", bool, meta=dict(category="DELIVERY_OPTIONS"))
     usps_processing_category = lib.OptionEnum("processingCategory")
     usps_rate_indicator = lib.OptionEnum("rateIndicator", RateIndicator)
-    usps_physical_signature_required = lib.OptionEnum("physicalSignatureRequired", bool)
+    usps_physical_signature_required = lib.OptionEnum("physicalSignatureRequired", bool, meta=dict(category="SIGNATURE"))
     usps_extra_services = lib.OptionEnum("extraServices", list)
     usps_shipping_filter = lib.OptionEnum("shippingFilter", lib.units.create_enum("shippingFilter", ["PRICE"]))
 

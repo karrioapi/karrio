@@ -45,15 +45,81 @@ This document outlines a comprehensive architectural upgrade to the Karrio carri
 
 ### Key Design Decisions
 
+#### Architecture Decisions
 1. **Brokered configs are operational only** - No credential overrides, only operational settings
-2. **System credentials never exposed** - BrokeredConnection.credentials always returns `None`; gateway accesses system_connection.credentials directly
+2. **System credentials never exposed** - BrokeredConnection.credentials always returns `None`; gateway accesses `_get_credentials()` internally
 3. **Capabilities are overridable** - Brokered connections can restrict/modify capabilities (e.g., disable rating)
-4. **Implicit visibility** - BrokeredConnection existence grants access; AccountConnection in OSS is system-wide accessible (Insiders: org-scoped)
+4. **Implicit visibility** - BrokeredConnection existence grants access; Carrier in OSS is system-wide accessible (Insiders: org-scoped via CarrierLink)
 5. **Rate sheets inherited** - Brokered uses system connection's rate sheet as-is
 6. **Unified REST API** - Single schema, GraphQL exposes three types separately
-7. **Pattern-based migration** - Detect "system-like" carriers for automatic conversion
+7. **Pattern-based migration** - Detect "system-like" carriers (is_system=True) for automatic conversion
 8. **Unified ID prefix** - All connection types use `car_xxx` prefix for consistency
 9. **Simple property names** - BrokeredConnection uses `config`, `carrier_id`, `display_name`, `capabilities` (not `effective_*`)
+
+#### Model & Naming Decisions
+10. **Keep Carrier model name** - Do NOT rename to AccountConnection; remove `is_system`, `active_users`, `active_orgs` fields
+11. **Single utility module** - Consolidate GatewayMixin, UnifiedConnection, ConnectionResolver into single `carriers.py` utility with `resolve_carrier()` and `create_snapshot()` functions
+12. **Gateway logic on models** - Each model (Carrier, SystemConnection, BrokeredConnection) keeps its own `gateway` property
+13. **Complete gateway.Carriers replacement** - `gateway.Connections` completely replaces `gateway.Carriers` (no alias)
+14. **Models-only exports** - Export SystemConnection, BrokeredConnection, Carrier; keep utilities internal
+
+#### Migration Decisions
+15. **MOVE data, not copy** - System carriers are MOVED to SystemConnection table (deleted from Carrier after migration)
+16. **Copy CarrierConfig to BrokeredConnection** - User/org-specific CarrierConfig.config migrated to BrokeredConnection.config_overrides
+17. **Delete CarrierConfig table** - Remove CarrierConfig model and table in same migration
+18. **Prefer orgs over users** - In Insiders mode: create BrokeredConnections for active_orgs only; OSS: active_users only
+19. **Unused system carriers preserved** - System carriers with no active_users/active_orgs still become SystemConnection (can be enabled later)
+20. **Django ORM migrations only** - No raw SQL; regenerate fresh migrations
+
+#### Legacy FK Decisions
+21. **FK → JSONField conversion** - Remove all carrier FKs (pickup_carrier, tracking_carrier, etc.) and replace with `carrier_snapshot` JSONField
+22. **Drop Shipment.carriers M2M** - Remove entirely; `selected_rate` JSONField already contains carrier info
+23. **Carrier snapshot minimal data** - Store: connection_id, connection_type, carrier_code, carrier_id, carrier_name, test_mode (no capabilities, no config)
+24. **Visibility via CarrierLink only** - Remove active_users/active_orgs M2M; OSS: all carriers visible; Insiders: org-scoped via CarrierLink
+25. **Orgs package in same PR** - Create BrokeredConnectionLink in orgs package as part of this migration
+
+#### Implementation Details
+26. **Utility in core/utils.py** - Add `resolve_carrier()` and `create_snapshot()` functions to existing core utils module
+27. **Org brokered created_by is null** - Org-scoped BrokeredConnections have created_by=null; access via BrokeredConnectionLink
+28. **Simple snapshot, no fallback ID** - Snapshot contains connection_id only; if connection deleted, use snapshot for display only
+29. **resolve_carrier() returns None** - When connection not found or access denied, return None (caller handles)
+30. **Brokered snapshot uses system ID** - When BrokeredConnection is used, snapshot stores SystemConnection ID (stable if brokered deleted)
+31. **Connection type values** - Use "account", "system", "brokered" as connection_type values in snapshots
+32. **SystemConnection.created_by** - Nullable FK(User, on_delete=SET_NULL) to track admin who created it
+33. **Brokered resolution with system ID** - When resolving type='brokered' snapshot: find user's BrokeredConnection for that SystemConnection; return it if found, else return SystemConnection
+34. **Brokered snapshot uses computed values** - Snapshot stores system.id as connection_id but uses brokered's computed carrier_id, carrier_name (respects overrides)
+35. **Connections API: list() and first()** - Keep simple: `list()` returns all matching, `first()` returns first match
+36. **Forward-only migration** - No reverse migration. Data is moved. Manual intervention needed for rollback.
+
+### Areas Requiring Updates (Carrier References)
+
+The following files/modules reference the Carrier model and will need updates:
+
+**Core Module:**
+- `modules/core/karrio/server/core/gateway.py` - Main gateway.Carriers class
+- `modules/core/karrio/server/core/filters.py` - Carrier filtering
+- `modules/core/karrio/server/providers/serializers/base.py` - Carrier serializers
+- `modules/core/karrio/server/providers/views/carriers.py` - Carrier REST views
+- `modules/core/karrio/server/providers/admin.py` - Django admin
+
+**Manager Module:**
+- `modules/manager/karrio/server/manager/models.py` - Pickup, Tracking, Shipment, etc.
+- `modules/manager/karrio/server/manager/serializers/shipment.py` - Shipment serializers
+
+**Graph Module:**
+- `modules/graph/karrio/server/graph/schemas/base/types.py` - GraphQL types
+- `modules/graph/karrio/server/graph/schemas/base/mutations.py` - GraphQL mutations
+- `modules/graph/karrio/server/graph/utils.py` - GraphQL utilities
+
+**Orgs Module (Insiders):**
+- `ee/insiders/modules/orgs/karrio/server/orgs/models.py` - Organization model with system_carriers M2M
+- `ee/insiders/modules/admin/karrio/server/admin/schemas/` - Admin GraphQL schemas
+
+**Pricing Module:**
+- `modules/pricing/karrio/server/pricing/models.py` - Surcharge carrier accounts
+
+**Data Module:**
+- `modules/data/karrio/server/data/resources/trackers.py` - Tracker resources
 
 ---
 

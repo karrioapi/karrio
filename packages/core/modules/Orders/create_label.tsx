@@ -2,6 +2,7 @@
 import {
   AddressType,
   CommodityType,
+  CustomsCommodityType,
   CURRENCY_OPTIONS,
   CustomsType,
   DEFAULT_CUSTOMS_CONTENT,
@@ -153,7 +154,7 @@ export default function Page() {
         .map(({ node: { line_items } }) => line_items)
         .flat();
     };
-    const getParent = (id: string | null) => {
+    const getParent = (id: string | null | undefined) => {
       return getItems().find((item) => item.id === id);
     };
     const getOrder = (item_id?: string | null) => {
@@ -178,10 +179,11 @@ export default function Page() {
 
       return parent_quantity - packed_quantity;
     };
-    const isPackedItem = (cdt: CommodityType, shipment: ShipmentType) => {
+    const isPackedItem = (cdt: CommodityType | CustomsCommodityType, shipment: ShipmentType) => {
+      const parentId = "parent_id" in cdt ? cdt.parent_id : null;
       const item = getShipmentCommodities(shipment).find(
         (item) =>
-          (!!cdt.parent_id && cdt.parent_id === item.parent_id) ||
+          (!!parentId && parentId === item.parent_id) ||
           (!!cdt.hs_code && cdt.hs_code === cdt.hs_code) ||
           (!!cdt.sku && cdt.sku === item.sku),
       );
@@ -613,7 +615,7 @@ export default function Page() {
                               header="Edit package"
                               onSubmit={mutation.updateParcel(
                                 pkg_index,
-                                pkg.id,
+                                pkg.id ?? undefined,
                               )}
                               parcel={pkg}
                               shipment={shipment}
@@ -635,7 +637,7 @@ export default function Page() {
                               disabled={
                                 loading || shipment.parcels.length === 1
                               }
-                              onClick={mutation.removeParcel(pkg_index, pkg.id)}
+                              onClick={mutation.removeParcel(pkg_index, pkg.id ?? undefined)}
                             >
                               <span className="icon is-small">
                                 <i className="fas fa-times"></i>
@@ -693,7 +695,7 @@ export default function Page() {
                                           mutation.updateItem(
                                             pkg_index,
                                             item_index,
-                                            pkg.id,
+                                            pkg.id ?? undefined,
                                           )({
                                             quantity: parseInt(e.target.value),
                                           } as CommodityType);
@@ -722,9 +724,9 @@ export default function Page() {
                                   onClick={mutation.removeItem(
                                     pkg_index,
                                     item_index,
-                                    item.id,
+                                    item.id ?? undefined,
                                   )}
-                                  disabled={pkg.items.length === 1}
+                                  disabled={(pkg.items?.length ?? 0) === 1}
                                 >
                                   <span className="icon is-small">
                                     <i className="fas fa-times"></i>
@@ -746,7 +748,7 @@ export default function Page() {
                             title="Edit items"
                             shipment={shipment}
                             onChange={(_) =>
-                              mutation.addItems(pkg_index, pkg.id)(_ as any)
+                              mutation.addItems(pkg_index, pkg.id ?? undefined)(_ as any)
                             }
                             order_ids={order_id.split(",").map((s) => s.trim())}
                           />
@@ -1256,7 +1258,7 @@ export default function Page() {
                                                 mutation.updateCommodity(
                                                   index,
                                                   shipment.customs?.id,
-                                                )(_),
+                                                )(_ as CommodityType),
                                             })
                                           }
                                         >
@@ -1278,7 +1280,7 @@ export default function Page() {
                                         mutation.removeCommodity(
                                           index,
                                           shipment.customs?.id,
-                                        )(commodity.id)
+                                        )(commodity.id ?? undefined)
                                       }
                                     >
                                       <span className="icon is-small">

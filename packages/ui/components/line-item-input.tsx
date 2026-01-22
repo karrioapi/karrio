@@ -52,12 +52,13 @@ export const LineItemInput = React.forwardRef<HTMLButtonElement, LineItemInputCo
     useEffect(() => {
       if (query.isFetched && !isNone(query.data?.orders)) {
         const dropdownItems = (query.data?.orders.edges || [])
-          .map(({ node: order }) => order.line_items.map(
-            (item, index) => ({
-              value: item.id,
+          .map(({ node: order }) => order.line_items
+            .filter((item) => item.id !== null)
+            .map((item, index) => ({
+              value: item.id as string,
               label: formatOrderLineItem(order as any, item as any, index)
-            })
-          )).flat();
+            }))
+          ).flat();
 
         setItems(dropdownItems);
       }

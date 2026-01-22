@@ -601,6 +601,7 @@ var Karrio = (function () {
             'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
             'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
             'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
         };
@@ -629,6 +630,7 @@ var Karrio = (function () {
             'address_line1': value['address_line1'],
             'address_line2': value['address_line2'],
             'validate_location': value['validate_location'],
+            'meta': value['meta'],
             'object_type': value['object_type'],
             'validation': AddressValidationToJSON(value['validation']),
         };
@@ -658,6 +660,7 @@ var Karrio = (function () {
             return json;
         }
         return {
+            'id': json['id'] == null ? undefined : json['id'],
             'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
             'city': json['city'] == null ? undefined : json['city'],
             'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
@@ -673,6 +676,7 @@ var Karrio = (function () {
             'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
             'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
             'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
         };
     }
     function AddressDataToJSON(json) {
@@ -683,6 +687,7 @@ var Karrio = (function () {
             return value;
         }
         return {
+            'id': value['id'],
             'postal_code': value['postal_code'],
             'city': value['city'],
             'federal_tax_id': value['federal_tax_id'],
@@ -698,6 +703,7 @@ var Karrio = (function () {
             'address_line1': value['address_line1'],
             'address_line2': value['address_line2'],
             'validate_location': value['validate_location'],
+            'meta': value['meta'],
         };
     }
 
@@ -1023,6 +1029,7 @@ var Karrio = (function () {
             'variant_id': value['variant_id'],
             'parent_id': value['parent_id'],
             'metadata': value['metadata'],
+            'meta': value['meta'],
         };
     }
 
@@ -1244,6 +1251,7 @@ var Karrio = (function () {
             'reference_number': value['reference_number'],
             'freight_class': value['freight_class'],
             'options': value['options'],
+            'meta': value['meta'],
         };
     }
 
@@ -2451,6 +2459,7 @@ var Karrio = (function () {
             'variant_id': json['variant_id'] == null ? undefined : json['variant_id'],
             'parent_id': json['parent_id'] == null ? undefined : json['parent_id'],
             'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
         };
     }
@@ -2479,6 +2488,7 @@ var Karrio = (function () {
             'variant_id': value['variant_id'],
             'parent_id': value['parent_id'],
             'metadata': value['metadata'],
+            'meta': value['meta'],
             'object_type': value['object_type'],
         };
     }
@@ -2964,6 +2974,7 @@ var Karrio = (function () {
             'variant_id': json['variant_id'] == null ? undefined : json['variant_id'],
             'parent_id': json['parent_id'] == null ? undefined : json['parent_id'],
             'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'unfulfilled_quantity': json['unfulfilled_quantity'] == null ? undefined : json['unfulfilled_quantity'],
         };
@@ -3332,6 +3343,7 @@ var Karrio = (function () {
             'reference_number': json['reference_number'] == null ? undefined : json['reference_number'],
             'freight_class': json['freight_class'] == null ? undefined : json['freight_class'],
             'options': json['options'] == null ? undefined : json['options'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
         };
     }
@@ -3359,6 +3371,7 @@ var Karrio = (function () {
             'reference_number': value['reference_number'],
             'freight_class': value['freight_class'],
             'options': value['options'],
+            'meta': value['meta'],
             'object_type': value['object_type'],
         };
     }
@@ -3447,8 +3460,8 @@ var Karrio = (function () {
             'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
-            'return_address': json['return_address'] == null ? undefined : AddressDataFromJSON(json['return_address']),
-            'billing_address': json['billing_address'] == null ? undefined : AddressDataFromJSON(json['billing_address']),
+            'return_address': json['return_address'] == null ? undefined : AddressFromJSON(json['return_address']),
+            'billing_address': json['billing_address'] == null ? undefined : AddressFromJSON(json['billing_address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': json['services'] == null ? undefined : json['services'],
             'options': json['options'] == null ? undefined : json['options'],
@@ -3627,6 +3640,7 @@ var Karrio = (function () {
             return value;
         }
         return {
+            'id': value['id'],
             'postal_code': value['postal_code'],
             'city': value['city'],
             'federal_tax_id': value['federal_tax_id'],
@@ -3642,6 +3656,7 @@ var Karrio = (function () {
             'address_line1': value['address_line1'],
             'address_line2': value['address_line2'],
             'validate_location': value['validate_location'],
+            'meta': value['meta'],
         };
     }
 
@@ -3747,6 +3762,7 @@ var Karrio = (function () {
             'reference_number': value['reference_number'],
             'freight_class': value['freight_class'],
             'options': value['options'],
+            'meta': value['meta'],
         };
     }
 
@@ -4343,8 +4359,8 @@ var Karrio = (function () {
             'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
-            'return_address': json['return_address'] == null ? undefined : AddressDataFromJSON(json['return_address']),
-            'billing_address': json['billing_address'] == null ? undefined : AddressDataFromJSON(json['billing_address']),
+            'return_address': json['return_address'] == null ? undefined : AddressFromJSON(json['return_address']),
+            'billing_address': json['billing_address'] == null ? undefined : AddressFromJSON(json['billing_address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': json['services'] == null ? undefined : json['services'],
             'options': json['options'] == null ? undefined : json['options'],

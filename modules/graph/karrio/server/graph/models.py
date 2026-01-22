@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 
 from karrio.server.core.models import OwnedEntity, uuid, register_model
-from karrio.server.manager.models import Customs, Parcel, Address
+from karrio.server.manager.models import Parcel, Address
 
 
 @register_model
@@ -20,9 +20,6 @@ class Template(OwnedEntity):
     address = models.OneToOneField(
         Address, on_delete=models.CASCADE, null=True, blank=True
     )
-    customs = models.OneToOneField(
-        Customs, on_delete=models.CASCADE, null=True, blank=True
-    )
     parcel = models.OneToOneField(
         Parcel, on_delete=models.CASCADE, null=True, blank=True
     )
@@ -31,7 +28,7 @@ class Template(OwnedEntity):
         attachment = next(
             (
                 entity
-                for entity in [self.address, self.customs, self.parcel]
+                for entity in [self.address, self.parcel]
                 if entity is not None
             ),
             super(),

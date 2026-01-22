@@ -11,7 +11,7 @@ import karrio.providers.postat.units as units
 # The entrypoint is defined in pyproject.toml under [project.entry-points."karrio.plugins"]
 METADATA = PluginMetadata(
     id="postat",
-    label="PostAT",
+    label="Austrian Post",
     description="Austrian Post (Österreichische Post) shipping integration via Post-Labelcenter API",
     # Integrations
     Mapper=Mapper,

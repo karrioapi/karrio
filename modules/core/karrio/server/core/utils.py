@@ -188,7 +188,7 @@ def with_telemetry(operation_name: str = None):
         class Shipments:
             @staticmethod
             @with_telemetry("shipment_create")
-            def create(payload: dict, carrier: Carrier = None, **kwargs):
+            def create(payload: dict, carrier: CarrierConnection = None, **kwargs):
                 ...
     """
 
@@ -1127,3 +1127,174 @@ def require_selected_rate(func):
         return result
 
     return wrapper
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CARRIER CONNECTION UTILITIES
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class ConnectionType:
+    """Connection type constants for carrier snapshots."""
+
+    ACCOUNT = "account"
+    SYSTEM = "system"
+    BROKERED = "brokered"
+
+
+def create_carrier_snapshot(connection: typing.Any) -> dict:
+    """
+    Create a snapshot dict from a carrier connection.
+
+    Works with any connection type (CarrierConnection, SystemConnection, BrokeredConnection).
+    The snapshot contains enough information to:
+    - Resolve back to the live connection if it still exists
+    - Display carrier identity if the connection is deleted
+
+    Args:
+        connection: Live connection object (CarrierConnection, SystemConnection, or BrokeredConnection)
+
+    Returns:
+        Snapshot dict suitable for storage in JSONField:
+        {
+            "connection_id": str,      # ID for resolution
+            "connection_type": str,    # "account", "system", or "brokered"
+            "carrier_code": str,       # Carrier type (e.g., "dhl_express")
+            "carrier_id": str,         # User-defined identifier
+            "carrier_name": str,       # Carrier type/code (API convention)
+            "test_mode": bool,         # Test/production mode
+        }
+
+    Note:
+        For BrokeredConnection, stores SystemConnection.id as connection_id
+        (more stable if brokered is deleted) but uses brokered's computed values.
+    """
+    if connection is None:
+        return {}
+
+    class_name = connection.__class__.__name__
+
+    # Determine connection type and ID
+    if class_name == "BrokeredConnection":
+        conn_type = ConnectionType.BROKERED
+        # Store system connection ID for stability (per decision #30)
+        conn_id = connection.system_connection_id
+        carrier_id = connection.effective_carrier_id
+        carrier_code = connection.carrier_code
+        test_mode = connection.test_mode
+    elif class_name == "SystemConnection":
+        conn_type = ConnectionType.SYSTEM
+        conn_id = connection.id
+        carrier_id = connection.carrier_id
+        carrier_code = connection.carrier_code
+        test_mode = connection.test_mode
+    else:  # CarrierConnection (account connection)
+        conn_type = ConnectionType.ACCOUNT
+        conn_id = connection.id
+        carrier_id = connection.carrier_id
+        carrier_code = connection.carrier_code
+        test_mode = connection.test_mode
+
+    # carrier_name follows API convention: use carrier_code (e.g., "canadapost")
+    # display_name is available via carrier_code lookup if needed
+    carrier_name = carrier_code
+
+    return {
+        "connection_id": conn_id,
+        "connection_type": conn_type,
+        "carrier_code": carrier_code,
+        "carrier_id": carrier_id,
+        "carrier_name": carrier_name,
+        "test_mode": test_mode,
+    }
+
+
+def resolve_carrier(
+    snapshot: typing.Optional[dict],
+    context: typing.Any = None,
+) -> typing.Optional[typing.Any]:
+    """
+    Resolve a live carrier connection from a snapshot.
+
+    Resolution chain:
+    1. Direct lookup by connection_id based on connection_type
+    2. For brokered: try to find user's BrokeredConnection for that SystemConnection
+    3. Fallback to SystemConnection if brokered not found
+    4. Return None if connection cannot be resolved (use snapshot for display)
+
+    Args:
+        snapshot: Connection snapshot dict with connection_id, connection_type, etc.
+        context: Request context for access control (user/org)
+
+    Returns:
+        Live connection object (CarrierConnection, SystemConnection, or BrokeredConnection)
+        or None if connection cannot be resolved.
+
+    Note:
+        Returns None when access is denied (per decision #29).
+        Caller should use snapshot data for display-only purposes.
+    """
+    if not snapshot:
+        return None
+
+    from karrio.server.providers.models import (
+        CarrierConnection,
+        SystemConnection,
+        BrokeredConnection,
+    )
+
+    conn_type = snapshot.get("connection_type", ConnectionType.ACCOUNT)
+    # Support both new format (connection_id) and legacy format (carrier_connection_id)
+    conn_id = snapshot.get("connection_id") or snapshot.get("carrier_connection_id")
+
+    if not conn_id:
+        return None
+
+    # Direct lookup by type
+    if conn_type == ConnectionType.ACCOUNT:
+        # Account connection (CarrierConnection)
+        queryset = CarrierConnection.objects.filter(id=conn_id, active=True)
+
+        # Apply access control in Insiders mode
+        if context is not None and hasattr(CarrierConnection, "access_by"):
+            queryset = CarrierConnection.access_by(context).filter(id=conn_id, active=True)
+
+        return queryset.first()
+
+    if conn_type == ConnectionType.SYSTEM:
+        # System connection
+        return SystemConnection.objects.filter(id=conn_id, active=True).first()
+
+    if conn_type == ConnectionType.BROKERED:
+        # Brokered connection - conn_id is actually system_connection_id (per decision #30)
+        # Try to find user's BrokeredConnection for that SystemConnection (per decision #33)
+        system_conn = SystemConnection.objects.filter(id=conn_id, active=True).first()
+
+        if not system_conn:
+            return None
+
+        # Try to find user's brokered connection
+        brokered_qs = BrokeredConnection.objects.filter(
+            system_connection=system_conn,
+            is_enabled=True,
+        )
+
+        # Apply access control based on context
+        if context is not None:
+            user = getattr(context, "user", None)
+            org = getattr(context, "org", None)
+
+            if settings.MULTI_ORGANIZATIONS and org:
+                # Insiders: Check for org-linked brokered connection
+                brokered_qs = brokered_qs.filter(link__org=org)
+            elif user:
+                # OSS: Check for user's brokered connection
+                brokered_qs = brokered_qs.filter(created_by=user)
+
+        brokered = brokered_qs.first()
+
+        # Return brokered if found, else return system connection as fallback
+        return brokered if brokered else system_conn
+
+    # Unknown connection type
+    return None

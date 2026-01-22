@@ -1,6 +1,8 @@
 import typing
 import datetime
 import strawberry
+from itertools import groupby
+from operator import itemgetter
 import django.db.models as models
 import django.db.models.functions as functions
 from django.conf import settings
@@ -238,8 +240,14 @@ class SystemUsageType:
             .annotate(count=models.Count("id"))
             .order_by("-date")
         )
-        order_volumes = (
-            order_filters.OrderFilters(
+        # Calculate order volumes from JSONField (line_items is embedded JSON)
+        _compute_total = lambda items: sum(
+            float(i.get("value_amount") or 0) * float(i.get("quantity") or 1)
+            for i in (items or [])
+        )
+        orders_with_totals = [
+            (o["date"], _compute_total(o.get("line_items")))
+            for o in order_filters.OrderFilters(
                 dict(
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
@@ -249,15 +257,13 @@ class SystemUsageType:
                 ),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
-            .values("date")
-            .annotate(
-                count=models.Sum(
-                    models.F("line_items__value_amount")
-                    * models.F("line_items__quantity")
-                )
-            )
+            .values("date", "line_items")
             .order_by("-date")
-        )
+        ]
+        order_volumes = [
+            {"date": date, "count": sum(t for _, t in items)}
+            for date, items in groupby(orders_with_totals, key=itemgetter(0))
+        ]
         shipment_count = (
             filters.ShipmentFilters(
                 dict(
@@ -452,12 +458,11 @@ class LogType:
         if User.objects.filter(
             id=info.context.request.user.id, is_staff=False
         ).exists():
-            # exclude system carriers records if user is not staff
-            system_carriers = [
-                item["id"]
-                for item in providers.Carrier.system_carriers.all().values("id")
-            ]
-            queryset = queryset.exclude(meta__carrier_account_id__in=system_carriers)
+            # exclude system connection records if user is not staff
+            system_connection_ids = list(
+                providers.SystemConnection.objects.values_list("id", flat=True)
+            )
+            queryset = queryset.exclude(meta__carrier_account_id__in=system_connection_ids)
 
         return queryset
 
@@ -534,6 +539,7 @@ class TokenType:
 
     @strawberry.field
     def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+        # self is a Token model instance, permissions is a @property on the model
         return self.permissions
 
     @staticmethod
@@ -555,6 +561,7 @@ class APIKeyType:
 
     @strawberry.field
     def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+        # self is a Token model instance, permissions is a @property on the model
         return self.permissions
 
     @staticmethod
@@ -643,29 +650,194 @@ class RateType:
 
 @strawberry.type
 class CommodityType:
-    id: str
-    object_type: str
-    weight: float
-    quantity: int
-    metadata: utils.JSON
-    sku: typing.Optional[str]
-    title: typing.Optional[str]
-    hs_code: typing.Optional[str]
-    description: typing.Optional[str]
-    value_amount: typing.Optional[float]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
-    origin_country: typing.Optional[utils.CountryCodeEnum]
-    value_currency: typing.Optional[utils.CurrencyCodeEnum]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
+    id: typing.Optional[str] = None
+    object_type: typing.Optional[str] = None
+    weight: typing.Optional[float] = None
+    quantity: typing.Optional[int] = None
+    metadata: typing.Optional[utils.JSON] = None
+    sku: typing.Optional[str] = None
+    title: typing.Optional[str] = None
+    hs_code: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    value_amount: typing.Optional[float] = None
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = None
+    origin_country: typing.Optional[utils.CountryCodeEnum] = None
+    value_currency: typing.Optional[utils.CurrencyCodeEnum] = None
+    created_at: typing.Optional[datetime.datetime] = None
+    updated_at: typing.Optional[datetime.datetime] = None
+    created_by: typing.Optional[UserType] = None
     parent_id: typing.Optional[str] = None
     parent: typing.Optional["CommodityType"] = None
     unfulfilled_quantity: typing.Optional[int] = None
 
+    @staticmethod
+    def parse(item: dict) -> typing.Optional["CommodityType"]:
+        if not item:
+            return None
+        return CommodityType(
+            **{
+                "object_type": item.get("object_type", "commodity"),
+                "weight": item.get("weight") or 0,
+                "quantity": item.get("quantity") or 1,
+                "metadata": item.get("metadata") or {},
+                **{k: v for k, v in item.items() if k in CommodityType.__annotations__},
+            }
+        )
+
 
 @strawberry.type
 class AddressType:
+    id: typing.Optional[str] = None
+    object_type: typing.Optional[str] = None
+    postal_code: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    federal_tax_id: typing.Optional[str] = None
+    state_tax_id: typing.Optional[str] = None
+    person_name: typing.Optional[str] = None
+    company_name: typing.Optional[str] = None
+    country_code: typing.Optional[utils.CountryCodeEnum] = None
+    email: typing.Optional[str] = None
+    phone_number: typing.Optional[str] = None
+    state_code: typing.Optional[str] = None
+    residential: typing.Optional[bool] = None
+    street_number: typing.Optional[str] = None
+    address_line1: typing.Optional[str] = None
+    address_line2: typing.Optional[str] = None
+    created_at: typing.Optional[datetime.datetime] = None
+    updated_at: typing.Optional[datetime.datetime] = None
+    created_by: typing.Optional[UserType] = None
+    validate_location: typing.Optional[bool] = None
+    validation: typing.Optional[utils.JSON] = None
+
+    @staticmethod
+    def parse(address: dict) -> typing.Optional["AddressType"]:
+        if not address:
+            return None
+        return AddressType(
+            **{
+                "object_type": address.get("object_type", "address"),
+                **{k: v for k, v in address.items() if k in AddressType.__annotations__},
+            }
+        )
+
+
+@strawberry.type
+class ParcelType:
+    id: typing.Optional[str] = None
+    object_type: typing.Optional[str] = None
+    weight: typing.Optional[float] = None
+    width: typing.Optional[float] = None
+    height: typing.Optional[float] = None
+    length: typing.Optional[float] = None
+    packaging_type: typing.Optional[str] = None
+    package_preset: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    content: typing.Optional[str] = None
+    is_document: typing.Optional[bool] = None
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = None
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = None
+    freight_class: typing.Optional[str] = None
+    reference_number: typing.Optional[str] = None
+    created_at: typing.Optional[datetime.datetime] = None
+    updated_at: typing.Optional[datetime.datetime] = None
+    created_by: typing.Optional[UserType] = None
+    items: typing.Optional[typing.List[CommodityType]] = None
+
+    @staticmethod
+    def parse(parcel: dict) -> typing.Optional["ParcelType"]:
+        if not parcel:
+            return None
+        return ParcelType(
+            **{
+                "object_type": parcel.get("object_type", "parcel"),
+                **{k: v for k, v in parcel.items() if k in ParcelType.__annotations__ and k != "items"},
+                "items": [CommodityType.parse(i) for i in (parcel.get("items") or [])],
+            }
+        )
+
+
+@strawberry.type
+class DutyType:
+    paid_by: typing.Optional[utils.PaidByEnum] = None
+    currency: typing.Optional[utils.CurrencyCodeEnum] = None
+    account_number: typing.Optional[str] = None
+    declared_value: typing.Optional[float] = None
+    bill_to: typing.Optional[AddressType] = None
+
+    @staticmethod
+    def parse(duty: dict) -> typing.Optional["DutyType"]:
+        if not duty:
+            return None
+        return DutyType(
+            paid_by=duty.get("paid_by"),
+            currency=duty.get("currency"),
+            account_number=duty.get("account_number"),
+            declared_value=duty.get("declared_value"),
+            bill_to=AddressType.parse(duty.get("bill_to")),
+        )
+
+
+@strawberry.type
+class CustomsType:
+    """Customs type for embedded JSON customs data on shipments.
+
+    This is a pure data type that parses customs JSON data, not tied to a database model.
+    """
+    certify: typing.Optional[bool] = None
+    commercial_invoice: typing.Optional[bool] = None
+    content_type: typing.Optional[utils.CustomsContentTypeEnum] = None
+    content_description: typing.Optional[str] = None
+    incoterm: typing.Optional[utils.IncotermCodeEnum] = None
+    invoice: typing.Optional[str] = None
+    invoice_date: typing.Optional[str] = None
+    signer: typing.Optional[str] = None
+    options: typing.Optional[utils.JSON] = None
+    # Private fields for parsed nested objects
+    _duty: strawberry.Private[typing.Optional[DutyType]] = None
+    _duty_billing_address: strawberry.Private[typing.Optional[AddressType]] = None
+    _commodities: strawberry.Private[typing.Optional[typing.List[CommodityType]]] = None
+
+    @strawberry.field
+    def duty(self) -> typing.Optional[DutyType]:
+        return self._duty
+
+    @strawberry.field
+    def duty_billing_address(self) -> typing.Optional[AddressType]:
+        return self._duty_billing_address
+
+    @strawberry.field
+    def commodities(self) -> typing.Optional[typing.List[CommodityType]]:
+        return self._commodities
+
+    @staticmethod
+    def parse(customs: dict) -> typing.Optional["CustomsType"]:
+        if not customs:
+            return None
+        return CustomsType(
+            certify=customs.get("certify"),
+            commercial_invoice=customs.get("commercial_invoice"),
+            content_type=customs.get("content_type"),
+            content_description=customs.get("content_description"),
+            incoterm=customs.get("incoterm"),
+            invoice=customs.get("invoice"),
+            invoice_date=customs.get("invoice_date"),
+            signer=customs.get("signer"),
+            options=customs.get("options"),
+            _duty=DutyType.parse(customs.get("duty")),
+            _duty_billing_address=AddressType.parse(customs.get("duty_billing_address")),
+            _commodities=[CommodityType.parse(c) for c in (customs.get("commodities") or [])],
+        )
+
+
+@strawberry.type
+class AddressTemplateType:
+    """Address template type for reusable address templates.
+
+    Uses the Address model directly with meta.label for template metadata,
+    following the PRD pattern for direct model templates.
+    All fields are resolved from the Django model's properties.
+    """
+
     id: str
     object_type: str
     postal_code: typing.Optional[str]
@@ -674,7 +846,7 @@ class AddressType:
     state_tax_id: typing.Optional[str]
     person_name: typing.Optional[str]
     company_name: typing.Optional[str]
-    country_code: utils.CountryCodeEnum
+    country_code: typing.Optional[utils.CountryCodeEnum]
     email: typing.Optional[str]
     phone_number: typing.Optional[str]
     state_code: typing.Optional[str]
@@ -686,11 +858,77 @@ class AddressType:
     updated_at: typing.Optional[datetime.datetime]
     created_by: typing.Optional[UserType]
     validate_location: typing.Optional[bool]
-    validation: typing.Optional[utils.JSON] = None
+    validation: typing.Optional[utils.JSON]
+    meta: typing.Optional[utils.JSON] = None
+
+
+# Standalone resolver functions for saved addresses (AddressTemplateType)
+@utils.authentication_required
+def resolve_addresses(
+    info,
+    filter: typing.Optional[inputs.AddressFilter] = strawberry.UNSET,
+) -> utils.Connection[AddressTemplateType]:
+    """Resolver for listing saved addresses."""
+    _filter = inputs.AddressFilter() if utils.is_unset(filter) else filter
+    _search = _filter.to_dict()
+    _query = models.Q(meta__label__isnull=False) & ~models.Q(meta__label="")
+
+    if any(_search.get("label") or ""):
+        _value = _search.get("label")
+        _query = _query & models.Q(meta__label__icontains=_value)
+
+    if any(_search.get("address") or ""):
+        _value = _search.get("address")
+        _query = _query & (
+            models.Q(address_line1__icontains=_value)
+            | models.Q(address_line2__icontains=_value)
+            | models.Q(postal_code__icontains=_value)
+            | models.Q(person_name__icontains=_value)
+            | models.Q(company_name__icontains=_value)
+            | models.Q(country_code__icontains=_value)
+            | models.Q(city__icontains=_value)
+            | models.Q(email__icontains=_value)
+            | models.Q(phone_number__icontains=_value)
+        )
+
+    if any(_search.get("keyword") or ""):
+        _value = _search.get("keyword")
+        _query = _query & (
+            models.Q(meta__label__icontains=_value)
+            | models.Q(address_line1__icontains=_value)
+            | models.Q(address_line2__icontains=_value)
+            | models.Q(postal_code__icontains=_value)
+            | models.Q(person_name__icontains=_value)
+            | models.Q(company_name__icontains=_value)
+            | models.Q(country_code__icontains=_value)
+            | models.Q(city__icontains=_value)
+            | models.Q(email__icontains=_value)
+            | models.Q(phone_number__icontains=_value)
+        )
+
+    queryset = manager.Address.access_by(info.context.request).filter(_query)
+
+    return utils.paginated_connection(queryset, **_filter.pagination())
+
+
+@utils.authentication_required
+def resolve_address(info, id: str) -> typing.Optional[AddressTemplateType]:
+    """Resolver for getting a single saved address by ID."""
+    return manager.Address.access_by(info.context.request).filter(
+        id=id,
+        meta__label__isnull=False,
+    ).first()
 
 
 @strawberry.type
-class ParcelType:
+class ParcelTemplateType:
+    """Parcel template type for reusable parcel templates.
+
+    Uses the Parcel model directly with meta.label for template metadata,
+    following the PRD pattern for direct model templates.
+    All fields are resolved from the Django model's properties.
+    """
+
     id: str
     object_type: str
     weight: typing.Optional[float]
@@ -706,193 +944,179 @@ class ParcelType:
     dimension_unit: typing.Optional[utils.DimensionUnitEnum]
     freight_class: typing.Optional[str]
     reference_number: typing.Optional[str]
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
-    created_by: UserType
+    created_at: typing.Optional[datetime.datetime]
+    updated_at: typing.Optional[datetime.datetime]
+    created_by: typing.Optional[UserType]
+    meta: typing.Optional[utils.JSON] = None
 
     @strawberry.field
-    def items(self: manager.Parcel) -> typing.List[CommodityType]:
-        return self.items.all()
-
-
-@strawberry.type
-class DutyType:
-    paid_by: typing.Optional[utils.PaidByEnum] = None
-    currency: typing.Optional[utils.CurrencyCodeEnum] = None
-    account_number: typing.Optional[str] = None
-    declared_value: typing.Optional[float] = None
-    bill_to: typing.Optional[AddressType] = None
-
-
-@strawberry.type
-class CustomsType:
-    id: str
-    object_type: str
-    certify: typing.Optional[bool] = strawberry.UNSET
-    commercial_invoice: typing.Optional[bool] = strawberry.UNSET
-    content_type: typing.Optional[utils.CustomsContentTypeEnum] = strawberry.UNSET
-    content_description: typing.Optional[str] = strawberry.UNSET
-    incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
-    invoice: typing.Optional[str] = strawberry.UNSET
-    invoice_date: typing.Optional[str] = strawberry.UNSET
-    signer: typing.Optional[str] = strawberry.UNSET
-    created_at: typing.Optional[datetime.datetime] = strawberry.UNSET
-    updated_at: typing.Optional[datetime.datetime] = strawberry.UNSET
-    created_by: typing.Optional[UserType] = strawberry.UNSET
-    options: typing.Optional[utils.JSON] = strawberry.UNSET
-    duty_billing_address: typing.Optional[AddressType] = strawberry.UNSET
-
-    @strawberry.field
-    def duty(self: manager) -> typing.Optional[DutyType]:
-        if self.duty is None:
+    def items(self: manager.Parcel) -> typing.Optional[typing.List[CommodityType]]:
+        """Items in the parcel."""
+        items_rel = getattr(self, "items", None)
+        if items_rel is None:
             return None
-
-        return DutyType(**self.duty)
-
-    @strawberry.field
-    def commodities(self: manager.Customs) -> typing.List[CommodityType]:
-        return self.commodities.all()
+        if hasattr(items_rel, "all"):
+            return list(items_rel.all())
+        return items_rel
 
 
-@strawberry.type
-class AddressTemplateType:
-    id: str
-    object_type: str
-    label: str
-    address: AddressType
-    is_default: typing.Optional[bool] = None
+# Standalone resolver functions for saved parcels (ParcelTemplateType)
+@utils.authentication_required
+def resolve_parcels(
+    info,
+    filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
+) -> utils.Connection[ParcelTemplateType]:
+    """Resolver for listing saved parcels."""
+    _filter = inputs.TemplateFilter() if filter == strawberry.UNSET else filter
+    _search = _filter.to_dict()
+    _query = models.Q(meta__label__isnull=False) & ~models.Q(meta__label="")
 
-    @staticmethod
-    @utils.authentication_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.AddressFilter] = strawberry.UNSET,
-    ) -> utils.Connection["AddressTemplateType"]:
-        _filter = inputs.AddressFilter() if utils.is_unset(filter) else filter
-        _search = _filter.to_dict()
-        _query = models.Q()
+    if any(_search.get("label") or ""):
+        _value = _search.get("label")
+        _query = _query & models.Q(meta__label__icontains=_value)
 
-        if any(_search.get("label") or ""):
-            _value = _search.get("label")
-            _query = _query | models.Q(label__icontains=_value)
+    if any(_search.get("keyword") or ""):
+        _value = _search.get("keyword")
+        _query = _query & models.Q(meta__label__icontains=_value)
 
-        if any(_search.get("address") or ""):
-            _value = _search.get("address")
-            _query = (
-                _query
-                | models.Q(address__address_line1__icontains=_value)
-                | models.Q(address__address_line2__icontains=_value)
-                | models.Q(address__postal_code__icontains=_value)
-                | models.Q(address__person_name__icontains=_value)
-                | models.Q(address__company_name__icontains=_value)
-                | models.Q(address__country_code__icontains=_value)
-                | models.Q(address__city__icontains=_value)
-                | models.Q(address__email__icontains=_value)
-                | models.Q(address__phone_number__icontains=_value)
-            )
+    queryset = manager.Parcel.access_by(info.context.request).filter(_query)
 
-        if any(_search.get("keyword") or ""):
-            _value = _search.get("keyword")
-            _query = (
-                _query
-                | models.Q(label__icontains=_value)
-                | models.Q(address__address_line1__icontains=_value)
-                | models.Q(address__address_line2__icontains=_value)
-                | models.Q(address__postal_code__icontains=_value)
-                | models.Q(address__person_name__icontains=_value)
-                | models.Q(address__company_name__icontains=_value)
-                | models.Q(address__country_code__icontains=_value)
-                | models.Q(address__city__icontains=_value)
-                | models.Q(address__email__icontains=_value)
-                | models.Q(address__phone_number__icontains=_value)
-            )
+    return utils.paginated_connection(queryset, **_filter.pagination())
 
-        _queryset = graph.Template.access_by(info.context.request).filter(
-            _query, address__isnull=False
-        )
 
-        return utils.paginated_connection(_queryset, **_filter.pagination())
+@utils.authentication_required
+def resolve_parcel(info, id: str) -> typing.Optional[ParcelTemplateType]:
+    """Resolver for getting a single saved parcel by ID."""
+    return manager.Parcel.access_by(info.context.request).filter(
+        id=id,
+        meta__label__isnull=False,
+    ).first()
 
 
 @strawberry.type
-class ParcelTemplateType:
+class ProductTemplateType:
+    """Product template type for reusable product/commodity templates.
+
+    Uses the Commodity model directly with meta.label for template metadata,
+    following the PRD pattern for direct model templates.
+    All fields are resolved from the Django model's properties.
+    """
+
     id: str
     object_type: str
-    label: str
-    parcel: ParcelType
-    is_default: typing.Optional[bool]
+    weight: float
+    quantity: int
+    sku: typing.Optional[str]
+    title: typing.Optional[str]
+    hs_code: typing.Optional[str]
+    description: typing.Optional[str]
+    value_amount: typing.Optional[float]
+    weight_unit: typing.Optional[utils.WeightUnitEnum]
+    origin_country: typing.Optional[utils.CountryCodeEnum]
+    value_currency: typing.Optional[utils.CurrencyCodeEnum]
+    created_at: typing.Optional[datetime.datetime]
+    updated_at: typing.Optional[datetime.datetime]
+    created_by: typing.Optional[UserType]
+    metadata: typing.Optional[utils.JSON] = None
+    meta: typing.Optional[utils.JSON] = None
 
-    @staticmethod
-    @utils.authentication_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
-    ) -> utils.Connection["ParcelTemplateType"]:
-        _filter = inputs.TemplateFilter() if filter == strawberry.UNSET else filter
-        _search = _filter.to_dict()
-        _query = models.Q()
 
-        if any(_search.get("label") or ""):
-            _value = _search.get("label")
-            _query = _query | models.Q(label__icontains=_value)
+# Standalone resolver functions for saved products (ProductTemplateType)
+@utils.authentication_required
+def resolve_products(
+    info,
+    filter: typing.Optional[inputs.ProductFilter] = strawberry.UNSET,
+) -> utils.Connection[ProductTemplateType]:
+    """Resolver for listing saved products."""
+    _filter = filter if not utils.is_unset(filter) else inputs.ProductFilter()
+    _search = _filter.to_dict()
+    _query = models.Q(meta__label__isnull=False) & ~models.Q(meta__label="")
 
-        if any(_search.get("keyword") or ""):
-            _value = _search.get("keyword")
-            _query = _query | models.Q(label__icontains=_value)
+    if any(_search.get("label") or ""):
+        _value = _search.get("label")
+        _query = _query & models.Q(meta__label__icontains=_value)
 
-        queryset = graph.Template.access_by(info.context.request).filter(
-            _query,
-            parcel__isnull=False,
+    if any(_search.get("keyword") or ""):
+        _value = _search.get("keyword")
+        _query = _query & (
+            models.Q(meta__label__icontains=_value)
+            | models.Q(title__icontains=_value)
+            | models.Q(sku__icontains=_value)
+            | models.Q(description__icontains=_value)
+            | models.Q(hs_code__icontains=_value)
         )
 
-        return utils.paginated_connection(queryset, **_filter.pagination())
+    if any(_search.get("sku") or ""):
+        _value = _search.get("sku")
+        _query = _query & models.Q(sku__icontains=_value)
+
+    if _search.get("origin_country"):
+        _query = _query & models.Q(origin_country=_search.get("origin_country"))
+
+    queryset = manager.Commodity.access_by(info.context.request).filter(_query)
+
+    return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
-class CustomsTemplateType:
-    id: str
-    object_type: str
-    label: str
-    customs: CustomsType
-    is_default: typing.Optional[bool]
-
-    @staticmethod
-    @utils.authentication_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
-    ) -> utils.Connection["CustomsTemplateType"]:
-        _filter = filter if not utils.is_unset(filter) else inputs.TemplateFilter()
-
-        queryset = graph.Template.access_by(info.context.request).filter(
-            customs__isnull=False,
-            **(
-                {"label__icontain": _filter.label}
-                if _filter.label is not strawberry.UNSET
-                else {}
-            ),
-        )
-        return utils.paginated_connection(queryset, **_filter.pagination())
+@utils.authentication_required
+def resolve_product(info, id: str) -> typing.Optional[ProductTemplateType]:
+    """Resolver for getting a single saved product by ID."""
+    return manager.Commodity.access_by(info.context.request).filter(
+        id=id,
+        meta__label__isnull=False,
+    ).first()
 
 
 @strawberry.type
 class DefaultTemplatesType:
-    default_address: typing.Optional[AddressTemplateType] = None
-    default_customs: typing.Optional[CustomsTemplateType] = None
-    default_parcel: typing.Optional[ParcelTemplateType] = None
+    """Default templates type for user's default address, parcel, and product templates.
 
-    @staticmethod
-    @utils.authentication_required
-    def resolve(info) -> "DefaultTemplatesType":
-        templates = graph.Template.access_by(info.context.request).filter(
-            is_default=True
-        )
+    Uses strawberry.Private to store the actual model instances and @strawberry.field
+    methods to return them as the correct strawberry types, ensuring proper field resolution.
+    """
 
-        return DefaultTemplatesType(  # type: ignore
-            default_address=templates.filter(address__isnull=False).first(),
-            default_customs=templates.filter(customs__isnull=False).first(),
-            default_parcel=templates.filter(parcel__isnull=False).first(),
-        )
+    _default_address: strawberry.Private[typing.Optional[manager.Address]] = None
+    _default_parcel: strawberry.Private[typing.Optional[manager.Parcel]] = None
+    _default_product: strawberry.Private[typing.Optional[manager.Commodity]] = None
+
+    @strawberry.field
+    def default_address(self) -> typing.Optional[AddressTemplateType]:
+        """Returns the default address template."""
+        return self._default_address  # type: ignore
+
+    @strawberry.field
+    def default_parcel(self) -> typing.Optional[ParcelTemplateType]:
+        """Returns the default parcel template."""
+        return self._default_parcel  # type: ignore
+
+    @strawberry.field
+    def default_product(self) -> typing.Optional[ProductTemplateType]:
+        """Returns the default product template."""
+        return self._default_product  # type: ignore
+
+
+# Standalone resolver function for DefaultTemplatesType
+@utils.authentication_required
+def resolve_default_templates(info) -> DefaultTemplatesType:
+    """Resolver for getting default templates."""
+    default_address = manager.Address.access_by(info.context.request).filter(
+        meta__is_default=True,
+        meta__label__isnull=False,
+    ).first()
+    default_parcel = manager.Parcel.access_by(info.context.request).filter(
+        meta__is_default=True,
+        meta__label__isnull=False,
+    ).first()
+    default_product = manager.Commodity.access_by(info.context.request).filter(
+        meta__is_default=True,
+        meta__label__isnull=False,
+    ).first()
+
+    return DefaultTemplatesType(
+        _default_address=default_address,
+        _default_parcel=default_parcel,
+        _default_product=default_product,
+    )
 
 
 @strawberry.type
@@ -946,6 +1170,33 @@ class TrackingInfoType:
 
 
 @strawberry.type
+class CarrierSnapshotType:
+    """Represents a carrier snapshot stored at the time of operation."""
+
+    connection_id: typing.Optional[str] = None
+    connection_type: typing.Optional[str] = None
+    carrier_code: typing.Optional[str] = None
+    carrier_id: typing.Optional[str] = None
+    carrier_name: typing.Optional[str] = None
+    test_mode: typing.Optional[bool] = None
+
+    @staticmethod
+    def parse(
+        snapshot: typing.Optional[dict],
+    ) -> typing.Optional["CarrierSnapshotType"]:
+        if not snapshot:
+            return None
+        return CarrierSnapshotType(
+            connection_id=snapshot.get("connection_id"),
+            connection_type=snapshot.get("connection_type"),
+            carrier_code=snapshot.get("carrier_code"),
+            carrier_id=snapshot.get("carrier_id"),
+            carrier_name=snapshot.get("carrier_name"),
+            test_mode=snapshot.get("test_mode"),
+        )
+
+
+@strawberry.type
 class TrackerType:
     id: str
     object_type: str
@@ -965,12 +1216,12 @@ class TrackerType:
     created_by: UserType
 
     @strawberry.field
-    def carrier_id(self: manager.Tracking) -> str:
-        return getattr(self.tracking_carrier, "carrier_id", None)
+    def carrier_id(self: manager.Tracking) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Tracking) -> str:
-        return getattr(self.tracking_carrier, "carrier_name", None)
+    def carrier_name(self: manager.Tracking) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_name")
 
     @strawberry.field
     def info(self: manager.Tracking) -> typing.Optional[TrackingInfoType]:
@@ -987,8 +1238,8 @@ class TrackerType:
     @strawberry.field
     def tracking_carrier(
         self: manager.Tracking,
-    ) -> typing.Optional["CarrierConnectionType"]:
-        return self.tracking_carrier
+    ) -> typing.Optional[CarrierSnapshotType]:
+        return CarrierSnapshotType.parse(self.carrier)
 
     @staticmethod
     @utils.authentication_required
@@ -1024,12 +1275,12 @@ class ManifestType:
     updated_at: datetime.datetime
 
     @strawberry.field
-    def carrier_id(self: manager.Manifest) -> str:
-        return getattr(self.manifest_carrier, "carrier_id", None)
+    def carrier_id(self: manager.Manifest) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Manifest) -> str:
-        return getattr(self.manifest_carrier, "carrier_name", None)
+    def carrier_name(self: manager.Manifest) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_name")
 
     @strawberry.field
     def messages(self: manager.Manifest) -> typing.List[MessageType]:
@@ -1038,8 +1289,8 @@ class ManifestType:
     @strawberry.field
     def manifest_carrier(
         self: manager.Manifest,
-    ) -> typing.Optional["CarrierConnectionType"]:
-        return self.manifest_carrier
+    ) -> typing.Optional[CarrierSnapshotType]:
+        return CarrierSnapshotType.parse(self.carrier)
 
     @staticmethod
     @utils.authentication_required
@@ -1070,23 +1321,17 @@ class ShipmentType:
     id: str
     object_type: str
     test_mode: bool
-    shipper: AddressType
-    recipient: AddressType
     options: utils.JSON
     metadata: utils.JSON
     status: utils.ShipmentStatusEnum
-    return_address: typing.Optional[AddressType]
-    billing_address: typing.Optional[AddressType]
     meta: typing.Optional[utils.JSON]
     label_type: typing.Optional[utils.LabelTypeEnum]
     tracking_number: typing.Optional[str]
     shipment_identifier: typing.Optional[str]
     tracking_url: typing.Optional[str]
     reference: typing.Optional[str]
-    customs: typing.Optional[CustomsType]
     services: typing.Optional[typing.List[str]]
     service: typing.Optional[str]
-    carrier_ids: typing.List[str]
     selected_rate_id: typing.Optional[str]
     tracker_id: typing.Optional[str]
     label_url: typing.Optional[str]
@@ -1097,16 +1342,45 @@ class ShipmentType:
     created_by: UserType
 
     @strawberry.field
+    def shipper(self: manager.Shipment) -> AddressType:
+        return AddressType.parse(self.shipper)
+
+    @strawberry.field
+    def recipient(self: manager.Shipment) -> AddressType:
+        return AddressType.parse(self.recipient)
+
+    @strawberry.field
+    def return_address(self: manager.Shipment) -> typing.Optional[AddressType]:
+        return AddressType.parse(self.return_address)
+
+    @strawberry.field
+    def billing_address(self: manager.Shipment) -> typing.Optional[AddressType]:
+        return AddressType.parse(self.billing_address)
+
+    @strawberry.field
+    def customs(self: manager.Shipment) -> typing.Optional[CustomsType]:
+        return CustomsType.parse(self.customs)
+
+    @strawberry.field
     def carrier_id(self: manager.Shipment) -> typing.Optional[str]:
-        return getattr(self.selected_rate_carrier, "carrier_id", None)
+        if self.selected_rate is None:
+            return None
+        return self.selected_rate.get("carrier_id")
 
     @strawberry.field
     def carrier_name(self: manager.Shipment) -> typing.Optional[str]:
-        return getattr(self.selected_rate_carrier, "carrier_name", None)
+        if self.selected_rate is None:
+            return None
+        return self.selected_rate.get("carrier_name")
+
+    @strawberry.field
+    def carrier_ids(self: manager.Shipment) -> typing.List[str]:
+        return self.carrier_ids or []
 
     @strawberry.field
     def parcels(self: manager.Shipment) -> typing.List[ParcelType]:
-        return self.parcels.all()
+        # parcels is now a JSON field, return parsed ParcelType objects
+        return [ParcelType.parse(p) for p in (self.parcels or [])]
 
     @strawberry.field
     def rates(self: manager.Shipment) -> typing.List[RateType]:
@@ -1119,8 +1393,10 @@ class ShipmentType:
     @strawberry.field
     def selected_rate_carrier(
         self: manager.Shipment,
-    ) -> typing.Optional["CarrierConnectionType"]:
-        return self.selected_rate_carrier
+    ) -> typing.Optional[CarrierSnapshotType]:
+        if self.carrier is None:
+            return None
+        return CarrierSnapshotType.parse(self.carrier)
 
     @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
@@ -1336,6 +1612,10 @@ class RateSheetType:
     carrier_name: utils.CarrierNameEnum
 
     @strawberry.field
+    def origin_countries(self: providers.RateSheet) -> typing.Optional[typing.List[str]]:
+        return self.origin_countries or []
+
+    @strawberry.field
     def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
         try:
             return lib.to_dict(self.metadata)
@@ -1401,29 +1681,61 @@ class RateSheetType:
 
 @strawberry.type
 class SystemConnectionType:
+    """Represents a SystemConnection that can be enabled by users via BrokeredConnection."""
+
     id: str
-    active: bool
     carrier_id: str
+    carrier_code: str
     display_name: str
     test_mode: bool
     capabilities: typing.List[str]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
 
-    @strawberry.field
-    def carrier_name(self: providers.Carrier) -> str:
-        return getattr(self, "settings", self).carrier_name
+    active: bool
 
     @strawberry.field
-    def enabled(self: providers.Carrier, info: Info) -> bool:
-        if hasattr(self, "active_orgs"):
-            return self.active_orgs.filter(id=info.context.request.org.id).exists()
-
-        return self.active_users.filter(id=info.context.request.user.id).exists()
+    def carrier_name(self: providers.SystemConnection) -> str:
+        return self.carrier_code
 
     @strawberry.field
-    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
-        return getattr(self, "config", None)
+    def enabled(self: providers.SystemConnection, info: Info) -> bool:
+        """Check if this SystemConnection is enabled for the current user/org."""
+        if settings.MULTI_ORGANIZATIONS:
+            org_id = getattr(info.context.request, "org", None)
+            org_id = org_id.id if org_id else None
+            return providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                is_enabled=True,
+                link__org__id=org_id,
+            ).exists()
+        else:
+            user_id = getattr(info.context.request, "user", None)
+            user_id = user_id.id if user_id else None
+            return providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                is_enabled=True,
+                created_by__id=user_id,
+            ).exists()
+
+    @strawberry.field
+    def config(self: providers.SystemConnection, info: Info) -> typing.Optional[utils.JSON]:
+        """Get the user's config for this SystemConnection from their BrokeredConnection."""
+        if settings.MULTI_ORGANIZATIONS:
+            org_id = getattr(info.context.request, "org", None)
+            org_id = org_id.id if org_id else None
+            brokered = providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                link__org__id=org_id,
+            ).first()
+        else:
+            user_id = getattr(info.context.request, "user", None)
+            user_id = user_id.id if user_id else None
+            brokered = providers.BrokeredConnection.objects.filter(
+                system_connection=self,
+                created_by__id=user_id,
+            ).first()
+        return brokered.config if brokered else None
 
     @staticmethod
     @utils.authentication_required
@@ -1432,42 +1744,46 @@ class SystemConnectionType:
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> utils.Connection["SystemConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
-        connections = filters.CarrierFilters(
-            _filter.to_dict(),
-            providers.Carrier.system_carriers.resolve_config_for(
-                info.context.request
-            ).filter(
-                active=True,
-                test_mode=getattr(info.context.request, "test_mode", False),
-            ),
-        ).qs
-        return utils.paginated_connection(connections, **_filter.pagination())
+        queryset = providers.SystemConnection.objects.filter(
+            active=True,
+            test_mode=getattr(info.context.request, "test_mode", False),
+        )
+        # Apply carrier filter if specified
+        if _filter.carrier_name:
+            queryset = queryset.filter(carrier_code=_filter.carrier_name)
+        return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type
 class CarrierConnectionType:
+    """GraphQL type for carrier connections."""
+
     id: str
     carrier_id: str
+    carrier_code: str
     carrier_name: str
     display_name: str
     active: bool
-    is_system: bool
     test_mode: bool
-    credentials: utils.JSON
     capabilities: typing.List[str]
-    rate_sheet: typing.Optional[RateSheetType] = None
 
     @strawberry.field
-    def metadata(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+    def credentials(self: providers.CarrierConnection, info: Info) -> utils.JSON:
+        return self.credentials
+
+    @strawberry.field
+    def metadata(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
         return getattr(self, "metadata", None)
 
     @strawberry.field
-    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+    def config(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
         return getattr(self, "config", None)
 
+    @strawberry.field
     def rate_sheet(
-        self: providers.Carrier, info: Info
+        self: providers.CarrierConnection, info: Info
     ) -> typing.Optional[RateSheetType]:
+        # Access rate_sheet FK from the Django model
         return getattr(self, "rate_sheet", None)
 
     @staticmethod
@@ -1478,9 +1794,10 @@ class CarrierConnectionType:
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> typing.List["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        # Carrier model now only contains user/org-owned connections (no is_system filter needed)
         connections = filters.CarrierFilters(
             _filter.to_dict(),
-            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+            providers.CarrierConnection.access_by(info.context.request),
         ).qs
         return connections
 
@@ -1492,7 +1809,7 @@ class CarrierConnectionType:
         id: str,
     ) -> typing.Optional["CarrierConnectionType"]:
         connection = (
-            providers.Carrier.access_by(info.context.request).filter(id=id).first()
+            providers.CarrierConnection.access_by(info.context.request).filter(id=id).first()
         )
         return connection
 
@@ -1504,9 +1821,10 @@ class CarrierConnectionType:
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> utils.Connection["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        # Carrier model now only contains user/org-owned connections (no is_system filter needed)
         queryset = filters.CarrierFilters(
             _filter.to_dict(),
-            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+            providers.CarrierConnection.access_by(info.context.request),
         ).qs
         connections = utils.paginated_connection(queryset, **_filter.pagination())
 

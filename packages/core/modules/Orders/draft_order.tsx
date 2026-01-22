@@ -269,7 +269,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                           add item
                         </ButtonField>
                       }
-                      onSubmit={(_) => mutation.addItem(_)}
+                      onSubmit={(_) => mutation.addItem(_ as any)}
                       disableOrderLinking={true}
                     />
                   </div>
@@ -300,7 +300,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                               </ButtonField>
                             }
                             commodity={item as any}
-                            onSubmit={(_) => mutation.updateItem(index, item.id)(_)}
+                            onSubmit={(_) => mutation.updateItem(index, item.id)(_ as any)}
                             disableOrderLinking={true}
                           />
                           <ButtonField
@@ -570,7 +570,7 @@ export default function Page(pageProps: { params: Promise<{ id?: string }> }) {
                           shipment={order as any}
                           address={order.shipping_to as AddressType}
                           onSubmit={(address) =>
-                            handleChange({ shipping_to: address })
+                            handleChange({ shipping_to: address as any })
                           }
                           trigger={
                             <ButtonField

@@ -154,6 +154,12 @@ class AddressValidation(serializers.Serializer):
 
 
 class AddressData(validators.AugmentedAddressSerializer):
+    id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A unique identifier for the address (used in JSON embedded data)",
+    )
     postal_code = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -259,6 +265,14 @@ class AddressData(validators.AugmentedAddressSerializer):
         allow_null=True,
         default=False,
         help_text="Indicate if the address should be validated",
+    )
+    meta = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default=dict,
+        help_text="""Template metadata for template identification.
+        Structure: {"label": "Warehouse A", "is_default": true, "usage": ["sender", "return"]}
+        """,
     )
 
 
@@ -369,6 +383,14 @@ class CommodityData(serializers.Serializer):
         </details>
         """,
     )
+    meta = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default=dict,
+        help_text="""Template metadata for template identification.
+        Structure: {"label": "Widget Pro", "is_default": false}
+        """,
+    )
 
 
 class Commodity(serializers.EntitySerializer, CommodityData):
@@ -472,6 +494,14 @@ class ParcelData(validators.PresetSerializer):
         </details>
         """,
     )
+    meta = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        default=dict,
+        help_text="""Template metadata for template identification.
+        Structure: {"label": "Standard Box", "is_default": true}
+        """,
+    )
 
 
 class Parcel(serializers.EntitySerializer, ParcelData):
@@ -529,12 +559,6 @@ class Duty(serializers.Serializer):
     )
 
 
-@serializers.allow_model_id(
-    [
-        ("commodities", "karrio.server.manager.models.Commodity"),
-        ("duty_billing_address", "karrio.server.manager.models.Address"),
-    ]
-)
 class CustomsData(serializers.Serializer):
     commodities = CommodityData(
         many=True, allow_empty=False, help_text="The parcel content items"
@@ -607,18 +631,6 @@ class CustomsData(serializers.Serializer):
         }
         </details>
         """,
-    )
-
-
-class Customs(serializers.EntitySerializer, CustomsData):
-    object_type = serializers.CharField(
-        default="customs_info", help_text="Specifies the object type"
-    )
-    commodities = Commodity(
-        required=False, many=True, help_text="The parcel content items"
-    )
-    duty_billing_address = Address(
-        required=False, allow_null=True, help_text="The duty payor address."
     )
 
 
@@ -1339,7 +1351,6 @@ class Rate(serializers.EntitySerializer):
         ("shipper", "karrio.server.manager.models.Address"),
         ("recipient", "karrio.server.manager.models.Address"),
         ("parcels", "karrio.server.manager.models.Parcel"),
-        ("customs", "karrio.server.manager.models.Customs"),
         ("return_address", "karrio.server.manager.models.Address"),
         ("billing_address", "karrio.server.manager.models.Address"),
     ]
@@ -1575,12 +1586,12 @@ class ShipmentContent(serializers.Serializer):
         Destination address (ship to) for the **recipient**
         """,
     )
-    return_address = AddressData(
+    return_address = Address(
         required=False,
         allow_null=True,
         help_text="The return address for this shipment. Defaults to the shipper address.",
     )
-    billing_address = AddressData(
+    billing_address = Address(
         required=False,
         allow_null=True,
         help_text="The payor address.",
@@ -1648,7 +1659,7 @@ class ShipmentContent(serializers.Serializer):
         default={},
         help_text="The payment details",
     )
-    customs = Customs(
+    customs = CustomsData(
         required=False,
         allow_null=True,
         help_text="""The customs details.<br/>

@@ -54,13 +54,13 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     dpd_order_type = lib.OptionEnum("orderType")
-    dpd_saturday_delivery = lib.OptionEnum("saturdayDelivery", bool)
-    dpd_ex_works_delivery = lib.OptionEnum("exWorksDelivery", bool)
+    dpd_saturday_delivery = lib.OptionEnum("saturdayDelivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    dpd_ex_works_delivery = lib.OptionEnum("exWorksDelivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
     # dpd_guarantee = lib.OptionEnum("guarantee", bool)
     dpd_tyres = lib.OptionEnum("tyres", bool)
     # dpd_personal_delivery = lib.OptionEnum("personalDelivery", bool)
     # dpd_pickup = lib.OptionEnum("pickup", bool)
-    dpd_parcel_shop_delivery = lib.OptionEnum("parcelShopDelivery")
+    dpd_parcel_shop_delivery = lib.OptionEnum("parcelShopDelivery", meta=dict(category="PUDO"))
     # dpd_predict = lib.OptionEnum("predict", bool)
     # dpd_personal_delivery_notification = lib.OptionEnum("personalDeliveryNotification", bool)
     # dpd_proactive_notification = lib.OptionEnum("proactiveNotification", bool)

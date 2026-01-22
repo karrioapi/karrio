@@ -15,6 +15,7 @@ from karrio.core.models import TrackingDetails, Message, TrackingEvent
 
 import karrio.server.core.utils as utils
 from karrio.server.core.logging import logger
+from karrio.server.core.utils import resolve_carrier
 import karrio.server.manager.models as models
 import karrio.server.tracing.utils as tracing
 import karrio.server.core.datatypes as datatypes
@@ -76,8 +77,8 @@ def create_request_batches(
         try:
             # Add a request delay to avoid sending two request batches to a carrier at the same time
             delay = int(((end / 10) * 10) - 10)
-            # Get the common tracking carrier
-            carrier = trackers[0].tracking_carrier
+            # Get the common tracking carrier from the JSON snapshot
+            carrier = resolve_carrier(trackers[0].carrier, context=None)
             # Collect the 5 trackers between the start and end indexes
             batch_trackers = trackers[start:end]
             tracking_numbers = [t.tracking_number for t in batch_trackers]

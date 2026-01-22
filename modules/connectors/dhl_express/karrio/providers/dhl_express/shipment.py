@@ -77,12 +77,32 @@ def _extract_shipment(
         else {}
     )
 
+    # Map DHL document names to unified categories
+    doc_category_map = {
+        "TransportLabel": "transport_label",
+        "ArchiveDocument": "archive_document",
+        "ShipmentReceipt": "shipment_receipt",
+        "WaybillDoc": "waybill_document",
+    }
+
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
-        docs=models.Documents(label=label, **invoice_data),
+        docs=models.Documents(
+            label=label,
+            extra_documents=[
+                models.ShippingDocument(
+                    category=doc_category_map.get(doc.DocName, "other"),
+                    format=doc.DocFormat or "PDF",
+                    base64=base64.encodebytes(doc.DocImageVal).decode("utf-8"),
+                )
+                for doc in multilabels
+                if doc.DocName != "CustomInvoiceImage" and doc.DocImageVal is not None
+            ],
+            **invoice_data,
+        ),
         selected_rate=selected_rate,
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),

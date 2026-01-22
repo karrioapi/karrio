@@ -99,7 +99,7 @@ class CarrierFilters(filters.FilterSet):
     class Meta:
         import karrio.server.providers.models as providers
 
-        model = providers.Carrier
+        model = providers.CarrierConnection
         fields: typing.List[str] = []
 
     def metadata_key_filter(self, queryset, name, value):
@@ -174,7 +174,7 @@ class CarrierConnectionFilter(filters.FilterSet):
     class Meta:
         import karrio.server.providers.models as providers
 
-        model = providers.Carrier
+        model = providers.CarrierConnection
         fields: typing.List[str] = []
 
     def metadata_key_filter(self, queryset, name, value):
@@ -459,9 +459,8 @@ class ShipmentFilters(filters.FilterSet):
         )
 
     def carrier_filter(self, queryset, name, values):
-        _filters = [
-            models.Q(selected_rate_carrier__carrier_code=value) for value in values
-        ]
+        # Filter by carrier_code in carrier JSON snapshot
+        _filters = [models.Q(carrier__carrier_code=value) for value in values]
         query = models.Q(meta__rate_provider__in=values)
 
         for item in _filters:
@@ -591,7 +590,8 @@ class TrackerFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def carrier_filter(self, queryset, name, values):
-        _filters = [models.Q(tracking_carrier__carrier_code=value) for value in values]
+        # Filter by carrier_code in carrier JSON snapshot
+        _filters = [models.Q(carrier__carrier_code=value) for value in values]
         query = _filters.pop()
 
         for item in _filters:
@@ -828,7 +828,8 @@ class ManifestFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def carrier_filter(self, queryset, name, values):
-        _filters = [models.Q(manifest_carrier__carrier_code=value) for value in values]
+        # Filter by carrier_code in carrier JSON snapshot
+        _filters = [models.Q(carrier__carrier_code=value) for value in values]
         query = _filters.pop()
 
         for item in _filters:

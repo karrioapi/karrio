@@ -224,14 +224,14 @@ ParsedShipmentResponse = [
             "extra_documents": [
                 {
                     "base64": ANY,
-                    "category": "retrunLabel",
+                    "category": "return_label",
                     "format": "PDF",
                     "print_format": "A4",
                     "url": ANY,
                 },
                 {
                     "base64": ANY,
-                    "category": "codLabel",
+                    "category": "cod_document",
                     "format": "PDF",
                     "print_format": "A4",
                     "url": ANY,
@@ -284,8 +284,8 @@ ShipmentRequest = {
         {
             "billingNumber": "33333333330102",
             "consignee": {
-                "addressHouse": "Apartment 107",
-                "addressStreet": "Kurt-Schumacher-Str. 20",
+                "addressHouse": "20",
+                "addressStreet": "Kurt-Schumacher-Str.",
                 "city": "Bonn",
                 "country": "DEU",
                 "email": "maria@musterfrau.de",
@@ -321,7 +321,8 @@ IntlShipmentRequest = {
         {
             "billingNumber": "33333333330102",
             "consignee": {
-                "addressStreet": "10 Downing Street",
+                "addressHouse": "10",
+                "addressStreet": "Downing Street",
                 "city": "London",
                 "country": "GBR",
                 "email": "joe@black.uk",
@@ -355,13 +356,13 @@ IntlShipmentRequest = {
             "services": {"endorsement": "RETURN"},
             "shipDate": ANY,
             "shipper": {
-                "addressStreet": "Sträßchensweg 10",
+                "addressHouse": "10",
+                "addressStreet": "Sträßchensweg",
                 "city": "Bonn",
                 "country": "DEU",
                 "email": "max@mustermann.de",
                 "name1": "My Online Shop GmbH",
                 "postalCode": "53113",
-                "addressHouse": "2. Etage",
             },
         }
     ],

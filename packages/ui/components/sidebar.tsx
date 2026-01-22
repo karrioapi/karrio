@@ -5,17 +5,14 @@ import {
   Home,
   Truck,
   MapPin,
-  Settings,
   Zap,
-  Code2,
   Terminal,
   Shield,
-  BookOpen,
   Inbox,
   List,
-  Brackets,
   Building2,
   BarChart3,
+  Workflow,
 } from "lucide-react"
 
 
@@ -73,20 +70,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/connections",
       icon: List,
     },
-    ...(metadata?.SHIPPING_RULES || metadata?.WORKFLOW_MANAGEMENT ? [{
-      title: "Automation",
-      url: metadata?.SHIPPING_RULES ? "/shipping-rules" : "/workflows",
+    ...(metadata?.SHIPPING_RULES ? [{
+      title: "Shipping Rules",
+      url: "/shipping-rules",
       icon: Zap,
+    }] : []),
+    ...(metadata?.WORKFLOW_MANAGEMENT ? [{
+      title: "Workflows",
+      url: "/workflows",
+      icon: Workflow,
     }] : []),
     ...(metadata?.ADVANCED_ANALYTICS ? [{
       title: "Reports",
       url: "/reports",
       icon: BarChart3,
-    }] : []),
-    ...(metadata?.ADMIN_DASHBOARD && user?.is_staff ? [{
-      title: "Control",
-      url: "/admin",
-      icon: Shield,
     }] : []),
     ...(metadata?.MULTI_ORGANIZATIONS && user?.is_superuser ? [{
       title: "Shippers",
@@ -102,9 +99,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/shippers/accounts",
         },
         {
-          title: "Addons",
-          url: "/shippers/addons",
+          title: "Markups",
+          url: "/shippers/markups",
         },
+        { title: "Carriers Network", url: "/admin/carriers" },
+      ],
+    }] : []),
+    ...(metadata?.ADMIN_DASHBOARD && user?.is_staff ? [{
+      title: "Platform",
+      url: "/admin",
+      icon: Shield,
+      items: [
+        { title: "Console", url: "/admin" },
+        { title: "Staff & Permissions", url: "/admin/staff" },
       ],
     }] : []),
   ];

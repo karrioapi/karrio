@@ -12,7 +12,6 @@ import {
 } from "@karrio/ui/components/ui/alert-dialog";
 import { useWorkflows, useWorkflowMutation } from "@karrio/hooks/workflows";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
-import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { bundleContexts } from "@karrio/hooks/utils";
@@ -25,8 +24,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@karrio/ui/components/ui/dropdown-menu";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-
 import { Dialog, DialogContent, DialogTitle } from "@karrio/ui/components/ui/dialog";
 import { WorkflowEditor } from "@karrio/core/components/workflow-editor";
 import { WorkflowTemplatePicker } from "@karrio/core/components/workflow-template-picker";
@@ -35,7 +32,6 @@ const ContextProviders = bundleContexts([]);
 
 export default function Page(pageProps: any) {
   const Component = (): JSX.Element => {
-    const { metadata } = useAPIMetadata();
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
@@ -138,13 +134,8 @@ export default function Page(pageProps: any) {
     return (
       <>
         {/* Header */}
-        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <div className="title is-4">
-            <span>Automation</span>
-            <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">
-              PREVIEW
-            </span>
-          </div>
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-0 pb-0 pt-4">
+          <span className="text-2xl font-semibold">Workflows</span>
           <WorkflowTemplatePicker
             onSelectTemplate={(template) => {
               setSelectedTemplate(template);
@@ -157,27 +148,6 @@ export default function Page(pageProps: any) {
             </Button>
           </WorkflowTemplatePicker>
         </header>
-
-        <div className="tabs">
-          <ul>
-            <li className={`is-capitalized has-text-weight-semibold ${metadata?.WORKFLOW_MANAGEMENT ? "" : "is-disabled"}`}
-              onClick={() => {
-                if (!metadata?.WORKFLOW_MANAGEMENT) {
-                  alert("Workflow management is not enabled in your API configuration.");
-                }
-              }}
-            >
-              <AppLink href="/shipping-rules" shallow={false} prefetch={false}>
-                <span>Shipping Rules</span>
-              </AppLink>
-            </li>
-            <li className={`is-capitalized has-text-weight-semibold is-active`}>
-              <AppLink href="/workflows" shallow={false} prefetch={false}>
-                <span>Workflows</span>
-              </AppLink>
-            </li>
-          </ul>
-        </div>
 
         <div className="py-4">
           {/* Workflow Info Banner */}

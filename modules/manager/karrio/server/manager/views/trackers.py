@@ -42,7 +42,8 @@ class TrackerList(GenericAPIView):
         carrier_name = query_params.get("carrier_name")
 
         if carrier_name is not None:
-            _filters += (Q(tracking_carrier__carrier_code=carrier_name),)
+            # Filter by carrier_code in the carrier JSON snapshot
+            _filters += (Q(carrier__carrier_code=carrier_name),)
 
         return queryset.filter(*_filters)
 
@@ -339,12 +340,79 @@ class TrackerDocs(django_downloadview.VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
 
+class TrackerEventInject(APIView):
+    """
+    Inbound tracking event API for event injection (testing purposes).
+    """
+
+    @openapi.extend_schema(
+        tags=["Trackers"],
+        operation_id=f"{ENDPOINT_ID}inject",
+        extensions={"x-operationId": "injectTrackingEvents"},
+        summary="Inject tracking events",
+        description="Inject tracking events into an existing tracker for testing purposes.",
+        request=serializers.TrackerEventInjectRequest(),
+        responses={
+            200: serializers.Operation(),
+            400: serializers.ErrorResponse(),
+            404: serializers.ErrorResponse(),
+            500: serializers.ErrorResponse(),
+        },
+    )
+    def post(self, request: Request, tracker_id: str):
+        """
+        Inject tracking events into an existing tracker.
+
+        This endpoint allows injecting events for testing the tracking pipeline.
+        """
+        import karrio.lib as lib
+        import karrio.server.manager.serializers.tracking as tracking_serializers
+
+        tracker = models.Tracking.access_by(request).get(pk=tracker_id)
+
+        serializer = serializers.TrackerEventInjectRequest(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        events = lib.to_dict(data.get("events", []))
+
+        # Build tracking details update payload
+        tracking_details = dict(events=events)
+
+        if data.get("status") is not None:
+            tracking_details["status"] = data["status"]
+
+        if data.get("delivered"):
+            tracking_details["delivered"] = data["delivered"]
+
+        if data.get("estimated_delivery") is not None:
+            tracking_details["estimated_delivery"] = data["estimated_delivery"]
+
+        # Use the centralized update_tracker function
+        tracking_serializers.update_tracker(tracker, tracking_details)
+
+        return Response(
+            serializers.Operation(
+                dict(operation="Inject Tracking Events", success=True)
+            ).data,
+            status=status.HTTP_200_OK,
+        )
+
+
 router.urls.append(path("trackers", TrackerList.as_view(), name="trackers-list"))
 router.urls.append(
     path(
         "trackers/<str:id_or_tracking_number>",
         TrackersDetails.as_view(),
         name="tracker-details",
+    )
+)
+# Register inject-events BEFORE shipment-tracker to avoid matching ambiguity
+router.urls.append(
+    path(
+        "trackers/<str:tracker_id>/inject-events",
+        TrackerEventInject.as_view(),
+        name="tracker-events-inject",
     )
 )
 router.urls.append(

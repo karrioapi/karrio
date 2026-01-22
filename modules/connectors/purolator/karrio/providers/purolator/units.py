@@ -71,17 +71,17 @@ class CreditCardType(lib.StrEnum):
 
 
 class ShippingOption(lib.Enum):
-    purolator_dangerous_goods = lib.OptionEnum("Dangerous Goods")
-    purolator_chain_of_signature = lib.OptionEnum("Chain of Signature")
-    purolator_express_cheque = lib.OptionEnum("ExpressCheque")
-    purolator_hold_for_pickup = lib.OptionEnum("Hold For Pickup")
-    purolator_return_services = lib.OptionEnum("Return Services")
-    purolator_saturday_service = lib.OptionEnum("Saturday Service")
+    purolator_dangerous_goods = lib.OptionEnum("Dangerous Goods", meta=dict(category="DANGEROUS_GOOD"))
+    purolator_chain_of_signature = lib.OptionEnum("Chain of Signature", meta=dict(category="SIGNATURE"))
+    purolator_express_cheque = lib.OptionEnum("ExpressCheque", meta=dict(category="COD"))
+    purolator_hold_for_pickup = lib.OptionEnum("Hold For Pickup", meta=dict(category="PUDO"))
+    purolator_return_services = lib.OptionEnum("Return Services", meta=dict(category="RETURN"))
+    purolator_saturday_service = lib.OptionEnum("Saturday Service", meta=dict(category="DELIVERY_OPTIONS"))
     purolator_origin_signature_not_required = lib.OptionEnum(
-        "Origin Signature Not Required (OSNR)"
+        "Origin Signature Not Required (OSNR)", meta=dict(category="SIGNATURE")
     )
     purolator_adult_signature_required = lib.OptionEnum(
-        "Adult Signature Required (ASR)"
+        "Adult Signature Required (ASR)", meta=dict(category="SIGNATURE")
     )
     purolator_special_handling = lib.OptionEnum("Special Handling")
 

@@ -7,7 +7,7 @@ import karrio.server.providers.models as models
 
 
 def register_signals():
-    signals.post_save.connect(carrier_changed, sender=models.Carrier)
+    signals.post_save.connect(carrier_changed, sender=models.CarrierConnection)
 
     logger.info("Karrio providers signals registered")
 

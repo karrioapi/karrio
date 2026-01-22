@@ -56,7 +56,41 @@ export const ClientProvider = ({
   const session = sessionQuery.data as ExtendedSessionType;
 
   const host = getHost?.() || KARRIO_API || "";
-  const client = setupRestClient(host, session);
+
+  // Use a ref to always have the latest session for the interceptor
+  const sessionRef = React.useRef<ExtendedSessionType | undefined>(session);
+  React.useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
+  // Memoize client setup to avoid recreating on every render
+  // but use sessionRef in interceptor to always get latest session
+  const client = React.useMemo(() => {
+    const karrioClient = new KarrioClient({ basePath: url$`${host}` });
+    karrioClient.axios.interceptors.request.use((config: any = { headers: {} }) => {
+      const currentSession = sessionRef.current;
+      const cookieOrgId = getCookie("orgId");
+      const testHeader: any = !!currentSession?.testMode
+        ? { "x-test-mode": currentSession.testMode }
+        : {};
+      const authHeader: any = !!currentSession?.accessToken
+        ? { authorization: `Bearer ${currentSession.accessToken}` }
+        : {};
+      const orgHeader: any = !!currentSession?.orgId
+        ? { "x-org-id": currentSession.orgId }
+        : {};
+
+      config.headers = {
+        ...config.headers,
+        ...authHeader,
+        ...orgHeader,
+        ...testHeader,
+      };
+
+      return config;
+    });
+    return karrioClient;
+  }, [host]);
 
   return (
     <APIClientsContext.Provider
@@ -86,9 +120,10 @@ export function useAuthenticatedQuery<TQueryFnData = unknown, TError = unknown, 
   const { query: sessionQuery } = useSyncedSession();
   const { requireAuth = true, enabled = true, ...queryOptions } = options;
 
-  // Wait for session to be loaded before enabling authenticated queries
-  const sessionLoaded = sessionQuery.isFetched || sessionQuery.isSuccess;
-  const shouldEnable = requireAuth ? (enabled && isAuthenticated && sessionLoaded) : enabled;
+  // Wait for session to be fully loaded with data before enabling authenticated queries
+  // isAuthenticated already checks for accessToken presence, so this ensures data is ready
+  const sessionReady = isAuthenticated && !!(sessionQuery.data as any)?.accessToken;
+  const shouldEnable = requireAuth ? (enabled && sessionReady) : enabled;
 
   // Scope query keys by orgId and testMode to avoid cross-org cache bleed
   const baseKey = (queryOptions as any).queryKey;
@@ -131,34 +166,4 @@ export function useAuthenticatedMutation<TData = unknown, TError = unknown, TVar
   options: UseMutationOptions<TData, TError, TVariables, TContext>
 ) {
   return useMutation(options);
-}
-
-function requestInterceptor(session?: ExtendedSessionType) {
-  return (config: any = { headers: {} }) => {
-    const cookieOrgId = getCookie("orgId");
-    const testHeader: any = !!session?.testMode
-      ? { "x-test-mode": session.testMode }
-      : {};
-    const authHeader: any = !!session?.accessToken
-      ? { authorization: `Bearer ${session.accessToken}` }
-      : {};
-    const orgHeader: any = !!session?.orgId
-      ? { "x-org-id": session.orgId }
-      : {};
-
-    config.headers = {
-      ...config.headers,
-      ...authHeader,
-      ...orgHeader,
-      ...testHeader,
-    };
-
-    return config;
-  };
-}
-
-function setupRestClient(host: string, session?: ExtendedSessionType): KarrioClient {
-  const client = new KarrioClient({ basePath: url$`${host}` });
-  client.axios.interceptors.request.use(requestInterceptor(session));
-  return client;
 }

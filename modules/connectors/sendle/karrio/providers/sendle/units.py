@@ -28,8 +28,8 @@ class ShippingService(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    sendle_hide_pickup_address = lib.OptionEnum("hide_pickup_address", bool)
-    sendle_first_mile_option = lib.OptionEnum("first_mile_option", bool)
+    sendle_hide_pickup_address = lib.OptionEnum("hide_pickup_address", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    sendle_first_mile_option = lib.OptionEnum("first_mile_option", bool, meta=dict(category="DELIVERY_OPTIONS"))
 
 
 def shipping_options_initializer(

@@ -40,10 +40,10 @@ def _extract_details(
     shipment = lib.to_object(dpd_res.ShipmentResponseType, data)
     label_format = (ctx or {}).get("label_format", "PDF")
 
-    [tracking_number, *_] = shipment.parcelIds 
+    [tracking_number, *_] = shipment.parcelIds
     label_data = lib.failsafe(lambda: shipment.label.base64Data)
     documents = [
-        ("qrcode", lib.failsafe(lambda: shipment.qrcode.base64Data))
+        ("qr_code", lib.failsafe(lambda: shipment.qrcode.base64Data))
     ]
 
     return models.ShipmentDetails(
@@ -55,7 +55,11 @@ def _extract_details(
         docs=models.Documents(
             label=label_data,
             extra_documents=[
-                models.ShippingDocument(category=category, base64=document, format="PDF")
+                models.ShippingDocument(
+                    category=provider_units.ShippingDocumentCategory.map(category).name_or_key,
+                    base64=document,
+                    format="PDF",
+                )
                 for category, document in documents if document
             ],
         ),

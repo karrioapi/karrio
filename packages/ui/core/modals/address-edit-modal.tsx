@@ -5,7 +5,7 @@ import {
   DEFAULT_ADDRESS_CONTENT,
   NotificationType,
 } from "@karrio/types";
-import { useAddressTemplateMutation } from "@karrio/hooks/address";
+import { useAddressMutation } from "@karrio/hooks/address";
 import { CheckBoxField } from "../components/checkbox-field";
 import { Notifier, Notify } from "../components/notifier";
 import { InputField } from "../components/input-field";
@@ -42,7 +42,7 @@ export const AddressEditModal = ({
 }: AddressEditModalComponent): JSX.Element => {
   const { notify } = useContext(Notify);
   const { setLoading } = useContext(Loading);
-  const mutation = useAddressTemplateMutation();
+  const mutation = useAddressMutation();
   const [isNew, setIsNew] = useState<boolean>(true);
   const { addUrlParam, removeUrlParam } = useLocation();
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -51,7 +51,13 @@ export const AddressEditModal = ({
   const [template, setTemplate] = useState<AddressTemplateType | undefined>();
 
   const editAddress = (operation: OperationType = {}) => {
-    const template = operation.addressTemplate || DEFAULT_TEMPLATE_CONTENT;
+    const addressTemplate = operation.addressTemplate;
+    // Extract label and is_default from meta if present (new format), fallback to top-level (legacy)
+    const template = addressTemplate ? {
+      ...addressTemplate,
+      label: addressTemplate.meta?.label || addressTemplate.label || "",
+      is_default: addressTemplate.meta?.is_default || addressTemplate.is_default || false,
+    } : DEFAULT_TEMPLATE_CONTENT;
 
     setOperation(operation);
     setIsNew(isNone(operation.addressTemplate));
@@ -87,13 +93,13 @@ export const AddressEditModal = ({
     try {
       setLoading(true);
       if (isNew) {
-        await mutation.createAddressTemplate.mutateAsync(payload as any);
+        await mutation.createAddress.mutateAsync(payload as any);
         notify({
           type: NotificationType.success,
           message: "Address successfully added!",
         });
       } else {
-        await mutation.updateAddressTemplate.mutateAsync(payload as any);
+        await mutation.updateAddress.mutateAsync(payload as any);
         notify({
           type: NotificationType.success,
           message: "Address successfully updated!",
@@ -129,8 +135,12 @@ export const AddressEditModal = ({
                 value={template.address}
                 onSubmit={async (address) => handleSubmit(address)}
                 onTemplateChange={(isUnchanged) => {
-                  const defaultValue =
-                    operation?.addressTemplate || DEFAULT_TEMPLATE_CONTENT;
+                  const addressTemplate = operation?.addressTemplate;
+                  const defaultValue = addressTemplate ? {
+                    ...addressTemplate,
+                    label: addressTemplate.meta?.label || addressTemplate.label || "",
+                    is_default: addressTemplate.meta?.is_default || addressTemplate.is_default || false,
+                  } : DEFAULT_TEMPLATE_CONTENT;
                   return (
                     isUnchanged &&
                     template.label === defaultValue.label &&

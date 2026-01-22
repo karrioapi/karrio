@@ -5,6 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**id** | **string** | A unique identifier for the address (used in JSON embedded data) | [optional] [default to undefined]
 **postal_code** | **string** | The address postal code         **(required for shipment purchase)**          | [optional] [default to undefined]
 **city** | **string** | The address city.         **(required for shipment purchase)**          | [optional] [default to undefined]
 **federal_tax_id** | **string** | The party frederal tax id | [optional] [default to undefined]
@@ -20,6 +21,7 @@ Name | Type | Description | Notes
 **address_line1** | **string** | The address line with street number &lt;br/&gt;         **(required for shipment purchase)**          | [optional] [default to undefined]
 **address_line2** | **string** | The address line with suite number | [optional] [default to undefined]
 **validate_location** | **boolean** | Indicate if the address should be validated | [optional] [default to false]
+**meta** | **{ [key: string]: any; }** | Template metadata for template identification.         Structure: {\&quot;label\&quot;: \&quot;Warehouse A\&quot;, \&quot;is_default\&quot;: true, \&quot;usage\&quot;: [\&quot;sender\&quot;, \&quot;return\&quot;]}          | [optional] [default to undefined]
 
 ## Example
 
@@ -27,6 +29,7 @@ Name | Type | Description | Notes
 import { PatchedAddressData } from './api';
 
 const instance: PatchedAddressData = {
+    id,
     postal_code,
     city,
     federal_tax_id,
@@ -42,6 +45,7 @@ const instance: PatchedAddressData = {
     address_line1,
     address_line2,
     validate_location,
+    meta,
 };
 ```
 

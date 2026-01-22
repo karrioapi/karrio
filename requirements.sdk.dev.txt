@@ -5,6 +5,8 @@
 
 # Shipping Plugins
 -e ./modules/connectors/australiapost
+-e ./modules/connectors/asendia
+-e ./modules/connectors/bpost
 -e ./modules/connectors/canadapost
 -e ./modules/connectors/chronopost
 -e ./modules/connectors/dhl_express
@@ -25,6 +27,7 @@
 -e ./modules/connectors/purolator
 -e ./modules/connectors/seko
 -e ./modules/connectors/sendle
+-e ./modules/connectors/spring
 -e ./modules/connectors/teleship
 -e ./modules/connectors/ups
 -e ./modules/connectors/usps

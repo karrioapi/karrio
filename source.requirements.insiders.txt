@@ -95,6 +95,7 @@ karrio_server_orders @ file://${PWD}/modules/orders
 karrio_server_orgs @ file://${PWD}/ee/insiders/modules/orgs
 karrio_server_pricing @ file://${PWD}/modules/pricing
 karrio_server_proxy @ file://${PWD}/modules/proxy
+karrio_spring @ file://${PWD}/modules/connectors/spring
 karrio_teleship @ file://${PWD}/modules/connectors/teleship
 karrio_ups @ file://${PWD}/modules/connectors/ups
 karrio_usps @ file://${PWD}/modules/connectors/usps
@@ -122,15 +123,15 @@ opentelemetry-proto==1.39.1
 opentelemetry-sdk==1.39.1
 opentelemetry-semantic-conventions==0.60b1
 opentelemetry-util-http==0.60b1
-packaging==25.0
-phonenumbers==9.0.21
+packaging==26.0
+phonenumbers==9.0.22
 pillow==12.1.0
-posthog==7.5.1
+posthog==7.6.0
 protobuf==6.33.4
 psutil==7.2.1
 psycopg2-binary==2.9.11
 py_soap @ file://${PWD}/modules/soap
-pycparser==2.23
+pycparser==3.0
 pydyf==0.12.1
 PyJWT==2.10.1
 PyPDF2==3.0.1
@@ -146,10 +147,10 @@ redis==7.1.0
 referencing==0.37.0
 requests==2.32.5
 rpds-py==0.30.0
-sentry-sdk==2.49.0
+sentry-sdk==2.50.0
 six==1.17.0
 sqlparse==0.5.5
-strawberry-graphql==0.289.0
+strawberry-graphql==0.289.3
 tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.0.0
@@ -159,7 +160,7 @@ uritemplate==4.2.0
 urllib3==2.6.3
 uvicorn==0.40.0
 validators==0.35.0
-weasyprint==67.0
+weasyprint==68.0
 webencodings==0.5.1
 whitenoise==6.11.0
 wrapt==1.17.3

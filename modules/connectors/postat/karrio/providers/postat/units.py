@@ -70,27 +70,27 @@ class ShippingOption(lib.Enum):
     postat_paper_layout = lib.OptionEnum("paper_layout", str)
 
     # Cash on Delivery
-    postat_cod = lib.OptionEnum("COD", float)
-    postat_cod_currency = lib.OptionEnum("COD_CURRENCY", str)
+    postat_cod = lib.OptionEnum("COD", float, meta=dict(category="COD"))
+    postat_cod_currency = lib.OptionEnum("COD_CURRENCY", str, meta=dict(category="COD"))
 
     # Insurance
-    postat_insurance = lib.OptionEnum("INS", float)
-    postat_insurance_currency = lib.OptionEnum("INS_CURRENCY", str)
+    postat_insurance = lib.OptionEnum("INS", float, meta=dict(category="INSURANCE"))
+    postat_insurance_currency = lib.OptionEnum("INS_CURRENCY", str, meta=dict(category="INSURANCE"))
 
     # Signature required
-    postat_signature = lib.OptionEnum("SIG", bool)
+    postat_signature = lib.OptionEnum("SIG", bool, meta=dict(category="SIGNATURE"))
 
     # Saturday delivery
-    postat_saturday_delivery = lib.OptionEnum("SAT", bool)
+    postat_saturday_delivery = lib.OptionEnum("SAT", bool, meta=dict(category="DELIVERY_OPTIONS"))
 
     # Email notification
-    postat_email_notification = lib.OptionEnum("MAIL", str)
+    postat_email_notification = lib.OptionEnum("MAIL", str, meta=dict(category="NOTIFICATION"))
 
     # SMS notification
-    postat_sms_notification = lib.OptionEnum("SMS", str)
+    postat_sms_notification = lib.OptionEnum("SMS", str, meta=dict(category="NOTIFICATION"))
 
     # Age verification (16 or 18)
-    postat_age_verification = lib.OptionEnum("AGE", int)
+    postat_age_verification = lib.OptionEnum("AGE", int, meta=dict(category="SIGNATURE"))
 
     # Unified option mappings
     cash_on_delivery = postat_cod

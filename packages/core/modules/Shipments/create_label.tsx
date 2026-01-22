@@ -2,6 +2,7 @@
 import {
   AddressType,
   CommodityType,
+  CustomsCommodityType,
   CURRENCY_OPTIONS,
   CustomsType,
   NotificationType,
@@ -141,7 +142,7 @@ export default function CreateLabelPage(pageProps: any) {
         .map(({ node: { line_items } }) => line_items)
         .flat();
     };
-    const getParent = (id: string | null) => {
+    const getParent = (id: string | null | undefined) => {
       return getItems().find((item) => item.id === id);
     };
     const getOrder = (item_id?: string | null) => {
@@ -171,11 +172,12 @@ export default function CreateLabelPage(pageProps: any) {
 
       return [];
     };
-    const isPackedItem = (cdt: CommodityType, shipment: ShipmentType) => {
+    const isPackedItem = (cdt: CommodityType | CustomsCommodityType, shipment: ShipmentType) => {
+      const parentId = "parent_id" in cdt ? cdt.parent_id : null;
       const item = getShipmentCommodities(shipment).find(
         (item) =>
-          (!!cdt.parent_id && cdt.parent_id === item.parent_id) ||
-          (!!cdt.hs_code && cdt.hs_code === cdt.hs_code) ||
+          (!!parentId && parentId === item.parent_id) ||
+          (!!cdt.hs_code && cdt.hs_code === item.hs_code) ||
           (!!cdt.sku && cdt.sku === item.sku),
       );
       return !!item;
@@ -199,10 +201,10 @@ export default function CreateLabelPage(pageProps: any) {
     };
     const setInitialData = () => {
       const shipper =
-        templates.data?.default_templates.default_address?.address ||
+        templates.data?.default_templates.default_address ||
         ({} as any);
       const parcel = {
-        ...(templates.data?.default_templates.default_parcel?.parcel ||
+        ...(templates.data?.default_templates.default_parcel ||
           DEFAULT_PARCEL_CONTENT),
       };
 
@@ -667,7 +669,7 @@ export default function CreateLabelPage(pageProps: any) {
                               header="Edit package"
                               onSubmit={mutation.updateParcel(
                                 pkg_index,
-                                pkg.id,
+                                pkg.id ?? undefined,
                               )}
                               parcel={pkg}
                               shipment={shipment}
@@ -690,7 +692,7 @@ export default function CreateLabelPage(pageProps: any) {
                                 query.isFetching ||
                                 shipment.parcels.length === 1
                               }
-                              onClick={mutation.removeParcel(pkg_index, pkg.id)}
+                              onClick={mutation.removeParcel(pkg_index, pkg.id ?? undefined)}
                             >
                               <span className="icon is-small">
                                 <i className="fas fa-times"></i>
@@ -748,7 +750,7 @@ export default function CreateLabelPage(pageProps: any) {
                                           mutation.updateItem(
                                             pkg_index,
                                             item_index,
-                                            pkg.id,
+                                            pkg.id ?? undefined,
                                           )({
                                             quantity: parseInt(e.target.value),
                                           } as CommodityType);
@@ -798,8 +800,8 @@ export default function CreateLabelPage(pageProps: any) {
                                             mutation.updateItem(
                                               pkg_index,
                                               item_index,
-                                              pkg.id,
-                                            )(_),
+                                              pkg.id ?? undefined,
+                                            )(_ as CommodityType),
                                         })
                                       }
                                     >
@@ -815,7 +817,7 @@ export default function CreateLabelPage(pageProps: any) {
                                   onClick={mutation.removeItem(
                                     pkg_index,
                                     item_index,
-                                    item.id,
+                                    item.id ?? undefined,
                                   )}
                                 >
                                   <span className="icon is-small">
@@ -846,7 +848,7 @@ export default function CreateLabelPage(pageProps: any) {
                                     onSubmit: (_) =>
                                       mutation.addItems(
                                         pkg_index,
-                                        pkg.id,
+                                        pkg.id ?? undefined,
                                       )([_] as any),
                                   })
                                 }
@@ -863,7 +865,7 @@ export default function CreateLabelPage(pageProps: any) {
                               title="Add items"
                               shipment={shipment}
                               onChange={(_) =>
-                                mutation.addItems(pkg_index, pkg.id)(_ as any)
+                                mutation.addItems(pkg_index, pkg.id ?? undefined)(_ as any)
                               }
                             />
                           )}
@@ -1369,7 +1371,7 @@ export default function CreateLabelPage(pageProps: any) {
                                                 mutation.updateCommodity(
                                                   index,
                                                   shipment.customs?.id,
-                                                )(_),
+                                                )(_ as CommodityType),
                                             })
                                           }
                                         >
@@ -1391,7 +1393,7 @@ export default function CreateLabelPage(pageProps: any) {
                                         mutation.removeCommodity(
                                           index,
                                           shipment.customs?.id,
-                                        )(commodity.id)
+                                        )(commodity.id ?? undefined)
                                       }
                                     >
                                       <span className="icon is-small">

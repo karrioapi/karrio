@@ -292,20 +292,23 @@ class TestConnectionList(APITestCase):
 
     def setUp(self):
         super().setUp()
-        self.system_carrier = providers.Carrier.objects.create(
+        # Create a SystemConnection (admin-managed platform connection)
+        self.system_connection = providers.SystemConnection.objects.create(
             carrier_code="usps",
             carrier_id="usps_system",
             test_mode=True,
             active=True,
-            is_system=True,
-            created_by=None,
             credentials=dict(
                 client_id="system_client",
                 client_secret="system_secret",
             ),
         )
-        # Grant the test user access to the system carrier
-        self.system_carrier.active_users.add(self.user)
+        # Create a BrokeredConnection (user enablement of the system connection)
+        self.brokered_connection = providers.BrokeredConnection.objects.create(
+            system_connection=self.system_connection,
+            is_enabled=True,
+            created_by=self.user,
+        )
 
     def test_list_connections(self):
         """Test GET /v1/connections returns user and system connections."""
@@ -345,29 +348,25 @@ class TestConnectionList(APITestCase):
         for connection in response_data["results"]:
             self.assertTrue(connection["active"])
 
-    def test_system_connections_hide_credentials(self):
-        """Test that system connections don't expose credentials."""
+    def test_credentials_are_write_only(self):
+        """Test that credentials are write-only and never exposed in API responses.
+
+        Note: Credentials can be created/updated via POST/PATCH but are never
+        returned in GET responses for security reasons.
+        """
         url = reverse("karrio.server.providers:carrier-connection-list")
 
         response = self.client.get(url)
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Verify that credentials are not returned for any connection type
         for connection in response_data["results"]:
-            if connection.get("is_system"):
-                self.assertIsNone(connection.get("credentials"))
-
-    def test_user_connections_show_credentials(self):
-        """Test that user connections expose credentials to their owner."""
-        url = reverse("karrio.server.providers:carrier-connection-list")
-
-        response = self.client.get(url)
-        response_data = json.loads(response.content)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        for connection in response_data["results"]:
-            if not connection.get("is_system"):
-                self.assertIsNotNone(connection.get("credentials"))
+            self.assertNotIn(
+                "credentials",
+                connection,
+                f"Credentials should not be exposed for connection {connection.get('id')}",
+            )
 
 
 class TestConnectionCreate(APITestCase):
@@ -436,7 +435,12 @@ class TestConnectionDetail(APITestCase):
         self.assertFalse(response_data["active"])
 
     def test_update_connection_credentials(self):
-        """Test updating connection credentials."""
+        """Test updating connection credentials.
+
+        Note: Credentials are write-only - they can be updated via PATCH
+        but are not returned in the response. We verify the update by
+        checking the database directly.
+        """
         url = reverse(
             "karrio.server.providers:carrier-connection-details",
             kwargs=dict(pk=self.carrier.pk),
@@ -446,8 +450,13 @@ class TestConnectionDetail(APITestCase):
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_data["credentials"]["username"], "new_username")
-        self.assertEqual(response_data["credentials"]["password"], "new_password")
+        # Credentials are write-only - verify they're not in response
+        self.assertNotIn("credentials", response_data)
+
+        # Verify credentials were actually updated in the database
+        self.carrier.refresh_from_db()
+        self.assertEqual(self.carrier.credentials["username"], "new_username")
+        self.assertEqual(self.carrier.credentials["password"], "new_password")
 
     def test_delete_connection(self):
         """Test DELETE /v1/connections/{pk} removes connection."""
@@ -463,7 +472,6 @@ class TestConnectionDetail(APITestCase):
         )
 
         response = self.client.delete(url)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         get_response = self.client.get(url)
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
@@ -475,7 +483,7 @@ class TestConnectionDetail(APITestCase):
         other_user = get_user_model().objects.create_user(
             "other@example.com", "password456"
         )
-        other_connection = providers.Carrier.objects.create(
+        other_connection = providers.CarrierConnection.objects.create(
             carrier_code="sendle",
             carrier_id="other_user_sendle",
             test_mode=True,
@@ -492,7 +500,7 @@ class TestConnectionDetail(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(
-            providers.Carrier.objects.filter(pk=other_connection.pk).exists()
+            providers.CarrierConnection.objects.filter(pk=other_connection.pk).exists()
         )
 
 
@@ -807,11 +815,7 @@ SENDLE_CONNECTION_RESPONSE = {
     "carrier_name": "sendle",
     "display_name": "Sendle",
     "carrier_id": "my_sendle_connection",
-    "credentials": {
-        "sendle_id": "test_sendle_id",
-        "api_key": "test_api_key",
-        "account_country_code": None,
-    },
+    # Note: credentials are write-only and not returned in responses
     "config": {},
     "metadata": {},
     "active": True,
@@ -838,11 +842,7 @@ SENDLE_CONNECTION_WITH_CONFIG_RESPONSE = {
     "carrier_name": "sendle",
     "display_name": "Sendle",
     "carrier_id": "sendle_with_config",
-    "credentials": {
-        "sendle_id": "test_sendle_id",
-        "api_key": "test_api_key",
-        "account_country_code": None,
-    },
+    # Note: credentials are write-only and not returned in responses
     "config": {
         "shipping_options": ["signature_required"],
     },

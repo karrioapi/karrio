@@ -10,12 +10,14 @@ import {
   CurrencyCodeEnum,
   DEFAULT_COMMODITY_CONTENT,
   WeightUnitEnum,
+  ProductTemplateType,
 } from "@karrio/types";
 import { EnhancedMetadataEditor } from "@karrio/ui/components/enhanced-metadata-editor";
 import { isEqual, isNone } from "@karrio/lib";
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from "@karrio/types";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { LineItemInput } from "@karrio/ui/components/line-item-input";
+import { ProductCombobox } from "@karrio/ui/components/product-combobox";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
@@ -133,6 +135,26 @@ export const CommodityEditDialog = ({
     });
   };
 
+  const loadProductTemplate = (product: ProductTemplateType | null) => {
+    if (!product) return;
+
+    // Load product template data into commodity form
+    setCommodity({
+      ...commodity,
+      title: product.title || commodity.title,
+      description: product.description || commodity.description,
+      sku: product.sku || commodity.sku,
+      hs_code: product.hs_code || commodity.hs_code,
+      origin_country: product.origin_country || commodity.origin_country,
+      weight: product.weight || commodity.weight,
+      weight_unit: product.weight_unit || commodity.weight_unit,
+      quantity: product.quantity || commodity.quantity,
+      value_amount: product.value_amount || commodity.value_amount,
+      value_currency: product.value_currency || commodity.value_currency,
+      metadata: product.metadata || commodity.metadata,
+    });
+  };
+
   // Validation logic
   const missingRequired = !commodity?.title || !commodity?.quantity || !commodity?.weight || !commodity?.origin_country;
   const hasChanges = !isEqual(initialCommodity, commodity) || (
@@ -160,6 +182,14 @@ export const CommodityEditDialog = ({
           <div className="flex flex-col flex-1 min-h-0">
             <div className="flex-1 overflow-y-auto px-4 py-3">
               <div className="space-y-6">
+                {/* Product Template Selector */}
+                <ProductCombobox
+                  label="Load from Product Template"
+                  placeholder="Search products by name, SKU, or HS code..."
+                  onValueChange={loadProductTemplate}
+                  disabled={!isNone(commodity?.parent_id)}
+                />
+
                 {ORDERS_MANAGEMENT && !disableOrderLinking && (
                   <LineItemInput
                     label="Order Line Item"

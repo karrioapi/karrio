@@ -7,11 +7,11 @@ from django.utils.functional import SimpleLazyObject
 
 from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (
-    save_many_to_many_data,
     owned_model_serializer,
-    save_one_to_one_data,
+    process_json_object_mutation,
+    process_json_array_mutation,
 )
-from karrio.server.core.logging import logger
+import karrio.server.manager.models as manager_models
 import karrio.server.orders.serializers as serializers
 import karrio.server.orders.models as models
 
@@ -96,11 +96,41 @@ class ScopeResolver:
 resolve_order_scope = ScopeResolver.from_context
 
 
-@owned_model_serializer
-class LineItemModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.LineItem
-        exclude = ["created_at", "updated_at", "created_by"]
+def process_order_line_items(payload: dict, instance=None):
+    """Process line_items array for order create/update.
+
+    Handles line item mutations and preserves fulfilled_quantity tracking.
+    """
+    if "line_items" not in payload:
+        return getattr(instance, "line_items", None) if instance else []
+
+    # Get existing items to preserve fulfilled_quantity
+    existing_items = (instance.line_items or []) if instance else []
+    existing_by_id = {
+        item.get("id"): item
+        for item in existing_items
+        if isinstance(item, dict) and item.get("id")
+    }
+
+    result = process_json_array_mutation(
+        "line_items", payload, instance,
+        id_prefix="oli", model_class=manager_models.Commodity,
+        data_field_name="line_items", object_type="commodity",
+    )
+
+    # Preserve fulfilled_quantity from existing items and initialize for new items
+    if result:
+        for item in result:
+            item_id = item.get("id")
+            if item_id and item_id in existing_by_id:
+                existing = existing_by_id[item_id]
+                if "fulfilled_quantity" not in item:
+                    item["fulfilled_quantity"] = existing.get("fulfilled_quantity", 0)
+            else:
+                if "unfulfilled_quantity" not in item:
+                    item["unfulfilled_quantity"] = item.get("quantity", 0)
+
+    return result
 
 
 @owned_model_serializer
@@ -112,31 +142,37 @@ class OrderSerializer(serializers.OrderData):
         source = validated_data.get("source") or "API"
         order_identifier = validated_data.get("order_id")
 
+        # Process JSON fields for addresses and line_items
+        json_fields = {}
+
+        if "shipping_to" in validated_data:
+            json_fields.update(shipping_to=process_json_object_mutation(
+                "shipping_to", validated_data, None,
+                model_class=manager_models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "shipping_from" in validated_data:
+            json_fields.update(shipping_from=process_json_object_mutation(
+                "shipping_from", validated_data, None,
+                model_class=manager_models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        if "billing_address" in validated_data:
+            json_fields.update(billing_address=process_json_object_mutation(
+                "billing_address", validated_data, None,
+                model_class=manager_models.Address, object_type="address", id_prefix="adr",
+            ))
+
+        json_fields.update(line_items=process_order_line_items(validated_data))
+
         order_data = {
             **{
                 key: value
                 for key, value in validated_data.items()
                 if key in models.Order.DIRECT_PROPS and value is not None
             },
+            **json_fields,
             "test_mode": test_mode,
-            "shipping_to": save_one_to_one_data(
-                "shipping_to",
-                serializers.AddressSerializer,
-                payload=validated_data,
-                context=context,
-            ),
-            "shipping_from": save_one_to_one_data(
-                "shipping_from",
-                serializers.AddressSerializer,
-                payload=validated_data,
-                context=context,
-            ),
-            "billing_address": save_one_to_one_data(
-                "billing_address",
-                serializers.AddressSerializer,
-                payload=validated_data,
-                context=context,
-            ),
         }
 
         # Acquire deduplication lock and create order
@@ -148,14 +184,6 @@ class OrderSerializer(serializers.OrderData):
         ) as lock:
             order = models.Order.objects.create(**order_data)
             lock.bind_order(order)
-
-        save_many_to_many_data(
-            "line_items",
-            LineItemModelSerializer,
-            order,
-            payload=validated_data,
-            context=context,
-        )
 
         return order
 
@@ -234,9 +262,13 @@ def compute_order_status(order: models.Order) -> str:
         ]
     )
 
-    for line_item in order.line_items.all():
-        fulfilled = line_item.unfulfilled_quantity <= 0
-        partially_fulfilled = line_item.unfulfilled_quantity < line_item.quantity
+    # Use JSON field for line_items
+    line_items = order.line_items or []
+    for line_item in line_items:
+        quantity = line_item.get("quantity", 1)
+        unfulfilled_quantity = line_item.get("unfulfilled_quantity", quantity)
+        fulfilled = unfulfilled_quantity <= 0
+        partially_fulfilled = unfulfilled_quantity < quantity
 
         if partially_fulfilled and not line_items_are_partially_fulfilled:
             line_items_are_partially_fulfilled = True

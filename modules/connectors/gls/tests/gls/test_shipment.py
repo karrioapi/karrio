@@ -18,7 +18,6 @@ class TestGLSGroupShipment(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
         # Basic validation
         request_dict = lib.to_dict(request.serialize())
         self.assertIn("shipment", request_dict)
@@ -30,7 +29,6 @@ class TestGLSGroupShipment(unittest.TestCase):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            print(mock.call_args[1]["url"])
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.shipment_api_url}/rs/shipments"
@@ -44,7 +42,6 @@ class TestGLSGroupShipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_error_response(self):
@@ -55,7 +52,6 @@ class TestGLSGroupShipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentErrorResponse)
 
 

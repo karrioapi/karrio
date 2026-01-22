@@ -218,6 +218,7 @@ export const GET_RATE_SHEETS = gql`
           name
           slug
           carrier_name
+          origin_countries
           metadata
           zones {
             id
@@ -286,6 +287,7 @@ export const GET_RATE_SHEET = gql`
       name
       slug
       carrier_name
+      origin_countries
       metadata
       zones {
         id
@@ -353,27 +355,24 @@ export const GET_RATE_SHEET = gql`
 `;
 
 // -----------------------------------------------------------
-// Addons Queries
+// Markups Queries
 // -----------------------------------------------------------
-export const GET_ADDONS = gql`
-  query GetAddons($filter: AddonFilter, $usageFilter: UsageFilter) {
-    addons(filter: $filter) {
+export const GET_MARKUPS = gql`
+  query GetMarkups($filter: MarkupFilter, $usageFilter: UsageFilter) {
+    markups(filter: $filter) {
       edges {
         node {
           id
           name
           active
           amount
-          surcharge_type
-          carriers
-          services
-          carrier_accounts {
-            id
-            usage {
-              total_shipments
-              total_addons_charges
-            }
-          }
+          markup_type
+          is_visible
+          carrier_codes
+          service_codes
+          connection_ids
+          organization_ids
+          metadata
           usage(filter: $usageFilter) {
             total_shipments
             total_addons_charges
@@ -391,22 +390,23 @@ export const GET_ADDONS = gql`
   }
 `;
 
-export const GET_ADDON = gql`
-  query GetAddon($id: String!) {
-    addon(id: $id) {
+export const GET_MARKUP = gql`
+  query GetMarkup($id: String!) {
+    markup(id: $id) {
       id
       name
       active
       amount
-      surcharge_type
-      carriers
-      services
-      carrier_accounts {
-        id
-        usage {
-          total_shipments
-          total_addons_charges
-        }
+      markup_type
+      is_visible
+      carrier_codes
+      service_codes
+      connection_ids
+      organization_ids
+      metadata
+      usage {
+        total_shipments
+        total_addons_charges
       }
     }
   }
@@ -1104,51 +1104,57 @@ export const UPDATE_SERVICE_SURCHARGE_IDS = gql`
 `;
 
 // -----------------------------------------------------------
-// Addon Mutations
+// Markup Mutations
 // -----------------------------------------------------------
-export const CREATE_ADDON = gql`
-  mutation CreateAddon($input: CreateAddonMutationInput!) {
-    create_addon(input: $input) {
+export const CREATE_MARKUP = gql`
+  mutation CreateMarkup($input: CreateMarkupMutationInput!) {
+    create_markup(input: $input) {
       errors {
         field
         messages
       }
-      addon {
+      markup {
         id
         name
         active
         amount
-        surcharge_type
-        carriers
-        services
+        markup_type
+        is_visible
+        carrier_codes
+        service_codes
+        connection_ids
+        metadata
       }
     }
   }
 `;
 
-export const UPDATE_ADDON = gql`
-  mutation UpdateAddon($input: UpdateAddonMutationInput!) {
-    update_addon(input: $input) {
+export const UPDATE_MARKUP = gql`
+  mutation UpdateMarkup($input: UpdateMarkupMutationInput!) {
+    update_markup(input: $input) {
       errors {
         field
         messages
       }
-      addon {
+      markup {
         id
         name
         active
         amount
-        surcharge_type
-        carriers
-        services
+        markup_type
+        is_visible
+        carrier_codes
+        service_codes
+        connection_ids
+        metadata
       }
     }
   }
 `;
 
-export const DELETE_ADDON = gql`
-  mutation DeleteAddon($input: DeleteMutationInput!) {
-    delete_addon(input: $input) {
+export const DELETE_MARKUP = gql`
+  mutation DeleteMarkup($input: DeleteMutationInput!) {
+    delete_markup(input: $input) {
       errors {
         field
         messages

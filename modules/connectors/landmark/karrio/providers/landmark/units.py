@@ -105,8 +105,8 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
-    landmark_shipment_insurance_freight = lib.OptionEnum("ShipmentInsuranceFreight", float)
-    landmark_order_insurance_freight_total = lib.OptionEnum("OrderInsuranceFreightTotal", float)
+    landmark_shipment_insurance_freight = lib.OptionEnum("ShipmentInsuranceFreight", float, meta=dict(category="INSURANCE"))
+    landmark_order_insurance_freight_total = lib.OptionEnum("OrderInsuranceFreightTotal", float, meta=dict(category="INSURANCE"))
 
     """ Unified Option type mapping """
     landmark_produce_label = lib.OptionEnum("ProduceLabel", bool)
@@ -114,7 +114,7 @@ class ShippingOption(lib.Enum):
     fulfilled_by_landmark = lib.OptionEnum("FulfilledByLandmark", bool)
     landmark_freight_pro_number = lib.OptionEnum("FreightProNumber", str)
     landmark_freight_piece_unit = lib.OptionEnum("FreightPieceUnit", str)
-    landmark_return_address_code = lib.OptionEnum("ReturnAddressCode", str)
+    landmark_return_address_code = lib.OptionEnum("ReturnAddressCode", str, meta=dict(category="RETURN"))
 
     """ unified option type mapping """
     insurance = landmark_shipment_insurance_freight

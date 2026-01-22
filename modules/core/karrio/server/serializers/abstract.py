@@ -1,3 +1,4 @@
+import re
 import yaml
 import pydoc
 import typing
@@ -12,6 +13,20 @@ import karrio.lib as lib
 from karrio.server.core.logging import logger
 
 T = typing.TypeVar("T")
+
+# Pattern for JSON-generated IDs: prefix_12hexchars (e.g., pcl_a1b2c3d4e5f6)
+JSON_ID_PATTERN = re.compile(r'^[a-z]{2,4}_[a-f0-9]{12}$')
+
+
+def is_json_generated_id(value: typing.Any) -> bool:
+    """Check if a value is a JSON-generated ID (not a database ID).
+
+    JSON-generated IDs have the format: prefix_12hexchars
+    Examples: pcl_a1b2c3d4e5f6, adr_123abc456def, itm_x9y8z7w6v5u4
+    """
+    if not isinstance(value, str):
+        return False
+    return JSON_ID_PATTERN.match(value) is not None
 
 
 class Context(typing.NamedTuple):
@@ -356,6 +371,12 @@ def allow_model_id(model_paths: []):  # type: ignore
                                 and ("id" in value)
                                 and (model is not None)
                             ):
+                                # Skip database lookup for JSON-generated IDs (pcl_xxx, adr_xxx, etc.)
+                                # These are embedded JSON data, not database references
+                                if is_json_generated_id(value["id"]):
+                                    new_content.append(value)
+                                    continue
+
                                 data = model_to_dict(model.objects.get(pk=value["id"]))
 
                                 for field, field_data in data.items():

@@ -139,17 +139,17 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
             carrier = resources.Field()
 
             def dehydrate_carrier(self, row):
-                carrier = getattr(row, "selected_rate_carrier", None)
-                settings = getattr(carrier, "settings", None)
-                return getattr(
-                    settings, "display_name", None
-                ) or units.REFERENCE_MODELS["carriers"].get(carrier.carrier_name)
+                # Get carrier info from shipment.carrier (JSON snapshot)
+                carrier_snapshot = getattr(row, "carrier", None) or {}
+                carrier_name = carrier_snapshot.get("carrier_name")
+                display_name = carrier_snapshot.get("display_name")
+                return display_name or units.REFERENCE_MODELS["carriers"].get(carrier_name)
 
         if "pieces" not in _exclude:
             pieces = resources.Field()
 
             def dehydrate_pieces(self, row):
-                return len(row.parcels.all())
+                return len(row.parcels or [])
 
         if "rate" not in _exclude:
             rate = resources.Field()

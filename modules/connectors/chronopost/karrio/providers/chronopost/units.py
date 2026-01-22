@@ -45,9 +45,9 @@ class ShippingService(lib.StrEnum):
 
 
 class ShippingOption(lib.Enum):
-    chronopost_delivery_on_monday = OptionEnum("1")
-    chronopost_delivery_on_saturday = OptionEnum("6")
-    chronopost_delivery_normal = OptionEnum("0")
+    chronopost_delivery_on_monday = OptionEnum("1", meta=dict(category="DELIVERY_OPTIONS"))
+    chronopost_delivery_on_saturday = OptionEnum("6", meta=dict(category="DELIVERY_OPTIONS"))
+    chronopost_delivery_normal = OptionEnum("0", meta=dict(category="DELIVERY_OPTIONS"))
 
     """ Unified Option type mapping """
     saturday_delivery = chronopost_delivery_on_saturday

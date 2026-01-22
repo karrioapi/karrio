@@ -7,7 +7,6 @@ import django.db.models.fields as fields
 
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
-import karrio.server.providers.models as providers
 import karrio.server.core.serializers as serializers
 
 
@@ -54,19 +53,6 @@ class CommodityManager(models.Manager):
         )
 
 
-class CustomsManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .select_related("duty_billing_address")
-            .prefetch_related(
-                "commodities",
-                *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-            )
-        )
-
-
 class PickupManager(models.Manager):
     def get_queryset(self):
         return (
@@ -86,20 +72,11 @@ class ShipmentManager(models.Manager):
             .get_queryset()
             .select_related(
                 "created_by",
-                "recipient",
-                "shipper",
-                "customs",
                 "manifest",
-                "return_address",
-                "billing_address",
                 "shipment_tracker",
                 "shipment_upload_record",
             )
             .prefetch_related(
-                "parcels",
-                "parcels__items",
-                "customs__commodities",
-                "customs__duty_billing_address",
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
@@ -113,8 +90,6 @@ class TrackingManager(models.Manager):
             .select_related(
                 "created_by",
                 "shipment",
-                "shipment__recipient",
-                "shipment__shipper",
             )
             .prefetch_related(
                 *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -156,16 +131,10 @@ class ManifestManager(models.Manager):
 
 @core.register_model
 class Address(core.OwnedEntity):
+    # Note: shipper_shipment, recipient_shipment, billing_address_shipment removed
+    # as shipment addresses are now stored as JSON fields
     HIDDEN_PROPS = (
-        "shipper_shipment",
-        "recipient_shipment",
-        "billing_address_shipment",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-        *(
-            ("shipper_order", "recipient_order")
-            if conf.settings.ORDERS_MANAGEMENT
-            else tuple()
-        ),
     )
     objects = AddressManager()
 
@@ -211,6 +180,30 @@ class Address(core.OwnedEntity):
     validate_location = models.BooleanField(null=True)
     validation = models.JSONField(blank=True, null=True)
 
+    # Template metadata: enables Address to serve as a reusable template
+    # Structure: {"label": "Warehouse A", "is_default": true, "usage": ["sender", "return"]}
+    meta = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value={}),
+        help_text="Template metadata: label, is_default, usage[]",
+    )
+
+    @property
+    def is_template(self) -> bool:
+        """Check if this address is a template (has meta with label)."""
+        return bool(self.meta and self.meta.get("label"))
+
+    @property
+    def label(self) -> typing.Optional[str]:
+        """Template label from meta field."""
+        return (self.meta or {}).get("label")
+
+    @property
+    def is_default(self) -> bool:
+        """Whether this is the default template."""
+        return (self.meta or {}).get("is_default", False)
+
     @property
     def object_type(self):
         return "address"
@@ -223,13 +216,6 @@ class Address(core.OwnedEntity):
             return self.recipient_shipment
         if hasattr(self, "billing_address_shipment"):
             return self.billing_address_shipment
-
-        return None
-
-    @property
-    def customs(self):
-        if hasattr(self, "duty_billing_address_customs"):
-            return self.duty_billing_address_customs
 
         return None
 
@@ -247,10 +233,12 @@ class Address(core.OwnedEntity):
 
 @core.register_model
 class Parcel(core.OwnedEntity):
-    HIDDEN_PROPS = (
-        "parcel_shipment",
-        *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-    )
+    """Standalone parcel model - used for parcel templates only.
+
+    Parcels attached to shipments are stored as JSON in Shipment.parcels field.
+    """
+
+    HIDDEN_PROPS = (*(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),)
     objects = ParcelManager()
 
     class Meta:
@@ -292,9 +280,33 @@ class Parcel(core.OwnedEntity):
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
 
+    # Template metadata: enables Parcel to serve as a reusable template
+    # Structure: {"label": "Standard Box", "is_default": true}
+    meta = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value={}),
+        help_text="Template metadata: label, is_default",
+    )
+
     def delete(self, *args, **kwargs):
         self.items.all().delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def is_template(self) -> bool:
+        """Check if this parcel is a template (has meta with label)."""
+        return bool(self.meta and self.meta.get("label"))
+
+    @property
+    def label(self) -> typing.Optional[str]:
+        """Template label from meta field."""
+        return (self.meta or {}).get("label")
+
+    @property
+    def is_default(self) -> bool:
+        """Whether this is the default template."""
+        return (self.meta or {}).get("is_default", False)
 
     @property
     def object_type(self):
@@ -302,7 +314,9 @@ class Parcel(core.OwnedEntity):
 
     @property
     def shipment(self):
-        return self.parcel_shipment.first()
+        # Standalone parcels (templates) don't have a shipment relationship
+        # Parcels attached to shipments are stored as JSON in Shipment.parcels
+        return None
 
 
 @core.register_model
@@ -310,7 +324,6 @@ class Commodity(core.OwnedEntity):
     HIDDEN_PROPS = (
         "children",
         "commodity_parcel",
-        "commodity_customs",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = CommodityManager()
@@ -363,9 +376,33 @@ class Commodity(core.OwnedEntity):
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
 
+    # Template metadata: enables Commodity to serve as a reusable template (product)
+    # Structure: {"label": "Widget Pro", "is_default": false}
+    meta = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value={}),
+        help_text="Template metadata: label, is_default",
+    )
+
     def delete(self, *args, **kwargs):
         self.children.all().delete()
         return super().delete(*args, **kwargs)
+
+    @property
+    def is_template(self) -> bool:
+        """Check if this commodity is a template/product (has meta with label)."""
+        return bool(self.meta and self.meta.get("label"))
+
+    @property
+    def label(self) -> typing.Optional[str]:
+        """Template label from meta field."""
+        return (self.meta or {}).get("label")
+
+    @property
+    def is_default(self) -> bool:
+        """Whether this is the default template."""
+        return (self.meta or {}).get("is_default", False)
 
     @property
     def object_type(self):
@@ -376,14 +413,8 @@ class Commodity(core.OwnedEntity):
         return self.commodity_parcel.first()
 
     @property
-    def customs(self):
-        return self.commodity_customs.first()
-
-    @property
     def shipment(self):
-        related = self.customs or self.parcel
-
-        return getattr(related, "shipment", None)
+        return getattr(self.parcel, "shipment", None)
 
     @property
     def order(self):
@@ -395,92 +426,27 @@ class Commodity(core.OwnedEntity):
         return None
 
 
-@core.register_model
-class Customs(core.OwnedEntity):
-    DIRECT_PROPS = [
-        "content_description",
-        "content_type",
-        "incoterm",
-        "commercial_invoice",
-        "certify",
-        "duty",
-        "created_by",
-        "signer",
-        "invoice",
-        "invoice_date",
-        "options",
-    ]
-    RELATIONAL_PROPS = ["commodities", "duty_billing_address"]
-    HIDDEN_PROPS = (
-        "customs_shipment",
-        *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
-    )
-    objects = CustomsManager()
+class Product(Commodity):
+    """Product is a proxy model for Commodity, used for template/product API endpoints.
+
+    This provides a cleaner "Product" naming for the template API while using
+    the same underlying Commodity table.
+    """
 
     class Meta:
-        db_table = "customs"
-        verbose_name = "Customs Info"
-        verbose_name_plural = "Customs Info"
-        ordering = ["-created_at"]
-
-    id = models.CharField(
-        max_length=50,
-        primary_key=True,
-        default=functools.partial(core.uuid, prefix="cst_"),
-        editable=False,
-    )
-
-    certify = models.BooleanField(null=True)
-    commercial_invoice = models.BooleanField(null=True)
-    content_type = models.CharField(
-        max_length=100, null=True, blank=True, db_index=True
-    )
-    content_description = models.CharField(max_length=250, null=True, blank=True)
-    incoterm = models.CharField(
-        max_length=50, choices=serializers.INCOTERMS, db_index=True
-    )
-    invoice = models.CharField(max_length=100, null=True, blank=True)
-    invoice_date = models.CharField(max_length=100, null=True, blank=True)
-    signer = models.CharField(max_length=100, null=True, blank=True)
-
-    duty = models.JSONField(
-        blank=True, null=True, default=functools.partial(utils.identity, value=None)
-    )
-    options = models.JSONField(
-        blank=True, null=True, default=functools.partial(utils.identity, value={})
-    )
-
-    # System Reference fields
-
-    commodities = models.ManyToManyField(
-        "Commodity", blank=True, related_name="commodity_customs"
-    )
-    duty_billing_address = models.OneToOneField(
-        "Address",
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name="duty_billing_address_customs",
-    )
-
-    def delete(self, *args, **kwargs):
-        self.commodities.all().delete()
-        return super().delete(*args, **kwargs)
+        proxy = True
+        verbose_name = "Product"
+        verbose_name_plural = "Products"
 
     @property
     def object_type(self):
-        return "customs_info"
-
-    @property
-    def shipment(self):
-        if hasattr(self, "customs_shipment"):
-            return self.customs_shipment
-
-        return None
+        return "product"
 
 
 @core.register_model
 class Pickup(core.OwnedEntity):
-    CONTEXT_RELATIONS = ["pickup_carrier"]
+    """Pickup model with embedded JSON address and carrier snapshot."""
+
     DIRECT_PROPS = [
         "confirmation_number",
         "pickup_date",
@@ -493,11 +459,13 @@ class Pickup(core.OwnedEntity):
         "created_by",
         "metadata",
         "meta",
+        "address",  # Embedded JSON field
+        "carrier",  # Carrier snapshot
     ]
     objects = PickupManager()
 
     class Meta:
-        db_table = "pickup"
+        db_table = "pickups"
         verbose_name = "Pickup"
         verbose_name_plural = "Pickups"
         ordering = ["-created_at"]
@@ -516,17 +484,30 @@ class Pickup(core.OwnedEntity):
     instruction = models.CharField(max_length=250, null=True, blank=True)
     package_location = models.CharField(max_length=250, null=True, blank=True)
 
+    # ─────────────────────────────────────────────────────────────────
+    # EMBEDDED JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Pickup address (embedded JSON)",
+    )
+
+    # Carrier snapshot - replaces pickup_carrier FK
+    # Structure: {connection_id, connection_type, carrier_code, carrier_id, carrier_name, test_mode}
+    carrier = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Carrier snapshot at time of pickup creation",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # OPERATIONAL JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
     options = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
     pickup_charge = models.JSONField(blank=True, null=True)
-    address = models.ForeignKey(
-        "Address",
-        on_delete=models.CASCADE,
-        related_name="address_pickup",
-        blank=True,
-        null=True,
-    )
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
@@ -534,59 +515,64 @@ class Pickup(core.OwnedEntity):
         blank=True, default=functools.partial(utils.identity, value={})
     )
 
-    # System Reference fields
-
-    pickup_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
+    # ─────────────────────────────────────────────────────────────────
+    # SHIPMENT RELATION (kept - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
     shipments = models.ManyToManyField("Shipment", related_name="shipment_pickup")
 
     def delete(self, *args, **kwargs):
-        handle = self.address or super()
-        return handle.delete(*args, **kwargs)
-
-    @classmethod
-    def resolve_context_data(cls, queryset, context):
-        """Apply context-aware carrier config resolution for pickup_carrier."""
-        from karrio.server.providers.models.carrier import Carrier
-
-        carrier_queryset = Carrier.objects.resolve_config_for(context)
-        return queryset.prefetch_related(
-            models.Prefetch("pickup_carrier", queryset=carrier_queryset),
-        )
+        return super().delete(*args, **kwargs)
 
     @property
     def object_type(self):
         return "pickup"
 
-    # Computed properties
+    # Computed properties from carrier snapshot
 
     @property
-    def carrier_id(self) -> str:
-        return typing.cast(providers.Carrier, self.pickup_carrier).carrier_id
+    def carrier_id(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_id")
 
     @property
-    def carrier_name(self) -> str:
-        return typing.cast(providers.Carrier, self.pickup_carrier).data.carrier_name
+    def carrier_name(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_name")
 
     @property
-    def parcels(self) -> typing.List[Parcel]:
+    def carrier_code(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_code")
+
+    @property
+    def parcels(self) -> typing.List[dict]:
+        """Get all parcels from related shipments as JSON data."""
+        if self.pk is None:
+            return []
         return sum(
-            [list(shipment.parcels.all()) for shipment in self.shipments.all()], []
+            [shipment.parcels or [] for shipment in self.shipments.all()], []
         )
 
     @property
     def tracking_numbers(self) -> typing.List[str]:
+        if self.pk is None:
+            return []
         return [shipment.tracking_number for shipment in self.shipments.all()]
 
 
 @core.register_model
 class Tracking(core.OwnedEntity):
-    CONTEXT_RELATIONS = ["tracking_carrier"]
+    """Tracking model with embedded carrier snapshot."""
+
     DIRECT_PROPS = [
         "metadata",
         "info",
+        "carrier",  # Carrier snapshot
     ]
     HIDDEN_PROPS = (
-        "tracking_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = TrackingManager()
@@ -597,8 +583,18 @@ class Tracking(core.OwnedEntity):
         verbose_name_plural = "Tracking Statuses"
         ordering = ["-created_at"]
         indexes = [
-            # Index for archiving queries based on creation date
             models.Index(fields=["created_at"], name="tracking_created_at_idx"),
+            # JSONField indexes for carrier snapshot queries
+            models.Index(
+                fields.json.KeyTextTransform("carrier_code", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="tracking_carrier_code_idx",
+            ),
+            models.Index(
+                fields.json.KeyTextTransform("connection_id", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="tracking_connection_id_idx",
+            ),
         ]
 
     id = models.CharField(
@@ -642,36 +638,46 @@ class Tracking(core.OwnedEntity):
     delivery_image = models.TextField(max_length=None, null=True, blank=True)
     signature_image = models.TextField(max_length=None, null=True, blank=True)
 
-    # System Reference fields
+    # ─────────────────────────────────────────────────────────────────
+    # CARRIER SNAPSHOT (replaces tracking_carrier FK)
+    # ─────────────────────────────────────────────────────────────────
+    # Structure: {connection_id, connection_type, carrier_code, carrier_id, carrier_name, test_mode}
+    carrier = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Carrier snapshot at time of tracker creation",
+    )
 
-    tracking_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
+    # ─────────────────────────────────────────────────────────────────
+    # SHIPMENT RELATION (kept - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
     shipment = models.OneToOneField(
         "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
     )
-
-    @classmethod
-    def resolve_context_data(cls, queryset, context):
-        """Apply context-aware carrier config resolution for tracking_carrier."""
-        from karrio.server.providers.models.carrier import Carrier
-
-        carrier_queryset = Carrier.objects.resolve_config_for(context)
-        return queryset.prefetch_related(
-            models.Prefetch("tracking_carrier", queryset=carrier_queryset),
-        )
 
     @property
     def object_type(self):
         return "tracker"
 
-    # Computed properties
+    # Computed properties from carrier snapshot
 
     @property
-    def carrier_id(self) -> str:
-        return typing.cast(providers.Carrier, self.tracking_carrier).carrier_id
+    def carrier_id(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_id")
 
     @property
-    def carrier_name(self) -> str:
-        return typing.cast(providers.Carrier, self.tracking_carrier).data.carrier_name
+    def carrier_name(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_name")
+
+    @property
+    def carrier_code(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_code")
 
     @property
     def pending(self) -> bool:
@@ -702,10 +708,12 @@ class Tracking(core.OwnedEntity):
 
 @core.register_model
 class Shipment(core.OwnedEntity):
-    CONTEXT_RELATIONS = ["selected_rate_carrier", "carriers"]
+    """Shipment model with embedded JSON data for addresses, parcels, customs, and carrier."""
+
     DIRECT_PROPS = [
         "options",
         "services",
+        "carrier_ids",
         "status",
         "meta",
         "label_type",
@@ -719,29 +727,27 @@ class Shipment(core.OwnedEntity):
         "metadata",
         "created_by",
         "reference",
-    ]
-    RELATIONAL_PROPS = [
+        # Embedded JSON fields
         "shipper",
         "recipient",
         "parcels",
         "customs",
-        "selected_rate",
         "return_address",
         "billing_address",
+        "selected_rate",
+        "carrier",  # Carrier snapshot
     ]
     HIDDEN_PROPS = (
-        "carriers",
         "label",
         "invoice",
         "shipment_pickup",
         "shipment_tracker",
-        "selected_rate_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = ShipmentManager()
 
     class Meta:
-        db_table = "shipment"
+        db_table = "shipments"
         verbose_name = "Shipment"
         verbose_name_plural = "Shipments"
         ordering = ["-created_at"]
@@ -751,8 +757,13 @@ class Shipment(core.OwnedEntity):
                 condition=models.Q(meta__object_id__isnull=False),
                 name="shipment_service_idx",
             ),
-            # Index for archiving queries based on creation date
             models.Index(fields=["created_at"], name="shipment_created_at_idx"),
+            # JSONField index for carrier snapshot queries
+            models.Index(
+                fields.json.KeyTextTransform("carrier_code", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="shipment_carrier_code_idx",
+            ),
         ]
 
     id = models.CharField(
@@ -767,25 +778,6 @@ class Shipment(core.OwnedEntity):
         default=serializers.SHIPMENT_STATUS[0][0],
         db_index=True,
     )
-
-    recipient = models.OneToOneField(
-        "Address", on_delete=models.CASCADE, related_name="recipient_shipment"
-    )
-    shipper = models.OneToOneField(
-        "Address", on_delete=models.CASCADE, related_name="shipper_shipment"
-    )
-    return_address = models.OneToOneField(
-        "Address",
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name="return_address_shipment",
-    )
-    billing_address = models.OneToOneField(
-        "Address",
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name="billing_address_shipment",
-    )
     label_type = models.CharField(max_length=25, null=True, blank=True)
     tracking_number = models.CharField(
         max_length=100, null=True, blank=True, db_index=True
@@ -793,18 +785,56 @@ class Shipment(core.OwnedEntity):
     shipment_identifier = models.CharField(max_length=100, null=True, blank=True)
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
-    customs = models.OneToOneField(
-        "Customs",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="customs_shipment",
-    )
+    reference = models.CharField(max_length=100, null=True, blank=True)
 
+    # Document storage
     label = models.TextField(max_length=None, null=True, blank=True)
     invoice = models.TextField(max_length=None, null=True, blank=True)
-    reference = models.CharField(max_length=100, null=True, blank=True)
+
+    # ─────────────────────────────────────────────────────────────────
+    # EMBEDDED JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    shipper = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Shipper address (embedded JSON)",
+    )
+    recipient = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Recipient address (embedded JSON)",
+    )
+    return_address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Return address (embedded JSON)",
+    )
+    billing_address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Billing address (embedded JSON)",
+    )
+    parcels = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value=[]),
+        help_text="Parcels array with nested items (embedded JSON)",
+    )
+    customs = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Customs information (embedded JSON)",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # OPERATIONAL JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    # selected_rate contains rate details:
+    # {id, carrier_id, carrier_name, service, currency, total_charge, test_mode, meta: {...}}
     selected_rate = models.JSONField(blank=True, null=True)
+    rates = models.JSONField(
+        blank=True, null=True, default=functools.partial(utils.identity, value=[])
+    )
     payment = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=None)
     )
@@ -813,6 +843,10 @@ class Shipment(core.OwnedEntity):
     )
     services = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
+    )
+    carrier_ids = models.JSONField(
+        blank=True, null=True, default=functools.partial(utils.identity, value=[]),
+        help_text="List of carrier IDs to filter rate requests",
     )
     messages = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
@@ -827,22 +861,19 @@ class Shipment(core.OwnedEntity):
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
     )
 
-    # System Reference fields
-
-    rates = models.JSONField(
-        blank=True, null=True, default=functools.partial(utils.identity, value=[])
-    )
-    parcels = models.ManyToManyField("Parcel", related_name="parcel_shipment")
-    carriers = models.ManyToManyField(
-        providers.Carrier, blank=True, related_name="related_shipments"
-    )
-    selected_rate_carrier = models.ForeignKey(
-        providers.Carrier,
-        on_delete=models.CASCADE,
-        related_name="carrier_shipments",
+    # ─────────────────────────────────────────────────────────────────
+    # CARRIER SNAPSHOT (consistent with Tracking, Pickup, Manifest, DocumentUploadRecord)
+    # ─────────────────────────────────────────────────────────────────
+    # Structure: {connection_id, connection_type, carrier_code, carrier_id, carrier_name, test_mode}
+    carrier = models.JSONField(
         blank=True,
         null=True,
+        help_text="Carrier snapshot at time of label purchase",
     )
+
+    # ─────────────────────────────────────────────────────────────────
+    # MANIFEST RELATION (kept - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
     manifest = models.ForeignKey(
         "Manifest",
         on_delete=models.SET_NULL,
@@ -852,76 +883,56 @@ class Shipment(core.OwnedEntity):
     )
 
     def delete(self, *args, **kwargs):
-        self.parcels.all().delete()
-        self.customs and self.customs.delete()
         return super().delete(*args, **kwargs)
-
-    @classmethod
-    def resolve_context_data(cls, queryset, context):
-        """
-        Apply context-aware prefetching for carriers with proper config resolution.
-        This is called by access_by() to ensure carrier configs are resolved for the request context.
-        """
-        from karrio.server.providers.models.carrier import Carrier
-
-        # Resolve carrier configs with the request context for user/org-specific config
-        carrier_queryset = Carrier.objects.resolve_config_for(context)
-
-        # Re-apply carrier prefetches with context-aware config resolution
-        # Note: Manager's get_queryset() already sets up base prefetches with context=None
-        # This overrides those prefetches with context-aware ones when called via access_by()
-        return queryset.prefetch_related(
-            models.Prefetch("carriers", queryset=carrier_queryset),
-            models.Prefetch("selected_rate_carrier", queryset=carrier_queryset),
-        )
 
     @property
     def object_type(self):
         return "shipment"
 
-    # Computed properties
+    # Computed properties from carrier snapshot
 
     @property
-    def carrier_id(self) -> str:
-        return typing.cast(providers.Carrier, self.selected_rate_carrier).carrier_id
+    def carrier_id(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_id")
 
     @property
-    def carrier_name(self) -> str:
-        return typing.cast(providers.Carrier, self.selected_rate_carrier).carrier_name
+    def carrier_name(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_name")
+
+    @property
+    def carrier_code(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_code")
 
     @property
     def tracker_id(self) -> typing.Optional[str]:
         return getattr(self.tracker, "id", None)
 
     @property
-    def carrier_ids(self) -> typing.List[str]:
-        return [carrier.carrier_id for carrier in self.carriers.all()]
+    def selected_rate_id(self) -> typing.Optional[str]:
+        if self.selected_rate is None:
+            return None
+        return self.selected_rate.get("id")
 
     @property
-    def selected_rate_id(self) -> str:
-        return (
-            typing.cast(dict, self.selected_rate).get("id")
-            if self.selected_rate is not None
-            else None
-        )
-
-    @property
-    def service(self) -> str:
-        return (
-            typing.cast(dict, self.selected_rate).get("service")
-            if self.selected_rate is not None
-            else None
-        )
+    def service(self) -> typing.Optional[str]:
+        if self.selected_rate is None:
+            return None
+        return self.selected_rate.get("service")
 
     @property
     def tracker(self):
         if hasattr(self, "shipment_tracker"):
             return self.shipment_tracker
-
         return None
 
     @property
-    def label_url(self) -> str:
+    def label_url(self) -> typing.Optional[str]:
         if self.label is None:
             return None
 
@@ -933,7 +944,7 @@ class Shipment(core.OwnedEntity):
         )
 
     @property
-    def invoice_url(self) -> str:
+    def invoice_url(self) -> typing.Optional[str]:
         if self.invoice is None:
             return None
 
@@ -949,12 +960,19 @@ class Shipment(core.OwnedEntity):
             invoice=self.invoice,
         )
 
-
 @core.register_model
 class DocumentUploadRecord(core.OwnedEntity):
-    CONTEXT_RELATIONS = ["upload_carrier"]
+    """Document upload record with embedded carrier snapshot."""
+
+    DIRECT_PROPS = [
+        "documents",
+        "messages",
+        "meta",
+        "options",
+        "reference",
+        "carrier",  # Carrier snapshot
+    ]
     HIDDEN_PROPS = (
-        "upload_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = DocumentUploadRecordManager()
@@ -985,38 +1003,50 @@ class DocumentUploadRecord(core.OwnedEntity):
     )
     reference = models.CharField(max_length=100, null=True, blank=True)
 
-    # System Reference fields
+    # ─────────────────────────────────────────────────────────────────
+    # CARRIER SNAPSHOT (replaces upload_carrier FK)
+    # ─────────────────────────────────────────────────────────────────
+    # Structure: {connection_id, connection_type, carrier_code, carrier_id, carrier_name, test_mode}
+    carrier = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Carrier snapshot at time of document upload",
+    )
 
-    upload_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
+    # ─────────────────────────────────────────────────────────────────
+    # SHIPMENT RELATION (kept - operational necessity)
+    # ─────────────────────────────────────────────────────────────────
     shipment = models.OneToOneField(
         "Shipment",
         on_delete=models.CASCADE,
         related_name="shipment_upload_record",
     )
 
-    @classmethod
-    def resolve_context_data(cls, queryset, context):
-        """Apply context-aware carrier config resolution for upload_carrier."""
-        from karrio.server.providers.models.carrier import Carrier
-
-        carrier_queryset = Carrier.objects.resolve_config_for(context)
-        return queryset.prefetch_related(
-            models.Prefetch("upload_carrier", queryset=carrier_queryset),
-        )
-
-    # Computed properties
+    # Computed properties from carrier snapshot
 
     @property
-    def carrier_id(self) -> str:
-        return typing.cast(providers.Carrier, self.upload_carrier).carrier_id
+    def carrier_id(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_id")
 
     @property
-    def carrier_name(self) -> str:
-        return typing.cast(providers.Carrier, self.upload_carrier).data.carrier_name
+    def carrier_name(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_name")
+
+    @property
+    def carrier_code(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_code")
 
 
 @core.register_model
 class Manifest(core.OwnedEntity):
+    """Manifest model with embedded JSON address and carrier snapshot."""
+
     DIRECT_PROPS = [
         "meta",
         "options",
@@ -1024,23 +1054,27 @@ class Manifest(core.OwnedEntity):
         "messages",
         "created_by",
         "reference",
-    ]
-    RELATIONAL_PROPS = [
-        "address",
+        "address",  # Embedded JSON field
+        "carrier",  # Carrier snapshot
     ]
     HIDDEN_PROPS = (
-        "manifest_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = ManifestManager()
 
     class Meta:
-        db_table = "manifest"
+        db_table = "manifests"
         verbose_name = "Manifest"
         verbose_name_plural = "Manifests"
         ordering = ["-created_at"]
-
-    CONTEXT_RELATIONS = ["manifest_carrier"]
+        indexes = [
+            # JSONField index for carrier snapshot queries
+            models.Index(
+                fields.json.KeyTextTransform("carrier_code", "carrier"),
+                condition=models.Q(carrier__isnull=False),
+                name="manifest_carrier_code_idx",
+            ),
+        ]
 
     id = models.CharField(
         max_length=50,
@@ -1048,9 +1082,30 @@ class Manifest(core.OwnedEntity):
         default=functools.partial(core.uuid, prefix="manf_"),
         editable=False,
     )
-    address = models.OneToOneField(
-        "Address", on_delete=models.CASCADE, related_name="manifest"
+    reference = models.CharField(max_length=100, null=True, blank=True)
+    manifest = models.TextField(max_length=None, null=True, blank=True)
+    test_mode = models.BooleanField(null=False)
+
+    # ─────────────────────────────────────────────────────────────────
+    # EMBEDDED JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    address = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Manifest address (embedded JSON)",
     )
+
+    # Carrier snapshot - replaces manifest_carrier FK
+    # Structure: {connection_id, connection_type, carrier_code, carrier_id, carrier_name, test_mode}
+    carrier = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Carrier snapshot at time of manifest creation",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # OPERATIONAL JSON FIELDS
+    # ─────────────────────────────────────────────────────────────────
     metadata = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
@@ -1063,40 +1118,33 @@ class Manifest(core.OwnedEntity):
     messages = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
     )
-    reference = models.CharField(max_length=100, null=True, blank=True)
-    manifest = models.TextField(max_length=None, null=True, blank=True)
-    test_mode = models.BooleanField(null=False)
 
-    # System Reference fields
-
-    manifest_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
-
-    @classmethod
-    def resolve_context_data(cls, queryset, context):
-        """Apply context-aware carrier config resolution for manifest_carrier."""
-        from karrio.server.providers.models.carrier import Carrier
-
-        carrier_queryset = Carrier.objects.resolve_config_for(context)
-        return queryset.prefetch_related(
-            models.Prefetch("manifest_carrier", queryset=carrier_queryset),
-        )
-
-    # Computed properties
+    # Computed properties from carrier snapshot
 
     @property
     def object_type(self):
         return "manifest"
 
     @property
-    def carrier_id(self) -> str:
-        return self.manifest_carrier.carrier_id
+    def carrier_id(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_id")
 
     @property
-    def carrier_name(self) -> str:
-        return self.manifest_carrier.data.carrier_name
+    def carrier_name(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_name")
 
     @property
-    def manifest_url(self) -> str:
+    def carrier_code(self) -> typing.Optional[str]:
+        if self.carrier is None:
+            return None
+        return self.carrier.get("carrier_code")
+
+    @property
+    def manifest_url(self) -> typing.Optional[str]:
         if self.manifest is None:
             return None
 

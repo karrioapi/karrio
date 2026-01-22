@@ -71,7 +71,7 @@ class CarrierSettings:
         self.id = id
 
         for name, value in kwargs.items():
-            if name not in ["carrier_ptr", "created_by", "active_users", "active_orgs"]:
+            if name not in ["carrier_ptr", "created_by"]:
                 self.__setattr__(name, value)
 
     # TODO: rename this to avoid confusion
@@ -85,8 +85,6 @@ class CarrierSettings:
                 "created_by",
                 "active",
                 "capabilities",
-                "active_users",
-                "active_orgs",
                 *([] if self.carrier_name == "generic" else ["display_name"]),
             ]
         }

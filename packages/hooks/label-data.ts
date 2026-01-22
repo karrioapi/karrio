@@ -315,8 +315,8 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
     if (!customs) return changes;
 
     const declared_value =
-      options.declared_value || customs!.duty.declared_value;
-    const duty = { ...customs!.duty, declared_value };
+      options.declared_value || customs?.duty?.declared_value;
+    const duty = { ...customs?.duty, declared_value };
 
     // ignore if duty hasn't changed
     if (isEqual(duty, customs.duty)) return changes;
@@ -474,7 +474,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
 
         const update = {
           ...parcel,
-          items: parcel.items.map((item, index) =>
+          items: (parcel.items || []).map((item, index) =>
             index !== item_index ? item : { ...item, ...data },
           ),
         };
@@ -508,14 +508,14 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
         const parcel = state.shipment.parcels[parcel_index];
         const update = {
           ...parcel,
-          items: parcel.items.filter(({ id }, index) =>
+          items: (parcel.items || []).filter(({ id }, index) =>
             !!item_id ? id !== item_id : index !== item_index,
           ),
         };
 
         // If shipment is persisted on the server
         if (!isLocalDraft(state.shipment.id) && !!item_id) {
-          const item = parcel.items.find(
+          const item = (parcel.items || []).find(
             ({ id }) => id === item_id,
           ) as CommodityType;
           const commodity = (state.shipment.customs?.commodities || []).find(
@@ -524,7 +524,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
               commodityMatch(item, state.shipment.customs?.commodities),
           );
           // send a request to remove item/commodity
-          await mutation.discardCommodity.mutateAsync({ id: item!.id });
+          await mutation.discardCommodity.mutateAsync({ id: item_id as string });
           if (
             !!commodity?.id &&
             (state.shipment.customs?.commodities || []).length > 1
@@ -534,7 +534,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
               manuallyUpdated: true,
             });
             queue = () =>
-              removeCommodity(-1, state.shipment.customs?.id)(commodity.id);
+              removeCommodity(-1, state.shipment.customs?.id)(commodity.id ?? undefined);
           }
         }
 
@@ -542,13 +542,9 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
         queue();
       };
   const updateCustoms =
-    (customs_id?: string) =>
+    (_customs_id?: string) =>
       async (data: CustomsType | null, change?: ChangeType) => {
-        if (!isLocalDraft(state.shipment.id) && !!customs_id && data === null) {
-          await mutation.discardCustoms.mutateAsync({ id: customs_id as string });
-        }
-
-        updateShipment({ customs: data }, change);
+        updateShipment({ customs: data as any }, change);
       };
   const addCommodities = async (
     items: CommodityType[],
@@ -565,7 +561,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
       ],
     };
 
-    updateCustoms(state.shipment.customs?.id)(update, change);
+    updateCustoms(state.shipment.customs?.id)(update as CustomsType, change);
   };
   const updateCommodity =
     (cdt_index: number, customs_id?: string) =>
@@ -578,7 +574,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
           ),
         };
 
-        updateCustoms(state.shipment.customs?.id)(update, change);
+        updateCustoms(state.shipment.customs?.id)(update as CustomsType, change);
       };
   const removeCommodity =
     (cdt_index: number, customs_id?: string) => async (cdt_id?: string) => {
@@ -594,7 +590,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
         await mutation.discardCommodity.mutateAsync({ id: cdt_id as string });
       }
 
-      updateCustoms(state.shipment.customs?.id)(update, change);
+      updateCustoms(state.shipment.customs?.id)(update as CustomsType, change);
     };
 
   // requests

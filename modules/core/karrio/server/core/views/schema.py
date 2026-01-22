@@ -232,6 +232,13 @@ def render_tags(request, APP_NAME):
                 """,
             },
             {
+                "name": "Products",
+                "description": f"""This is an object representing your {APP_NAME} product template.
+                Product templates are reusable commodity definitions that can be used in customs declarations
+                and shipment items for recurring shipments of the same products.
+                """,
+            },
+            {
                 "name": "Parcels",
                 "description": f"""This is an object representing your {APP_NAME} shipping parcel.
                 Parcel objects are linked to your shipment history, and can be used for recurring shipping

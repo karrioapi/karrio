@@ -118,15 +118,17 @@ class OptionEnum:
         state: The current state value
         default: The default value to use when none is provided
         help: Help text describing the option
+        meta: Optional metadata dict (e.g., dict(category="COD"))
     """
     code: str
     type: typing.Union[typing.Callable, MetaEnum] = str
     state: typing.Any = None
     default: typing.Any = None
     help: typing.Optional[str] = None
+    meta: typing.Optional[dict] = None
 
     def __getitem__(self, type: typing.Callable = None) -> "OptionEnum":
-        return OptionEnum("", type or self.type, self.state, self.default, self.help)
+        return OptionEnum("", type or self.type, self.state, self.default, self.help, self.meta)
 
     def __call__(self, value: typing.Any = None) -> "OptionEnum":
         """Create a new OptionEnum instance with the specified value.
@@ -161,7 +163,7 @@ class OptionEnum:
         else:
             state = self.type(value) if value is not None else None
 
-        return OptionEnum(self.code, self.type, state, self.default, self.help)
+        return OptionEnum(self.code, self.type, state, self.default, self.help, self.meta)
 
 
 @attr.s(auto_attribs=True)

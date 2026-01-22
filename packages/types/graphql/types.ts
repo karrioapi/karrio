@@ -72,10 +72,10 @@ export interface GetSystemUsageVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: get_address_templates
+// GraphQL query operation: get_addresses
 // ====================================================
 
-export interface get_address_templates_address_templates_page_info {
+export interface get_addresses_addresses_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -83,7 +83,9 @@ export interface get_address_templates_address_templates_page_info {
   end_cursor: string | null;
 }
 
-export interface get_address_templates_address_templates_edges_node_address {
+export interface get_addresses_addresses_edges_node {
+  id: string;
+  object_type: string;
   company_name: string | null;
   person_name: string | null;
   street_number: string | null;
@@ -93,96 +95,30 @@ export interface get_address_templates_address_templates_edges_node_address {
   residential: boolean | null;
   city: string | null;
   state_code: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   federal_tax_id: string | null;
   state_tax_id: string | null;
   validate_location: boolean | null;
+  meta: any | null;
 }
 
-export interface get_address_templates_address_templates_edges_node {
-  id: string;
-  is_default: boolean | null;
-  label: string;
-  address: get_address_templates_address_templates_edges_node_address;
+export interface get_addresses_addresses_edges {
+  node: get_addresses_addresses_edges_node;
 }
 
-export interface get_address_templates_address_templates_edges {
-  node: get_address_templates_address_templates_edges_node;
+export interface get_addresses_addresses {
+  page_info: get_addresses_addresses_page_info;
+  edges: get_addresses_addresses_edges[];
 }
 
-export interface get_address_templates_address_templates {
-  page_info: get_address_templates_address_templates_page_info;
-  edges: get_address_templates_address_templates_edges[];
+export interface get_addresses {
+  addresses: get_addresses_addresses;
 }
 
-export interface get_address_templates {
-  address_templates: get_address_templates_address_templates;
-}
-
-export interface get_address_templatesVariables {
+export interface get_addressesVariables {
   filter?: AddressFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: get_customs_info_templates
-// ====================================================
-
-export interface get_customs_info_templates_customs_templates_page_info {
-  count: number;
-  has_next_page: boolean;
-  has_previous_page: boolean;
-  start_cursor: string | null;
-  end_cursor: string | null;
-}
-
-export interface get_customs_info_templates_customs_templates_edges_node_customs_duty {
-  paid_by: PaidByEnum | null;
-  currency: CurrencyCodeEnum | null;
-  account_number: string | null;
-  declared_value: number | null;
-}
-
-export interface get_customs_info_templates_customs_templates_edges_node_customs {
-  incoterm: IncotermCodeEnum | null;
-  content_type: CustomsContentTypeEnum | null;
-  commercial_invoice: boolean | null;
-  content_description: string | null;
-  duty: get_customs_info_templates_customs_templates_edges_node_customs_duty | null;
-  invoice: string | null;
-  invoice_date: string | null;
-  signer: string | null;
-  certify: boolean | null;
-  options: any | null;
-}
-
-export interface get_customs_info_templates_customs_templates_edges_node {
-  id: string;
-  label: string;
-  is_default: boolean | null;
-  customs: get_customs_info_templates_customs_templates_edges_node_customs;
-}
-
-export interface get_customs_info_templates_customs_templates_edges {
-  node: get_customs_info_templates_customs_templates_edges_node;
-}
-
-export interface get_customs_info_templates_customs_templates {
-  page_info: get_customs_info_templates_customs_templates_page_info;
-  edges: get_customs_info_templates_customs_templates_edges[];
-}
-
-export interface get_customs_info_templates {
-  customs_templates: get_customs_info_templates_customs_templates;
-}
-
-export interface get_customs_info_templatesVariables {
-  filter?: TemplateFilter | null;
 }
 
 
@@ -193,7 +129,9 @@ export interface get_customs_info_templatesVariables {
 // GraphQL query operation: get_default_templates
 // ====================================================
 
-export interface get_default_templates_default_templates_default_address_address {
+export interface get_default_templates_default_templates_default_address {
+  id: string;
+  object_type: string;
   company_name: string | null;
   person_name: string | null;
   street_number: string | null;
@@ -203,49 +141,18 @@ export interface get_default_templates_default_templates_default_address_address
   residential: boolean | null;
   city: string | null;
   state_code: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   federal_tax_id: string | null;
   state_tax_id: string | null;
   validate_location: boolean | null;
+  meta: any | null;
 }
 
-export interface get_default_templates_default_templates_default_address {
+export interface get_default_templates_default_templates_default_parcel {
   id: string;
-  is_default: boolean | null;
-  label: string;
-  address: get_default_templates_default_templates_default_address_address;
-}
-
-export interface get_default_templates_default_templates_default_customs_customs_duty {
-  paid_by: PaidByEnum | null;
-  currency: CurrencyCodeEnum | null;
-  account_number: string | null;
-  declared_value: number | null;
-}
-
-export interface get_default_templates_default_templates_default_customs_customs {
-  incoterm: IncotermCodeEnum | null;
-  content_type: CustomsContentTypeEnum | null;
-  commercial_invoice: boolean | null;
-  content_description: string | null;
-  duty: get_default_templates_default_templates_default_customs_customs_duty | null;
-  invoice: string | null;
-  invoice_date: string | null;
-  signer: string | null;
-  certify: boolean | null;
-  options: any | null;
-}
-
-export interface get_default_templates_default_templates_default_customs {
-  id: string;
-  label: string;
-  is_default: boolean | null;
-  customs: get_default_templates_default_templates_default_customs_customs;
-}
-
-export interface get_default_templates_default_templates_default_parcel_parcel {
+  object_type: string;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -255,18 +162,11 @@ export interface get_default_templates_default_templates_default_parcel_parcel {
   packaging_type: string | null;
   package_preset: string | null;
   is_document: boolean | null;
-}
-
-export interface get_default_templates_default_templates_default_parcel {
-  id: string;
-  is_default: boolean | null;
-  label: string;
-  parcel: get_default_templates_default_templates_default_parcel_parcel;
+  meta: any | null;
 }
 
 export interface get_default_templates_default_templates {
   default_address: get_default_templates_default_templates_default_address | null;
-  default_customs: get_default_templates_default_templates_default_customs | null;
   default_parcel: get_default_templates_default_templates_default_parcel | null;
 }
 
@@ -457,12 +357,12 @@ export interface get_shipment_shipment_created_by {
 }
 
 export interface get_shipment_shipment_recipient {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -476,12 +376,12 @@ export interface get_shipment_shipment_recipient {
 }
 
 export interface get_shipment_shipment_shipper {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -495,12 +395,12 @@ export interface get_shipment_shipment_shipper {
 }
 
 export interface get_shipment_shipment_return_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -514,12 +414,12 @@ export interface get_shipment_shipment_return_address {
 }
 
 export interface get_shipment_shipment_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -533,23 +433,23 @@ export interface get_shipment_shipment_billing_address {
 }
 
 export interface get_shipment_shipment_parcels_items {
-  id: string;
-  weight: number;
+  id: string | null;
+  weight: number | null;
   title: string | null;
   description: string | null;
-  quantity: number;
+  quantity: number | null;
   sku: string | null;
   hs_code: string | null;
   value_amount: number | null;
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
 export interface get_shipment_shipment_parcels {
-  id: string;
+  id: string | null;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -562,7 +462,16 @@ export interface get_shipment_shipment_parcels {
   freight_class: string | null;
   reference_number: string | null;
   description: string | null;
-  items: get_shipment_shipment_parcels_items[];
+  items: get_shipment_shipment_parcels_items[] | null;
+}
+
+export interface get_shipment_shipment_customs_duty_bill_to {
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
 }
 
 export interface get_shipment_shipment_customs_duty {
@@ -570,45 +479,33 @@ export interface get_shipment_shipment_customs_duty {
   currency: CurrencyCodeEnum | null;
   account_number: string | null;
   declared_value: number | null;
-}
-
-export interface get_shipment_shipment_customs_commodities {
-  id: string;
-  weight: number;
-  weight_unit: WeightUnitEnum | null;
-  title: string | null;
-  description: string | null;
-  quantity: number;
-  sku: string | null;
-  hs_code: string | null;
-  value_amount: number | null;
-  value_currency: CurrencyCodeEnum | null;
-  origin_country: CountryCodeEnum | null;
-  metadata: any;
-  parent_id: string | null;
+  bill_to: get_shipment_shipment_customs_duty_bill_to | null;
 }
 
 export interface get_shipment_shipment_customs_duty_billing_address {
-  id: string;
-  postal_code: string | null;
   city: string | null;
-  person_name: string | null;
-  company_name: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
   state_code: string | null;
-  residential: boolean | null;
-  street_number: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
+}
+
+export interface get_shipment_shipment_customs_commodities {
+  id: string | null;
+  sku: string | null;
+  hs_code: string | null;
+  quantity: number | null;
+  description: string | null;
+  value_amount: number | null;
+  value_currency: CurrencyCodeEnum | null;
+  weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any | null;
 }
 
 export interface get_shipment_shipment_customs {
-  id: string;
   certify: boolean | null;
   commercial_invoice: boolean | null;
   content_type: CustomsContentTypeEnum | null;
@@ -617,10 +514,10 @@ export interface get_shipment_shipment_customs {
   invoice: string | null;
   invoice_date: string | null;
   signer: string | null;
-  duty: get_shipment_shipment_customs_duty | null;
   options: any | null;
-  commodities: get_shipment_shipment_customs_commodities[];
+  duty: get_shipment_shipment_customs_duty | null;
   duty_billing_address: get_shipment_shipment_customs_duty_billing_address | null;
+  commodities: get_shipment_shipment_customs_commodities[] | null;
 }
 
 export interface get_shipment_shipment_payment {
@@ -676,11 +573,12 @@ export interface get_shipment_shipment_messages {
 }
 
 export interface get_shipment_shipment_selected_rate_carrier {
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_shipment_shipment_tracker_events {
@@ -726,8 +624,8 @@ export interface get_shipment_shipment_tracker_messages {
 export interface get_shipment_shipment_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   status: TrackerStatusEnum;
   events: get_shipment_shipment_tracker_events[];
   delivered: boolean | null;
@@ -806,12 +704,12 @@ export interface get_shipments_shipments_edges_node_created_by {
 }
 
 export interface get_shipments_shipments_edges_node_recipient {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -825,12 +723,12 @@ export interface get_shipments_shipments_edges_node_recipient {
 }
 
 export interface get_shipments_shipments_edges_node_shipper {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -844,12 +742,12 @@ export interface get_shipments_shipments_edges_node_shipper {
 }
 
 export interface get_shipments_shipments_edges_node_return_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -863,12 +761,12 @@ export interface get_shipments_shipments_edges_node_return_address {
 }
 
 export interface get_shipments_shipments_edges_node_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -882,23 +780,23 @@ export interface get_shipments_shipments_edges_node_billing_address {
 }
 
 export interface get_shipments_shipments_edges_node_parcels_items {
-  id: string;
-  weight: number;
+  id: string | null;
+  weight: number | null;
   title: string | null;
   description: string | null;
-  quantity: number;
+  quantity: number | null;
   sku: string | null;
   hs_code: string | null;
   value_amount: number | null;
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
 export interface get_shipments_shipments_edges_node_parcels {
-  id: string;
+  id: string | null;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -911,7 +809,16 @@ export interface get_shipments_shipments_edges_node_parcels {
   freight_class: string | null;
   reference_number: string | null;
   description: string | null;
-  items: get_shipments_shipments_edges_node_parcels_items[];
+  items: get_shipments_shipments_edges_node_parcels_items[] | null;
+}
+
+export interface get_shipments_shipments_edges_node_customs_duty_bill_to {
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
 }
 
 export interface get_shipments_shipments_edges_node_customs_duty {
@@ -919,45 +826,33 @@ export interface get_shipments_shipments_edges_node_customs_duty {
   currency: CurrencyCodeEnum | null;
   account_number: string | null;
   declared_value: number | null;
-}
-
-export interface get_shipments_shipments_edges_node_customs_commodities {
-  id: string;
-  weight: number;
-  weight_unit: WeightUnitEnum | null;
-  title: string | null;
-  description: string | null;
-  quantity: number;
-  sku: string | null;
-  hs_code: string | null;
-  value_amount: number | null;
-  value_currency: CurrencyCodeEnum | null;
-  origin_country: CountryCodeEnum | null;
-  metadata: any;
-  parent_id: string | null;
+  bill_to: get_shipments_shipments_edges_node_customs_duty_bill_to | null;
 }
 
 export interface get_shipments_shipments_edges_node_customs_duty_billing_address {
-  id: string;
-  postal_code: string | null;
   city: string | null;
-  person_name: string | null;
-  company_name: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
   state_code: string | null;
-  residential: boolean | null;
-  street_number: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
+}
+
+export interface get_shipments_shipments_edges_node_customs_commodities {
+  id: string | null;
+  sku: string | null;
+  hs_code: string | null;
+  quantity: number | null;
+  description: string | null;
+  value_amount: number | null;
+  value_currency: CurrencyCodeEnum | null;
+  weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any | null;
 }
 
 export interface get_shipments_shipments_edges_node_customs {
-  id: string;
   certify: boolean | null;
   commercial_invoice: boolean | null;
   content_type: CustomsContentTypeEnum | null;
@@ -966,10 +861,10 @@ export interface get_shipments_shipments_edges_node_customs {
   invoice: string | null;
   invoice_date: string | null;
   signer: string | null;
-  duty: get_shipments_shipments_edges_node_customs_duty | null;
   options: any | null;
-  commodities: get_shipments_shipments_edges_node_customs_commodities[];
+  duty: get_shipments_shipments_edges_node_customs_duty | null;
   duty_billing_address: get_shipments_shipments_edges_node_customs_duty_billing_address | null;
+  commodities: get_shipments_shipments_edges_node_customs_commodities[] | null;
 }
 
 export interface get_shipments_shipments_edges_node_payment {
@@ -1025,9 +920,12 @@ export interface get_shipments_shipments_edges_node_messages {
 }
 
 export interface get_shipments_shipments_edges_node_selected_rate_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_shipments_shipments_edges_node {
@@ -1092,12 +990,12 @@ export interface get_shipmentsVariables {
 // ====================================================
 
 export interface get_shipment_data_shipment_recipient {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1111,12 +1009,12 @@ export interface get_shipment_data_shipment_recipient {
 }
 
 export interface get_shipment_data_shipment_shipper {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1130,12 +1028,12 @@ export interface get_shipment_data_shipment_shipper {
 }
 
 export interface get_shipment_data_shipment_return_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1149,12 +1047,12 @@ export interface get_shipment_data_shipment_return_address {
 }
 
 export interface get_shipment_data_shipment_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1168,23 +1066,23 @@ export interface get_shipment_data_shipment_billing_address {
 }
 
 export interface get_shipment_data_shipment_parcels_items {
-  id: string;
-  weight: number;
+  id: string | null;
+  weight: number | null;
   title: string | null;
   description: string | null;
-  quantity: number;
+  quantity: number | null;
   sku: string | null;
   hs_code: string | null;
   value_amount: number | null;
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
 export interface get_shipment_data_shipment_parcels {
-  id: string;
+  id: string | null;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -1197,7 +1095,16 @@ export interface get_shipment_data_shipment_parcels {
   freight_class: string | null;
   reference_number: string | null;
   description: string | null;
-  items: get_shipment_data_shipment_parcels_items[];
+  items: get_shipment_data_shipment_parcels_items[] | null;
+}
+
+export interface get_shipment_data_shipment_customs_duty_bill_to {
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
 }
 
 export interface get_shipment_data_shipment_customs_duty {
@@ -1205,45 +1112,33 @@ export interface get_shipment_data_shipment_customs_duty {
   currency: CurrencyCodeEnum | null;
   account_number: string | null;
   declared_value: number | null;
-}
-
-export interface get_shipment_data_shipment_customs_commodities {
-  id: string;
-  weight: number;
-  weight_unit: WeightUnitEnum | null;
-  title: string | null;
-  description: string | null;
-  quantity: number;
-  sku: string | null;
-  hs_code: string | null;
-  value_amount: number | null;
-  value_currency: CurrencyCodeEnum | null;
-  origin_country: CountryCodeEnum | null;
-  metadata: any;
-  parent_id: string | null;
+  bill_to: get_shipment_data_shipment_customs_duty_bill_to | null;
 }
 
 export interface get_shipment_data_shipment_customs_duty_billing_address {
-  id: string;
-  postal_code: string | null;
   city: string | null;
-  person_name: string | null;
-  company_name: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
   state_code: string | null;
-  residential: boolean | null;
-  street_number: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
+}
+
+export interface get_shipment_data_shipment_customs_commodities {
+  id: string | null;
+  sku: string | null;
+  hs_code: string | null;
+  quantity: number | null;
+  description: string | null;
+  value_amount: number | null;
+  value_currency: CurrencyCodeEnum | null;
+  weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any | null;
 }
 
 export interface get_shipment_data_shipment_customs {
-  id: string;
   certify: boolean | null;
   commercial_invoice: boolean | null;
   content_type: CustomsContentTypeEnum | null;
@@ -1252,10 +1147,10 @@ export interface get_shipment_data_shipment_customs {
   invoice: string | null;
   invoice_date: string | null;
   signer: string | null;
-  duty: get_shipment_data_shipment_customs_duty | null;
   options: any | null;
-  commodities: get_shipment_data_shipment_customs_commodities[];
+  duty: get_shipment_data_shipment_customs_duty | null;
   duty_billing_address: get_shipment_data_shipment_customs_duty_billing_address | null;
+  commodities: get_shipment_data_shipment_customs_commodities[] | null;
 }
 
 export interface get_shipment_data_shipment_payment {
@@ -1328,12 +1223,12 @@ export interface get_shipment_dataVariables {
 // ====================================================
 
 export interface partial_shipment_update_partial_shipment_update_shipment_recipient {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1347,12 +1242,12 @@ export interface partial_shipment_update_partial_shipment_update_shipment_recipi
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_shipper {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1366,12 +1261,12 @@ export interface partial_shipment_update_partial_shipment_update_shipment_shippe
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_return_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1385,12 +1280,12 @@ export interface partial_shipment_update_partial_shipment_update_shipment_return
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -1404,23 +1299,23 @@ export interface partial_shipment_update_partial_shipment_update_shipment_billin
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_parcels_items {
-  id: string;
-  weight: number;
+  id: string | null;
+  weight: number | null;
   title: string | null;
   description: string | null;
-  quantity: number;
+  quantity: number | null;
   sku: string | null;
   hs_code: string | null;
   value_amount: number | null;
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_parcels {
-  id: string;
+  id: string | null;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -1433,7 +1328,16 @@ export interface partial_shipment_update_partial_shipment_update_shipment_parcel
   freight_class: string | null;
   reference_number: string | null;
   description: string | null;
-  items: partial_shipment_update_partial_shipment_update_shipment_parcels_items[];
+  items: partial_shipment_update_partial_shipment_update_shipment_parcels_items[] | null;
+}
+
+export interface partial_shipment_update_partial_shipment_update_shipment_customs_duty_bill_to {
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_customs_duty {
@@ -1441,45 +1345,33 @@ export interface partial_shipment_update_partial_shipment_update_shipment_custom
   currency: CurrencyCodeEnum | null;
   account_number: string | null;
   declared_value: number | null;
-}
-
-export interface partial_shipment_update_partial_shipment_update_shipment_customs_commodities {
-  id: string;
-  weight: number;
-  weight_unit: WeightUnitEnum | null;
-  title: string | null;
-  description: string | null;
-  quantity: number;
-  sku: string | null;
-  hs_code: string | null;
-  value_amount: number | null;
-  value_currency: CurrencyCodeEnum | null;
-  origin_country: CountryCodeEnum | null;
-  metadata: any;
-  parent_id: string | null;
+  bill_to: partial_shipment_update_partial_shipment_update_shipment_customs_duty_bill_to | null;
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_customs_duty_billing_address {
-  id: string;
-  postal_code: string | null;
   city: string | null;
-  person_name: string | null;
-  company_name: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
   state_code: string | null;
-  residential: boolean | null;
-  street_number: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
+}
+
+export interface partial_shipment_update_partial_shipment_update_shipment_customs_commodities {
+  id: string | null;
+  sku: string | null;
+  hs_code: string | null;
+  quantity: number | null;
+  description: string | null;
+  value_amount: number | null;
+  value_currency: CurrencyCodeEnum | null;
+  weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any | null;
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_customs {
-  id: string;
   certify: boolean | null;
   commercial_invoice: boolean | null;
   content_type: CustomsContentTypeEnum | null;
@@ -1488,10 +1380,10 @@ export interface partial_shipment_update_partial_shipment_update_shipment_custom
   invoice: string | null;
   invoice_date: string | null;
   signer: string | null;
-  duty: partial_shipment_update_partial_shipment_update_shipment_customs_duty | null;
   options: any | null;
-  commodities: partial_shipment_update_partial_shipment_update_shipment_customs_commodities[];
+  duty: partial_shipment_update_partial_shipment_update_shipment_customs_duty | null;
   duty_billing_address: partial_shipment_update_partial_shipment_update_shipment_customs_duty_billing_address | null;
+  commodities: partial_shipment_update_partial_shipment_update_shipment_customs_commodities[] | null;
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_payment {
@@ -1649,19 +1541,22 @@ export interface get_tracker_tracker_created_by {
 }
 
 export interface get_tracker_tracker_tracking_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_tracker_tracker_shipment_shipper {
   city: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface get_tracker_tracker_shipment_recipient {
   city: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface get_tracker_tracker_shipment {
@@ -1676,8 +1571,8 @@ export interface get_tracker_tracker_shipment {
 export interface get_tracker_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   status: TrackerStatusEnum;
   events: get_tracker_tracker_events[];
   delivered: boolean | null;
@@ -1764,19 +1659,22 @@ export interface get_trackers_trackers_edges_node_messages {
 }
 
 export interface get_trackers_trackers_edges_node_tracking_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface get_trackers_trackers_edges_node_shipment_shipper {
   city: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface get_trackers_trackers_edges_node_shipment_recipient {
   city: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
 }
 
 export interface get_trackers_trackers_edges_node_shipment {
@@ -1801,8 +1699,8 @@ export interface get_trackers_trackers_edges_node {
   test_mode: boolean;
   info: get_trackers_trackers_edges_node_info | null;
   messages: get_trackers_trackers_edges_node_messages[];
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   meta: any | null;
   metadata: any;
   tracking_carrier: get_trackers_trackers_edges_node_tracking_carrier | null;
@@ -1916,10 +1814,10 @@ export interface get_webhooksVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: get_parcel_templates
+// GraphQL query operation: get_parcels
 // ====================================================
 
-export interface get_parcel_templates_parcel_templates_page_info {
+export interface get_parcels_parcels_page_info {
   count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
@@ -1927,7 +1825,9 @@ export interface get_parcel_templates_parcel_templates_page_info {
   end_cursor: string | null;
 }
 
-export interface get_parcel_templates_parcel_templates_edges_node_parcel {
+export interface get_parcels_parcels_edges_node {
+  id: string;
+  object_type: string;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -1937,29 +1837,23 @@ export interface get_parcel_templates_parcel_templates_edges_node_parcel {
   packaging_type: string | null;
   package_preset: string | null;
   is_document: boolean | null;
+  meta: any | null;
 }
 
-export interface get_parcel_templates_parcel_templates_edges_node {
-  id: string;
-  is_default: boolean | null;
-  label: string;
-  parcel: get_parcel_templates_parcel_templates_edges_node_parcel;
+export interface get_parcels_parcels_edges {
+  node: get_parcels_parcels_edges_node;
 }
 
-export interface get_parcel_templates_parcel_templates_edges {
-  node: get_parcel_templates_parcel_templates_edges_node;
+export interface get_parcels_parcels {
+  page_info: get_parcels_parcels_page_info;
+  edges: get_parcels_parcels_edges[];
 }
 
-export interface get_parcel_templates_parcel_templates {
-  page_info: get_parcel_templates_parcel_templates_page_info;
-  edges: get_parcel_templates_parcel_templates_edges[];
+export interface get_parcels {
+  parcels: get_parcels_parcels;
 }
 
-export interface get_parcel_templates {
-  parcel_templates: get_parcel_templates_parcel_templates;
-}
-
-export interface get_parcel_templatesVariables {
+export interface get_parcelsVariables {
   filter?: TemplateFilter | null;
 }
 
@@ -2039,78 +1933,18 @@ export interface mutate_system_connectionVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: create_customs_template
+// GraphQL mutation operation: delete_address
 // ====================================================
 
-export interface create_customs_template_create_customs_template_template {
+export interface delete_address_delete_address {
   id: string;
 }
 
-export interface create_customs_template_create_customs_template_errors {
-  field: string;
-  messages: string[];
+export interface delete_address {
+  delete_address: delete_address_delete_address;
 }
 
-export interface create_customs_template_create_customs_template {
-  template: create_customs_template_create_customs_template_template | null;
-  errors: create_customs_template_create_customs_template_errors[] | null;
-}
-
-export interface create_customs_template {
-  create_customs_template: create_customs_template_create_customs_template;
-}
-
-export interface create_customs_templateVariables {
-  data: CreateCustomsTemplateInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: update_customs_template
-// ====================================================
-
-export interface update_customs_template_update_customs_template_template {
-  id: string;
-}
-
-export interface update_customs_template_update_customs_template_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface update_customs_template_update_customs_template {
-  template: update_customs_template_update_customs_template_template | null;
-  errors: update_customs_template_update_customs_template_errors[] | null;
-}
-
-export interface update_customs_template {
-  update_customs_template: update_customs_template_update_customs_template;
-}
-
-export interface update_customs_templateVariables {
-  data: UpdateCustomsTemplateInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: delete_template
-// ====================================================
-
-export interface delete_template_delete_template {
-  id: string;
-}
-
-export interface delete_template {
-  delete_template: delete_template_delete_template;
-}
-
-export interface delete_templateVariables {
+export interface delete_addressVariables {
   data: DeleteMutationInput;
 }
 
@@ -2119,29 +1953,19 @@ export interface delete_templateVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: create_parcel_template
+// GraphQL mutation operation: delete_parcel
 // ====================================================
 
-export interface create_parcel_template_create_parcel_template_template {
+export interface delete_parcel_delete_parcel {
   id: string;
 }
 
-export interface create_parcel_template_create_parcel_template_errors {
-  field: string;
-  messages: string[];
+export interface delete_parcel {
+  delete_parcel: delete_parcel_delete_parcel;
 }
 
-export interface create_parcel_template_create_parcel_template {
-  template: create_parcel_template_create_parcel_template_template | null;
-  errors: create_parcel_template_create_parcel_template_errors[] | null;
-}
-
-export interface create_parcel_template {
-  create_parcel_template: create_parcel_template_create_parcel_template;
-}
-
-export interface create_parcel_templateVariables {
-  data: CreateParcelTemplateInput;
+export interface delete_parcelVariables {
+  data: DeleteMutationInput;
 }
 
 
@@ -2149,29 +1973,29 @@ export interface create_parcel_templateVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: update_parcel_template
+// GraphQL mutation operation: create_parcel
 // ====================================================
 
-export interface update_parcel_template_update_parcel_template_template {
+export interface create_parcel_create_parcel_parcel {
   id: string;
 }
 
-export interface update_parcel_template_update_parcel_template_errors {
+export interface create_parcel_create_parcel_errors {
   field: string;
   messages: string[];
 }
 
-export interface update_parcel_template_update_parcel_template {
-  template: update_parcel_template_update_parcel_template_template | null;
-  errors: update_parcel_template_update_parcel_template_errors[] | null;
+export interface create_parcel_create_parcel {
+  parcel: create_parcel_create_parcel_parcel | null;
+  errors: create_parcel_create_parcel_errors[] | null;
 }
 
-export interface update_parcel_template {
-  update_parcel_template: update_parcel_template_update_parcel_template;
+export interface create_parcel {
+  create_parcel: create_parcel_create_parcel;
 }
 
-export interface update_parcel_templateVariables {
-  data: UpdateParcelTemplateInput;
+export interface create_parcelVariables {
+  data: CreateParcelInput;
 }
 
 
@@ -2179,29 +2003,29 @@ export interface update_parcel_templateVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: create_address_template
+// GraphQL mutation operation: update_parcel
 // ====================================================
 
-export interface create_address_template_create_address_template_template {
+export interface update_parcel_update_parcel_parcel {
   id: string;
 }
 
-export interface create_address_template_create_address_template_errors {
+export interface update_parcel_update_parcel_errors {
   field: string;
   messages: string[];
 }
 
-export interface create_address_template_create_address_template {
-  template: create_address_template_create_address_template_template | null;
-  errors: create_address_template_create_address_template_errors[] | null;
+export interface update_parcel_update_parcel {
+  parcel: update_parcel_update_parcel_parcel | null;
+  errors: update_parcel_update_parcel_errors[] | null;
 }
 
-export interface create_address_template {
-  create_address_template: create_address_template_create_address_template;
+export interface update_parcel {
+  update_parcel: update_parcel_update_parcel;
 }
 
-export interface create_address_templateVariables {
-  data: CreateAddressTemplateInput;
+export interface update_parcelVariables {
+  data: UpdateParcelInput2;
 }
 
 
@@ -2209,29 +2033,191 @@ export interface create_address_templateVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: update_address_template
+// GraphQL mutation operation: create_address
 // ====================================================
 
-export interface update_address_template_update_address_template_template {
+export interface create_address_create_address_address {
   id: string;
 }
 
-export interface update_address_template_update_address_template_errors {
+export interface create_address_create_address_errors {
   field: string;
   messages: string[];
 }
 
-export interface update_address_template_update_address_template {
-  template: update_address_template_update_address_template_template | null;
-  errors: update_address_template_update_address_template_errors[] | null;
+export interface create_address_create_address {
+  address: create_address_create_address_address | null;
+  errors: create_address_create_address_errors[] | null;
 }
 
-export interface update_address_template {
-  update_address_template: update_address_template_update_address_template;
+export interface create_address {
+  create_address: create_address_create_address;
 }
 
-export interface update_address_templateVariables {
-  data: UpdateAddressTemplateInput;
+export interface create_addressVariables {
+  data: CreateAddressInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: update_address
+// ====================================================
+
+export interface update_address_update_address_address {
+  id: string;
+}
+
+export interface update_address_update_address_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface update_address_update_address {
+  address: update_address_update_address_address | null;
+  errors: update_address_update_address_errors[] | null;
+}
+
+export interface update_address {
+  update_address: update_address_update_address;
+}
+
+export interface update_addressVariables {
+  data: UpdateAddressInput2;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_products
+// ====================================================
+
+export interface get_products_products_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_products_products_edges_node {
+  id: string;
+  object_type: string;
+  weight: number;
+  weight_unit: WeightUnitEnum | null;
+  quantity: number;
+  sku: string | null;
+  title: string | null;
+  hs_code: string | null;
+  description: string | null;
+  value_amount: number | null;
+  value_currency: CurrencyCodeEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any | null;
+  meta: any | null;
+  created_at: any | null;
+  updated_at: any | null;
+}
+
+export interface get_products_products_edges {
+  node: get_products_products_edges_node;
+}
+
+export interface get_products_products {
+  page_info: get_products_products_page_info;
+  edges: get_products_products_edges[];
+}
+
+export interface get_products {
+  products: get_products_products;
+}
+
+export interface get_productsVariables {
+  filter?: ProductFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: create_product
+// ====================================================
+
+export interface create_product_create_product_product {
+  id: string;
+}
+
+export interface create_product_create_product_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface create_product_create_product {
+  product: create_product_create_product_product | null;
+  errors: create_product_create_product_errors[] | null;
+}
+
+export interface create_product {
+  create_product: create_product_create_product;
+}
+
+export interface create_productVariables {
+  data: CreateProductInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: update_product
+// ====================================================
+
+export interface update_product_update_product_product {
+  id: string;
+}
+
+export interface update_product_update_product_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface update_product_update_product {
+  product: update_product_update_product_product | null;
+  errors: update_product_update_product_errors[] | null;
+}
+
+export interface update_product {
+  update_product: update_product_update_product;
+}
+
+export interface update_productVariables {
+  data: UpdateProductInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: delete_product
+// ====================================================
+
+export interface delete_product_delete_product {
+  id: string;
+}
+
+export interface delete_product {
+  delete_product: delete_product_delete_product;
+}
+
+export interface delete_productVariables {
+  data: DeleteMutationInput;
 }
 
 
@@ -2251,26 +2237,6 @@ export interface discard_commodity {
 }
 
 export interface discard_commodityVariables {
-  data: DeleteMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: discard_customs
-// ====================================================
-
-export interface discard_customs_discard_customs {
-  id: string;
-}
-
-export interface discard_customs {
-  discard_customs: discard_customs_discard_customs;
-}
-
-export interface discard_customsVariables {
   data: DeleteMutationInput;
 }
 
@@ -2710,12 +2676,12 @@ export interface get_eventsVariables {
 // ====================================================
 
 export interface get_order_order_shipping_to {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -2729,12 +2695,12 @@ export interface get_order_order_shipping_to {
 }
 
 export interface get_order_order_shipping_from {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -2748,12 +2714,12 @@ export interface get_order_order_shipping_from {
 }
 
 export interface get_order_order_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -2767,7 +2733,7 @@ export interface get_order_order_billing_address {
 }
 
 export interface get_order_order_line_items {
-  id: string;
+  id: string | null;
   weight: number;
   title: string | null;
   description: string | null;
@@ -2779,7 +2745,7 @@ export interface get_order_order_line_items {
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
@@ -2794,12 +2760,12 @@ export interface get_order_order_shipments_created_by {
 }
 
 export interface get_order_order_shipments_recipient {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -2813,12 +2779,12 @@ export interface get_order_order_shipments_recipient {
 }
 
 export interface get_order_order_shipments_shipper {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -2832,12 +2798,12 @@ export interface get_order_order_shipments_shipper {
 }
 
 export interface get_order_order_shipments_return_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -2851,12 +2817,12 @@ export interface get_order_order_shipments_return_address {
 }
 
 export interface get_order_order_shipments_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -2870,23 +2836,23 @@ export interface get_order_order_shipments_billing_address {
 }
 
 export interface get_order_order_shipments_parcels_items {
-  id: string;
-  weight: number;
+  id: string | null;
+  weight: number | null;
   title: string | null;
   description: string | null;
-  quantity: number;
+  quantity: number | null;
   sku: string | null;
   hs_code: string | null;
   value_amount: number | null;
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
 export interface get_order_order_shipments_parcels {
-  id: string;
+  id: string | null;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -2899,7 +2865,16 @@ export interface get_order_order_shipments_parcels {
   freight_class: string | null;
   reference_number: string | null;
   description: string | null;
-  items: get_order_order_shipments_parcels_items[];
+  items: get_order_order_shipments_parcels_items[] | null;
+}
+
+export interface get_order_order_shipments_customs_duty_bill_to {
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
 }
 
 export interface get_order_order_shipments_customs_duty {
@@ -2907,45 +2882,33 @@ export interface get_order_order_shipments_customs_duty {
   currency: CurrencyCodeEnum | null;
   account_number: string | null;
   declared_value: number | null;
-}
-
-export interface get_order_order_shipments_customs_commodities {
-  id: string;
-  weight: number;
-  weight_unit: WeightUnitEnum | null;
-  title: string | null;
-  description: string | null;
-  quantity: number;
-  sku: string | null;
-  hs_code: string | null;
-  value_amount: number | null;
-  value_currency: CurrencyCodeEnum | null;
-  origin_country: CountryCodeEnum | null;
-  metadata: any;
-  parent_id: string | null;
+  bill_to: get_order_order_shipments_customs_duty_bill_to | null;
 }
 
 export interface get_order_order_shipments_customs_duty_billing_address {
-  id: string;
-  postal_code: string | null;
   city: string | null;
-  person_name: string | null;
-  company_name: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
   state_code: string | null;
-  residential: boolean | null;
-  street_number: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
+}
+
+export interface get_order_order_shipments_customs_commodities {
+  id: string | null;
+  sku: string | null;
+  hs_code: string | null;
+  quantity: number | null;
+  description: string | null;
+  value_amount: number | null;
+  value_currency: CurrencyCodeEnum | null;
+  weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any | null;
 }
 
 export interface get_order_order_shipments_customs {
-  id: string;
   certify: boolean | null;
   commercial_invoice: boolean | null;
   content_type: CustomsContentTypeEnum | null;
@@ -2954,10 +2917,10 @@ export interface get_order_order_shipments_customs {
   invoice: string | null;
   invoice_date: string | null;
   signer: string | null;
-  duty: get_order_order_shipments_customs_duty | null;
   options: any | null;
-  commodities: get_order_order_shipments_customs_commodities[];
+  duty: get_order_order_shipments_customs_duty | null;
   duty_billing_address: get_order_order_shipments_customs_duty_billing_address | null;
+  commodities: get_order_order_shipments_customs_commodities[] | null;
 }
 
 export interface get_order_order_shipments_payment {
@@ -3015,8 +2978,8 @@ export interface get_order_order_shipments_messages {
 export interface get_order_order_shipments_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
 }
 
 export interface get_order_order_shipments {
@@ -3090,12 +3053,12 @@ export interface get_orderVariables {
 // ====================================================
 
 export interface get_order_data_order_shipping_to {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3109,12 +3072,12 @@ export interface get_order_data_order_shipping_to {
 }
 
 export interface get_order_data_order_shipping_from {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3128,12 +3091,12 @@ export interface get_order_data_order_shipping_from {
 }
 
 export interface get_order_data_order_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3147,7 +3110,7 @@ export interface get_order_data_order_billing_address {
 }
 
 export interface get_order_data_order_line_items {
-  id: string;
+  id: string | null;
   weight: number;
   title: string | null;
   description: string | null;
@@ -3158,7 +3121,7 @@ export interface get_order_data_order_line_items {
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
@@ -3197,12 +3160,12 @@ export interface get_orders_orders_page_info {
 }
 
 export interface get_orders_orders_edges_node_shipping_to {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3216,12 +3179,12 @@ export interface get_orders_orders_edges_node_shipping_to {
 }
 
 export interface get_orders_orders_edges_node_shipping_from {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3235,12 +3198,12 @@ export interface get_orders_orders_edges_node_shipping_from {
 }
 
 export interface get_orders_orders_edges_node_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3254,7 +3217,7 @@ export interface get_orders_orders_edges_node_billing_address {
 }
 
 export interface get_orders_orders_edges_node_line_items {
-  id: string;
+  id: string | null;
   weight: number;
   title: string | null;
   description: string | null;
@@ -3266,7 +3229,7 @@ export interface get_orders_orders_edges_node_line_items {
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
@@ -3281,12 +3244,12 @@ export interface get_orders_orders_edges_node_shipments_created_by {
 }
 
 export interface get_orders_orders_edges_node_shipments_recipient {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3300,12 +3263,12 @@ export interface get_orders_orders_edges_node_shipments_recipient {
 }
 
 export interface get_orders_orders_edges_node_shipments_shipper {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3319,12 +3282,12 @@ export interface get_orders_orders_edges_node_shipments_shipper {
 }
 
 export interface get_orders_orders_edges_node_shipments_return_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3338,12 +3301,12 @@ export interface get_orders_orders_edges_node_shipments_return_address {
 }
 
 export interface get_orders_orders_edges_node_shipments_billing_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -3357,23 +3320,23 @@ export interface get_orders_orders_edges_node_shipments_billing_address {
 }
 
 export interface get_orders_orders_edges_node_shipments_parcels_items {
-  id: string;
-  weight: number;
+  id: string | null;
+  weight: number | null;
   title: string | null;
   description: string | null;
-  quantity: number;
+  quantity: number | null;
   sku: string | null;
   hs_code: string | null;
   value_amount: number | null;
   weight_unit: WeightUnitEnum | null;
   value_currency: CurrencyCodeEnum | null;
   origin_country: CountryCodeEnum | null;
-  metadata: any;
+  metadata: any | null;
   parent_id: string | null;
 }
 
 export interface get_orders_orders_edges_node_shipments_parcels {
-  id: string;
+  id: string | null;
   width: number | null;
   height: number | null;
   length: number | null;
@@ -3386,7 +3349,16 @@ export interface get_orders_orders_edges_node_shipments_parcels {
   freight_class: string | null;
   reference_number: string | null;
   description: string | null;
-  items: get_orders_orders_edges_node_shipments_parcels_items[];
+  items: get_orders_orders_edges_node_shipments_parcels_items[] | null;
+}
+
+export interface get_orders_orders_edges_node_shipments_customs_duty_bill_to {
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
 }
 
 export interface get_orders_orders_edges_node_shipments_customs_duty {
@@ -3394,45 +3366,33 @@ export interface get_orders_orders_edges_node_shipments_customs_duty {
   currency: CurrencyCodeEnum | null;
   account_number: string | null;
   declared_value: number | null;
-}
-
-export interface get_orders_orders_edges_node_shipments_customs_commodities {
-  id: string;
-  weight: number;
-  weight_unit: WeightUnitEnum | null;
-  title: string | null;
-  description: string | null;
-  quantity: number;
-  sku: string | null;
-  hs_code: string | null;
-  value_amount: number | null;
-  value_currency: CurrencyCodeEnum | null;
-  origin_country: CountryCodeEnum | null;
-  metadata: any;
-  parent_id: string | null;
+  bill_to: get_orders_orders_edges_node_shipments_customs_duty_bill_to | null;
 }
 
 export interface get_orders_orders_edges_node_shipments_customs_duty_billing_address {
-  id: string;
-  postal_code: string | null;
   city: string | null;
-  person_name: string | null;
-  company_name: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
   state_code: string | null;
-  residential: boolean | null;
-  street_number: string | null;
+  country_code: CountryCodeEnum | null;
+  postal_code: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
+}
+
+export interface get_orders_orders_edges_node_shipments_customs_commodities {
+  id: string | null;
+  sku: string | null;
+  hs_code: string | null;
+  quantity: number | null;
+  description: string | null;
+  value_amount: number | null;
+  value_currency: CurrencyCodeEnum | null;
+  weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any | null;
 }
 
 export interface get_orders_orders_edges_node_shipments_customs {
-  id: string;
   certify: boolean | null;
   commercial_invoice: boolean | null;
   content_type: CustomsContentTypeEnum | null;
@@ -3441,10 +3401,10 @@ export interface get_orders_orders_edges_node_shipments_customs {
   invoice: string | null;
   invoice_date: string | null;
   signer: string | null;
-  duty: get_orders_orders_edges_node_shipments_customs_duty | null;
   options: any | null;
-  commodities: get_orders_orders_edges_node_shipments_customs_commodities[];
+  duty: get_orders_orders_edges_node_shipments_customs_duty | null;
   duty_billing_address: get_orders_orders_edges_node_shipments_customs_duty_billing_address | null;
+  commodities: get_orders_orders_edges_node_shipments_customs_commodities[] | null;
 }
 
 export interface get_orders_orders_edges_node_shipments_payment {
@@ -3502,8 +3462,8 @@ export interface get_orders_orders_edges_node_shipments_messages {
 export interface get_orders_orders_edges_node_shipments_tracker {
   id: string;
   tracking_number: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
 }
 
 export interface get_orders_orders_edges_node_shipments {
@@ -4452,6 +4412,7 @@ export interface GetRateSheet_rate_sheet {
   id: string;
   name: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   zones: GetRateSheet_rate_sheet_zones[] | null;
   surcharges: GetRateSheet_rate_sheet_surcharges[] | null;
   service_rates: GetRateSheet_rate_sheet_service_rates[] | null;
@@ -4547,6 +4508,7 @@ export interface GetRateSheets_rate_sheets_edges_node {
   id: string;
   name: string;
   carrier_name: CarrierNameEnum;
+  origin_countries: string[] | null;
   zones: GetRateSheets_rate_sheets_edges_node_zones[] | null;
   surcharges: GetRateSheets_rate_sheets_edges_node_surcharges[] | null;
   service_rates: GetRateSheets_rate_sheets_edges_node_service_rates[] | null;
@@ -4851,14 +4813,14 @@ export interface GetManifests_manifests_page_info {
 }
 
 export interface GetManifests_manifests_edges_node_address {
-  id: string;
+  id: string | null;
   postal_code: string | null;
   city: string | null;
   federal_tax_id: string | null;
   state_tax_id: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   state_code: string | null;
@@ -4869,9 +4831,12 @@ export interface GetManifests_manifests_edges_node_address {
 }
 
 export interface GetManifests_manifests_edges_node_manifest_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
 }
 
 export interface GetManifests_manifests_edges_node_messages {
@@ -4881,8 +4846,8 @@ export interface GetManifests_manifests_edges_node_messages {
 
 export interface GetManifests_manifests_edges_node {
   id: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   manifest_url: string | null;
   shipment_identifiers: string[];
   reference: string | null;
@@ -4928,7 +4893,7 @@ export interface GetManifest_manifest_address {
   state_tax_id: string | null;
   person_name: string | null;
   company_name: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   email: string | null;
   phone_number: string | null;
   address_line1: string | null;
@@ -4944,8 +4909,8 @@ export interface GetManifest_manifest_messages {
 
 export interface GetManifest_manifest {
   id: string;
-  carrier_id: string;
-  carrier_name: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
   manifest_url: string | null;
   shipment_identifiers: string[];
   reference: string | null;
@@ -5057,12 +5022,12 @@ export interface DeleteAPIKeyVariables {
 // ====================================================
 
 export interface search_data_shipment_results_edges_node_recipient {
-  id: string;
+  id: string | null;
   city: string | null;
   street_number: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   postal_code: string | null;
   person_name: string | null;
   phone_number: string | null;
@@ -5087,12 +5052,12 @@ export interface search_data_shipment_results {
 }
 
 export interface search_data_order_results_edges_node_shipping_to {
-  id: string;
+  id: string | null;
   city: string | null;
   street_number: string | null;
   address_line1: string | null;
   address_line2: string | null;
-  country_code: CountryCodeEnum;
+  country_code: CountryCodeEnum | null;
   postal_code: string | null;
   person_name: string | null;
   phone_number: string | null;
@@ -5391,36 +5356,82 @@ export enum CountryCodeEnum {
   ZW = "ZW",
 }
 
-export enum IncotermCodeEnum {
-  CFR = "CFR",
-  CIF = "CIF",
-  CIP = "CIP",
-  CPT = "CPT",
-  DAF = "DAF",
-  DAP = "DAP",
-  DDP = "DDP",
-  DDU = "DDU",
-  DEQ = "DEQ",
-  DES = "DES",
-  EXW = "EXW",
-  FAS = "FAS",
-  FCA = "FCA",
-  FOB = "FOB",
+export enum DimensionUnitEnum {
+  CM = "CM",
+  IN = "IN",
 }
 
-export enum CustomsContentTypeEnum {
-  documents = "documents",
-  gift = "gift",
-  merchandise = "merchandise",
-  other = "other",
-  return_merchandise = "return_merchandise",
-  sample = "sample",
+export enum WeightUnitEnum {
+  G = "G",
+  KG = "KG",
+  LB = "LB",
+  OZ = "OZ",
 }
 
-export enum PaidByEnum {
-  recipient = "recipient",
-  sender = "sender",
-  third_party = "third_party",
+export enum CarrierNameEnum {
+  aramex = "aramex",
+  asendia = "asendia",
+  asendia_us = "asendia_us",
+  australiapost = "australiapost",
+  boxknight = "boxknight",
+  bpost = "bpost",
+  canadapost = "canadapost",
+  canpar = "canpar",
+  chronopost = "chronopost",
+  colissimo = "colissimo",
+  dhl_express = "dhl_express",
+  dhl_parcel_de = "dhl_parcel_de",
+  dhl_poland = "dhl_poland",
+  dhl_universal = "dhl_universal",
+  dicom = "dicom",
+  dpd = "dpd",
+  dpd_meta = "dpd_meta",
+  dtdc = "dtdc",
+  easypost = "easypost",
+  easyship = "easyship",
+  eshipper = "eshipper",
+  fedex = "fedex",
+  freightcom = "freightcom",
+  generic = "generic",
+  geodis = "geodis",
+  gls = "gls",
+  hay_post = "hay_post",
+  hermes = "hermes",
+  landmark = "landmark",
+  laposte = "laposte",
+  locate2u = "locate2u",
+  mydhl = "mydhl",
+  nationex = "nationex",
+  parcelone = "parcelone",
+  postat = "postat",
+  purolator = "purolator",
+  roadie = "roadie",
+  royalmail = "royalmail",
+  sapient = "sapient",
+  seko = "seko",
+  sendle = "sendle",
+  shipengine = "shipengine",
+  spring = "spring",
+  teleship = "teleship",
+  tge = "tge",
+  tnt = "tnt",
+  ups = "ups",
+  usps = "usps",
+  usps_international = "usps_international",
+  veho = "veho",
+  zoom2u = "zoom2u",
+}
+
+export enum ShipmentStatusEnum {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  delivery_failed = "delivery_failed",
+  draft = "draft",
+  in_transit = "in_transit",
+  needs_attention = "needs_attention",
+  out_for_delivery = "out_for_delivery",
+  purchased = "purchased",
+  shipped = "shipped",
 }
 
 export enum CurrencyCodeEnum {
@@ -5570,86 +5581,42 @@ export enum CurrencyCodeEnum {
   ZAR = "ZAR",
 }
 
-export enum DimensionUnitEnum {
-  CM = "CM",
-  IN = "IN",
-}
-
-export enum WeightUnitEnum {
-  G = "G",
-  KG = "KG",
-  LB = "LB",
-  OZ = "OZ",
-}
-
-export enum CarrierNameEnum {
-  aramex = "aramex",
-  asendia_us = "asendia_us",
-  australiapost = "australiapost",
-  boxknight = "boxknight",
-  bpost = "bpost",
-  canadapost = "canadapost",
-  canpar = "canpar",
-  chronopost = "chronopost",
-  colissimo = "colissimo",
-  dhl_express = "dhl_express",
-  dhl_parcel_de = "dhl_parcel_de",
-  dhl_poland = "dhl_poland",
-  dhl_universal = "dhl_universal",
-  dicom = "dicom",
-  dpd = "dpd",
-  dpd_meta = "dpd_meta",
-  dtdc = "dtdc",
-  easypost = "easypost",
-  easyship = "easyship",
-  eshipper = "eshipper",
-  fedex = "fedex",
-  freightcom = "freightcom",
-  generic = "generic",
-  geodis = "geodis",
-  gls = "gls",
-  hay_post = "hay_post",
-  hermes = "hermes",
-  landmark = "landmark",
-  laposte = "laposte",
-  locate2u = "locate2u",
-  mydhl = "mydhl",
-  nationex = "nationex",
-  parcelone = "parcelone",
-  postat = "postat",
-  purolator = "purolator",
-  roadie = "roadie",
-  royalmail = "royalmail",
-  sapient = "sapient",
-  seko = "seko",
-  sendle = "sendle",
-  shipengine = "shipengine",
-  teleship = "teleship",
-  tge = "tge",
-  tnt = "tnt",
-  ups = "ups",
-  usps = "usps",
-  usps_international = "usps_international",
-  veho = "veho",
-  zoom2u = "zoom2u",
-}
-
-export enum ShipmentStatusEnum {
-  cancelled = "cancelled",
-  delivered = "delivered",
-  delivery_failed = "delivery_failed",
-  draft = "draft",
-  in_transit = "in_transit",
-  needs_attention = "needs_attention",
-  out_for_delivery = "out_for_delivery",
-  purchased = "purchased",
-  shipped = "shipped",
-}
-
 export enum LabelTypeEnum {
   PDF = "PDF",
   PNG = "PNG",
   ZPL = "ZPL",
+}
+
+export enum CustomsContentTypeEnum {
+  documents = "documents",
+  gift = "gift",
+  merchandise = "merchandise",
+  other = "other",
+  return_merchandise = "return_merchandise",
+  sample = "sample",
+}
+
+export enum IncotermCodeEnum {
+  CFR = "CFR",
+  CIF = "CIF",
+  CIP = "CIP",
+  CPT = "CPT",
+  DAF = "DAF",
+  DAP = "DAP",
+  DDP = "DDP",
+  DDU = "DDU",
+  DEQ = "DEQ",
+  DES = "DES",
+  EXW = "EXW",
+  FAS = "FAS",
+  FCA = "FCA",
+  FOB = "FOB",
+}
+
+export enum PaidByEnum {
+  recipient = "recipient",
+  sender = "sender",
+  third_party = "third_party",
 }
 
 export enum TrackerStatusEnum {
@@ -5751,14 +5718,6 @@ export interface AddressFilter {
 }
 
 // null
-export interface TemplateFilter {
-  offset?: number | null;
-  first?: number | null;
-  label?: string | null;
-  keyword?: string | null;
-}
-
-// null
 export interface CreateCarrierConnectionMutationInput {
   carrier_name: CarrierNameEnum;
   carrier_id: string;
@@ -5830,7 +5789,7 @@ export interface PartialShipmentMutationInput {
   shipper?: UpdateAddressInput | null;
   return_address?: UpdateAddressInput | null;
   billing_address?: UpdateAddressInput | null;
-  customs?: UpdateCustomsInput | null;
+  customs?: any | null;
   parcels?: UpdateParcelInput[] | null;
   payment?: PaymentInput | null;
   label_type?: LabelTypeEnum | null;
@@ -5860,19 +5819,21 @@ export interface UpdateAddressInput {
 }
 
 // null
-export interface UpdateCustomsInput {
-  commodities?: UpdateCommodityInput[] | null;
-  certify?: boolean | null;
-  commercial_invoice?: boolean | null;
-  content_type?: CustomsContentTypeEnum | null;
-  content_description?: string | null;
-  incoterm?: IncotermCodeEnum | null;
-  invoice?: string | null;
-  invoice_date?: string | null;
-  signer?: string | null;
-  duty?: UpdateDutyInput | null;
-  duty_billing_address?: UpdateAddressInput | null;
-  options?: any | null;
+export interface UpdateParcelInput {
+  weight?: number | null;
+  weight_unit?: WeightUnitEnum | null;
+  width?: number | null;
+  height?: number | null;
+  length?: number | null;
+  packaging_type?: string | null;
+  package_preset?: string | null;
+  description?: string | null;
+  content?: string | null;
+  is_document?: boolean | null;
+  dimension_unit?: DimensionUnitEnum | null;
+  reference_number?: string | null;
+  freight_class?: string | null;
+  items?: UpdateCommodityInput[] | null;
   id?: string | null;
 }
 
@@ -5890,53 +5851,6 @@ export interface UpdateCommodityInput {
   value_currency?: CurrencyCodeEnum | null;
   metadata?: any | null;
   parent_id?: string | null;
-  id?: string | null;
-}
-
-// null
-export interface UpdateDutyInput {
-  paid_by?: PaidByEnum | null;
-  currency?: CurrencyCodeEnum | null;
-  account_number?: string | null;
-  declared_value?: number | null;
-  bill_to?: AddressInput | null;
-}
-
-// null
-export interface AddressInput {
-  country_code?: CountryCodeEnum | null;
-  postal_code?: string | null;
-  city?: string | null;
-  federal_tax_id?: string | null;
-  state_tax_id?: string | null;
-  person_name?: string | null;
-  company_name?: string | null;
-  email?: string | null;
-  phone_number?: string | null;
-  state_code?: string | null;
-  residential?: boolean | null;
-  street_number?: string | null;
-  address_line1?: string | null;
-  address_line2?: string | null;
-  validate_location?: boolean | null;
-}
-
-// null
-export interface UpdateParcelInput {
-  weight?: number | null;
-  weight_unit?: WeightUnitEnum | null;
-  width?: number | null;
-  height?: number | null;
-  length?: number | null;
-  packaging_type?: string | null;
-  package_preset?: string | null;
-  description?: string | null;
-  content?: string | null;
-  is_document?: boolean | null;
-  dimension_unit?: DimensionUnitEnum | null;
-  reference_number?: string | null;
-  freight_class?: string | null;
-  items?: UpdateCommodityInput[] | null;
   id?: string | null;
 }
 
@@ -5977,6 +5891,14 @@ export interface WebhookFilter {
 }
 
 // null
+export interface TemplateFilter {
+  offset?: number | null;
+  first?: number | null;
+  label?: string | null;
+  keyword?: string | null;
+}
+
+// null
 export interface CarrierFilter {
   offset?: number | null;
   first?: number | null;
@@ -5994,63 +5916,7 @@ export interface SystemCarrierMutationInput {
 }
 
 // null
-export interface CreateCustomsTemplateInput {
-  label: string;
-  customs: CustomsInput;
-  is_default?: boolean | null;
-}
-
-// null
-export interface CustomsInput {
-  commodities: CommodityInput[];
-  certify?: boolean | null;
-  commercial_invoice?: boolean | null;
-  content_type?: CustomsContentTypeEnum | null;
-  content_description?: string | null;
-  incoterm?: IncotermCodeEnum | null;
-  invoice?: string | null;
-  invoice_date?: string | null;
-  signer?: string | null;
-  duty?: DutyInput | null;
-  duty_billing_address?: UpdateAddressInput | null;
-  options?: any | null;
-}
-
-// null
-export interface CommodityInput {
-  weight: number;
-  weight_unit: WeightUnitEnum;
-  quantity?: number | null;
-  sku?: string | null;
-  title?: string | null;
-  hs_code?: string | null;
-  description?: string | null;
-  value_amount?: number | null;
-  origin_country?: CountryCodeEnum | null;
-  value_currency?: CurrencyCodeEnum | null;
-  metadata?: any | null;
-  parent_id?: string | null;
-}
-
-// null
-export interface DutyInput {
-  paid_by: PaidByEnum;
-  currency?: CurrencyCodeEnum | null;
-  account_number?: string | null;
-  declared_value?: number | null;
-  bill_to?: AddressInput | null;
-}
-
-// null
-export interface UpdateCustomsTemplateInput {
-  label?: string | null;
-  customs?: UpdateCustomsInput | null;
-  is_default?: boolean | null;
-  id: string;
-}
-
-// null
-export interface CreateParcelTemplateInput {
+export interface CreateParcelInput {
   label: string;
   parcel: ParcelInput;
   is_default?: boolean | null;
@@ -6075,7 +5941,23 @@ export interface ParcelInput {
 }
 
 // null
-export interface UpdateParcelTemplateInput {
+export interface CommodityInput {
+  weight: number;
+  weight_unit: WeightUnitEnum;
+  quantity?: number | null;
+  sku?: string | null;
+  title?: string | null;
+  hs_code?: string | null;
+  description?: string | null;
+  value_amount?: number | null;
+  origin_country?: CountryCodeEnum | null;
+  value_currency?: CurrencyCodeEnum | null;
+  metadata?: any | null;
+  parent_id?: string | null;
+}
+
+// null
+export interface UpdateParcelInput2 {
   label?: string | null;
   parcel?: UpdateParcelInput | null;
   is_default?: boolean | null;
@@ -6083,18 +5965,82 @@ export interface UpdateParcelTemplateInput {
 }
 
 // null
-export interface CreateAddressTemplateInput {
+export interface CreateAddressInput {
   label: string;
   address: AddressInput;
   is_default?: boolean | null;
 }
 
 // null
-export interface UpdateAddressTemplateInput {
+export interface AddressInput {
+  country_code?: CountryCodeEnum | null;
+  postal_code?: string | null;
+  city?: string | null;
+  federal_tax_id?: string | null;
+  state_tax_id?: string | null;
+  person_name?: string | null;
+  company_name?: string | null;
+  email?: string | null;
+  phone_number?: string | null;
+  state_code?: string | null;
+  residential?: boolean | null;
+  street_number?: string | null;
+  address_line1?: string | null;
+  address_line2?: string | null;
+  validate_location?: boolean | null;
+}
+
+// null
+export interface UpdateAddressInput2 {
   label?: string | null;
   address?: UpdateAddressInput | null;
   is_default?: boolean | null;
   id: string;
+}
+
+// null
+export interface ProductFilter {
+  offset?: number | null;
+  first?: number | null;
+  label?: string | null;
+  keyword?: string | null;
+  sku?: string | null;
+  origin_country?: CountryCodeEnum | null;
+}
+
+// null
+export interface CreateProductInput {
+  label: string;
+  weight: number;
+  weight_unit: WeightUnitEnum;
+  quantity?: number | null;
+  sku?: string | null;
+  title?: string | null;
+  hs_code?: string | null;
+  description?: string | null;
+  value_amount?: number | null;
+  value_currency?: CurrencyCodeEnum | null;
+  origin_country?: CountryCodeEnum | null;
+  is_default?: boolean | null;
+  metadata?: any | null;
+}
+
+// null
+export interface UpdateProductInput {
+  id: string;
+  label?: string | null;
+  weight?: number | null;
+  weight_unit?: WeightUnitEnum | null;
+  quantity?: number | null;
+  sku?: string | null;
+  title?: string | null;
+  hs_code?: string | null;
+  description?: string | null;
+  value_amount?: number | null;
+  value_currency?: CurrencyCodeEnum | null;
+  origin_country?: CountryCodeEnum | null;
+  is_default?: boolean | null;
+  metadata?: any | null;
 }
 
 // null
@@ -6235,6 +6181,7 @@ export interface CreateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   metadata?: any | null;
 }
 
@@ -6312,6 +6259,7 @@ export interface UpdateRateSheetMutationInput {
   surcharges?: SharedSurchargeInput[] | null;
   service_rates?: ServiceRateInput[] | null;
   carriers?: string[] | null;
+  origin_countries?: string[] | null;
   remove_missing_services?: boolean | null;
   metadata?: any | null;
 }

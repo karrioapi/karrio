@@ -104,6 +104,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
     import karrio.server.core.gateway as gateway
     import karrio.server.core.validators as validators
     import karrio.server.core.middleware as middleware
+    import karrio.server.providers.models as providers
 
     request = request or middleware.SessionContext.get_current_request()
     is_authenticated = lib.identity(
@@ -128,14 +129,15 @@ def contextual_reference(request: Request = None, reduced: bool = True):
             c for c in gateway.Carriers.list(system_only=True)
             if c.ext == "generic"
         ]
+        # Filter to only Carrier instances (user-owned connections, not brokered)
         custom_carriers = [
             c
             for c in (
-                gateway.Carriers.list(context=request).exclude(is_system=True)
+                gateway.Carriers.list(context=request)
                 if is_authenticated
                 else []
             )
-            if c.ext == "generic"
+            if c.ext == "generic" and isinstance(c, providers.CarrierConnection)
         ]
 
         extra_carriers = {

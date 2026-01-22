@@ -38,6 +38,11 @@ const settingsItems = [
     href: "/settings/parcels",
   },
   {
+    key: "products",
+    label: "Product catalog",
+    href: "/settings/products",
+  },
+  {
     key: "templates",
     label: "Document templates",
     href: "/settings/templates",

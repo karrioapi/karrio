@@ -112,29 +112,29 @@ class ShippingOption(lib.Enum):
     """
 
     # Delivery options
-    parcelone_saturday_delivery = lib.OptionEnum("SDO", bool)  # Saturday delivery only
-    parcelone_return_label = lib.OptionEnum("SRL", bool)  # Return label
+    parcelone_saturday_delivery = lib.OptionEnum("SDO", bool, meta=dict(category="DELIVERY_OPTIONS"))  # Saturday delivery only
+    parcelone_return_label = lib.OptionEnum("SRL", bool, meta=dict(category="RETURN"))  # Return label
 
     # Payment services
-    parcelone_cod = lib.OptionEnum("COD", float)  # Cash on delivery
-    parcelone_cod_currency = lib.OptionEnum("COD_CURRENCY")
-    parcelone_insurance = lib.OptionEnum("INS", float)  # Insurance
-    parcelone_insurance_currency = lib.OptionEnum("INS_CURRENCY")
+    parcelone_cod = lib.OptionEnum("COD", float, meta=dict(category="COD"))  # Cash on delivery
+    parcelone_cod_currency = lib.OptionEnum("COD_CURRENCY", meta=dict(category="COD"))
+    parcelone_insurance = lib.OptionEnum("INS", float, meta=dict(category="INSURANCE"))  # Insurance
+    parcelone_insurance_currency = lib.OptionEnum("INS_CURRENCY", meta=dict(category="INSURANCE"))
 
     # Notification services
-    parcelone_notification_email = lib.OptionEnum("MAIL")  # Email notification
-    parcelone_notification_sms = lib.OptionEnum("SMS")  # SMS notification
+    parcelone_notification_email = lib.OptionEnum("MAIL", meta=dict(category="NOTIFICATION"))  # Email notification
+    parcelone_notification_sms = lib.OptionEnum("SMS", meta=dict(category="NOTIFICATION"))  # SMS notification
 
     # Delivery confirmation
-    parcelone_signature = lib.OptionEnum("SIG", bool)  # Signature required
-    parcelone_ident_check = lib.OptionEnum("IDENT", bool)  # Identity check
-    parcelone_age_check = lib.OptionEnum("AGE", int)  # Age verification (16, 18)
-    parcelone_personally = lib.OptionEnum("PERS", bool)  # Personal delivery only
+    parcelone_signature = lib.OptionEnum("SIG", bool, meta=dict(category="SIGNATURE"))  # Signature required
+    parcelone_ident_check = lib.OptionEnum("IDENT", bool, meta=dict(category="SIGNATURE"))  # Identity check
+    parcelone_age_check = lib.OptionEnum("AGE", int, meta=dict(category="SIGNATURE"))  # Age verification (16, 18)
+    parcelone_personally = lib.OptionEnum("PERS", bool, meta=dict(category="SIGNATURE"))  # Personal delivery only
 
     # Delivery location options
-    parcelone_neighbor_delivery = lib.OptionEnum("NEIGHBOR", bool)
-    parcelone_no_neighbor = lib.OptionEnum("NONEIGHBOR", bool)
-    parcelone_drop_off_point = lib.OptionEnum("DROP")  # Parcel shop delivery (PUDO ID)
+    parcelone_neighbor_delivery = lib.OptionEnum("NEIGHBOR", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    parcelone_no_neighbor = lib.OptionEnum("NONEIGHBOR", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    parcelone_drop_off_point = lib.OptionEnum("DROP", meta=dict(category="PUDO"))  # Parcel shop delivery (PUDO ID)
 
     # Premium services
     parcelone_premium = lib.OptionEnum("PREMIUM", bool)

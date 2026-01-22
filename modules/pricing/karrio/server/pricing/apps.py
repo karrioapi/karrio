@@ -7,6 +7,10 @@ class PricingConfig(AppConfig):
     verbose_name = _("Shipping Markup")
 
     def ready(self):
-        from karrio.server.pricing.signals import register_rate_post_processing
+        from karrio.server.pricing.signals import (
+            register_rate_post_processing,
+            register_fee_capture,
+        )
 
         register_rate_post_processing()
+        register_fee_capture()

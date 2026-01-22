@@ -236,8 +236,8 @@ export const ShipmentComponent = ({
                           containerClassName="mt-1 ml-1 mr-2"
                           height={28}
                           width={28}
-                          text_color={shipment.selected_rate_carrier?.config?.text_color}
-                          background={shipment.selected_rate_carrier?.config?.brand_color}
+                          text_color={(shipment.selected_rate_carrier as any)?.config?.text_color}
+                          background={(shipment.selected_rate_carrier as any)?.config?.brand_color}
                         />
                         <div className="text-ellipsis text-xs" style={{ maxWidth: "190px", lineHeight: "16px" }}>
                           <span className="text-blue-600 font-bold">
@@ -408,10 +408,10 @@ export const ShipmentComponent = ({
                 )}
 
               {/* Connection details section */}
-              {(shipment.selected_rate_carrier?.id ||
+              {((shipment.selected_rate_carrier as any)?.id ||
                 shipment.selected_rate_carrier?.carrier_id ||
                 shipment.selected_rate_carrier?.carrier_name ||
-                shipment.selected_rate_carrier?.display_name) && (
+                (shipment.selected_rate_carrier as any)?.display_name) && (
                   <>
                     <h2 className="text-xl font-semibold my-4">Connection Details</h2>
                     <hr className="mt-1 mb-2" style={{ height: "1px" }} />
@@ -423,7 +423,7 @@ export const ShipmentComponent = ({
                           <div className="flex flex-col xl:flex-row xl:items-center">
                             <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Connection ID</div>
                             <div className="text-sm font-medium break-all">
-                              {shipment.selected_rate_carrier?.id || '-'}
+                              {(shipment.selected_rate_carrier as any)?.id || '-'}
                             </div>
                           </div>
 
@@ -447,7 +447,7 @@ export const ShipmentComponent = ({
                           <div className="flex flex-col xl:flex-row xl:items-center">
                             <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Provider</div>
                             <div className="text-sm font-medium break-all">
-                              {shipment.selected_rate_carrier?.display_name || '-'}
+                              {(shipment.selected_rate_carrier as any)?.display_name || '-'}
                             </div>
                           </div>
                         </div>

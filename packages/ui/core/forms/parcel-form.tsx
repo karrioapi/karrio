@@ -18,7 +18,7 @@ import {
 import React, { useEffect, useReducer, useState } from "react";
 import { CheckBoxField } from "../components/checkbox-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useParcelTemplates } from "@karrio/hooks/parcel";
+import { useParcels } from "@karrio/hooks/parcel";
 import { SelectField } from "../components/select-field";
 import { InputField } from "../components/input-field";
 import { WeightUnitEnum } from "@karrio/types";
@@ -74,7 +74,7 @@ export const ParcelForm = ({
   const {
     references: { packaging_types, package_presets },
   } = useAPIMetadata();
-  const { query } = useParcelTemplates();
+  const { query } = useParcels();
   const [key] = useState<string>(`parcel-${Date.now()}`);
   const [parcel, dispatch] = useReducer(
     reducer,
@@ -109,9 +109,9 @@ export const ParcelForm = ({
       target.type === "checkbox" ? target.checked : target.value;
 
     if (name === "parcel_type") {
-      const template = (query.data?.parcel_templates.edges || []).find(
+      const template = (query.data?.parcels.edges || []).find(
         (p) => p.node.id === value,
-      )?.node?.parcel;
+      )?.node as any;
       const preset = {
         ...parcel,
         package_preset: undefined,
@@ -173,12 +173,12 @@ export const ParcelForm = ({
           <option value="preset">Carrier Parcel Presets</option>
         </optgroup>
         {!isNone(shipment) &&
-          (query.data?.parcel_templates.edges || []).length > 0 && (
+          (query.data?.parcels.edges || []).length > 0 && (
             <optgroup label="Load your custom parcel template">
-              {(query.data?.parcel_templates.edges || []).map(
+              {(query.data?.parcels.edges || []).map(
                 ({ node: template }) => (
                   <option key={template.id} value={template.id}>
-                    {template.label}
+                    {template.meta?.label}
                   </option>
                 ),
               )}

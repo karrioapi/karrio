@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **account_entity** | **string** |  | [default to undefined]
 **account_number** | **string** |  | [default to undefined]
 **account_country_code** | **string** |  | [default to 'AU']
+**customer_id** | **string** |  | [default to undefined]
 **api_key** | **string** |  | [default to undefined]
 **account_id** | **string** |  | [default to undefined]
 **passphrase** | **string** |  | [default to undefined]
@@ -34,7 +35,6 @@ Name | Type | Description | Notes
 **dpd_password** | **string** |  | [optional] [default to undefined]
 **dpd_client_id** | **string** |  | [optional] [default to undefined]
 **dpd_client_secret** | **string** |  | [optional] [default to undefined]
-**customer_id** | **string** |  | [default to undefined]
 **customer_account_number** | **string** |  | [optional] [default to undefined]
 **customer_sub_account_number** | **string** |  | [optional] [default to undefined]
 **customer_code** | **string** |  | [default to undefined]
@@ -85,6 +85,7 @@ const instance: ConnectionCredentialsField = {
     account_entity,
     account_number,
     account_country_code,
+    customer_id,
     api_key,
     account_id,
     passphrase,
@@ -108,7 +109,6 @@ const instance: ConnectionCredentialsField = {
     dpd_password,
     dpd_client_id,
     dpd_client_secret,
-    customer_id,
     customer_account_number,
     customer_sub_account_number,
     customer_code,

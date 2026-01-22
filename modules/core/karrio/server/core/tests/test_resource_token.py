@@ -421,39 +421,41 @@ class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
 
     def setUp(self):
         super().setUp()
-        from karrio.server.manager.models import Shipment, Address, Parcel, Manifest
+        from karrio.server.manager.models import Shipment, Manifest
+        from karrio.server.core.utils import create_carrier_snapshot
 
-        # Create test addresses
-        self.shipper = Address.objects.create(
-            postal_code="E1C4Z8",
-            city="Moncton",
-            person_name="John Doe",
-            country_code="CA",
-            state_code="NB",
-            address_line1="125 Church St",
-            created_by=self.user,
-        )
-        self.recipient = Address.objects.create(
-            postal_code="V6M2V9",
-            city="Vancouver",
-            person_name="Jane Doe",
-            country_code="CA",
-            state_code="BC",
-            address_line1="5840 Oak St",
-            created_by=self.user,
-        )
+        # Create test addresses (JSON data for embedded fields)
+        self.shipper_data = {
+            "id": "adr_shipper",
+            "postal_code": "E1C4Z8",
+            "city": "Moncton",
+            "person_name": "John Doe",
+            "country_code": "CA",
+            "state_code": "NB",
+            "address_line1": "125 Church St",
+        }
+        self.recipient_data = {
+            "id": "adr_recipient",
+            "postal_code": "V6M2V9",
+            "city": "Vancouver",
+            "person_name": "Jane Doe",
+            "country_code": "CA",
+            "state_code": "BC",
+            "address_line1": "5840 Oak St",
+        }
 
-        # Create test parcel
-        self.parcel = Parcel.objects.create(
-            weight=1.0,
-            weight_unit="KG",
-            created_by=self.user,
-        )
+        # Create test parcel (JSON data for embedded field)
+        self.parcel_data = {
+            "id": "pcl_test",
+            "weight": 1.0,
+            "weight_unit": "KG",
+        }
 
-        # Create test shipment with label
+        # Create test shipment with label (using JSON fields)
         self.shipment = Shipment.objects.create(
-            shipper=self.shipper,
-            recipient=self.recipient,
+            shipper=self.shipper_data,
+            recipient=self.recipient_data,
+            parcels=[self.parcel_data],
             created_by=self.user,
             test_mode=True,
             status="purchased",
@@ -461,26 +463,25 @@ class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
             label="JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/AFQAZQBzAHQpCj4+CmVuZG9iagoyIDAgb2JqCjw8Cj4+CmVuZG9iagozIDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA2OCAwMDAwMCBuIAowMDAwMDAwMDg5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNAo+PgpzdGFydHhyZWYKMTEwCiUlRU9GCg==",  # Base64 encoded minimal PDF
             label_type="PDF",
         )
-        self.shipment.parcels.set([self.parcel])
 
-        # Create address for manifest
-        self.manifest_address = Address.objects.create(
-            postal_code="E1C4Z8",
-            city="Moncton",
-            person_name="Manifest Address",
-            country_code="CA",
-            state_code="NB",
-            address_line1="125 Church St",
-            created_by=self.user,
-        )
+        # Create manifest address (JSON data for embedded field)
+        self.manifest_address_data = {
+            "id": "adr_manifest",
+            "postal_code": "E1C4Z8",
+            "city": "Moncton",
+            "person_name": "Manifest Address",
+            "country_code": "CA",
+            "state_code": "NB",
+            "address_line1": "125 Church St",
+        }
 
-        # Create test manifest with document
+        # Create test manifest with document (using JSON field)
         self.manifest = Manifest.objects.create(
             created_by=self.user,
             test_mode=True,
-            address=self.manifest_address,
+            address=self.manifest_address_data,
             manifest="JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/AFQAZQBzAHQpCj4+CmVuZG9iagoyIDAgb2JqCjw8Cj4+CmVuZG9iagozIDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA2OCAwMDAwMCBuIAowMDAwMDAwMDg5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNAo+PgpzdGFydHhyZWYKMTEwCiUlRU9GCg==",  # Base64 encoded minimal PDF
-            manifest_carrier=self.carrier,
+            carrier=create_carrier_snapshot(self.carrier),
         )
 
     def test_shipment_label_download_with_api_token(self):

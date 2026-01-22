@@ -49,7 +49,8 @@ class ParcelSerializer(ParcelData):
     def update(
         self, instance: models.Parcel, validated_data: dict, **kwargs
     ) -> models.Parcel:
-        data = process_dictionaries_mutations(["options"], validated_data, instance)
+        # Handle dictionary mutations for options and meta fields
+        data = process_dictionaries_mutations(["options", "meta"], validated_data, instance)
         changes = []
 
         for key, val in data.items():
@@ -76,7 +77,9 @@ def can_mutate_parcel(
             code="state_error",
         )
 
-    if delete and len(shipment.parcels.all()) == 1:
+    # Use JSON field for parcel count check
+    parcels = shipment.parcels or []
+    if delete and len(parcels) == 1:
         raise APIException(
             f"Operation not permitted. The related shipment needs at least one parcel.",
             status_code=status.HTTP_409_CONFLICT,

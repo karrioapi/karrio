@@ -4,7 +4,7 @@ import * as ee from "./graphql/ee/index";
 
 export {
   CreateCarrierNameEnum,
-  CustomsIncotermEnum,
+  CustomsDataIncotermEnum as CustomsIncotermEnum,
   WebhookEnabledEventsEnum,
   OrderStatusEnum,
 } from "./rest/api";
@@ -15,21 +15,35 @@ export type EventType = graph.get_events_events_edges_node;
 export type AddressType = graph.get_shipment_shipment_shipper;
 export type CommodityType = (
   | graph.get_order_order_line_items
-  | graph.get_shipment_shipment_customs_commodities
   | graph.get_shipment_shipment_parcels_items
 ) & {
   unfulfilled_quantity?: number | null;
 };
-export type DutyType = graph.get_shipment_shipment_customs_duty;
-export type CustomsType = graph.get_shipment_shipment_customs & {
+
+export type CustomsCommodityType = graph.get_shipment_shipment_customs_commodities;
+export type DutyType = {
+  paid_by?: string | null;
+  currency?: string | null;
+  account_number?: string | null;
+  declared_value?: number | null;
+  bill_to?: AddressType | null;
+};
+export type CustomsType = {
   commodities: CommodityType[];
-  duty?: DutyType;
+  duty?: DutyType | null;
   duty_billing_address?: AddressType | null;
   id?: string;
+  certify?: boolean | null;
+  commercial_invoice?: boolean | null;
+  content_type?: string | null;
+  content_description?: string | null;
+  incoterm?: string | null;
+  invoice?: string | null;
+  invoice_date?: string | null;
+  signer?: string | null;
+  options?: Record<string, any> | null;
 };
-export type ParcelType = graph.get_shipment_shipment_parcels & {
-  items: CommodityType[];
-};
+export type ParcelType = graph.get_shipment_shipment_parcels;
 export type ManifestType = graph.GetManifests_manifests_edges_node;
 export type TrackingEventType = graph.get_tracker_tracker_events;
 export type TrackerType = graph.get_tracker_tracker & {
@@ -58,20 +72,14 @@ export interface OrderType extends graph.get_order_order {
 }
 
 export type AddressTemplateType =
-  graph.get_address_templates_address_templates_edges_node & {
-    address: AddressType;
-  };
-export type CustomsTemplateType =
-  graph.get_customs_info_templates_customs_templates_edges_node & {
-    customs: CustomsType;
-  };
+  graph.get_addresses_addresses_edges_node;
 export type ParcelTemplateType =
-  graph.get_parcel_templates_parcel_templates_edges_node & {
-    parcel: ParcelType;
-  };
+  graph.get_parcels_parcels_edges_node;
+export type ProductTemplateType =
+  graph.get_products_products_edges_node;
 export type TemplateType = AddressTemplateType &
   ParcelTemplateType &
-  CustomsTemplateType;
+  ProductTemplateType;
 
 export type ServiceLevelType = graph.CreateServiceLevelInput &
   graph.UpdateServiceLevelInput;
@@ -163,7 +171,7 @@ export const CARRIER_NAMES: string[] = Array.from(
 );
 
 export const INCOTERMS: string[] = Array.from(
-  new Set(Object.values(api.CustomsIncotermEnum)),
+  new Set(Object.values(api.CustomsDataIncotermEnum)),
 );
 
 export const CUSTOMS_CONTENT_TYPES: string[] = Array.from(
@@ -466,6 +474,7 @@ export const CARRIER_IMAGES: Collection = {
   fedex_smartpost: "fedex",
   firstmile: "generic",
   globegistics: "generic",
+  gls: "gls",
   gso: "generic",
   hermes: "hermes",
   hermes_parcel: "hermes",

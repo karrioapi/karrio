@@ -32,43 +32,57 @@ def parse_shipment_response(
     return shipment, messages
 
 
+def _get_doc_content(doc: shipping.DocumentType) -> typing.Optional[str]:
+    return doc.encodedLabel or (lib.request(url=doc.url, decoder=lib.encode_base64) if doc.url else None)
+
+
+def _get_doc_category(content_type: str) -> str:
+    category_map = {
+        "RETURN": "return_label",
+        "CUSTOMS": "customs_document",
+        "CERTIFICATE_OF_ORIGIN": "customs_document",
+        "DANGEROUS": "dangerous_goods_document",
+        "PACKING": "packing_list",
+        "RECEIPT": "shipping_receipt",
+    }
+    return next((cat for key, cat in category_map.items() if key in content_type), "other")
+
+
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
     ctx: dict = {},
 ) -> models.ShipmentDetails:
-    # fmt: off
     shipment = lib.to_object(shipping.TransactionShipmentType, data)
     service = provider_units.ShippingService.map(shipment.serviceType)
-    pieceDocuments: typing.List[shipping.PackageDocuments] = sum(
-        [_.packageDocuments for _ in shipment.pieceResponses],
-        start=[],
-    )
-
+    piece_documents = sum([_.packageDocuments or [] for _ in shipment.pieceResponses], start=[])
     tracking_number = shipment.masterTrackingNumber
-    invoices = [_ for _ in shipment.shipmentDocuments if "INVOICE" in _.contentType]
-    labels = [_ for _ in pieceDocuments if "LABEL" in _.contentType]
 
-    invoice_type = invoices[0].docType if len(invoices) > 0 else "PDF"
-    invoice = lib.identity(
-        lib.bundle_base64(
-            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in invoices],
-            invoice_type,
-        )
-        if len(invoices) > 0
-        else None
-    )
+    invoices = [d for d in (shipment.shipmentDocuments or []) if d.contentType and "INVOICE" in d.contentType]
+    labels = [d for d in piece_documents if d.contentType and "LABEL" in d.contentType]
 
-    label_type = labels[0].docType if len(labels) > 0 else "PDF"
-    label = lib.identity(
-        lib.bundle_base64(
-            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in labels],
-            label_type,
-        )
-        if len(labels) > 0
-        else None
-    )
-    # fmt: on
+    invoice_type = invoices[0].docType if invoices else "PDF"
+    invoice = lib.bundle_base64(
+        [_get_doc_content(d) for d in invoices], invoice_type
+    ) if invoices else None
+
+    label_type = labels[0].docType if labels else "PDF"
+    label = lib.bundle_base64(
+        [_get_doc_content(d) for d in labels], label_type
+    ) if labels else None
+
+    # Collect extra documents (excluding primary labels and invoices)
+    is_primary_doc = lambda ct: ct and ("LABEL" in ct or "INVOICE" in ct)
+    shipment_docs = [
+        (d, d.contentType or "")
+        for d in (shipment.shipmentDocuments or [])
+        if not is_primary_doc(d.contentType) and _get_doc_content(d)
+    ]
+    package_docs = [
+        (d, d.contentType or "")
+        for d in piece_documents
+        if d not in labels and _get_doc_content(d)
+    ]
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
@@ -76,7 +90,18 @@ def _extract_details(
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
         label_type=label_type,
-        docs=models.Documents(label=label, invoice=invoice),
+        docs=models.Documents(
+            label=label,
+            invoice=invoice,
+            extra_documents=[
+                models.ShippingDocument(
+                    category=_get_doc_category(content_type),
+                    format=doc.docType or "PDF",
+                    base64=_get_doc_content(doc),
+                )
+                for doc, content_type in (shipment_docs + package_docs)
+            ],
+        ),
         meta=dict(
             service_name=service.name_or_key,
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
