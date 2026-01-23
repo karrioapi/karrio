@@ -13245,7 +13245,7 @@ tags:
     | chronopost | Chronopost |
     | colissimo | Colissimo |
     | dhl_express | DHL Express |
-    | dhl_parcel_de | DHL Parcel DE |
+    | dhl_parcel_de | DHL Germany |
     | dhl_poland | DHL Parcel Poland |
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
@@ -13451,7 +13451,7 @@ tags:
     | dhl_destination_charges | Z |
     | dhl_express_all | None |
 
-    ### DHL Parcel DE
+    ### DHL Germany
     | Code         | Service Name |
     | ------------ | ------------ |
     | dhl_parcel_de_paket | V01PAK |

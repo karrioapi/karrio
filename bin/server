@@ -44,11 +44,9 @@ elif [[ "$*" == *gen:ref* ]]; then
     curl -s http://localhost:5002/v1/carriers -o "${ROOT:?}/apps/web/public/carrier-integrations.json" && \
         echo "✓ Carrier integrations saved to apps/web/public/carrier-integrations.json" || \
         { echo "✗ Failed to download carrier integrations"; exit 1; }
-    # Copy to schemas and bin directories
+    # Copy to schemas directory
     cp "${ROOT:?}/apps/web/public/carrier-integrations.json" "${ROOT:?}/schemas/carrier-integrations.json" && \
         echo "✓ Carrier integrations copied to schemas/carrier-integrations.json"
-    cp "${ROOT:?}/apps/web/public/carrier-integrations.json" "${ROOT:?}/bin/carrier-integrations.json" && \
-        echo "✓ Carrier integrations copied to bin/carrier-integrations.json"
     cd -
 elif [[ "$*" == *gen:ts:cli* ]]; then
     cd "${ROOT:?}"
@@ -98,11 +96,9 @@ elif [[ "$*" == *gen:all* ]]; then
     curl -s http://localhost:5002/v1/carriers -o "${ROOT:?}/apps/web/public/carrier-integrations.json" && \
         echo "✓ Carrier integrations saved to apps/web/public/carrier-integrations.json" || \
         echo "✗ Failed to download carrier integrations"
-    # Copy to schemas and bin directories
+    # Copy to schemas directory
     cp "${ROOT:?}/apps/web/public/carrier-integrations.json" "${ROOT:?}/schemas/carrier-integrations.json" && \
         echo "✓ Carrier integrations copied to schemas/carrier-integrations.json"
-    cp "${ROOT:?}/apps/web/public/carrier-integrations.json" "${ROOT:?}/bin/carrier-integrations.json" && \
-        echo "✓ Carrier integrations copied to bin/carrier-integrations.json"
     echo ""
 
     echo "✓ All schemas generated successfully!"
@@ -131,7 +127,7 @@ else
     echo "  gen:admin     - Generate Admin GraphQL schema from localhost:5002/admin/graphql/"
     echo "  gen:platform  - Generate Platform GraphQL schema from localhost:5002/admin/graphql/"
     echo "  gen:openapi   - Generate OpenAPI schema from localhost:5002/shipping-openapi"
-    echo "  gen:ref       - Generate carrier integrations reference file (saves to apps/web/public/, schemas/, bin/)"
+    echo "  gen:ref       - Generate carrier integrations reference file (saves to apps/web/public/, schemas/)"
     echo "  gen:all       - Generate all schemas (graphql, admin, ee, platform, openapi, carrier integrations)"
     echo "  gen:ts:cli    - Generate TypeScript fetch client from OpenAPI schema using docker"
     echo "  build:js      - Build Browser JavaScript client (runs gen:ts:cli, installs dependencies, builds with gulp)"
@@ -140,7 +136,7 @@ else
     echo "  ./bin/server gen:openapi"
     echo "  ./bin/server gen:all"
     echo ""
-    echo "Output directories: schemas/, apps/web/public/, bin/"
+    echo "Output directories: schemas/, apps/web/public/"
     echo ""
     echo "Note: Make sure your development server is running on localhost:5002 before generating schemas."
 fi
