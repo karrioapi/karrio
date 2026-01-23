@@ -12405,9 +12405,6 @@ components:
           type: string
         client_secret:
           type: string
-        billing_number:
-          type: string
-          nullable: true
         account_country_code:
           type: string
           nullable: true

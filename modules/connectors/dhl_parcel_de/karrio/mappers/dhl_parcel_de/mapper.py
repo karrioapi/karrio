@@ -1,4 +1,4 @@
-"""Karrio DHL Parcel DE client mapper."""
+"""Karrio DHL Germany client mapper."""
 
 import typing
 import karrio.lib as lib
@@ -30,9 +30,7 @@ class Mapper(mapper.Mapper):
     ) -> lib.Serializable[str]:
         return provider.shipment_cancel_request(payload, self.settings)
 
-    def create_pickup_request(
-        self, payload: models.PickupRequest
-    ) -> lib.Serializable:
+    def create_pickup_request(self, payload: models.PickupRequest) -> lib.Serializable:
         return provider.pickup_request(payload, self.settings)
 
     def create_cancel_pickup_request(
@@ -62,10 +60,14 @@ class Mapper(mapper.Mapper):
 
     def parse_pickup_response(
         self, response: lib.Deserializable[str]
-    ) -> typing.Tuple[typing.Optional[models.PickupDetails], typing.List[models.Message]]:
+    ) -> typing.Tuple[
+        typing.Optional[models.PickupDetails], typing.List[models.Message]
+    ]:
         return provider.parse_pickup_response(response, self.settings)
 
     def parse_cancel_pickup_response(
         self, response: lib.Deserializable[str]
-    ) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+    ) -> typing.Tuple[
+        typing.Optional[models.ConfirmationDetails], typing.List[models.Message]
+    ]:
         return provider.parse_pickup_cancel_response(response, self.settings)

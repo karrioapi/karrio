@@ -148,11 +148,19 @@ class PickupData(PickupSerializer):
         excluded_keys = {"created_by", "carrier_filter", "tracking_numbers"}
         filtered_data = {k: v for k, v in validated_data.items() if k not in excluded_keys}
         parcels_list = sum([(s.parcels or []) for s in self._shipments], [])
+
+        # Extract billing_number from first shipment's meta (if available)
+        billing_number = next(
+            (s.meta.get("billing_number") for s in self._shipments if s.meta.get("billing_number")),
+            None,
+        )
+
         request_data = {
             **filtered_data,
             "parcels": parcels_list,
             "options": {
                 "shipment_identifiers": shipment_identifiers,
+                **({"billing_number": billing_number} if billing_number else {}),
                 **(validated_data.get("options") or {}),
             },
         }
@@ -263,6 +271,12 @@ class PickupUpdateData(PickupSerializer):
             "options": instance.options or {},
         }
 
+        # Extract billing_number from first shipment's meta (if available)
+        billing_number = next(
+            (s.meta.get("billing_number") for s in self._shipments if s.meta.get("billing_number")),
+            None,
+        )
+
         # Build request data directly (data comes from trusted sources)
         request_data = {
             **base_data,
@@ -270,6 +284,7 @@ class PickupUpdateData(PickupSerializer):
             "address": merged_address,
             "options": {
                 "shipment_identifiers": shipment_identifiers,
+                **({"billing_number": billing_number} if billing_number else {}),
                 **(instance.meta or {}),
                 **(validated_data.get("options") or {}),
             },

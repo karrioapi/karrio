@@ -1,10 +1,61 @@
 import csv
+import attr
+import typing
 import pathlib
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
 
 import karrio.schemas.dhl_parcel_de.shipping_request as ship_req
+
+
+class ShippingService(lib.Enum):
+    """Carrier specific services"""
+
+    dhl_parcel_de_paket = "V01PAK"
+    dhl_parcel_de_kleinpaket = "V62KP"
+    dhl_parcel_de_europaket = "V54EPAK"
+    dhl_parcel_de_paket_international = "V53WPAK"
+    dhl_parcel_de_warenpost_international = "V66WPI"
+
+
+@attr.s(auto_attribs=True)
+class ServiceBillingNumberType:
+    """Typed object for service-specific billing number configuration."""
+
+    service: ShippingService  # Required: shipping service enum
+    billing_number: str  # Required: billing number for this service
+
+    name: typing.Optional[str] = None  # Optional: friendly name for this entry
+
+
+# Default test/sandbox billing numbers from DHL documentation
+# https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2
+DEFAULT_TEST_BILLING_NUMBERS: typing.List[ServiceBillingNumberType] = [
+    # V01PAK - DHL Paket (incl. services)
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_paket", billing_number="33333333330102"
+    ),
+    # V53WPAK - DHL Paket International
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_paket_international", billing_number="33333333335301"
+    ),
+    # V54EPAK - DHL Europaket
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_europaket", billing_number="33333333335401"
+    ),
+    # V62KP - DHL Kleinpaket
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_kleinpaket", billing_number="33333333336201"
+    ),
+    # V66WPI - Warenpost International
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_warenpost_international", billing_number="33333333336601"
+    ),
+]
+
+# Default test billing number (V01PAK with services)
+DEFAULT_TEST_BILLING_NUMBER = "33333333330102"
 
 
 class PackagingType(lib.StrEnum):
@@ -81,8 +132,8 @@ class LabelType(lib.Enum):
 class ShippingDocumentCategory(lib.StrEnum):
     """Carrier specific document category types.
 
-    Maps DHL Parcel DE document types to standard ShippingDocumentCategory.
-    Values match the exact syntax used by DHL Parcel DE API.
+    Maps DHL Germany document types to standard ShippingDocumentCategory.
+    Values match the exact syntax used by DHL Germany API.
     """
 
     shipping_label = "shippingLabel"
@@ -114,19 +165,11 @@ class ConnectionConfig(lib.Enum):
         "label_type",
         lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
     )
-
-
-class ShippingService(lib.Enum):
-    """Carrier specific services"""
-
-    dhl_parcel_de_paket = "V01PAK"
-    dhl_parcel_de_kleinpaket = "V62KP"
-    dhl_parcel_de_europaket = "V54EPAK"
-    dhl_parcel_de_paket_international = "V53WPAK"
-    dhl_parcel_de_warenpost_international = "V66WPI"
-
-    # Alias for backwards compatibility (Warenpost replaced by Kleinpaket as of 2025)
-    dhl_parcel_de_warenpost = dhl_parcel_de_kleinpaket
+    # Billing number configuration
+    default_billing_number = lib.OptionEnum("default_billing_number")
+    service_billing_numbers = lib.OptionEnum(
+        "service_billing_numbers", typing.List[ServiceBillingNumberType]
+    )
 
 
 class ShippingOption(lib.Enum):
@@ -265,7 +308,7 @@ class TrackingStatus(lib.Enum):
 
 
 class TrackingIncidentReason(lib.Enum):
-    """Maps DHL Parcel DE exception codes to normalized TrackingIncidentReason."""
+    """Maps DHL Germany exception codes to normalized TrackingIncidentReason."""
 
     # Carrier-caused issues
     carrier_damaged_parcel = ["damaged", "package_damaged", "parcel_damaged"]

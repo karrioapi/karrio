@@ -1,4 +1,4 @@
-"""Karrio DHL Parcel DE client settings."""
+"""Karrio DHL Germany client settings."""
 
 import attr
 import typing
@@ -11,14 +11,13 @@ import karrio.universal.mappers.rating_proxy as rating_proxy
 
 @attr.s(auto_attribs=True)
 class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
-    """DHL Parcel DE connection settings."""
+    """DHL Germany connection settings."""
 
     # required carrier specific properties
     username: str
     password: str
     client_id: str
     client_secret: str
-    billing_number: str = None
 
     # generic properties
     id: str = None

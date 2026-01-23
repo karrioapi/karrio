@@ -1,4 +1,4 @@
-"""Karrio DHL Parcel DE client proxy."""
+"""Karrio DHL Germany client proxy."""
 
 import typing
 import datetime
@@ -63,7 +63,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         access_token = self.authenticate().deserialize()
-        query = urllib.parse.urlencode(lib.to_dict(request.ctx))
+        ctx = lib.to_dict(request.ctx) or {}
+        meta = ctx.pop("_meta", {})  # Extract meta context for response parsing
+        query = urllib.parse.urlencode(ctx)
         response = lib.request(
             url=f"{self.settings.server_url}/v2/orders?{query}",
             data=lib.to_json(request.serialize()),
@@ -76,7 +78,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, lib.to_dict, meta)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         access_token = self.authenticate().deserialize()

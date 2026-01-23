@@ -2229,7 +2229,6 @@ export interface DhlParcelDe {
     'password': string;
     'client_id': string;
     'client_secret': string;
-    'billing_number'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface DhlPoland {

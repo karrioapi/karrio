@@ -1,4 +1,4 @@
-"""Karrio DHL Parcel DE pickup create implementation."""
+"""Karrio DHL Germany pickup create implementation."""
 
 import karrio.schemas.dhl_parcel_de.pickup_request as dhl
 import karrio.schemas.dhl_parcel_de.pickup_response as pickup
@@ -58,15 +58,27 @@ def pickup_request(
         option_type=lib.units.create_enum(
             "PickupOptions",
             {
-                "dhl_parcel_de_pickup_location_type": lib.OptionEnum("pickupLocationType"),
+                "billing_number": lib.OptionEnum("billing_number"),
+                "dhl_parcel_de_pickup_location_type": lib.OptionEnum(
+                    "pickupLocationType"
+                ),
                 "dhl_parcel_de_as_id": lib.OptionEnum("asId"),
-                "dhl_parcel_de_transportation_type": lib.OptionEnum("transportationType"),
+                "dhl_parcel_de_transportation_type": lib.OptionEnum(
+                    "transportationType"
+                ),
                 "dhl_parcel_de_shipment_size": lib.OptionEnum("shipmentSize"),
-                "dhl_parcel_de_send_confirmation_email": lib.OptionEnum("sendConfirmationEmail", bool),
-                "dhl_parcel_de_send_time_window_email": lib.OptionEnum("sendTimeWindowEmail", bool),
+                "dhl_parcel_de_send_confirmation_email": lib.OptionEnum(
+                    "sendConfirmationEmail", bool
+                ),
+                "dhl_parcel_de_send_time_window_email": lib.OptionEnum(
+                    "sendTimeWindowEmail", bool
+                ),
             },
         ),
     )
+
+    # Resolve billing number from options (passed from shipment.meta) or fallback to default
+    billing_number = options.billing_number.state or settings.get_billing_number()
 
     # Parse ready and closing times
     ready_time = payload.ready_time or "09:00"
@@ -79,8 +91,8 @@ def pickup_request(
     # Build the request
     request = dhl.PickupRequestType(
         customerDetails=dhl.CustomerDetailsType(
-            accountNumber=settings.billing_number,
-            billingNumber=settings.billing_number,
+            accountNumber=billing_number,
+            billingNumber=billing_number,
         ),
         pickupLocation=dhl.PickupLocationType(
             type=options.dhl_parcel_de_pickup_location_type.state or "Address",
@@ -90,7 +102,9 @@ def pickup_request(
                     address.person_name if address.company_name else None
                 ),
                 addressStreet=address.street,
-                addressHouse=lib.text(address.street_number) if address.street_number else None,
+                addressHouse=(
+                    lib.text(address.street_number) if address.street_number else None
+                ),
                 postalCode=address.postal_code,
                 city=address.city,
                 country=address.country_code,
@@ -134,7 +148,8 @@ def pickup_request(
             dhl.ShipmentDetailsType(
                 shipments=[
                     dhl.ShipmentType(
-                        transportationType=options.dhl_parcel_de_transportation_type.state or "PAKET",
+                        transportationType=options.dhl_parcel_de_transportation_type.state
+                        or "PAKET",
                         replacement=False,
                         shipmentNo=None,
                         size=options.dhl_parcel_de_shipment_size.state,

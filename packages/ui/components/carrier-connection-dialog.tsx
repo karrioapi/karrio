@@ -42,7 +42,7 @@ import { isEqual, KARRIO_API } from "@karrio/lib";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "./ui/input";
-import { Zap, Loader2, Webhook, Check, X, Copy } from "lucide-react";
+import { Zap, Loader2, Webhook, Check, X, Copy, Plus, Trash2 } from "lucide-react";
 import * as z from "zod";
 
 
@@ -501,17 +501,24 @@ export function CarrierConnectionDialog({
     if (!carrierName) return null;
     const configs = references?.connection_configs?.[carrierName] || {};
 
+    // Identify object array configs (type "list" with nested "fields")
+    const objectArrayConfigs = Object.entries(configs).filter(
+      ([_, config]: [string, any]) => config.type === "list" && config.fields
+    );
+
     return (
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(configs)
           .filter(
-            ([key, _]) =>
+            ([key, config]: [string, any]) =>
               ![
                 "brand_color",
                 "text_color",
                 "shipping_services",
                 "shipping_options",
-              ].includes(key),
+              ].includes(key) &&
+              // Exclude object array configs - they are rendered separately
+              !(config.type === "list" && config.fields),
           )
           .map(([key, config]: [string, any]) => (
             <FormField
@@ -555,6 +562,187 @@ export function CarrierConnectionDialog({
               )}
             />
           ))}
+
+        {/* Object Array Config Fields (e.g., service_billing_numbers) */}
+        {objectArrayConfigs.map(([key, config]: [string, any]) => (
+          <FormField
+            key={key}
+            control={form.control}
+            name={`config.${key}`}
+            render={({ field }) => {
+              const items: any[] = field.value || [];
+              const fieldDefs = config.fields || {};
+              // Sort fields: required first, then enums, then plain fields
+              const fieldKeys = Object.keys(fieldDefs).sort((a, b) => {
+                const aRequired = fieldDefs[a]?.required ? 0 : 2;
+                const bRequired = fieldDefs[b]?.required ? 0 : 2;
+                const aEnum = fieldDefs[a]?.enum ? 0 : 1;
+                const bEnum = fieldDefs[b]?.enum ? 0 : 1;
+                // Primary sort by required, secondary by enum
+                return (aRequired + aEnum) - (bRequired + bEnum);
+              });
+
+              // Default values for service_billing_numbers (DHL Parcel DE sandbox)
+              const defaultServiceBillingNumbers: Record<string, any>[] = [
+                { service: "dhl_parcel_de_paket", billing_number: "33333333330102", name: "" },
+                { service: "dhl_parcel_de_paket_international", billing_number: "33333333335301", name: "" },
+                { service: "dhl_parcel_de_europaket", billing_number: "33333333335401", name: "" },
+                { service: "dhl_parcel_de_kleinpaket", billing_number: "33333333336201", name: "" },
+                { service: "dhl_parcel_de_warenpost_international", billing_number: "33333333336601", name: "" },
+              ];
+
+              // Auto-prefill defaults for service_billing_numbers when empty
+              if (key === "service_billing_numbers" && items.length === 0 && field.value === undefined) {
+                // Use setTimeout to avoid updating state during render
+                setTimeout(() => field.onChange(defaultServiceBillingNumbers), 0);
+              }
+
+              const addItem = () => {
+                const newItem: Record<string, any> = {};
+                Object.entries(fieldDefs).forEach(([fieldKey, fieldDef]: [string, any]) => {
+                  newItem[fieldKey] = fieldDef.default || "";
+                });
+                field.onChange([...items, newItem]);
+              };
+
+              const removeItem = (index: number) => {
+                const newItems = items.filter((_, i) => i !== index);
+                field.onChange(newItems);
+              };
+
+              const updateItem = (index: number, fieldKey: string, value: any) => {
+                const newItems = [...items];
+                newItems[index] = { ...newItems[index], [fieldKey]: value };
+                field.onChange(newItems);
+              };
+
+              return (
+                <FormItem className="col-span-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <FormLabel>{formatLabel(config.name)}</FormLabel>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addItem}
+                      className="h-7 px-2"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
+                  <FormControl>
+                    <div className="rounded-md border overflow-hidden">
+                      {/* Table Header */}
+                      <div className="bg-muted/50 border-b">
+                        <div className="grid gap-2 p-2 text-xs font-medium text-muted-foreground" style={{
+                          gridTemplateColumns: `repeat(${fieldKeys.length}, minmax(0, 1fr)) 40px`
+                        }}>
+                          {fieldKeys.map((fieldKey) => {
+                            const fieldDef = fieldDefs[fieldKey];
+                            return (
+                              <div key={fieldKey} className="px-1">
+                                {formatLabel(fieldDef.name || fieldKey)}
+                                {fieldDef.required && <span className="text-destructive ml-0.5">*</span>}
+                              </div>
+                            );
+                          })}
+                          <div className="px-1"></div>
+                        </div>
+                      </div>
+
+                      {/* Table Body */}
+                      {items.length === 0 ? (
+                        <div className="p-4 text-center text-sm text-muted-foreground">
+                          No items configured. Click "Add" to create one.
+                        </div>
+                      ) : (
+                        <div className="divide-y max-h-[240px] overflow-y-auto">
+                          {items.map((item, index) => (
+                            <div
+                              key={index}
+                              className="grid gap-2 p-2 items-center hover:bg-muted/30"
+                              style={{
+                                gridTemplateColumns: `repeat(${fieldKeys.length}, minmax(0, 1fr)) 40px`
+                              }}
+                            >
+                              {fieldKeys.map((fieldKey) => {
+                                const fieldDef = fieldDefs[fieldKey];
+                                const hasEnum = fieldDef.enum;
+                                const isServiceField = fieldKey === "service" || fieldKey.includes("service");
+                                const serviceNames = references?.service_names?.[carrierName] || {};
+
+                                return (
+                                  <div key={fieldKey} className="w-full min-w-0">
+                                    {/* Enum field */}
+                                    {hasEnum ? (
+                                      <Select
+                                        value={item[fieldKey] || ""}
+                                        onValueChange={(value) => updateItem(index, fieldKey, value)}
+                                      >
+                                        <SelectTrigger className="h-8 text-sm w-full">
+                                          <SelectValue placeholder="Select..." className="truncate" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {fieldDef.enum.map((option: string) => (
+                                            <SelectItem key={option} value={option}>
+                                              {formatLabel(option)}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    ) : isServiceField && Object.keys(serviceNames).length > 0 ? (
+                                      /* Service field - use carrier service_names */
+                                      <Select
+                                        value={item[fieldKey] || ""}
+                                        onValueChange={(value) => updateItem(index, fieldKey, value)}
+                                      >
+                                        <SelectTrigger className="h-8 text-sm w-full">
+                                          <SelectValue placeholder="Select service..." className="truncate" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {Object.entries(serviceNames).map(([serviceKey, serviceLabel]) => (
+                                            <SelectItem key={serviceKey} value={serviceKey}>
+                                              {formatLabel(serviceLabel as string)}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    ) : (
+                                      /* Text input */
+                                      <Input
+                                        value={item[fieldKey] || ""}
+                                        onChange={(e) => updateItem(index, fieldKey, e.target.value)}
+                                        placeholder={fieldDef.name || fieldKey}
+                                        className="h-8 text-sm w-full"
+                                      />
+                                    )}
+                                  </div>
+                                );
+                              })}
+                              <div className="flex justify-center">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeItem(index)}
+                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+        ))}
 
         {configs["brand_color"] && (
           <FormField
