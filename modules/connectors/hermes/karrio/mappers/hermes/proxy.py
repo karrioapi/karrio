@@ -14,25 +14,8 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         return super().get_rates(request)
 
-    def _get_headers(self, accept: str = "application/json") -> dict:
-        """Get common headers for Hermes API requests."""
-        return {
-            "Content-Type": "application/json",
-            "Accept": accept,
-            "Accept-Language": self.settings.connection_config.language.state or "DE",
-            "Authorization": f"Bearer {provider_utils.get_access_token(self.settings)}",
-        }
-
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Create shipment order(s) with label(s).
-
-        Endpoint: POST /shipmentorders/labels
-
-        For multi-piece shipments:
-        - First package is created and we get shipmentOrderID
-        - Subsequent packages include parentShipmentOrderID from first response
-        - All requests are made sequentially (required by Hermes API)
-        """
+        """Create shipment order(s) with label(s). Sequential for multi-piece linking."""
         requests_data, is_multi_piece = provider_utils.prepare_shipment_data(request)
         label_type = self.settings.connection_config.label_type.state or "PDF"
         accept_header = LabelType.map(label_type).value or "application/pdf"
@@ -47,7 +30,12 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 data=lib.to_json(req_data),
                 trace=self.trace_as("json"),
                 method="POST",
-                headers=self._get_headers(accept=accept_header),
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": accept_header,
+                    "Accept-Language": self.settings.connection_config.language.state or "DE",
+                    "Authorization": f"Bearer {provider_utils.get_access_token(self.settings)}",
+                },
             )
 
             response_dict = lib.to_dict(response)
@@ -58,25 +46,24 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return lib.Deserializable(responses, lambda res: res)
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Create a pickup order.
-
-        Endpoint: POST /pickuporders
-        """
+        """Create a pickup order. Endpoint: POST /pickuporders"""
         response = lib.request(
             url=f"{self.settings.server_url}/pickuporders",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
-            headers=self._get_headers(),
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Accept-Language": self.settings.connection_config.language.state or "DE",
+                "Authorization": f"Bearer {provider_utils.get_access_token(self.settings)}",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Cancel a pickup order.
-
-        Endpoint: DELETE /pickuporders/{pickupOrderID}
-        """
+        """Cancel a pickup order. Endpoint: DELETE /pickuporders/{pickupOrderID}"""
         payload = request.serialize()
         pickup_order_id = payload.get("pickupOrderID")
 
@@ -84,17 +71,18 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             url=f"{self.settings.server_url}/pickuporders/{pickup_order_id}",
             trace=self.trace_as("json"),
             method="DELETE",
-            headers=self._get_headers(),
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Accept-Language": self.settings.connection_config.language.state or "DE",
+                "Authorization": f"Bearer {provider_utils.get_access_token(self.settings)}",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Get tracking information for shipments.
-
-        Endpoint: GET /shipmentinfo?shipmentID=...
-        Accepts up to 100 shipment IDs per request.
-        """
+        """Get tracking information. Endpoint: GET /shipmentinfo"""
         tracking_numbers = request.serialize()
         query_params = "&".join([f"shipmentID={num}" for num in tracking_numbers])
 
@@ -102,7 +90,12 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             url=f"{self.settings.server_url}/shipmentinfo?{query_params}",
             trace=self.trace_as("json"),
             method="GET",
-            headers=self._get_headers(),
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Accept-Language": self.settings.connection_config.language.state or "DE",
+                "Authorization": f"Bearer {provider_utils.get_access_token(self.settings)}",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
