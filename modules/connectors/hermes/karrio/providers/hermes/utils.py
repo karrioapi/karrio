@@ -100,3 +100,29 @@ def login(settings: Settings):
         seconds=float(response.get("expires_in", 3600))
     )
     return {**response, "expiry": lib.fdatetime(expiry)}
+
+
+def get_access_token(settings: Settings) -> str:
+    """Get access token from settings."""
+    token_data = settings.access_token
+    return token_data.get("access_token") if isinstance(token_data, dict) else token_data
+
+
+def prepare_shipment_data(request: lib.Serializable) -> tuple:
+    """Prepare shipment request data and multi-piece flag."""
+    requests_data = request.serialize()
+    is_multi_piece = request.ctx.get("is_multi_piece", False) if request.ctx else False
+    requests_data = requests_data if isinstance(requests_data, list) else [requests_data]
+    return requests_data, is_multi_piece
+
+
+def inject_parent_shipment_id(req_data: dict, parent_id: str) -> dict:
+    """Inject parentShipmentOrderID for multi-piece packages 2+."""
+    if req_data.get("service", {}).get("multipartService"):
+        req_data["service"]["multipartService"]["parentShipmentOrderID"] = parent_id
+    return req_data
+
+
+def extract_shipment_order_id(response: dict) -> str:
+    """Extract shipmentOrderID from response for multi-piece linking."""
+    return response.get("shipmentOrderID")
