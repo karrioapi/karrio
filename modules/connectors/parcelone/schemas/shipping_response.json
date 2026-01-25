@@ -1,0 +1,143 @@
+{
+  "status": 200,
+  "success": 1,
+  "message": "OK",
+  "type": "success",
+  "instance": "/shipment",
+  "UniqId": "649969a6f6e1",
+  "results": {
+    "YourShipmentID": "12345678",
+    "ActionResult": {
+      "ShipmentID": "101415",
+      "ShipmentRef": "custref_123",
+      "TrackingID": "1234501014159",
+      "Success": 1,
+      "Errors": [
+        {
+          "ErrorNo": "E001",
+          "Message": "Error message",
+          "StatusCode": "400"
+        }
+      ],
+      "Warnings": [
+        {
+          "WarningNo": "W001",
+          "Message": "Warning message",
+          "StatusCode": "200"
+        }
+      ]
+    },
+    "LabelURL": "https://api.parcelone.io/label/12345",
+    "Charges": [
+      {
+        "Currency": "EUR",
+        "Value": "5.99",
+        "Description": "Shipping charge"
+      }
+    ],
+    "TotalCharges": {
+      "Currency": "EUR",
+      "Value": "5.99",
+      "Description": "Total shipping charges"
+    },
+    "PackageResults": [
+      {
+        "ShipmentID": "101415",
+        "PackageID": 1,
+        "PackageRef": "PKG001",
+        "TrackingID": "1234501014159",
+        "DocType": "LABEL",
+        "Format": {
+          "Type": "PDF",
+          "Size": "A4",
+          "Unit": "mm",
+          "Orientation": 0,
+          "Height": "297",
+          "Width": "210"
+        },
+        "Label": "JVBERi0xLjQKJeLjz9MK...",
+        "TrackingURL": "https://tracking.parcel.one/?trackingNumber=1234501014159",
+        "CarrierTrackURL": "https://www.dhl.de/tracking/1234501014159",
+        "Charges": [
+          {
+            "Currency": "EUR",
+            "Value": "5.99",
+            "Description": "Package shipping charge"
+          }
+        ]
+      }
+    ],
+    "DocumentsResults": [
+      {
+        "ShipmentID": "101415",
+        "PackageID": "1",
+        "TrackingID": "1234501014159",
+        "DocType": "CUSTOMS",
+        "Format": {
+          "Type": "PDF",
+          "Size": "A4",
+          "Unit": "mm",
+          "Orientation": 0,
+          "Height": "297",
+          "Width": "210"
+        },
+        "Document": "JVBERi0xLjQK...",
+        "Charges": [
+          {
+            "Currency": "EUR",
+            "Value": "0.00",
+            "Description": "Document charge"
+          }
+        ],
+        "PackageRef": "PKG001",
+        "PackageTrackingID": "1234501014159",
+        "ActionResult": {
+          "ShipmentID": "101415",
+          "ShipmentRef": "custref_123",
+          "TrackingID": "1234501014159",
+          "Success": 1,
+          "Errors": [],
+          "Warnings": []
+        },
+        "DocumentID": "DOC001",
+        "Type": "CN23",
+        "Size": "A4"
+      }
+    ],
+    "InternationalDocumentsResults": [
+      {
+        "ShipmentID": "101415",
+        "PackageID": "1",
+        "TrackingID": "1234501014159",
+        "DocType": "CN23",
+        "Format": {
+          "Type": "PDF",
+          "Size": "A4",
+          "Unit": "mm",
+          "Orientation": 0,
+          "Height": "297",
+          "Width": "210"
+        },
+        "Document": "JVBERi0xLjQK...",
+        "Charges": [],
+        "PackageRef": "PKG001",
+        "PackageTrackingID": "1234501014159",
+        "ActionResult": {
+          "ShipmentID": "101415",
+          "ShipmentRef": "custref_123",
+          "TrackingID": "1234501014159",
+          "Success": 1,
+          "Errors": [],
+          "Warnings": []
+        },
+        "DocumentID": "INTDOC001",
+        "Type": "CN23",
+        "Size": "A4"
+      }
+    ],
+    "LabelsAvailable": 1,
+    "DocumentsAvailable": 1,
+    "InternationalDocumentsAvailable": 1,
+    "InternationalDocumentsNeeded": 0
+  }
+}
