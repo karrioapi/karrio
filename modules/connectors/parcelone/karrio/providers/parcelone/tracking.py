@@ -99,6 +99,7 @@ def _parse_tracking_event(event: parcelone.TrackingEventType) -> models.Tracking
         try_formats=["%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S"],
     )
     status = provider_units.TrackingStatus.find(event.StatusCode)
+    reason = provider_units.TrackingIncidentReason.find(event.StatusCode)
 
     return models.TrackingEvent(
         date=date,
@@ -111,6 +112,7 @@ def _parse_tracking_event(event: parcelone.TrackingEventType) -> models.Tracking
             current_format="%Y-%m-%dT%H:%M:%S",
         ),
         status=status.name if status else None,
+        reason=reason.name if reason else None,
     )
 
 
