@@ -1,6 +1,7 @@
 """Karrio ParcelOne shipment cancellation implementation."""
 
 import typing
+import karrio.schemas.parcelone as parcelone
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.parcelone.error as error
@@ -14,7 +15,10 @@ def parse_shipment_cancel_response(
     """Parse shipment cancellation response from ParcelOne REST API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = response.get("success") == 1
+
+    cancel_response = lib.to_object(parcelone.CancelResponseType, response)
+    result = cancel_response.results
+    success = cancel_response.success == 1 and (result.Success == 1 if result else False)
 
     confirmation = lib.identity(
         models.ConfirmationDetails(
