@@ -1,0 +1,219 @@
+{
+  "ShippingData": {
+    "ShipmentID": "string",
+    "ShipmentRef": "CustRef 9998898",
+    "TrackingID": "string",
+    "CEPID": "PA1",
+    "ProductID": "eco",
+    "CustomerID": "string",
+    "MandatorID": "1",
+    "ConsignerID": "1",
+    "ShipToData": {
+      "Reference": "Senderref - 123",
+      "Name1": "Max Mustermann",
+      "Name2": "c/o Maria Musterfrau",
+      "Name3": "Office 2nd level",
+      "ShipmentAddress": {
+        "Street": "Hilldale Lane",
+        "Streetno": "28",
+        "PostalCode": "14150",
+        "City": "Tonawanda",
+        "District": "Beauty District",
+        "State": "NY",
+        "Country": "US"
+      },
+      "PrivateAddressIndicator": 1,
+      "ShipmentContact": {
+        "Email": "max@mustermann.de",
+        "Phone": "+01 8889484",
+        "Mobile": "+01 453-48889484",
+        "Fax": "+01 8889485",
+        "Company": "string",
+        "ContactPerson": "string",
+        "AttentionName": "string",
+        "Salutation": "string",
+        "FirstName": "string",
+        "LastName": "string",
+        "BirthDate": "string"
+      },
+      "SalesTaxID": "string",
+      "CustomsID": "string",
+      "BranchID": "string",
+      "CEPCustID": "string"
+    },
+    "ShipFromData": {
+      "Reference": "string",
+      "Name1": "string",
+      "Name2": "string",
+      "Name3": "string",
+      "ShipmentAddress": {
+        "Street": "Hilldale Lane",
+        "Streetno": "28",
+        "PostalCode": "14150",
+        "City": "Tonawanda",
+        "District": "Beauty District",
+        "State": "NY",
+        "Country": "US"
+      },
+      "ShipmentContact": {
+        "Email": "max@mustermann.de",
+        "Phone": "+01 8889484",
+        "Mobile": "+01 453-48889484",
+        "Fax": "+01 8889485",
+        "Company": "string",
+        "ContactPerson": "string",
+        "AttentionName": "string",
+        "Salutation": "string",
+        "FirstName": "string",
+        "LastName": "string",
+        "BirthDate": "string"
+      },
+      "SalesTaxID": "string",
+      "CustomsID": "string",
+      "BankAccount": {
+        "BankCode": "string",
+        "Bank": "string",
+        "AccountOwner": "string",
+        "AccountNumber": "string",
+        "Iban": "string",
+        "Bic": "string"
+      }
+    },
+    "ReturnShipmentIndicator": 0,
+    "PrintLabel": 1,
+    "LabelFormat": {
+      "Type": "PDF",
+      "Size": "A4",
+      "Unit": "",
+      "Orientation": 0,
+      "Height": "",
+      "Width": ""
+    },
+    "PrintDocuments": 1,
+    "ReturnCharges": 0,
+    "MaxCharges": {
+      "Currency": "string",
+      "Value": "string",
+      "Description": "string"
+    },
+    "DocumentFormat": {
+      "Type": "PDF",
+      "Size": "A4",
+      "Unit": "",
+      "Orientation": 0,
+      "Height": "",
+      "Width": ""
+    },
+    "Software": "P1 OpenAPI Doc v1",
+    "Packages": [
+      {
+        "PackageID": "string",
+        "PackageRef": "string",
+        "PackageTrackingID": "string",
+        "PackageType": "string",
+        "PackageWeight": {
+          "Unit": "string",
+          "Value": "string"
+        },
+        "PackageDimensions": {
+          "Measurement": "string",
+          "Length": "string",
+          "Width": "string",
+          "Height": "string"
+        },
+        "PackageVolume": {
+          "Unit": "string",
+          "Value": "string"
+        },
+        "Services": [
+          {
+            "ServiceID": "SDO",
+            "Value": {
+              "Currency": "string",
+              "Value": "string",
+              "Description": "string"
+            },
+            "Parameters": "string"
+          }
+        ],
+        "IntDocData": {
+          "PrintInternationalDocuments": 1,
+          "InternationalDocumentFormat": {
+            "Type": "PDF",
+            "Size": "A4",
+            "Unit": "",
+            "Orientation": 0,
+            "Height": "",
+            "Width": ""
+          },
+          "ConsignerCustomsID": "1234567890",
+          "ShipToRef": "Phone: +49 123123123",
+          "CustomDetails": [
+            {
+              "Contents": "Item of Contents of the Package",
+              "Quantity": 33,
+              "NetWeightPerItem": 3.456,
+              "NetWeight": 3.456,
+              "ItemValuePerItem": 13.33,
+              "ItemValue": 13.33,
+              "TariffNumber": "1234567890",
+              "Origin": "DE",
+              "AdditionalInfo": [
+                {
+                  "Key": "string",
+                  "Value": "string"
+                }
+              ]
+            }
+          ],
+          "Postage": 2.34,
+          "TotalValue": 236.34,
+          "Currency": "EUR",
+          "TotalWeightkg": 12.345,
+          "ItemCategory": 3,
+          "Explanation": "Explanation",
+          "OfficeOfOrigin": "OfficeOfOrigin",
+          "Comments": "Comments",
+          "Date": "2022-01-11",
+          "License": 0,
+          "LicenseNo": "",
+          "Certificate": 0,
+          "CertificateNo": "",
+          "Invoice": 1,
+          "InvoiceNo": "Ivoice: 123456789",
+          "NonDeliveryInstruction": "",
+          "ServiceLevel": "",
+          "ValidatedForExport": "",
+          "AdditionalInfo": [
+            {
+              "Key": "string",
+              "Value": "string"
+            }
+          ]
+        },
+        "Remarks": "string"
+      }
+    ],
+    "Services": [
+      {
+        "ServiceID": "SDO",
+        "Value": {
+          "Currency": "string",
+          "Value": "string",
+          "Description": "string"
+        },
+        "Parameters": "string"
+      }
+    ],
+    "CEPSpecials": [
+      {
+        "Key": "string",
+        "Value": "string"
+      }
+    ],
+    "CostCenter": "",
+    "Other1": "",
+    "Other2": "",
+    "Other3": ""
+  }
+}

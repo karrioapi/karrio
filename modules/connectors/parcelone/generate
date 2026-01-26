@@ -1,6 +1,16 @@
 SCHEMAS=./schemas
 LIB_MODULES=./karrio/schemas/parcelone
-find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
-touch "${LIB_MODULES}/__init__.py"
 
-generateDS --no-namespace-defs -o "${LIB_MODULES}/shipping_wcf.py" $SCHEMAS/shipping_wcf.xsd
+# Remove generated .py files but preserve __init__.py (contains backwards compatibility aliases)
+find "${LIB_MODULES}" -name "*.py" ! -name "__init__.py" -exec rm -r {} \;
+
+generate_schema() {
+    echo "Generating $1..."
+    "${ROOT}/bin/cli" codegen generate "$1" "$2" --no-nice-property-names --append-type-suffix
+}
+
+generate_schema "${SCHEMAS}/shipping_request.json" "${LIB_MODULES}/shipping_request.py"
+generate_schema "${SCHEMAS}/shipping_response.json" "${LIB_MODULES}/shipping_response.py"
+generate_schema "${SCHEMAS}/cancel_response.json" "${LIB_MODULES}/cancel_response.py"
+generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+generate_schema "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error.py"

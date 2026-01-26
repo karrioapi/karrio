@@ -234,6 +234,50 @@ class TrackingStatus(lib.Enum):
     ]
 
 
+class TrackingIncidentReason(lib.Enum):
+    """Maps carrier exception codes to normalized incident reasons.
+
+    IMPORTANT: This enum is required for tracking implementations.
+    It maps carrier-specific exception/status codes to standardized
+    incident reasons for tracking events. The reason field helps
+    identify why a delivery exception occurred.
+
+    Categories of reasons:
+    - carrier_*: Issues caused by the carrier
+    - consignee_*: Issues caused by the recipient
+    - customs_*: Customs-related delays
+    - weather_*: Weather/force majeure events
+    """
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = ["DAMAGED", "DMG"]
+    carrier_sorting_error = ["MISROUTED", "MSR"]
+    carrier_address_not_found = ["ADDRESS_NOT_FOUND", "ANF"]
+    carrier_parcel_lost = ["LOST", "LP"]
+    carrier_not_enough_time = ["LATE", "NO_TIME"]
+    carrier_vehicle_issue = ["VEHICLE_BREAKDOWN", "VB"]
+
+    # Consignee-caused issues
+    consignee_refused = ["REFUSED", "RJ"]
+    consignee_business_closed = ["BUSINESS_CLOSED", "BC"]
+    consignee_not_available = ["NOT_AVAILABLE", "NA"]
+    consignee_not_home = ["NOT_HOME", "NH", "ADDRESSEE_NOT_FOUND"]
+    consignee_incorrect_address = ["WRONG_ADDRESS", "IA"]
+    consignee_access_restricted = ["ACCESS_RESTRICTED", "AR"]
+
+    # Customs-related issues
+    customs_delay = ["CUSTOMS", "CUSTOMS_CLEARANCE", "CD"]
+    customs_documentation = ["CUSTOMS_DOCS", "CM"]
+    customs_duties_unpaid = ["PAYMENT_REQUIRED", "DU"]
+
+    # Weather/force majeure
+    weather_delay = ["WEATHER", "WE"]
+    natural_disaster = ["NATURAL_DISASTER", "ND"]
+
+    # Unknown/unmapped
+    unknown = []
+
+
 def load_services_from_csv() -> list:
     """
     Load service definitions from CSV file.

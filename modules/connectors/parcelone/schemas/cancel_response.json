@@ -1,0 +1,27 @@
+{
+  "status": 200,
+  "success": 1,
+  "message": "OK",
+  "type": "success",
+  "instance": "/shipment/{ShipmentRefField}/{ShipmentRefValue}",
+  "results": {
+    "ShipmentID": "101415",
+    "ShipmentRef": "custref_123",
+    "TrackingID": "1234501014159",
+    "Success": 1,
+    "Errors": [
+      {
+        "ErrorNo": "E001",
+        "Message": "Error message",
+        "StatusCode": "400"
+      }
+    ],
+    "Warnings": [
+      {
+        "WarningNo": "W001",
+        "Message": "Warning message"
+      }
+    ]
+  },
+  "UniqId": "6499698a6f6e1"
+}
