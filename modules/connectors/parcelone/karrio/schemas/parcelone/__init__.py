@@ -40,6 +40,14 @@ from karrio.schemas.parcelone.tracking_response import (
     TrackingResponseType,
 )
 
+# Import cancel response types
+from karrio.schemas.parcelone.cancel_response import (
+    ErrorType as CancelErrorType,
+    WarningType as CancelWarningType,
+    ResultsType as CancelResultType,
+    CancelResponseType,
+)
+
 # Import error types
 from karrio.schemas.parcelone.error import (
     ErrorType as ErrorDetailType,
