@@ -16,9 +16,8 @@ import { Loading } from "../components/loader";
 import { isNone } from "@karrio/lib";
 
 const DEFAULT_TEMPLATE_CONTENT = {
-  label: "",
-  is_default: false,
-  address: DEFAULT_ADDRESS_CONTENT,
+  ...DEFAULT_ADDRESS_CONTENT,
+  meta: { label: "", is_default: false },
 } as AddressTemplateType;
 
 type OperationType = {
@@ -52,11 +51,13 @@ export const AddressEditModal = ({
 
   const editAddress = (operation: OperationType = {}) => {
     const addressTemplate = operation.addressTemplate;
-    // Extract label and is_default from meta if present (new format), fallback to top-level (legacy)
+    // Use flat structure with meta field
     const template = addressTemplate ? {
       ...addressTemplate,
-      label: addressTemplate.meta?.label || addressTemplate.label || "",
-      is_default: addressTemplate.meta?.is_default || addressTemplate.is_default || false,
+      meta: {
+        label: addressTemplate.meta?.label || "",
+        is_default: addressTemplate.meta?.is_default || false,
+      },
     } : DEFAULT_TEMPLATE_CONTENT;
 
     setOperation(operation);
@@ -82,13 +83,25 @@ export const AddressEditModal = ({
     const name = target.name;
     const value = target.type === "checkbox" ? target.checked : target.value;
 
-    setTemplate({ ...template, [name]: value } as AddressTemplateType);
+    // Handle meta fields (label, is_default)
+    if (name === "label" || name === "is_default") {
+      setTemplate({
+        ...template,
+        meta: { ...template?.meta, [name]: value },
+      } as AddressTemplateType);
+    } else {
+      setTemplate({ ...template, [name]: value } as AddressTemplateType);
+    }
   };
   const handleSubmit = async ({
     validation,
     ...address
   }: AddressType | any) => {
-    const payload = { ...template, address };
+    // Build payload with flat structure and meta field
+    const payload = {
+      ...address,
+      meta: template?.meta,
+    };
 
     try {
       setLoading(true);
@@ -99,7 +112,7 @@ export const AddressEditModal = ({
           message: "Address successfully added!",
         });
       } else {
-        await mutation.updateAddress.mutateAsync(payload as any);
+        await mutation.updateAddress.mutateAsync({ ...payload, id: template?.id } as any);
         notify({
           type: NotificationType.success,
           message: "Address successfully updated!",
@@ -132,19 +145,15 @@ export const AddressEditModal = ({
             {template !== undefined && (
               <AddressForm
                 name="template"
-                value={template.address}
+                value={template}
                 onSubmit={async (address) => handleSubmit(address)}
                 onTemplateChange={(isUnchanged) => {
                   const addressTemplate = operation?.addressTemplate;
-                  const defaultValue = addressTemplate ? {
-                    ...addressTemplate,
-                    label: addressTemplate.meta?.label || addressTemplate.label || "",
-                    is_default: addressTemplate.meta?.is_default || addressTemplate.is_default || false,
-                  } : DEFAULT_TEMPLATE_CONTENT;
+                  const defaultMeta = addressTemplate?.meta || { label: "", is_default: false };
                   return (
                     isUnchanged &&
-                    template.label === defaultValue.label &&
-                    template.is_default === defaultValue.is_default
+                    template.meta?.label === defaultMeta.label &&
+                    template.meta?.is_default === defaultMeta.is_default
                   );
                 }}
               >
@@ -153,7 +162,7 @@ export const AddressEditModal = ({
                     label="label"
                     name="label"
                     onChange={handleChange}
-                    defaultValue={template?.label}
+                    defaultValue={template?.meta?.label}
                     className="is-small"
                     wrapperClass="column px-1 py-3"
                     fieldClass="mb-0 p-0"
@@ -164,7 +173,7 @@ export const AddressEditModal = ({
                   <CheckBoxField
                     name="is_default"
                     onChange={handleChange}
-                    defaultChecked={template?.is_default as boolean}
+                    defaultChecked={template?.meta?.is_default as boolean}
                     fieldClass="column mb-0 px-2 pt-3 pb-2"
                   >
                     <span>Set as default address</span>

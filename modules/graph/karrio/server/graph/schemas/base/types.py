@@ -906,6 +906,10 @@ def resolve_addresses(
             | models.Q(phone_number__icontains=_value)
         )
 
+    if any(_search.get("usage") or ""):
+        _value = _search.get("usage")
+        _query = _query & models.Q(meta__usage__contains=_value)
+
     queryset = manager.Address.access_by(info.context.request).filter(_query)
 
     return utils.paginated_connection(queryset, **_filter.pagination())
@@ -978,6 +982,10 @@ def resolve_parcels(
     if any(_search.get("keyword") or ""):
         _value = _search.get("keyword")
         _query = _query & models.Q(meta__label__icontains=_value)
+
+    if any(_search.get("usage") or ""):
+        _value = _search.get("usage")
+        _query = _query & models.Q(meta__usage__contains=_value)
 
     queryset = manager.Parcel.access_by(info.context.request).filter(_query)
 
@@ -1052,6 +1060,10 @@ def resolve_products(
 
     if _search.get("origin_country"):
         _query = _query & models.Q(origin_country=_search.get("origin_country"))
+
+    if any(_search.get("usage") or ""):
+        _value = _search.get("usage")
+        _query = _query & models.Q(meta__usage__contains=_value)
 
     queryset = manager.Commodity.access_by(info.context.request).filter(_query)
 

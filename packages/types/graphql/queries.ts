@@ -1468,7 +1468,7 @@ export const CREATE_PARCEL = gql`
 `;
 
 export const UPDATE_PARCEL = gql`
-  mutation update_parcel($data: UpdateParcelInput2!) {
+  mutation update_parcel($data: UpdateParcelInput!) {
     update_parcel(input: $data) {
       parcel {
         id
@@ -1496,7 +1496,7 @@ export const CREATE_ADDRESS = gql`
 `;
 
 export const UPDATE_ADDRESS = gql`
-  mutation update_address($data: UpdateAddressInput2!) {
+  mutation update_address($data: UpdateAddressInput!) {
     update_address(input: $data) {
       address {
         id

@@ -71,6 +71,7 @@ class ManifestFilter(utils.Paginated):
 class TemplateFilter(utils.Paginated):
     label: typing.Optional[str] = strawberry.UNSET
     keyword: typing.Optional[str] = strawberry.UNSET
+    usage: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -261,12 +262,6 @@ class AddressInput:
 
 
 @strawberry.input
-class UpdateAddressInput(AddressInput):
-    id: typing.Optional[str] = strawberry.UNSET
-    country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-
-
-@strawberry.input
 class ParcelInput:
     weight: float
     weight_unit: utils.WeightUnitEnum
@@ -282,14 +277,6 @@ class ParcelInput:
     reference_number: typing.Optional[str] = strawberry.UNSET
     freight_class: typing.Optional[str] = strawberry.UNSET
     items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateParcelInput(ParcelInput):
-    id: typing.Optional[str] = strawberry.UNSET
-    weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
-    items: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET  # type: ignore
 
 
 @strawberry.input
@@ -311,6 +298,109 @@ class PaymentInput:
     account_number: typing.Optional[str] = strawberry.UNSET
     paid_by: typing.Optional[utils.PaidByEnum] = strawberry.UNSET
     currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ADDRESS TEMPLATE INPUTS (flat structure with meta as JSON for extensibility)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class CreateAddressInput(utils.BaseInput):
+    """Flat address template input with meta for template metadata."""
+
+    meta: utils.JSON
+    country_code: typing.Optional[utils.CountryCodeEnum]
+    postal_code: typing.Optional[str] = strawberry.UNSET
+    city: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    person_name: typing.Optional[str] = strawberry.UNSET
+    company_name: typing.Optional[str] = strawberry.UNSET
+    email: typing.Optional[str] = strawberry.UNSET
+    phone_number: typing.Optional[str] = strawberry.UNSET
+    state_code: typing.Optional[str] = strawberry.UNSET
+    residential: typing.Optional[bool] = strawberry.UNSET
+    street_number: typing.Optional[str] = strawberry.UNSET
+    address_line1: typing.Optional[str] = strawberry.UNSET
+    address_line2: typing.Optional[str] = strawberry.UNSET
+    validate_location: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateAddressInput(utils.BaseInput):
+    """Flat address template update input."""
+
+    id: str
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
+    country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    postal_code: typing.Optional[str] = strawberry.UNSET
+    city: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    person_name: typing.Optional[str] = strawberry.UNSET
+    company_name: typing.Optional[str] = strawberry.UNSET
+    email: typing.Optional[str] = strawberry.UNSET
+    phone_number: typing.Optional[str] = strawberry.UNSET
+    state_code: typing.Optional[str] = strawberry.UNSET
+    residential: typing.Optional[bool] = strawberry.UNSET
+    street_number: typing.Optional[str] = strawberry.UNSET
+    address_line1: typing.Optional[str] = strawberry.UNSET
+    address_line2: typing.Optional[str] = strawberry.UNSET
+    validate_location: typing.Optional[bool] = strawberry.UNSET
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PARCEL TEMPLATE INPUTS (flat structure with meta)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class CreateParcelInput(utils.BaseInput):
+    """Flat parcel template input with meta for template metadata."""
+
+    meta: utils.JSON
+    weight: float
+    weight_unit: utils.WeightUnitEnum
+    width: typing.Optional[float] = strawberry.UNSET
+    height: typing.Optional[float] = strawberry.UNSET
+    length: typing.Optional[float] = strawberry.UNSET
+    packaging_type: typing.Optional[str] = strawberry.UNSET
+    package_preset: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    content: typing.Optional[str] = strawberry.UNSET
+    is_document: typing.Optional[bool] = strawberry.UNSET
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    reference_number: typing.Optional[str] = strawberry.UNSET
+    freight_class: typing.Optional[str] = strawberry.UNSET
+    items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateParcelInput(utils.BaseInput):
+    """Flat parcel template update input."""
+
+    id: str
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
+    weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    width: typing.Optional[float] = strawberry.UNSET
+    height: typing.Optional[float] = strawberry.UNSET
+    length: typing.Optional[float] = strawberry.UNSET
+    packaging_type: typing.Optional[str] = strawberry.UNSET
+    package_preset: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    content: typing.Optional[str] = strawberry.UNSET
+    is_document: typing.Optional[bool] = strawberry.UNSET
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    reference_number: typing.Optional[str] = strawberry.UNSET
+    freight_class: typing.Optional[str] = strawberry.UNSET
+    items: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHIPMENT MUTATION INPUTS
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 @strawberry.input
@@ -335,38 +425,16 @@ class ChangeShipmentStatusMutationInput(utils.BaseInput):
     status: typing.Optional[utils.ManualShipmentStatusEnum]
 
 
-@strawberry.input
-class CreateAddressInput(utils.BaseInput):
-    label: str
-    address: AddressInput
-    is_default: typing.Optional[bool] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateAddressInput2(CreateAddressInput):
-    id: str  # type: ignore
-    label: typing.Optional[str]
-    address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-
-
-@strawberry.input
-class CreateParcelInput(utils.BaseInput):
-    label: str
-    parcel: ParcelInput
-    is_default: typing.Optional[bool] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateParcelInput2(CreateParcelInput):
-    id: str  # type: ignore
-    label: typing.Optional[str] = strawberry.UNSET
-    is_default: typing.Optional[bool] = strawberry.UNSET
-    parcel: typing.Optional[UpdateParcelInput] = strawberry.UNSET
+# ─────────────────────────────────────────────────────────────────────────────
+# PRODUCT TEMPLATE INPUTS (flat structure with meta)
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 @strawberry.input
 class CreateProductInput(utils.BaseInput):
-    label: str
+    """Flat product template input with meta for template metadata."""
+
+    meta: utils.JSON
     weight: float
     weight_unit: utils.WeightUnitEnum
     quantity: typing.Optional[int] = 1
@@ -377,14 +445,15 @@ class CreateProductInput(utils.BaseInput):
     value_amount: typing.Optional[float] = strawberry.UNSET
     value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
     origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    is_default: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateProductInput(utils.BaseInput):
+    """Flat product template update input."""
+
     id: str
-    label: typing.Optional[str] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
     weight: typing.Optional[float] = strawberry.UNSET
     weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
     quantity: typing.Optional[int] = strawberry.UNSET
@@ -395,7 +464,6 @@ class UpdateProductInput(utils.BaseInput):
     value_amount: typing.Optional[float] = strawberry.UNSET
     value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
     origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    is_default: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
