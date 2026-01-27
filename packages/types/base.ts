@@ -438,6 +438,7 @@ export const CARRIER_IMAGES: Collection = {
   axlehire: "generic",
   better_trucks: "generic",
   bond: "generic",
+  bpost: "bpost",
   canadapost: "canadapost",
   canpar: "canpar",
   cdl: "generic",
