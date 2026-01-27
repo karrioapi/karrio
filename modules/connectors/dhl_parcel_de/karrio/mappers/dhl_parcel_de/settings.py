@@ -13,11 +13,11 @@ import karrio.universal.mappers.rating_proxy as rating_proxy
 class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     """DHL Germany connection settings."""
 
-    # required carrier specific properties
-    username: str
-    password: str
-    client_id: str
-    client_secret: str
+    # carrier specific properties
+    username: str = None
+    password: str = None
+    client_id: str = None
+    client_secret: str = None
 
     # generic properties
     id: str = None

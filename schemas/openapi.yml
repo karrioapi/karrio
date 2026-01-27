@@ -255,7 +255,10 @@ paths:
   /v1/addresses:
     get:
       operationId: $list
-      description: Retrieve all addresses.
+      description: "\n        Retrieve all addresses.\n\n        Query Parameters:\n
+        \       - label: Filter by meta.label (case-insensitive contains)\n        -
+        keyword: Search across label, address fields, contact info\n        - usage:
+        Filter by meta.usage (exact match in array)\n        "
       summary: List all addresses
       tags:
       - Addresses
@@ -2217,7 +2220,10 @@ paths:
   /v1/parcels:
     get:
       operationId: $$$list
-      description: Retrieve all stored parcels.
+      description: "\n        Retrieve all stored parcels.\n\n        Query Parameters:\n
+        \       - label: Filter by meta.label (case-insensitive contains)\n        -
+        keyword: Search by label\n        - usage: Filter by meta.usage (exact match
+        in array)\n        "
       summary: List all parcels
       tags:
       - Parcels
@@ -2654,7 +2660,10 @@ paths:
       operationId: $&list
       description: "\n        Retrieve all product templates.\n\n        Products
         are reusable commodity definitions that can be used\n        in customs declarations
-        and shipment items.\n        "
+        and shipment items.\n\n        Query Parameters:\n        - label: Filter
+        by meta.label (case-insensitive contains)\n        - keyword: Search across
+        label, title, sku, description, hs_code\n        - usage: Filter by meta.usage
+        (exact match in array)\n        "
       summary: List all products
       tags:
       - Products
@@ -12399,21 +12408,20 @@ components:
       properties:
         username:
           type: string
+          nullable: true
         password:
           type: string
+          nullable: true
         client_id:
           type: string
+          nullable: true
         client_secret:
           type: string
+          nullable: true
         account_country_code:
           type: string
           nullable: true
           default: DE
-      required:
-      - client_id
-      - client_secret
-      - password
-      - username
     dhl_poland:
       type: object
       properties:

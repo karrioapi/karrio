@@ -2225,10 +2225,10 @@ export interface DhlExpress {
     'account_country_code'?: string | null;
 }
 export interface DhlParcelDe {
-    'username': string;
-    'password': string;
-    'client_id': string;
-    'client_secret': string;
+    'username'?: string | null;
+    'password'?: string | null;
+    'client_id'?: string | null;
+    'client_secret'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface DhlPoland {
@@ -7169,7 +7169,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
-         * Retrieve all addresses.
+         *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all addresses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7348,7 +7348,7 @@ export const AddressesApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Retrieve all addresses.
+         *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all addresses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7416,7 +7416,7 @@ export const AddressesApiFactory = function (configuration?: Configuration, base
             return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Retrieve all addresses.
+         *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all addresses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7504,7 +7504,7 @@ export class AddressesApi extends BaseAPI {
     }
 
     /**
-     * Retrieve all addresses.
+     *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
      * @summary List all addresses
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11496,7 +11496,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Retrieve all stored parcels.
+         *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all parcels
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11675,7 +11675,7 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Retrieve all stored parcels.
+         *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all parcels
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11743,7 +11743,7 @@ export const ParcelsApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Retrieve all stored parcels.
+         *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all parcels
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11831,7 +11831,7 @@ export class ParcelsApi extends BaseAPI {
     }
 
     /**
-     * Retrieve all stored parcels.
+     *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
      * @summary List all parcels
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -12458,7 +12458,7 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all products
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12637,7 +12637,7 @@ export const ProductsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all products
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12705,7 +12705,7 @@ export const ProductsApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all products
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12793,7 +12793,7 @@ export class ProductsApi extends BaseAPI {
     }
 
     /**
-     *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+     *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
      * @summary List all products
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

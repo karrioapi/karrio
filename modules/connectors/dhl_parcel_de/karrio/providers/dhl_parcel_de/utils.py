@@ -6,16 +6,61 @@ import karrio.core as core
 class Settings(core.Settings):
     """DHL Germany connection settings."""
 
-    username: str
-    password: str
-    client_id: str
-    client_secret: str
+    username: str = None
+    password: str = None
+    client_id: str = None
+    client_secret: str = None
 
     account_country_code: str = "DE"
 
     @property
     def carrier_name(self):
         return "dhl_parcel_de"
+
+    # Computed credential properties with system config fallback
+    @property
+    def connection_username(self) -> typing.Optional[str]:
+        """Return user-provided username or fallback to system config."""
+        if self.username:
+            return self.username
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_USERNAME")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_USERNAME")
+        )
+
+    @property
+    def connection_password(self) -> typing.Optional[str]:
+        """Return user-provided password or fallback to system config."""
+        if self.password:
+            return self.password
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_PASSWORD")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_PASSWORD")
+        )
+
+    @property
+    def connection_client_id(self) -> typing.Optional[str]:
+        """Return user-provided client_id or fallback to system config."""
+        if self.client_id:
+            return self.client_id
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_CLIENT_ID")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_CLIENT_ID")
+        )
+
+    @property
+    def connection_client_secret(self) -> typing.Optional[str]:
+        """Return user-provided client_secret or fallback to system config."""
+        if self.client_secret:
+            return self.client_secret
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_CLIENT_SECRET")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_CLIENT_SECRET")
+        )
 
     @property
     def server_url(self):

@@ -18,7 +18,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         """Retrieve the access_token using the client_id|client_secret pair
         or collect it from the cache if an unexpired access_token exist.
         """
-        cache_key = f"{self.settings.carrier_name}|{self.settings.client_id}|{self.settings.client_secret}"
+        cache_key = f"{self.settings.carrier_name}|{self.settings.connection_client_id}|{self.settings.connection_client_secret}"
 
         def get_token():
             response = lib.request(
@@ -27,10 +27,10 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 data=lib.to_query_string(
                     dict(
                         grant_type="password",
-                        username=self.settings.username,
-                        password=self.settings.password,
-                        client_id=self.settings.client_id,
-                        client_secret=self.settings.client_secret,
+                        username=self.settings.connection_username,
+                        password=self.settings.connection_password,
+                        client_id=self.settings.connection_client_id,
+                        client_secret=self.settings.connection_client_secret,
                     )
                 ),
                 method="POST",
@@ -104,7 +104,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 method="GET",
                 headers={
                     "Accept": "application/json",
-                    "DHL-API-Key": self.settings.client_secret,
+                    "DHL-API-Key": self.settings.connection_client_secret,
                 },
             ),
             request.serialize(),

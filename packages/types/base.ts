@@ -384,6 +384,10 @@ export interface References {
     }>
   >;
   integration_status: Collection<string>;
+  system_credentials_carriers: Collection<{
+    production: boolean;
+    sandbox: boolean;
+  }>;
 }
 
 export type SessionType<T = {}> = T & {

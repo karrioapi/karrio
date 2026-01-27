@@ -9,6 +9,53 @@ import karrio.core.models as models
 import karrio.schemas.dhl_parcel_de.shipping_request as ship_req
 
 
+# System config schema for runtime settings (e.g., API credentials)
+# Format: Dict[str, Tuple[default_value, description, type]]
+# Note: The actual env values are read by the server (constance.py) using decouple
+SYSTEM_CONFIG = {
+    "DHL_PARCEL_DE_USERNAME": (
+        "",
+        "DHL Parcel DE API username for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_PASSWORD": (
+        "",
+        "DHL Parcel DE API password for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_CLIENT_ID": (
+        "",
+        "DHL Parcel DE OAuth client ID for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_CLIENT_SECRET": (
+        "",
+        "DHL Parcel DE OAuth client secret for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_USERNAME": (
+        "user-valid",
+        "DHL Parcel DE API username for sandbox/test mode",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_PASSWORD": (
+        "SandboxPasswort2023!",
+        "DHL Parcel DE API password for sandbox/test mode",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_CLIENT_ID": (
+        "",
+        "DHL Parcel DE OAuth client ID for sandbox/test mode",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_CLIENT_SECRET": (
+        "",
+        "DHL Parcel DE OAuth client secret for sandbox/test mode",
+        str,
+    ),
+}
+
+
 class ShippingService(lib.Enum):
     """Carrier specific services"""
 
@@ -58,6 +105,56 @@ DEFAULT_TEST_BILLING_NUMBERS: typing.List[ServiceBillingNumberType] = [
 DEFAULT_TEST_BILLING_NUMBER = "33333333330102"
 
 
+class LabelType(lib.Enum):
+    """Carrier specific label type"""
+
+    PDF_A4 = ("PDF", "A4")
+    ZPL2_A4 = ("ZPL2", "A4")
+    PDF_910_300_700 = ("PDF", "910-300-700")
+    ZPL2_910_300_700 = ("ZPL2", "910-300-700")
+    PDF_910_300_700_oz = ("PDF", "910-300-700-oz")
+    ZPL2_910_300_700_oz = ("ZPL2", "910-300-700-oz")
+    PDF_910_300_710 = ("PDF", "910-300-710")
+    ZPL2_910_300_710 = ("ZPL2", "910-300-710")
+    PDF_910_300_600 = ("PDF", "910-300-600")
+    ZPL2_910_300_600 = ("ZPL2", "910-300-600")
+    PDF_910_300_610 = ("PDF", "910-300-610")
+    ZPL2_910_300_610 = ("ZPL2", "910-300-610")
+    PDF_910_300_400 = ("PDF", "910-300-400")
+    ZPL2_910_300_400 = ("ZPL2", "910-300-400")
+    PDF_910_300_410 = ("PDF", "910-300-410")
+    ZPL2_910_300_410 = ("ZPL2", "910-300-410")
+    PDF_910_300_300 = ("PDF", "910-300-300")
+    ZPL2_910_300_300 = ("ZPL2", "910-300-300")
+    PDF_910_300_300_oz = ("PDF", "910-300-300-oz")
+    ZPL2_910_300_300_oz = ("ZPL2", "910-300-300-oz")
+
+    """ Unified Label type mapping """
+    PDF = PDF_A4
+    ZPL = ZPL2_A4
+    PNG = PDF_A4
+
+
+class ConnectionConfig(lib.Enum):
+    label_type = lib.OptionEnum(
+        "label_type",
+        lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
+    )
+    language = lib.OptionEnum(
+        "language",
+        lib.units.create_enum("Language", ["de", "en"]),
+    )
+    default_billing_number = lib.OptionEnum("default_billing_number")
+    service_billing_numbers = lib.OptionEnum(
+        "service_billing_numbers", typing.List[ServiceBillingNumberType]
+    )
+    profile = lib.OptionEnum("profile")
+    cost_center = lib.OptionEnum("cost_center")
+    creation_software = lib.OptionEnum("creation_software")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+
+
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
@@ -99,36 +196,6 @@ class Incoterm(lib.StrEnum):
     DXV = "DXV"
 
 
-class LabelType(lib.Enum):
-    """Carrier specific label type"""
-
-    PDF_A4 = ("PDF", "A4")
-    ZPL2_A4 = ("ZPL2", "A4")
-    PDF_910_300_700 = ("PDF", "910-300-700")
-    ZPL2_910_300_700 = ("ZPL2", "910-300-700")
-    PDF_910_300_700_oz = ("PDF", "910-300-700-oz")
-    ZPL2_910_300_700_oz = ("ZPL2", "910-300-700-oz")
-    PDF_910_300_710 = ("PDF", "910-300-710")
-    ZPL2_910_300_710 = ("ZPL2", "910-300-710")
-    PDF_910_300_600 = ("PDF", "910-300-600")
-    ZPL2_910_300_600 = ("ZPL2", "910-300-600")
-    PDF_910_300_610 = ("PDF", "910-300-610")
-    ZPL2_910_300_610 = ("ZPL2", "910-300-610")
-    PDF_910_300_400 = ("PDF", "910-300-400")
-    ZPL2_910_300_400 = ("ZPL2", "910-300-400")
-    PDF_910_300_410 = ("PDF", "910-300-410")
-    ZPL2_910_300_410 = ("ZPL2", "910-300-410")
-    PDF_910_300_300 = ("PDF", "910-300-300")
-    ZPL2_910_300_300 = ("ZPL2", "910-300-300")
-    PDF_910_300_300_oz = ("PDF", "910-300-300-oz")
-    ZPL2_910_300_300_oz = ("ZPL2", "910-300-300-oz")
-
-    """ Unified Label type mapping """
-    PDF = PDF_A4
-    ZPL = ZPL2_A4
-    PNG = PDF_A4
-
-
 class ShippingDocumentCategory(lib.StrEnum):
     """Carrier specific document category types.
 
@@ -149,27 +216,6 @@ class ShippingDocumentCategory(lib.StrEnum):
     warenpost_international = "warenpostInternational"
     error_label = "errorLabel"
     qr_code = "qrCode"
-
-
-class ConnectionConfig(lib.Enum):
-    profile = lib.OptionEnum("profile")
-    cost_center = lib.OptionEnum("cost_center")
-    creation_software = lib.OptionEnum("creation_software")
-    shipping_options = lib.OptionEnum("shipping_options", list)
-    shipping_services = lib.OptionEnum("shipping_services", list)
-    language = lib.OptionEnum(
-        "language",
-        lib.units.create_enum("Language", ["de", "en"]),
-    )
-    label_type = lib.OptionEnum(
-        "label_type",
-        lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
-    )
-    # Billing number configuration
-    default_billing_number = lib.OptionEnum("default_billing_number")
-    service_billing_numbers = lib.OptionEnum(
-        "service_billing_numbers", typing.List[ServiceBillingNumberType]
-    )
 
 
 class ShippingOption(lib.Enum):

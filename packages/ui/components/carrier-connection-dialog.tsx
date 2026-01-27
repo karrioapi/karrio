@@ -42,7 +42,8 @@ import { isEqual, KARRIO_API } from "@karrio/lib";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "./ui/input";
-import { Zap, Loader2, Webhook, Check, X, Copy, Plus, Trash2 } from "lucide-react";
+import { Zap, Loader2, Webhook, Check, X, Copy, Plus, Trash2, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import * as z from "zod";
 
 
@@ -89,7 +90,21 @@ export function CarrierConnectionDialog({
 }: CarrierConnectionDialogProps) {
   const [initialValues, setInitialValues] = useState<FormData | null>(null);
   const [oauthCredentials, setOauthCredentials] = useState<Record<string, any> | null>(null);
+  const [showCustomCredentials, setShowCustomCredentials] = useState(false);
   const { toast } = useToast();
+
+  // Check if system credentials are available for a carrier
+  const getSystemCredentialsStatus = (carrierName: string) => {
+    const systemCredentials = (references as any)?.system_credentials_carriers;
+    return systemCredentials?.[carrierName] || null;
+  };
+
+  // Check if system credentials are available for the current test mode
+  const hasSystemCredentials = (carrierName: string, testMode: boolean) => {
+    const status = getSystemCredentialsStatus(carrierName);
+    if (!status) return false;
+    return testMode ? status.sandbox : status.production;
+  };
 
   // OAuth connection hook
   const {
@@ -207,6 +222,15 @@ export function CarrierConnectionDialog({
       }
     }
 
+    // Check if system credentials are available for this carrier
+    // If so, credential fields are optional (user can rely on system defaults)
+    // Note: We check for both sandbox and production since test_mode might not be in the form
+    const systemCredStatus = getSystemCredentialsStatus(carrierName);
+    const hasAnySystemCreds = systemCredStatus?.production || systemCredStatus?.sandbox;
+
+    // List of known credential fields that can be satisfied by system config
+    const systemCredentialFields = ["username", "password", "client_id", "client_secret"];
+
     // Check only required credential fields (excluding the ones we've filtered out)
     return Object.entries(fields)
       .filter(([key]) => ![
@@ -220,6 +244,11 @@ export function CarrierConnectionDialog({
       ].includes(key))
       .every(([key, field]: [string, any]) => {
         if (field.required) {
+          // If system credentials are available and this is a credential field that can be
+          // provided by system config, don't require user input
+          if (hasAnySystemCreds && systemCredentialFields.includes(key)) {
+            return true; // Skip validation - system will provide
+          }
           const value = credentials?.[key];
           return value !== undefined && value !== "" && value !== null;
         }
@@ -1086,66 +1115,138 @@ export function CarrierConnectionDialog({
                     </TabsList>
                     <TabsContent value="credentials" className="pt-6">
                       <div className="space-y-4">
-                        {/* OAuth Quick Connect Banner - only show for new connections with OAuth support */}
-                        {!selectedConnection && currentCarrierSupportsOAuth && (
-                          <>
-                            <div className="rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4">
-                              <div className="flex items-start gap-3">
-                                <div className="flex-shrink-0">
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-                                    <Zap className="h-5 w-5 text-purple-600" />
+                        {/* System Credentials Banner - show when system credentials are available */}
+                        {(() => {
+                          const carrierName = watch("carrier_name");
+                          const systemCredStatus = getSystemCredentialsStatus(carrierName);
+                          const hasAnySystemCreds = systemCredStatus?.production || systemCredStatus?.sandbox;
+
+                          if (hasAnySystemCreds) {
+                            return (
+                              <>
+                                <div className="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-4">
+                                  <div className="flex items-start gap-3">
+                                    <div className="flex-shrink-0">
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                                        <Info className="h-5 w-5 text-blue-600" />
+                                      </div>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-sm font-semibold text-blue-900">
+                                        Using System Credentials
+                                      </h4>
+                                      <p className="mt-1 text-sm text-blue-700">
+                                        Your platform administrator has configured default credentials for this carrier.
+                                        You can skip entering credentials and the system will use the default configuration.
+                                      </p>
+                                      <div className="mt-2 flex gap-2 text-xs">
+                                        {systemCredStatus?.production && (
+                                          <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-green-700">
+                                            <Check className="h-3 w-3 mr-1" />
+                                            Production
+                                          </span>
+                                        )}
+                                        {systemCredStatus?.sandbox && (
+                                          <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">
+                                            <Check className="h-3 w-3 mr-1" />
+                                            Sandbox
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-semibold text-purple-900">
-                                    Quick Connect
-                                  </h4>
-                                  <p className="mt-1 text-sm text-purple-700">
-                                    Connect your {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")} account instantly with secure OAuth authorization.
-                                  </p>
-                                  <Button
-                                    type="button"
-                                    onClick={handleOAuthConnect}
-                                    disabled={isOAuthLoading}
-                                    className="mt-3 bg-purple-600 hover:bg-purple-700 text-white"
-                                    size="sm"
-                                  >
-                                    {isOAuthLoading ? (
-                                      <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Connecting...
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Zap className="mr-2 h-4 w-4" />
-                                        Connect with {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")}
-                                      </>
+
+                                {/* Collapsible credentials section */}
+                                <Collapsible open={showCustomCredentials} onOpenChange={setShowCustomCredentials}>
+                                  <CollapsibleTrigger asChild>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      className="flex w-full items-center justify-between px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                                    >
+                                      <span>Use custom credentials instead (Advanced)</span>
+                                      {showCustomCredentials ? (
+                                        <ChevronUp className="h-4 w-4" />
+                                      ) : (
+                                        <ChevronDown className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </CollapsibleTrigger>
+                                  <CollapsibleContent className="space-y-4 pt-4">
+                                    {renderCredentialFields()}
+                                  </CollapsibleContent>
+                                </Collapsible>
+                              </>
+                            );
+                          }
+
+                          // No system credentials - show OAuth or regular credential fields
+                          return (
+                            <>
+                              {/* OAuth Quick Connect Banner - only show for new connections with OAuth support */}
+                              {!selectedConnection && currentCarrierSupportsOAuth && (
+                                <>
+                                  <div className="rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4">
+                                    <div className="flex items-start gap-3">
+                                      <div className="flex-shrink-0">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+                                          <Zap className="h-5 w-5 text-purple-600" />
+                                        </div>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="text-sm font-semibold text-purple-900">
+                                          Quick Connect
+                                        </h4>
+                                        <p className="mt-1 text-sm text-purple-700">
+                                          Connect your {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")} account instantly with secure OAuth authorization.
+                                        </p>
+                                        <Button
+                                          type="button"
+                                          onClick={handleOAuthConnect}
+                                          disabled={isOAuthLoading}
+                                          className="mt-3 bg-purple-600 hover:bg-purple-700 text-white"
+                                          size="sm"
+                                        >
+                                          {isOAuthLoading ? (
+                                            <>
+                                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                              Connecting...
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Zap className="mr-2 h-4 w-4" />
+                                              Connect with {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")}
+                                            </>
+                                          )}
+                                        </Button>
+                                      </div>
+                                    </div>
+                                    {oauthCredentials && (
+                                      <div className="mt-3 rounded-md bg-green-50 border border-green-200 p-2">
+                                        <p className="text-xs text-green-700 flex items-center gap-1">
+                                          <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
+                                          Authorization successful! Credentials have been prefilled below.
+                                        </p>
+                                      </div>
                                     )}
-                                  </Button>
-                                </div>
-                              </div>
-                              {oauthCredentials && (
-                                <div className="mt-3 rounded-md bg-green-50 border border-green-200 p-2">
-                                  <p className="text-xs text-green-700 flex items-center gap-1">
-                                    <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
-                                    Authorization successful! Credentials have been prefilled below.
-                                  </p>
-                                </div>
+                                  </div>
+                                  <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                      <span className="w-full border-t" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                      <span className="bg-background px-2 text-muted-foreground">
+                                        Or enter credentials manually
+                                      </span>
+                                    </div>
+                                  </div>
+                                </>
                               )}
-                            </div>
-                            <div className="relative">
-                              <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t" />
-                              </div>
-                              <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-background px-2 text-muted-foreground">
-                                  Or enter credentials manually
-                                </span>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                        {renderCredentialFields()}
+                              {renderCredentialFields()}
+                            </>
+                          );
+                        })()}
                       </div>
                     </TabsContent>
                     <TabsContent value="config" className="pt-6">
