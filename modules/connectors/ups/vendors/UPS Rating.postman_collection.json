@@ -1,0 +1,747 @@
+{
+  "info": {
+    "_postman_id": "ac21ef26-eecf-4841-b0b2-737d615b6809",
+    "name": "UPS Rating",
+    "description": "Compare delivery services and shipping rates to determine the best option.\n\nVisit the full [UPS Rating Documentation](https://developer.ups.com/api/reference?loc=en_US#tag/Rating_other) for more details!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20452875"
+  },
+  "item": [
+    {
+      "name": "Simple Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n                    \"RateRequest\": {\r\n                      \"Request\": {\r\n                        \"TransactionReference\": {\r\n                          \"CustomerContext\": \"CustomerContext\",\r\n                          \"TransactionIdentifier\": \"TransactionIdentifier\"\r\n                        }\r\n                      },\r\n                      \"Shipment\": {\r\n                        \"Shipper\": {\r\n                          \"Name\": \"ShipperName\",\r\n                          \"ShipperNumber\": {{shipper_number}},\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipperAddressLine\",\r\n                              \"ShipperAddressLine\",\r\n                              \"ShipperAddressLine\"\r\n                            ],\r\n                            \"City\": \"TIMONIUM\",\r\n                            \"StateProvinceCode\": \"MD\",\r\n                            \"PostalCode\": \"21093\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"ShipTo\": {\r\n                          \"Name\": \"ShipToName\",\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipToAddressLine\",\r\n                              \"ShipToAddressLine\",\r\n                              \"ShipToAddressLine\"\r\n                            ],\r\n                            \"City\": \"Alpharetta\",\r\n                            \"StateProvinceCode\": \"GA\",\r\n                            \"PostalCode\": \"30005\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"ShipFrom\": {\r\n                          \"Name\": \"ShipFromName\",\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipFromAddressLine\",\r\n                              \"ShipFromAddressLine\",\r\n                              \"ShipFromAddressLine\"\r\n                            ],\r\n                            \"City\": \"TIMONIUM\",\r\n                            \"StateProvinceCode\": \"MD\",\r\n                            \"PostalCode\": \"21093\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"PaymentDetails\": {\r\n                          \"ShipmentCharge\": {\r\n                            \"Type\": \"01\",\r\n                            \"BillShipper\": {\r\n                              \"AccountNumber\": {{shipper_number}}\r\n                            }\r\n                          }\r\n                        },\r\n                        \"Service\": {\r\n                          \"Code\": \"03\",\r\n                          \"Description\": \"Ground\"\r\n                        },\r\n                        \"NumOfPieces\": \"1\",\r\n                        \"Package\": {\r\n                          \"SimpleRate\": {\r\n                            \"Description\": \"SimpleRateDescription\",\r\n                            \"Code\": \"XS\"\r\n                          },\r\n                          \"PackagingType\": {\r\n                            \"Code\": \"02\",\r\n                            \"Description\": \"Packaging\"\r\n                          },\r\n                          \"Dimensions\": {\r\n                            \"UnitOfMeasurement\": {\r\n                              \"Code\": \"IN\",\r\n                              \"Description\": \"Inches\"\r\n                            },\r\n                            \"Length\": \"5\",\r\n                            \"Width\": \"5\",\r\n                            \"Height\": \"5\"\r\n                          },\r\n                          \"PackageWeight\": {\r\n                            \"UnitOfMeasurement\": {\r\n                              \"Code\": \"LBS\",\r\n                              \"Description\": \"Pounds\"\r\n                            },\r\n                            \"Weight\": \"1\"\r\n                          }\r\n                        }\r\n                      }\r\n                    }\r\n                  }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        },
+        "description": "This HTTP POST request takes in origin information (**ShipFrom**), destination information (**ShipTo**), and **Package** information and returns the estimated cost of that movement."
+      },
+      "response": [
+        {
+          "name": "Simple Rate Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transID",
+                "value": "",
+                "type": "text",
+                "description": "An identifier unique to the request. Length 32"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "type": "text",
+                "description": "An identifier of the client/source application that is making the request.Length 512"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n                    \"RateRequest\": {\r\n                      \"Request\": {\r\n                        \"TransactionReference\": {\r\n                          \"CustomerContext\": \"CustomerContext\",\r\n                          \"TransactionIdentifier\": \"TransactionIdentifier\"\r\n                        }\r\n                      },\r\n                      \"Shipment\": {\r\n                        \"Shipper\": {\r\n                          \"Name\": \"ShipperName\",\r\n                          \"ShipperNumber\": {{shipper_number}},\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipperAddressLine\",\r\n                              \"ShipperAddressLine\",\r\n                              \"ShipperAddressLine\"\r\n                            ],\r\n                            \"City\": \"TIMONIUM\",\r\n                            \"StateProvinceCode\": \"MD\",\r\n                            \"PostalCode\": \"21093\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"ShipTo\": {\r\n                          \"Name\": \"ShipToName\",\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipToAddressLine\",\r\n                              \"ShipToAddressLine\",\r\n                              \"ShipToAddressLine\"\r\n                            ],\r\n                            \"City\": \"Alpharetta\",\r\n                            \"StateProvinceCode\": \"GA\",\r\n                            \"PostalCode\": \"30005\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"ShipFrom\": {\r\n                          \"Name\": \"ShipFromName\",\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipFromAddressLine\",\r\n                              \"ShipFromAddressLine\",\r\n                              \"ShipFromAddressLine\"\r\n                            ],\r\n                            \"City\": \"TIMONIUM\",\r\n                            \"StateProvinceCode\": \"MD\",\r\n                            \"PostalCode\": \"21093\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"PaymentDetails\": {\r\n                          \"ShipmentCharge\": {\r\n                            \"Type\": \"01\",\r\n                            \"BillShipper\": {\r\n                              \"AccountNumber\": {{shipper_number}}\r\n                            }\r\n                          }\r\n                        },\r\n                        \"Service\": {\r\n                          \"Code\": \"03\",\r\n                          \"Description\": \"Ground\"\r\n                        },\r\n                        \"NumOfPieces\": \"1\",\r\n                        \"Package\": {\r\n                          \"SimpleRate\": {\r\n                            \"Description\": \"SimpleRateDescription\",\r\n                            \"Code\": \"XS\"\r\n                          },\r\n                          \"PackagingType\": {\r\n                            \"Code\": \"02\",\r\n                            \"Description\": \"Packaging\"\r\n                          },\r\n                          \"Dimensions\": {\r\n                            \"UnitOfMeasurement\": {\r\n                              \"Code\": \"IN\",\r\n                              \"Description\": \"Inches\"\r\n                            },\r\n                            \"Length\": \"5\",\r\n                            \"Width\": \"5\",\r\n                            \"Height\": \"5\"\r\n                          },\r\n                          \"PackageWeight\": {\r\n                            \"UnitOfMeasurement\": {\r\n                              \"Code\": \"LBS\",\r\n                              \"Description\": \"Pounds\"\r\n                            },\r\n                            \"Weight\": \"1\"\r\n                          }\r\n                        }\r\n                      }\r\n                    }\r\n                  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "rating",
+                ":version",
+                ":requestoption"
+              ],
+              "query": [
+                {
+                  "key": "additionalinfo",
+                  "value": "",
+                  "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+                }
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Supported values: v1, v1601, v1607, v1701, v1707, v2108, v2205."
+                },
+                {
+                  "key": "requestoption",
+                  "value": "rate",
+                  "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"RateResponse\": {\n        \"RatedShipment\": {\n            \"BaseServiceCharge\": {\n                \"CurrencyCode\": \"USD\",\n                \"MonetaryValue\": \"0.00\"\n            },\n            \"BillingWeight\": {\n                \"UnitOfMeasurement\": {\n                    \"Code\": \"LBS\",\n                    \"Description\": \"Pounds\"\n                },\n                \"Weight\": \"7.0\"\n            },\n            \"RatedPackage\": {\n                \"BaseServiceCharge\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"14.46\"\n                },\n                \"BillingWeight\": {\n                    \"UnitOfMeasurement\": {\n                        \"Code\": \"LBS\",\n                        \"Description\": \"Pounds\"\n                    },\n                    \"Weight\": \"7.0\"\n                },\n                \"ItemizedCharges\": [\n                    {\n                        \"Code\": \"376\",\n                        \"CurrencyCode\": \"USD\",\n                        \"MonetaryValue\": \"0.00\",\n                        \"SubType\": \"Urban\"\n                    },\n                    {\n                        \"Code\": \"375\",\n                        \"CurrencyCode\": \"USD\",\n                        \"MonetaryValue\": \"1.08\"\n                    }\n                ],\n                \"ServiceOptionsCharges\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"0.00\"\n                },\n                \"TotalCharges\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"15.54\"\n                },\n                \"TransportationCharges\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"15.54\"\n                },\n                \"Weight\": \"7.0\"\n            },\n            \"RatedShipmentAlert\": [\n                {\n                    \"Code\": \"110971\",\n                    \"Description\": \"Your invoice may vary from the displayed reference rates\"\n                },\n                {\n                    \"Code\": \"111531\",\n                    \"Description\": \"No user level discount applied for this shipment.\"\n                }\n            ],\n            \"Service\": {\n                \"Code\": \"03\",\n                \"Description\": \"\"\n            },\n            \"ServiceOptionsCharges\": {\n                \"CurrencyCode\": \"USD\",\n                \"MonetaryValue\": \"0.00\"\n            },\n            \"TotalCharges\": {\n                \"CurrencyCode\": \"USD\",\n                \"MonetaryValue\": \"15.54\"\n            },\n            \"TransportationCharges\": {\n                \"CurrencyCode\": \"USD\",\n                \"MonetaryValue\": \"15.54\"\n            }\n        },\n        \"Response\": {\n            \"Alert\": [\n                {\n                    \"Code\": \"110971\",\n                    \"Description\": \"Your invoice may vary from the displayed reference rates\"\n                },\n                {\n                    \"Code\": \"111531\",\n                    \"Description\": \"No user level discount applied for this shipment.\"\n                }\n            ],\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            },\n            \"TransactionReference\": {\n                \"CustomerContext\": \"trans123\",\n                \"TransactionIdentifier\": \"xwsspta11bl6GskNQPcV4b\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Negotiated Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"RateRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"Verify Success response\",\r\n                \"TransactionIdentifier\": \"?\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_Name\",\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"Morris Road\",\r\n                        \"Morris Road\",\r\n                        \"Morris Road\"\r\n                    ],\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"France Company\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"103 avenue des Champs-Elysees\",\r\n                        \"103 avenue des Champs-Elysees\",\r\n                        \"103 avenue des Champs-Elysees\"\r\n                    ],\r\n                    \"City\": \"STARZACH\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\"\r\n                    ],\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentDetails\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillThirdParty\": {\r\n                        \"AttentionName\": \"Name\",\r\n                        \"Name\": \"TR\",\r\n                        \"AccountNumber\": \"\",\r\n                        \"Address\": {\r\n                            \"ResidentialAddressIndicator\": \"Y\",\r\n                            \"AddressLine\": \"AdressLine\",\r\n                            \"City\": \"NEW YORK\",\r\n                            \"StateProvinceCode\": \"NY\",\r\n                            \"PostalCode\": \"21093\",\r\n                            \"CountryCode\": \"US\"\r\n                        }\r\n                    }\r\n                }\r\n            },\r\n            \"ShipmentRatingOptions\": {\r\n                \"TPFCNegotiatedRatesIndicator\": \"Y\",\r\n                \"NegotiatedRatesIndicator\": \"Y\"\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"UPS Worldwide Economy DDU\"\r\n            },\r\n            \"NumOfPieces\": \"10\",\r\n            \"Package\": {\r\n                \"PackagingType\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Packaging\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"Inches\"\r\n                    },\r\n                    \"Length\": \"5\",\r\n                    \"Width\": \"5\",\r\n                    \"Height\": \"5\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\",\r\n                        \"Description\": \"Ounces\"\r\n                    },\r\n                    \"Weight\": \"0.1\"\r\n                },\r\n                \"OversizeIndicator\": \"X\",\r\n                \"MinimumBillableWeightIndicator\": \"X\"\r\n            }\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "International Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"RateRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"Verify Success response\",\r\n                \"TransactionIdentifier\": \"?\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_Name\",\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"Morris Road\",\r\n                        \"Morris Road\",\r\n                        \"Morris Road\"\r\n                    ],\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"France Company\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"103 avenue des Champs-Elysees\",\r\n                        \"103 avenue des Champs-Elysees\",\r\n                        \"103 avenue des Champs-Elysees\"\r\n                    ],\r\n                    \"City\": \"STARZACH\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"72181\",\r\n                    \"CountryCode\": \"DE\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\"\r\n                    ],\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentDetails\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"072\",\r\n                \"Description\": \"UPS Worldwide Economy DDP\"\r\n            },\r\n            \"NumOfPieces\": \"10\",\r\n            \"Package\": {\r\n                \"PackagingType\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Packaging\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"Inches\"\r\n                    },\r\n                    \"Length\": \"5\",\r\n                    \"Width\": \"5\",\r\n                    \"Height\": \"5\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\",\r\n                        \"Description\": \"LBS\"\r\n                    },\r\n                    \"Weight\": \"0.1\"\r\n                },\r\n                \"OversizeIndicator\": \"X\",\r\n                \"MinimumBillableWeightIndicator\": \"X\"\r\n            },\r\n            \"ShipmentRatingOptions\": {\r\n                \"NegotiatedRatesIndicator\": \"Y\"\r\n            }\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Multi-Piece Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"RateRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"CustomerContext\",\r\n                \"TransactionIdentifier\": \"TransactionIdentifier\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Shipper\": {\r\n                \"Name\": \"ShipperName\",\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipperAddressLine\",\r\n                        \"ShipperAddressLine\",\r\n                        \"ShipperAddressLine\"\r\n                    ],\r\n                    \"City\": \"TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipToName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipToAddressLine\",\r\n                        \"ShipToAddressLine\",\r\n                        \"ShipToAddressLine\"\r\n                    ],\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\"\r\n                    ],\r\n                    \"City\": \"TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentDetails\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"Ground\"\r\n            },\r\n            \"ShipmentTotalWeight\": {\r\n                \"UnitOfMeasurement\": {\r\n                    \"Code\": \"LBS\",\r\n                    \"Description\": \"Pounds\"\r\n                },\r\n                \"Weight\": \"3\"\r\n            },\r\n            \"NumOfPieces\": \"2\",\r\n            \"Package\": [\r\n                {\r\n                    \"PackagingType\": {\r\n                        \"Code\": \"02\",\r\n                        \"Description\": \"Packaging\"\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"IN\",\r\n                            \"Description\": \"Inches\"\r\n                        },\r\n                        \"Length\": \"5\",\r\n                        \"Width\": \"5\",\r\n                        \"Height\": \"5\"\r\n                    },\r\n                    \"PackageWeight\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"LBS\",\r\n                            \"Description\": \"Pounds\"\r\n                        },\r\n                        \"Weight\": \"1\"\r\n                    }\r\n                },\r\n                {\r\n                    \"PackagingType\": {\r\n                        \"Code\": \"02\",\r\n                        \"Description\": \"Packaging\"\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"IN\",\r\n                            \"Description\": \"Inches\"\r\n                        },\r\n                        \"Length\": \"4\",\r\n                        \"Width\": \"4\",\r\n                        \"Height\": \"4\"\r\n                    },\r\n                    \"PackageWeight\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"LBS\",\r\n                            \"Description\": \"Pounds\"\r\n                        },\r\n                        \"Weight\": \"2\"\r\n                    }\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TPFC Negotiated Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n                    \"RateRequest\": {\r\n                      \"Request\": {\r\n                        \"TransactionReference\": {\r\n                          \"CustomerContext\": \"CustomerContext\",\r\n                          \"TransactionIdentifier\": \"TransactionIdentifier\"\r\n                        }\r\n                      },\r\n                      \"Shipment\": {\r\n                        \"Shipper\": {\r\n                          \"Name\": \"ShipperName\",\r\n                          \"ShipperNumber\": {{shipper_number}},\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipperAddressLine\",\r\n                              \"ShipperAddressLine\",\r\n                              \"ShipperAddressLine\"\r\n                            ],\r\n                            \"City\": \"TIMONIUM\",\r\n                            \"StateProvinceCode\": \"MD\",\r\n                            \"PostalCode\": \"21093\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"ShipTo\": {\r\n                          \"Name\": \"ShipToName\",\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipToAddressLine\",\r\n                              \"ShipToAddressLine\",\r\n                              \"ShipToAddressLine\"\r\n                            ],\r\n                            \"City\": \"Alpharetta\",\r\n                            \"StateProvinceCode\": \"GA\",\r\n                            \"PostalCode\": \"30005\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"ShipFrom\": {\r\n                          \"Name\": \"ShipFromName\",\r\n                          \"Address\": {\r\n                            \"AddressLine\": [\r\n                              \"ShipFromAddressLine\",\r\n                              \"ShipFromAddressLine\",\r\n                              \"ShipFromAddressLine\"\r\n                            ],\r\n                            \"City\": \"TIMONIUM\",\r\n                            \"StateProvinceCode\": \"MD\",\r\n                            \"PostalCode\": \"21093\",\r\n                            \"CountryCode\": \"US\"\r\n                          }\r\n                        },\r\n                        \"PaymentDetails\": [\r\n                          {\r\n                            \"ShipmentCharge\": {\r\n                              \"Type\": \"01\",\r\n                              \"BillThirdParty\": {\r\n                                \"AttentionName\": \"AttentionName\",\r\n                                \"Name\": \"Name\",\r\n                                \"AccountNumber\": \"ThirdPartyAccount\",\r\n                                \"Address\": {\r\n                                  \"AddressLine\": \"AdressLine\",\r\n                                  \"City\": \"NEW YORK\",\r\n                                  \"StateProvinceCode\": \"NY\",\r\n                                  \"PostalCode\": \"21093\",\r\n                                  \"CountryCode\": \"US\"\r\n                                }\r\n                              }\r\n                            }\r\n                          },\r\n                          {\r\n                            \"ShipmentCharge\": {\r\n                              \"Type\": \"02\",\r\n                              \"BillThirdParty\": {\r\n                                \"AttentionName\": \"AttentionName\",\r\n                                \"Name\": \"Name\",\r\n                                \"AccountNumber\": \"ThirdPartyAccount\",\r\n                                \"Address\": {\r\n                                  \"AddressLine\": \"AdressLine\",\r\n                                  \"City\": \"NEW YORK\",\r\n                                  \"StateProvinceCode\": \"NY\",\r\n                                  \"PostalCode\": \"21093\",\r\n                                  \"CountryCode\": \"US\"\r\n                                }\r\n                              }\r\n                            }\r\n                          }\r\n                        ],\r\n                        \"Service\": {\r\n                          \"Code\": \"03\",\r\n                          \"Description\": \"Ground\"\r\n                        },\r\n                        \"NumOfPieces\": \"1\",\r\n                        \"Package\": {\r\n                          \"PackagingType\": {\r\n                            \"Code\": \"02\",\r\n                            \"Description\": \"Packaging\"\r\n                          },\r\n                          \"Dimensions\": {\r\n                            \"UnitOfMeasurement\": {\r\n                              \"Code\": \"IN\",\r\n                              \"Description\": \"Inches\"\r\n                            },\r\n                            \"Length\": \"5\",\r\n                            \"Width\": \"5\",\r\n                            \"Height\": \"5\"\r\n                          },\r\n                          \"PackageWeight\": {\r\n                            \"UnitOfMeasurement\": {\r\n                              \"Code\": \"LBS\",\r\n                              \"Description\": \"Pounds\"\r\n                            },\r\n                            \"Weight\": \"1\"\r\n                          },\r\n                          \"ShipmentRatingOptions\": {\r\n                            \"TPFCNegotiatedRatesIndicator\": \"Y\"\r\n                          }\r\n                        }\r\n                      }\r\n                    }\r\n                  }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Time In Transit Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"RateRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"CustomerContext\",\r\n                \"TransactionIdentifier\": \"TransactionIdentifier\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Shipper\": {\r\n                \"Shipper\": {\r\n                    \"Name\": \"ShipperName\",\r\n                    \"ShipperNumber\": {{shipper_number}},\r\n                    \"Address\": {\r\n                        \"AddressLine\": [\r\n                            \"ShipperAddressLine\",\r\n                            \"ShipperAddressLine\",\r\n                            \"ShipperAddressLine\"\r\n                        ],\r\n                        \"City\": \"TIMONIUM\",\r\n                        \"StateProvinceCode\": \"MD\",\r\n                        \"PostalCode\": \"21093\",\r\n                        \"CountryCode\": \"US\"\r\n                    }\r\n                },\r\n                \"ShipTo\": {\r\n                    \"Name\": \"ShipToName\",\r\n                    \"Address\": {\r\n                        \"AddressLine\": [\r\n                            \"ShipToAddressLine\",\r\n                            \"ShipToAddressLine\",\r\n                            \"ShipToAddressLine\"\r\n                        ],\r\n                        \"City\": \"Alpharetta\",\r\n                        \"StateProvinceCode\": \"GA\",\r\n                        \"PostalCode\": \"30005\",\r\n                        \"CountryCode\": \"US\"\r\n                    }\r\n                },\r\n                \"ShipFrom\": {\r\n                    \"Name\": \"ShipFromName\",\r\n                    \"Address\": {\r\n                        \"AddressLine\": [\r\n                            \"ShipFromAddressLine\",\r\n                            \"ShipFromAddressLine\",\r\n                            \"ShipFromAddressLine\"\r\n                        ],\r\n                        \"City\": \"TIMONIUM\",\r\n                        \"StateProvinceCode\": \"MD\",\r\n                        \"PostalCode\": \"21093\",\r\n                        \"CountryCode\": \"US\"\r\n                    }\r\n                },\r\n                \"PaymentDetails\": {\r\n                    \"ShipmentCharge\": {\r\n                        \"Type\": \"01\",\r\n                        \"BillShipper\": {\r\n                            \"AccountNumber\": \"ShipperNumber\"\r\n                        }\r\n                    }\r\n                },\r\n                \"Service\": {\r\n                    \"Code\": \"03\",\r\n                    \"Description\": \"Ground\"\r\n                },\r\n                \"NumOfPieces\": \"1\",\r\n                \"Package\": {\r\n                    \"PackagingType\": {\r\n                        \"Code\": \"02\",\r\n                        \"Description\": \"Packaging\"\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"IN\",\r\n                            \"Description\": \"Inches\"\r\n                        },\r\n                        \"Length\": \"5\",\r\n                        \"Width\": \"5\",\r\n                        \"Height\": \"5\"\r\n                    },\r\n                    \"PackageWeight\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"LBS\",\r\n                            \"Description\": \"Pounds\"\r\n                        },\r\n                        \"Weight\": \"1\"\r\n                    }\r\n                },\r\n                \"DeliveryTimeInformation\": {\r\n                    \"PackageBillType\": \"03\",\r\n                    \"Pickup\": {\r\n                        \"Date\": \"20230101\",\r\n                        \"Time\": \"1000\"\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=timeintransit",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "timeintransit",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Standard Account Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"RateRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"CustomerContext\",\r\n                \"TransactionIdentifier\": \"TransactionIdentifier\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Shipper\": {\r\n                \"Name\": \"ShipperName\",\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipperAddressLine\",\r\n                        \"ShipperAddressLine\",\r\n                        \"ShipperAddressLine\"\r\n                    ],\r\n                    \"City\": \"TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipToName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipToAddressLine\",\r\n                        \"ShipToAddressLine\",\r\n                        \"ShipToAddressLine\"\r\n                    ],\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\"\r\n                    ],\r\n                    \"City\": \"TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentDetails\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"Ground\"\r\n            },\r\n            \"NumOfPieces\": \"1\",\r\n            \"Package\": {\r\n                \"PackagingType\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Packaging\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"Inches\"\r\n                    },\r\n                    \"Length\": \"5\",\r\n                    \"Width\": \"5\",\r\n                    \"Height\": \"5\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\",\r\n                        \"Description\": \"Pounds\"\r\n                    },\r\n                    \"Weight\": \"1\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Published Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"RateRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"CustomerContext\",\r\n                \"TransactionIdentifier\": \"TransactionIdentifier\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Shipper\": {\r\n                \"Name\": \"ShipperName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipperAddressLine\",\r\n                        \"ShipperAddressLine\",\r\n                        \"ShipperAddressLine\"\r\n                    ],\r\n                    \"City\": \"TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipToName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipToAddressLine\",\r\n                        \"ShipToAddressLine\",\r\n                        \"ShipToAddressLine\"\r\n                    ],\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\",\r\n                        \"ShipFromAddressLine\"\r\n                    ],\r\n                    \"City\": \"TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"Ground\"\r\n            },\r\n            \"NumOfPieces\": \"1\",\r\n            \"Package\": {\r\n                \"PackagingType\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Packaging\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"Inches\"\r\n                    },\r\n                    \"Length\": \"5\",\r\n                    \"Width\": \"5\",\r\n                    \"Height\": \"5\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\",\r\n                        \"Description\": \"Pounds\"\r\n                    },\r\n                    \"Weight\": \"1\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Rate with Dry Ice Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transID",
+            "value": "",
+            "type": "text",
+            "description": "An identifier unique to the request. Length 32"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "type": "text",
+            "description": "An identifier of the client/source application that is making the request.Length 512"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"RateRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"  n          \",\r\n                \"TransactionIdentifier\": \"\"\r\n            }\r\n        },\r\n        \"CustomerClassification\": {\r\n            \"Code\": \"01\",\r\n            \"Description\": \"Daily Rates\"\r\n        },\r\n        \"Shipment\": {\r\n            \"ShipmentCharges\": {\r\n                \"BillShipper\": {\r\n                    \"AccountNumber\": \"\"\r\n                }\r\n            },\r\n            \"DeliveryTimeInformation\": {\r\n                \"PackageBillType\": \"07\"\r\n            },\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_Name19\",\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Address\": {\r\n                    \"AddressLine\": \"Shipper_AddressLine\",\r\n                    \"City\": \"New York\",\r\n                    \"StateProvinceCode\": \"NY\",\r\n                    \"PostalCode\": \"10013\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"Shiptoname\",\r\n                \"Address\": {\r\n                    \"ResidentialAddressIndicator\": \"x\",\r\n                    \"AddressLine\": \"12380 Morris Road\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"Shipfromname\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"Shipfromaddress\",\r\n                    \"City\": \"Texas\",\r\n                    \"StateProvinceCode\": \"TX\",\r\n                    \"PostalCode\": \"77040\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"01\",\r\n                \"Description\": \"Next Day Air\"\r\n            },\r\n            \"ShipmentRatingOptions\": {\r\n                \"NegotiatedRatesIndicator\": \"Y\"\r\n            },\r\n            \"Package\": {\r\n                \"LargePackageIndicator\": \"X\",\r\n                \"PackagingType\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Package\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"INCHES\"\r\n                    },\r\n                    \"Length\": \"6\",\r\n                    \"Width\": \"7\",\r\n                    \"Height\": \"8\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\"\r\n                    },\r\n                    \"Weight\": \"10\"\r\n                },\r\n                \"PackageServiceOptions\": {\r\n                    \"DryIce\": {\r\n                        \"RegulationSet\": \"CFR\",\r\n                        \"DryIceWeight\": {\r\n                            \"UnitOfMeasurement\": {\r\n                                \"Code\": \"01\",\r\n                                \"Description\": \"LBS\"\r\n                            },\r\n                            \"Weight\": \"5\"\r\n                        },\r\n                        \"AuditRequired\": \"\"\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rating/:version/:requestoption?additionalinfo=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "rating",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "additionalinfo",
+              "value": "",
+              "description": "Valid Values: timeintransit = The server rates with transit time information combined with requestoption in URL. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            },
+            {
+              "key": "requestoption",
+              "value": "rate",
+              "description": "Valid Values: Rate = The server rates (The default Request option is Rate if a Request Option is not provided). Shop = The server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses. Rate is the only valid request option for Ground Freight Pricing requests."
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// if (Number(pm.globals.get(\"expiry_time\")) < (new Date().getTime() + 10000)) {",
+          "//     const jwtt = {",
+          "//     url: `${pm.environment.get(\"base_url\")}security/v1/oauth/token`,",
+          "//     method: 'POST',",
+          "//     header: {",
+          "//         'Content-Type': 'application/x-www-form-urlencoded',",
+          "//         'Authorization': \"Basic \" + btoa(pm.globals.get(\"client_id\") + \":\" + pm.globals.get(\"client_secret\"))",
+          "//     },",
+          "//     body: {",
+          "//         mode: 'urlencoded',",
+          "//         urlencoded: [",
+          "//             {key: 'grant_type', value: 'client_credentials'},",
+          "//             {key: 'scope', value: '<scope details>'}",
+          "//         ]",
+          "//     }",
+          "// }",
+          "// pm.sendRequest(jwtt, (err, res) => {",
+          "//         if (err != null) {",
+          "//             throw new Error(\"Access Denied.\");",
+          "//         } else {",
+          "//             pm.globals.set(\"bearer_token\", res.json().access_token);",
+          "//             pm.globals.set(\"expiry_time\", Number(res.json().issued_at) + (Number(res.json().expires_in) * 1000));",
+          "//         }",
+          "//     })",
+          "// }"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://wwwcie.ups.com",
+      "type": "string"
+    }
+  ]
+}

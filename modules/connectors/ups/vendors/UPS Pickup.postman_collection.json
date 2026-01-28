@@ -1,0 +1,714 @@
+{
+  "info": {
+    "_postman_id": "d7dd9c32-e6de-47ec-9a91-35312b92931e",
+    "name": "UPS Pickup",
+    "description": "Enables customers to schedule the pickup of a processed package, or new shipment.\n\nVisit the full [UPS Pickup Documentation](https://developer.ups.com/api/reference?loc=en_US#tag/Pickup_other) for more details!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20452875"
+  },
+  "item": [
+    {
+      "name": "Pickup Rate Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"PickupRateRequest\": {\r\n      \"PickupAddress\": {\r\n          \"AddressLine\": \"315 Saddle Bridge Drive\",\r\n          \"City\": \"Allendale\",\r\n          \"StateProvince\": \"NJ\",\r\n          \"PostalCode\": \"07401\",\r\n          \"CountryCode\": \"US\",\r\n          \"ResidentialIndicator\": \"Y\"\r\n        },\r\n      \"AlternateAddressIndicator\": \"N\",\r\n      \"ServiceDateOption\": \"02\",\r\n      \"PickupDateInfo\": {\r\n          \"CloseTime\": \"2000\",\r\n          \"ReadyTime\": \"900\",\r\n          \"PickupDate\": \"20160405\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/pickup/:pickuptype",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "pickup",
+            ":pickuptype"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v1",
+              "description": "Version of the API. Valid values v1"
+            },
+            {
+              "key": "pickuptype",
+              "value": "smart",
+              "description": "\"oncall\" \"smart\" or \"both\""
+            }
+          ]
+        },
+        "description": "This HTTP POST request returns the estimated rates of an on-call pickup when a **PickupAddress** and **PickupDateInfo** are provided."
+      },
+      "response": [
+        {
+          "name": "Pickup Rate Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"PickupRateRequest\": {\r\n      \"PickupAddress\": {\r\n          \"AddressLine\": \"315 Saddle Bridge Drive\",\r\n          \"City\": \"Allendale\",\r\n          \"StateProvince\": \"NJ\",\r\n          \"PostalCode\": \"07401\",\r\n          \"CountryCode\": \"US\",\r\n          \"ResidentialIndicator\": \"Y\"\r\n        },\r\n      \"AlternateAddressIndicator\": \"N\",\r\n      \"ServiceDateOption\": \"02\",\r\n      \"PickupDateInfo\": {\r\n          \"CloseTime\": \"2000\",\r\n          \"ReadyTime\": \"900\",\r\n          \"PickupDate\": \"20160405\"\r\n        }\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/shipments/:version/pickup/:pickuptype",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                ":version",
+                "pickup",
+                ":pickuptype"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Version of the API. Valid values v1"
+                },
+                {
+                  "key": "pickuptype",
+                  "value": "smart",
+                  "description": "\"oncall\" \"smart\" or \"both\""
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"PickupRateResponse\": {\n        \"RateResult\": {\n            \"ChargeDetail\": [\n                {\n                    \"ChargeAmount\": \"5.80\",\n                    \"ChargeCode\": \"B\",\n                    \"ChargeDescription\": \"BASE CHARGE\",\n                    \"TaxAmount\": \"0.00\"\n                },\n                {\n                    \"ChargeAmount\": \"0.00\",\n                    \"ChargeCode\": \"S\",\n                    \"ChargeDescription\": \"REMOTE AREA SURCHARGE\",\n                    \"TaxAmount\": \"0.00\"\n                },\n                {\n                    \"ChargeAmount\": \"3.95\",\n                    \"ChargeCode\": \"S\",\n                    \"ChargeDescription\": \"RESIDENTIAL SURCHARGE\",\n                    \"TaxAmount\": \"0.00\"\n                },\n                {\n                    \"ChargeAmount\": \"0.71\",\n                    \"ChargeCode\": \"S\",\n                    \"ChargeDescription\": \"FUEL SURCHARGE\",\n                    \"TaxAmount\": \"0.00\"\n                }\n            ],\n            \"CurrencyCode\": \"USD\",\n            \"GrandTotalOfAllCharge\": \"10.46\",\n            \"RateType\": \"FD\"\n        },\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Pickup Pending Status Example Request",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "AccountNumber",
+            "value": "{{shipper_number}}",
+            "description": "The specific account number that belongs to the shipper.Length 6 or 10",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/pickup/:pickuptype",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "pickup",
+            ":pickuptype"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v1",
+              "description": "version of API e.g v1"
+            },
+            {
+              "key": "pickuptype",
+              "value": "oncall",
+              "description": "\"oncall\" \"smart\" or \"both\""
+            }
+          ]
+        },
+        "description": "This HTTP GET request will return the current status of al pending pickups for a given **AccountNumber**."
+      },
+      "response": [
+        {
+          "name": "Pickup Pending Status Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "AccountNumber",
+                "value": "{{shipper_number}}",
+                "description": "The specific account number that belongs to the shipper.Length 6 or 10",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/shipments/:version/pickup/:pickuptype",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                ":version",
+                "pickup",
+                ":pickuptype"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "version of API e.g v1"
+                },
+                {
+                  "key": "pickuptype",
+                  "value": "oncall",
+                  "description": "\"oncall\" \"smart\" or \"both\""
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"PickupPendingStatusResponse\": {\n        \"PendingStatus\": {\n            \"BillingCode\": \"01\",\n            \"ContactName\": \"Test user\",\n            \"OnCallStatusCode\": \"012\",\n            \"PickupStatusMessage\": \"Your pickup request is being processed\",\n            \"PickupType\": \"01\",\n            \"PRN\": \"2928H4MPOLF\",\n            \"ReferenceNumber\": \"\",\n            \"ServiceDate\": \"20170907\"\n        },\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            },\n            \"TransactionReference\": {\n                \"CustomerContext\": \"Your Customer Context\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Pickup Cancel Example Request",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "transId",
+            "value": "testing",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "Prn",
+            "value": "",
+            "description": "The pickup equest number (PRN) generated by UPS pickup system. Required if CancelBy = prn.Length 26",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/pickup/:CancelBy",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "pickup",
+            ":CancelBy"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "version of API e.g v2403"
+            },
+            {
+              "key": "CancelBy",
+              "value": "01",
+              "description": "Valid Values: 01 = AccountNumber, 02 = PRN"
+            }
+          ]
+        },
+        "description": "This HTTP DELETE request is used to can a given on-call pickup based on the **Prn** provided."
+      },
+      "response": [
+        {
+          "name": "Pickup Cancel Success",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "transId",
+                "value": "testing",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "Prn",
+                "value": "",
+                "description": "The pickup equest number (PRN) generated by UPS pickup system. Required if CancelBy = prn.Length 26",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/shipments/:version/pickup/:CancelBy",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                ":version",
+                "pickup",
+                ":CancelBy"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "version of API e.g v1"
+                },
+                {
+                  "key": "CancelBy",
+                  "value": "01",
+                  "description": "Valid Values: 01 = AccountNumber, 02 = PRN"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"PickupCancelResponse\": {\n        \"PickupType\": \"01\",\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            },\n            \"TransactionReference\": {\n                \"CustomerContext\": \"\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Pickup Creation Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"PickupCreationRequest\": {\r\n        \"RatePickupIndicator\": \"N\",\r\n        \"Shipper\": {\r\n            \"Account\": {\r\n                \"AccountNumber\": {{shipper_number}},\r\n                \"AccountCountryCode\": \"US\"\r\n            }\r\n        },\r\n        \"PickupDateInfo\": {\r\n            \"CloseTime\": \"1400\",\r\n            \"ReadyTime\": \"0500\",\r\n            \"PickupDate\": \"20221214\"\r\n        },\r\n        \"PickupAddress\": {\r\n            \"CompanyName\": \"Pickup Proxy\",\r\n            \"ContactName\": \"Pickup Manager\",\r\n            \"AddressLine\": \"123 Main Street\",\r\n            \"Room\": \"R01\",\r\n            \"Floor\": \"2\",\r\n            \"City\": \"Allendale\",\r\n            \"StateProvince\": \"NJ\",\r\n            \"Urbanization\": \"\",\r\n            \"PostalCode\": \"07401\",\r\n            \"CountryCode\": \"US\",\r\n            \"ResidentialIndicator\": \"Y\",\r\n            \"PickupPoint\": \"Lobby\",\r\n            \"Phone\": {\r\n                \"Number\": \"5555555555\",\r\n                \"Extension\": \"911\"\r\n            }\r\n        },\r\n        \"AlternateAddressIndicator\": \"Y\",\r\n        \"PickupPiece\": [\r\n            {\r\n                \"ServiceCode\": \"001\",\r\n                \"Quantity\": \"27\",\r\n                \"DestinationCountryCode\": \"US\",\r\n                \"ContainerCode\": \"01\"\r\n            },\r\n            {\r\n                \"ServiceCode\": \"012\",\r\n                \"Quantity\": \"4\",\r\n                \"DestinationCountryCode\": \"US\",\r\n                \"ContainerCode\": \"01\"\r\n            }\r\n        ],\r\n        \"TotalWeight\": {\r\n            \"Weight\": \"5.5\",\r\n            \"UnitOfMeasurement\": \"LBS\"\r\n        },\r\n        \"OverweightIndicator\": \"N\",\r\n        \"PaymentMethod\": \"01\",\r\n        \"SpecialInstruction\": \"Test \",\r\n        \"ReferenceNumber\": \"CreatePickupRef\",\r\n        \"Notification\": {\r\n            \"ConfirmationEmailAddress\": \"test@ups.com\",\r\n            \"UndeliverableEmailAddress\": \"test@ups.com\"\r\n        },\r\n        \"CSR\": {\r\n            \"ProfileId\": \"1 Q83 122\",\r\n            \"ProfileCountryCode\": \"US\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/pickupcreation/:version/pickup",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "pickupcreation",
+            ":version",
+            "pickup"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Version of the API. Valid values: v2403"
+            }
+          ]
+        },
+        "description": "This HTTP POST request allows the user to create a UPS pickup by providing a location to pickup from, the **PickupAddress**, and what is being picked up, the **PickupPiece**. The **PRN** for the event is returned in the response."
+      },
+      "response": [
+        {
+          "name": "Pickup Creation Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"PickupCreationRequest\": {\r\n        \"RatePickupIndicator\": \"N\",\r\n        \"Shipper\": {\r\n            \"Account\": {\r\n                \"AccountNumber\": {{shipper_number}},\r\n                \"AccountCountryCode\": \"US\"\r\n            }\r\n        },\r\n        \"PickupDateInfo\": {\r\n            \"CloseTime\": \"1400\",\r\n            \"ReadyTime\": \"0500\",\r\n            \"PickupDate\": \"20221214\"\r\n        },\r\n        \"PickupAddress\": {\r\n            \"CompanyName\": \"Pickup Proxy\",\r\n            \"ContactName\": \"Pickup Manager\",\r\n            \"AddressLine\": \"123 Main Street\",\r\n            \"Room\": \"R01\",\r\n            \"Floor\": \"2\",\r\n            \"City\": \"Allendale\",\r\n            \"StateProvince\": \"NJ\",\r\n            \"Urbanization\": \"\",\r\n            \"PostalCode\": \"07401\",\r\n            \"CountryCode\": \"US\",\r\n            \"ResidentialIndicator\": \"Y\",\r\n            \"PickupPoint\": \"Lobby\",\r\n            \"Phone\": {\r\n                \"Number\": \"5555555555\",\r\n                \"Extension\": \"911\"\r\n            }\r\n        },\r\n        \"AlternateAddressIndicator\": \"Y\",\r\n        \"PickupPiece\": [\r\n            {\r\n                \"ServiceCode\": \"001\",\r\n                \"Quantity\": \"27\",\r\n                \"DestinationCountryCode\": \"US\",\r\n                \"ContainerCode\": \"01\"\r\n            },\r\n            {\r\n                \"ServiceCode\": \"012\",\r\n                \"Quantity\": \"4\",\r\n                \"DestinationCountryCode\": \"US\",\r\n                \"ContainerCode\": \"01\"\r\n            }\r\n        ],\r\n        \"TotalWeight\": {\r\n            \"Weight\": \"5.5\",\r\n            \"UnitOfMeasurement\": \"LBS\"\r\n        },\r\n        \"OverweightIndicator\": \"N\",\r\n        \"PaymentMethod\": \"01\",\r\n        \"SpecialInstruction\": \"Test \",\r\n        \"ReferenceNumber\": \"CreatePickupRef\",\r\n        \"Notification\": {\r\n            \"ConfirmationEmailAddress\": \"test@ups.com\",\r\n            \"UndeliverableEmailAddress\": \"test@ups.com\"\r\n        },\r\n        \"CSR\": {\r\n            \"ProfileId\": \"1 Q83 122\",\r\n            \"ProfileCountryCode\": \"US\"\r\n        }\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pickupcreation/:version/pickup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "pickupcreation",
+                ":version",
+                "pickup"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Version of the API. Valid values: v1 v1607 v1707."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"PickupCreationResponse\": {\n        \"PRN\": \"2930O2BER9R\",\n        \"RateStatus\": {\n            \"Code\": \"04\",\n            \"Description\": \"Rate not requested\"\n        },\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Pickup Get Political Division 1 List Example Request",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/pickup/:version/countries/:countrycode",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "pickup",
+            ":version",
+            "countries",
+            ":countrycode"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v1",
+              "description": "Version of API e.g. v1"
+            },
+            {
+              "key": "countrycode",
+              "value": "US",
+              "description": "Country or terrirtory for which the list will represent.Length 2"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Pickup Get Service Center Facilities Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"PickupGetServiceCenterFacilitiesRequest\": {\r\n        \"PickupPiece\": {\r\n            \"ServiceCode\": \"096\",\r\n            \"ContainerCode\": \"03\"\r\n        },\r\n        \"DestinationAddress\": {\r\n            \"City\": \"Allendale\",\r\n            \"StateProvince\": \"NJ\",\r\n            \"PostalCode\": \"07401\",\r\n            \"CountryCode\": \"US\"\r\n        },\r\n        \"OriginAddress\": {\r\n            \"City\": \"LONDON\",\r\n            \"PostalCode\": \"W84PL\",\r\n            \"CountryCode\": \"GB\"\r\n        },\r\n        \"Locale\": \"en_HK\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/pickup/:version/servicecenterlocations",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "pickup",
+            ":version",
+            "servicecenterlocations"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v1",
+              "description": "Version of API e.g v1"
+            }
+          ]
+        },
+        "description": "This HTTP POST request returns UPS Facility location information by providing a **DestinationAddress** and **OriginAddress** to define a shipping lane."
+      },
+      "response": [
+        {
+          "name": "Pickup Get Service Center Facilities Example Request",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"PickupGetServiceCenterFacilitiesRequest\": {\r\n        \"PickupPiece\": {\r\n            \"ServiceCode\": \"096\",\r\n            \"ContainerCode\": \"03\"\r\n        },\r\n        \"DestinationAddress\": {\r\n            \"City\": \"Allendale\",\r\n            \"StateProvince\": \"NJ\",\r\n            \"PostalCode\": \"07401\",\r\n            \"CountryCode\": \"US\"\r\n        },\r\n        \"OriginAddress\": {\r\n            \"City\": \"LONDON\",\r\n            \"PostalCode\": \"W84PL\",\r\n            \"CountryCode\": \"GB\"\r\n        },\r\n        \"Locale\": \"en_HK\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pickup/:version/servicecenterlocations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "pickup",
+                ":version",
+                "servicecenterlocations"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Version of API e.g v1"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"PickupGetServiceCenterFacilitiesResponse\": {\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            }\n        },\n        \"ServiceCenterLocation\": {\n            \"DropOffFacilities\": {\n                \"Address\": {\n                    \"AddressLine\": \"5356 GEORGIA HWY 85, SUITE 100\",\n                    \"City\": \"FOREST PARK\",\n                    \"CountryCode\": \"US\",\n                    \"PostalCode\": \"30297\",\n                    \"StateProvince\": \"GA\"\n                },\n                \"FacilityTime\": {\n                    \"DayOfWeek\": [\n                        {\n                            \"CloseHours\": \"2100\",\n                            \"Day\": \"Monday\",\n                            \"LastDrop\": \"1930\",\n                            \"OpenHours\": \"0600\"\n                        },\n                        {\n                            \"CloseHours\": \"0200\",\n                            \"Day\": \"Tuesday\",\n                            \"LastDrop\": \"1930\",\n                            \"OpenHours\": \"0630\"\n                        },\n                        {\n                            \"CloseHours\": \"0200\",\n                            \"Day\": \"Wednesday\",\n                            \"LastDrop\": \"1930\",\n                            \"OpenHours\": \"0630\"\n                        },\n                        {\n                            \"CloseHours\": \"0200\",\n                            \"Day\": \"Thursday\",\n                            \"LastDrop\": \"1930\",\n                            \"OpenHours\": \"0630\"\n                        },\n                        {\n                            \"CloseHours\": \"0200\",\n                            \"Day\": \"Friday\",\n                            \"LastDrop\": \"1930\",\n                            \"OpenHours\": \"0630\"\n                        },\n                        {\n                            \"CloseHours\": \"1000\",\n                            \"Day\": \"Saturday\",\n                            \"LastDrop\": \"1000\",\n                            \"OpenHours\": \"0800\"\n                        }\n                    ]\n                },\n                \"Name\": \"ATLANTA\",\n                \"Phone\": \"8004238848\",\n                \"SLIC\": \"0973\",\n                \"Timezone\": \"America/New_York\",\n                \"Type\": \"FRT\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://wwwcie.ups.com",
+      "type": "string"
+    }
+  ]
+}

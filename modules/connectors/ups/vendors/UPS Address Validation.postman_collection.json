@@ -1,0 +1,207 @@
+{
+  "info": {
+    "_postman_id": "f2cd7176-bd05-48ea-bb72-b359a11cff09",
+    "name": "UPS Address Validation",
+    "description": "Validates addresses at the street level in the United States and Puerto Rico.\n\nVisit the [UPS Address Validation Documentation ](https://developer.ups.com/api/reference?loc=en_US#tag/AddressValidation_other) for more details.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20452875"
+  },
+  "item": [
+    {
+      "name": "Address Validation Example Request",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"XAVRequest\": {\r\n        \"AddressKeyFormat\": {\r\n            \"ConsigneeName\": \"RITZ CAMERA CENTERS-1749\",\r\n            \"BuildingName\": \"Innoplex\",\r\n            \"AddressLine\": [\r\n                \"26601 ALISO CREEK ROAD\",\r\n                \"STE D\",\r\n                \"ALISO VIEJO TOWN CENTER\"\r\n            ],\r\n            \"Region\": \"ROSWELL,GA,30076-1521\",\r\n            \"PoliticalDivision2\": \"ALISO VIEJO\",\r\n            \"PoliticalDivision1\": \"CA\",\r\n            \"PostcodePrimaryLow\": \"92656\",\r\n            \"PostcodeExtendedLow\": \"1521\",\r\n            \"Urbanization\": \"porto arundal\",\r\n            \"CountryCode\": \"US\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/addressvalidation/:version/:requestoption?regionalrequestindicator=True&maximumcandidatelistsize=20",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "addressvalidation",
+            ":version",
+            ":requestoption"
+          ],
+          "query": [
+            {
+              "key": "regionalrequestindicator",
+              "value": "True",
+              "description": "Valid values: True or False. \nIf True, either the region element or any combination of Political Division 1, Political Division 2, PostcodePrimaryLow and the PostcodeExtendedLow fields will be recognized for validation in addition to the urbanization element. \nIf False or no indicator, street level address validation is provided"
+            },
+            {
+              "key": "maximumcandidatelistsize",
+              "value": "20",
+              "description": "Valid values: 0 – 50\nThe maximum number of Candidates to return for this request. If not provided, the default size of 15 is returned."
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2",
+              "description": "Identifies the version of the API. Valid values: v2"
+            },
+            {
+              "key": "requestoption",
+              "value": "1",
+              "description": "Valid values: 1 - Address Validation 2 - Address Classification 3 - Address Validation and Address Classification."
+            }
+          ]
+        },
+        "description": "This POST request can be used to validate a street level address in either the US or PR. Address classification can be done by changing the **requestoption** path parameter."
+      },
+      "response": [
+        {
+          "name": "Address Validation Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"XAVRequest\": {\r\n        \"AddressKeyFormat\": {\r\n            \"ConsigneeName\": \"RITZ CAMERA CENTERS-1749\",\r\n            \"BuildingName\": \"Innoplex\",\r\n            \"AddressLine\": [\r\n                \"26601 ALISO CREEK ROAD\",\r\n                \"STE D\",\r\n                \"ALISO VIEJO TOWN CENTER\"\r\n            ],\r\n            \"Region\": \"ROSWELL,GA,30076-1521\",\r\n            \"PoliticalDivision2\": \"ALISO VIEJO\",\r\n            \"PoliticalDivision1\": \"CA\",\r\n            \"PostcodePrimaryLow\": \"92656\",\r\n            \"PostcodeExtendedLow\": \"1521\",\r\n            \"Urbanization\": \"porto arundal\",\r\n            \"CountryCode\": \"US\"\r\n        }\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/addressvalidation/:version/:requestoption?regionalrequestindicator=True&maximumcandidatelistsize=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "addressvalidation",
+                ":version",
+                ":requestoption"
+              ],
+              "query": [
+                {
+                  "key": "regionalrequestindicator",
+                  "value": "True",
+                  "description": "Valid values: True or False. \nIf True, either the region element or any combination of Political Division 1, Political Division 2, PostcodePrimaryLow and the PostcodeExtendedLow fields will be recognized for validation in addition to the urbanization element. \nIf False or no indicator, street level address validation is provided"
+                },
+                {
+                  "key": "maximumcandidatelistsize",
+                  "value": "20",
+                  "description": "Valid values: 0 – 50\nThe maximum number of Candidates to return for this request. If not provided, the default size of 15 is returned."
+                }
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Identifies the version of the API. Valid values: v1"
+                },
+                {
+                  "key": "requestoption",
+                  "value": "1",
+                  "description": "Valid values: 1 - Address Validation 2 - Address Classification 3 - Address Validation and Address Classification."
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"XAVResponse\": {\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            }\n        },\n        \"ValidAddressIndicator\": \"\",\n        \"Candidate\": {\n            \"AddressKeyFormat\": {\n                \"AddressLine\": \"12380 MORRIS RD\",\n                \"PoliticalDivision2\": \"ALPHARETTA\",\n                \"PoliticalDivision1\": \"GA\",\n                \"PostcodePrimaryLow\": \"30005\",\n                \"PostcodeExtendedLow\": \"4616\",\n                \"Region\": \"ALPHARETTA GA 30005-4616\",\n                \"CountryCode\": \"US\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (Number(pm.globals.get(\"expiry_time\")) < (new Date().getTime() + 10000)) {",
+          "    const jwtt = {",
+          "    url: `${pm.environment.get(\"base_url\")}security/v1/oauth/token`,",
+          "    method: 'POST',",
+          "    header: {",
+          "        'Content-Type': 'application/x-www-form-urlencoded',",
+          "        'Authorization': \"Basic \" + btoa(pm.globals.get(\"client_id\") + \":\" + pm.globals.get(\"client_secret\"))",
+          "    },",
+          "    body: {",
+          "        mode: 'urlencoded',",
+          "        urlencoded: [",
+          "            {key: 'grant_type', value: 'client_credentials'},",
+          "            {key: 'scope', value: '<scope details>'}",
+          "        ]",
+          "    }",
+          "}",
+          "pm.sendRequest(jwtt, (err, res) => {",
+          "        if (err != null) {",
+          "            throw new Error(\"Access Denied\");",
+          "        } else {",
+          "            pm.globals.set(\"bearer_token\", res.json().access_token);",
+          "            pm.globals.set(\"expiry_time\", Number(res.json().issued_at) + (Number(res.json().expires_in) * 1000));",
+          "        }",
+          "    })",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://wwwcie.ups.com",
+      "type": "string"
+    }
+  ]
+}
