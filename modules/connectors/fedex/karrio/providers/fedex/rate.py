@@ -242,7 +242,7 @@ def rate_request(
                             height=package.height.map(
                                 provider_units.MeasurementOptions
                             ).value,
-                            units=package.dimension_unit.value,
+                            units=dim_unit.value,
                         )
                         if (
                             # only set dimensions if the packaging type is set to your_packaging
