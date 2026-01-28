@@ -1,4 +1,5 @@
 import pydoc
+import re
 import typing
 from django.conf import settings
 from django.http import JsonResponse
@@ -42,7 +43,21 @@ class LoggingMixin(mixins.LoggingMixin):
                 else self.log["response"]
             )
         )
+        # Derive entity_id for log correlation.
         entity_id = failsafe(lambda: DP.to_dict(response)["id"])
+
+        if not entity_id:
+            path = self.log.get("path") or getattr(self.request, "path", "")
+            if path:
+                match = re.search(r"/v1/(shipments|pickups|trackers|orders)/([a-z0-9_]+)/", path)
+                if match:
+                    entity_id = match.group(2)
+
+        if not entity_id:
+            tracer = failsafe(lambda: getattr(self.request, "tracer", None))
+            if tracer and hasattr(tracer, "context"):
+                entity_id = tracer.context.get("object_id")
+
         test_mode = failsafe(lambda: self.request.test_mode)
 
         if test_mode is None and '"test_mode": true' in (self.log["response"] or ""):

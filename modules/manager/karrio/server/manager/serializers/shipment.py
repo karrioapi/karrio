@@ -199,6 +199,8 @@ class ShipmentSerializer(ShipmentData):
 
         # Buy label if preferred service is selected, shipping method applied, shipping rules applied, or skip rate fetching
         if (service and fetch_rates) or apply_shipping_method_flag or apply_shipping_rules or skip_rate_fetching:
+            from karrio.server.tracing.utils import set_tracing_context
+            set_tracing_context(object_id=shipment.id)
             return buy_shipment_label(
                 shipment,
                 context=context,
