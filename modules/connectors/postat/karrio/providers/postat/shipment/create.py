@@ -17,9 +17,14 @@ def parse_shipment_response(
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     result = lib.find_element("ImportShipmentResult", response, first=True)
+
+    # Check if we have valid tracking codes before extracting
+    code_elements = lib.find_element("Code", result) if result is not None else []
+    has_tracking = any(code.text for code in (code_elements or []))
+
     shipment = (
         _extract_details(response, settings)
-        if result is not None and not any(messages)
+        if result is not None and has_tracking and not any(messages)
         else None
     )
 
@@ -86,62 +91,62 @@ def shipment_request(
     )
 
     # Build request using generated schema types
-    request = lib.Envelope(
-        Body=lib.Body(
-            postat.ImportShipmentType(
-                row=[
-                    postat.ImportShipmentRowType(
-                        ClientID=settings.client_id,
-                        OrgUnitID=settings.org_unit_id,
-                        OrgUnitGuid=settings.org_unit_guid,
-                        DeliveryServiceThirdPartyID=service,
-                        CustomDataBit1=False,
-                        OUShipperReference1=payload.reference,
-                        ColloList=postat.ColloListType(
-                            ColloRow=[
-                                postat.ColloRowType(
-                                    Weight=package.weight.KG,
-                                    Length=package.length.CM,
-                                    Width=package.width.CM,
-                                    Height=package.height.CM,
-                                )
-                                for package in packages
-                            ]
-                        ),
-                        OURecipientAddress=postat.AddressType(
-                            Name1=recipient.company_name or recipient.person_name,
-                            Name2=(
-                                recipient.person_name
-                                if recipient.company_name
-                                else None
-                            ),
-                            AddressLine1=recipient.street,
-                            AddressLine2=recipient.address_line2,
-                            HouseNumber=recipient.street_number,
-                            PostalCode=recipient.postal_code,
-                            City=recipient.city,
-                            CountryID=recipient.country_code,
-                            Email=recipient.email,
-                            Tel1=recipient.phone_number,
-                        ),
-                        OUShipperAddress=postat.AddressType(
-                            Name1=shipper.company_name or shipper.person_name,
-                            Name2=shipper.person_name if shipper.company_name else None,
-                            AddressLine1=shipper.street,
-                            AddressLine2=shipper.address_line2,
-                            PostalCode=shipper.postal_code,
-                            City=shipper.city,
-                            CountryID=shipper.country_code,
-                        ),
-                        PrinterObject=postat.PrinterObjectType(
-                            LabelFormatID=label_size,
-                            LanguageID=label_format,
-                            PaperLayoutID=paper_layout,
-                        ),
-                    )
-                ]
+    import_shipment = postat.ImportShipmentType(
+        row=[
+            postat.ImportShipmentRowType(
+                ClientID=settings.client_id,
+                OrgUnitID=settings.org_unit_id,
+                OrgUnitGuid=settings.org_unit_guid,
+                DeliveryServiceThirdPartyID=service,
+                CustomDataBit1=False,
+                OUShipperReference1=payload.reference,
+                ColloList=postat.ColloListType(
+                    ColloRow=[
+                        postat.ColloRowType(
+                            Weight=package.weight.KG,
+                            Length=package.length.CM,
+                            Width=package.width.CM,
+                            Height=package.height.CM,
+                        )
+                        for package in packages
+                    ]
+                ),
+                OURecipientAddress=postat.AddressType(
+                    Name1=recipient.company_name or recipient.person_name,
+                    Name2=(
+                        recipient.person_name
+                        if recipient.company_name
+                        else None
+                    ),
+                    AddressLine1=recipient.street,
+                    AddressLine2=recipient.address_line2,
+                    HouseNumber=recipient.street_number,
+                    PostalCode=recipient.postal_code,
+                    City=recipient.city,
+                    CountryID=recipient.country_code,
+                    Email=recipient.email,
+                    Tel1=recipient.phone_number,
+                ),
+                OUShipperAddress=postat.AddressType(
+                    Name1=shipper.company_name or shipper.person_name,
+                    Name2=shipper.person_name if shipper.company_name else None,
+                    AddressLine1=shipper.street,
+                    AddressLine2=shipper.address_line2,
+                    PostalCode=shipper.postal_code,
+                    City=shipper.city,
+                    CountryID=shipper.country_code,
+                ),
+                PrinterObject=postat.PrinterObjectType(
+                    LabelFormatID=label_size,
+                    LanguageID=label_format,
+                    PaperLayoutID=paper_layout,
+                ),
             )
-        )
+        ]
     )
+    # Set proper element name for PostAT API (ImportShipment, not ImportShipmentType)
+    import_shipment.original_tagname_ = "ImportShipment"
 
-    return lib.Serializable(request, lib.envelope_serializer)
+    request = lib.Envelope(Body=lib.Body(import_shipment))
+
+    return lib.Serializable(request, provider_utils.standard_request_serializer)
