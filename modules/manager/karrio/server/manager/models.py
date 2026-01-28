@@ -4,6 +4,7 @@ import django.conf as conf
 import django.urls as urls
 import django.db.models as models
 import django.db.models.fields as fields
+from django.contrib.contenttypes.fields import GenericRelation
 
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
@@ -189,6 +190,12 @@ class Address(core.OwnedEntity):
         help_text="Template metadata: label, is_default, usage[]",
     )
 
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="address",
+    )
+
     @property
     def is_template(self) -> bool:
         """Check if this address is a template (has meta with label)."""
@@ -287,6 +294,12 @@ class Parcel(core.OwnedEntity):
         null=True,
         default=functools.partial(utils.identity, value={}),
         help_text="Template metadata: label, is_default",
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="parcel",
     )
 
     def delete(self, *args, **kwargs):
@@ -520,6 +533,12 @@ class Pickup(core.OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     shipments = models.ManyToManyField("Shipment", related_name="shipment_pickup")
 
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="pickup",
+    )
+
     def delete(self, *args, **kwargs):
         return super().delete(*args, **kwargs)
 
@@ -653,6 +672,12 @@ class Tracking(core.OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     shipment = models.OneToOneField(
         "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="tracking",
     )
 
     @property
@@ -880,6 +905,12 @@ class Shipment(core.OwnedEntity):
         related_name="shipments",
         blank=True,
         null=True,
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="shipment",
     )
 
     def delete(self, *args, **kwargs):

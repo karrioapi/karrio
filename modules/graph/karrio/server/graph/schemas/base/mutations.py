@@ -490,7 +490,12 @@ class DeleteMutation(utils.BaseMutation):
         if validator:
             validator(instance, context=info.context)
 
+        # Get the shipment FK if it exists and is a direct relationship
+        # (not a GenericRelation/RelatedManager)
         shipment = getattr(instance, "shipment", None)
+        if shipment is not None and not isinstance(shipment, manager.Shipment):
+            shipment = None
+
         instance.delete(keep_parents=True)
 
         if shipment is not None:

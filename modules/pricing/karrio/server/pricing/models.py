@@ -2,6 +2,7 @@ import typing
 import functools
 import django.db.models as models
 import django.core.validators as validators
+from django.contrib.contenttypes.fields import GenericRelation
 
 import karrio.lib as lib
 import karrio.core.models as karrio
@@ -127,6 +128,12 @@ class Markup(core.Entity):
         default=dict,
         blank=True,
         help_text="Additional metadata for the markup",
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="markup",
     )
 
     @property

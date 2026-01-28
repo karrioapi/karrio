@@ -627,6 +627,8 @@ class CreateMetafieldInput(utils.BaseInput):
     type: utils.MetafieldTypeEnum
     value: typing.Optional[utils.JSON] = strawberry.UNSET
     is_required: typing.Optional[bool] = strawberry.UNSET
+    object_type: typing.Optional[str] = strawberry.UNSET
+    object_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -643,6 +645,8 @@ class MetafieldInput(utils.BaseInput):
     value: typing.Optional[utils.JSON] = strawberry.UNSET
     is_required: typing.Optional[bool] = strawberry.UNSET
     id: typing.Optional[str] = strawberry.UNSET
+    object_type: typing.Optional[str] = strawberry.UNSET
+    object_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -650,6 +654,8 @@ class MetafieldFilter(utils.Paginated):
     key: typing.Optional[str] = strawberry.UNSET
     type: typing.Optional[utils.MetafieldTypeEnum] = strawberry.UNSET
     is_required: typing.Optional[bool] = strawberry.UNSET
+    object_type: typing.Optional[str] = strawberry.UNSET
+    object_id: typing.Optional[str] = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────

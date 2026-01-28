@@ -377,12 +377,19 @@ class SystemUsageType:
 
 @strawberry.type
 class MetafieldType:
-    object_type: str
     id: str
     key: str
     is_required: bool
     type: utils.MetafieldTypeEnum
     value: typing.Optional[utils.JSON] = None
+    object_id: typing.Optional[str] = None
+
+    @strawberry.field
+    def object_type(self: core.Metafield) -> str:
+        """Return the model name of the attached object, or 'metafield' if not attached."""
+        if self.content_type:
+            return self.content_type.model
+        return "metafield"
 
     @strawberry.field
     def parsed_value(self: core.Metafield) -> typing.Optional[utils.JSON]:
@@ -400,6 +407,8 @@ class MetafieldType:
         info,
         filter: typing.Optional[inputs.MetafieldFilter] = strawberry.UNSET,
     ) -> utils.Connection["MetafieldType"]:
+        from django.contrib.contenttypes.models import ContentType
+
         _filter = filter if not utils.is_unset(filter) else inputs.MetafieldFilter()
         queryset = core.Metafield.access_by(info.context.request)
 
@@ -410,6 +419,14 @@ class MetafieldType:
             queryset = queryset.filter(type=_filter.type)
         if not utils.is_unset(_filter.is_required):
             queryset = queryset.filter(is_required=_filter.is_required)
+        if not utils.is_unset(_filter.object_type):
+            ct = ContentType.objects.filter(model=_filter.object_type).first()
+            if ct:
+                queryset = queryset.filter(content_type=ct)
+            else:
+                queryset = queryset.none()
+        if not utils.is_unset(_filter.object_id):
+            queryset = queryset.filter(object_id=_filter.object_id)
 
         return utils.paginated_connection(queryset, **_filter.pagination())
 

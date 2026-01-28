@@ -11,6 +11,7 @@ import django.conf as conf
 import django.forms as forms
 import django.db.models as models
 import django.core.cache as caching
+from django.contrib.contenttypes.fields import GenericRelation
 
 import karrio.lib as lib
 import karrio.sdk as karrio
@@ -173,6 +174,12 @@ class CarrierConnection(core.OwnedEntity):
         null=True,
         default=core.field_default({}),
         help_text="User defined metadata",
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="carrier_connection",
     )
 
     def __str__(self):
