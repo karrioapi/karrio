@@ -1,0 +1,615 @@
+# ============================================================================
+# DHL Parcel DE Shipment Tracking API - Test Commands & Documentation
+# ============================================================================
+#
+# This file documents the DHL Parcel DE dedicated Tracking API, which is
+# different from the DHL Universal Tracking API currently used by Karrio.
+#
+# Official Documentation:
+#   https://developer.dhl.com/api-reference/dhl-parcel-de-shipment-tracking-post-parcel-germany
+#
+# ============================================================================
+# MIGRATION CONTEXT
+# ============================================================================
+#
+# Current Implementation (Karrio):
+#   - Uses DHL Universal Tracking API
+#   - Endpoint: https://api-eu.dhl.com/track/shipments
+#   - Format: JSON with query parameters
+#   - Auth: DHL-API-Key header only
+#
+# Proposed Implementation (DHL Parcel DE Dedicated Tracking):
+#   - Uses dedicated Parcel DE Tracking API
+#   - Endpoint: https://api-eu.dhl.com/parcel/de/tracking/v0/shipments (production)
+#              https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments (sandbox)
+#   - Format: XML in query parameter
+#   - Auth: HTTP Basic Auth (API key:secret) + XML credentials (appname:password)
+#
+# Benefits of Migration:
+#   - More detailed tracking data for German parcels
+#   - Proof of delivery (signature) retrieval
+#   - Full sender/recipient information for business customers
+#   - Estimated delivery date/time windows
+#   - Better event codes and status descriptions
+#
+# ============================================================================
+# AUTHENTICATION
+# ============================================================================
+#
+# Two-layer authentication required:
+#
+# 1. API Gateway Authentication (HTTP Basic Auth):
+#    - Username: Your DHL API Key (from DHL Developer Portal)
+#    - Password: Your DHL API Secret (from DHL Developer Portal)
+#    - Header format: Authorization: Basic base64(api_key:api_secret)
+#
+# 2. Tracking Service Authentication (in XML):
+#    - appname: Your username from DHL Business Customer Portal
+#    - password: Your password from DHL Business Customer Portal
+#
+# Sandbox Credentials:
+#   - API Key/Secret: Register at https://developer.dhl.com and create an app
+#   - XML Credentials: appname="zt12345", password="geheim" (hardcoded for sandbox)
+#
+# ============================================================================
+# ENVIRONMENT VARIABLES (Required)
+# ============================================================================
+#
+# Before running tests, set these environment variables:
+#
+#   export DHL_PARCEL_DE_API_KEY="your-api-key-from-developer-portal"
+#   export DHL_PARCEL_DE_API_SECRET="your-api-secret-from-developer-portal"
+#
+# For production, also set:
+#   export DHL_PARCEL_DE_USERNAME="your-business-portal-username"
+#   export DHL_PARCEL_DE_PASSWORD="your-business-portal-password"
+#
+# ============================================================================
+# API ENDPOINTS
+# ============================================================================
+#
+# Sandbox:    https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments
+# Production: https://api-eu.dhl.com/parcel/de/tracking/v0/shipments
+#
+# ============================================================================
+# AVAILABLE OPERATIONS
+# ============================================================================
+#
+# 1. d-get-piece-detail (Business Customers)
+#    - Full shipment details + event history
+#    - Up to 20 tracking numbers per request (semicolon separated)
+#    - Includes sender/recipient data
+#    - Supports zip-code for privacy-restricted data
+#
+# 2. d-get-signature (Business Customers)
+#    - Retrieves proof of delivery (POD) / recipient signature
+#    - Returns GIF image in hexadecimal format
+#    - Only for delivered shipments (delivery-event-flag=1, dest-country=DE)
+#
+# 3. get-status-for-public-user (Public Query)
+#    - Same data as public DHL tracking (www.dhl.de)
+#    - No sensitive information
+#    - Up to 15 tracking numbers per request
+#    - NOTE: NOT supported in sandbox - production only!
+#
+# ============================================================================
+# TEST TRACKING NUMBERS (Sandbox Only)
+# ============================================================================
+#
+# These tracking numbers are pre-configured in the DHL sandbox:
+#
+#   00340434161094015902  - Delivered (signature available)
+#   00340434161094022115  - Delivered (signature available)
+#   00340434161094027318  - Available for testing
+#   00340434161094032954  - Available for testing
+#   00340434161094038253  - Available for testing
+#   00340434161094042557  - Available for testing
+#
+# All sandbox shipments show delivery to: 53113 Bonn, Germany
+#
+# ============================================================================
+# CURL COMMAND EXAMPLES
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# 1. d-get-piece-detail - Single Tracking Number (English)
+# ----------------------------------------------------------------------------
+# Expected: Full tracking details with event history
+
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094015902" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ----------------------------------------------------------------------------
+# 2. d-get-piece-detail - With Zip Code (For Additional Data)
+# ----------------------------------------------------------------------------
+# Providing zip code enables access to privacy-restricted data
+
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094015902" zip-code="53113" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ----------------------------------------------------------------------------
+# 3. d-get-piece-detail - Multiple Tracking Numbers
+# ----------------------------------------------------------------------------
+# Up to 20 tracking numbers, semicolon separated
+# Note: Zip code NOT supported with multiple tracking numbers
+
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094015902;00340434161094022115;00340434161094027318" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ----------------------------------------------------------------------------
+# 4. d-get-piece-detail - German Language
+# ----------------------------------------------------------------------------
+
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="de" password="geheim" piece-code="00340434161094015902" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ----------------------------------------------------------------------------
+# 5. d-get-piece-detail - With Date Range Filter
+# ----------------------------------------------------------------------------
+
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094015902" from-date="2016-01-01" to-date="2016-12-31" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ----------------------------------------------------------------------------
+# 6. d-get-signature - Proof of Delivery / Signature
+# ----------------------------------------------------------------------------
+# Returns GIF image in hexadecimal format (474946383961... = GIF89a header)
+# Convert hex to binary to get the actual image
+
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094015902" request="d-get-signature" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ----------------------------------------------------------------------------
+# 7. get-status-for-public-user - Public Query (PRODUCTION ONLY)
+# ----------------------------------------------------------------------------
+# NOTE: This operation does NOT work in sandbox!
+# Use in production with production credentials
+
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="${DHL_PARCEL_DE_USERNAME}" password="${DHL_PARCEL_DE_PASSWORD}" request="get-status-for-public-user" language-code="en" piece-code="TRACKING_NUMBER" zip-code="ZIP_CODE" />' \
+  --get \
+  'https://api-eu.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ============================================================================
+# BATCH TEST - All Sandbox Tracking Numbers
+# ============================================================================
+
+echo "=== Testing Tracking Number 1: 00340434161094015902 ==="
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094015902" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+echo ""
+echo "=== Testing Tracking Number 2: 00340434161094022115 ==="
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094022115" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+echo ""
+echo "=== Testing Tracking Number 3: 00340434161094027318 ==="
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094027318" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+echo ""
+echo "=== Testing Tracking Number 4: 00340434161094032954 ==="
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094032954" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+echo ""
+echo "=== Testing Tracking Number 5: 00340434161094038253 ==="
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094038253" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+echo ""
+echo "=== Testing Tracking Number 6: 00340434161094042557 ==="
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094042557" request="d-get-piece-detail" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+echo ""
+echo "=== Testing Signature Retrieval ==="
+curl -s -X GET \
+  -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+  --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="zt12345" language-code="en" password="geheim" piece-code="00340434161094015902" request="d-get-signature" />' \
+  --get \
+  'https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments'
+
+# ============================================================================
+# SAMPLE RESPONSES (From Live Testing on 2026-01-28)
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# d-get-piece-detail Response (Successful - HTTP 200)
+# ----------------------------------------------------------------------------
+#
+# <?xml version="1.0" encoding="UTF-8"?>
+# <data name="piece-shipment-list" code="0" request-id="...">
+#   <data name="piece-shipment"
+#     error-status="0"
+#     piece-id="a5aed21b-d9f4-4396-a322-f6f5f00f8039"
+#     shipment-code=""
+#     piece-identifier="340434161094015902"
+#     identifier-type="2"
+#     piece-code="00340434161094015902"
+#     event-location=""
+#     event-country="DE"
+#     status-liste="0"
+#     status-timestamp="18.03.2016 10:02"
+#     status="The shipment has been successfully delivered"
+#     short-status="Delivery successful"
+#     recipient-name="Kraemer"
+#     recipient-street="Heinrich-Brüning-Str. 7"
+#     recipient-city="53113 Bonn"
+#     pan-recipient-name="Deutsche Post DHL"
+#     pan-recipient-street="Heinrich-Brüning-Str. 7"
+#     pan-recipient-city="53113 Bonn"
+#     pan-recipient-address="Heinrich-Brüning-Str. 7 53113 Bonn"
+#     pan-recipient-postalcode="53113"
+#     shipper-name="No sender data has been transferred to DHL."
+#     shipper-street=""
+#     shipper-city=""
+#     shipper-address=""
+#     product-code="00"
+#     product-key=""
+#     product-name="DHL PAKET (parcel)"
+#     delivery-event-flag="1"
+#     recipient-id="5"
+#     recipient-id-text="different person present"
+#     upu=""
+#     shipment-length="0.0"
+#     shipment-width="0.0"
+#     shipment-height="0.0"
+#     shipment-weight="0.0"
+#     international-flag="0"
+#     division="DPEED"
+#     ice="DLVRD"
+#     ric="OTHER"
+#     standard-event-code="ZU"
+#     dest-country="DE"
+#     origin-country="DE"
+#     searched-piece-code="00340434161094015902"
+#     searched-ref-no=""
+#     piece-customer-reference=""
+#     shipment-customer-reference=""
+#     leitcode=""
+#     routing-code-ean=""
+#     matchcode=""
+#     domestic-id=""
+#     airway-bill-number=""
+#     ruecksendung="false"
+#     pslz-nr="5066935271"
+#     order-preferred-delivery-day="false"
+#   >
+#     <data name="piece-event-list"
+#       piece-identifier="340434161094015902"
+#       piece-id="a5aed21b-d9f4-4396-a322-f6f5f00f8039"
+#       leitcode="5311304400700"
+#       routing-code-ean=""
+#       ruecksendung="false"
+#       pslz-nr="5066935271"
+#       order-preferred-delivery-day="false"
+#     >
+#       <data name="piece-event"
+#         event-timestamp="17.03.2016 11:44"
+#         event-status="The shipment has been posted by the sender at the PACKSTATION"
+#         event-text="The shipment has been posted by the sender at the PACKSTATION"
+#         event-short-status="Posting at PACKSTATION"
+#         ice="SHRCU"
+#         ric="PCKST"
+#         event-location="Bremen"
+#         event-country="Germany"
+#         standard-event-code="ES"
+#         ruecksendung="false"
+#       />
+#       <data name="piece-event"
+#         event-timestamp="17.03.2016 13:54"
+#         event-status="The shipment has been taken from the PACKSTATION for onward transportation"
+#         event-text="The shipment has been taken from the PACKSTATION for onward transportation"
+#         event-short-status="Transportation to parcel center of origin"
+#         ice="LDTMV"
+#         ric="MVMTV"
+#         event-location="Bremen"
+#         event-country="Germany"
+#         standard-event-code="AA"
+#         ruecksendung="false"
+#       />
+#       <data name="piece-event"
+#         event-timestamp="17.03.2016 13:55"
+#         event-status="The shipment has been picked up"
+#         event-text="The shipment has been picked up"
+#         event-short-status="Pick-up successful"
+#         ice="PCKDU"
+#         ric="PUBCR"
+#         event-location=""
+#         event-country="Germany"
+#         standard-event-code="AE"
+#         ruecksendung="false"
+#       />
+#       <data name="piece-event"
+#         event-timestamp="17.03.2016 15:51"
+#         event-status="The shipment has been processed in the parcel center of origin"
+#         event-text="The shipment has been processed in the parcel center of origin"
+#         event-short-status="Parcel center of origin"
+#         ice="LDTMV"
+#         ric="MVMTV"
+#         event-location="Bremen"
+#         event-country="Germany"
+#         standard-event-code="AA"
+#         ruecksendung="false"
+#       />
+#       <data name="piece-event"
+#         event-timestamp="18.03.2016 03:32"
+#         event-status="The shipment has been processed in the destination parcel center"
+#         event-text="The shipment has been processed in the destination parcel center"
+#         event-short-status="Destination parcel center"
+#         ice="ULFMV"
+#         ric="UNLDD"
+#         event-location="Neuwied"
+#         event-country="Germany"
+#         standard-event-code="EE"
+#         ruecksendung="false"
+#       />
+#       <data name="piece-event"
+#         event-timestamp="18.03.2016 09:02"
+#         event-status="The shipment has been loaded onto the delivery vehicle"
+#         event-text="The shipment has been loaded onto the delivery vehicle"
+#         event-short-status="In delivery"
+#         ice="SRTED"
+#         ric="NRQRD"
+#         event-location=""
+#         event-country=""
+#         standard-event-code="PO"
+#         ruecksendung="false"
+#       />
+#       <data name="piece-event"
+#         event-timestamp="18.03.2016 10:02"
+#         event-status="The shipment has been successfully delivered"
+#         event-text="The shipment has been successfully delivered"
+#         event-short-status="Delivery successful"
+#         ice="DLVRD"
+#         ric="OTHER"
+#         event-location="Bonn"
+#         event-country="Germany"
+#         standard-event-code="ZU"
+#         ruecksendung="false"
+#       />
+#     </data>
+#   </data>
+# </data>
+
+# ----------------------------------------------------------------------------
+# d-get-signature Response (Successful - HTTP 200)
+# ----------------------------------------------------------------------------
+#
+# <?xml version="1.0" encoding="UTF-8"?>
+# <data name="signature-list" code="0" request-id="...">
+#   <data name="signature"
+#     searched-piece-code="00340434161094015902"
+#     event-date="18.03.2016"
+#     mime-type="image/gif"
+#     image="474946383961de00de00f00000000000ffffff2c00000000de00de004008ff0003..."
+#   />
+# </data>
+#
+# Note: image attribute contains GIF in hex format
+# To convert: each 2 hex chars = 1 byte (e.g., "47" = 0x47 = 'G')
+# "474946383961" = "GIF89a" (GIF header)
+
+# ============================================================================
+# XML REQUEST ATTRIBUTE REFERENCE
+# ============================================================================
+#
+# Common Attributes (all requests):
+#   appname       - User ID for DHL Tracking (required)
+#   password      - Password for DHL Tracking (required)
+#   request       - Operation type (required)
+#   language-code - Response language: "en" or "de" (required)
+#
+# d-get-piece-detail Attributes:
+#   piece-code    - Tracking number(s), semicolon separated, up to 20 (required)
+#   zip-code      - Postal code for privacy-restricted data (optional, single tracking only)
+#   from-date     - Start date filter YYYY-MM-DD (optional)
+#   to-date       - End date filter YYYY-MM-DD (optional)
+#
+# d-get-signature Attributes:
+#   piece-code    - Single tracking number (required)
+#   date-from     - Start date filter YYYY-MM-DD (optional)
+#   date-to       - End date filter YYYY-MM-DD (optional)
+#
+# get-status-for-public-user Attributes:
+#   piece-code    - Tracking number(s), semicolon separated, up to 15 (required)
+#   zip-code      - Required for location data (optional)
+#
+# ============================================================================
+# XML RESPONSE ATTRIBUTE REFERENCE
+# ============================================================================
+#
+# piece-shipment Attributes:
+#   error-status          - 0 = success
+#   piece-id              - Internal DHL UUID
+#   piece-code            - Full tracking number with prefix
+#   piece-identifier      - Tracking number without prefix
+#   identifier-type       - 1=IDC, 2=LP EAN, 3=LP Ansi/Fact
+#   status-timestamp      - Last event timestamp (DD.MM.YYYY HH:mm)
+#   status                - Full status text
+#   short-status          - Brief status text
+#   recipient-name        - Recipient name
+#   recipient-street      - Recipient street address
+#   recipient-city        - Recipient city with postal code
+#   pan-recipient-*       - EDI data fields
+#   shipper-*             - Sender information
+#   product-code          - DHL product code
+#   product-name          - DHL product name (e.g., "DHL PAKET")
+#   delivery-event-flag   - 1=delivered, 0=not delivered
+#   recipient-id          - Recipient type code
+#   recipient-id-text     - Recipient type description
+#   international-flag    - 0=national, 1=international
+#   ice                   - International Coded Event
+#   ric                   - Reason Instruction Code
+#   standard-event-code   - DHL standard event code
+#   dest-country          - Destination country (ISO)
+#   origin-country        - Origin country (ISO)
+#   ruecksendung          - true/false for return shipment
+#   delivery-date         - Estimated delivery date
+#   delivery-timeframe-*  - Estimated delivery time window
+#   shipment-weight       - Package weight
+#   shipment-length/width/height - Package dimensions
+#
+# piece-event Attributes:
+#   event-timestamp       - Event time (DD.MM.YYYY HH:mm)
+#   event-status          - Full event description
+#   event-text            - Event text (same as status)
+#   event-short-status    - Brief event description
+#   ice                   - International Coded Event
+#   ric                   - Reason Instruction Code
+#   event-location        - Event location city
+#   event-country         - Event location country
+#   standard-event-code   - DHL standard event code
+#
+# ============================================================================
+# ERROR CODES
+# ============================================================================
+#
+# Response code="X" values:
+#   0     - Success
+#   -1000 - Technical error, contact support
+#   -3    - Unknown request type
+#   -2    - Internal SQL error
+#   -1    - No database connection
+#   5     - Login failed (wrong credentials)
+#   6     - Too many invalid logins (rate limited)
+#   41    - IDC checksum invalid (wrong tracking format)
+#   45    - No piece-code supplied
+#   57    - No info for given postal code
+#   58    - Missing ekp-no parameter
+#   59    - Neither piece-code nor tas-order-no specified
+#   60    - Only one of piece-code or tas-order-no allowed
+#   61    - No shipment data for TAS order number
+#   62    - Authorization error
+#   63    - Signatures unavailable (archive server connection issue)
+#   64    - Right to query without check digit missing
+#   100   - No data found
+#   200   - No electronic shipment data available
+#
+# ============================================================================
+# STANDARD EVENT CODES (standard-event-code)
+# ============================================================================
+#
+#   ES - Einlieferung / Posting (shipment entered system)
+#   AA - Bearbeitung Start-Paketzentrum / Processing at origin parcel center
+#   AE - Abholung / Pick-up successful
+#   EE - Bearbeitung Ziel-Paketzentrum / Destination parcel center
+#   PO - In Zustellung / Loaded onto delivery vehicle
+#   ZU - Zustellung erfolgt / Delivery successful
+#
+# ============================================================================
+# ICE (International Coded Event) REFERENCE
+# ============================================================================
+#
+#   SHRCU  - Shipment received at collection unit
+#   LDTMV  - Loaded to/moving on transportation
+#   PCKDU  - Picked up
+#   ULFMV  - Unloaded from transportation
+#   SRTED  - Sorted
+#   DLVRD  - Delivered
+#
+# ============================================================================
+# RIC (Reason Instruction Code) REFERENCE
+# ============================================================================
+#
+#   PCKST  - Packstation
+#   MVMTV  - Movement
+#   PUBCR  - Public carrier
+#   UNLDD  - Unloaded
+#   NRQRD  - No reason required
+#   OTHER  - Other
+#   ACCPT  - Accepted
+#
+# ============================================================================
+# RECIPIENT ID CODES (recipient-id)
+# ============================================================================
+#
+#   1 - Original recipient (Empfänger orig.)
+#   2 - Spouse (Ehegatte)
+#   3 - Household member (Haushaltsangehöriger)
+#   4 - Neighbor (Nachbar)
+#   5 - Different person present (andere anwesende Person)
+#
+# ============================================================================
+# PRODUCTION USAGE
+# ============================================================================
+#
+# For production deployment:
+#
+# 1. Change endpoint from api-sandbox.dhl.com to api-eu.dhl.com
+# 2. Use production API key/secret from DHL Developer Portal
+# 3. Use production appname/password from DHL Business Customer Portal
+# 4. get-status-for-public-user becomes available
+#
+# Production Example:
+#
+# curl -s -X GET \
+#   -u "${DHL_PARCEL_DE_API_KEY}:${DHL_PARCEL_DE_API_SECRET}" \
+#   --data-urlencode 'xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="${DHL_PARCEL_DE_USERNAME}" language-code="en" password="${DHL_PARCEL_DE_PASSWORD}" piece-code="REAL_TRACKING_NUMBER" request="d-get-piece-detail" />' \
+#   --get \
+#   'https://api-eu.dhl.com/parcel/de/tracking/v0/shipments'
+#
+# ============================================================================
+# KARRIO IMPLEMENTATION NOTES
+# ============================================================================
+#
+# Current proxy.py uses:
+#   - URL: https://api-eu.dhl.com/track/shipments (DHL Universal Tracking)
+#   - Header: DHL-API-Key only
+#   - Response: JSON format
+#
+# New implementation needs:
+#   - URL: https://api-{sandbox/eu}.dhl.com/parcel/de/tracking/v0/shipments
+#   - Auth: HTTP Basic (API key:secret)
+#   - Request: XML in query parameter
+#   - Response: XML format (needs parsing)
+#
+# Key considerations:
+#   1. Need to add XML builder for request
+#   2. Need to add XML parser for response
+#   3. Need separate tracking credentials (appname/password) in settings
+#   4. Can reuse existing OAuth credentials (client_id/client_secret) for API auth
+#   5. Should expose d-get-signature for POD feature
+#
+# ============================================================================
+# TESTED AND VERIFIED: 2026-01-28
+# ============================================================================

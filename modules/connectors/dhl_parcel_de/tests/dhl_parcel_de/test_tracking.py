@@ -13,34 +13,49 @@ class TestCarrierTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
+        serialized = request.serialize()
 
-        self.assertEqual(request.serialize(), TrackingRequestJSON)
+        # Request should be a list of XML strings
+        self.assertEqual(len(serialized), 1)
+        # Check that the request contains expected XML elements
+        self.assertIn('<?xml version="1.0" encoding="UTF-8" standalone="no"?>', serialized[0])
+        self.assertIn('appname="zt12345"', serialized[0])
+        self.assertIn('password="geheim"', serialized[0])
+        self.assertIn('request="d-get-piece-detail"', serialized[0])
+        self.assertIn('language-code="en"', serialized[0])
+        self.assertIn('piece-code="00340434161094015902"', serialized[0])
 
     def test_get_tracking(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
-            mock.return_value = "{}"
+            mock.return_value = TrackingResponseXML
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.tracking_server_url}/track/shipments?language=en&trackingNumber=00340434292135100124",
-            )
+            # Check URL contains the tracking server and xml parameter
+            call_url = mock.call_args[1]["url"]
+            self.assertIn(gateway.settings.tracking_server_url, call_url)
+            self.assertIn("xml=", call_url)
+
+            # Check HTTP Basic Auth header is present
+            headers = mock.call_args[1]["headers"]
+            self.assertIn("Authorization", headers)
+            self.assertTrue(headers["Authorization"].startswith("Basic "))
 
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
-            mock.return_value = TrackingResponseJSON
+            mock.return_value = TrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
+            print(parsed_response)
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_error_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
-            mock.return_value = TrackingErrorResponseJSON
+            mock.return_value = TrackingErrorResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-
+            print(parsed_response)
             self.assertListEqual(
                 DP.to_dict(parsed_response), ParsedTrackingErrorResponse
             )
@@ -49,41 +64,95 @@ class TestCarrierTracking(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-TRACKING_PAYLOAD = ["00340434292135100124"]
+TRACKING_PAYLOAD = ["00340434161094015902"]
 
 ParsedTrackingResponse = [
     [
         {
             "carrier_id": "dhl_parcel_de",
             "carrier_name": "dhl_parcel_de",
-            "delivered": False,
-            "estimated_delivery": "2018-08-03",
+            "delivered": True,
             "events": [
                 {
-                    "code": "pre-transit",
-                    "date": "2018-03-02",
-                    "description": "JESSICA",
-                    "location": "Oderweg 2, AMSTERDAM",
+                    "code": "ZU",
+                    "date": "2016-03-18",
+                    "description": "The shipment has been successfully delivered",
+                    "location": "Bonn, Germany",
                     "status": "delivered",
-                    "time": "07:53 AM",
-                    "timestamp": "2018-03-02T07:53:47.000Z",
-                }
+                    "time": "10:02 AM",
+                    "timestamp": "2016-03-18T10:02:00.000Z",
+                },
+                {
+                    "code": "PO",
+                    "date": "2016-03-18",
+                    "description": "The shipment has been loaded onto the delivery vehicle",
+                    "status": "in_transit",
+                    "time": "09:02 AM",
+                    "timestamp": "2016-03-18T09:02:00.000Z",
+                },
+                {
+                    "code": "EE",
+                    "date": "2016-03-18",
+                    "description": "The shipment has been processed in the destination parcel center",
+                    "location": "Neuwied, Germany",
+                    "status": "in_transit",
+                    "time": "03:32 AM",
+                    "timestamp": "2016-03-18T03:32:00.000Z",
+                },
+                {
+                    "code": "AA",
+                    "date": "2016-03-17",
+                    "description": "The shipment has been processed in the parcel center of origin",
+                    "location": "Bremen, Germany",
+                    "status": "in_transit",
+                    "time": "15:51 PM",
+                    "timestamp": "2016-03-17T15:51:00.000Z",
+                },
+                {
+                    "code": "AE",
+                    "date": "2016-03-17",
+                    "description": "The shipment has been picked up",
+                    "location": "Germany",
+                    "status": "in_transit",
+                    "time": "13:55 PM",
+                    "timestamp": "2016-03-17T13:55:00.000Z",
+                },
+                {
+                    "code": "AA",
+                    "date": "2016-03-17",
+                    "description": "The shipment has been taken from the PACKSTATION for onward transportation",
+                    "location": "Bremen, Germany",
+                    "status": "in_transit",
+                    "time": "13:54 PM",
+                    "timestamp": "2016-03-17T13:54:00.000Z",
+                },
+                {
+                    "code": "ES",
+                    "date": "2016-03-17",
+                    "description": "The shipment has been posted by the sender at the PACKSTATION",
+                    "location": "Bremen, Germany",
+                    "status": "in_transit",
+                    "time": "11:44 AM",
+                    "timestamp": "2016-03-17T11:44:00.000Z",
+                },
             ],
             "info": {
-                "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=7777777770",
-                "customer_name": "John Doe",
-                "package_weight": 253.5,
-                "package_weight_unit": "kg",
-                "shipment_destination_country": "NL",
-                "shipment_destination_postal_code": "1043 AG",
-                "shipment_origin_country": "NL",
-                "shipment_origin_postal_code": "1043 AG",
-                "shipment_service": "UNKNOWN - Product unknown",
-                "signed_by": "John Doe",
+                "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=00340434161094015902",
+                "customer_name": "Kraemer",
+                "package_weight": 0.0,
+                "package_weight_unit": "KG",
+                "shipment_destination_country": "DE",
+                "shipment_destination_postal_code": "53113",
+                "shipment_origin_country": "DE",
+                "shipment_service": "DHL PAKET (parcel)",
+                "signed_by": "different person present",
             },
-            "meta": {"reference": "YZ3892406173"},
-            "status": "in_transit",
-            "tracking_number": "7777777770",
+            "meta": {
+                "piece_id": "a5aed21b-d9f4-4396-a322-f6f5f00f8039",
+                "product_code": "00",
+            },
+            "status": "delivered",
+            "tracking_number": "00340434161094015902",
         }
     ],
     [],
@@ -95,170 +164,175 @@ ParsedTrackingErrorResponse = [
         {
             "carrier_id": "dhl_parcel_de",
             "carrier_name": "dhl_parcel_de",
-            "code": "404",
-            "details": {"instance": "/shipment/8264715546", "title": "No result found"},
-            "message": "No shipment with given tracking number found.",
+            "code": "100",
+            "details": {
+                "request_id": "test-request-id-12345",
+                "response_name": "piece-shipment-list",
+            },
+            "message": "No data found",
         }
     ],
 ]
 
 
-# Serialized output samples
+# XML Response samples (based on actual DHL Parcel DE Tracking API responses)
 
-TrackingRequestJSON = [{"language": "en", "trackingNumber": "00340434292135100124"}]
-
-TrackingResponseJSON = """{
-    "url": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
-    "prevUrl": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
-    "nextUrl": "/shipments?trackingNumber=7777777770?offset=5&limit=5",
-    "firstUrl": "/shipments?trackingNumber=7777777770?offset=0&limit=5",
-    "lastUrl": "/shipments?trackingNumber=7777777770?offset=10&limit=5",
-    "shipments": [
-      {
-        "id": 7777777770,
-        "service": "express",
-        "origin": {
-          "address": {
-            "countryCode": "NL",
-            "postalCode": "1043 AG",
-            "addressLocality": "Oderweg 2, AMSTERDAM"
-          }
-        },
-        "destination": {
-          "address": {
-            "countryCode": "NL",
-            "postalCode": "1043 AG",
-            "addressLocality": "Oderweg 2, AMSTERDAM"
-          }
-        },
-        "status": {
-          "timestamp": "2018-03-02T07:53:47Z",
-          "location": {
-            "address": {
-              "countryCode": "NL",
-              "postalCode": "1043 AG",
-              "addressLocality": "Oderweg 2, AMSTERDAM"
-            }
-          },
-          "statusCode": "pre-transit",
-          "status": "DELIVERED",
-          "description": "JESSICA",
-          "remark": "The shipment is pending completion of customs inspection.",
-          "nextSteps": "The status will be updated following customs inspection."
-        },
-        "estimatedTimeOfDelivery": "2018-08-03T00:00:00Z",
-        "estimatedDeliveryTimeFrame": {
-          "estimatedFrom": "2018-08-03T00:00:00Z",
-          "estimatedThrough": "2018-08-03T22:00:00Z"
-        },
-        "estimatedTimeOfDeliveryRemark": "By End of Day",
-        "serviceUrl": "http://www.dhl.de/de/privatkunden.html?piececode=7777777770",
-        "rerouteUrl": "https://www.dhl.de/de/privatkunden.html?piececode=7777777770&verfuegen_selected_tab=FIRST",
-        "details": {
-          "carrier": {
-            "@type": "Organization",
-            "organizationName": "EXPRESS"
-          },
-          "product": {
-            "productName": "UNKNOWN - Product unknown"
-          },
-          "receiver": {
-            "@type": "Person",
-            "organizationName": "EXPRESS",
-            "familyName": "Doe",
-            "givenName": "John",
-            "name": "John"
-          },
-          "sender": {
-            "@type": "Person",
-            "organizationName": "EXPRESS",
-            "familyName": "Doe",
-            "givenName": "John",
-            "name": "John"
-          },
-          "proofOfDelivery": {
-            "timestamp": "2018-09-05T16:33:00Z",
-            "signatureUrl": "string",
-            "documentUrl": "https://webpod.dhl.com/webPOD/DHLePODRequest",
-            "signed": {
-              "@type": "Person",
-              "familyName": "Doe",
-              "givenName": "John",
-              "name": "John"
-            }
-          },
-          "totalNumberOfPieces": 8,
-          "pieceIds": [
-            "JD014600006281230704",
-            "JD014600002708681600",
-            "JD014600006615052259",
-            "JD014600006615052264",
-            "JD014600006615052265",
-            "JD014600006615052268",
-            "JD014600006615052307",
-            "JD014600002266382340",
-            "JD014600002659593446",
-            "JD014600006101653481",
-            "JD014600006614884499"
-          ],
-          "weight": {
-            "value": 253.5,
-            "unitText": "kg"
-          },
-          "volume": {
-            "value": 12600
-          },
-          "loadingMeters": 1.5,
-          "dimensions": {
-            "width": {
-              "value": 20,
-              "unitText": "cm"
-            },
-            "height": {
-              "value": 18,
-              "unitText": "cm"
-            },
-            "length": {
-              "value": 35,
-              "unitText": "cm"
-            }
-          },
-          "references": {
-            "number": "YZ3892406173",
-            "type": "customer-reference"
-          }
-        },
-        "events": [
-          {
-            "timestamp": "2018-03-02T07:53:47",
-            "location": {
-              "address": {
-                "countryCode": "NL",
-                "postalCode": "1043 AG",
-                "addressLocality": "Oderweg 2, AMSTERDAM"
-              }
-            },
-            "statusCode": "pre-transit",
-            "status": "DELIVERED",
-            "description": "JESSICA",
-            "remark": "The shipment is pending completion of customs inspection.",
-            "nextSteps": "The status will be updated following customs inspection."
-          }
-        ]
-      }
-    ],
-    "possibleAdditionalShipmentsUrl": [
-      "/shipments?trackingNumber=7777777770&service=parcel-de",
-      "/shipments?trackingNumber=7777777770&service=parcel-nl"
-    ]
-}
+TrackingResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<data name="piece-shipment-list" code="0" request-id="test-request-12345">
+  <data name="piece-shipment"
+    error-status="0"
+    piece-id="a5aed21b-d9f4-4396-a322-f6f5f00f8039"
+    shipment-code=""
+    piece-identifier="340434161094015902"
+    identifier-type="2"
+    piece-code="00340434161094015902"
+    event-location=""
+    event-country="DE"
+    status-liste="0"
+    status-timestamp="18.03.2016 10:02"
+    status="The shipment has been successfully delivered"
+    short-status="Delivery successful"
+    recipient-name="Kraemer"
+    recipient-street="Heinrich-Brüning-Str. 7"
+    recipient-city="53113 Bonn"
+    pan-recipient-name="Deutsche Post DHL"
+    pan-recipient-street="Heinrich-Brüning-Str. 7"
+    pan-recipient-city="53113 Bonn"
+    pan-recipient-address="Heinrich-Brüning-Str. 7 53113 Bonn"
+    pan-recipient-postalcode="53113"
+    shipper-name="No sender data has been transferred to DHL."
+    shipper-street=""
+    shipper-city=""
+    shipper-address=""
+    product-code="00"
+    product-key=""
+    product-name="DHL PAKET (parcel)"
+    delivery-event-flag="1"
+    recipient-id="5"
+    recipient-id-text="different person present"
+    upu=""
+    shipment-length="0.0"
+    shipment-width="0.0"
+    shipment-height="0.0"
+    shipment-weight="0.0"
+    international-flag="0"
+    division="DPEED"
+    ice="DLVRD"
+    ric="OTHER"
+    standard-event-code="ZU"
+    dest-country="DE"
+    origin-country="DE"
+    searched-piece-code="00340434161094015902"
+    searched-ref-no=""
+    piece-customer-reference=""
+    shipment-customer-reference=""
+    leitcode=""
+    routing-code-ean=""
+    matchcode=""
+    domestic-id=""
+    airway-bill-number=""
+    ruecksendung="false"
+    pslz-nr="5066935271"
+    order-preferred-delivery-day="false"
+  >
+    <data name="piece-event-list"
+      piece-identifier="340434161094015902"
+      piece-id="a5aed21b-d9f4-4396-a322-f6f5f00f8039"
+      leitcode="5311304400700"
+      routing-code-ean=""
+      ruecksendung="false"
+      pslz-nr="5066935271"
+      order-preferred-delivery-day="false"
+    >
+      <data name="piece-event"
+        event-timestamp="17.03.2016 11:44"
+        event-status="The shipment has been posted by the sender at the PACKSTATION"
+        event-text="The shipment has been posted by the sender at the PACKSTATION"
+        event-short-status="Posting at PACKSTATION"
+        ice="SHRCU"
+        ric="PCKST"
+        event-location="Bremen"
+        event-country="Germany"
+        standard-event-code="ES"
+        ruecksendung="false"
+      />
+      <data name="piece-event"
+        event-timestamp="17.03.2016 13:54"
+        event-status="The shipment has been taken from the PACKSTATION for onward transportation"
+        event-text="The shipment has been taken from the PACKSTATION for onward transportation"
+        event-short-status="Transportation to parcel center of origin"
+        ice="LDTMV"
+        ric="MVMTV"
+        event-location="Bremen"
+        event-country="Germany"
+        standard-event-code="AA"
+        ruecksendung="false"
+      />
+      <data name="piece-event"
+        event-timestamp="17.03.2016 13:55"
+        event-status="The shipment has been picked up"
+        event-text="The shipment has been picked up"
+        event-short-status="Pick-up successful"
+        ice="PCKDU"
+        ric="PUBCR"
+        event-location=""
+        event-country="Germany"
+        standard-event-code="AE"
+        ruecksendung="false"
+      />
+      <data name="piece-event"
+        event-timestamp="17.03.2016 15:51"
+        event-status="The shipment has been processed in the parcel center of origin"
+        event-text="The shipment has been processed in the parcel center of origin"
+        event-short-status="Parcel center of origin"
+        ice="LDTMV"
+        ric="MVMTV"
+        event-location="Bremen"
+        event-country="Germany"
+        standard-event-code="AA"
+        ruecksendung="false"
+      />
+      <data name="piece-event"
+        event-timestamp="18.03.2016 03:32"
+        event-status="The shipment has been processed in the destination parcel center"
+        event-text="The shipment has been processed in the destination parcel center"
+        event-short-status="Destination parcel center"
+        ice="ULFMV"
+        ric="UNLDD"
+        event-location="Neuwied"
+        event-country="Germany"
+        standard-event-code="EE"
+        ruecksendung="false"
+      />
+      <data name="piece-event"
+        event-timestamp="18.03.2016 09:02"
+        event-status="The shipment has been loaded onto the delivery vehicle"
+        event-text="The shipment has been loaded onto the delivery vehicle"
+        event-short-status="In delivery"
+        ice="SRTED"
+        ric="NRQRD"
+        event-location=""
+        event-country=""
+        standard-event-code="PO"
+        ruecksendung="false"
+      />
+      <data name="piece-event"
+        event-timestamp="18.03.2016 10:02"
+        event-status="The shipment has been successfully delivered"
+        event-text="The shipment has been successfully delivered"
+        event-short-status="Delivery successful"
+        ice="DLVRD"
+        ric="OTHER"
+        event-location="Bonn"
+        event-country="Germany"
+        standard-event-code="ZU"
+        ruecksendung="false"
+      />
+    </data>
+  </data>
+</data>
 """
 
-TrackingErrorResponseJSON = """
-{
-    "title": "No result found",
-    "detail": "No shipment with given tracking number found.",
-    "status": 404,
-    "instance": "/shipment/8264715546"
-}
+TrackingErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<data name="piece-shipment-list" code="100" error="No data found" request-id="test-request-id-12345"/>
 """
