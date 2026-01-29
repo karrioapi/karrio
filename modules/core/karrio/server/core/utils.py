@@ -347,8 +347,8 @@ def post_processing(methods: List[str] = None):
         for name in methods:
             method = getattr(klass, name)
 
-            def wrapper(*args, **kwargs):
-                result = method(*args, **kwargs)
+            def wrapper(*args, _method=method, **kwargs):
+                result = _method(*args, **kwargs)
                 processes = klass.post_process_functions
                 context = kwargs.get("context")
 
