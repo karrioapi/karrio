@@ -1,0 +1,948 @@
+{
+	"info": {
+		"_postman_id": "6ca7bc22-5058-474e-b976-91c6c16bd8e9",
+		"name": "Pickup Api V3 Sandbox Customer Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12425667"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"GKP GetToken: Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"let j = pm.response.json();\r",
+									"x = j.access_token;\r",
+									"pm.collectionVariables.set(\"access_token\", x);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{gkpuser}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{gkppass}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://{{host}}/{{authpath}}/token",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{authpath}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "orders",
+			"item": [
+				{
+					"name": "ORDER_EZA_1_Paket_festes_Datum",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "DPDHL-User-Authentication-Token",
+								"value": "{{apiKey}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n    \"type\": \"Address\",\n    \"pickupAddress\": {\n        \"name1\": \"{{pickupName1}}\",\n        \"name2\": \"{{pickupName2}}\",\n        \"addressStreet\": \"{{pickupAddressStreet}}\",\n        \"addressHouse\": \"{{pickupAddressHouse}}\",\n        \"postalCode\": \"{{pickupPostalCode}}\",\n        \"city\": \"{{pickupCity}}\",\n        \"country\": \"{{pickupCountry}}\"\n   }},\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"Date\",\n      \"value\": \"{{fixPickupDate}}\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"PAKET\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ],\n  \"customerDetails\": {\n    \"billingNumber\": \"{{billingNumber}}\"\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER_EZA_1_Paket_ASAP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n    \"type\": \"Address\",\n    \"pickupAddress\": {\n        \"name1\": \"{{pickupName1}}\",\n        \"name2\": \"{{pickupName2}}\",\n        \"addressStreet\": \"{{pickupAddressStreet}}\",\n        \"addressHouse\": \"{{pickupAddressHouse}}\",\n        \"postalCode\": \"{{pickupPostalCode}}\",\n        \"city\": \"{{pickupCity}}\",\n        \"country\": \"{{pickupCountry}}\"\n   }},\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"ASAP\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"PAKET\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ],\n  \"customerDetails\": {\n    \"billingNumber\": \"{{billingNumber}}\"\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER_EZA_1_Paket_Service_Etikettendruck_ASAP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n    \"type\": \"Address\",\n    \"pickupAddress\": {\n        \"name1\": \"{{pickupName1}}\",\n        \"name2\": \"{{pickupName2}}\",\n        \"addressStreet\": \"{{pickupAddressStreet}}\",\n        \"addressHouse\": \"{{pickupAddressHouse}}\",\n        \"postalCode\": \"{{pickupPostalCode}}\",\n        \"city\": \"{{pickupCity}}\",\n        \"country\": \"{{pickupCountry}}\"\n   }},\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"ASAP\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"PAKET\",\n        \"shipmentNo\": \"\",\n        \"pickupServices\": {\n          \"printLabel\": {\n            \"consignee\": {\n              \"name1\": \"{{consigneeName1}}\",\n              \"name2\": \"{{consigneeName2}}\",\n              \"addressStreet\": \"{{consigneeAddressStreet}}\",\n              \"addressHouse\": \"{{consigneeAddressHouse}}\",\n              \"postalCode\": \"{{consigneePostalCode}}\",\n              \"city\": \"{{consigneeCity}}\"\n            }\n          }\n        },\n        \"customerReference\": \"987654321\"\n      },\n      {\n        \"transportationType\": \"PAKET\",\n        \"shipmentNo\": \"\",\n        \"pickupServices\": {\n          \"printLabel\": {\n            \"consignee\": {\n              \"name1\": \"{{consigneeName1}}\",\n              \"name2\": \"{{consigneeName2}}\",\n              \"addressStreet\": \"{{consigneeAddressStreet}}\",\n              \"addressHouse\": \"{{consigneeAddressHouse}}\",\n              \"postalCode\": \"{{consigneePostalCode}}\",\n              \"city\": \"{{consigneeCity}}\"\n            }\n          }\n        },\n        \"customerReference\": \"987654321\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ],\n  \"customerDetails\": {\n    \"billingNumber\": \"{{billingNumber}}\"\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER_EZA_1_Paket_Service_Sperrgut_ASAP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n    \"type\": \"Address\",\n    \"pickupAddress\": {\n        \"name1\": \"{{pickupName1}}\",\n        \"name2\": \"{{pickupName2}}\",\n        \"addressStreet\": \"{{pickupAddressStreet}}\",\n        \"addressHouse\": \"{{pickupAddressHouse}}\",\n        \"postalCode\": \"{{pickupPostalCode}}\",\n        \"city\": \"{{pickupCity}}\",\n        \"country\": \"{{pickupCountry}}\"\n   }},\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"ASAP\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"PAKET\",\n        \"pickupServices\": {\n          \"bulkyGood\": {\n            \"comment\": \"Fahrrad\"\n          }\n        },\n        \"customerReference\": \"987654321\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ],\n  \"customerDetails\": {\n    \"billingNumber\": \"{{billingNumber}}\"\n  }\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER_BDA_1_Paket_ASAP_Adresse",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n    \"type\": \"Address\",\n    \"pickupAddress\": {\n        \"name1\": \"{{pickupLocationName1}}\",\n        \"name2\": \"{{pickupLocationName2}}\",\n        \"addressStreet\": \"{{pickupLocationAddressStreet}}\",\n        \"addressHouse\": \"{{pickupLocationAddressHouse}}\",\n        \"postalCode\": \"{{pickupLocationPostalCode}}\",\n        \"city\": \"{{pickupLocationCity}}\"\n   }},\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"ASAP\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"PAKET\",\n        \"size\": \"M\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER_BDA_1_Paket_ASAP_AS-ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n        \"type\": \"Id\",\n        \"asId\": \"{{pickupLocationAsId}}\"\n   },\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"ASAP\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"PAKET\",\n        \"size\": \"M\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER_EMA_ASAP_Adresse",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n    \"type\": \"Address\",\n    \"pickupAddress\": {\n        \"name1\": \"{{pickupLocationName1}}\",\n        \"name2\": \"{{pickupLocationName2}}\",\n        \"addressStreet\": \"{{pickupLocationAddressStreet}}\",\n        \"addressHouse\": \"{{pickupLocationAddressHouse}}\",\n        \"postalCode\": \"{{pickupLocationPostalCode}}\",\n        \"city\": \"{{pickupLocationCity}}\"\n   }},\n   \"businessHours\": [\n    {\n      \"timeFrom\": \"{{businessHours1From}}\",\n      \"timeUntil\": \"{{businessHours1Until}}\"\n    },\n    {\n      \"timeFrom\": \"{{businessHours2From}}\",\n      \"timeUntil\": \"{{businessHours2Until}}\"\n    }\n  ],\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"ASAP\"\n    },\n    \"totalWeight\": {\n        \"uom\": \"{{totalWeightUom}}\",\n        \"value\": \"{{totalWeightValue}}\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"SPERRGUT\"\n      },\n      {\n        \"transportationType\": \"ROLLBEHAELTER\"\n      },\n      {\n        \"transportationType\": \"PALETTEN\"\n      },\n      {\n        \"transportationType\": \"WECHSELBEHAELTER\"\n      },\n      {\n        \"transportationType\": \"PAKET\",\n        \"size\": \"M\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER_EMA_ASAP_AS-ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickupLocation\": {\n        \"type\": \"Id\",\n        \"asId\": \"{{pickupLocationAsId}}\"\n   },\n  \"businessHours\": [\n    {\n      \"timeFrom\": \"{{businessHours1From}}\",\n      \"timeUntil\": \"{{businessHours1Until}}\"\n    },\n    {\n      \"timeFrom\": \"{{businessHours2From}}\",\n      \"timeUntil\": \"{{businessHours2Until}}\"\n    }\n  ],\n  \"pickupDetails\": {\n    \"pickupDate\": {\n      \"type\": \"ASAP\"\n    },\n    \"totalWeight\": {\n        \"uom\": \"{{totalWeightUom}}\",\n        \"value\": \"{{totalWeightValue}}\"\n    },\n    \"comment\": \"{{comment}}\"\n  },\n  \"shipmentDetails\": {\n    \"shipments\": [\n      {\n        \"transportationType\": \"SPERRGUT\"\n      },\n      {\n        \"transportationType\": \"ROLLBEHAELTER\"\n      },\n      {\n        \"transportationType\": \"PALETTEN\"\n      },\n      {\n        \"transportationType\": \"WECHSELBEHAELTER\"\n      },\n      {\n        \"transportationType\": \"PAKET\",\n        \"size\": \"M\"\n      }\n    ]\n  },\n  \"contactPerson\": [\n    {\n      \"name\": \"{{contactPerson1Name}}\",\n      \"phone\": \"{{contactPerson1Phone}}\",\n      \"email\": \"{{contactPerson1Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson1SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson1SendTimeWindow}}\"\n      }\n    },\n     {\n      \"name\": \"{{contactPerson2Name}}\",\n      \"phone\": \"{{contactPerson2Phone}}\",\n      \"email\": \"{{contactPerson2Email}}\",\n      \"emailNotification\": {\n        \"sendPickupConfirmationEmail\": \"{{contactPerson2SendConfirmation}}\",\n        \"sendPickupTimeWindowEmail\": \"{{contactPerson2SendTimeWindow}}\"\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?validate={{validate}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "{{validate}}"
+								}
+							]
+						},
+						"description": "The root ressource to placing orders."
+					},
+					"response": []
+				},
+				{
+					"name": "CANCEL",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?orderID=962bb37f445b4c969106f97415476dbd",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "orderID",
+									"value": "{{cancelOrderId}}",
+									"description": "(Required) The orderID (array) of one (or several) pickup order(s).",
+									"disabled": true
+								},
+								{
+									"key": "orderID",
+									"value": "962bb37f445b4c969106f97415476dbd"
+								}
+							]
+						},
+						"description": "This operation cancels one (or several) pickup order(s)."
+					},
+					"response": []
+				},
+				{
+					"name": "GET_BY_ORDER_ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?orderID={{getOrderId}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "DPDHL-User-Authentication-Token",
+									"value": "{{apiKey}}",
+									"disabled": true
+								},
+								{
+									"key": "orderID",
+									"value": "{{getOrderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET_BY_PICKUPDATE_ADDRESS",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?pickupDate={{fixPickupDate}}&pickupPostalCode={{pickupLocationPostalCode}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "pickupDate",
+									"value": "{{fixPickupDate}}"
+								},
+								{
+									"key": "pickupPostalCode",
+									"value": "{{pickupLocationPostalCode}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "locations",
+			"item": [
+				{
+					"name": "Get pickup location ids and addresses.",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/locations?postalCode={{pickupLocationPostalCode}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "postalCode",
+									"value": "{{pickupLocationPostalCode}}"
+								}
+							]
+						},
+						"description": "Retrieve data for specific pickup locations."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get Version",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/{{basepath}}",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"{{basepath}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const moment = require('moment');",
+					"// Today + offset days defined in gLobal collection variables",
+					"pm.environment.set(\"today\", moment().format(\"YYYY-MM-DD\"));",
+					"//console.log(\"Setting global variable today to \", pm.environment.get(\"today\"))",
+					"",
+					"// yesterday days defined in gLobal collection variables",
+					"pm.environment.set(\"yesterday\", moment().subtract(1,\"days\").format(\"YYYY-MM-DD\"));",
+					"",
+					"// tomorrow days defined in gLobal collection variables",
+					"pm.environment.set(\"tomorrow\", moment().add(1,\"days\").format(\"YYYY-MM-DD\"));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "api-sandbox.dhl.com",
+			"type": "string"
+		},
+		{
+			"key": "basepath",
+			"value": "parcel/de/transportation/pickup/v3"
+		},
+		{
+			"key": "authpath",
+			"value": "parcel/de/account/auth/ropc/v1",
+			"type": "string"
+		},
+		{
+			"key": "gkpuser",
+			"value": "user-valid",
+			"type": "string"
+		},
+		{
+			"key": "gkppass",
+			"value": "SandboxPasswort2023!",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": "Please add your client id",
+			"type": "string"
+		},
+		{
+			"key": "client_secret",
+			"value": "Please add your client secret",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "billingNumber",
+			"value": "22222222220801",
+			"type": "string"
+		},
+		{
+			"key": "fixPickupDate",
+			"value": "{{tomorrow}}",
+			"type": "string"
+		},
+		{
+			"key": "pickupName1",
+			"value": "Maxi Mustermann",
+			"type": "string"
+		},
+		{
+			"key": "pickupName2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "pickupAddressStreet",
+			"value": "Charles-de-Gaulle-Str.",
+			"type": "string"
+		},
+		{
+			"key": "pickupAddressHouse",
+			"value": "20",
+			"type": "string"
+		},
+		{
+			"key": "pickupPostalCode",
+			"value": "53113",
+			"type": "string"
+		},
+		{
+			"key": "pickupCity",
+			"value": "Bonn",
+			"type": "string"
+		},
+		{
+			"key": "pickupCountry",
+			"value": "DE",
+			"type": "string"
+		},
+		{
+			"key": "consigneeName1",
+			"value": "Max Mustermann",
+			"type": "string"
+		},
+		{
+			"key": "consigneeName2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "consigneeAddressStreet",
+			"value": "Platz der Deutschen Post",
+			"type": "string"
+		},
+		{
+			"key": "consigneeAddressHouse",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "consigneePostalCode",
+			"value": "53113",
+			"type": "string"
+		},
+		{
+			"key": "consigneeCity",
+			"value": "Bonn",
+			"type": "string"
+		},
+		{
+			"key": "comment",
+			"value": "Test API Abholen",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson1Name",
+			"value": "Maxi Mutermann",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson1Phone",
+			"value": "015155555",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson1Email",
+			"value": "maxi@post.de",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson2Name",
+			"value": "Max Mutermann",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson2Phone",
+			"value": "015166666",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson2Email",
+			"value": "max@post.de",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson1SendConfirmation",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson1SendTimeWindow",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson2SendConfirmation",
+			"value": "false",
+			"type": "string"
+		},
+		{
+			"key": "contactPerson2SendTimeWindow",
+			"value": "false",
+			"type": "string"
+		},
+		{
+			"key": "pickupLocationName1",
+			"value": "Deutsche Post DHL Group",
+			"type": "string"
+		},
+		{
+			"key": "pickupLocationName2",
+			"value": "Sandbox Optima",
+			"type": "string"
+		},
+		{
+			"key": "pickupLocationAddressStreet",
+			"value": "Charles-de-Gaulle-Str.",
+			"type": "string"
+		},
+		{
+			"key": "pickupLocationAddressHouse",
+			"value": "20",
+			"type": "string"
+		},
+		{
+			"key": "pickupLocationPostalCode",
+			"value": "53113",
+			"type": "string"
+		},
+		{
+			"key": "pickupLocationCity",
+			"value": "Bonn",
+			"type": "string"
+		},
+		{
+			"key": "pickupLocationAsId",
+			"value": "AS3333312346",
+			"type": "string"
+		},
+		{
+			"key": "businessHours1From",
+			"value": "08:00",
+			"type": "string"
+		},
+		{
+			"key": "businessHours1Until",
+			"value": "12:00",
+			"type": "string"
+		},
+		{
+			"key": "businessHours2From",
+			"value": "13:00",
+			"type": "string"
+		},
+		{
+			"key": "businessHours2Until",
+			"value": "17:00",
+			"type": "string"
+		},
+		{
+			"key": "totalWeightValue",
+			"value": "1500",
+			"type": "string"
+		},
+		{
+			"key": "totalWeightUom",
+			"value": "g",
+			"type": "string"
+		},
+		{
+			"key": "validate",
+			"value": "false",
+			"type": "string"
+		},
+		{
+			"key": "cancelOrderId",
+			"value": "e1cc0b21b4504155b565ae0f33f162f3",
+			"type": "string"
+		},
+		{
+			"key": "getOrderId",
+			"value": "e1cc0b21b4504155b565ae0f33f162f3",
+			"type": "string"
+		}
+	]
+}

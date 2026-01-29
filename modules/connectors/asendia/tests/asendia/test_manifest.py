@@ -18,42 +18,46 @@ class TestAsendiaManifest(unittest.TestCase):
 
     def test_create_manifest_request(self):
         request = gateway.mapper.create_manifest_request(self.ManifestRequest)
-        print(lib.to_dict(request.serialize()))
         self.assertEqual(lib.to_dict(request.serialize()), ManifestRequest)
 
     def test_create_manifest(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 mock.return_value = "{}"
                 karrio.Manifest.create(self.ManifestRequest).from_(gateway)
-                print(mock.call_args[1]["url"])
                 self.assertEqual(
                     mock.call_args[1]["url"],
-                    f"{gateway.settings.server_url}/api/manifests"
+                    f"{gateway.settings.server_url}/api/manifests",
                 )
 
     def test_parse_manifest_response(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 mock.return_value = ManifestResponse
                 parsed_response = (
-                    karrio.Manifest.create(self.ManifestRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
                 )
-                print(lib.to_dict(parsed_response))
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedManifestResponse)
+                self.assertListEqual(
+                    lib.to_dict(parsed_response), ParsedManifestResponse
+                )
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 mock.return_value = ErrorResponse
                 parsed_response = (
-                    karrio.Manifest.create(self.ManifestRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
                 )
-                print(lib.to_dict(parsed_response))
+
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -103,7 +107,7 @@ ParsedManifestResponse = [
             "manifest_location": "/manifests/manifest-123",
         },
     },
-    []
+    [],
 ]
 
 ErrorResponse = """{
@@ -124,7 +128,10 @@ ParsedErrorResponse = [
             "carrier_id": "asendia",
             "carrier_name": "asendia",
             "code": "400",
-            "details": {"path": "/api/manifests", "type": "https://www.asendia-sync.com/problem/constraint-violation"},
+            "details": {
+                "path": "/api/manifests",
+                "type": "https://www.asendia-sync.com/problem/constraint-violation",
+            },
             "message": "Invalid parcel IDs",
         },
         {

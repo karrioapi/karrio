@@ -2025,7 +2025,7 @@ export interface update_parcel {
 }
 
 export interface update_parcelVariables {
-  data: UpdateParcelInput2;
+  data: UpdateParcelInput;
 }
 
 
@@ -2085,7 +2085,7 @@ export interface update_address {
 }
 
 export interface update_addressVariables {
-  data: UpdateAddressInput2;
+  data: UpdateAddressInput;
 }
 
 
@@ -5714,6 +5714,7 @@ export interface AddressFilter {
   first?: number | null;
   label?: string | null;
   keyword?: string | null;
+  usage?: string | null;
   address?: string | null;
 }
 
@@ -5800,6 +5801,8 @@ export interface PartialShipmentMutationInput {
 
 // null
 export interface UpdateAddressInput {
+  id: string;
+  meta?: any | null;
   country_code?: CountryCodeEnum | null;
   postal_code?: string | null;
   city?: string | null;
@@ -5815,11 +5818,12 @@ export interface UpdateAddressInput {
   address_line1?: string | null;
   address_line2?: string | null;
   validate_location?: boolean | null;
-  id?: string | null;
 }
 
 // null
 export interface UpdateParcelInput {
+  id: string;
+  meta?: any | null;
   weight?: number | null;
   weight_unit?: WeightUnitEnum | null;
   width?: number | null;
@@ -5834,7 +5838,6 @@ export interface UpdateParcelInput {
   reference_number?: string | null;
   freight_class?: string | null;
   items?: UpdateCommodityInput[] | null;
-  id?: string | null;
 }
 
 // null
@@ -5896,6 +5899,7 @@ export interface TemplateFilter {
   first?: number | null;
   label?: string | null;
   keyword?: string | null;
+  usage?: string | null;
 }
 
 // null
@@ -5917,13 +5921,7 @@ export interface SystemCarrierMutationInput {
 
 // null
 export interface CreateParcelInput {
-  label: string;
-  parcel: ParcelInput;
-  is_default?: boolean | null;
-}
-
-// null
-export interface ParcelInput {
+  meta: any;
   weight: number;
   weight_unit: WeightUnitEnum;
   width?: number | null;
@@ -5957,22 +5955,8 @@ export interface CommodityInput {
 }
 
 // null
-export interface UpdateParcelInput2 {
-  label?: string | null;
-  parcel?: UpdateParcelInput | null;
-  is_default?: boolean | null;
-  id: string;
-}
-
-// null
 export interface CreateAddressInput {
-  label: string;
-  address: AddressInput;
-  is_default?: boolean | null;
-}
-
-// null
-export interface AddressInput {
+  meta: any;
   country_code?: CountryCodeEnum | null;
   postal_code?: string | null;
   city?: string | null;
@@ -5991,26 +5975,19 @@ export interface AddressInput {
 }
 
 // null
-export interface UpdateAddressInput2 {
-  label?: string | null;
-  address?: UpdateAddressInput | null;
-  is_default?: boolean | null;
-  id: string;
-}
-
-// null
 export interface ProductFilter {
   offset?: number | null;
   first?: number | null;
   label?: string | null;
   keyword?: string | null;
+  usage?: string | null;
   sku?: string | null;
   origin_country?: CountryCodeEnum | null;
 }
 
 // null
 export interface CreateProductInput {
-  label: string;
+  meta: any;
   weight: number;
   weight_unit: WeightUnitEnum;
   quantity?: number | null;
@@ -6021,14 +5998,13 @@ export interface CreateProductInput {
   value_amount?: number | null;
   value_currency?: CurrencyCodeEnum | null;
   origin_country?: CountryCodeEnum | null;
-  is_default?: boolean | null;
   metadata?: any | null;
 }
 
 // null
 export interface UpdateProductInput {
   id: string;
-  label?: string | null;
+  meta?: any | null;
   weight?: number | null;
   weight_unit?: WeightUnitEnum | null;
   quantity?: number | null;
@@ -6039,7 +6015,6 @@ export interface UpdateProductInput {
   value_amount?: number | null;
   value_currency?: CurrencyCodeEnum | null;
   origin_country?: CountryCodeEnum | null;
-  is_default?: boolean | null;
   metadata?: any | null;
 }
 
@@ -6391,6 +6366,25 @@ export interface CreateOrderMutationInput {
   billing_address?: AddressInput | null;
   metadata?: any | null;
   options?: any | null;
+}
+
+// null
+export interface AddressInput {
+  country_code?: CountryCodeEnum | null;
+  postal_code?: string | null;
+  city?: string | null;
+  federal_tax_id?: string | null;
+  state_tax_id?: string | null;
+  person_name?: string | null;
+  company_name?: string | null;
+  email?: string | null;
+  phone_number?: string | null;
+  state_code?: string | null;
+  residential?: boolean | null;
+  street_number?: string | null;
+  address_line1?: string | null;
+  address_line2?: string | null;
+  validate_location?: boolean | null;
 }
 
 // null

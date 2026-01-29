@@ -128,15 +128,247 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    """Hermes tracking status mapping."""
+    """Hermes tracking status mapping.
 
-    on_hold = ["on_hold"]
-    delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
-    delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
-    ready_for_pickup = ["ready_for_pickup"]
+    Maps Hermes 2x2 event codes (4-digit) to Karrio unified statuses.
+    Based on Hermes Germany Eventcodes.csv.
+    """
+
+    pending = [
+        "0000",  # Die Sendung wurde Hermes elektronisch angekündigt
+        "0600",  # Shipment has not arrived at the depot (1st notice)
+        "0700",  # Shipment has not arrived at the depot (2nd notice)
+        "0800",  # Shipment has not arrived at the depot (7 days)
+        "0900",  # Shipment has not arrived at the depot (28 days)
+    ]
+    picked_up = [
+        "1000",  # Die Sendung hat das Lager des Auftraggebers verlassen
+        "1900",  # Shipment accepted after collection
+        "1901",  # Shipment arrived at branch by self-delivery
+        "1910",  # Shipment received on tour
+    ]
+    in_transit = [
+        "1510",  # Sendung am LC umgeschlagen (sorted at logistics center)
+        "1610",  # Shipment in international transit
+        "1710",  # Customs export created
+        "1720",  # Customs clearance completed
+        "1810",  # Handed to partner carrier (international)
+        "1820",  # Handed to partner carrier (international)
+        "2000",  # Die Sendung ist eingetroffen (arrived at depot)
+        "2100",  # Arrived without advice data
+        "2300",  # Automatic shipment received
+        "2400",  # Shipment handed in at ParcelShop
+    ]
+    out_for_delivery = [
+        "3000",  # Die Sendung ist auf Zustelltour gegangen
+        "3010",  # Shipment has left depot on tour
+        "3300",  # Sorted for delivery tour (automatic)
+    ]
+    ready_for_pickup = [
+        "3410",  # Die Sendung liegt im PaketShop zur Abholung bereit
+        "3430",  # Handed over to island carrier
+    ]
+    delivered = [
+        "3500",  # Die Sendung wurde zugestellt
+        "3510",  # Shipment delivered (with scanner)
+        "3511",  # Delivered in letterbox
+        "3520",  # Shipment delivered (without scanner)
+        "3530",  # Collected by recipient from ParcelShop
+        "7500",  # Return shipment arrived at client
+    ]
+    delivery_failed = [
+        "3710",  # Annahmeverweigerung (refused)
+        "3715",  # COD not paid
+        "3720",  # Address not found
+        "3731",  # Recipient not present (1st attempt)
+        "3732",  # Recipient not present (2nd attempt)
+        "3733",  # Recipient not present (3rd attempt)
+        "3734",  # Recipient not present (4th attempt)
+        "3740",  # Damage detected
+        "3750",  # Tour cancellation
+        "3751",  # Incorrect TAN (1st attempt)
+        "3752",  # Incorrect TAN (2nd attempt)
+        "3753",  # Incorrect TAN (3rd attempt)
+        "3754",  # Incorrect TAN (4th attempt)
+        "3760",  # Return shipment collected
+        "3761",  # Return shipment taken
+        "3780",  # Misdirected
+        "3782",  # Ident failed - photo mismatch
+        "3783",  # Ident failed - name mismatch
+        "3784",  # Ident failed - DOB mismatch
+        "3785",  # Ident failed - document mismatch
+        "3786",  # Ident failed - PIN code
+        "3787",  # Ident failed - age verification
+        "3795",  # Shipment stopped
+    ]
+    on_hold = [
+        "1730",  # Held by customs
+        "1751",  # Rejected by customs
+        "4100",  # Sendung wird aufbewahrt (shipment stored)
+        "4500",  # Stored (stocktaking)
+        "4610",  # ParcelShop - high volume, cannot pick up
+        "4620",  # ParcelShop - shipment not available
+        "4630",  # ParcelShop - shipment not found
+        "4690",  # Status corrected at ParcelShop
+    ]
+    delivery_delayed = [
+        "4010",  # Return - refused
+        "4015",  # Return - COD not paid
+        "4020",  # Return - address not found
+        "4024",  # Return - too large/heavy for ParcelShop
+        "4025",  # Shipment returned to depot
+        "4031",  # Return - N1 (1st attempt failed)
+        "4032",  # Return - N2 (2nd attempt failed)
+        "4033",  # Return - N3 (3rd attempt failed)
+        "4034",  # Return - N4 (4th attempt failed)
+        "4035",  # Return - not collected from ParcelShop
+        "4040",  # Return - damage
+        "4050",  # Return - tour cancellation
+        "4051",  # Return - TAN 1
+        "4052",  # Return - TAN 2
+        "4053",  # Return - TAN 3
+        "4054",  # Return - TAN 4
+        "4060",  # Return shipment received (pickup)
+        "4061",  # Return shipment received (take-away)
+        "4062",  # Return handed in at ParcelShop
+        "4070",  # Tour departure cancelled
+        "4072",  # Return cancelled (correction)
+        "4080",  # Misdirected
+        "4081",  # Ident failed
+        "4082",  # Ident failed - photo
+        "4083",  # Ident failed - name
+        "4084",  # Ident failed - DOB
+        "4085",  # Ident failed - document
+        "4086",  # Ident failed - PIN
+        "4087",  # Ident failed - age
+        "4095",  # Delivery stopped
+    ]
+    return_to_sender = [
+        "1520",  # Return shipment sorted
+        "6080",  # Rückversand (return shipment)
+        "6081",  # Return - refused
+        "6082",  # Return - address not readable
+        "6083",  # Return - address not found
+        "6084",  # Return - receiver not met
+        "6085",  # Return - damage
+        "6086",  # Return - sorting error
+        "6087",  # Return - technical issue
+        "6088",  # Redirected at receiver request
+        "6089",  # Return - returns
+        "6090",  # Forwarded to logistics center
+        "6092",  # Return - ident failed
+        "6093",  # Return - not collected from ParcelShop
+        "6094",  # Return - COD not paid
+        "6096",  # Return - too large/heavy for ParcelShop
+        "6098",  # Return - incorrect TAN
+        "6099",  # Return - delivery stopped
+    ]
+
+
+class TrackingIncidentReason(lib.Enum):
+    """Maps Hermes exception codes to normalized incident reasons.
+
+    Based on Hermes Germany Eventcodes.csv.
+    Maps carrier-specific exception/status codes to standardized
+    incident reasons for tracking events.
+    """
+
+    # Consignee-caused issues
+    consignee_refused = [
+        "3710",  # Annahmeverweigerung
+        "4010",  # Return - refused
+        "6081",  # Return - refused
+    ]
+    consignee_not_home = [
+        "3731",  # Recipient not present (1st attempt)
+        "3732",  # Recipient not present (2nd attempt)
+        "3733",  # Recipient not present (3rd attempt)
+        "3734",  # Recipient not present (4th attempt)
+        "4031",  # Return - N1
+        "4032",  # Return - N2
+        "4033",  # Return - N3
+        "4034",  # Return - N4
+        "6084",  # Return - receiver not met
+    ]
+    consignee_incorrect_address = [
+        "3720",  # Address not found
+        "4020",  # Return - address not found
+        "6082",  # Return - address not readable
+        "6083",  # Return - address not found
+    ]
+    consignee_not_available = [
+        "4035",  # Not collected from ParcelShop
+        "6093",  # Return - not collected from ParcelShop
+    ]
+    consignee_cod_unpaid = [
+        "3715",  # COD not paid
+        "4015",  # Return - COD not paid
+        "6094",  # Return - COD not paid
+    ]
+    consignee_id_failed = [
+        "3782",  # Ident failed - photo mismatch
+        "3783",  # Ident failed - name mismatch
+        "3784",  # Ident failed - DOB mismatch
+        "3785",  # Ident failed - document mismatch
+        "3786",  # Ident failed - PIN code
+        "3787",  # Ident failed - age verification
+        "4081",  # Ident failed
+        "4082",  # Ident failed - photo
+        "4083",  # Ident failed - name
+        "4084",  # Ident failed - DOB
+        "4085",  # Ident failed - document
+        "4086",  # Ident failed - PIN
+        "4087",  # Ident failed - age
+        "6092",  # Return - ident failed
+    ]
+    consignee_tan_invalid = [
+        "3751",  # Incorrect TAN (1st attempt)
+        "3752",  # Incorrect TAN (2nd attempt)
+        "3753",  # Incorrect TAN (3rd attempt)
+        "3754",  # Incorrect TAN (4th attempt)
+        "4051",  # Return - TAN 1
+        "4052",  # Return - TAN 2
+        "4053",  # Return - TAN 3
+        "4054",  # Return - TAN 4
+        "6098",  # Return - incorrect TAN
+    ]
+
+    # Carrier-caused issues
+    carrier_damaged_parcel = [
+        "3740",  # Damage detected
+        "4040",  # Return - damage
+        "6085",  # Return - damage
+    ]
+    carrier_sorting_error = [
+        "3780",  # Misdirected
+        "4080",  # Misdirected
+        "6086",  # Return - sorting error
+        "6087",  # Return - technical issue
+    ]
+    carrier_not_enough_time = [
+        "3750",  # Tour cancellation
+        "4050",  # Return - tour cancellation
+        "4070",  # Tour departure cancelled
+    ]
+    carrier_parcel_too_large = [
+        "4024",  # Return - too large/heavy for ParcelShop
+        "6096",  # Return - too large/heavy for ParcelShop
+    ]
+
+    # Customs-related issues
+    customs_delay = [
+        "1730",  # Held by customs
+    ]
+    customs_rejected = [
+        "1751",  # Rejected by customs
+    ]
+
+    # Shipment stopped
+    shipment_stopped = [
+        "3795",  # Shipment stopped
+        "4095",  # Delivery stopped
+        "6099",  # Return - delivery stopped
+    ]
 
 
 class LabelType(lib.StrEnum):

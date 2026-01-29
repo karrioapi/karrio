@@ -1,4 +1,4 @@
-"""Karrio DHL Parcel DE pickup cancel implementation."""
+"""Karrio DHL Germany pickup cancel implementation."""
 
 import karrio.schemas.dhl_parcel_de.pickup_cancel_response as pickup
 
@@ -12,7 +12,9 @@ import karrio.providers.dhl_parcel_de.utils as provider_utils
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+) -> typing.Tuple[
+    typing.Optional[models.ConfirmationDetails], typing.List[models.Message]
+]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
@@ -51,7 +53,7 @@ def pickup_cancel_request(
     payload: models.PickupCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    # The DHL Parcel DE API uses query parameters for cancellation
+    # The DHL Germany API uses query parameters for cancellation
     # DELETE /orders?orderID={orderID}
     request = dict(
         orderID=payload.confirmation_number,

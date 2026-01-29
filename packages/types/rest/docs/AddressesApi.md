@@ -121,7 +121,7 @@ const { status, data } = await apiInstance.discard(
 # **list**
 > AddressList list()
 
-Retrieve all addresses.
+         Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
 
 ### Example
 

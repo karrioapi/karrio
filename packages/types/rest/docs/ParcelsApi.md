@@ -121,7 +121,7 @@ const { status, data } = await apiInstance.discard(
 # **list**
 > ParcelList list()
 
-Retrieve all stored parcels.
+         Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
 
 ### Example
 

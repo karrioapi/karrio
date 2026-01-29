@@ -53,6 +53,17 @@ class Mapper(mapper.Mapper):
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
         return provider.parse_pickup_cancel_response(response, self.settings)
 
+    # Tracking operations
+    def create_tracking_request(
+        self, payload: models.TrackingRequest
+    ) -> lib.Serializable:
+        return provider.tracking_request(payload, self.settings)
+
+    def parse_tracking_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+        return provider.parse_tracking_response(response, self.settings)
+
     # Note: Hermes API does not support:
     # - cancel_shipment (no DELETE endpoint for shipments)
     # - pickup_update (no PUT endpoint for pickups)

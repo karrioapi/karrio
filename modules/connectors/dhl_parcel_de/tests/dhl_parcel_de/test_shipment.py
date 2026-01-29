@@ -242,6 +242,7 @@ ParsedShipmentResponse = [
         },
         "label_type": "PDF",
         "meta": {
+            "billing_number": "33333333330102",
             "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=340434310428091700",
             "shipmentNo": "340434310428091700",
             "shipmentRefNo": "340434310428091700",
@@ -319,7 +320,7 @@ IntlShipmentRequest = {
     "profile": "STANDARD_GRUPPENPROFIL",
     "shipments": [
         {
-            "billingNumber": "33333333330102",
+            "billingNumber": "33333333335401",  # V54EPAK (Europaket) test billing number
             "consignee": {
                 "addressHouse": "10",
                 "addressStreet": "Downing Street",
@@ -617,6 +618,7 @@ ParsedShipmentResponseWithCustomsDoc = [
         "docs": {"invoice": "JVBERi0xLjUKCustomsDoc", "label": "JVBERi0xLjUK"},
         "label_type": "PDF",
         "meta": {
+            "billing_number": "33333333335401",  # V54EPAK (Europaket) test billing number
             "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=CD530123554DE",
             "shipmentNo": "CD530123554DE",
             "shipmentRefNo": "Order No. 1234",

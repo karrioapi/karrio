@@ -1,4 +1,4 @@
-import { TemplateFilter, CreateParcelInput, CREATE_PARCEL, DELETE_PARCEL, get_parcels, GET_PARCELS, UpdateParcelInput2, UPDATE_PARCEL, create_parcel, update_parcel, delete_parcel } from "@karrio/types";
+import { TemplateFilter, CreateParcelInput, CREATE_PARCEL, DELETE_PARCEL, get_parcels, GET_PARCELS, UpdateParcelInput, UPDATE_PARCEL, create_parcel, update_parcel, delete_parcel } from "@karrio/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useAuthenticatedQuery, useKarrio } from "./karrio";
@@ -90,7 +90,7 @@ export function useParcelMutation() {
     { onSuccess: invalidateCache, onError }
   );
   const updateParcel = useMutation(
-    (data: UpdateParcelInput2) => karrio.graphql.request<update_parcel>(
+    (data: UpdateParcelInput) => karrio.graphql.request<update_parcel>(
       gqlstr(UPDATE_PARCEL), { data }
     ),
     { onSuccess: invalidateCache, onError }

@@ -68,10 +68,33 @@ class WorkspaceConfigModelSerializer(serializers.ModelSerializer):
 
 @serializers.owned_model_serializer
 class MetafieldModelSerializer(serializers.ModelSerializer):
+    object_type = serializers.CharField(required=False, allow_null=True)
+    object_id = serializers.CharField(required=False, allow_null=True)
+
     class Meta:
         model = core.Metafield
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
-        exclude = ["created_at", "updated_at", "created_by"]
+        exclude = ["created_at", "updated_at", "created_by", "content_type"]
+
+    def validate(self, data):
+        from django.contrib.contenttypes.models import ContentType
+
+        object_type = data.pop("object_type", None)
+        object_id = data.get("object_id")
+
+        if object_type and object_id:
+            ct = ContentType.objects.filter(model=object_type).first()
+            if not ct:
+                raise serializers.ValidationError(
+                    {"object_type": f"Invalid object type: {object_type}"}
+                )
+            data["content_type"] = ct
+        elif object_type or object_id:
+            raise serializers.ValidationError(
+                "Both object_type and object_id must be provided together"
+            )
+
+        return data
 
 
 @serializers.owned_model_serializer

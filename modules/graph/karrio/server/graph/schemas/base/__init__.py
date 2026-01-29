@@ -216,7 +216,7 @@ class Mutation:
 
     @strawberry.mutation
     def update_address(
-        self, info: Info, input: inputs.UpdateAddressInput2
+        self, info: Info, input: inputs.UpdateAddressInput
     ) -> mutations.UpdateAddressMutation:
         return mutations.UpdateAddressMutation.mutate(info, **input.to_dict())
 
@@ -228,7 +228,7 @@ class Mutation:
 
     @strawberry.mutation
     def update_parcel(
-        self, info: Info, input: inputs.UpdateParcelInput2
+        self, info: Info, input: inputs.UpdateParcelInput
     ) -> mutations.UpdateParcelMutation:
         return mutations.UpdateParcelMutation.mutate(info, **input.to_dict())
 

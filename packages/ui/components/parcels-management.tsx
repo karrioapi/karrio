@@ -91,9 +91,13 @@ function ParcelEditDialog({
 
   const handleSubmit = async (parcel: Partial<ParcelType>) => {
     try {
+      // Build payload with flat structure and meta field
       const payload = {
-        ...formData,
-        parcel,
+        ...parcel,
+        meta: {
+          label: formData.label,
+          is_default: formData.is_default,
+        },
       };
 
       if (parcelTemplate) {

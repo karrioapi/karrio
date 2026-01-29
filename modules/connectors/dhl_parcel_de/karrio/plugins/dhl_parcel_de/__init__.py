@@ -6,7 +6,7 @@ import karrio.providers.dhl_parcel_de.units as units
 METADATA = metadata.PluginMetadata(
     status="beta",
     id="dhl_parcel_de",
-    label="DHL Parcel DE",
+    label="DHL Germany",
     # Integrations
     Mapper=mappers.Mapper,
     Proxy=mappers.Proxy,
@@ -17,4 +17,5 @@ METADATA = metadata.PluginMetadata(
     services=units.ShippingService,
     service_levels=units.DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
+    system_config=units.SYSTEM_CONFIG,
 )

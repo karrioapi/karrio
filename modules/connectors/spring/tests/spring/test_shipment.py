@@ -16,41 +16,43 @@ class TestSpringShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
+            **ShipmentCancelPayload
+        )
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
+
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.spring.proxy.lib.run_asynchronously") as mock_async:
             mock_async.return_value = ["{}"]
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            print(f"run_asynchronously called: {mock_async.called}")
+
             self.assertTrue(mock_async.called)
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.spring.proxy.lib.run_asynchronously") as mock_async:
             mock_async.return_value = [ShipmentResponse]
             parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
+
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
-        print(f"Generated cancel request: {lib.to_dict(request.serialize())}")
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
+
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
         with patch("karrio.mappers.spring.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            print(f"Called URL: {mock.call_args[1]['url']}")
+
             self.assertEqual(
                 mock.call_args[1]["url"],
                 f"{gateway.settings.server_url}",
@@ -64,18 +66,18 @@ class TestSpringShipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(f"Parsed cancel response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedShipmentCancelResponse
+            )
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.spring.proxy.lib.run_asynchronously") as mock_async:
             mock_async.return_value = [ErrorResponse]
             parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
+
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -84,13 +86,15 @@ class TestSpringMultiPieceShipment(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
-        self.MultiPieceShipmentRequest = models.ShipmentRequest(**MultiPieceShipmentPayload)
+        self.MultiPieceShipmentRequest = models.ShipmentRequest(
+            **MultiPieceShipmentPayload
+        )
 
     def test_create_multi_piece_shipment_request(self):
         """Verify that multi-piece shipments create one request per package."""
         request = gateway.mapper.create_shipment_request(self.MultiPieceShipmentRequest)
         serialized = lib.to_dict(request.serialize())
-        print(f"Multi-piece request: {serialized}")
+
         # Should have 2 requests (one per package)
         self.assertEqual(len(serialized), 2)
         # References should include package index
@@ -103,13 +107,16 @@ class TestSpringMultiPieceShipment(unittest.TestCase):
     def test_parse_multi_piece_shipment_response(self):
         """Verify that multi-piece responses are aggregated correctly."""
         with patch("karrio.mappers.spring.proxy.lib.run_asynchronously") as mock_async:
-            mock_async.return_value = [MultiPieceShipmentResponse1, MultiPieceShipmentResponse2]
+            mock_async.return_value = [
+                MultiPieceShipmentResponse1,
+                MultiPieceShipmentResponse2,
+            ]
             parsed_response = (
                 karrio.Shipment.create(self.MultiPieceShipmentRequest)
                 .from_(gateway)
                 .parse()
             )
-            print(f"Multi-piece parsed response: {lib.to_dict(parsed_response)}")
+
             result = lib.to_dict(parsed_response)
             # Should have shipment details
             self.assertIsNotNone(result[0])
@@ -119,13 +126,13 @@ class TestSpringMultiPieceShipment(unittest.TestCase):
             self.assertIn("tracking_numbers", result[0]["meta"])
             self.assertEqual(
                 set(result[0]["meta"]["tracking_numbers"]),
-                {"LXAB00000001NL", "LXAB00000002NL"}
+                {"LXAB00000001NL", "LXAB00000002NL"},
             )
             # Should have multiple shipment identifiers in meta (tracking numbers for cancellation)
             self.assertIn("shipment_identifiers", result[0]["meta"])
             self.assertEqual(
                 set(result[0]["meta"]["shipment_identifiers"]),
-                {"LXAB00000001NL", "LXAB00000002NL"}
+                {"LXAB00000001NL", "LXAB00000002NL"},
             )
 
 
@@ -170,7 +177,7 @@ MultiPieceShipmentPayload = {
             "length": 25.0,
             "weight_unit": "KG",
             "dimension_unit": "CM",
-        }
+        },
     ],
     "service": "PPTT",
     "reference": "ORDER-MULTI",

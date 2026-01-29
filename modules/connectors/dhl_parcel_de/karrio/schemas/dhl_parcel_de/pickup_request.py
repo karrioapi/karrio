@@ -53,8 +53,8 @@ class PickupAddressType:
     name1: typing.Optional[str] = None
     name2: typing.Optional[str] = None
     addressStreet: typing.Optional[str] = None
-    addressHouse: typing.Optional[int] = None
-    postalCode: typing.Optional[int] = None
+    addressHouse: typing.Optional[str] = None
+    postalCode: typing.Optional[str] = None
     city: typing.Optional[str] = None
     country: typing.Optional[str] = None
     state: typing.Optional[str] = None
@@ -87,10 +87,10 @@ class PickupServicesType:
 class ShipmentType:
     transportationType: typing.Optional[str] = None
     replacement: typing.Optional[bool] = None
-    shipmentNo: typing.Optional[int] = None
+    shipmentNo: typing.Optional[str] = None
     size: typing.Optional[str] = None
     pickupServices: typing.Optional[PickupServicesType] = jstruct.JStruct[PickupServicesType]
-    customerReference: typing.Optional[int] = None
+    customerReference: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)

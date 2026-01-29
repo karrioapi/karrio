@@ -11,3 +11,4 @@ kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_create_request
 kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_create_response.json" "${LIB_MODULES}/pickup_create_response.py"
 kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_cancel_request.json" "${LIB_MODULES}/pickup_cancel_request.py"
 kcli codegen generate --no-nice-property-names "${SCHEMAS}/pickup_cancel_response.json" "${LIB_MODULES}/pickup_cancel_response.py"
+kcli codegen generate --no-nice-property-names "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"

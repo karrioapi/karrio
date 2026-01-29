@@ -11,24 +11,25 @@ class Proxy(proxy.Proxy):
     settings: Settings
 
     def authenticate(self, _=None) -> lib.Deserializable[str]:
-        """Retrieve the access_token using the client_id|client_secret pair
-        or collect it from the cache if an unexpired access_token exist.
-        """
+        """Authenticate and return access_token wrapped in Deserializable."""
+        return lib.Deserializable(self.get_token())
+
+    def get_token(self) -> str:
+        """Retrieve access_token using client credentials, with caching."""
         cache_key = f"{self.settings.carrier_name}|{self.settings.client_id}|{self.settings.client_secret}"
 
-        def get_token():
+        def fetch_token():
             merchant_id = self.settings.connection_config.merchant_id.state
             result = lib.request(
                 url=f"{self.settings.server_url}/security/v1/oauth/token",
-                trace=self.settings.trace_as("json"),
-                data="grant_type=client_credentials",
+                trace=self.trace_as("json"),
                 method="POST",
                 headers={
                     "authorization": f"Basic {self.settings.authorization}",
                     "content-Type": "application/x-www-form-urlencoded",
                     **({"x-merchant-id": merchant_id} if merchant_id else {}),
                 },
-                max_retries=2,
+                data="grant_type=client_credentials",
             )
             response = lib.to_dict(result)
             messages = provider_error.parse_error_response(response, self.settings)
@@ -41,115 +42,125 @@ class Proxy(proxy.Proxy):
             ) + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
             return {**response, "expiry": lib.fdatetime(expiry)}
 
-        token = self.settings.connection_cache.thread_safe(
-            refresh_func=get_token,
+        return self.settings.connection_cache.thread_safe(
+            refresh_func=fetch_token,
             cache_key=cache_key,
             buffer_minutes=30,
-        )
+        ).get_state()
 
-        return lib.Deserializable(token.get_state())
-
-    def _send_request(
-        self,
-        path: str,
-        request: lib.Serializable = None,
-        method: str = "POST",
-        headers: dict = None,
-    ) -> str:
-        try:
-            access_token = self.authenticate().deserialize()
-
-            return lib.request(
-                url=f"{self.settings.server_url}{path}",
-                trace=self.trace_as("json"),
-                method=method,
-                headers={
-                    "transId": "x-trans-id",
-                    "transactionSrc": "x-trans-src",
-                    "content-Type": "application/json",
-                    "authorization": f"Bearer {access_token}",
-                    **(headers or {}),
-                },
-                **({"data": lib.to_json(request.serialize())} if request else {}),
-            )
-        except errors.ParsedMessagesError as e:
-            return lib.to_json(
-                {
-                    "response": {
-                        "errors": [
-                            {
-                                "code": "401",
-                                "message": "Authentication failed",
-                            }
-                        ]
-                    }
-                }
-            )
-
-    def get_rates(
-        self,
-        request: lib.Serializable,
-    ) -> lib.Deserializable:
-        response = self._send_request(
-            "/api/rating/v2409/Shop?additionalinfo=timeintransit",
-            request,
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
+        response = lib.request(
+            url=f"{self.settings.server_url}/api/rating/v2409/Shop?additionalinfo=timeintransit",
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "authorization": f"Bearer {self.get_token()}",
+                "content-Type": "application/json",
+            },
+            data=lib.to_json(request.serialize()),
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
-    def create_shipment(
-        self,
-        request: lib.Serializable,
-    ) -> lib.Deserializable:
-        response = self._send_request(
-            "/api/shipments/v2409/ship",
-            request,
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        response = lib.request(
+            url=f"{self.settings.server_url}/api/shipments/v2409/ship",
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "authorization": f"Bearer {self.get_token()}",
+                "content-Type": "application/json",
+            },
+            data=lib.to_json(request.serialize()),
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
-    def cancel_shipment(
-        self,
-        request: lib.Serializable,
-    ) -> lib.Deserializable:
-        response = self._send_request(
-            f"/api/shipments/v2409/void/cancel/{request.serialize().get('shipmentidentificationnumber')}",
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        shipment_id = request.serialize().get("shipmentidentificationnumber")
+        response = lib.request(
+            url=f"{self.settings.server_url}/api/shipments/v2409/void/cancel/{shipment_id}",
+            trace=self.trace_as("json"),
             method="DELETE",
+            headers={
+                "authorization": f"Bearer {self.get_token()}",
+                "content-Type": "application/json",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def get_tracking(
-        self, request: lib.Serializable
-    ) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
-        """get_tracking makes background requests for each tracking number"""
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
         locale = self.settings.connection_config.locale.state or "en_US"
+        token = self.get_token()
 
-        responses: typing.List[typing.Tuple[str, str]] = lib.run_concurently(
+        responses = lib.run_concurently(
             lambda tracking_number: (
                 tracking_number,
-                self._send_request(
-                    f"/api/track/v1/details/{tracking_number}?locale={locale}&returnSignature=true",
+                lib.request(
+                    url=f"{self.settings.server_url}/api/track/v1/details/{tracking_number}?locale={locale}&returnSignature=true",
+                    trace=self.trace_as("json"),
                     method="GET",
+                    headers={
+                        "authorization": f"Bearer {token}",
+                        "content-Type": "application/json",
+                    },
                 ),
             ),
             request.serialize(),
         )
+
         return lib.Deserializable(
             responses,
-            lambda res: [(_, lib.to_dict(__)) for _, __ in res if any(__.strip())],
+            lambda res: [(num, lib.to_dict(data)) for num, data in res if any(data.strip())],
         )
 
-    def upload_document(
-        self,
-        request: lib.Serializable,
-    ) -> lib.Deserializable:
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
         payload = request.serialize()
         shipper_number = payload["UploadRequest"]["ShipperNumber"]
 
-        response = self._send_request(
-            f"/api/paperlessdocuments/v1/upload",
-            headers=dict(ShipperNumber=shipper_number),
+        response = lib.request(
+            url=f"{self.settings.server_url}/api/paperlessdocuments/v1/upload",
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "authorization": f"Bearer {self.get_token()}",
+                "content-Type": "application/json",
+                "ShipperNumber": shipper_number,
+            },
+            data=lib.to_json(payload),
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        response = lib.request(
+            url=f"{self.settings.server_url}/api/pickupcreation/v2409/pickup",
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "authorization": f"Bearer {self.get_token()}",
+                "content-Type": "application/json",
+            },
+            data=lib.to_json(request.serialize()),
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        payload = request.serialize()
+        prn = payload.get("prn")
+        cancel_by = payload.get("cancel_by", "02")
+
+        response = lib.request(
+            url=f"{self.settings.server_url}/api/shipments/v2409/pickup/{cancel_by}",
+            trace=self.trace_as("json"),
+            method="DELETE",
+            headers={
+                "authorization": f"Bearer {self.get_token()}",
+                "content-Type": "application/json",
+                **({"Prn": prn} if prn else {}),
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)

@@ -160,6 +160,11 @@ class OptionEnum:
                 else None
             )
 
+        # Handle typing generics (e.g., typing.List[X], typing.Dict[X, Y])
+        elif hasattr(self.type, "__origin__"):
+            # For List types, just use the value as-is (it's already a list from JSON)
+            state = value if value is not None else None
+
         else:
             state = self.type(value) if value is not None else None
 

@@ -1,4 +1,4 @@
-"""Karrio DHL Parcel DE client proxy."""
+"""Karrio DHL Germany client proxy."""
 
 import typing
 import datetime
@@ -18,7 +18,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         """Retrieve the access_token using the client_id|client_secret pair
         or collect it from the cache if an unexpired access_token exist.
         """
-        cache_key = f"{self.settings.carrier_name}|{self.settings.client_id}|{self.settings.client_secret}"
+        cache_key = f"{self.settings.carrier_name}|{self.settings.connection_client_id}|{self.settings.connection_client_secret}"
 
         def get_token():
             response = lib.request(
@@ -27,10 +27,10 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 data=lib.to_query_string(
                     dict(
                         grant_type="password",
-                        username=self.settings.username,
-                        password=self.settings.password,
-                        client_id=self.settings.client_id,
-                        client_secret=self.settings.client_secret,
+                        username=self.settings.connection_username,
+                        password=self.settings.connection_password,
+                        client_id=self.settings.connection_client_id,
+                        client_secret=self.settings.connection_client_secret,
                     )
                 ),
                 method="POST",
@@ -63,7 +63,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         access_token = self.authenticate().deserialize()
-        query = urllib.parse.urlencode(lib.to_dict(request.ctx))
+        ctx = lib.to_dict(request.ctx) or {}
+        meta = ctx.pop("_meta", {})  # Extract meta context for response parsing
+        query = urllib.parse.urlencode(ctx)
         response = lib.request(
             url=f"{self.settings.server_url}/v2/orders?{query}",
             data=lib.to_json(request.serialize()),
@@ -76,7 +78,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, lib.to_dict, meta)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         access_token = self.authenticate().deserialize()
@@ -102,7 +104,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 method="GET",
                 headers={
                     "Accept": "application/json",
-                    "DHL-API-Key": self.settings.client_secret,
+                    "DHL-API-Key": self.settings.connection_client_secret,
                 },
             ),
             request.serialize(),

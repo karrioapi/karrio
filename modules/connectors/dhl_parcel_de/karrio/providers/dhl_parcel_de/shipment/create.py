@@ -16,12 +16,13 @@ def parse_shipment_response(
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response = _response.deserialize()
     items = response.get("items") or []
+    ctx = _response.ctx or {}
 
     messages = error.parse_error_response(response, settings)
     shipment = (
         lib.to_multi_piece_shipment(
             [
-                (f"{_}", _extract_details(item, settings))
+                (f"{_}", _extract_details(item, settings, ctx))
                 for _, item in enumerate(items, start=1)
             ]
         )
@@ -35,9 +36,11 @@ def parse_shipment_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
+    ctx: dict = None,
 ) -> models.ShipmentDetails:
     # fmt: off
     shipment = lib.to_object(shipping.ItemType, data)
+    _ctx = ctx or {}
 
     tracking_number = str(shipment.shipmentNo)
     label = lib.failsafe(lambda: shipment.label.b64 or shipment.label.zpl2)
@@ -75,6 +78,7 @@ def _extract_details(
             shipmentRefNo=shipment.shipmentRefNo,
             tracking_numbers=[tracking_number],
             shipment_identifiers=[tracking_number],
+            billing_number=_ctx.get("billing_number"),
         ),
     )
     # fmt: on
@@ -87,6 +91,8 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     service = provider_units.ShippingService.map(payload.service).value_or_key
+    service_code = provider_units.ShippingService.map(payload.service).name
+    billing_number = settings.get_billing_number(service_code)
     options = lib.to_shipping_options(
         payload.options,
         initializer=provider_units.shipping_options_initializer,
@@ -116,7 +122,7 @@ def shipment_request(
         shipments=[
             dhl_parcel_de.ShipmentType(
                 product=service,
-                billingNumber=settings.billing_number,
+                billingNumber=billing_number,
                 refNo=payload.reference,
                 costCenter=settings.connection_config.cost_center.state,
                 creationSoftware=settings.connection_config.creation_software.state,
@@ -325,5 +331,7 @@ def shipment_request(
             printFormat=print_format,
             combine="true",
             # validate="true",
+            # Meta context for response parsing (not URL params)
+            _meta=dict(billing_number=billing_number),
         ),
     )

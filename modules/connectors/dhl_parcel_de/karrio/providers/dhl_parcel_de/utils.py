@@ -1,21 +1,66 @@
+import typing
 import karrio.lib as lib
 import karrio.core as core
 
 
 class Settings(core.Settings):
-    """DHL Parcel DE connection settings."""
+    """DHL Germany connection settings."""
 
-    username: str
-    password: str
-    client_id: str
-    client_secret: str
-    billing_number: str = None
+    username: str = None
+    password: str = None
+    client_id: str = None
+    client_secret: str = None
 
     account_country_code: str = "DE"
 
     @property
     def carrier_name(self):
         return "dhl_parcel_de"
+
+    # Computed credential properties with system config fallback
+    @property
+    def connection_username(self) -> typing.Optional[str]:
+        """Return user-provided username or fallback to system config."""
+        if self.username:
+            return self.username
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_USERNAME")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_USERNAME")
+        )
+
+    @property
+    def connection_password(self) -> typing.Optional[str]:
+        """Return user-provided password or fallback to system config."""
+        if self.password:
+            return self.password
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_PASSWORD")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_PASSWORD")
+        )
+
+    @property
+    def connection_client_id(self) -> typing.Optional[str]:
+        """Return user-provided client_id or fallback to system config."""
+        if self.client_id:
+            return self.client_id
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_CLIENT_ID")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_CLIENT_ID")
+        )
+
+    @property
+    def connection_client_secret(self) -> typing.Optional[str]:
+        """Return user-provided client_secret or fallback to system config."""
+        if self.client_secret:
+            return self.client_secret
+        return (
+            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_CLIENT_SECRET")
+            if self.test_mode
+            else self.connection_system_config.get("DHL_PARCEL_DE_CLIENT_SECRET")
+        )
 
     @property
     def server_url(self):
@@ -64,6 +109,59 @@ class Settings(core.Settings):
             self.config or {},
             option_type=ConnectionConfig,
         )
+
+    def get_billing_number(self, service_code: str = None) -> typing.Optional[str]:
+        """Resolve billing number for a service with fallback to default.
+
+        Args:
+            service_code: The karrio service code (e.g., "dhl_parcel_de_paket")
+
+        Returns:
+            The billing number for the service, or default if not found
+        """
+        from karrio.providers.dhl_parcel_de.units import (
+            DEFAULT_TEST_BILLING_NUMBERS,
+            DEFAULT_TEST_BILLING_NUMBER,
+        )
+
+        service_billing_numbers = (
+            self.connection_config.service_billing_numbers.state or []
+        )
+
+        # Use test defaults if in test mode and no custom config provided
+        if self.test_mode and not service_billing_numbers:
+            service_billing_numbers = DEFAULT_TEST_BILLING_NUMBERS
+
+        if service_code:
+            service_billing = next(
+                (
+                    item
+                    for item in service_billing_numbers
+                    if (
+                        item.service == service_code
+                        if hasattr(item, "service")
+                        else item.get("service") == service_code
+                    )
+                ),
+                None,
+            )
+            if service_billing:
+                return (
+                    service_billing.billing_number
+                    if hasattr(service_billing, "billing_number")
+                    else service_billing.get("billing_number")
+                )
+
+        # Fallback to configured default or test default
+        default_billing = self.connection_config.default_billing_number.state
+        if default_billing:
+            return default_billing
+
+        # Use test default if in test mode
+        if self.test_mode:
+            return DEFAULT_TEST_BILLING_NUMBER
+
+        return None
 
     @property
     def profile(self):

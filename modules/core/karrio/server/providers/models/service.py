@@ -66,6 +66,15 @@ class ServiceLevel(core.OwnedEntity):
         null=True,
         help_text="Maximum volume in liters for volumetric weight calculation",
     )
+    dim_factor = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="Dimensional weight divisor. 5000-6000 for cm/kg, 139-166 for in/lb",
+    )
+    use_volumetric = models.BooleanField(
+        default=False,
+        help_text="Use max(actual_weight, volumetric_weight) for rate calculation",
+    )
 
     # ─────────────────────────────────────────────────────────────────
     # COST TRACKING (internal - not shown to customer)
@@ -94,6 +103,16 @@ class ServiceLevel(core.OwnedEntity):
     )
 
     metadata = models.JSONField(blank=True, null=True, default=core.field_default({}))
+
+    # ─────────────────────────────────────────────────────────────────
+    # SERVICE FEATURES
+    # ─────────────────────────────────────────────────────────────────
+    features = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default({}),
+        help_text="Structured features: {first_mile, last_mile, form_factor, b2c, b2b, tracked, ...}",
+    )
 
     def __str__(self):
         return f"{self.id} | {self.service_name}"

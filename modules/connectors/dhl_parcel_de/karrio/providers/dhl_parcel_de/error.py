@@ -53,6 +53,7 @@ def parse_error_response(
                 validation_state = validation_msg.get("validationState", "")
                 property_name = validation_msg.get("property", "")
                 message_text = validation_msg.get("validationMessage", "")
+                message_code = validation_msg.get("validationMessageCode")
 
                 # Only process validation messages with actual error/warning states and messages
                 # Skip placeholder/informational messages (validationState: "string" or empty)
@@ -72,7 +73,7 @@ def parse_error_response(
                         models.Message(
                             carrier_id=settings.carrier_id,
                             carrier_name=settings.carrier_name,
-                            code=validation_state,
+                            code=message_code or validation_state,
                             message=f"{property_name}: {message_text}" if property_name else message_text,
                             details={**details, **kwargs},
                         )

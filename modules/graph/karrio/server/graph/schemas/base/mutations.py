@@ -490,7 +490,12 @@ class DeleteMutation(utils.BaseMutation):
         if validator:
             validator(instance, context=info.context)
 
+        # Get the shipment FK if it exists and is a direct relationship
+        # (not a GenericRelation/RelatedManager)
         shipment = getattr(instance, "shipment", None)
+        if shipment is not None and not isinstance(shipment, manager.Shipment):
+            shipment = None
+
         instance.delete(keep_parents=True)
 
         if shipment is not None:
@@ -1028,21 +1033,25 @@ class CreateAddressMutation(utils.BaseMutation):
     @transaction.atomic
     def mutate(info: Info, **input) -> "CreateAddressMutation":
         data = input.copy()
-        label = data.pop("label")
-        is_default = data.pop("is_default", False)
 
-        # Extract address data (might be nested under 'address' key or at top level)
-        address_data = data.pop("address", data)
+        # Extract meta from input (flat structure)
+        meta_input = data.pop("meta", {})
+        meta = {
+            k: v
+            for k, v in meta_input.items()
+            if not utils.is_unset(v)
+        }
 
         # If setting as default, clear existing default
-        if is_default:
+        if meta.get("is_default"):
             _clear_default_address_templates(info)
 
-        # Create meta field with template metadata
-        meta = {"label": label, "is_default": is_default}
+        # Ensure is_default has a value
+        if "is_default" not in meta:
+            meta["is_default"] = False
 
         serializer = serializers.AddressModelSerializer(
-            data={**address_data, "meta": meta},
+            data={**data, "meta": meta},
             context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
@@ -1063,11 +1072,14 @@ class UpdateAddressMutation(utils.BaseMutation):
     def mutate(info: Info, **input) -> "UpdateAddressMutation":
         data = input.copy()
         id = data.pop("id")
-        label = data.pop("label", None)
-        is_default = data.pop("is_default", None)
 
-        # Extract address data (might be nested under 'address' key or at top level)
-        address_data = data.pop("address", data)
+        # Extract meta from input (flat structure)
+        meta_input = data.pop("meta", {})
+        meta_updates = {
+            k: v
+            for k, v in meta_input.items()
+            if not utils.is_unset(v)
+        }
 
         instance = manager.Address.access_by(info.context.request).get(id=id)
 
@@ -1078,18 +1090,15 @@ class UpdateAddressMutation(utils.BaseMutation):
             )
 
         # Update meta field
-        meta = instance.meta or {}
-        if label is not None:
-            meta["label"] = label
-        if is_default is not None:
-            # If setting as default, clear existing default
-            if is_default:
-                _clear_default_address_templates(info, exclude_id=id)
-            meta["is_default"] = is_default
+        meta = {**(instance.meta or {}), **meta_updates}
+
+        # If setting as default, clear existing default
+        if meta_updates.get("is_default"):
+            _clear_default_address_templates(info, exclude_id=id)
 
         serializer = serializers.AddressModelSerializer(
             instance,
-            data={**address_data, "meta": meta},
+            data={**data, "meta": meta},
             context=info.context.request,
             partial=True,
         )
@@ -1110,21 +1119,25 @@ class CreateParcelMutation(utils.BaseMutation):
     @transaction.atomic
     def mutate(info: Info, **input) -> "CreateParcelMutation":
         data = input.copy()
-        label = data.pop("label")
-        is_default = data.pop("is_default", False)
 
-        # Extract parcel data (might be nested under 'parcel' key or at top level)
-        parcel_data = data.pop("parcel", data)
+        # Extract meta from input (flat structure)
+        meta_input = data.pop("meta", {})
+        meta = {
+            k: v
+            for k, v in meta_input.items()
+            if not utils.is_unset(v)
+        }
 
         # If setting as default, clear existing default
-        if is_default:
+        if meta.get("is_default"):
             _clear_default_parcel_templates(info)
 
-        # Create meta field with template metadata
-        meta = {"label": label, "is_default": is_default}
+        # Ensure is_default has a value
+        if "is_default" not in meta:
+            meta["is_default"] = False
 
         serializer = serializers.ParcelModelSerializer(
-            data={**parcel_data, "meta": meta},
+            data={**data, "meta": meta},
             context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
@@ -1145,11 +1158,14 @@ class UpdateParcelMutation(utils.BaseMutation):
     def mutate(info: Info, **input) -> "UpdateParcelMutation":
         data = input.copy()
         id = data.pop("id")
-        label = data.pop("label", None)
-        is_default = data.pop("is_default", None)
 
-        # Extract parcel data (might be nested under 'parcel' key or at top level)
-        parcel_data = data.pop("parcel", data)
+        # Extract meta from input (flat structure)
+        meta_input = data.pop("meta", {})
+        meta_updates = {
+            k: v
+            for k, v in meta_input.items()
+            if not utils.is_unset(v)
+        }
 
         instance = manager.Parcel.access_by(info.context.request).get(id=id)
 
@@ -1160,18 +1176,15 @@ class UpdateParcelMutation(utils.BaseMutation):
             )
 
         # Update meta field
-        meta = instance.meta or {}
-        if label is not None:
-            meta["label"] = label
-        if is_default is not None:
-            # If setting as default, clear existing default
-            if is_default:
-                _clear_default_parcel_templates(info, exclude_id=id)
-            meta["is_default"] = is_default
+        meta = {**(instance.meta or {}), **meta_updates}
+
+        # If setting as default, clear existing default
+        if meta_updates.get("is_default"):
+            _clear_default_parcel_templates(info, exclude_id=id)
 
         serializer = serializers.ParcelModelSerializer(
             instance,
-            data={**parcel_data, "meta": meta},
+            data={**data, "meta": meta},
             context=info.context.request,
             partial=True,
         )
@@ -1250,15 +1263,22 @@ class CreateProductMutation(utils.BaseMutation):
     @transaction.atomic
     def mutate(info: Info, **input) -> "CreateProductMutation":
         data = input.copy()
-        label = data.pop("label")
-        is_default = data.pop("is_default", False)
+
+        # Extract meta from input (flat structure)
+        meta_input = data.pop("meta", {})
+        meta = {
+            k: v
+            for k, v in meta_input.items()
+            if not utils.is_unset(v)
+        }
 
         # If setting as default, clear existing default
-        if is_default:
+        if meta.get("is_default"):
             _clear_default_product_templates(info)
 
-        # Create meta field with template metadata
-        meta = {"label": label, "is_default": is_default}
+        # Ensure is_default has a value
+        if "is_default" not in meta:
+            meta["is_default"] = False
 
         serializer = serializers.CommodityModelSerializer(
             data={**data, "meta": meta},
@@ -1282,8 +1302,14 @@ class UpdateProductMutation(utils.BaseMutation):
     def mutate(info: Info, **input) -> "UpdateProductMutation":
         data = input.copy()
         id = data.pop("id")
-        label = data.pop("label", None)
-        is_default = data.pop("is_default", None)
+
+        # Extract meta from input (flat structure)
+        meta_input = data.pop("meta", {})
+        meta_updates = {
+            k: v
+            for k, v in meta_input.items()
+            if not utils.is_unset(v)
+        }
 
         instance = manager.Commodity.access_by(info.context.request).get(id=id)
 
@@ -1294,14 +1320,11 @@ class UpdateProductMutation(utils.BaseMutation):
             )
 
         # Update meta field
-        meta = instance.meta or {}
-        if label is not None:
-            meta["label"] = label
-        if is_default is not None:
-            # If setting as default, clear existing default
-            if is_default:
-                _clear_default_product_templates(info, exclude_id=id)
-            meta["is_default"] = is_default
+        meta = {**(instance.meta or {}), **meta_updates}
+
+        # If setting as default, clear existing default
+        if meta_updates.get("is_default"):
+            _clear_default_product_templates(info, exclude_id=id)
 
         serializer = serializers.CommodityModelSerializer(
             instance,

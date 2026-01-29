@@ -41,3 +41,13 @@ from karrio.schemas.hermes.pickup_create_request import (
 from karrio.schemas.hermes.pickup_create_response import PickupCreateResponseType
 from karrio.schemas.hermes.pickup_cancel_request import PickupCancelRequestType
 from karrio.schemas.hermes.pickup_cancel_response import PickupCancelResponseType
+from karrio.schemas.hermes.tracking_response import (
+    TrackingResponseType,
+    ShipmentinfoType,
+    ResultType,
+    StatusType,
+    ScanningUnitType,
+    ReceiverAddressType as TrackingReceiverAddressType,
+    DeliveryForecastType,
+    TimeSlotType,
+)

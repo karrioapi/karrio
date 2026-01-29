@@ -166,19 +166,23 @@ function AddressEditDialog({
     }
 
     try {
+      // Build payload with flat structure and meta field
       const payload = {
-        ...formData,
-        address,
+        ...address,
+        meta: {
+          label: formData.label,
+          is_default: formData.is_default,
+        },
       };
 
       if (addressTemplate) {
-        await updateAddress.mutateAsync({ ...payload, id: addressTemplate.id });
+        await updateAddress.mutateAsync({ ...payload, id: addressTemplate.id } as any);
         toast({
           title: "Success",
           description: "Address updated successfully!",
         });
       } else {
-        await createAddress.mutateAsync(payload);
+        await createAddress.mutateAsync(payload as any);
         toast({
           title: "Success",
           description: "Address created successfully!",

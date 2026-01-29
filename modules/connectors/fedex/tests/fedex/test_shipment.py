@@ -706,10 +706,10 @@ MultiPieceShipmentRequest = {
             {
                 "declaredValue": {"amount": 0.0, "currency": "USD"},
                 "dimensions": {
-                    "height": 12.0,
-                    "length": 12.0,
+                    "height": 12,
+                    "length": 12,
                     "units": "IN",
-                    "width": 12.0,
+                    "width": 12,
                 },
                 "groupPackageCount": 1,
                 "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
@@ -719,10 +719,10 @@ MultiPieceShipmentRequest = {
             {
                 "declaredValue": {"amount": 0.0, "currency": "USD"},
                 "dimensions": {
-                    "height": 11.0,
-                    "length": 11.0,
+                    "height": 11,
+                    "length": 11,
                     "units": "IN",
-                    "width": 11.0,
+                    "width": 11,
                 },
                 "groupPackageCount": 1,
                 "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},

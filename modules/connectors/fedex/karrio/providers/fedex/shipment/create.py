@@ -714,9 +714,15 @@ def shipment_request(
                     ),
                     dimensions=lib.identity(
                         fedex.DimensionsType(
-                            length=package.length.value,
-                            width=package.width.value,
-                            height=package.height.value,
+                            length=package.length.map(
+                                provider_units.MeasurementOptions
+                            ).value,
+                            width=package.width.map(
+                                provider_units.MeasurementOptions
+                            ).value,
+                            height=package.height.map(
+                                provider_units.MeasurementOptions
+                            ).value,
                             units=dim_unit.value,
                         )
                         if (

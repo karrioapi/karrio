@@ -384,6 +384,10 @@ export interface References {
     }>
   >;
   integration_status: Collection<string>;
+  system_credentials_carriers: Collection<{
+    production: boolean;
+    sandbox: boolean;
+  }>;
 }
 
 export type SessionType<T = {}> = T & {
@@ -438,6 +442,7 @@ export const CARRIER_IMAGES: Collection = {
   axlehire: "generic",
   better_trucks: "generic",
   bond: "generic",
+  bpost: "bpost",
   canadapost: "canadapost",
   canpar: "canpar",
   cdl: "generic",

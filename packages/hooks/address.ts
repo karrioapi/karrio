@@ -1,4 +1,4 @@
-import { AddressFilter, CreateAddressInput, create_address, CREATE_ADDRESS, delete_address, DELETE_ADDRESS, get_addresses, GET_ADDRESSES, UpdateAddressInput2, update_address, UPDATE_ADDRESS } from "@karrio/types";
+import { AddressFilter, CreateAddressInput, create_address, CREATE_ADDRESS, delete_address, DELETE_ADDRESS, get_addresses, GET_ADDRESSES, UpdateAddressInput, update_address, UPDATE_ADDRESS } from "@karrio/types";
 import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
 import { gqlstr, insertUrlParam, isNoneOrEmpty } from "@karrio/lib";
 import { useQueryClient } from "@tanstack/react-query";
@@ -88,7 +88,7 @@ export function useAddressMutation() {
   });
 
   const updateAddress = useAuthenticatedMutation({
-    mutationFn: (data: UpdateAddressInput2) => karrio.graphql.request<update_address>(
+    mutationFn: (data: UpdateAddressInput) => karrio.graphql.request<update_address>(
       gqlstr(UPDATE_ADDRESS), { data }
     ),
     onSuccess: invalidateCache,

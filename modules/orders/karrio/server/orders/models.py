@@ -4,6 +4,8 @@ from contextlib import contextmanager
 from django.conf import settings
 from django.db import models
 
+from django.contrib.contenttypes.fields import GenericRelation
+
 from karrio.server.core.utils import identity
 from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.manager import models as manager
@@ -133,6 +135,12 @@ class Order(OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     shipments = models.ManyToManyField(
         "manager.Shipment", related_name="shipment_order"
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="order",
     )
 
     @property

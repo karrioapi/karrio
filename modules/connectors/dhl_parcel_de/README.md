@@ -1,7 +1,7 @@
 
 # karrio.dhl_parcel_de
 
-This package is a DHL Parcel DE extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
+This package is a DHL Germany extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 

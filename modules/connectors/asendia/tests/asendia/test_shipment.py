@@ -15,77 +15,100 @@ class TestAsendiaShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
-        self.MultiPieceShipmentRequest = models.ShipmentRequest(**MultiPieceShipmentPayload)
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
+            **ShipmentCancelPayload
+        )
+        self.MultiPieceShipmentRequest = models.ShipmentRequest(
+            **MultiPieceShipmentPayload
+        )
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         # Request is now a list (one per package) for Pattern B
-        print(lib.to_dict(request.serialize()))
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.asendia.proxy.lib.run_asynchronously") as mock_async:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 # Mock both async calls: 1) create parcels, 2) fetch labels
                 mock_async.side_effect = [
                     [ShipmentResponse],  # First call: create parcel
-                    [{"parcel": lib.to_dict(ShipmentResponse), "label": MockLabelBase64}],  # Second call: fetch label
+                    [
+                        {
+                            "parcel": lib.to_dict(ShipmentResponse),
+                            "label": MockLabelBase64,
+                        }
+                    ],  # Second call: fetch label
                 ]
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
                 # Verify the async function was called twice (create + fetch labels)
-                print(f"Async call count: {mock_async.call_count}")
                 self.assertEqual(mock_async.call_count, 2)
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.asendia.proxy.lib.run_asynchronously") as mock_async:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 # Mock both async calls: 1) create parcels, 2) fetch labels
                 mock_async.side_effect = [
                     [ShipmentResponse],  # First call: create parcel
-                    [{"parcel": lib.to_dict(ShipmentResponse), "label": MockLabelBase64}],  # Second call: fetch label
+                    [
+                        {
+                            "parcel": lib.to_dict(ShipmentResponse),
+                            "label": MockLabelBase64,
+                        }
+                    ],  # Second call: fetch label
                 ]
                 parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
                 )
-                print(lib.to_dict(parsed_response))
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
+                self.assertListEqual(
+                    lib.to_dict(parsed_response), ParsedShipmentResponse
+                )
 
     def test_create_cancel_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
-        print(request.serialize())
+        request = gateway.mapper.create_cancel_shipment_request(
+            self.ShipmentCancelRequest
+        )
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_cancel_shipment(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 mock.return_value = "{}"
                 karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-                print(mock.call_args[1]["url"])
                 self.assertEqual(
                     mock.call_args[1]["url"],
-                    f"{gateway.settings.server_url}/api/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    f"{gateway.settings.server_url}/api/parcels/3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 )
 
     def test_parse_cancel_response(self):
         with patch("karrio.mappers.asendia.proxy.lib.request") as mock:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 mock.return_value = "{}"
                 parsed_response = (
                     karrio.Shipment.cancel(self.ShipmentCancelRequest)
                     .from_(gateway)
                     .parse()
                 )
-                print(lib.to_dict(parsed_response))
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
+                self.assertListEqual(
+                    lib.to_dict(parsed_response), ParsedShipmentCancelResponse
+                )
 
     def test_create_multi_piece_shipment_request(self):
         """Test that multi-piece shipments create one request per package."""
         request = gateway.mapper.create_shipment_request(self.MultiPieceShipmentRequest)
         serialized = lib.to_dict(request.serialize())
-        print(f"Multi-piece request: {serialized}")
         # Verify we get a list with 2 requests (one per package)
         self.assertEqual(len(serialized), 2)
         self.assertEqual(serialized, MultiPieceShipmentRequest)
@@ -93,16 +116,30 @@ class TestAsendiaShipment(unittest.TestCase):
     def test_parse_multi_piece_shipment_response(self):
         """Test that multi-piece responses are aggregated correctly using lib.to_multi_piece_shipment()."""
         with patch("karrio.mappers.asendia.proxy.lib.run_asynchronously") as mock_async:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
-                with patch("karrio.core.utils.transformer.utils.bundle_base64") as mock_bundle:
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
+                with patch(
+                    "karrio.core.utils.transformer.utils.bundle_base64"
+                ) as mock_bundle:
                     # Mock bundle_base64 to return the first label (skip actual PDF merging)
                     mock_bundle.return_value = MockLabelBase64
                     # Mock both async calls: 1) create parcels, 2) fetch labels
                     mock_async.side_effect = [
-                        [MultiPieceShipmentResponse1, MultiPieceShipmentResponse2],  # First call: create parcels
                         [
-                            {"parcel": lib.to_dict(MultiPieceShipmentResponse1), "label": MockLabelBase64},
-                            {"parcel": lib.to_dict(MultiPieceShipmentResponse2), "label": MockLabelBase64},
+                            MultiPieceShipmentResponse1,
+                            MultiPieceShipmentResponse2,
+                        ],  # First call: create parcels
+                        [
+                            {
+                                "parcel": lib.to_dict(MultiPieceShipmentResponse1),
+                                "label": MockLabelBase64,
+                            },
+                            {
+                                "parcel": lib.to_dict(MultiPieceShipmentResponse2),
+                                "label": MockLabelBase64,
+                            },
                         ],  # Second call: fetch labels
                     ]
                     parsed_response = (
@@ -111,27 +148,32 @@ class TestAsendiaShipment(unittest.TestCase):
                         .parse()
                     )
                     result = lib.to_dict(parsed_response)
-                    print(f"Parsed multi-piece response: {result}")
                     # Sort the lists in meta for comparison since lib.to_multi_piece_shipment() uses sets
-                    result[0]["meta"]["shipment_identifiers"] = sorted(result[0]["meta"]["shipment_identifiers"])
-                    result[0]["meta"]["tracking_numbers"] = sorted(result[0]["meta"]["tracking_numbers"])
+                    result[0]["meta"]["shipment_identifiers"] = sorted(
+                        result[0]["meta"]["shipment_identifiers"]
+                    )
+                    result[0]["meta"]["tracking_numbers"] = sorted(
+                        result[0]["meta"]["tracking_numbers"]
+                    )
                     self.assertListEqual(result, ParsedMultiPieceShipmentResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.asendia.proxy.lib.run_asynchronously") as mock_async:
-            with patch("karrio.providers.asendia.utils.Settings.access_token", new_callable=lambda: property(lambda self: "test_token")):
+            with patch(
+                "karrio.providers.asendia.utils.Settings.access_token",
+                new_callable=lambda: property(lambda self: "test_token"),
+            ):
                 # Mock error response from create parcel
                 error_dict = lib.to_dict(ErrorResponse)
                 mock_async.side_effect = [
                     [ErrorResponse],  # First call: create parcel returns error
-                    [{"parcel": error_dict, "label": None}],  # Second call: return error with no label
+                    [
+                        {"parcel": error_dict, "label": None}
+                    ],  # Second call: return error with no label
                 ]
                 parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
                 )
-                print(lib.to_dict(parsed_response))
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -148,7 +190,7 @@ ShipmentPayload = {
         "person_name": "John Sender",
         "company_name": "Sender Company",
         "phone_number": "+41791234567",
-        "email": "sender@example.com"
+        "email": "sender@example.com",
     },
     "recipient": {
         "address_line1": "123 Main Street",
@@ -159,19 +201,19 @@ ShipmentPayload = {
         "person_name": "Jane Receiver",
         "company_name": "Receiver Inc",
         "phone_number": "+12125551234",
-        "email": "receiver@example.com"
+        "email": "receiver@example.com",
     },
-    "parcels": [{
-        "weight": 1.5,
-        "weight_unit": "KG",
-    }],
+    "parcels": [
+        {
+            "weight": 1.5,
+            "weight_unit": "KG",
+        }
+    ],
     "service": "asendia_epaq_standard",
     "reference": "REF-123456",
 }
 
-ShipmentCancelPayload = {
-    "shipment_identifier": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
+ShipmentCancelPayload = {"shipment_identifier": "3fa85f64-5717-4562-b3fc-2c963f66afa6"}
 
 # Request is now a list (one per package) for Pattern B: Per-Package Request
 ShipmentRequest = [
@@ -225,7 +267,9 @@ ShipmentResponse = """{
 }"""
 
 # Mock base64-encoded label (simple PDF header for testing)
-MockLabelBase64 = "JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoK"
+MockLabelBase64 = (
+    "JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFI+PgplbmRvYmoK"
+)
 
 ParsedShipmentResponse = [
     {
@@ -241,7 +285,7 @@ ParsedShipmentResponse = [
         "shipment_identifier": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "tracking_number": "ASENDIA123456789",
     },
-    []
+    [],
 ]
 
 ParsedShipmentCancelResponse = [
@@ -249,9 +293,9 @@ ParsedShipmentCancelResponse = [
         "carrier_id": "asendia",
         "carrier_name": "asendia",
         "success": True,
-        "operation": "Cancel Shipment"
+        "operation": "Cancel Shipment",
     },
-    []
+    [],
 ]
 
 # Multi-piece shipment test data
@@ -264,7 +308,7 @@ MultiPieceShipmentPayload = {
         "person_name": "John Sender",
         "company_name": "Sender Company",
         "phone_number": "+41791234567",
-        "email": "sender@example.com"
+        "email": "sender@example.com",
     },
     "recipient": {
         "address_line1": "123 Main Street",
@@ -275,7 +319,7 @@ MultiPieceShipmentPayload = {
         "person_name": "Jane Receiver",
         "company_name": "Receiver Inc",
         "phone_number": "+12125551234",
-        "email": "receiver@example.com"
+        "email": "receiver@example.com",
     },
     "parcels": [
         {"weight": 1.5, "weight_unit": "KG"},
@@ -376,7 +420,9 @@ ParsedMultiPieceShipmentResponse = [
     {
         "carrier_id": "asendia",
         "carrier_name": "asendia",
-        "docs": {"label": MockLabelBase64},  # lib.to_multi_piece_shipment() bundles labels
+        "docs": {
+            "label": MockLabelBase64
+        },  # lib.to_multi_piece_shipment() bundles labels
         "label_type": "PDF",
         "meta": {
             "carrier_tracking_link": "https://tracking.asendia.com/tracking/ASENDIA111111111",
@@ -388,7 +434,7 @@ ParsedMultiPieceShipmentResponse = [
         "shipment_identifier": "pkg-001-uuid",
         "tracking_number": "ASENDIA111111111",
     },
-    []
+    [],
 ]
 
 ErrorResponse = """{

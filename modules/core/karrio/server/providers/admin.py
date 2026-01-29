@@ -185,6 +185,7 @@ def system_connection_admin(ext: str, connection_proxy):
                             "config",
                             "rate_sheet",
                             "metadata",
+                            "metafields",  # M2M with through model - managed via API
                         ]
                     ],
                 },
@@ -295,6 +296,7 @@ class BrokeredConnectionAdmin(admin.ModelAdmin):
     list_filter = ("is_enabled", "system_connection__carrier_code")
     search_fields = ("carrier_id", "system_connection__carrier_id")
     readonly_fields = ("system_connection", "created_by", "created_at", "updated_at")
+    exclude = ("metafields",)  # M2M with through model - managed via API
 
     def has_add_permission(self, request):
         # Brokered connections are created via API, not admin

@@ -1,0 +1,172 @@
+{
+  "info": {
+    "_postman_id": "003f5ace-291f-4d93-b2a2-6be86eb9961d",
+    "name": "UPS Tracking",
+    "description": "Track status of a shipment, delivery, time, and the latest transit scan.\n\nVisit the full [UPS Tracking Documentation](https://developer.ups.com/api/reference?loc=en_US#tag/Tracking_other) for more details!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20452875"
+  },
+  "item": [
+    {
+      "name": "Tracking Example Request",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "transId",
+            "value": "testing",
+            "description": "transID",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "transactionSrc",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/track/v1/details/:inquiryNumber?locale=en_US&returnSignature=false",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "track",
+            "v1",
+            "details",
+            ":inquiryNumber"
+          ],
+          "query": [
+            {
+              "key": "locale",
+              "value": "en_US",
+              "description": "locale"
+            },
+            {
+              "key": "returnSignature",
+              "value": "false",
+              "description": "Return signature"
+            }
+          ],
+          "variable": [
+            {
+              "key": "inquiryNumber",
+              "value": null,
+              "description": "Inquiry Number"
+            }
+          ]
+        },
+        "description": "This HTTP GET request allows users to provide a UPS 1Z tracking number as an **inquiryNumber** in order to receive details on that package's movement through the UPS system."
+      },
+      "response": [
+        {
+          "name": "Tracking Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "transId",
+                "value": "testing",
+                "description": "transID",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "transactionSrc",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/track/v1/details/:inquiryNumber?locale=en_US&returnSignature=false",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "track",
+                "v1",
+                "details",
+                ":inquiryNumber"
+              ],
+              "query": [
+                {
+                  "key": "locale",
+                  "value": "en_US",
+                  "description": "locale"
+                },
+                {
+                  "key": "returnSignature",
+                  "value": "false",
+                  "description": "Return signature"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "inquiryNumber",
+                  "value": null,
+                  "description": "Inquiry Number"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"trackResponse\": {\n        \"shipment\": [\n            {\n                \"inquiryNumber\": \"1Z1442YY7229014688\",\n                \"package\": [\n                    {\n                        \"trackingNumber\": \"1Z1442YY7229014688\",\n                        \"deliveryDate\": [\n                            {\n                                \"type\": \"DEL\",\n                                \"date\": \"20220126\"\n                            }\n                        ],\n                        \"deliveryTime\": {\n                            \"type\": \"DEL\",\n                            \"endTime\": \"163000\"\n                        },\n                        \"activity\": [\n                            {\n                                \"location\": {\n                                    \"address\": {\n                                        \"city\": \"PARAMUS\",\n                                        \"stateProvince\": \"NJ\",\n                                        \"countryCode\": \"US\",\n                                        \"country\": \"US\"\n                                    },\n                                    \"slic\": \"0761\"\n                                },\n                                \"status\": {\n                                    \"type\": \"D\",\n                                    \"description\": \"DELIVERED \",\n                                    \"code\": \"F4\",\n                                    \"statusCode\": \"011\"\n                                },\n                                \"date\": \"20220126\",\n                                \"time\": \"163000\"\n                            },\n                            {\n                                \"location\": {\n                                    \"address\": {\n                                        \"countryCode\": \"US\",\n                                        \"country\": \"US\"\n                                    }\n                                },\n                                \"status\": {\n                                    \"type\": \"M\",\n                                    \"description\": \"Shipper created a label, UPS has not received the package yet. \",\n                                    \"code\": \"MP\",\n                                    \"statusCode\": \"003\"\n                                },\n                                \"date\": \"20220126\",\n                                \"time\": \"151641\"\n                            }\n                        ],\n                        \"packageCount\": 1\n                    }\n                ]\n            }\n        ]\n    }\n}"
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://wwwcie.ups.com/",
+      "type": "string"
+    }
+  ]
+}

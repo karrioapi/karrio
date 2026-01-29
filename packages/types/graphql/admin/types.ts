@@ -3011,6 +3011,14 @@ export interface InstanceConfigMutationInput {
   USPS_INTERNATIONAL_ENABLED?: boolean | null;
   VEHO_ENABLED?: boolean | null;
   ZOOM2U_ENABLED?: boolean | null;
+  DHL_PARCEL_DE_USERNAME?: string | null;
+  DHL_PARCEL_DE_PASSWORD?: string | null;
+  DHL_PARCEL_DE_CLIENT_ID?: string | null;
+  DHL_PARCEL_DE_CLIENT_SECRET?: string | null;
+  DHL_PARCEL_DE_SANDBOX_USERNAME?: string | null;
+  DHL_PARCEL_DE_SANDBOX_PASSWORD?: string | null;
+  DHL_PARCEL_DE_SANDBOX_CLIENT_ID?: string | null;
+  DHL_PARCEL_DE_SANDBOX_CLIENT_SECRET?: string | null;
   TELESHIP_OAUTH_CLIENT_ID?: string | null;
   TELESHIP_OAUTH_CLIENT_SECRET?: string | null;
   TELESHIP_SANDBOX_OAUTH_CLIENT_ID?: string | null;

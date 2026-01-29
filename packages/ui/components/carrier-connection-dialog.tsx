@@ -42,7 +42,8 @@ import { isEqual, KARRIO_API } from "@karrio/lib";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "./ui/input";
-import { Zap, Loader2, Webhook, Check, X, Copy } from "lucide-react";
+import { Zap, Loader2, Webhook, Check, X, Copy, Plus, Trash2, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import * as z from "zod";
 
 
@@ -89,7 +90,21 @@ export function CarrierConnectionDialog({
 }: CarrierConnectionDialogProps) {
   const [initialValues, setInitialValues] = useState<FormData | null>(null);
   const [oauthCredentials, setOauthCredentials] = useState<Record<string, any> | null>(null);
+  const [showCustomCredentials, setShowCustomCredentials] = useState(false);
   const { toast } = useToast();
+
+  // Check if system credentials are available for a carrier
+  const getSystemCredentialsStatus = (carrierName: string) => {
+    const systemCredentials = (references as any)?.system_credentials_carriers;
+    return systemCredentials?.[carrierName] || null;
+  };
+
+  // Check if system credentials are available for the current test mode
+  const hasSystemCredentials = (carrierName: string, testMode: boolean) => {
+    const status = getSystemCredentialsStatus(carrierName);
+    if (!status) return false;
+    return testMode ? status.sandbox : status.production;
+  };
 
   // OAuth connection hook
   const {
@@ -207,6 +222,15 @@ export function CarrierConnectionDialog({
       }
     }
 
+    // Check if system credentials are available for this carrier
+    // If so, credential fields are optional (user can rely on system defaults)
+    // Note: We check for both sandbox and production since test_mode might not be in the form
+    const systemCredStatus = getSystemCredentialsStatus(carrierName);
+    const hasAnySystemCreds = systemCredStatus?.production || systemCredStatus?.sandbox;
+
+    // List of known credential fields that can be satisfied by system config
+    const systemCredentialFields = ["username", "password", "client_id", "client_secret"];
+
     // Check only required credential fields (excluding the ones we've filtered out)
     return Object.entries(fields)
       .filter(([key]) => ![
@@ -220,6 +244,11 @@ export function CarrierConnectionDialog({
       ].includes(key))
       .every(([key, field]: [string, any]) => {
         if (field.required) {
+          // If system credentials are available and this is a credential field that can be
+          // provided by system config, don't require user input
+          if (hasAnySystemCreds && systemCredentialFields.includes(key)) {
+            return true; // Skip validation - system will provide
+          }
           const value = credentials?.[key];
           return value !== undefined && value !== "" && value !== null;
         }
@@ -501,17 +530,24 @@ export function CarrierConnectionDialog({
     if (!carrierName) return null;
     const configs = references?.connection_configs?.[carrierName] || {};
 
+    // Identify object array configs (type "list" with nested "fields")
+    const objectArrayConfigs = Object.entries(configs).filter(
+      ([_, config]: [string, any]) => config.type === "list" && config.fields
+    );
+
     return (
       <div className="grid grid-cols-2 gap-4">
         {Object.entries(configs)
           .filter(
-            ([key, _]) =>
+            ([key, config]: [string, any]) =>
               ![
                 "brand_color",
                 "text_color",
                 "shipping_services",
                 "shipping_options",
-              ].includes(key),
+              ].includes(key) &&
+              // Exclude object array configs - they are rendered separately
+              !(config.type === "list" && config.fields),
           )
           .map(([key, config]: [string, any]) => (
             <FormField
@@ -555,6 +591,187 @@ export function CarrierConnectionDialog({
               )}
             />
           ))}
+
+        {/* Object Array Config Fields (e.g., service_billing_numbers) */}
+        {objectArrayConfigs.map(([key, config]: [string, any]) => (
+          <FormField
+            key={key}
+            control={form.control}
+            name={`config.${key}`}
+            render={({ field }) => {
+              const items: any[] = field.value || [];
+              const fieldDefs = config.fields || {};
+              // Sort fields: required first, then enums, then plain fields
+              const fieldKeys = Object.keys(fieldDefs).sort((a, b) => {
+                const aRequired = fieldDefs[a]?.required ? 0 : 2;
+                const bRequired = fieldDefs[b]?.required ? 0 : 2;
+                const aEnum = fieldDefs[a]?.enum ? 0 : 1;
+                const bEnum = fieldDefs[b]?.enum ? 0 : 1;
+                // Primary sort by required, secondary by enum
+                return (aRequired + aEnum) - (bRequired + bEnum);
+              });
+
+              // Default values for service_billing_numbers (DHL Parcel DE sandbox)
+              const defaultServiceBillingNumbers: Record<string, any>[] = [
+                { service: "dhl_parcel_de_paket", billing_number: "33333333330102", name: "" },
+                { service: "dhl_parcel_de_paket_international", billing_number: "33333333335301", name: "" },
+                { service: "dhl_parcel_de_europaket", billing_number: "33333333335401", name: "" },
+                { service: "dhl_parcel_de_kleinpaket", billing_number: "33333333336201", name: "" },
+                { service: "dhl_parcel_de_warenpost_international", billing_number: "33333333336601", name: "" },
+              ];
+
+              // Auto-prefill defaults for service_billing_numbers when empty
+              if (key === "service_billing_numbers" && items.length === 0 && field.value === undefined) {
+                // Use setTimeout to avoid updating state during render
+                setTimeout(() => field.onChange(defaultServiceBillingNumbers), 0);
+              }
+
+              const addItem = () => {
+                const newItem: Record<string, any> = {};
+                Object.entries(fieldDefs).forEach(([fieldKey, fieldDef]: [string, any]) => {
+                  newItem[fieldKey] = fieldDef.default || "";
+                });
+                field.onChange([...items, newItem]);
+              };
+
+              const removeItem = (index: number) => {
+                const newItems = items.filter((_, i) => i !== index);
+                field.onChange(newItems);
+              };
+
+              const updateItem = (index: number, fieldKey: string, value: any) => {
+                const newItems = [...items];
+                newItems[index] = { ...newItems[index], [fieldKey]: value };
+                field.onChange(newItems);
+              };
+
+              return (
+                <FormItem className="col-span-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <FormLabel>{formatLabel(config.name)}</FormLabel>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addItem}
+                      className="h-7 px-2"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
+                  <FormControl>
+                    <div className="rounded-md border overflow-hidden">
+                      {/* Table Header */}
+                      <div className="bg-muted/50 border-b">
+                        <div className="grid gap-2 p-2 text-xs font-medium text-muted-foreground" style={{
+                          gridTemplateColumns: `repeat(${fieldKeys.length}, minmax(0, 1fr)) 40px`
+                        }}>
+                          {fieldKeys.map((fieldKey) => {
+                            const fieldDef = fieldDefs[fieldKey];
+                            return (
+                              <div key={fieldKey} className="px-1">
+                                {formatLabel(fieldDef.name || fieldKey)}
+                                {fieldDef.required && <span className="text-destructive ml-0.5">*</span>}
+                              </div>
+                            );
+                          })}
+                          <div className="px-1"></div>
+                        </div>
+                      </div>
+
+                      {/* Table Body */}
+                      {items.length === 0 ? (
+                        <div className="p-4 text-center text-sm text-muted-foreground">
+                          No items configured. Click "Add" to create one.
+                        </div>
+                      ) : (
+                        <div className="divide-y max-h-[240px] overflow-y-auto">
+                          {items.map((item, index) => (
+                            <div
+                              key={index}
+                              className="grid gap-2 p-2 items-center hover:bg-muted/30"
+                              style={{
+                                gridTemplateColumns: `repeat(${fieldKeys.length}, minmax(0, 1fr)) 40px`
+                              }}
+                            >
+                              {fieldKeys.map((fieldKey) => {
+                                const fieldDef = fieldDefs[fieldKey];
+                                const hasEnum = fieldDef.enum;
+                                const isServiceField = fieldKey === "service" || fieldKey.includes("service");
+                                const serviceNames = references?.service_names?.[carrierName] || {};
+
+                                return (
+                                  <div key={fieldKey} className="w-full min-w-0">
+                                    {/* Enum field */}
+                                    {hasEnum ? (
+                                      <Select
+                                        value={item[fieldKey] || ""}
+                                        onValueChange={(value) => updateItem(index, fieldKey, value)}
+                                      >
+                                        <SelectTrigger className="h-8 text-sm w-full">
+                                          <SelectValue placeholder="Select..." className="truncate" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {fieldDef.enum.map((option: string) => (
+                                            <SelectItem key={option} value={option}>
+                                              {formatLabel(option)}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    ) : isServiceField && Object.keys(serviceNames).length > 0 ? (
+                                      /* Service field - use carrier service_names */
+                                      <Select
+                                        value={item[fieldKey] || ""}
+                                        onValueChange={(value) => updateItem(index, fieldKey, value)}
+                                      >
+                                        <SelectTrigger className="h-8 text-sm w-full">
+                                          <SelectValue placeholder="Select service..." className="truncate" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {Object.entries(serviceNames).map(([serviceKey, serviceLabel]) => (
+                                            <SelectItem key={serviceKey} value={serviceKey}>
+                                              {formatLabel(serviceLabel as string)}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    ) : (
+                                      /* Text input */
+                                      <Input
+                                        value={item[fieldKey] || ""}
+                                        onChange={(e) => updateItem(index, fieldKey, e.target.value)}
+                                        placeholder={fieldDef.name || fieldKey}
+                                        className="h-8 text-sm w-full"
+                                      />
+                                    )}
+                                  </div>
+                                );
+                              })}
+                              <div className="flex justify-center">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeItem(index)}
+                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+        ))}
 
         {configs["brand_color"] && (
           <FormField
@@ -898,66 +1115,138 @@ export function CarrierConnectionDialog({
                     </TabsList>
                     <TabsContent value="credentials" className="pt-6">
                       <div className="space-y-4">
-                        {/* OAuth Quick Connect Banner - only show for new connections with OAuth support */}
-                        {!selectedConnection && currentCarrierSupportsOAuth && (
-                          <>
-                            <div className="rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4">
-                              <div className="flex items-start gap-3">
-                                <div className="flex-shrink-0">
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-                                    <Zap className="h-5 w-5 text-purple-600" />
+                        {/* System Credentials Banner - show when system credentials are available */}
+                        {(() => {
+                          const carrierName = watch("carrier_name");
+                          const systemCredStatus = getSystemCredentialsStatus(carrierName);
+                          const hasAnySystemCreds = systemCredStatus?.production || systemCredStatus?.sandbox;
+
+                          if (hasAnySystemCreds) {
+                            return (
+                              <>
+                                <div className="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 p-4">
+                                  <div className="flex items-start gap-3">
+                                    <div className="flex-shrink-0">
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                                        <Info className="h-5 w-5 text-blue-600" />
+                                      </div>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-sm font-semibold text-blue-900">
+                                        Using System Credentials
+                                      </h4>
+                                      <p className="mt-1 text-sm text-blue-700">
+                                        Your platform administrator has configured default credentials for this carrier.
+                                        You can skip entering credentials and the system will use the default configuration.
+                                      </p>
+                                      <div className="mt-2 flex gap-2 text-xs">
+                                        {systemCredStatus?.production && (
+                                          <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-green-700">
+                                            <Check className="h-3 w-3 mr-1" />
+                                            Production
+                                          </span>
+                                        )}
+                                        {systemCredStatus?.sandbox && (
+                                          <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">
+                                            <Check className="h-3 w-3 mr-1" />
+                                            Sandbox
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-semibold text-purple-900">
-                                    Quick Connect
-                                  </h4>
-                                  <p className="mt-1 text-sm text-purple-700">
-                                    Connect your {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")} account instantly with secure OAuth authorization.
-                                  </p>
-                                  <Button
-                                    type="button"
-                                    onClick={handleOAuthConnect}
-                                    disabled={isOAuthLoading}
-                                    className="mt-3 bg-purple-600 hover:bg-purple-700 text-white"
-                                    size="sm"
-                                  >
-                                    {isOAuthLoading ? (
-                                      <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Connecting...
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Zap className="mr-2 h-4 w-4" />
-                                        Connect with {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")}
-                                      </>
+
+                                {/* Collapsible credentials section */}
+                                <Collapsible open={showCustomCredentials} onOpenChange={setShowCustomCredentials}>
+                                  <CollapsibleTrigger asChild>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      className="flex w-full items-center justify-between px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground"
+                                    >
+                                      <span>Use custom credentials instead (Advanced)</span>
+                                      {showCustomCredentials ? (
+                                        <ChevronUp className="h-4 w-4" />
+                                      ) : (
+                                        <ChevronDown className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </CollapsibleTrigger>
+                                  <CollapsibleContent className="space-y-4 pt-4">
+                                    {renderCredentialFields()}
+                                  </CollapsibleContent>
+                                </Collapsible>
+                              </>
+                            );
+                          }
+
+                          // No system credentials - show OAuth or regular credential fields
+                          return (
+                            <>
+                              {/* OAuth Quick Connect Banner - only show for new connections with OAuth support */}
+                              {!selectedConnection && currentCarrierSupportsOAuth && (
+                                <>
+                                  <div className="rounded-lg border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4">
+                                    <div className="flex items-start gap-3">
+                                      <div className="flex-shrink-0">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+                                          <Zap className="h-5 w-5 text-purple-600" />
+                                        </div>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="text-sm font-semibold text-purple-900">
+                                          Quick Connect
+                                        </h4>
+                                        <p className="mt-1 text-sm text-purple-700">
+                                          Connect your {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")} account instantly with secure OAuth authorization.
+                                        </p>
+                                        <Button
+                                          type="button"
+                                          onClick={handleOAuthConnect}
+                                          disabled={isOAuthLoading}
+                                          className="mt-3 bg-purple-600 hover:bg-purple-700 text-white"
+                                          size="sm"
+                                        >
+                                          {isOAuthLoading ? (
+                                            <>
+                                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                              Connecting...
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Zap className="mr-2 h-4 w-4" />
+                                              Connect with {references?.carriers?.[watch("carrier_name")] || watch("carrier_name")}
+                                            </>
+                                          )}
+                                        </Button>
+                                      </div>
+                                    </div>
+                                    {oauthCredentials && (
+                                      <div className="mt-3 rounded-md bg-green-50 border border-green-200 p-2">
+                                        <p className="text-xs text-green-700 flex items-center gap-1">
+                                          <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
+                                          Authorization successful! Credentials have been prefilled below.
+                                        </p>
+                                      </div>
                                     )}
-                                  </Button>
-                                </div>
-                              </div>
-                              {oauthCredentials && (
-                                <div className="mt-3 rounded-md bg-green-50 border border-green-200 p-2">
-                                  <p className="text-xs text-green-700 flex items-center gap-1">
-                                    <span className="inline-block h-2 w-2 rounded-full bg-green-500"></span>
-                                    Authorization successful! Credentials have been prefilled below.
-                                  </p>
-                                </div>
+                                  </div>
+                                  <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                      <span className="w-full border-t" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                      <span className="bg-background px-2 text-muted-foreground">
+                                        Or enter credentials manually
+                                      </span>
+                                    </div>
+                                  </div>
+                                </>
                               )}
-                            </div>
-                            <div className="relative">
-                              <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t" />
-                              </div>
-                              <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-background px-2 text-muted-foreground">
-                                  Or enter credentials manually
-                                </span>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                        {renderCredentialFields()}
+                              {renderCredentialFields()}
+                            </>
+                          );
+                        })()}
                       </div>
                     </TabsContent>
                     <TabsContent value="config" className="pt-6">
