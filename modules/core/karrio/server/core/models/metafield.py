@@ -70,23 +70,27 @@ class Metafield(entity.OwnedEntity):
 
     @classmethod
     def access_by(cls, context, manager: str = "objects"):
-        """Override access_by to filter by created_by only.
+        """Org-aware access control for metafields.
 
-        Metafields don't have a direct org relationship - they inherit
-        organization context from the objects they're attached to via
-        GenericForeignKey.
+        Metafield uses GenericForeignKey rather than a direct org FK,
+        so we scope access via created_by org membership instead.
         """
-        from django.db import models as db_models
-
         if isinstance(context, dict):
             user = context.get("user", context)
+            org = context.get("org")
         else:
             user = getattr(context, "user", context)
+            org = getattr(context, "org", None)
 
         user_id = getattr(user, "id", None)
         queryset = getattr(cls, manager, cls.objects)
 
-        return queryset.filter(db_models.Q(created_by__id=user_id))
+        if org is not None:
+            return queryset.filter(
+                models.Q(created_by__in=org.users.all())
+            )
+
+        return queryset.filter(models.Q(created_by__id=user_id))
 
     @property
     def object_type(self):
