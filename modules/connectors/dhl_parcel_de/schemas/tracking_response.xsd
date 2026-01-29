@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!--
+    DHL Parcel DE Tracking API Response Schema
+    Based on actual API responses documented in tracking-test.txt
+
+    Response structure:
+    <data name="piece-shipment-list" code="0" request-id="...">
+        <data name="piece-shipment" ...attributes...>
+            <data name="piece-event-list" ...>
+                <data name="piece-event" .../>
+                ...
+            </data>
+        </data>
+    </data>
+
+    For d-get-signature:
+    <data name="signature-list" code="0" request-id="...">
+        <data name="signature" ...attributes.../>
+    </data>
+    -->
+
+    <xs:element name="data" type="TrackingResponseType"/>
+
+    <!-- Root response element -->
+    <xs:complexType name="TrackingResponseType">
+        <xs:annotation>
+            <xs:documentation>Root element for DHL Parcel DE Tracking API response</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="data" type="PieceShipmentType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <!-- Response metadata -->
+        <xs:attribute name="name" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Response type: "piece-shipment-list" or "signature-list"</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="code" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Response code: 0=success, other values indicate errors</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="request-id" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Unique request identifier for troubleshooting</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="error" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Error message when code != 0</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!-- Piece Shipment (d-get-piece-detail response) -->
+    <xs:complexType name="PieceShipmentType">
+        <xs:annotation>
+            <xs:documentation>Shipment details including events</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="data" type="PieceEventListType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+
+        <!-- Metadata -->
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="error-status" type="xs:string"/>
+
+        <!-- Tracking identifiers -->
+        <xs:attribute name="piece-id" type="xs:string"/>
+        <xs:attribute name="shipment-code" type="xs:string"/>
+        <xs:attribute name="piece-identifier" type="xs:string"/>
+        <xs:attribute name="identifier-type" type="xs:string"/>
+        <xs:attribute name="piece-code" type="xs:string"/>
+        <xs:attribute name="searched-piece-code" type="xs:string"/>
+        <xs:attribute name="searched-ref-no" type="xs:string"/>
+
+        <!-- Current status -->
+        <xs:attribute name="event-location" type="xs:string"/>
+        <xs:attribute name="event-country" type="xs:string"/>
+        <xs:attribute name="status-liste" type="xs:string"/>
+        <xs:attribute name="status-timestamp" type="xs:string"/>
+        <xs:attribute name="status" type="xs:string"/>
+        <xs:attribute name="short-status" type="xs:string"/>
+
+        <!-- Recipient information -->
+        <xs:attribute name="recipient-name" type="xs:string"/>
+        <xs:attribute name="recipient-street" type="xs:string"/>
+        <xs:attribute name="recipient-city" type="xs:string"/>
+        <xs:attribute name="recipient-id" type="xs:string"/>
+        <xs:attribute name="recipient-id-text" type="xs:string"/>
+
+        <!-- PAN (EDI) recipient data -->
+        <xs:attribute name="pan-recipient-name" type="xs:string"/>
+        <xs:attribute name="pan-recipient-street" type="xs:string"/>
+        <xs:attribute name="pan-recipient-city" type="xs:string"/>
+        <xs:attribute name="pan-recipient-address" type="xs:string"/>
+        <xs:attribute name="pan-recipient-postalcode" type="xs:string"/>
+
+        <!-- Shipper information -->
+        <xs:attribute name="shipper-name" type="xs:string"/>
+        <xs:attribute name="shipper-street" type="xs:string"/>
+        <xs:attribute name="shipper-city" type="xs:string"/>
+        <xs:attribute name="shipper-address" type="xs:string"/>
+
+        <!-- Product information -->
+        <xs:attribute name="product-code" type="xs:string"/>
+        <xs:attribute name="product-key" type="xs:string"/>
+        <xs:attribute name="product-name" type="xs:string"/>
+
+        <!-- Delivery information -->
+        <xs:attribute name="delivery-event-flag" type="xs:string"/>
+        <xs:attribute name="delivery-date" type="xs:string"/>
+        <xs:attribute name="delivery-timeframe-from" type="xs:string"/>
+        <xs:attribute name="delivery-timeframe-to" type="xs:string"/>
+
+        <!-- Event codes -->
+        <xs:attribute name="ice" type="xs:string"/>
+        <xs:attribute name="ric" type="xs:string"/>
+        <xs:attribute name="standard-event-code" type="xs:string"/>
+
+        <!-- Geographic information -->
+        <xs:attribute name="dest-country" type="xs:string"/>
+        <xs:attribute name="origin-country" type="xs:string"/>
+        <xs:attribute name="international-flag" type="xs:string"/>
+
+        <!-- Package dimensions -->
+        <xs:attribute name="shipment-length" type="xs:string"/>
+        <xs:attribute name="shipment-width" type="xs:string"/>
+        <xs:attribute name="shipment-height" type="xs:string"/>
+        <xs:attribute name="shipment-weight" type="xs:string"/>
+
+        <!-- References -->
+        <xs:attribute name="piece-customer-reference" type="xs:string"/>
+        <xs:attribute name="shipment-customer-reference" type="xs:string"/>
+
+        <!-- Routing codes -->
+        <xs:attribute name="leitcode" type="xs:string"/>
+        <xs:attribute name="routing-code-ean" type="xs:string"/>
+        <xs:attribute name="matchcode" type="xs:string"/>
+        <xs:attribute name="domestic-id" type="xs:string"/>
+        <xs:attribute name="airway-bill-number" type="xs:string"/>
+        <xs:attribute name="upu" type="xs:string"/>
+
+        <!-- Miscellaneous -->
+        <xs:attribute name="ruecksendung" type="xs:string"/>
+        <xs:attribute name="pslz-nr" type="xs:string"/>
+        <xs:attribute name="order-preferred-delivery-day" type="xs:string"/>
+        <xs:attribute name="division" type="xs:string"/>
+
+        <!-- Signature data (for d-get-signature response) -->
+        <xs:attribute name="event-date" type="xs:string"/>
+        <xs:attribute name="mime-type" type="xs:string"/>
+        <xs:attribute name="image" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- Piece Event List -->
+    <xs:complexType name="PieceEventListType">
+        <xs:annotation>
+            <xs:documentation>List of tracking events for a shipment</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="data" type="PieceEventType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <!-- Event list metadata -->
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="piece-identifier" type="xs:string"/>
+        <xs:attribute name="piece-id" type="xs:string"/>
+        <xs:attribute name="leitcode" type="xs:string"/>
+        <xs:attribute name="routing-code-ean" type="xs:string"/>
+        <xs:attribute name="ruecksendung" type="xs:string"/>
+        <xs:attribute name="pslz-nr" type="xs:string"/>
+        <xs:attribute name="order-preferred-delivery-day" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- Piece Event -->
+    <xs:complexType name="PieceEventType">
+        <xs:annotation>
+            <xs:documentation>Individual tracking event</xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="event-timestamp" type="xs:string"/>
+        <xs:attribute name="event-status" type="xs:string"/>
+        <xs:attribute name="event-text" type="xs:string"/>
+        <xs:attribute name="event-short-status" type="xs:string"/>
+        <xs:attribute name="ice" type="xs:string"/>
+        <xs:attribute name="ric" type="xs:string"/>
+        <xs:attribute name="event-location" type="xs:string"/>
+        <xs:attribute name="event-country" type="xs:string"/>
+        <xs:attribute name="standard-event-code" type="xs:string"/>
+        <xs:attribute name="ruecksendung" type="xs:string"/>
+    </xs:complexType>
+</xs:schema>

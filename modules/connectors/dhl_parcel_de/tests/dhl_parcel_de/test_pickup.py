@@ -15,12 +15,10 @@ class TestDHLParcelDEPickup(unittest.TestCase):
 
     def test_create_pickup_request(self):
         request = gateway.mapper.create_pickup_request(self.PickupRequest)
-        print(request.serialize())
         self.assertEqual(request.serialize(), PickupRequest)
 
     def test_create_pickup_request_asap(self):
         request = gateway.mapper.create_pickup_request(self.PickupRequestASAP)
-        print(request.serialize())
         self.assertEqual(request.serialize(), PickupRequestASAP)
 
     def test_create_cancel_pickup_request(self):
@@ -54,7 +52,6 @@ class TestDHLParcelDEPickup(unittest.TestCase):
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
-            print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_cancel_pickup_response(self):
@@ -63,7 +60,6 @@ class TestDHLParcelDEPickup(unittest.TestCase):
             parsed_response = (
                 karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
-            print(parsed_response)
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedCancelPickupResponse
             )
@@ -74,8 +70,9 @@ class TestDHLParcelDEPickup(unittest.TestCase):
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             )
-            print(parsed_response)
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupErrorResponse)
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedPickupErrorResponse
+            )
 
 
 if __name__ == "__main__":

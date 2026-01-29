@@ -581,6 +581,20 @@ class Pickup(core.OwnedEntity):
             return []
         return [shipment.tracking_number for shipment in self.shipments.all()]
 
+    @property
+    def pickup_type(self) -> typing.Optional[str]:
+        """Get pickup type from meta field (one_time, daily, recurring)."""
+        if self.meta is None:
+            return "one_time"
+        return self.meta.get("pickup_type", "one_time")
+
+    @property
+    def recurrence(self) -> typing.Optional[dict]:
+        """Get recurrence config from meta field."""
+        if self.meta is None:
+            return None
+        return self.meta.get("recurrence")
+
 
 @core.register_model
 class Tracking(core.OwnedEntity):

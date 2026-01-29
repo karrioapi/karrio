@@ -1688,6 +1688,20 @@ class ComputedDocumentFile(models.DocumentFile):
         return pathlib.Path(self.doc_name or "").suffix
 
 
+class PickupType(utils.StrEnum):
+    """Unified pickup type enumeration.
+
+    Defines the scheduling type for carrier pickups:
+    - one_time: Single pickup on a specific date
+    - daily: Recurring pickup every business day
+    - recurring: Custom recurring schedule (weekly, etc.)
+    """
+
+    one_time = "one_time"
+    daily = "daily"
+    recurring = "recurring"
+
+
 class TrackingStatus(utils.Enum):
     pending = ["pending"]
     picked_up = ["picked_up"]

@@ -190,9 +190,12 @@ class PickupRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
+    parcels_count: int = None
     shipment_identifiers: List[str] = []
     package_location: str = None
     instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     options: Dict = {}
     metadata: Dict = {}
 
@@ -211,6 +214,8 @@ class PickupUpdateRequest:
     shipment_identifiers: List[str] = []
     package_location: str = None
     instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     options: Dict = {}
 
 
@@ -463,6 +468,7 @@ class PickupDetails:
     pickup_charge: ChargeDetails = JStruct[ChargeDetails]
     ready_time: str = None
     closing_time: str = None
+    pickup_type: str = None  # one_time, daily, recurring
     meta: dict = None
     id: str = None
 

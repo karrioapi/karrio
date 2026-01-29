@@ -54,6 +54,14 @@ def pickup_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     """Create a DPD META-API pickup scheduling request."""
+    # DPD only supports one-time pickups via API
+    pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    if pickup_type not in ("one_time", None):
+        raise lib.exceptions.FieldError({
+            "pickup_type": f"DPD only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+            "For daily/recurring pickups, please contact DPD to set up a regular pickup schedule."
+        })
+
     # Convert karrio models to carrier-specific format
     address = lib.to_address(payload.address)
 

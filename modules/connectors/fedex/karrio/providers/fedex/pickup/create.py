@@ -68,6 +68,19 @@ def pickup_request(
         ),
     )
 
+    # Map unified pickup_type to FedEx pickup type
+    # one_time -> ON_CALL, daily/recurring -> REGULAR_STOP
+    unified_pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    fedex_pickup_type = (
+        "REGULAR_STOP"
+        if unified_pickup_type in ("daily", "recurring")
+        else "ON_CALL"
+    )
+
+    # Normalize times to HH:MM format to handle both HH:MM and HH:MM:SS inputs
+    ready_time = lib.ftime(payload.ready_time, try_formats=["%H:%M:%S", "%H:%M"]) or payload.ready_time
+    closing_time = lib.ftime(payload.closing_time, try_formats=["%H:%M:%S", "%H:%M"]) or payload.closing_time
+
     # map data to convert karrio model to fedex specific type
     request = fedex.PickupRequestType(
         associatedAccountNumber=fedex.AccountNumberType(
@@ -97,8 +110,8 @@ def pickup_request(
                 ),
                 deliveryInstructions=options.instructions.state,
             ),
-            readyDateTimestamp=f"{payload.pickup_date}T{payload.closing_time}:00Z",
-            customerCloseTime=f"{payload.closing_time}:00",
+            readyDateTimestamp=f"{payload.pickup_date}T{ready_time}:00Z",
+            customerCloseTime=f"{closing_time}:00",
             pickupDateType=options.fedex_pickup_date_type.state,
             packageLocation=payload.package_location,
             buildingPart=options.fedex_building_part.state,
@@ -117,7 +130,7 @@ def pickup_request(
         accountAddressOfRecord=None,
         remarks=None,
         countryRelationships=None,
-        pickupType=None,
+        pickupType=fedex_pickup_type,
         trackingNumber=None,
         commodityDescription=lib.text(packages.description, max=100),
         expressFreightDetail=None,

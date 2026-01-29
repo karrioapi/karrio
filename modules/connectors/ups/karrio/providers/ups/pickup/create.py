@@ -50,6 +50,15 @@ def pickup_request(
     payload: models.PickupRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    # UPS only supports one-time (on-call) pickups via API
+    # Daily/recurring pickups require account setup through UPS directly
+    pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    if pickup_type not in ("one_time", None):
+        raise lib.exceptions.FieldError({
+            "pickup_type": f"UPS only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+            "For daily/recurring pickups, please contact UPS to set up a regular pickup schedule."
+        })
+
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
     options = lib.to_shipping_options(payload.options or {})

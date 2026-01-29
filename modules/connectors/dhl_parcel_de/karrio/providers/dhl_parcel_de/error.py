@@ -4,79 +4,110 @@ import karrio.core.models as models
 import karrio.providers.dhl_parcel_de.utils as provider_utils
 
 
+TRACKING_ERROR_CODES = {
+    "5": "Login failed",
+    "6": "Too many invalid logins",
+    "41": "Invalid tracking number format",
+    "45": "No tracking number supplied",
+    "62": "Authorization error",
+    "100": "No data found",
+    "200": "No electronic shipment data available",
+}
+
+
 def parse_error_response(
-    response: typing.Union[typing.List[dict], dict],
+    responses: typing.Union[typing.List[dict], dict],
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    responses = response if isinstance(response, list) else [response]
-    messages = []
+    results = responses if isinstance(responses, list) else [responses]
+    errors: typing.List[dict] = sum(
+        [
+            [result.get("status")]
+            if isinstance(result.get("status"), dict)
+            and result.get("status", {}).get("title", "").lower() != "ok"
+            else [result] if result.get("title") and result.get("title") != "ok" else []
+            for result in results
+        ],
+        [],
+    )
+    validations: typing.List[dict] = sum(
+        [
+            [
+                {**msg, "shipmentNo": item.get("shipmentNo")}
+                for item in result.get("items", [])
+                for msg in item.get("validationMessages", [])
+                if msg.get("validationState", "").lower() in ["error", "warning"]
+            ]
+            for result in results
+        ],
+        [],
+    )
 
-    # Parse top-level errors
-    errors = [
-        response.get("status") if isinstance(response.get("status"), dict) else response
-        for response in responses
-        if (
-            ("title" in response and (response.get("title") or "") != "ok")
-            or (
-                isinstance(response.get("status"), dict)
-                and "title" in response.get("status", {})
-                and (response.get("status", {}).get("title") or "").lower() != "ok"
-            )
+    return [
+        models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code=str(error.get("status") or error.get("statusCode")),
+            message=error.get("detail") or error.get("title"),
+            details=lib.to_dict(
+                dict(title=error.get("title"), instance=error.get("instance"))
+            ),
         )
+        for error in errors
+    ] + [
+        models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code=msg.get("validationMessageCode") or msg.get("validationState"),
+            message=lib.text(
+                msg.get("property"), msg.get("validationMessage"), separator=": "
+            ),
+            details=lib.to_dict(
+                dict(
+                    property=msg.get("property"),
+                    shipmentNo=msg.get("shipmentNo"),
+                    validationState=msg.get("validationState"),
+                )
+            ),
+        )
+        for msg in validations
     ]
 
-    # Create messages for top-level errors
-    for error in errors:
+
+def parse_tracking_error_response(
+    response: lib.Element,
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    code = response.get("code")
+    error_status = response.get("error-status")
+    messages = []
+
+    if code and code != "0":
         messages.append(
             models.Message(
                 carrier_id=settings.carrier_id,
                 carrier_name=settings.carrier_name,
-                code=str(error.get("status") or error.get("statusCode")),
-                message=error.get("detail") or error.get("title"),
-                details={
-                    "title": error.get("title"),
-                    "instance": error.get("instance"),
-                    **kwargs,
-                },
+                code=code,
+                message=response.get("error") or TRACKING_ERROR_CODES.get(code, "Tracking error"),
+                details=dict(
+                    request_id=response.get("request-id"),
+                    response_name=response.get("name"),
+                ),
             )
         )
 
-    # Parse validation messages from items
-    for response in responses:
-        items = response.get("items", [])
-        for item in items:
-            shipment_no = item.get("shipmentNo")
-            validation_messages = item.get("validationMessages", [])
-
-            for validation_msg in validation_messages:
-                validation_state = validation_msg.get("validationState", "")
-                property_name = validation_msg.get("property", "")
-                message_text = validation_msg.get("validationMessage", "")
-                message_code = validation_msg.get("validationMessageCode")
-
-                # Only process validation messages with actual error/warning states and messages
-                # Skip placeholder/informational messages (validationState: "string" or empty)
-                if (
-                    message_text
-                    and validation_state
-                    and validation_state.lower() in ["error", "warning"]
-                ):
-                    details = {
-                        "property": property_name,
-                        "validationState": validation_state,
-                    }
-                    if shipment_no:
-                        details["shipmentNo"] = shipment_no
-
-                    messages.append(
-                        models.Message(
-                            carrier_id=settings.carrier_id,
-                            carrier_name=settings.carrier_name,
-                            code=message_code or validation_state,
-                            message=f"{property_name}: {message_text}" if property_name else message_text,
-                            details={**details, **kwargs},
-                        )
-                    )
+    if error_status and error_status != "0":
+        piece_code = response.get("searched-piece-code") or response.get("piece-code")
+        messages.append(
+            models.Message(
+                carrier_id=settings.carrier_id,
+                carrier_name=settings.carrier_name,
+                code=error_status,
+                message=f"Tracking error for {piece_code}",
+                details=dict(piece_code=piece_code),
+            )
+        )
 
     return messages

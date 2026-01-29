@@ -347,10 +347,54 @@ class CustomsOption(lib.Enum):
 
 
 class TrackingStatus(lib.Enum):
-    delivered = ["delivered"]
-    in_transit = ["transit"]
-    delivery_failed = ["failure"]
-    delivery_delayed = ["unknown"]
+    """Maps DHL Parcel DE tracking codes to normalized status.
+
+    ICE (International Coded Event) codes from DHL Parcel DE Tracking API:
+    - SHRCU: Shipment received at collection unit
+    - LDTMV: Loaded to/moving on transportation
+    - PCKDU: Picked up
+    - ULFMV: Unloaded from transportation
+    - SRTED: Sorted
+    - DLVRD: Delivered
+    - ARRVD: Arrived
+    - HLDCC: Held at customs
+
+    RIC (Reason Instruction Code) codes:
+    - PCKST: Packstation
+    - MVMTV: Movement
+    - PUBCR: Public carrier
+    - UNLDD: Unloaded
+    - NRQRD: No reason required
+    - OTHER: Other
+
+    Standard event codes:
+    - ES: Einlieferung / Posting
+    - AA: Processing at origin parcel center
+    - AE: Pick-up successful
+    - EE: Destination parcel center
+    - PO: Loaded onto delivery vehicle
+    - ZU: Delivery successful
+    """
+
+    delivered = ["delivered", "dlvrd", "zu"]
+    in_transit = [
+        "transit",
+        "shrcu",
+        "ldtmv",
+        "pckdu",
+        "ulfmv",
+        "srted",
+        "arrvd",
+        "hldcc",
+        "es",
+        "aa",
+        "ae",
+        "ee",
+        "po",
+    ]
+    delivery_failed = ["failure", "ntdel", "rtrnd", "adurs"]
+    delivery_delayed = ["unknown", "delay"]
+    out_for_delivery = ["po", "in delivery"]
 
 
 class TrackingIncidentReason(lib.Enum):

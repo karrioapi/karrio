@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!--
+    DHL Parcel DE Tracking API Request Schema
+    Based on: https://developer.dhl.com/api-reference/dhl-parcel-de-shipment-tracking-post-parcel-germany
+
+    The request is sent as XML in a query parameter:
+    ?xml=<?xml version="1.0" encoding="UTF-8" standalone="no"?><data appname="..." ... />
+    -->
+
+    <xs:element name="data" type="TrackingRequestType"/>
+
+    <xs:complexType name="TrackingRequestType">
+        <xs:annotation>
+            <xs:documentation>
+                DHL Parcel DE Tracking Request.
+                Supports operations: d-get-piece-detail, d-get-signature, get-status-for-public-user
+            </xs:documentation>
+        </xs:annotation>
+
+        <!-- User credentials for DHL Tracking service -->
+        <xs:attribute name="appname" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Username for DHL Tracking service (from Business Customer Portal)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="password" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Password for DHL Tracking service (from Business Customer Portal)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <!-- Request type -->
+        <xs:attribute name="request" type="RequestType" use="required">
+            <xs:annotation>
+                <xs:documentation>Type of tracking request operation</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <!-- Language code -->
+        <xs:attribute name="language-code" type="LanguageCodeType" use="required">
+            <xs:annotation>
+                <xs:documentation>Response language: "en" (English) or "de" (German)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <!-- Tracking number(s) -->
+        <xs:attribute name="piece-code" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    Tracking number(s). For d-get-piece-detail: up to 20 semicolon-separated.
+                    For d-get-signature: single tracking number only.
+                    For get-status-for-public-user: up to 15 semicolon-separated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <!-- Optional: Postal code for privacy-restricted data -->
+        <xs:attribute name="zip-code" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Postal code to access privacy-restricted data.
+                    Note: Only works with single tracking number for d-get-piece-detail.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <!-- Optional: Date range filters -->
+        <xs:attribute name="from-date" type="xs:date" use="optional">
+            <xs:annotation>
+                <xs:documentation>Start date filter (YYYY-MM-DD format)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="to-date" type="xs:date" use="optional">
+            <xs:annotation>
+                <xs:documentation>End date filter (YYYY-MM-DD format)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <!-- d-get-signature specific date filters -->
+        <xs:attribute name="date-from" type="xs:date" use="optional">
+            <xs:annotation>
+                <xs:documentation>Start date filter for d-get-signature (YYYY-MM-DD format)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="date-to" type="xs:date" use="optional">
+            <xs:annotation>
+                <xs:documentation>End date filter for d-get-signature (YYYY-MM-DD format)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!-- Request type enumeration -->
+    <xs:simpleType name="RequestType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="d-get-piece-detail">
+                <xs:annotation>
+                    <xs:documentation>Full shipment details with event history (business customers)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="d-get-signature">
+                <xs:annotation>
+                    <xs:documentation>Proof of delivery / recipient signature (business customers)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="get-status-for-public-user">
+                <xs:annotation>
+                    <xs:documentation>Public tracking query (same as www.dhl.de, production only)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Language code enumeration -->
+    <xs:simpleType name="LanguageCodeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="en"/>
+            <xs:enumeration value="de"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

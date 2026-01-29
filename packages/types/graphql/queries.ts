@@ -3373,6 +3373,148 @@ export const GET_MANIFEST = gql`
 //#endregion
 
 // -----------------------------------------------------------
+// Pickup queries
+// -----------------------------------------------------------
+//#region
+
+export const GET_PICKUPS = gql`
+  query get_pickups($filter: PickupFilter) {
+    pickups(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          object_type
+          carrier_id
+          carrier_name
+          confirmation_number
+          pickup_date
+          ready_time
+          closing_time
+          instruction
+          package_location
+          test_mode
+          address {
+            id
+            postal_code
+            city
+            person_name
+            company_name
+            country_code
+            email
+            phone_number
+            state_code
+            residential
+            street_number
+            address_line1
+            address_line2
+          }
+          pickup_charge {
+            name
+            amount
+            currency
+          }
+          pickup_carrier {
+            connection_id
+            connection_type
+            carrier_code
+            carrier_id
+            carrier_name
+            test_mode
+          }
+          tracking_numbers
+          options
+          metadata
+          meta
+          created_at
+          updated_at
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PICKUP = gql`
+  query get_pickup($id: String!) {
+    pickup(id: $id) {
+      id
+      object_type
+      carrier_id
+      carrier_name
+      confirmation_number
+      pickup_date
+      ready_time
+      closing_time
+      instruction
+      package_location
+      test_mode
+      address {
+        id
+        postal_code
+        city
+        person_name
+        company_name
+        country_code
+        email
+        phone_number
+        state_code
+        residential
+        street_number
+        address_line1
+        address_line2
+      }
+      pickup_charge {
+        name
+        amount
+        currency
+      }
+      pickup_carrier {
+        connection_id
+        connection_type
+        carrier_code
+        carrier_id
+        carrier_name
+        test_mode
+      }
+      parcels {
+        id
+        weight
+        width
+        height
+        length
+        packaging_type
+        package_preset
+        weight_unit
+        dimension_unit
+      }
+      tracking_numbers
+      shipments {
+        id
+        tracking_number
+        status
+      }
+      options
+      metadata
+      meta
+      created_at
+      updated_at
+      created_by {
+        email
+        full_name
+      }
+    }
+  }
+`;
+
+//#endregion
+
+// -----------------------------------------------------------
 // API Keys queries and mutations
 // -----------------------------------------------------------
 //#region

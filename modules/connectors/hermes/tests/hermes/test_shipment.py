@@ -15,7 +15,9 @@ class TestHermesShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.MultiPieceShipmentRequest = models.ShipmentRequest(**MultiPieceShipmentPayload)
+        self.MultiPieceShipmentRequest = models.ShipmentRequest(
+            **MultiPieceShipmentPayload
+        )
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -27,61 +29,76 @@ class TestHermesShipment(unittest.TestCase):
         """Test multi-piece shipment request generation."""
         request = gateway.mapper.create_shipment_request(self.MultiPieceShipmentRequest)
         serialized = request.serialize()
-        print(f"Multi-piece request: {serialized}")
         # Should be a list of 3 requests
         self.assertEqual(len(serialized), 3)
         # First package should have partNumber=1, no parentShipmentOrderID (omitted when None)
         self.assertEqual(serialized[0]["service"]["multipartService"]["partNumber"], 1)
-        self.assertEqual(serialized[0]["service"]["multipartService"]["numberOfParts"], 3)
+        self.assertEqual(
+            serialized[0]["service"]["multipartService"]["numberOfParts"], 3
+        )
         # parentShipmentOrderID is not present (lib.to_dict removes None values)
-        self.assertNotIn("parentShipmentOrderID", serialized[0]["service"]["multipartService"])
+        self.assertNotIn(
+            "parentShipmentOrderID", serialized[0]["service"]["multipartService"]
+        )
         # Second package should have partNumber=2
         self.assertEqual(serialized[1]["service"]["multipartService"]["partNumber"], 2)
-        self.assertEqual(serialized[1]["service"]["multipartService"]["numberOfParts"], 3)
+        self.assertEqual(
+            serialized[1]["service"]["multipartService"]["numberOfParts"], 3
+        )
         # Third package should have partNumber=3
         self.assertEqual(serialized[2]["service"]["multipartService"]["partNumber"], 3)
-        self.assertEqual(serialized[2]["service"]["multipartService"]["numberOfParts"], 3)
+        self.assertEqual(
+            serialized[2]["service"]["multipartService"]["numberOfParts"], 3
+        )
 
     def test_create_shipment(self):
-        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+        with patch(
+            "karrio.providers.hermes.utils.Settings.access_token",
+            new_callable=PropertyMock,
+        ) as mock_token:
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = "{}"
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
                 self.assertEqual(
                     mock.call_args[1]["url"],
-                    f"{gateway.settings.server_url}/shipmentorders/labels"
+                    f"{gateway.settings.server_url}/shipmentorders/labels",
                 )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+        with patch(
+            "karrio.providers.hermes.utils.Settings.access_token",
+            new_callable=PropertyMock,
+        ) as mock_token:
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = ShipmentResponse
                 parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
                 )
-                print(f"Parsed response: {parsed_response}")
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
+                self.assertListEqual(
+                    lib.to_dict(parsed_response), ParsedShipmentResponse
+                )
 
     def test_parse_error_response(self):
-        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+        with patch(
+            "karrio.providers.hermes.utils.Settings.access_token",
+            new_callable=PropertyMock,
+        ) as mock_token:
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = ErrorResponse
                 parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
                 )
-                print(f"Error response: {parsed_response}")
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
     def test_create_multi_piece_shipment(self):
         """Test multi-piece shipment creation with sequential API calls."""
-        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+        with patch(
+            "karrio.providers.hermes.utils.Settings.access_token",
+            new_callable=PropertyMock,
+        ) as mock_token:
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 # Return different responses for each package
@@ -95,19 +112,22 @@ class TestHermesShipment(unittest.TestCase):
                     .from_(gateway)
                     .parse()
                 )
-                print(f"Multi-piece parsed response: {parsed_response}")
                 # Should have 3 API calls
                 self.assertEqual(mock.call_count, 3)
                 # Second and third calls should have parentShipmentOrderID injected
                 second_call_data = lib.to_dict(mock.call_args_list[1][1]["data"])
                 self.assertEqual(
-                    second_call_data["service"]["multipartService"]["parentShipmentOrderID"],
-                    "11111111111"
+                    second_call_data["service"]["multipartService"][
+                        "parentShipmentOrderID"
+                    ],
+                    "11111111111",
                 )
                 third_call_data = lib.to_dict(mock.call_args_list[2][1]["data"])
                 self.assertEqual(
-                    third_call_data["service"]["multipartService"]["parentShipmentOrderID"],
-                    "11111111111"
+                    third_call_data["service"]["multipartService"][
+                        "parentShipmentOrderID"
+                    ],
+                    "11111111111",
                 )
                 # Check the response structure (not exact label value due to bundling)
                 shipment, messages = parsed_response
@@ -118,7 +138,11 @@ class TestHermesShipment(unittest.TestCase):
                 tracking_numbers = set(shipment.meta.get("tracking_numbers", []))
                 self.assertEqual(
                     tracking_numbers,
-                    {"H1111111111111111111", "H2222222222222222222", "H3333333333333333333"}
+                    {
+                        "H1111111111111111111",
+                        "H2222222222222222222",
+                        "H3333333333333333333",
+                    },
                 )
                 self.assertEqual(messages, [])
 
@@ -136,7 +160,7 @@ ShipmentPayload = {
         "person_name": "Max Mustermann",
         "company_name": "Test Company",
         "phone_number": "+49401234567",
-        "email": "sender@example.com"
+        "email": "sender@example.com",
     },
     "recipient": {
         "address_line1": "Essener Bogen 1",
@@ -145,18 +169,20 @@ ShipmentPayload = {
         "country_code": "DE",
         "person_name": "Max Mustermann",
         "phone_number": "+49401234567",
-        "email": "receiver@example.com"
+        "email": "receiver@example.com",
     },
-    "parcels": [{
-        "weight": 5.0,
-        "width": 30.0,
-        "height": 20.0,
-        "length": 40.0,
-        "weight_unit": "KG",
-        "dimension_unit": "CM",
-    }],
+    "parcels": [
+        {
+            "weight": 5.0,
+            "width": 30.0,
+            "height": 20.0,
+            "length": 40.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        }
+    ],
     "service": "hermes_standard",
-    "reference": "ORDER-12345"
+    "reference": "ORDER-12345",
 }
 
 MultiPieceShipmentPayload = {
@@ -168,7 +194,7 @@ MultiPieceShipmentPayload = {
         "person_name": "Max Mustermann",
         "company_name": "Test Company",
         "phone_number": "+49401234567",
-        "email": "sender@example.com"
+        "email": "sender@example.com",
     },
     "recipient": {
         "address_line1": "Essener Bogen 1",
@@ -177,7 +203,7 @@ MultiPieceShipmentPayload = {
         "country_code": "DE",
         "person_name": "Max Mustermann",
         "phone_number": "+49401234567",
-        "email": "receiver@example.com"
+        "email": "receiver@example.com",
     },
     "parcels": [
         {
@@ -206,47 +232,40 @@ MultiPieceShipmentPayload = {
         },
     ],
     "service": "hermes_standard",
-    "reference": "ORDER-MULTI"
+    "reference": "ORDER-MULTI",
 }
 
 # Single package request - now returns a list with one item
-ShipmentRequest = [{
-    "clientReference": "ORDER-12345",
-    "receiverName": {
-        "firstname": "Max",
-        "lastname": "Mustermann"
-    },
-    "receiverAddress": {
-        "street": "Essener Bogen",
-        "houseNumber": "1",
-        "zipCode": "22419",
-        "town": "Hamburg",
-        "countryCode": "DE"
-    },
-    "receiverContact": {
-        "phone": "+49401234567",
-        "mail": "receiver@example.com"
-    },
-    "senderName": {
-        "firstname": "Max",
-        "lastname": "Mustermann"
-    },
-    "senderAddress": {
-        "street": "Essener Bogen",
-        "houseNumber": "1",
-        "zipCode": "22419",
-        "town": "Hamburg",
-        "countryCode": "DE",
-        "addressAddition3": "Test Company"
-    },
-    "parcel": {
-        "parcelHeight": 200,
-        "parcelWidth": 300,
-        "parcelDepth": 400,
-        "parcelWeight": 5000,
-        "productType": "PARCEL"
+ShipmentRequest = [
+    {
+        "clientReference": "ORDER-12345",
+        "receiverName": {"firstname": "Max", "lastname": "Mustermann"},
+        "receiverAddress": {
+            "street": "Essener Bogen",
+            "houseNumber": "1",
+            "zipCode": "22419",
+            "town": "Hamburg",
+            "countryCode": "DE",
+        },
+        "receiverContact": {"phone": "+49401234567", "mail": "receiver@example.com"},
+        "senderName": {"firstname": "Max", "lastname": "Mustermann"},
+        "senderAddress": {
+            "street": "Essener Bogen",
+            "houseNumber": "1",
+            "zipCode": "22419",
+            "town": "Hamburg",
+            "countryCode": "DE",
+            "addressAddition3": "Test Company",
+        },
+        "parcel": {
+            "parcelHeight": 200,
+            "parcelWidth": 300,
+            "parcelDepth": 400,
+            "parcelWeight": 5000,
+            "productType": "PARCEL",
+        },
     }
-}]
+]
 
 ShipmentResponse = """{
     "listOfResultCodes": [],
@@ -273,15 +292,13 @@ ParsedShipmentResponse = [
         "tracking_number": "H1234567890123456789",
         "shipment_identifier": "12345678901",
         "label_type": "PDF",
-        "docs": {
-            "label": "JVBERi0xLjQKMSAwIG9iago8PAovVHlwZS..."
-        },
+        "docs": {"label": "JVBERi0xLjQKMSAwIG9iago8PAovVHlwZS..."},
         "meta": {
             "shipment_id": "H1234567890123456789",
-            "shipment_order_id": "12345678901"
-        }
+            "shipment_order_id": "12345678901",
+        },
     },
-    []
+    [],
 ]
 
 ParsedErrorResponse = [
@@ -292,9 +309,9 @@ ParsedErrorResponse = [
             "carrier_name": "hermes",
             "code": "e010",
             "message": "Error while creating shipment order – Parcel class does not match the dimensions.",
-            "details": {}
+            "details": {},
         }
-    ]
+    ],
 ]
 
 # Multi-piece shipment responses (one per package)
@@ -347,14 +364,14 @@ ParsedMultiPieceShipmentResponse = [
             "shipment_ids": [
                 "H1111111111111111111",
                 "H2222222222222222222",
-                "H3333333333333333333"
+                "H3333333333333333333",
             ],
             "tracking_numbers": [
                 "H1111111111111111111",
                 "H2222222222222222222",
-                "H3333333333333333333"
-            ]
-        }
+                "H3333333333333333333",
+            ],
+        },
     },
-    []
+    [],
 ]

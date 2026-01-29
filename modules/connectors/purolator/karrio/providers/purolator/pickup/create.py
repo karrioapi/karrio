@@ -71,6 +71,15 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     :param settings: Settings
     :return: Serializable
     """
+    # Purolator only supports one-time pickups via API
+    pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    if pickup_type not in ("one_time", None):
+        import karrio.lib as lib
+        raise lib.exceptions.FieldError({
+            "pickup_type": f"Purolator only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+            "For daily/recurring pickups, please contact Purolator to set up a regular pickup schedule."
+        })
+
     request: Pipeline = Pipeline(
         validate=lambda *_: _validate_pickup(payload=payload, settings=settings),
         schedule=partial(_schedule_pickup, payload=payload, settings=settings),

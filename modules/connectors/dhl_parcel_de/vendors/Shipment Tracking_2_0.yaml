@@ -1,0 +1,16 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: DHL Parcel DE Shipment Tracking
+  description: >
+      Note:
+      The API type is a RESTful Webservice and the Tracking API works exclusively with the GET method.
+      Please have a look to the WADL in Download Section.
+paths:
+  /Placeholder, see WADL and Testsuite :
+    get:
+      description: SOAP UI              
+      responses:
+        '200':
+          description: Testcases
+      

@@ -80,7 +80,38 @@ class Settings(core.Settings):
 
     @property
     def tracking_server_url(self):
-        return "https://api-eu.dhl.com"
+        """Dedicated DHL Parcel DE Tracking API endpoint.
+
+        Uses XML request in query parameter and returns XML response.
+        Requires HTTP Basic Auth (API key:secret) + XML credentials (appname:password).
+        """
+        return (
+            "https://api-sandbox.dhl.com/parcel/de/tracking/v0/shipments"
+            if self.test_mode
+            else "https://api-eu.dhl.com/parcel/de/tracking/v0/shipments"
+        )
+
+    @property
+    def tracking_appname(self) -> str:
+        """Return tracking service appname (username).
+
+        In sandbox mode, uses hardcoded credentials as per DHL documentation.
+        In production, uses the connection username.
+        """
+        if self.test_mode:
+            return "zt12345"  # Sandbox hardcoded credential
+        return self.connection_username or ""
+
+    @property
+    def tracking_password(self) -> str:
+        """Return tracking service password.
+
+        In sandbox mode, uses hardcoded credentials as per DHL documentation.
+        In production, uses the connection password.
+        """
+        if self.test_mode:
+            return "geheim"  # Sandbox hardcoded credential
+        return self.connection_password or ""
 
     @property
     def pickup_server_url(self):

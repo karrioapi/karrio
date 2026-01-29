@@ -134,11 +134,14 @@ class PickupRequest(BasePickupRequest):
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
 
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
+    parcels_count: int = None
     shipment_identifiers: typing.List[str] = []
     package_location: str = None
+    instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     metadata: typing.Dict = {}
     options: typing.Dict = {}
-    instruction: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -152,8 +155,10 @@ class PickupUpdateRequest(BasePickupUpdateRequest):
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
     shipment_identifiers: typing.List[str] = []
     package_location: str = None
-    options: typing.Dict = {}
     instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
+    options: typing.Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -274,6 +279,8 @@ class Pickup:
     pickup_charge: ChargeDetails = jstruct.JStruct[ChargeDetails]
     instruction: str = None
     package_location: str = None
+    pickup_type: str = None  # one_time, daily, recurring
+    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     metadata: typing.Dict = {}
     options: typing.Dict = {}
     meta: dict = {}
