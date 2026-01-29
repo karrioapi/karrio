@@ -26,7 +26,7 @@
     "clsx": "^1.1.1",
     "file-loader": "^6.2.0",
     "mermaid": "^11.5.0",
-    "next": "15.4.10",
+    "next": "16.1.5",
     "next-themes": "^0.3.0",
     "next-view-transitions": "^0.3.4",
     "nextra": "^4.2.16",
