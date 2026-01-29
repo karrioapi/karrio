@@ -766,6 +766,7 @@ class Shipment(core.OwnedEntity):
         "metadata",
         "created_by",
         "reference",
+        "applied_fees",  # Accounting: addons + surcharge COGS values
         # Embedded JSON fields
         "shipper",
         "recipient",
@@ -898,6 +899,12 @@ class Shipment(core.OwnedEntity):
     )
     extra_documents = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
+    )
+    applied_fees = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value=[]),
+        help_text="Applied fees for accounting: addons + surcharge COGS values",
     )
 
     # ─────────────────────────────────────────────────────────────────
