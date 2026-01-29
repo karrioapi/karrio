@@ -226,8 +226,11 @@ class Markup(core.Entity):
 
 class Fee(models.Model):
     """
-    Captured fee/markup applied to a shipment.
-    Primary source for usage statistics and financial reporting.
+    Immutable snapshot of an applied fee at time of shipment purchase.
+    Primary source of truth for usage statistics and financial reporting.
+
+    All reference fields are plain CharFields (no FKs) — this decouples
+    fee records from live objects so they survive deletions/changes.
     """
 
     class Meta:
@@ -236,10 +239,13 @@ class Fee(models.Model):
         verbose_name_plural = "Fees"
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["shipment_id"]),
-            models.Index(fields=["markup_id"]),
+            # Single-field indexes for fields without db_index=True
             models.Index(fields=["carrier_code"]),
             models.Index(fields=["created_at"]),
+            # Composite indexes for time-series queries
+            models.Index(fields=["account_id", "created_at"]),
+            models.Index(fields=["connection_id", "created_at"]),
+            models.Index(fields=["markup_id", "created_at"]),
         ]
 
     id = models.CharField(
@@ -249,23 +255,7 @@ class Fee(models.Model):
         editable=False,
     )
 
-    # Links
-    shipment = models.ForeignKey(
-        "manager.Shipment",
-        on_delete=models.CASCADE,
-        related_name="fees",
-        help_text="The shipment this fee was applied to",
-    )
-    markup = models.ForeignKey(
-        Markup,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="fees",
-        help_text="The markup that generated this fee (null if markup was deleted)",
-    )
-
-    # Fee details (snapshot at time of capture)
+    # Fee details (captured at time of application)
     name = models.CharField(
         max_length=100,
         help_text="The fee name at time of application",
@@ -277,18 +267,48 @@ class Fee(models.Model):
         max_length=3,
         help_text="Currency code (e.g., USD, EUR)",
     )
-    markup_type = models.CharField(
+    fee_type = models.CharField(
         max_length=25,
         choices=MARKUP_TYPE_CHOICES,
         help_text="Whether this was a fixed amount or percentage markup",
     )
-    markup_percentage = models.FloatField(
+    percentage = models.FloatField(
         null=True,
         blank=True,
         help_text="Original percentage if this was a percentage-based markup",
     )
 
-    # Context snapshot
+    # Markup reference (snapshot, no FK)
+    markup_id = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text="The markup ID that generated this fee",
+    )
+
+    # Shipment reference (snapshot, no FK)
+    shipment_id = models.CharField(
+        max_length=50,
+        db_index=True,
+        help_text="The shipment this fee was applied to",
+    )
+
+    # Organization/Account reference (snapshot, no FK)
+    account_id = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text="The organization/account this fee belongs to",
+    )
+
+    # Carrier connection context
+    connection_id = models.CharField(
+        max_length=50,
+        db_index=True,
+        help_text="Connection ID used for this shipment",
+    )
     carrier_code = models.CharField(
         max_length=50,
         help_text="Carrier code at time of shipment creation",
@@ -299,12 +319,9 @@ class Fee(models.Model):
         blank=True,
         help_text="Service code at time of shipment creation",
     )
-    connection_id = models.CharField(
-        max_length=50,
-        help_text="Connection ID used for this shipment",
-    )
 
-    # Timestamps
+    # Context
+    test_mode = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -60,7 +60,10 @@ class MarkupAdmin(admin.ModelAdmin):
                 super().__init__(*args, **kwargs)
 
                 if kwargs.get("instance") is not None:
-                    self.fields["organizations"].initial = kwargs["instance"].org.all()
+                    org_ids = kwargs["instance"].organization_ids or []
+                    self.fields["organizations"].initial = (
+                        orgs.Organization.objects.filter(id__in=org_ids)
+                    )
 
             organizations = forms.ModelMultipleChoiceField(
                 queryset=orgs.Organization.objects.all(),
@@ -69,10 +72,10 @@ class MarkupAdmin(admin.ModelAdmin):
             )
 
             def save(self, commit=True):
-                instance = super().save(commit=commit)
-                instance.save()
+                instance = super().save(commit=False)
                 organizations = self.cleaned_data.get("organizations", [])
-                instance.org.set(organizations)
+                instance.organization_ids = [str(org.id) for org in organizations]
+                instance.save()
                 return instance
 
         form = MarkupForm
@@ -91,24 +94,24 @@ class FeeAdmin(admin.ModelAdmin):
     """Admin interface for Fee model (read-only)."""
 
     list_display = ("name", "amount", "currency", "carrier_code", "service_code", "created_at")
-    list_filter = ("markup_type", "carrier_code", "currency")
-    search_fields = ("name", "shipment__id", "markup__id")
+    list_filter = ("fee_type", "carrier_code", "currency", "test_mode")
+    search_fields = ("name", "shipment_id", "markup_id", "account_id")
     readonly_fields = (
-        "id", "shipment", "markup", "name", "amount", "currency",
-        "markup_type", "markup_percentage", "carrier_code", "service_code",
-        "connection_id", "created_at",
+        "id", "shipment_id", "markup_id", "account_id", "name", "amount", "currency",
+        "fee_type", "percentage", "carrier_code", "service_code",
+        "connection_id", "test_mode", "created_at",
     )
     date_hierarchy = "created_at"
 
     fieldsets = (
         (None, {
-            "fields": ("id", "shipment", "markup")
+            "fields": ("id", "shipment_id", "markup_id", "account_id")
         }),
         ("Fee Details", {
             "fields": (
                 "name",
                 ("amount", "currency"),
-                ("markup_type", "markup_percentage"),
+                ("fee_type", "percentage"),
             )
         }),
         ("Context", {
@@ -116,6 +119,7 @@ class FeeAdmin(admin.ModelAdmin):
                 "carrier_code",
                 "service_code",
                 "connection_id",
+                "test_mode",
             )
         }),
         ("Timestamps", {
