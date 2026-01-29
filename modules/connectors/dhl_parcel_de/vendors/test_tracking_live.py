@@ -59,8 +59,8 @@ def test_tracking():
 
     print("\n[CONFIG]")
     print(lib.to_json({
-        "api_key": f"{API_KEY[:10]}...{API_KEY[-4:]}",
-        "api_secret": f"{API_SECRET[:4]}...{API_SECRET[-4:]}",
+        "api_key": "***redacted***",
+        "api_secret": "***redacted***",
         "test_mode": True,
         "tracking_appname": "zt12345 (sandbox)",
         "tracking_password": "geheim (sandbox)",
