@@ -89,6 +89,35 @@ class CarrierSettings:
             ]
         }
 
+    @property
+    def shipping_services(self):
+        """Alias for services to be compatible with RatingMixinProxy.
+
+        Converts service dicts to ServiceLevel objects if needed.
+        """
+        import karrio.lib as lib
+        from karrio.core.models import ServiceLevel
+
+        services = getattr(self, "services", [])
+        return [
+            lib.to_object(ServiceLevel, s) if isinstance(s, dict) else s
+            for s in services
+        ]
+
+    @property
+    def account_country_code(self):
+        """Account country code for rate calculation, falls back from config or metadata."""
+        return (
+            getattr(self, "_account_country_code", None)
+            or (getattr(self, "config", None) or {}).get("account_country_code")
+            or (getattr(self, "metadata", None) or {}).get("account_country_code")
+        )
+
+    @account_country_code.setter
+    def account_country_code(self, value):
+        """Set account country code."""
+        self._account_country_code = value
+
     @classmethod
     def create(cls, data: dict):
         return cls(**data)
