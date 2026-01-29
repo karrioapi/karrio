@@ -335,6 +335,7 @@ import {
 - ❌ **DO NOT** catch bare `Exception`—be specific
 - ❌ **DO NOT** use mutable default arguments
 - ❌ **DO NOT** import `*` except from designated re-export modules
+- ❌ **DO NOT** use raw SQL (`RunSQL`) in Django migrations—use only Django migration operations (`AddField`, `RemoveField`, `RenameField`, `AlterField`, `RunPython`, etc.) to ensure compatibility across SQLite, PostgreSQL, and MySQL
 
 ### TypeScript/React
 - ❌ **DO NOT** use `class` components—use functional components
