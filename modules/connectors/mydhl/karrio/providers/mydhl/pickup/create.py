@@ -82,6 +82,14 @@ def pickup_request(
 
     Returns a Serializable object that can be sent to the carrier API
     """
+    # MyDHL only supports one-time pickups via API
+    pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    if pickup_type not in ("one_time", None):
+        raise lib.exceptions.FieldError({
+            "pickup_type": f"MyDHL only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+            "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
+        })
+
     # Extract pickup details
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)

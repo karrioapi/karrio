@@ -120,9 +120,18 @@ def _create_pickup_request(
     )
     address = lib.to_address(payload.address)
 
+    # Map unified pickup_type to CanadaPost pickup type
+    # one_time -> OnDemand, daily/recurring -> Scheduled
+    unified_pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    cp_pickup_type = (
+        PickupType.SCHEDULED.value
+        if unified_pickup_type in ("daily", "recurring")
+        else PickupType.ON_DEMAND.value
+    )
+
     request = RequestType(
         customer_request_id=settings.customer_number,
-        pickup_type=PickupType.ON_DEMAND.value,
+        pickup_type=cp_pickup_type,
         pickup_location=PickupLocationType(
             business_address_flag=(not payload.address.residential),
             alternate_address=AlternateAddressType(

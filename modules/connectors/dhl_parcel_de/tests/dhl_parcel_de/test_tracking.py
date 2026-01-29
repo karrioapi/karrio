@@ -18,7 +18,9 @@ class TestCarrierTracking(unittest.TestCase):
         # Request should be a list of XML strings
         self.assertEqual(len(serialized), 1)
         # Check that the request contains expected XML elements
-        self.assertIn('<?xml version="1.0" encoding="UTF-8" standalone="no"?>', serialized[0])
+        self.assertIn(
+            '<?xml version="1.0" encoding="UTF-8" standalone="no"?>', serialized[0]
+        )
         self.assertIn('appname="zt12345"', serialized[0])
         self.assertIn('password="geheim"', serialized[0])
         self.assertIn('request="d-get-piece-detail"', serialized[0])
@@ -46,7 +48,7 @@ class TestCarrierTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_error_response(self):
@@ -55,7 +57,7 @@ class TestCarrierTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(parsed_response)
+
             self.assertListEqual(
                 DP.to_dict(parsed_response), ParsedTrackingErrorResponse
             )

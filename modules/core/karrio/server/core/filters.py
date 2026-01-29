@@ -732,13 +732,189 @@ class UploadRecordFilter(filters.FilterSet):
 
 
 class PickupFilters(filters.FilterSet):
-    parameters: list = []
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="pickup keyword and indexes search",
+    )
+    id = filters.CharInFilter(
+        field_name="id",
+        lookup_expr="in",
+        help_text="pickup id(s).",
+    )
+    confirmation_number = filters.CharFilter(
+        field_name="confirmation_number",
+        lookup_expr="icontains",
+        help_text="confirmation number (partial match)",
+    )
+    pickup_date_after = filters.DateFilter(
+        field_name="pickup_date",
+        lookup_expr="gte",
+        help_text="pickup date after (YYYY-MM-DD)",
+    )
+    pickup_date_before = filters.DateFilter(
+        field_name="pickup_date",
+        lookup_expr="lte",
+        help_text="pickup date before (YYYY-MM-DD)",
+    )
+    created_after = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="gte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+    created_before = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="lte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+    carrier_name = filters.MultipleChoiceFilter(
+        method="carrier_filter",
+        choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+        help_text=f"""
+        carrier_name for the pickup
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
+    )
+    address = filters.CharFilter(
+        method="address_filter",
+        help_text="pickup address search",
+    )
+    metadata_key = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_key_filter",
+        help_text="pickup metadata key.",
+    )
+    metadata_value = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_value_filter",
+        help_text="pickup metadata value.",
+    )
+    meta_key = filters.CharFilter(
+        field_name="meta",
+        method="meta_key_filter",
+        help_text="pickup meta key.",
+    )
+    meta_value = filters.CharFilter(
+        field_name="meta",
+        method="meta_value_filter",
+        help_text="pickup meta value.",
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "keyword",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "confirmation_number",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "pickup_date_after",
+            type=openapi.OpenApiTypes.DATE,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "pickup_date_before",
+            type=openapi.OpenApiTypes.DATE,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            description=(
+                "The unique carrier slug. <br/>"
+                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+            ),
+        ),
+        openapi.OpenApiParameter(
+            "address",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
 
     class Meta:
         import karrio.server.manager.models as manager
 
         model = manager.Pickup
         fields: list = []
+
+    def keyword_filter(self, queryset, name, value):
+        if "postgres" in conf.settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "id",
+                    "confirmation_number",
+                    "instruction",
+                    "package_location",
+                )
+            ).filter(search=value)
+
+        return queryset.filter(
+            models.Q(id__icontains=value)
+            | models.Q(confirmation_number__icontains=value)
+            | models.Q(instruction__icontains=value)
+            | models.Q(package_location__icontains=value)
+        )
+
+    def carrier_filter(self, queryset, name, values):
+        # Filter by carrier_code in carrier JSON snapshot
+        _filters = [models.Q(carrier__carrier_code=value) for value in values]
+        query = _filters[0] if _filters else models.Q()
+
+        for item in _filters[1:]:
+            query |= item
+
+        return queryset.filter(query)
+
+    def address_filter(self, queryset, name, value):
+        # Address is stored as JSON field, filter by string search
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "address")
+                if value.lower() in str(o.get("address") or {}).lower()
+            ]
+        )
+
+    def metadata_key_filter(self, queryset, name, value):
+        return queryset.filter(metadata__has_key=value)
+
+    def metadata_value_filter(self, queryset, name, value):
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "metadata")
+                if value in (o.get("metadata") or {}).values()
+            ]
+        )
+
+    def meta_key_filter(self, queryset, name, value):
+        return queryset.filter(meta__has_key=value)
+
+    def meta_value_filter(self, queryset, name, value):
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "meta")
+                if value in map(str, (o.get("meta") or {}).values())
+            ]
+        )
 
 
 class RateSheetFilter(filters.FilterSet):

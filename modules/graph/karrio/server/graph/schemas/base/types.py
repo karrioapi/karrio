@@ -1340,6 +1340,100 @@ class ManifestType:
 
 
 @strawberry.type
+class PickupType:
+    """GraphQL type for Pickup model."""
+
+    id: str
+    object_type: str
+    confirmation_number: typing.Optional[str]
+    pickup_date: typing.Optional[str]
+    ready_time: typing.Optional[str]
+    closing_time: typing.Optional[str]
+    instruction: typing.Optional[str]
+    package_location: typing.Optional[str]
+    test_mode: bool
+    options: utils.JSON
+    metadata: utils.JSON
+    meta: typing.Optional[utils.JSON]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    created_by: UserType
+
+    @strawberry.field
+    def pickup_type(self: manager.Pickup) -> str:
+        """Pickup scheduling type: one_time, daily, or recurring."""
+        return self.pickup_type or "one_time"
+
+    @strawberry.field
+    def recurrence(self: manager.Pickup) -> typing.Optional[utils.JSON]:
+        """Recurrence config for recurring pickups."""
+        return self.recurrence
+
+    @strawberry.field
+    def carrier_id(self: manager.Pickup) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_id")
+
+    @strawberry.field
+    def carrier_name(self: manager.Pickup) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_name")
+
+    @strawberry.field
+    def address(self: manager.Pickup) -> typing.Optional[AddressType]:
+        return AddressType.parse(self.address) if self.address else None
+
+    @strawberry.field
+    def pickup_charge(self: manager.Pickup) -> typing.Optional[ChargeType]:
+        return ChargeType.parse(self.pickup_charge) if self.pickup_charge else None
+
+    @strawberry.field
+    def parcels(self: manager.Pickup) -> typing.List[ParcelType]:
+        """Parcels from related shipments."""
+        return [
+            ParcelType.parse(p)
+            for shipment in self.shipments.all()
+            for p in (shipment.parcels or [])
+        ]
+
+    @strawberry.field
+    def tracking_numbers(self: manager.Pickup) -> typing.List[str]:
+        """Tracking numbers from related shipments."""
+        return [
+            s.tracking_number
+            for s in self.shipments.all()
+            if s.tracking_number
+        ]
+
+    @strawberry.field
+    def shipments(self: manager.Pickup) -> typing.List["ShipmentType"]:
+        """Related shipments for this pickup."""
+        return list(self.shipments.all())
+
+    @strawberry.field
+    def pickup_carrier(
+        self: manager.Pickup,
+    ) -> typing.Optional[CarrierSnapshotType]:
+        """Carrier snapshot with credentials protected."""
+        return CarrierSnapshotType.parse(self.carrier)
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info, id: str) -> typing.Optional["PickupType"]:
+        return manager.Pickup.access_by(info.context.request).filter(id=id).first()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.PickupFilter] = strawberry.UNSET,
+    ) -> utils.Connection["PickupType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.PickupFilter()
+        queryset = filters.PickupFilters(
+            _filter.to_dict(), manager.Pickup.access_by(info.context.request)
+        ).qs
+        return utils.paginated_connection(queryset, **_filter.pagination())
+
+
+@strawberry.type
 class PaymentType:
     account_number: typing.Optional[str] = None
     paid_by: typing.Optional[utils.PaidByEnum] = None

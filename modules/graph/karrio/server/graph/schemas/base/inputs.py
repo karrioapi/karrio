@@ -68,6 +68,23 @@ class ManifestFilter(utils.Paginated):
 
 
 @strawberry.input
+class PickupFilter(utils.Paginated):
+    keyword: typing.Optional[str] = strawberry.UNSET
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    confirmation_number: typing.Optional[str] = strawberry.UNSET
+    pickup_date_after: typing.Optional[str] = strawberry.UNSET
+    pickup_date_before: typing.Optional[str] = strawberry.UNSET
+    created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
+    created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
+    address: typing.Optional[str] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[str] = strawberry.UNSET
+    meta_key: typing.Optional[str] = strawberry.UNSET
+    meta_value: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
 class TemplateFilter(utils.Paginated):
     label: typing.Optional[str] = strawberry.UNSET
     keyword: typing.Optional[str] = strawberry.UNSET

@@ -101,6 +101,13 @@ class Query:
         resolver=types.ManifestType.resolve_list
     )
 
+    pickup: typing.Optional[types.PickupType] = strawberry.field(
+        resolver=types.PickupType.resolve
+    )
+    pickups: utils.Connection[types.PickupType] = strawberry.field(
+        resolver=types.PickupType.resolve_list
+    )
+
     carrier_connection: typing.Optional[types.CarrierConnectionType] = strawberry.field(
         resolver=types.CarrierConnectionType.resolve
     )

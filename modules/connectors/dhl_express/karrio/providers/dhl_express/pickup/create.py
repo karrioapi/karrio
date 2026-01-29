@@ -65,6 +65,14 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
 
 
 def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
+    # DHL Express only supports one-time pickups via API
+    pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    if pickup_type not in ("one_time", None):
+        raise lib.exceptions.FieldError({
+            "pickup_type": f"DHL Express only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+            "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
+        })
+
     packages = Packages(payload.parcels)
     address = lib.to_address(payload.address)
 

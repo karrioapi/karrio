@@ -175,6 +175,9 @@ PICKUP_RESPONSE = {
         },
         "ready_time": "13:00",
         "closing_time": "17:00",
+        "pickup_type": "one_time",
+        "parcels_count": None,
+        "recurrence": {},
         "test_mode": True,
         "address": {
             "id": None,
@@ -239,6 +242,9 @@ PICKUP_UPDATE_RESPONSE = {
         "pickup_charge": None,
         "ready_time": "14:30",
         "closing_time": "17:00",
+        "pickup_type": "one_time",
+        "parcels_count": None,
+        "recurrence": {},
         "test_mode": True,
         "address": {
             "id": None,

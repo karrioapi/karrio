@@ -19,45 +19,50 @@ class TestHermesTracking(unittest.TestCase):
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
         serialized = request.serialize()
-        print(f"Tracking request: {serialized}")
         self.assertEqual(serialized, TrackingRequest)
 
     def test_get_tracking(self):
-        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+        with patch(
+            "karrio.providers.hermes.utils.Settings.access_token",
+            new_callable=PropertyMock,
+        ) as mock_token:
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = "{}"
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
                 call_url = mock.call_args[1]["url"]
-                print(f"Tracking URL: {call_url}")
                 self.assertIn("/shipmentinfo?", call_url)
                 self.assertIn("shipmentID=H1234567890123456789", call_url)
 
     def test_parse_tracking_response(self):
-        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+        with patch(
+            "karrio.providers.hermes.utils.Settings.access_token",
+            new_callable=PropertyMock,
+        ) as mock_token:
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = TrackingResponse
                 parsed_response = (
-                    karrio.Tracking.fetch(self.TrackingRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
                 )
-                print(f"Parsed tracking response: {parsed_response}")
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
+                self.assertListEqual(
+                    lib.to_dict(parsed_response), ParsedTrackingResponse
+                )
 
     def test_parse_tracking_error_response(self):
-        with patch("karrio.providers.hermes.utils.Settings.access_token", new_callable=PropertyMock) as mock_token:
+        with patch(
+            "karrio.providers.hermes.utils.Settings.access_token",
+            new_callable=PropertyMock,
+        ) as mock_token:
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = TrackingErrorResponse
                 parsed_response = (
-                    karrio.Tracking.fetch(self.TrackingRequest)
-                    .from_(gateway)
-                    .parse()
+                    karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
                 )
-                print(f"Parsed tracking error response: {parsed_response}")
-                self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingErrorResponse)
+                self.assertListEqual(
+                    lib.to_dict(parsed_response), ParsedTrackingErrorResponse
+                )
 
 
 if __name__ == "__main__":
@@ -161,7 +166,7 @@ ParsedTrackingResponse = [
                     "code": "3500",
                     "location": "Hamburg, DEU",
                     "timestamp": "2024-01-20T14:30:00+01:00",
-                    "status": "delivered"
+                    "status": "delivered",
                 },
                 {
                     "date": "2024-01-20",
@@ -170,7 +175,7 @@ ParsedTrackingResponse = [
                     "code": "3000",
                     "location": "Hamburg, DEU",
                     "timestamp": "2024-01-20T07:00:00+01:00",
-                    "status": "out_for_delivery"
+                    "status": "out_for_delivery",
                 },
                 {
                     "date": "2024-01-19",
@@ -179,7 +184,7 @@ ParsedTrackingResponse = [
                     "code": "2000",
                     "location": "Hamburg, DEU",
                     "timestamp": "2024-01-19T10:15:00+01:00",
-                    "status": "in_transit"
+                    "status": "in_transit",
                 },
                 {
                     "date": "2024-01-18",
@@ -188,8 +193,8 @@ ParsedTrackingResponse = [
                     "code": "0000",
                     "location": "Berlin, DEU",
                     "timestamp": "2024-01-18T08:30:00+01:00",
-                    "status": "pending"
-                }
+                    "status": "pending",
+                },
             ],
             "delivered": True,
             "status": "delivered",
@@ -197,14 +202,12 @@ ParsedTrackingResponse = [
             "info": {
                 "carrier_tracking_link": "https://www.myhermes.de/tracking/H1234567890123456789",
                 "shipment_destination_country": "DEU",
-                "shipment_destination_postal_code": "22419"
+                "shipment_destination_postal_code": "22419",
             },
-            "meta": {
-                "client_reference": "ORDER-12345"
-            }
+            "meta": {"client_reference": "ORDER-12345"},
         }
     ],
-    []
+    [],
 ]
 
 ParsedTrackingErrorResponse = [
@@ -215,9 +218,7 @@ ParsedTrackingErrorResponse = [
             "carrier_name": "hermes",
             "code": "e001",
             "message": "There is no information for the entered value.",
-            "details": {
-                "shipment_id": "H1234567890123456789"
-            }
+            "details": {"shipment_id": "H1234567890123456789"},
         }
-    ]
+    ],
 ]
