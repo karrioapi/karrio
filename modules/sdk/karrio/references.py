@@ -462,6 +462,23 @@ def detect_hooks_methods(hooks_type: object) -> typing.List[str]:
 COMMON_FIELDS = ["id", "carrier_id", "test_mode", "carrier_name", "services"]
 
 
+def _normalize_option_meta(meta: typing.Optional[dict]) -> typing.Optional[dict]:
+    """
+    Normalize option meta to ensure configurable defaults to True.
+
+    This ensures all options are configurable in the shipping method editor by default,
+    unless explicitly set to False.
+    """
+    if meta is None:
+        return {"configurable": True}
+
+    normalized = dict(meta)
+    if "configurable" not in normalized:
+        normalized["configurable"] = True
+
+    return normalized
+
+
 def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
     """
     Extract nested field definitions from an attrs class type.
@@ -626,7 +643,7 @@ def collect_references(
                     type=parse_type(c.value.type),
                     default=c.value.default,
                     help=c.value.help,
-                    meta=c.value.meta,
+                    meta=_normalize_option_meta(c.value.meta),
                     enum=lib.identity(
                         None
                         if "enum" not in str(c.value.type).lower()
@@ -787,10 +804,11 @@ def collect_references(
         },
         # ratesheets - carrier default rate sheet configurations
         # Contains shared zones, services with zone_ids, and service_rates mappings
+        # All enabled carriers are included - those without service_levels get empty defaults
         "ratesheets": {
             key: transform_to_shared_zones_format(mapper.get("service_levels") or [])
             for key, mapper in PROVIDERS.items()
-            if key in enabled_carrier_ids and mapper.get("service_levels") is not None
+            if key in enabled_carrier_ids
         },
         "integration_status": {
             carrier_id: metadata_obj.status

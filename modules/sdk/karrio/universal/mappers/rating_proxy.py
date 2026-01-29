@@ -32,6 +32,10 @@ class RatingMixinProxy:
     ) -> utils.Deserializable[typing.List[typing.Tuple[str, PackageRates]]]:
         _request = request.serialize()
 
+        # Extract required features from options
+        options = getattr(_request, 'options', {}) or {}
+        required_features = options.get("features", [])
+
         shipper = lib.to_address(_request.shipper)
         recipient = lib.to_address(_request.recipient)
         packages = lib.to_packages(_request.parcels)
@@ -63,6 +67,7 @@ class RatingMixinProxy:
                     is_domicile=is_domicile,
                     is_international=is_international,
                     selected_services=selected_services,
+                    required_features=required_features,
                 ),
             )
             for idx, pkg in enumerate(packages, 1)
@@ -139,16 +144,63 @@ def check_location_match(
     return True
 
 
+def calculate_billable_weight(
+    package: units.Package,
+    service,
+) -> typing.Tuple[float, float, float]:
+    """
+    Calculate billable weight for a package.
+
+    For services with volumetric weight enabled (use_volumetric=True),
+    billable weight = max(actual_weight, volumetric_weight).
+
+    Volumetric weight formula: (L × W × H) / dim_factor
+    - Metric (cm/kg): dim_factor = 5000-6000 (standard: 5000)
+    - Imperial (in/lb): dim_factor = 139-166 (standard: 139)
+
+    Args:
+        package: Package with weight and dimensions
+        service: ServiceLevel with weight_unit, dimension_unit, dim_factor, use_volumetric
+
+    Returns:
+        Tuple of (billable_weight, actual_weight, volumetric_weight)
+    """
+    weight_unit = service.weight_unit or "KG"
+    actual_weight = package.weight[weight_unit] if package.weight else 0.0
+
+    # If volumetric not enabled or no dim_factor, use actual weight
+    if not getattr(service, 'use_volumetric', False) or not getattr(service, 'dim_factor', None):
+        return actual_weight, actual_weight, 0.0
+
+    # Calculate volumetric weight if dimensions are available
+    dimension_unit = service.dimension_unit or "CM"
+    volumetric_weight = 0.0
+
+    pkg_length = package.length[dimension_unit] if package.length else None
+    pkg_width = package.width[dimension_unit] if package.width else None
+    pkg_height = package.height[dimension_unit] if package.height else None
+
+    if pkg_length and pkg_width and pkg_height:
+        volume = pkg_length * pkg_width * pkg_height
+        volumetric_weight = volume / service.dim_factor
+
+    # Billable weight is max of actual and volumetric
+    billable_weight = max(actual_weight, volumetric_weight)
+
+    return billable_weight, actual_weight, volumetric_weight
+
+
 def check_weight_match(
     zone: models.ServiceZone,
     package: units.Package,
     service,
+    billable_weight: float = None,
 ) -> bool:
     """
     Check if package weight fits within zone's weight range.
 
     Weight range logic (inclusive min, exclusive max):
-    - min_weight <= package_weight < max_weight
+    - min_weight <= billable_weight < max_weight
 
     Examples:
     - Zone: 0-0.5kg, Package: 0.3kg -> Match ✅
@@ -161,7 +213,12 @@ def check_weight_match(
 
     # Default to KG if service doesn't specify weight unit
     weight_unit = service.weight_unit or "KG"
-    package_weight = package.weight[weight_unit]
+
+    # Use billable weight if provided, otherwise calculate actual weight
+    if billable_weight is not None:
+        package_weight = billable_weight
+    else:
+        package_weight = package.weight[weight_unit]
 
     # Check min weight (inclusive)
     if zone.min_weight is not None:
@@ -238,6 +295,7 @@ def get_available_rates(
     is_domicile: bool = None,
     is_international: bool = None,
     selected_services: typing.List[str] = [],
+    required_features: typing.List[str] = [],
 ) -> PackageRates:
     errors: typing.List[models.Message] = []
     rates: typing.List[models.RateDetails] = []
