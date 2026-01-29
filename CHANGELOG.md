@@ -1,3 +1,50 @@
+# Karrio 2026.1.3
+
+## Changes
+
+### Feat
+
+- feat: end-to-end pickup management with support for recurring + optional shipments link + graphql
+- feat(dhl_parcel_de): migrate to dedicated XML tracking API instead of universal tracking
+- feat(ups): add missing pickup API implementation for REST+OAuth2 integration
+- feat: improve metafield relationship definition and augment all major objects with metafields
+- feat(dhl_parcel_de): add support for reusable global connection app
+- feat(dhl_parcel_de): restructure billing_number configuration per services at the connection level
+- feat(hermes): implement tracking functionality with shipment info API
+- feat(hermes): add TrackingStatus and TrackingIncidentReason enums with event codes
+- feat(hermes): add multi-piece shipment support
+- feat: improve trace display in activity timeline (@jacobshilitz)
+- feat: SDK service level features, volumetric weight, and static rate resolution
+- feat: rate sheet weight brackets and server-side static rate resolution
+- feat: metafield org-aware access control
+- feat: workspace config preferences and service level features GraphQL schema
+- feat: shipment applied_fees field for accounting
+- feat: enhance usage stats and Markups management
+
+### Fix
+
+- fix: potential fix for code scanning alert no. 59: Clear-text logging of sensitive information
+- fix(fedex): round package dimensions to integers (@jacobshilitz)
+- fix(logs): set entity_id for failed shipment actions (@jacobshilitz)
+- fix: inconsistent address, parcels and products templates GraphQL signatures
+- fix(hermes): remove redundant dimension checks and refactor to single tree instantiation
+- fix: post_processing closure-in-loop bug when multiple methods registered
+
+### Refactor
+
+- refactor(hermes): use inline headers and clean up comments
+- refactor: clean up proxy by extracting data processing helpers to utils
+- refactor: fee model as denormalized snapshot decoupled from FKs
+
+### Chore
+
+- chore(dhl_parcel_de): improve pickup integration with live tests
+- devx: add PRD template and update AGENTS.md for future PRD writing
+- test(hermes): add tracking unit tests
+- chore: add no-raw-SQL migration rule to AGENTS.md
+
+---
+
 # Karrio 2026.1.2
 
 ## Changes

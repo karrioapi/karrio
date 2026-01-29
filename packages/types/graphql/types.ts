@@ -4966,7 +4966,7 @@ export interface get_pickups_pickups_edges_node_address {
 export interface get_pickups_pickups_edges_node_pickup_charge {
   name: string | null;
   amount: number | null;
-  currency: CurrencyCodeEnum | null;
+  currency: CurrencyCodeEnum;
 }
 
 export interface get_pickups_pickups_edges_node_pickup_carrier {
@@ -5045,7 +5045,7 @@ export interface get_pickup_pickup_address {
 export interface get_pickup_pickup_pickup_charge {
   name: string | null;
   amount: number | null;
-  currency: CurrencyCodeEnum | null;
+  currency: CurrencyCodeEnum;
 }
 
 export interface get_pickup_pickup_pickup_carrier {

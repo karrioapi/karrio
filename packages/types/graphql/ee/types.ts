@@ -3060,6 +3060,8 @@ export interface CreateMetafieldInput {
   type: MetafieldTypeEnum;
   value?: any | null;
   is_required?: boolean | null;
+  object_type?: string | null;
+  object_id?: string | null;
 }
 
 // null
@@ -3084,6 +3086,8 @@ export interface MetafieldInput {
   value?: any | null;
   is_required?: boolean | null;
   id?: string | null;
+  object_type?: string | null;
+  object_id?: string | null;
 }
 
 // null

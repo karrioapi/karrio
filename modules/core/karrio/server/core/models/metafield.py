@@ -70,10 +70,11 @@ class Metafield(entity.OwnedEntity):
 
     @classmethod
     def access_by(cls, context, manager: str = "objects"):
-        """Org-aware access control for metafields.
+        """Custom access control for metafields.
 
-        Metafield uses GenericForeignKey rather than a direct org FK,
-        so we scope access via created_by org membership instead.
+        Metafield uses GenericForeignKey and has no direct 'org' FK,
+        so the default OrganizationAccess filter (which references org__id)
+        cannot be applied. Instead, we scope via created_by directly.
         """
         if isinstance(context, dict):
             user = context.get("user", context)
@@ -85,7 +86,8 @@ class Metafield(entity.OwnedEntity):
         user_id = getattr(user, "id", None)
         queryset = getattr(cls, manager, cls.objects)
 
-        if org is not None:
+        # Use truthiness (not identity) to handle SimpleLazyObject wrapping None
+        if org:
             return queryset.filter(
                 models.Q(created_by__in=org.users.all())
             )

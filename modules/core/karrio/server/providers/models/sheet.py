@@ -269,12 +269,14 @@ class RateSheet(core.OwnedEntity):
 
     def update_service_rate(self, service_id: str, zone_id: str, rate_data: dict) -> dict:
         """Update or create a service-zone rate mapping.
-        Uses (service_id, zone_id, min_weight, max_weight) as the unique key."""
+        Uses (service_id, zone_id, min_weight, max_weight) as the unique key.
+        Falls back to (service_id, zone_id) match when no exact key match exists."""
         service_rates = list(self.service_rates or [])
         min_weight = rate_data.get("min_weight", 0)
         max_weight = rate_data.get("max_weight", 0)
         target_key = f"{service_id}:{zone_id}:{min_weight}:{max_weight}"
 
+        # First try exact composite key match
         for i, rate in enumerate(service_rates):
             rate_key = self._make_rate_key(rate)
             if rate_key == target_key:
@@ -282,6 +284,18 @@ class RateSheet(core.OwnedEntity):
                 self.service_rates = service_rates
                 self.save(update_fields=["service_rates"])
                 return service_rates[i]
+
+        # Fallback: match by (service_id, zone_id) if a single entry exists
+        matches = [
+            (i, r) for i, r in enumerate(service_rates)
+            if r.get("service_id") == service_id and r.get("zone_id") == zone_id
+        ]
+        if len(matches) == 1:
+            idx = matches[0][0]
+            service_rates[idx] = {"service_id": service_id, "zone_id": zone_id, **rate_data}
+            self.service_rates = service_rates
+            self.save(update_fields=["service_rates"])
+            return service_rates[idx]
 
         # Create new rate record
         new_rate = {"service_id": service_id, "zone_id": zone_id, **rate_data}

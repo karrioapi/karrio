@@ -9,7 +9,7 @@ charset-normalizer==3.4.4
 click==8.3.1
 croniter==6.0.0
 cross-web==0.4.1
-cryptography==46.0.3
+cryptography==46.0.4
 cssselect2==0.8.0
 deprecation==2.1.0
 diff-match-patch==20241021
@@ -42,7 +42,7 @@ fonttools==4.61.1
 googleapis-common-protos==1.72.0
 graphql-core==3.2.7
 grpcio==1.76.0
-gunicorn==23.0.0
+gunicorn==24.1.1
 h11==0.16.0
 hiredis==3.3.0
 huey==2.6.0
@@ -128,9 +128,9 @@ opentelemetry-util-http==0.60b1
 packaging==26.0
 phonenumbers==9.0.22
 pillow==12.1.0
-posthog==7.6.0
+posthog==7.7.0
 protobuf==6.33.4
-psutil==7.2.1
+psutil==7.2.2
 psycopg2-binary==2.9.11
 py_soap @ file://${PWD}/modules/soap
 pycparser==3.0
@@ -149,10 +149,10 @@ redis==7.1.0
 referencing==0.37.0
 requests==2.32.5
 rpds-py==0.30.0
-sentry-sdk==2.50.0
+sentry-sdk==2.51.0
 six==1.17.0
 sqlparse==0.5.5
-strawberry-graphql==0.289.3
+strawberry-graphql==0.289.8
 tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.0.0

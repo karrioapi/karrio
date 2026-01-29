@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.1`.
+    The current version is `2026.1.3`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.1
+  version: 2026.1.3
 paths:
   /:
     get:
@@ -2429,6 +2429,52 @@ paths:
       operationId: $$$$list
       description: Retrieve all scheduled pickups.
       summary: List shipment pickups
+      parameters:
+      - in: query
+        name: address
+        schema:
+          type: string
+      - in: query
+        name: carrier_name
+        schema:
+          type: string
+        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
+          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
+          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
+          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
+          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
+          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
+          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `veho`, `zoom2u`'
+      - in: query
+        name: confirmation_number
+        schema:
+          type: string
+      - in: query
+        name: created_after
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_before
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: keyword
+        schema:
+          type: string
+      - in: query
+        name: pickup_date_after
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: pickup_date_before
+        schema:
+          type: string
+          format: date
       tags:
       - Pickups
       security:
@@ -9985,6 +10031,26 @@ components:
           type: string
           nullable: true
           description: The pickup expected closing or late time
+        pickup_type:
+          enum:
+          - one_time
+          - daily
+          - recurring
+          - null
+          type: string
+          x-spec-enum-id: f6e56facfab73bf5
+          nullable: true
+          default: one_time
+          description: "The pickup scheduling type.<br/>\n        - one_time: Single
+            pickup on a specific date<br/>\n        - daily: Recurring pickup every
+            business day<br/>\n        - recurring: Custom recurring schedule\n        "
+        recurrence:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: "Recurrence configuration for recurring pickups.<br/>\n        Example:
+            {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\",
+            \"friday\"]}\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -10004,6 +10070,12 @@ components:
           items:
             $ref: '#/components/schemas/Parcel'
           description: The shipment parcels to pickup.
+        parcels_count:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: The number of parcels to be picked up (alternative to providing
+            parcels array)
         instruction:
           type: string
           nullable: true
@@ -10068,6 +10140,12 @@ components:
           allOf:
           - $ref: '#/components/schemas/AddressData'
           description: The pickup address
+        parcels_count:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: The number of parcels to be picked up (alternative to linking
+            shipments)
         ready_time:
           type: string
           description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n
@@ -10088,6 +10166,24 @@ components:
           description: "The package(s) location.<br/>\n        eg: Behind the entrance
             door.\n        "
           maxLength: 50
+        pickup_type:
+          enum:
+          - one_time
+          - daily
+          - recurring
+          type: string
+          x-spec-enum-id: f6e56facfab73bf5
+          default: one_time
+          description: "The pickup scheduling type.<br/>\n        - one_time: Single
+            pickup on a specific date<br/>\n        - daily: Recurring pickup every
+            business day<br/>\n        - recurring: Custom recurring schedule\n        "
+        recurrence:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: "Recurrence configuration for recurring pickups.<br/>\n        Example:
+            {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\",
+            \"friday\"], \"end_date\": \"2024-12-31\"}\n        "
         options:
           type: object
           additionalProperties: {}
@@ -10097,7 +10193,8 @@ components:
           type: array
           items:
             type: string
-          description: The list of shipments to be picked up
+          description: The list of shipments to be picked up (optional if parcels_count
+            provided)
         metadata:
           type: object
           additionalProperties: {}
@@ -10107,7 +10204,6 @@ components:
       - closing_time
       - pickup_date
       - ready_time
-      - tracking_numbers
     PickupList:
       type: object
       properties:
@@ -10144,6 +10240,12 @@ components:
           items:
             $ref: '#/components/schemas/ParcelData'
           description: The shipment parcels to pickup.
+        parcels_count:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: The number of parcels to be picked up (alternative to providing
+            parcels array)
         ready_time:
           type: string
           description: "The ready time for pickup.<br/>\n        Time Format: `HH:MM`\n
@@ -10164,15 +10266,31 @@ components:
           description: "The package(s) location.<br/>\n        eg: Behind the entrance
             door.\n        "
           maxLength: 50
+        pickup_type:
+          enum:
+          - one_time
+          - daily
+          - recurring
+          type: string
+          x-spec-enum-id: f6e56facfab73bf5
+          default: one_time
+          description: "The pickup scheduling type.<br/>\n        - one_time: Single
+            pickup on a specific date<br/>\n        - daily: Recurring pickup every
+            business day<br/>\n        - recurring: Custom recurring schedule\n        "
+        recurrence:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: "Recurrence configuration for recurring pickups.<br/>\n        Example:
+            {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\",
+            \"friday\"], \"end_date\": \"2024-12-31\"}\n        "
         options:
           type: object
           additionalProperties: {}
           nullable: true
           description: Advanced carrier specific pickup options
       required:
-      - address
       - closing_time
-      - parcels
       - pickup_date
       - ready_time
     PickupResponse:
@@ -10198,6 +10316,12 @@ components:
           allOf:
           - $ref: '#/components/schemas/AddressData'
           description: The pickup address
+        parcels_count:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: The number of parcels to be picked up (alternative to linking
+            shipments)
         ready_time:
           type: string
           nullable: true
@@ -10216,6 +10340,24 @@ components:
           nullable: true
           description: "The package(s) location.<br/>\n        eg: Behind the entrance
             door.\n        "
+        pickup_type:
+          enum:
+          - one_time
+          - daily
+          - recurring
+          type: string
+          x-spec-enum-id: f6e56facfab73bf5
+          default: one_time
+          description: "The pickup scheduling type.<br/>\n        - one_time: Single
+            pickup on a specific date<br/>\n        - daily: Recurring pickup every
+            business day<br/>\n        - recurring: Custom recurring schedule\n        "
+        recurrence:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: "Recurrence configuration for recurring pickups.<br/>\n        Example:
+            {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\",
+            \"friday\"], \"end_date\": \"2024-12-31\"}\n        "
         options:
           type: object
           additionalProperties: {}
@@ -10275,6 +10417,24 @@ components:
           description: "The package(s) location.<br/>\n        eg: Behind the entrance
             door.\n        "
           maxLength: 50
+        pickup_type:
+          enum:
+          - one_time
+          - daily
+          - recurring
+          type: string
+          x-spec-enum-id: f6e56facfab73bf5
+          default: one_time
+          description: "The pickup scheduling type.<br/>\n        - one_time: Single
+            pickup on a specific date<br/>\n        - daily: Recurring pickup every
+            business day<br/>\n        - recurring: Custom recurring schedule\n        "
+        recurrence:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: "Recurrence configuration for recurring pickups.<br/>\n        Example:
+            {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\",
+            \"friday\"], \"end_date\": \"2024-12-31\"}\n        "
         options:
           type: object
           additionalProperties: {}
