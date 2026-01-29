@@ -438,8 +438,12 @@ const ActivityTitle = ({ item }: { item: ActivityItem }) => {
     switch (item.activityType) {
       case 'api-call':
         return `${item.parentLog.method} ${item.parentLog.path}`;
-      case 'trace-call':
-        return item.traceRequestRecord.key || 'Trace Request';
+      case 'trace-call': {
+        const carrierName =
+          item.traceRequestRecord?.meta?.carrier_name ||
+          item.traceResponseRecord?.meta?.carrier_name;
+        return carrierName || 'Trace';
+      }
       case 'event':
         return item.type?.toString().replace(/_/g, ' ') || 'Unknown Event';
       default:
@@ -463,7 +467,18 @@ const ActivityTitle = ({ item }: { item: ActivityItem }) => {
   return (
     <div className="flex items-center gap-2 overflow-hidden">
       <span className="text-sm font-semibold text-gray-900 truncate">
-        {getTitle()}
+        {item.activityType === 'trace-call' ? (
+          <>
+            {getTitle()}
+            {(item.traceRequestRecord?.meta?.carrier_id || item.traceResponseRecord?.meta?.carrier_id) && (
+              <span className="text-xs text-gray-600 font-normal ml-1">
+                {' - '}{item.traceRequestRecord?.meta?.carrier_id || item.traceResponseRecord?.meta?.carrier_id}
+              </span>
+            )}
+          </>
+        ) : (
+          getTitle()
+        )}
       </span>
       {item.activityType === 'api-call' && (
         <StatusCode code={item.parentLog.status_code as number} />
@@ -485,8 +500,23 @@ const ActivityMeta = ({ item }: { item: ActivityItem }) => {
         return meta;
       case 'trace-call':
         const traceMeta: string[] = [];
+        
+        // Calculate duration from request and response timestamps
+        const requestTimestamp = item.traceRequestRecord?.timestamp;
+        const responseTimestamp = item.traceResponseRecord?.timestamp;
+        if (requestTimestamp && responseTimestamp) {
+          const durationMs = Math.round((responseTimestamp - requestTimestamp) * 1000);
+          traceMeta.push(`${durationMs}ms`);
+        }
+        
         if (item.traceRequestRecord.timestamp) {
           traceMeta.push(new Date(item.traceRequestRecord.timestamp * 1000).toLocaleTimeString());
+        }
+        const traceUrl =
+          item.traceRequestRecord?.record?.url ||
+          item.traceResponseRecord?.record?.url;
+        if (traceUrl) {
+          traceMeta.push(traceUrl.length > 40 ? `${traceUrl.slice(0, 40)}...` : traceUrl);
         }
         if (item.traceRequestRecord.test_mode) traceMeta.push('Test');
         return traceMeta;
