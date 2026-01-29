@@ -2682,8 +2682,28 @@ export const UPDATE_RATE_SHEET = gql`
           max_weight
           weight_unit
           active
+          dim_factor
+          use_volumetric
           zone_ids
           surcharge_ids
+          features {
+            first_mile
+            last_mile
+            form_factor
+            b2c
+            b2b
+            shipment_type
+            age_check
+            signature
+            tracked
+            insurance
+            express
+            dangerous_goods
+            saturday_delivery
+            sunday_delivery
+            multicollo
+            neighbor_delivery
+          }
         }
       }
       errors {
@@ -2727,8 +2747,28 @@ export const DELETE_RATE_SHEET_SERVICE = gql`
           max_weight
           weight_unit
           active
+          dim_factor
+          use_volumetric
           zone_ids
           surcharge_ids
+          features {
+            first_mile
+            last_mile
+            form_factor
+            b2c
+            b2b
+            shipment_type
+            age_check
+            signature
+            tracked
+            insurance
+            express
+            dangerous_goods
+            saturday_delivery
+            sunday_delivery
+            multicollo
+            neighbor_delivery
+          }
         }
       }
       errors {
@@ -3035,10 +3075,30 @@ export const GET_RATE_SHEET = gql`
         dimension_unit
         max_weight
         weight_unit
+        dim_factor
+        use_volumetric
         domicile
         international
         zone_ids
         surcharge_ids
+        features {
+          first_mile
+          last_mile
+          form_factor
+          b2c
+          b2b
+          shipment_type
+          age_check
+          signature
+          tracked
+          insurance
+          express
+          dangerous_goods
+          saturday_delivery
+          sunday_delivery
+          multicollo
+          neighbor_delivery
+        }
       }
       carriers {
         id
@@ -3110,10 +3170,30 @@ export const GET_RATE_SHEETS = gql`
             dimension_unit
             max_weight
             weight_unit
+            dim_factor
+            use_volumetric
             domicile
             international
             zone_ids
             surcharge_ids
+            features {
+              first_mile
+              last_mile
+              form_factor
+              b2c
+              b2b
+              shipment_type
+              age_check
+              signature
+              tracked
+              insurance
+              express
+              dangerous_goods
+              saturday_delivery
+              sunday_delivery
+              multicollo
+              neighbor_delivery
+            }
           }
           carriers {
             id

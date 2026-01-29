@@ -175,6 +175,180 @@ class WorkspaceConfigType:
 
     # endregion
 
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Labels (format uses default_label_type above)
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def print_label_size(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelSizeEnum]:
+        return self.config.get("print_label_size")
+
+    @strawberry.field
+    def print_label_show_options(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_label_show_options")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Return Labels
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def print_return_label_size(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelSizeEnum]:
+        return self.config.get("print_return_label_size")
+
+    @strawberry.field
+    def print_return_label_show_options(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_return_label_show_options")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Customs Documents
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def print_customs_size(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelSizeEnum]:
+        return self.config.get("print_customs_size")
+
+    @strawberry.field
+    def print_customs_show_options(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_customs_show_options")
+
+    @strawberry.field
+    def print_customs_with_label(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_customs_with_label")
+
+    @strawberry.field
+    def print_customs_copies(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[int]:
+        return self.config.get("print_customs_copies")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Settings
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def default_parcel_weight(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[float]:
+        return self.config.get("default_parcel_weight")
+
+    @strawberry.field
+    def default_shipping_service(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("default_shipping_service")
+
+    @strawberry.field
+    def default_shipping_carrier(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("default_shipping_carrier")
+
+    @strawberry.field
+    def default_export_reason(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.ExportReasonEnum]:
+        return self.config.get("default_export_reason")
+
+    @strawberry.field
+    def default_delivery_instructions(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("default_delivery_instructions")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Label Options
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def label_show_postage_paid_logo(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("label_show_postage_paid_logo")
+
+    @strawberry.field
+    def label_show_qr_code(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("label_show_qr_code")
+
+    @strawberry.field
+    def customs_use_order_as_invoice(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("customs_use_order_as_invoice")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Recommendations Preferences
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def pref_first_mile(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[typing.List[utils.FirstMileEnum]]:
+        return self.config.get("pref_first_mile")
+
+    @strawberry.field
+    def pref_last_mile(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[typing.List[utils.LastMileEnum]]:
+        return self.config.get("pref_last_mile")
+
+    @strawberry.field
+    def pref_form_factor(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[typing.List[utils.FormFactorEnum]]:
+        return self.config.get("pref_form_factor")
+
+    @strawberry.field
+    def pref_age_check(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.AgeCheckEnum]:
+        return self.config.get("pref_age_check")
+
+    @strawberry.field
+    def pref_signature_required(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("pref_signature_required")
+
+    @strawberry.field
+    def pref_max_lead_time_days(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[int]:
+        return self.config.get("pref_max_lead_time_days")
+
+    # endregion
+
     @staticmethod
     @utils.authentication_required
     def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
@@ -1661,6 +1835,74 @@ class ServiceRateType:
 
 
 @strawberry.type
+class ServiceLevelFeaturesType:
+    """Structured service level features.
+
+    Defines the capabilities and characteristics of a shipping service.
+    Used for filtering, display, and setting default options.
+    """
+
+    # First Mile: How parcels get to the carrier
+    # "pick_up" | "drop_off" | "pick_up_and_drop_off"
+    first_mile: typing.Optional[str] = None
+
+    # Last Mile: How parcels are delivered to recipient
+    # "home_delivery" | "service_point" | "mailbox"
+    last_mile: typing.Optional[str] = None
+
+    # Form Factor: Type of package the service supports
+    # "letter" | "parcel" | "mailbox" | "pallet"
+    form_factor: typing.Optional[str] = None
+
+    # Type of Shipments: Business model support
+    b2c: typing.Optional[bool] = None  # Business to Consumer
+    b2b: typing.Optional[bool] = None  # Business to Business
+
+    # Shipment Direction: "outbound" | "returns" | "both"
+    shipment_type: typing.Optional[str] = None
+
+    # Age Verification: null | "16" | "18"
+    age_check: typing.Optional[str] = None
+
+    # Default signature requirement
+    signature: typing.Optional[bool] = None
+
+    # Tracking availability
+    tracked: typing.Optional[bool] = None
+
+    # Insurance availability
+    insurance: typing.Optional[bool] = None
+
+    # Express/Priority service
+    express: typing.Optional[bool] = None
+
+    # Dangerous goods support
+    dangerous_goods: typing.Optional[bool] = None
+
+    # Weekend delivery options
+    saturday_delivery: typing.Optional[bool] = None
+    sunday_delivery: typing.Optional[bool] = None
+
+    # Multi-package shipment support
+    multicollo: typing.Optional[bool] = None
+
+    # Neighbor delivery allowed
+    neighbor_delivery: typing.Optional[bool] = None
+
+    @staticmethod
+    def parse(features: typing.Optional[dict]) -> "ServiceLevelFeaturesType":
+        """Parse a features dict into ServiceLevelFeaturesType."""
+        if not features or not isinstance(features, dict):
+            return ServiceLevelFeaturesType()
+
+        import dataclasses
+        field_names = {f.name for f in dataclasses.fields(ServiceLevelFeaturesType)}
+        return ServiceLevelFeaturesType(**{
+            k: v for k, v in features.items() if k in field_names
+        })
+
+
+@strawberry.type
 class ServiceLevelType:
     """
     Service level definition for rate sheet-based shipping.
@@ -1693,8 +1935,17 @@ class ServiceLevelType:
     max_volume: typing.Optional[float]
     cost: typing.Optional[float]
 
+    # Volumetric weight fields
+    dim_factor: typing.Optional[float]
+    use_volumetric: typing.Optional[bool]
+
     domicile: typing.Optional[bool]
     international: typing.Optional[bool]
+
+    @strawberry.field
+    def features(self: providers.ServiceLevel) -> ServiceLevelFeaturesType:
+        """Structured service features."""
+        return ServiceLevelFeaturesType.parse(self.features)
 
     @strawberry.field
     def metadata(self: providers.ServiceLevel) -> typing.Optional[utils.JSON]:

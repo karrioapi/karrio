@@ -119,6 +119,7 @@ class UpdateUserInput(utils.BaseInput):
 
 @strawberry.input
 class WorkspaceConfigMutationInput(utils.BaseInput):
+    # General preferences
     default_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
     default_country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
     default_label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
@@ -126,6 +127,7 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     default_weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
     default_dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
 
+    # Customs identifiers
     state_tax_id: typing.Optional[str] = strawberry.UNSET
     federal_tax_id: typing.Optional[str] = strawberry.UNSET
 
@@ -137,12 +139,60 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     customs_nip_number: typing.Optional[str] = strawberry.UNSET
     customs_vat_registration_number: typing.Optional[str] = strawberry.UNSET
 
+    # Default options
     insured_by_default: typing.Optional[bool] = strawberry.UNSET
 
+    # Label printing
     label_message_1: typing.Optional[str] = strawberry.UNSET
     label_message_2: typing.Optional[str] = strawberry.UNSET
     label_message_3: typing.Optional[str] = strawberry.UNSET
     label_logo: typing.Optional[str] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Labels (format uses default_label_type above)
+    # ─────────────────────────────────────────────────────────────────
+    print_label_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
+    print_label_show_options: typing.Optional[bool] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Return Labels
+    # ─────────────────────────────────────────────────────────────────
+    print_return_label_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
+    print_return_label_show_options: typing.Optional[bool] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Customs Documents
+    # ─────────────────────────────────────────────────────────────────
+    print_customs_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
+    print_customs_show_options: typing.Optional[bool] = strawberry.UNSET
+    print_customs_with_label: typing.Optional[bool] = strawberry.UNSET
+    print_customs_copies: typing.Optional[int] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Settings
+    # ─────────────────────────────────────────────────────────────────
+    default_parcel_weight: typing.Optional[float] = strawberry.UNSET
+    default_shipping_service: typing.Optional[str] = strawberry.UNSET
+    default_shipping_carrier: typing.Optional[str] = strawberry.UNSET
+    default_export_reason: typing.Optional[utils.ExportReasonEnum] = strawberry.UNSET
+    default_delivery_instructions: typing.Optional[str] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Label Options
+    # ─────────────────────────────────────────────────────────────────
+    label_show_postage_paid_logo: typing.Optional[bool] = strawberry.UNSET
+    label_show_qr_code: typing.Optional[bool] = strawberry.UNSET
+    customs_use_order_as_invoice: typing.Optional[bool] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Recommendations Preferences
+    # ─────────────────────────────────────────────────────────────────
+    pref_first_mile: typing.Optional[typing.List[utils.FirstMileEnum]] = strawberry.UNSET
+    pref_last_mile: typing.Optional[typing.List[utils.LastMileEnum]] = strawberry.UNSET
+    pref_form_factor: typing.Optional[typing.List[utils.FormFactorEnum]] = strawberry.UNSET
+    pref_age_check: typing.Optional[utils.AgeCheckEnum] = strawberry.UNSET
+    pref_signature_required: typing.Optional[bool] = strawberry.UNSET
+    pref_max_lead_time_days: typing.Optional[int] = strawberry.UNSET
 
 
 @strawberry.input
@@ -501,6 +551,62 @@ class LabelTemplateInput(utils.BaseInput):
 
 
 @strawberry.input
+class ServiceLevelFeaturesInput(utils.BaseInput):
+    """Structured service level features input.
+
+    Defines the capabilities and characteristics of a shipping service.
+    Used for filtering, display, and setting default options.
+    """
+
+    # First Mile: How parcels get to the carrier
+    # "pick_up" | "drop_off" | "pick_up_and_drop_off"
+    first_mile: typing.Optional[str] = strawberry.UNSET
+
+    # Last Mile: How parcels are delivered to recipient
+    # "home_delivery" | "service_point" | "mailbox"
+    last_mile: typing.Optional[str] = strawberry.UNSET
+
+    # Form Factor: Type of package the service supports
+    # "letter" | "parcel" | "mailbox" | "pallet"
+    form_factor: typing.Optional[str] = strawberry.UNSET
+
+    # Type of Shipments: Business model support
+    b2c: typing.Optional[bool] = strawberry.UNSET  # Business to Consumer
+    b2b: typing.Optional[bool] = strawberry.UNSET  # Business to Business
+
+    # Shipment Direction: "outbound" | "returns" | "both"
+    shipment_type: typing.Optional[str] = strawberry.UNSET
+
+    # Age Verification: null | "16" | "18"
+    age_check: typing.Optional[str] = strawberry.UNSET
+
+    # Default signature requirement
+    signature: typing.Optional[bool] = strawberry.UNSET
+
+    # Tracking availability
+    tracked: typing.Optional[bool] = strawberry.UNSET
+
+    # Insurance availability
+    insurance: typing.Optional[bool] = strawberry.UNSET
+
+    # Express/Priority service
+    express: typing.Optional[bool] = strawberry.UNSET
+
+    # Dangerous goods support
+    dangerous_goods: typing.Optional[bool] = strawberry.UNSET
+
+    # Weekend delivery options
+    saturday_delivery: typing.Optional[bool] = strawberry.UNSET
+    sunday_delivery: typing.Optional[bool] = strawberry.UNSET
+
+    # Multi-package shipment support
+    multicollo: typing.Optional[bool] = strawberry.UNSET
+
+    # Neighbor delivery allowed
+    neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
 class CreateServiceLevelInput(utils.BaseInput):
     """Input for creating a new service level."""
 
@@ -526,8 +632,15 @@ class CreateServiceLevelInput(utils.BaseInput):
     max_volume: typing.Optional[float] = strawberry.UNSET
     cost: typing.Optional[float] = strawberry.UNSET
 
+    # Volumetric weight fields
+    dim_factor: typing.Optional[float] = strawberry.UNSET
+    use_volumetric: typing.Optional[bool] = strawberry.UNSET
+
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
+
+    # Service features as structured object
+    features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
 
     zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
@@ -562,8 +675,15 @@ class UpdateServiceLevelInput(utils.BaseInput):
     max_volume: typing.Optional[float] = strawberry.UNSET
     cost: typing.Optional[float] = strawberry.UNSET
 
+    # Volumetric weight fields
+    dim_factor: typing.Optional[float] = strawberry.UNSET
+    use_volumetric: typing.Optional[bool] = strawberry.UNSET
+
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
+
+    # Service features as structured object
+    features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
 
     zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
