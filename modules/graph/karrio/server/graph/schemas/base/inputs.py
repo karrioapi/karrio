@@ -68,9 +68,27 @@ class ManifestFilter(utils.Paginated):
 
 
 @strawberry.input
+class PickupFilter(utils.Paginated):
+    keyword: typing.Optional[str] = strawberry.UNSET
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    confirmation_number: typing.Optional[str] = strawberry.UNSET
+    pickup_date_after: typing.Optional[str] = strawberry.UNSET
+    pickup_date_before: typing.Optional[str] = strawberry.UNSET
+    created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
+    created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
+    address: typing.Optional[str] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[str] = strawberry.UNSET
+    meta_key: typing.Optional[str] = strawberry.UNSET
+    meta_value: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
 class TemplateFilter(utils.Paginated):
     label: typing.Optional[str] = strawberry.UNSET
     keyword: typing.Optional[str] = strawberry.UNSET
+    usage: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -101,6 +119,7 @@ class UpdateUserInput(utils.BaseInput):
 
 @strawberry.input
 class WorkspaceConfigMutationInput(utils.BaseInput):
+    # General preferences
     default_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
     default_country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
     default_label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
@@ -108,6 +127,7 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     default_weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
     default_dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
 
+    # Customs identifiers
     state_tax_id: typing.Optional[str] = strawberry.UNSET
     federal_tax_id: typing.Optional[str] = strawberry.UNSET
 
@@ -119,12 +139,60 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     customs_nip_number: typing.Optional[str] = strawberry.UNSET
     customs_vat_registration_number: typing.Optional[str] = strawberry.UNSET
 
+    # Default options
     insured_by_default: typing.Optional[bool] = strawberry.UNSET
 
+    # Label printing
     label_message_1: typing.Optional[str] = strawberry.UNSET
     label_message_2: typing.Optional[str] = strawberry.UNSET
     label_message_3: typing.Optional[str] = strawberry.UNSET
     label_logo: typing.Optional[str] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Labels (format uses default_label_type above)
+    # ─────────────────────────────────────────────────────────────────
+    print_label_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
+    print_label_show_options: typing.Optional[bool] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Return Labels
+    # ─────────────────────────────────────────────────────────────────
+    print_return_label_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
+    print_return_label_show_options: typing.Optional[bool] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Customs Documents
+    # ─────────────────────────────────────────────────────────────────
+    print_customs_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
+    print_customs_show_options: typing.Optional[bool] = strawberry.UNSET
+    print_customs_with_label: typing.Optional[bool] = strawberry.UNSET
+    print_customs_copies: typing.Optional[int] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Settings
+    # ─────────────────────────────────────────────────────────────────
+    default_parcel_weight: typing.Optional[float] = strawberry.UNSET
+    default_shipping_service: typing.Optional[str] = strawberry.UNSET
+    default_shipping_carrier: typing.Optional[str] = strawberry.UNSET
+    default_export_reason: typing.Optional[utils.ExportReasonEnum] = strawberry.UNSET
+    default_delivery_instructions: typing.Optional[str] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Label Options
+    # ─────────────────────────────────────────────────────────────────
+    label_show_postage_paid_logo: typing.Optional[bool] = strawberry.UNSET
+    label_show_qr_code: typing.Optional[bool] = strawberry.UNSET
+    customs_use_order_as_invoice: typing.Optional[bool] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Recommendations Preferences
+    # ─────────────────────────────────────────────────────────────────
+    pref_first_mile: typing.Optional[typing.List[utils.FirstMileEnum]] = strawberry.UNSET
+    pref_last_mile: typing.Optional[typing.List[utils.LastMileEnum]] = strawberry.UNSET
+    pref_form_factor: typing.Optional[typing.List[utils.FormFactorEnum]] = strawberry.UNSET
+    pref_age_check: typing.Optional[utils.AgeCheckEnum] = strawberry.UNSET
+    pref_signature_required: typing.Optional[bool] = strawberry.UNSET
+    pref_max_lead_time_days: typing.Optional[int] = strawberry.UNSET
 
 
 @strawberry.input
@@ -261,12 +329,6 @@ class AddressInput:
 
 
 @strawberry.input
-class UpdateAddressInput(AddressInput):
-    id: typing.Optional[str] = strawberry.UNSET
-    country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-
-
-@strawberry.input
 class ParcelInput:
     weight: float
     weight_unit: utils.WeightUnitEnum
@@ -282,14 +344,6 @@ class ParcelInput:
     reference_number: typing.Optional[str] = strawberry.UNSET
     freight_class: typing.Optional[str] = strawberry.UNSET
     items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateParcelInput(ParcelInput):
-    id: typing.Optional[str] = strawberry.UNSET
-    weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
-    items: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET  # type: ignore
 
 
 @strawberry.input
@@ -311,6 +365,109 @@ class PaymentInput:
     account_number: typing.Optional[str] = strawberry.UNSET
     paid_by: typing.Optional[utils.PaidByEnum] = strawberry.UNSET
     currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ADDRESS TEMPLATE INPUTS (flat structure with meta as JSON for extensibility)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class CreateAddressInput(utils.BaseInput):
+    """Flat address template input with meta for template metadata."""
+
+    meta: utils.JSON
+    country_code: typing.Optional[utils.CountryCodeEnum]
+    postal_code: typing.Optional[str] = strawberry.UNSET
+    city: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    person_name: typing.Optional[str] = strawberry.UNSET
+    company_name: typing.Optional[str] = strawberry.UNSET
+    email: typing.Optional[str] = strawberry.UNSET
+    phone_number: typing.Optional[str] = strawberry.UNSET
+    state_code: typing.Optional[str] = strawberry.UNSET
+    residential: typing.Optional[bool] = strawberry.UNSET
+    street_number: typing.Optional[str] = strawberry.UNSET
+    address_line1: typing.Optional[str] = strawberry.UNSET
+    address_line2: typing.Optional[str] = strawberry.UNSET
+    validate_location: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateAddressInput(utils.BaseInput):
+    """Flat address template update input."""
+
+    id: str
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
+    country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    postal_code: typing.Optional[str] = strawberry.UNSET
+    city: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    person_name: typing.Optional[str] = strawberry.UNSET
+    company_name: typing.Optional[str] = strawberry.UNSET
+    email: typing.Optional[str] = strawberry.UNSET
+    phone_number: typing.Optional[str] = strawberry.UNSET
+    state_code: typing.Optional[str] = strawberry.UNSET
+    residential: typing.Optional[bool] = strawberry.UNSET
+    street_number: typing.Optional[str] = strawberry.UNSET
+    address_line1: typing.Optional[str] = strawberry.UNSET
+    address_line2: typing.Optional[str] = strawberry.UNSET
+    validate_location: typing.Optional[bool] = strawberry.UNSET
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PARCEL TEMPLATE INPUTS (flat structure with meta)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class CreateParcelInput(utils.BaseInput):
+    """Flat parcel template input with meta for template metadata."""
+
+    meta: utils.JSON
+    weight: float
+    weight_unit: utils.WeightUnitEnum
+    width: typing.Optional[float] = strawberry.UNSET
+    height: typing.Optional[float] = strawberry.UNSET
+    length: typing.Optional[float] = strawberry.UNSET
+    packaging_type: typing.Optional[str] = strawberry.UNSET
+    package_preset: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    content: typing.Optional[str] = strawberry.UNSET
+    is_document: typing.Optional[bool] = strawberry.UNSET
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    reference_number: typing.Optional[str] = strawberry.UNSET
+    freight_class: typing.Optional[str] = strawberry.UNSET
+    items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateParcelInput(utils.BaseInput):
+    """Flat parcel template update input."""
+
+    id: str
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
+    weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    width: typing.Optional[float] = strawberry.UNSET
+    height: typing.Optional[float] = strawberry.UNSET
+    length: typing.Optional[float] = strawberry.UNSET
+    packaging_type: typing.Optional[str] = strawberry.UNSET
+    package_preset: typing.Optional[str] = strawberry.UNSET
+    description: typing.Optional[str] = strawberry.UNSET
+    content: typing.Optional[str] = strawberry.UNSET
+    is_document: typing.Optional[bool] = strawberry.UNSET
+    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    reference_number: typing.Optional[str] = strawberry.UNSET
+    freight_class: typing.Optional[str] = strawberry.UNSET
+    items: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SHIPMENT MUTATION INPUTS
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 @strawberry.input
@@ -335,38 +492,16 @@ class ChangeShipmentStatusMutationInput(utils.BaseInput):
     status: typing.Optional[utils.ManualShipmentStatusEnum]
 
 
-@strawberry.input
-class CreateAddressInput(utils.BaseInput):
-    label: str
-    address: AddressInput
-    is_default: typing.Optional[bool] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateAddressInput2(CreateAddressInput):
-    id: str  # type: ignore
-    label: typing.Optional[str]
-    address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-
-
-@strawberry.input
-class CreateParcelInput(utils.BaseInput):
-    label: str
-    parcel: ParcelInput
-    is_default: typing.Optional[bool] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateParcelInput2(CreateParcelInput):
-    id: str  # type: ignore
-    label: typing.Optional[str] = strawberry.UNSET
-    is_default: typing.Optional[bool] = strawberry.UNSET
-    parcel: typing.Optional[UpdateParcelInput] = strawberry.UNSET
+# ─────────────────────────────────────────────────────────────────────────────
+# PRODUCT TEMPLATE INPUTS (flat structure with meta)
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 @strawberry.input
 class CreateProductInput(utils.BaseInput):
-    label: str
+    """Flat product template input with meta for template metadata."""
+
+    meta: utils.JSON
     weight: float
     weight_unit: utils.WeightUnitEnum
     quantity: typing.Optional[int] = 1
@@ -377,14 +512,15 @@ class CreateProductInput(utils.BaseInput):
     value_amount: typing.Optional[float] = strawberry.UNSET
     value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
     origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    is_default: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateProductInput(utils.BaseInput):
+    """Flat product template update input."""
+
     id: str
-    label: typing.Optional[str] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
     weight: typing.Optional[float] = strawberry.UNSET
     weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
     quantity: typing.Optional[int] = strawberry.UNSET
@@ -395,7 +531,6 @@ class UpdateProductInput(utils.BaseInput):
     value_amount: typing.Optional[float] = strawberry.UNSET
     value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
     origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    is_default: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
@@ -413,6 +548,62 @@ class LabelTemplateInput(utils.BaseInput):
     height: typing.Optional[int] = strawberry.UNSET
     shipment_sample: typing.Optional[utils.JSON] = strawberry.UNSET
     id: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
+class ServiceLevelFeaturesInput(utils.BaseInput):
+    """Structured service level features input.
+
+    Defines the capabilities and characteristics of a shipping service.
+    Used for filtering, display, and setting default options.
+    """
+
+    # First Mile: How parcels get to the carrier
+    # "pick_up" | "drop_off" | "pick_up_and_drop_off"
+    first_mile: typing.Optional[str] = strawberry.UNSET
+
+    # Last Mile: How parcels are delivered to recipient
+    # "home_delivery" | "service_point" | "mailbox"
+    last_mile: typing.Optional[str] = strawberry.UNSET
+
+    # Form Factor: Type of package the service supports
+    # "letter" | "parcel" | "mailbox" | "pallet"
+    form_factor: typing.Optional[str] = strawberry.UNSET
+
+    # Type of Shipments: Business model support
+    b2c: typing.Optional[bool] = strawberry.UNSET  # Business to Consumer
+    b2b: typing.Optional[bool] = strawberry.UNSET  # Business to Business
+
+    # Shipment Direction: "outbound" | "returns" | "both"
+    shipment_type: typing.Optional[str] = strawberry.UNSET
+
+    # Age Verification: null | "16" | "18"
+    age_check: typing.Optional[str] = strawberry.UNSET
+
+    # Default signature requirement
+    signature: typing.Optional[bool] = strawberry.UNSET
+
+    # Tracking availability
+    tracked: typing.Optional[bool] = strawberry.UNSET
+
+    # Insurance availability
+    insurance: typing.Optional[bool] = strawberry.UNSET
+
+    # Express/Priority service
+    express: typing.Optional[bool] = strawberry.UNSET
+
+    # Dangerous goods support
+    dangerous_goods: typing.Optional[bool] = strawberry.UNSET
+
+    # Weekend delivery options
+    saturday_delivery: typing.Optional[bool] = strawberry.UNSET
+    sunday_delivery: typing.Optional[bool] = strawberry.UNSET
+
+    # Multi-package shipment support
+    multicollo: typing.Optional[bool] = strawberry.UNSET
+
+    # Neighbor delivery allowed
+    neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
@@ -441,8 +632,15 @@ class CreateServiceLevelInput(utils.BaseInput):
     max_volume: typing.Optional[float] = strawberry.UNSET
     cost: typing.Optional[float] = strawberry.UNSET
 
+    # Volumetric weight fields
+    dim_factor: typing.Optional[float] = strawberry.UNSET
+    use_volumetric: typing.Optional[bool] = strawberry.UNSET
+
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
+
+    # Service features as structured object
+    features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
 
     zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
@@ -477,8 +675,15 @@ class UpdateServiceLevelInput(utils.BaseInput):
     max_volume: typing.Optional[float] = strawberry.UNSET
     cost: typing.Optional[float] = strawberry.UNSET
 
+    # Volumetric weight fields
+    dim_factor: typing.Optional[float] = strawberry.UNSET
+    use_volumetric: typing.Optional[bool] = strawberry.UNSET
+
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
+
+    # Service features as structured object
+    features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
 
     zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
@@ -559,6 +764,8 @@ class CreateMetafieldInput(utils.BaseInput):
     type: utils.MetafieldTypeEnum
     value: typing.Optional[utils.JSON] = strawberry.UNSET
     is_required: typing.Optional[bool] = strawberry.UNSET
+    object_type: typing.Optional[str] = strawberry.UNSET
+    object_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -575,6 +782,8 @@ class MetafieldInput(utils.BaseInput):
     value: typing.Optional[utils.JSON] = strawberry.UNSET
     is_required: typing.Optional[bool] = strawberry.UNSET
     id: typing.Optional[str] = strawberry.UNSET
+    object_type: typing.Optional[str] = strawberry.UNSET
+    object_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -582,6 +791,8 @@ class MetafieldFilter(utils.Paginated):
     key: typing.Optional[str] = strawberry.UNSET
     type: typing.Optional[utils.MetafieldTypeEnum] = strawberry.UNSET
     is_required: typing.Optional[bool] = strawberry.UNSET
+    object_type: typing.Optional[str] = strawberry.UNSET
+    object_id: typing.Optional[str] = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────

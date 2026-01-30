@@ -59,6 +59,109 @@ class TestPickupSchedule(TestFixture):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertDictEqual(response_data, PICKUP_RESPONSE)
 
+    def test_schedule_pickup_with_parcels_count(self):
+        """Test scheduling a standalone pickup using parcels_count instead of tracking_numbers."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA_STANDALONE)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["confirmation_number"], "27241")
+
+    def test_schedule_pickup_validation_no_source(self):
+        """Test that validation fails when neither tracking_numbers nor parcels_count is provided."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        response = self.client.post(f"{url}", PICKUP_DATA_NO_SOURCE)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = json.loads(response.content)
+        self.assertIn("errors", response_data)
+
+    def test_schedule_pickup_validation_standalone_no_address(self):
+        """Test that validation fails for standalone pickup without address."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        response = self.client.post(f"{url}", PICKUP_DATA_STANDALONE_NO_ADDRESS)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = json.loads(response.content)
+        self.assertIn("errors", response_data)
+
+    def test_backward_compatibility_tracking_numbers(self):
+        """Test that the existing tracking_numbers flow still works."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_schedule_pickup_with_pickup_type_one_time(self):
+        """Test scheduling a pickup with explicit one_time pickup_type."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA_ONE_TIME)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["pickup_type"], "one_time")
+            self.assertIsNone(response_data["recurrence"])
+
+    def test_schedule_pickup_with_pickup_type_daily(self):
+        """Test scheduling a pickup with daily pickup_type."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA_DAILY)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["pickup_type"], "daily")
+
+    def test_schedule_pickup_with_pickup_type_recurring(self):
+        """Test scheduling a pickup with recurring pickup_type and recurrence config."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA_RECURRING)
+            response_data = json.loads(response.content)
+
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["pickup_type"], "recurring")
+            self.assertIsNotNone(response_data["recurrence"])
+            self.assertEqual(response_data["recurrence"]["frequency"], "weekly")
+            self.assertIn("monday", response_data["recurrence"]["days_of_week"])
+
 
 class TestPickupDetails(TestFixture):
     def setUp(self) -> None:
@@ -131,6 +234,123 @@ PICKUP_DATA = {
     "tracking_numbers": ["123456789012"],
 }
 
+# Test data for standalone pickup with parcels_count
+PICKUP_DATA_STANDALONE = {
+    "pickup_date": "2020-10-25",
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "instruction": "Handle with care",
+    "package_location": "Front desk",
+    "address": {
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "email": "john@a.com",
+    },
+    "parcels_count": 3,
+}
+
+# Test data with neither tracking_numbers nor parcels_count (should fail validation)
+PICKUP_DATA_NO_SOURCE = {
+    "pickup_date": "2020-10-25",
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "address": {
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+    },
+}
+
+# Test data for standalone pickup without address (should fail validation)
+PICKUP_DATA_STANDALONE_NO_ADDRESS = {
+    "pickup_date": "2020-10-25",
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "parcels_count": 2,
+}
+
+# Test data for pickup with explicit one_time pickup_type
+PICKUP_DATA_ONE_TIME = {
+    "pickup_date": "2020-10-25",
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "instruction": "One-time pickup",
+    "package_location": "Front door",
+    "address": {
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "email": "john@a.com",
+    },
+    "tracking_numbers": ["123456789012"],
+    "pickup_type": "one_time",
+}
+
+# Test data for daily pickup
+PICKUP_DATA_DAILY = {
+    "pickup_date": "2020-10-25",
+    "ready_time": "09:00",
+    "closing_time": "17:00",
+    "instruction": "Daily pickup",
+    "package_location": "Loading dock",
+    "address": {
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "email": "john@a.com",
+    },
+    "tracking_numbers": ["123456789012"],
+    "pickup_type": "daily",
+}
+
+# Test data for recurring pickup
+PICKUP_DATA_RECURRING = {
+    "pickup_date": "2020-10-25",
+    "ready_time": "10:00",
+    "closing_time": "16:00",
+    "instruction": "Weekly recurring pickup",
+    "package_location": "Warehouse bay 3",
+    "address": {
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "email": "john@a.com",
+    },
+    "tracking_numbers": ["123456789012"],
+    "pickup_type": "recurring",
+    "recurrence": {
+        "frequency": "weekly",
+        "days_of_week": ["monday", "wednesday", "friday"],
+    },
+}
+
 PICKUP_UPDATE_DATA = {
     "ready_time": "14:00",
     "package_location": "At the main entrance hall next to the distributor",
@@ -181,7 +401,12 @@ PICKUP_RESPONSE = {
     "carrier_id": "canadapost",
     "confirmation_number": "27241",
     "pickup_date": "2020-10-25",
-    "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD", "id": ANY},
+    "pickup_charge": {
+        "name": "Pickup fees",
+        "amount": 0.0,
+        "currency": "CAD",
+        "id": ANY,
+    },
     "ready_time": "13:00",
     "closing_time": "17:00",
     "test_mode": True,
@@ -228,8 +453,11 @@ PICKUP_RESPONSE = {
             "meta": {},
         }
     ],
+    "parcels_count": None,
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall",
+    "pickup_type": "one_time",
+    "recurrence": None,
     "options": {},
     "metadata": {},
     "meta": ANY,
@@ -242,7 +470,12 @@ PICKUP_UPDATE_RESPONSE = {
     "carrier_id": "canadapost",
     "confirmation_number": "00110215",
     "pickup_date": "2020-10-25",
-    "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD", "id": ANY},
+    "pickup_charge": {
+        "name": "Pickup fees",
+        "amount": 0.0,
+        "currency": "CAD",
+        "id": ANY,
+    },
     "ready_time": "14:00",
     "closing_time": "17:00",
     "test_mode": True,
@@ -289,8 +522,11 @@ PICKUP_UPDATE_RESPONSE = {
             "meta": {},
         }
     ],
+    "parcels_count": None,
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall next to the distributor",
+    "pickup_type": "one_time",
+    "recurrence": None,
     "options": {},
     "metadata": {},
     "meta": ANY,
@@ -303,7 +539,12 @@ PICKUP_CANCEL_RESPONSE = {
     "carrier_id": "canadapost",
     "confirmation_number": "00110215",
     "pickup_date": "2020-10-25",
-    "pickup_charge": {"name": "Pickup fees", "amount": 0.0, "currency": "CAD", "id": None},
+    "pickup_charge": {
+        "name": "Pickup fees",
+        "amount": 0.0,
+        "currency": "CAD",
+        "id": None,
+    },
     "ready_time": "13:00",
     "closing_time": "17:00",
     "address": {
@@ -328,8 +569,11 @@ PICKUP_CANCEL_RESPONSE = {
         "meta": {},
     },
     "parcels": [],  # Deleted pickup has no parcels
+    "parcels_count": None,
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall",
+    "pickup_type": "one_time",
+    "recurrence": None,
     "options": {},
     "metadata": {},
     "test_mode": True,

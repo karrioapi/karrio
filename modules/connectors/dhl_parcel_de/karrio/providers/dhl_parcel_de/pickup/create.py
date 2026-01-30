@@ -1,4 +1,4 @@
-"""Karrio DHL Parcel DE pickup create implementation."""
+"""Karrio DHL Germany pickup create implementation."""
 
 import karrio.schemas.dhl_parcel_de.pickup_request as dhl
 import karrio.schemas.dhl_parcel_de.pickup_response as pickup
@@ -43,6 +43,14 @@ def _extract_details(
         meta=dict(
             pickup_type=confirmation.pickupType,
             free_of_charge=confirmation.freeOfCharge,
+            confirmed_shipments=[
+                dict(
+                    transportation_type=s.transportationType,
+                    shipment_no=s.shipmentNo,
+                    order_date=s.orderDate,
+                )
+                for s in (confirmation.confirmedShipments or [])
+            ],
         ),
     )
 
@@ -51,6 +59,14 @@ def pickup_request(
     payload: models.PickupRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    # DHL Parcel DE only supports one-time pickups via API
+    pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
+    if pickup_type not in ("one_time", None):
+        raise lib.exceptions.FieldError({
+            "pickup_type": f"DHL Parcel DE only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+            "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
+        })
+
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
     options = lib.units.Options(
@@ -58,52 +74,72 @@ def pickup_request(
         option_type=lib.units.create_enum(
             "PickupOptions",
             {
-                "dhl_parcel_de_pickup_location_type": lib.OptionEnum("pickupLocationType"),
+                "billing_number": lib.OptionEnum("billing_number"),
+                "dhl_parcel_de_pickup_location_type": lib.OptionEnum(
+                    "pickupLocationType"
+                ),
                 "dhl_parcel_de_as_id": lib.OptionEnum("asId"),
-                "dhl_parcel_de_transportation_type": lib.OptionEnum("transportationType"),
+                "dhl_parcel_de_transportation_type": lib.OptionEnum(
+                    "transportationType"
+                ),
                 "dhl_parcel_de_shipment_size": lib.OptionEnum("shipmentSize"),
-                "dhl_parcel_de_send_confirmation_email": lib.OptionEnum("sendConfirmationEmail", bool),
-                "dhl_parcel_de_send_time_window_email": lib.OptionEnum("sendTimeWindowEmail", bool),
+                "dhl_parcel_de_send_confirmation_email": lib.OptionEnum(
+                    "sendConfirmationEmail", bool
+                ),
+                "dhl_parcel_de_send_time_window_email": lib.OptionEnum(
+                    "sendTimeWindowEmail", bool
+                ),
+                "dhl_parcel_de_pickup_date_type": lib.OptionEnum("pickupDateType"),
             },
         ),
     )
 
-    # Parse ready and closing times
-    ready_time = payload.ready_time or "09:00"
-    closing_time = payload.closing_time or "17:00"
-
-    # Compute total weight in grams
-    total_weight_kg = packages.weight.value if packages.weight else 0
-    total_weight_grams = int(total_weight_kg * 1000)
+    billing_number = options.billing_number.state or settings.get_billing_number()
+    pickup_date_type = options.dhl_parcel_de_pickup_date_type.state or ("ASAP" if not payload.pickup_date else "Date")
+    location_type = options.dhl_parcel_de_pickup_location_type.state or "Address"
+    transportation_type = options.dhl_parcel_de_transportation_type.state or "PAKET"
+    send_confirmation = options.dhl_parcel_de_send_confirmation_email.state
+    send_time_window = options.dhl_parcel_de_send_time_window_email.state
 
     # Build the request
     request = dhl.PickupRequestType(
-        customerDetails=dhl.CustomerDetailsType(
-            accountNumber=settings.billing_number,
-            billingNumber=settings.billing_number,
+        customerDetails=lib.identity(
+            dhl.CustomerDetailsType(
+                billingNumber=billing_number,
+            )
+            if billing_number
+            else None
         ),
         pickupLocation=dhl.PickupLocationType(
-            type=options.dhl_parcel_de_pickup_location_type.state or "Address",
-            pickupAddress=dhl.PickupAddressType(
-                name1=address.company_name or address.person_name,
-                name2=lib.identity(
-                    address.person_name if address.company_name else None
-                ),
-                addressStreet=address.street,
-                addressHouse=lib.text(address.street_number) if address.street_number else None,
-                postalCode=address.postal_code,
-                city=address.city,
-                country=address.country_code,
-                state=address.state_code,
+            type=location_type,
+            pickupAddress=lib.identity(
+                dhl.PickupAddressType(
+                    name1=address.company_name or address.person_name,
+                    name2=lib.identity(
+                        address.person_name if address.company_name else None
+                    ),
+                    addressStreet=address.street_name or address.street,
+                    addressHouse=address.street_number,
+                    postalCode=address.postal_code,
+                    city=address.city,
+                    country=address.country_code,
+                    state=address.state_code,
+                )
+                if location_type == "Address"
+                else None
             ),
-            asId=options.dhl_parcel_de_as_id.state,
+            asId=options.dhl_parcel_de_as_id.state if location_type == "Id" else None,
         ),
-        businessHours=[
-            dhl.BusinessHourType(
-                timeFrom=ready_time,
-                timeUntil=closing_time,
-            )
-        ],
+        businessHours=lib.identity(
+            [
+                dhl.BusinessHourType(
+                    timeFrom=payload.ready_time,
+                    timeUntil=payload.closing_time,
+                )
+            ]
+            if payload.ready_time and payload.closing_time
+            else None
+        ),
         contactPerson=[
             dhl.ContactPersonType(
                 name=address.person_name or address.company_name,
@@ -111,41 +147,37 @@ def pickup_request(
                 email=address.email,
                 emailNotification=lib.identity(
                     dhl.EmailNotificationType(
-                        sendPickupConfirmationEmail=options.dhl_parcel_de_send_confirmation_email.state,
-                        sendPickupTimeWindowEmail=options.dhl_parcel_de_send_time_window_email.state,
+                        sendPickupConfirmationEmail=send_confirmation,
+                        sendPickupTimeWindowEmail=send_time_window,
                     )
-                    if address.email
+                    if address.email and (send_confirmation is not None or send_time_window is not None)
                     else None
                 ),
             )
         ],
         pickupDetails=dhl.PickupDetailsType(
             pickupDate=dhl.PickupDateType(
-                type="Date",
-                value=payload.pickup_date,
+                type=pickup_date_type,
+                value=payload.pickup_date if pickup_date_type == "Date" else None,
             ),
-            totalWeight=dhl.TotalWeightType(
-                uom="g",
-                value=total_weight_grams,
+            totalWeight=lib.identity(
+                dhl.TotalWeightType(
+                    uom="g",
+                    value=lib.to_int(packages.weight.G),
+                )
+                if packages.weight.G
+                else None
             ),
             comment=payload.instruction,
         ),
-        shipmentDetails=lib.identity(
-            dhl.ShipmentDetailsType(
-                shipments=[
-                    dhl.ShipmentType(
-                        transportationType=options.dhl_parcel_de_transportation_type.state or "PAKET",
-                        replacement=False,
-                        shipmentNo=None,
-                        size=options.dhl_parcel_de_shipment_size.state,
-                        pickupServices=None,
-                        customerReference=None,
-                    )
-                    for _ in range(len(packages) or 1)
-                ]
-            )
-            if len(packages) > 0
-            else None
+        shipmentDetails=dhl.ShipmentDetailsType(
+            shipments=[
+                dhl.ShipmentType(
+                    transportationType=transportation_type,
+                    size=options.dhl_parcel_de_shipment_size.state,
+                )
+                for _ in range(len(packages) or 1)
+            ]
         ),
     )
 

@@ -36,6 +36,14 @@ class ParcelList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}list",
         extensions={"x-operationId": "listParcels"},
         summary="List all parcels",
+        description="""
+        Retrieve all stored parcels.
+
+        Query Parameters:
+        - label: Filter by meta.label (case-insensitive contains)
+        - keyword: Search by label
+        - usage: Filter by meta.usage (exact match in array)
+        """,
         responses={
             200: Parcels(),
             404: ErrorResponse(),
@@ -46,14 +54,29 @@ class ParcelList(GenericAPIView):
         """
         Retrieve all stored parcels.
         """
-        parcels = models.Parcel.access_by(request).filter(
+        queryset = models.Parcel.access_by(request).filter(
             **{
                 f"{prop}__isnull": True
                 for prop in models.Parcel.HIDDEN_PROPS
                 if prop != "org"
             }
         )
-        serializer = Parcel(parcels, many=True)
+
+        # Apply query parameter filters
+        label = request.query_params.get("label")
+        keyword = request.query_params.get("keyword")
+        usage = request.query_params.get("usage")
+
+        if label:
+            queryset = queryset.filter(meta__label__icontains=label)
+
+        if keyword:
+            queryset = queryset.filter(meta__label__icontains=keyword)
+
+        if usage:
+            queryset = queryset.filter(meta__usage__contains=usage)
+
+        serializer = Parcel(queryset, many=True)
         response = self.paginate_queryset(serializer.data)
 
         return self.get_paginated_response(response)

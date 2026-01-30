@@ -5,11 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**username** | **string** |  | [default to undefined]
-**password** | **string** |  | [default to undefined]
-**client_id** | **string** |  | [default to undefined]
-**client_secret** | **string** |  | [default to undefined]
-**billing_number** | **string** |  | [optional] [default to undefined]
+**username** | **string** |  | [optional] [default to undefined]
+**password** | **string** |  | [optional] [default to undefined]
+**client_id** | **string** |  | [optional] [default to undefined]
+**client_secret** | **string** |  | [optional] [default to undefined]
 **account_country_code** | **string** |  | [optional] [default to 'DE']
 
 ## Example
@@ -22,7 +21,6 @@ const instance: DhlParcelDe = {
     password,
     client_id,
     client_secret,
-    billing_number,
     account_country_code,
 };
 ```

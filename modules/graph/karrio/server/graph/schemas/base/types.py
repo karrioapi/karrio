@@ -175,6 +175,180 @@ class WorkspaceConfigType:
 
     # endregion
 
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Labels (format uses default_label_type above)
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def print_label_size(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelSizeEnum]:
+        return self.config.get("print_label_size")
+
+    @strawberry.field
+    def print_label_show_options(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_label_show_options")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Return Labels
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def print_return_label_size(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelSizeEnum]:
+        return self.config.get("print_return_label_size")
+
+    @strawberry.field
+    def print_return_label_show_options(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_return_label_show_options")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Printing Options - Customs Documents
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def print_customs_size(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelSizeEnum]:
+        return self.config.get("print_customs_size")
+
+    @strawberry.field
+    def print_customs_show_options(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_customs_show_options")
+
+    @strawberry.field
+    def print_customs_with_label(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("print_customs_with_label")
+
+    @strawberry.field
+    def print_customs_copies(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[int]:
+        return self.config.get("print_customs_copies")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Settings
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def default_parcel_weight(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[float]:
+        return self.config.get("default_parcel_weight")
+
+    @strawberry.field
+    def default_shipping_service(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("default_shipping_service")
+
+    @strawberry.field
+    def default_shipping_carrier(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("default_shipping_carrier")
+
+    @strawberry.field
+    def default_export_reason(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.ExportReasonEnum]:
+        return self.config.get("default_export_reason")
+
+    @strawberry.field
+    def default_delivery_instructions(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("default_delivery_instructions")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Label Options
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def label_show_postage_paid_logo(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("label_show_postage_paid_logo")
+
+    @strawberry.field
+    def label_show_qr_code(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("label_show_qr_code")
+
+    @strawberry.field
+    def customs_use_order_as_invoice(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("customs_use_order_as_invoice")
+
+    # endregion
+
+    # ─────────────────────────────────────────────────────────────────
+    # Shipping Defaults - Recommendations Preferences
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def pref_first_mile(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[typing.List[utils.FirstMileEnum]]:
+        return self.config.get("pref_first_mile")
+
+    @strawberry.field
+    def pref_last_mile(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[typing.List[utils.LastMileEnum]]:
+        return self.config.get("pref_last_mile")
+
+    @strawberry.field
+    def pref_form_factor(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[typing.List[utils.FormFactorEnum]]:
+        return self.config.get("pref_form_factor")
+
+    @strawberry.field
+    def pref_age_check(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.AgeCheckEnum]:
+        return self.config.get("pref_age_check")
+
+    @strawberry.field
+    def pref_signature_required(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("pref_signature_required")
+
+    @strawberry.field
+    def pref_max_lead_time_days(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[int]:
+        return self.config.get("pref_max_lead_time_days")
+
+    # endregion
+
     @staticmethod
     @utils.authentication_required
     def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
@@ -377,12 +551,19 @@ class SystemUsageType:
 
 @strawberry.type
 class MetafieldType:
-    object_type: str
     id: str
     key: str
     is_required: bool
     type: utils.MetafieldTypeEnum
     value: typing.Optional[utils.JSON] = None
+    object_id: typing.Optional[str] = None
+
+    @strawberry.field
+    def object_type(self: core.Metafield) -> str:
+        """Return the model name of the attached object, or 'metafield' if not attached."""
+        if self.content_type:
+            return self.content_type.model
+        return "metafield"
 
     @strawberry.field
     def parsed_value(self: core.Metafield) -> typing.Optional[utils.JSON]:
@@ -400,6 +581,8 @@ class MetafieldType:
         info,
         filter: typing.Optional[inputs.MetafieldFilter] = strawberry.UNSET,
     ) -> utils.Connection["MetafieldType"]:
+        from django.contrib.contenttypes.models import ContentType
+
         _filter = filter if not utils.is_unset(filter) else inputs.MetafieldFilter()
         queryset = core.Metafield.access_by(info.context.request)
 
@@ -410,6 +593,14 @@ class MetafieldType:
             queryset = queryset.filter(type=_filter.type)
         if not utils.is_unset(_filter.is_required):
             queryset = queryset.filter(is_required=_filter.is_required)
+        if not utils.is_unset(_filter.object_type):
+            ct = ContentType.objects.filter(model=_filter.object_type).first()
+            if ct:
+                queryset = queryset.filter(content_type=ct)
+            else:
+                queryset = queryset.none()
+        if not utils.is_unset(_filter.object_id):
+            queryset = queryset.filter(object_id=_filter.object_id)
 
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -906,6 +1097,10 @@ def resolve_addresses(
             | models.Q(phone_number__icontains=_value)
         )
 
+    if any(_search.get("usage") or ""):
+        _value = _search.get("usage")
+        _query = _query & models.Q(meta__usage__contains=_value)
+
     queryset = manager.Address.access_by(info.context.request).filter(_query)
 
     return utils.paginated_connection(queryset, **_filter.pagination())
@@ -978,6 +1173,10 @@ def resolve_parcels(
     if any(_search.get("keyword") or ""):
         _value = _search.get("keyword")
         _query = _query & models.Q(meta__label__icontains=_value)
+
+    if any(_search.get("usage") or ""):
+        _value = _search.get("usage")
+        _query = _query & models.Q(meta__usage__contains=_value)
 
     queryset = manager.Parcel.access_by(info.context.request).filter(_query)
 
@@ -1052,6 +1251,10 @@ def resolve_products(
 
     if _search.get("origin_country"):
         _query = _query & models.Q(origin_country=_search.get("origin_country"))
+
+    if any(_search.get("usage") or ""):
+        _value = _search.get("usage")
+        _query = _query & models.Q(meta__usage__contains=_value)
 
     queryset = manager.Commodity.access_by(info.context.request).filter(_query)
 
@@ -1311,6 +1514,100 @@ class ManifestType:
 
 
 @strawberry.type
+class PickupType:
+    """GraphQL type for Pickup model."""
+
+    id: str
+    object_type: str
+    confirmation_number: typing.Optional[str]
+    pickup_date: typing.Optional[str]
+    ready_time: typing.Optional[str]
+    closing_time: typing.Optional[str]
+    instruction: typing.Optional[str]
+    package_location: typing.Optional[str]
+    test_mode: bool
+    options: utils.JSON
+    metadata: utils.JSON
+    meta: typing.Optional[utils.JSON]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    created_by: UserType
+
+    @strawberry.field
+    def pickup_type(self: manager.Pickup) -> str:
+        """Pickup scheduling type: one_time, daily, or recurring."""
+        return self.pickup_type or "one_time"
+
+    @strawberry.field
+    def recurrence(self: manager.Pickup) -> typing.Optional[utils.JSON]:
+        """Recurrence config for recurring pickups."""
+        return self.recurrence
+
+    @strawberry.field
+    def carrier_id(self: manager.Pickup) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_id")
+
+    @strawberry.field
+    def carrier_name(self: manager.Pickup) -> typing.Optional[str]:
+        return (self.carrier or {}).get("carrier_name")
+
+    @strawberry.field
+    def address(self: manager.Pickup) -> typing.Optional[AddressType]:
+        return AddressType.parse(self.address) if self.address else None
+
+    @strawberry.field
+    def pickup_charge(self: manager.Pickup) -> typing.Optional[ChargeType]:
+        return ChargeType.parse(self.pickup_charge) if self.pickup_charge else None
+
+    @strawberry.field
+    def parcels(self: manager.Pickup) -> typing.List[ParcelType]:
+        """Parcels from related shipments."""
+        return [
+            ParcelType.parse(p)
+            for shipment in self.shipments.all()
+            for p in (shipment.parcels or [])
+        ]
+
+    @strawberry.field
+    def tracking_numbers(self: manager.Pickup) -> typing.List[str]:
+        """Tracking numbers from related shipments."""
+        return [
+            s.tracking_number
+            for s in self.shipments.all()
+            if s.tracking_number
+        ]
+
+    @strawberry.field
+    def shipments(self: manager.Pickup) -> typing.List["ShipmentType"]:
+        """Related shipments for this pickup."""
+        return list(self.shipments.all())
+
+    @strawberry.field
+    def pickup_carrier(
+        self: manager.Pickup,
+    ) -> typing.Optional[CarrierSnapshotType]:
+        """Carrier snapshot with credentials protected."""
+        return CarrierSnapshotType.parse(self.carrier)
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info, id: str) -> typing.Optional["PickupType"]:
+        return manager.Pickup.access_by(info.context.request).filter(id=id).first()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.PickupFilter] = strawberry.UNSET,
+    ) -> utils.Connection["PickupType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.PickupFilter()
+        queryset = filters.PickupFilters(
+            _filter.to_dict(), manager.Pickup.access_by(info.context.request)
+        ).qs
+        return utils.paginated_connection(queryset, **_filter.pagination())
+
+
+@strawberry.type
 class PaymentType:
     account_number: typing.Optional[str] = None
     paid_by: typing.Optional[utils.PaidByEnum] = None
@@ -1538,6 +1835,74 @@ class ServiceRateType:
 
 
 @strawberry.type
+class ServiceLevelFeaturesType:
+    """Structured service level features.
+
+    Defines the capabilities and characteristics of a shipping service.
+    Used for filtering, display, and setting default options.
+    """
+
+    # First Mile: How parcels get to the carrier
+    # "pick_up" | "drop_off" | "pick_up_and_drop_off"
+    first_mile: typing.Optional[str] = None
+
+    # Last Mile: How parcels are delivered to recipient
+    # "home_delivery" | "service_point" | "mailbox"
+    last_mile: typing.Optional[str] = None
+
+    # Form Factor: Type of package the service supports
+    # "letter" | "parcel" | "mailbox" | "pallet"
+    form_factor: typing.Optional[str] = None
+
+    # Type of Shipments: Business model support
+    b2c: typing.Optional[bool] = None  # Business to Consumer
+    b2b: typing.Optional[bool] = None  # Business to Business
+
+    # Shipment Direction: "outbound" | "returns" | "both"
+    shipment_type: typing.Optional[str] = None
+
+    # Age Verification: null | "16" | "18"
+    age_check: typing.Optional[str] = None
+
+    # Default signature requirement
+    signature: typing.Optional[bool] = None
+
+    # Tracking availability
+    tracked: typing.Optional[bool] = None
+
+    # Insurance availability
+    insurance: typing.Optional[bool] = None
+
+    # Express/Priority service
+    express: typing.Optional[bool] = None
+
+    # Dangerous goods support
+    dangerous_goods: typing.Optional[bool] = None
+
+    # Weekend delivery options
+    saturday_delivery: typing.Optional[bool] = None
+    sunday_delivery: typing.Optional[bool] = None
+
+    # Multi-package shipment support
+    multicollo: typing.Optional[bool] = None
+
+    # Neighbor delivery allowed
+    neighbor_delivery: typing.Optional[bool] = None
+
+    @staticmethod
+    def parse(features: typing.Optional[dict]) -> "ServiceLevelFeaturesType":
+        """Parse a features dict into ServiceLevelFeaturesType."""
+        if not features or not isinstance(features, dict):
+            return ServiceLevelFeaturesType()
+
+        import dataclasses
+        field_names = {f.name for f in dataclasses.fields(ServiceLevelFeaturesType)}
+        return ServiceLevelFeaturesType(**{
+            k: v for k, v in features.items() if k in field_names
+        })
+
+
+@strawberry.type
 class ServiceLevelType:
     """
     Service level definition for rate sheet-based shipping.
@@ -1570,8 +1935,17 @@ class ServiceLevelType:
     max_volume: typing.Optional[float]
     cost: typing.Optional[float]
 
+    # Volumetric weight fields
+    dim_factor: typing.Optional[float]
+    use_volumetric: typing.Optional[bool]
+
     domicile: typing.Optional[bool]
     international: typing.Optional[bool]
+
+    @strawberry.field
+    def features(self: providers.ServiceLevel) -> ServiceLevelFeaturesType:
+        """Structured service features."""
+        return ServiceLevelFeaturesType.parse(self.features)
 
     @strawberry.field
     def metadata(self: providers.ServiceLevel) -> typing.Optional[utils.JSON]:

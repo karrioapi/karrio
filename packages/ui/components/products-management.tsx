@@ -235,9 +235,8 @@ function ProductEditDialog({
     }
 
     try {
+      // Build payload with flat structure and meta field
       const payload = {
-        label: data.label,
-        is_default: data.is_default || false,
         weight: data.weight,
         weight_unit: data.weight_unit as any,
         quantity: data.quantity || 1,
@@ -248,19 +247,23 @@ function ProductEditDialog({
         ...(data.value_amount && { value_amount: data.value_amount }),
         ...(data.value_currency && { value_currency: data.value_currency as any }),
         ...(data.origin_country && { origin_country: data.origin_country as any }),
+        meta: {
+          label: data.label,
+          is_default: data.is_default || false,
+        },
       };
 
       if (productTemplate) {
         await updateProduct.mutateAsync({
           ...payload,
           id: productTemplate.id,
-        });
+        } as any);
         toast({
           title: "Success",
           description: "Product updated successfully!",
         });
       } else {
-        await createProduct.mutateAsync(payload);
+        await createProduct.mutateAsync(payload as any);
         toast({
           title: "Success",
           description: "Product created successfully!",

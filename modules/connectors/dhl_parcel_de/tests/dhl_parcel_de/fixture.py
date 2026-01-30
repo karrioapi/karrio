@@ -20,9 +20,10 @@ gateway = karrio.gateway["dhl_parcel_de"].create(
         password="password",
         client_id=client_id,
         client_secret=client_secret,
-        billing_number="33333333330102",
+        test_mode=True,  # Test mode uses default sandbox billing numbers automatically
         config={
             "label_type": "ZPL2_910_300_700_oz",
+            # billing numbers are auto-populated from DEFAULT_TEST_BILLING_NUMBERS in test mode
         },
     ),
     cache=lib.Cache(**cached_auth),

@@ -2,7 +2,7 @@
 import {
   CreateParcelInput,
   DEFAULT_PARCEL_CONTENT,
-  UpdateParcelInput2,
+  UpdateParcelInput,
 } from "@karrio/types";
 import { NotificationType, ParcelTemplateType } from "@karrio/types";
 import { useParcelMutation } from "@karrio/hooks/parcel";
@@ -16,9 +16,8 @@ import { Loading } from "../components/loader";
 import { isEqual, isNone } from "@karrio/lib";
 
 const DEFAULT_TEMPLATE_CONTENT = {
-  label: "",
-  is_default: false,
-  parcel: DEFAULT_PARCEL_CONTENT,
+  ...DEFAULT_PARCEL_CONTENT,
+  meta: { label: "", is_default: false },
 } as ParcelTemplateType;
 
 type OperationType = {
@@ -53,27 +52,27 @@ export const ParcelEditModal = ({
 
   const computeDisable = (isValid: boolean, template: ParcelTemplateType) => {
     const parcelTemplate = operation?.parcelTemplate;
-    const defaultValue = parcelTemplate ? {
-      ...parcelTemplate,
-      label: parcelTemplate.meta?.label || parcelTemplate.label || "",
-      is_default: parcelTemplate.meta?.is_default || parcelTemplate.is_default || false,
-    } : DEFAULT_TEMPLATE_CONTENT;
+    const defaultMeta = parcelTemplate?.meta || { label: "", is_default: false };
+    const { meta: templateMeta, ...templateData } = template || {};
+    const { meta: defaultParcelMeta, ...defaultParcelData } = parcelTemplate || {};
 
     return (
       !isValid ||
-      (template.label === defaultValue.label &&
-        template.is_default === defaultValue.is_default &&
-        isEqual(template?.parcel, defaultValue.parcel))
+      (templateMeta?.label === defaultMeta.label &&
+        templateMeta?.is_default === defaultMeta.is_default &&
+        isEqual(templateData, defaultParcelData))
     );
   };
 
   const editParcel = (operation?: OperationType) => {
     const parcelTemplate = operation?.parcelTemplate;
-    // Extract label and is_default from meta if present (new format), fallback to top-level (legacy)
+    // Use flat structure with meta field
     const template = parcelTemplate ? {
       ...parcelTemplate,
-      label: parcelTemplate.meta?.label || parcelTemplate.label || "",
-      is_default: parcelTemplate.meta?.is_default || parcelTemplate.is_default || false,
+      meta: {
+        label: parcelTemplate.meta?.label || "",
+        is_default: parcelTemplate.meta?.is_default || false,
+      },
     } : DEFAULT_TEMPLATE_CONTENT;
 
     setIsActive(true);
@@ -97,18 +96,21 @@ export const ParcelEditModal = ({
     e.preventDefault();
     try {
       setLoading(true);
+      // Extract meta and parcel data for flat structure
+      const { meta, id, object_type, created_at, updated_at, created_by, ...parcelData } = template || {};
+      const payload = {
+        ...parcelData,
+        meta,
+      };
+
       if (isNew) {
-        await mutation.createParcel.mutateAsync(
-          template as CreateParcelInput,
-        );
+        await mutation.createParcel.mutateAsync(payload as CreateParcelInput);
         notify({
           type: NotificationType.success,
           message: "Parcel successfully added!",
         });
       } else {
-        await mutation.updateParcel.mutateAsync(
-          template as UpdateParcelInput2,
-        );
+        await mutation.updateParcel.mutateAsync({ ...payload, id } as UpdateParcelInput);
         notify({
           type: NotificationType.success,
           message: "Parcel successfully updated!",
@@ -144,8 +146,11 @@ export const ParcelEditModal = ({
 
             {template !== undefined && (
               <ParcelForm
-                value={template.parcel}
-                onChange={(parcel: any) => setTemplate({ ...template, parcel })}
+                value={template}
+                onChange={(parcel: any) => {
+                  const { meta, ...parcelData } = parcel;
+                  setTemplate({ ...template, ...parcelData });
+                }}
                 prefixChilren={
                   <>
                     <div className="columns mb-0 px-2">
@@ -153,9 +158,12 @@ export const ParcelEditModal = ({
                         label="label"
                         name="label"
                         onChange={(e) =>
-                          setTemplate({ ...template, label: e.target.value })
+                          setTemplate({
+                            ...template,
+                            meta: { ...template.meta, label: e.target.value },
+                          })
                         }
-                        defaultValue={template.label}
+                        defaultValue={template.meta?.label}
                         className="is-small"
                         wrapperClass="px-1 py-2"
                         fieldClass="column mb-0 p-0"
@@ -168,10 +176,10 @@ export const ParcelEditModal = ({
                         onChange={(e) =>
                           setTemplate({
                             ...template,
-                            is_default: e.target.checked,
+                            meta: { ...template.meta, is_default: e.target.checked },
                           })
                         }
-                        defaultChecked={template?.is_default as boolean}
+                        defaultChecked={template?.meta?.is_default as boolean}
                         fieldClass="column mb-0 px-2 pt-3 pb-0"
                       >
                         <span>Set as default parcel</span>

@@ -13,6 +13,7 @@ import {
   UpdateOrderMutationInput,
   UpdateCommodityInput,
   CommodityInput,
+  AddressInput,
   NotificationType,
   DISCARD_COMMODITY,
   discard_commodity,
@@ -212,10 +213,11 @@ export function useOrderMutation(id?: string) {
 // -----------------------------------------------------------
 //#region
 
-type OrderDataType = (CreateOrderMutationInput | UpdateOrderMutationInput) & {
+type OrderDataType = Omit<CreateOrderMutationInput | UpdateOrderMutationInput, "billing_address"> & {
   id?: string;
   shipping_to: UpdateOrderMutationInput["shipping_to"] & { id?: string };
   shipping_from?: UpdateOrderMutationInput["shipping_from"] & { id?: string };
+  billing_address?: (AddressInput & { id?: string | null }) | null;
   line_items: ((CommodityInput | UpdateCommodityInput) & { id?: string })[];
 };
 type ChangeType = {

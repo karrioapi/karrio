@@ -71,34 +71,46 @@ class PickupSerializer(PickupRequest):
         required=False, validators=[address_exists], help_text="The pickup address"
     )
     tracking_numbers = serializers.StringListField(
-        required=True,
+        required=False,
         validators=[shipment_exists],
-        help_text="The list of shipments to be picked up",
+        help_text="The list of shipments to be picked up (optional if parcels_count provided)",
+    )
+    parcels_count = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        min_value=1,
+        help_text="The number of parcels to be picked up (alternative to linking shipments)",
     )
     metadata = PlainDictField(
         required=False, default={}, help_text="User metadata for the pickup"
     )
 
     def __init__(self, instance: models.Pickup = None, **kwargs):
+        self._shipments: typing.List[models.Shipment] = []
+
         if "data" in kwargs:
             data = kwargs.get("data").copy()
+            tracking_numbers = data.get("tracking_numbers", [])
 
-            self._shipments: typing.List[models.Shipment] = (
-                models.Shipment.objects.filter(
-                    tracking_number__in=data.get("tracking_numbers", [])
+            # Only fetch shipments if tracking_numbers provided
+            if tracking_numbers:
+                self._shipments = list(
+                    models.Shipment.objects.filter(
+                        tracking_number__in=tracking_numbers
+                    )
                 )
-            )
 
+            # Address resolution logic
             if data.get("address") is None and instance is None:
-                # shipper is now a JSON dict, use directly
+                # Try to get address from linked shipments
                 address = next(
                     (s.shipper for s in self._shipments if s.shipper), None
                 )
             elif data.get("address") is None and instance is not None:
-                # address is now a JSON dict, use directly
+                # Use existing instance address
                 address = instance.address
             elif isinstance(data.get("address"), str):
-                # Legacy: look up address by ID (should rarely happen with JSON addresses)
+                # Legacy: look up address by ID
                 address = models.Address.objects.get(pk=data.get("address"))
             else:
                 address = data.get("address")
@@ -113,12 +125,29 @@ class PickupSerializer(PickupRequest):
     def validate(self, data):
         validated_data = super(PickupRequest, self).validate(data)
 
-        if (
-            len(validated_data.get("tracking_numbers", [])) > 1
-            and validated_data.get("address") is None
-        ):
+        tracking_numbers = validated_data.get("tracking_numbers", [])
+        parcels_count = validated_data.get("parcels_count")
+        address = validated_data.get("address")
+
+        # Must have at least one source of parcel info
+        if not tracking_numbers and not parcels_count:
             raise serializers.ValidationError(
-                "address must be specified for multi-shipments pickup", code="required"
+                "At least one of tracking_numbers or parcels_count must be provided",
+                code="required"
+            )
+
+        # Address required for standalone pickups (no tracking_numbers)
+        if not tracking_numbers and not address:
+            raise serializers.ValidationError(
+                "address is required when not linking to shipments",
+                code="required"
+            )
+
+        # Existing validation for multi-shipment pickups
+        if len(tracking_numbers) > 1 and address is None:
+            raise serializers.ValidationError(
+                "address must be specified for multi-shipments pickup",
+                code="required"
             )
 
         return validated_data
@@ -128,31 +157,57 @@ class PickupSerializer(PickupRequest):
 class PickupData(PickupSerializer):
     def create(self, validated_data: dict, context: Context, **kwargs) -> models.Pickup:
         carrier_filter = validated_data["carrier_filter"]
-        shipment_identifiers = [
-            _
-            for shipment in self._shipments
-            for _ in set(
-                [
-                    *(shipment.meta.get("shipment_identifiers") or []),
-                    shipment.shipment_identifier,
-                ]
+        parcels_count = validated_data.get("parcels_count")
+        pickup_type = validated_data.get("pickup_type", "one_time")
+        recurrence = validated_data.get("recurrence") or {}
+
+        # Extract shipment identifiers only if shipments linked
+        shipment_identifiers = []
+        billing_number = None
+
+        if self._shipments:
+            shipment_identifiers = [
+                _
+                for shipment in self._shipments
+                for _ in set(
+                    [
+                        *(shipment.meta.get("shipment_identifiers") or []),
+                        shipment.shipment_identifier,
+                    ]
+                )
+            ]
+            # Extract billing_number from first shipment's meta (if available)
+            billing_number = next(
+                (s.meta.get("billing_number") for s in self._shipments if s.meta.get("billing_number")),
+                None,
             )
-        ]
+
         carrier = Connections.first(
             context=context,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter},
         )
 
+        # Determine parcels source
+        if self._shipments:
+            # Mode 1: Parcels from linked shipments
+            parcels_list = sum([(s.parcels or []) for s in self._shipments], [])
+        elif parcels_count:
+            # Mode 2: Generate placeholder parcels from count
+            parcels_list = [{"id": f"parcel_{i+1}"} for i in range(parcels_count)]
+        else:
+            parcels_list = []
+
         # Build request data directly (address is now a JSON dict)
         # Exclude non-serializable fields from request data
-        excluded_keys = {"created_by", "carrier_filter", "tracking_numbers"}
+        excluded_keys = {"created_by", "carrier_filter", "tracking_numbers", "parcels_count", "recurrence"}
         filtered_data = {k: v for k, v in validated_data.items() if k not in excluded_keys}
-        parcels_list = sum([(s.parcels or []) for s in self._shipments], [])
+
         request_data = {
             **filtered_data,
             "parcels": parcels_list,
             "options": {
-                "shipment_identifiers": shipment_identifiers,
+                **({"shipment_identifiers": shipment_identifiers} if shipment_identifiers else {}),
+                **({"billing_number": billing_number} if billing_number else {}),
                 **(validated_data.get("options") or {}),
             },
         }
@@ -167,6 +222,13 @@ class PickupData(PickupSerializer):
         # Use the address from validated_data directly (JSON field)
         address_data = validated_data.get("address") or {}
 
+        # Build meta with pickup_type and recurrence (stored in meta per PRD)
+        meta_data = {
+            **(payload.get("meta") or {}),
+            "pickup_type": pickup_type,
+            **({"recurrence": recurrence} if recurrence else {}),
+        }
+
         pickup = models.Pickup.objects.create(
             **{
                 **payload,
@@ -175,6 +237,7 @@ class PickupData(PickupSerializer):
                 "created_by": context.user,
                 "test_mode": response.pickup.test_mode,
                 "confirmation_number": response.pickup.confirmation_number,
+                "meta": meta_data,
             }
         )
         pickup.shipments.set(self._shipments)
@@ -227,6 +290,22 @@ class PickupUpdateData(PickupSerializer):
         help_text="The list of shipments to be picked up",
     )
 
+    def validate(self, data):
+        """Override validation for update - existing pickups don't need parcel source validation."""
+        # Skip the parent's tracking_numbers/parcels_count validation for updates
+        # The pickup already exists with its parcels, we're just updating details
+        validated_data = serializers.Serializer.validate(self, data)
+
+        # Only validate multi-shipment address requirement if tracking_numbers provided
+        tracking_numbers = validated_data.get("tracking_numbers", [])
+        if len(tracking_numbers) > 1 and validated_data.get("address") is None:
+            raise serializers.ValidationError(
+                "address must be specified for multi-shipments pickup",
+                code="required"
+            )
+
+        return validated_data
+
     def update(
         self, instance: models.Pickup, validated_data: dict, context: dict, **kwargs
     ) -> models.Tracking:
@@ -246,6 +325,10 @@ class PickupUpdateData(PickupSerializer):
         address_updates = validated_data.get("address") or {}
         merged_address = {**existing_address, **address_updates}
 
+        # Extract pickup_type and recurrence for meta
+        pickup_type = validated_data.get("pickup_type") or (instance.meta or {}).get("pickup_type", "one_time")
+        recurrence = validated_data.get("recurrence") or (instance.meta or {}).get("recurrence")
+
         # Build base data from instance fields directly (not via serializer)
         # Convert date to string for serializer validation
         pickup_date = (
@@ -261,7 +344,14 @@ class PickupUpdateData(PickupSerializer):
             "instruction": instance.instruction,
             "package_location": instance.package_location,
             "options": instance.options or {},
+            "pickup_type": pickup_type,
         }
+
+        # Extract billing_number from first shipment's meta (if available)
+        billing_number = next(
+            (s.meta.get("billing_number") for s in self._shipments if s.meta.get("billing_number")),
+            None,
+        )
 
         # Build request data directly (data comes from trusted sources)
         request_data = {
@@ -270,6 +360,7 @@ class PickupUpdateData(PickupSerializer):
             "address": merged_address,
             "options": {
                 "shipment_identifiers": shipment_identifiers,
+                **({"billing_number": billing_number} if billing_number else {}),
                 **(instance.meta or {}),
                 **(validated_data.get("options") or {}),
             },
@@ -281,14 +372,22 @@ class PickupUpdateData(PickupSerializer):
 
         data = validated_data.copy()
         for key, val in data.items():
-            # Skip address - it needs special handling for merging
-            if key == "address":
+            # Skip address and meta-stored fields - they need special handling
+            if key in ("address", "pickup_type", "recurrence"):
                 continue
             if key in models.Pickup.DIRECT_PROPS:
                 setattr(instance, key, val)
 
         # Always set the merged address (preserves existing fields while applying updates)
         instance.address = merged_address
+
+        # Update meta with pickup_type and recurrence
+        existing_meta = instance.meta or {}
+        instance.meta = {
+            **existing_meta,
+            "pickup_type": pickup_type,
+            **({"recurrence": recurrence} if recurrence else {}),
+        }
 
         instance.save()
         return instance

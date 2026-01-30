@@ -35,6 +35,14 @@ class AddressList(GenericAPIView):
         operation_id=f"{ENDPOINT_ID}list",
         extensions={"x-operationId": "listAddresses"},
         summary="List all addresses",
+        description="""
+        Retrieve all addresses.
+
+        Query Parameters:
+        - label: Filter by meta.label (case-insensitive contains)
+        - keyword: Search across label, address fields, contact info
+        - usage: Filter by meta.usage (exact match in array)
+        """,
         responses={
             200: Addresses(),
             404: ErrorResponse(),
@@ -45,14 +53,42 @@ class AddressList(GenericAPIView):
         """
         Retrieve all addresses.
         """
-        addresses = models.Address.access_by(request).filter(
+        from django.db.models import Q
+
+        queryset = models.Address.access_by(request).filter(
             **{
                 f"{prop}__isnull": True
                 for prop in models.Address.HIDDEN_PROPS
                 if prop != "org"
             }
         )
-        response = self.paginate_queryset(Address(addresses, many=True).data)
+
+        # Apply query parameter filters
+        label = request.query_params.get("label")
+        keyword = request.query_params.get("keyword")
+        usage = request.query_params.get("usage")
+
+        if label:
+            queryset = queryset.filter(meta__label__icontains=label)
+
+        if keyword:
+            queryset = queryset.filter(
+                Q(meta__label__icontains=keyword)
+                | Q(address_line1__icontains=keyword)
+                | Q(address_line2__icontains=keyword)
+                | Q(postal_code__icontains=keyword)
+                | Q(person_name__icontains=keyword)
+                | Q(company_name__icontains=keyword)
+                | Q(country_code__icontains=keyword)
+                | Q(city__icontains=keyword)
+                | Q(email__icontains=keyword)
+                | Q(phone_number__icontains=keyword)
+            )
+
+        if usage:
+            queryset = queryset.filter(meta__usage__contains=usage)
+
+        response = self.paginate_queryset(Address(queryset, many=True).data)
         return self.get_paginated_response(response)
 
     @openapi.extend_schema(

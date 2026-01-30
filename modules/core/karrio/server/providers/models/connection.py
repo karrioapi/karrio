@@ -15,6 +15,7 @@ import django.conf as conf
 import django.forms as forms
 import django.db.models as models
 import django.core.cache as caching
+from django.contrib.contenttypes.fields import GenericRelation
 
 import karrio.lib as lib
 import karrio.sdk as karrio
@@ -164,6 +165,12 @@ class SystemConnection(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="system_connection",
+    )
 
     def __str__(self):
         return f"{self.carrier_code}:{self.carrier_id}"
@@ -404,6 +411,12 @@ class BrokeredConnection(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="brokered_connection",
+    )
 
     def __str__(self):
         return f"{self.effective_carrier_id} (via {self.system_connection_id})"

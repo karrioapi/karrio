@@ -1,0 +1,970 @@
+{
+  "info": {
+    "_postman_id": "af2f70b3-405b-4aee-af8d-1eb715e4cebc",
+    "name": "UPS Shipping",
+    "description": "Prepare your package for shipment, manage returns, and cancel scheduled shipments.\n\nVisit the full [UPS Shipping Documentation](https://developer.ups.com/api/reference?loc=en_US#tag/Shipping_other) for more details!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20452875"
+  },
+  "item": [
+    {
+      "name": "Shipping Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"SubVersion\": \"1801\",\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"Ship WS test\",\r\n            \"Shipper\": {\r\n                \"Name\": \"ShipperName\",\r\n                \"AttentionName\": \"ShipperZs Attn Name\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1115554758\",\r\n                    \"Extension\": \" \"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"FaxNumber\": \"8002222222\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2311 York Rd\",\r\n                    \"City\": \"Timonium\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"Happy Dog Pet Supply\",\r\n                \"AttentionName\": \"1160b_74\",\r\n                \"Phone\": {\r\n                    \"Number\": \"9225377171\"\r\n                },\r\n                \"Address\": {\r\n                    \"AddressLine\": \"123 Main St\",\r\n                    \"City\": \"timonium\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21030\",\r\n                    \"CountryCode\": \"US\"\r\n                },\r\n                \"Residential\": \" \"\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"T and T Designs\",\r\n                \"AttentionName\": \"1160b_74\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567890\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2311 York Rd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"Express\"\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \" \",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Nails\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"Inches\"\r\n                    },\r\n                    \"Length\": \"10\",\r\n                    \"Width\": \"30\",\r\n                    \"Height\": \"45\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\",\r\n                        \"Description\": \"Pounds\"\r\n                    },\r\n                    \"Weight\": \"5\"\r\n                }\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\",\r\n                \"Description\": \"GIF\"\r\n            },\r\n            \"HTTPUserAgent\": \"Mozilla/4.5\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        },
+        "description": "This HTTP POST request takes in origin information (**ShipFrom**), destination information (**ShipTo**), **PaymentInformation**, and **Package** information and returns the cost of the movement as well as a UPS 1Z tracking number that represents the movement."
+      },
+      "response": [
+        {
+          "name": "Shipping Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"SubVersion\": \"1801\",\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"Ship WS test\",\r\n            \"Shipper\": {\r\n                \"Name\": \"ShipperName\",\r\n                \"AttentionName\": \"ShipperZs Attn Name\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1115554758\",\r\n                    \"Extension\": \" \"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"FaxNumber\": \"8002222222\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2311 York Rd\",\r\n                    \"City\": \"Timonium\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"Happy Dog Pet Supply\",\r\n                \"AttentionName\": \"1160b_74\",\r\n                \"Phone\": {\r\n                    \"Number\": \"9225377171\"\r\n                },\r\n                \"Address\": {\r\n                    \"AddressLine\": \"123 Main St\",\r\n                    \"City\": \"timonium\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21030\",\r\n                    \"CountryCode\": \"US\"\r\n                },\r\n                \"Residential\": \" \"\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"T and T Designs\",\r\n                \"AttentionName\": \"1160b_74\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567890\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2311 York Rd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"Express\"\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \" \",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Nails\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"Inches\"\r\n                    },\r\n                    \"Length\": \"10\",\r\n                    \"Width\": \"30\",\r\n                    \"Height\": \"45\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\",\r\n                        \"Description\": \"Pounds\"\r\n                    },\r\n                    \"Weight\": \"5\"\r\n                }\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\",\r\n                \"Description\": \"GIF\"\r\n            },\r\n            \"HTTPUserAgent\": \"Mozilla/4.5\"\r\n        }\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/shipments/:version/ship",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                ":version",
+                "ship"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Supported values: v1, v1601, v1607, v1701, v1707, v1801, v1807, v2108, v2205 "
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"ShipmentResponse\": {\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            },\n            \"TransactionReference\": {\n                \"CustomerContext\": \"CustomerContext\"\n            }\n        },\n        \"ShipmentResults\": {\n            \"BillingWeight\": {\n                \"UnitOfMeasurement\": {\n                    \"Code\": \"LBS\",\n                    \"Description\": \"Pounds\"\n                },\n                \"Weight\": \"0.0\"\n            },\n            \"PackageResults\": {\n                \"BaseServiceCharge\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"0.00\"\n                },\n                \"ItemizedCharges\": {\n                    \"Code\": \"ItemizedCharges Code\",\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"0.00\"\n                },\n                \"ServiceOptionsCharges\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"0.00\"\n                },\n                \"ShippingLabel\": {\n                    \"GraphicImage\": \"GraphicImage\",\n                    \"HTMLImage\": \"HTMLImage\",\n                    \"ImageFormat\": {\n                        \"Code\": \"GIF\",\n                        \"Description\": \"GIF\"\n                    }\n                },\n                \"SimpleRate\": {\n                    \"Code\": \"S\"\n                },\n                \"TrackingNumber\": \"TrackingNumber\"\n            },\n            \"ShipmentCharges\": {\n                \"RateChart\": \"1\",\n                \"ServiceOptionsCharges\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"0.00\"\n                },\n                \"TotalCharges\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"0.00\"\n                },\n                \"TransportationCharges\": {\n                    \"CurrencyCode\": \"USD\",\n                    \"MonetaryValue\": \"0.00\"\n                }\n            },\n            \"ShipmentIdentificationNumber\": \"ShipmentIdentificationNumber\"\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Shipping with Negotiated Rates Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"SubVersion\": \"1601\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"?\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"TaxInformationIndicator\": \"\",\r\n            \"ShipmentRatingOptions\": {\r\n                \"NegotiatedRatesIndicator\": \"X\"\r\n            },\r\n            \"ItemizedChargesRequestedIndicator\": \"X\",\r\n            \"Description\": \"1507 US shipment\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_name\",\r\n                \"AttentionName\": \"Shipper_Attn.name\",\r\n                \"CompanyDisplayableName\": \"Shipper_company\",\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Phone\": {\r\n                    \"Number\": \"5555555555\"\r\n                },\r\n                \"Address\": {\r\n                    \"AddressLine\": \"Shipper_Addrline1\",\r\n                    \"City\": \"BERLIN\",\r\n                    \"StateProvinceCode\": \"\",\r\n                    \"PostalCode\": \"10785\",\r\n                    \"CountryCode\": \"DE\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipTo_name\",\r\n                \"AttentionName\": \"ShipTo_Attn.name\",\r\n                \"CompanyDisplayableName\": \"ShipTo_company\",\r\n                \"Phone\": {\r\n                    \"Number\": \"5555555555\"\r\n                },\r\n                \"Address\": {\r\n                    \"AddressLine\": \"Shipper_Addrline1\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFrom_name\",\r\n                \"AttentionName\": \"ShipFrom_Attn.name\",\r\n                \"CompanyDisplayableName\": \"ShipFrom_company\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"ShipFrom_Addrline1\",\r\n                    \"City\": \"BERLIN\",\r\n                    \"StateProvinceCode\": \"\",\r\n                    \"PostalCode\": \"10785\",\r\n                    \"CountryCode\": \"DE\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": \"\"\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"07\",\r\n                \"Description\": \"UPS\"\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \"Package1\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Customer Supplied Package\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"CM\",\r\n                        \"Description\": \"Centimeters\"\r\n                    },\r\n                    \"Length\": \"8\",\r\n                    \"Width\": \"2\",\r\n                    \"Height\": \"2\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"KGS\",\r\n                        \"Description\": \"Kilograms\"\r\n                    },\r\n                    \"Weight\": \"20.2\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Shipping with International Forms Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"String\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"Description of Goods\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Henry Lee Thomson\",\r\n                \"AttentionName\": \"John Smith\",\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"TaxIdentificationNumber\": \"456789\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"Address\": {\r\n                    \"AddressLine\": \"34 Queen St\",\r\n                    \"City\": \"Toronto\",\r\n                    \"StateProvinceCode\": \"ON\",\r\n                    \"PostalCode\": \"M5C2M6\",\r\n                    \"CountryCode\": \"CA\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"Happy Dog Pet Supply\",\r\n                \"AttentionName\": \"Marley Brinson\",\r\n                \"TaxIdentificationNumber\": \"458889\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"Address\": {\r\n                    \"AddressLine\": \"B.B. King Blvd.\",\r\n                    \"City\": \"Charlotte\",\r\n                    \"StateProvinceCode\": \"NC\",\r\n                    \"PostalCode\": \"28256\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"T and T Designs\",\r\n                \"AttentionName\": \"Mike\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567999\",\r\n                \"TaxIdentificationNumber\": \"456999\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"34 Queen St\",\r\n                    \"City\": \"Toronto\",\r\n                    \"StateProvinceCode\": \"ON\",\r\n                    \"PostalCode\": \"M5C2M6\",\r\n                    \"CountryCode\": \"CA\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": \" \"\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"08\",\r\n                \"Description\": \"Expedited\"\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \"International Goods\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"KGS\"\r\n                    },\r\n                    \"Weight\": \"10\"\r\n                }\r\n            },\r\n            \"ShipmentServiceOptions\": {\r\n                \"InternationalForms\": {\r\n                    \"FormType\": \"04\",\r\n                    \"FormGroupIdName\": \"NAFTA Form\",\r\n                    \"Contacts\": {\r\n                        \"SoldTo\": {\r\n                            \"Option\": \" \",\r\n                            \"Name\": \"ACME Designs\",\r\n                            \"AttentionName\": \"Wile E Coyote\",\r\n                            \"TaxIdentificationNumber\": \" \",\r\n                            \"Phone\": {\r\n                                \"Number\": \"5551479876\"\r\n                            },\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"123 Main St\",\r\n                                \"City\": \"Phoenix\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"PostalCode\": \"30076\",\r\n                                \"CountryCode\": \"US\"\r\n                            }\r\n                        },\r\n                        \"Producer\": {\r\n                            \"Option\": \" \",\r\n                            \"CompanyName\": \"Tree Service\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"678 Elm St\",\r\n                                \"City\": \"Marietta\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"PostalCode\": \"30066\",\r\n                                \"CountryCode\": \"US\"\r\n                            },\r\n                            \"Phone\": {\r\n                                \"Number\": \"5555555555\"\r\n                            },\r\n                            \"EmailAddress\": \" \",\r\n                            \"TaxIdentificationNumber\": \" \"\r\n                        }\r\n                    },\r\n                    \"Product\": {\r\n                        \"Description\": \"Today is the best day of the week\",\r\n                        \"CommodityCode\": \"12345678\",\r\n                        \"OriginCountryCode\": \"US\",\r\n                        \"JointProductionIndicator\": \" \",\r\n                        \"NetCostCode\": \"NC\",\r\n                        \"NetCostDateRange\": {\r\n                            \"BeginDate\": \"20050801\",\r\n                            \"EndDate\": \"20051015\"\r\n                        },\r\n                        \"PreferenceCriteria\": \"A\",\r\n                        \"ProducerInfo\": \"No[1]\"\r\n                    },\r\n                    \"BlanketPeriod\": {\r\n                        \"BeginDate\": \"20050115\",\r\n                        \"EndDate\": \"20050816\"\r\n                    }\r\n                }\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\"\r\n            }\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Shipping Dry Ice or Lithium Batteries Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"String\"\r\n            },\r\n            \"SubVersion\": \"1701\"\r\n        },\r\n        \"Shipment\": {\r\n            \"DGSignatoryInfo\": {\r\n                \"UploadOnlyIndicator\": \"Y\",\r\n                \"ShipperDeclaration\": \"01\",\r\n                \"Date\": \"20200112\",\r\n                \"Place\": \"GA\",\r\n                \"Title\": \"DGPaperImage\",\r\n                \"Name\": \"DGSignatory\"\r\n            },\r\n            \"Description\": \"ER1703\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_Name\",\r\n                \"AttentionName\": \"Shipper_AttentionName\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Address\": {\r\n                    \"AddressLine\": \"12380 Morris Rd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipTo_CompanyName\",\r\n                \"AttentionName\": \"ShipTo_AttentionName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567890\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"793 Foothill Blvd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFrom_CompanyName\",\r\n                \"AttentionName\": \"ShipFrom_AttentionName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567890\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"12380 Morris Rd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"Ground\"\r\n            },\r\n            \"Package\": [\r\n                {\r\n                    \"HazMatPackageInformation\": {\r\n                        \"OuterPackagingType\": \"FIBERBOARD BOX\",\r\n                        \"QValue\": \"0.1\",\r\n                        \"OverPackedIndicator\": \" \",\r\n                        \"AllPackedInOneIndicator\": \" \"\r\n                    },\r\n                    \"Description\": \"Package Description\",\r\n                    \"Packaging\": {\r\n                        \"Code\": \"02\",\r\n                        \"Description\": \"Customer Supplied Package\"\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"Length\": \"10\",\r\n                        \"Width\": \"10\",\r\n                        \"Height\": \"10\",\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"IN\",\r\n                            \"Description\": \"Inches\"\r\n                        }\r\n                    },\r\n                    \"PackageWeight\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"LBS\",\r\n                            \"Description\": \"Pounds\"\r\n                        },\r\n                        \"Weight\": \"10\"\r\n                    },\r\n                    \"PackageServiceOptions\": {\r\n                        \"HazMat\": {\r\n                            \"LocalProperShippingName\": \"Ship\",\r\n                            \"LocalTechnicalName\": \"Local\",\r\n                            \"EmergencyPhone\": \"1234567890\",\r\n                            \"ReferenceNumber\": \"12345\",\r\n                            \"HazardLabelRequired\": \"Y\",\r\n                            \"aDRPackingGroupLetter\": \"1\",\r\n                            \"PackagingTypeQuantity\": \"100\",\r\n                            \"SubRiskClass\": \"SubRisk\",\r\n                            \"aDRItemNumber\": \"1234567890\",\r\n                            \"TechnicalName\": \"Hazmat TechnicalName\",\r\n                            \"ClassDivisionNumber\": \"12345\",\r\n                            \"Quantity\": \"100.0\",\r\n                            \"UOM\": \"IN\",\r\n                            \"PackagingType\": \"Box\",\r\n                            \"IDNumber\": \"UN3480\",\r\n                            \"ProperShippingName\": \"Lithium ion batteries\",\r\n                            \"AdditionalDescription\": \"Hazmat AdditionalDescription\",\r\n                            \"PackagingGroupType\": \"III\",\r\n                            \"PackagingInstructionCode\": \"1234\",\r\n                            \"ReportableQuantity\": \"RQ\",\r\n                            \"RegulationSet\": \"CFR\",\r\n                            \"TransportationMode\": \"Ground\",\r\n                            \"CommodityRegulatedLevelCode\": \"LQ\",\r\n                            \"TransportCategory\": \"0\",\r\n                            \"TunnelRestrictionCode\": \"Nothing\",\r\n                            \"ChemicalRecordIdentifier\": \"100\"\r\n                        },\r\n                        \"PackageIdentifier\": \"123\"\r\n                    }\r\n                },\r\n                {\r\n                    \"Description\": \"DG\",\r\n                    \"NumOfPieces\": \"10\",\r\n                    \"Packaging\": {\r\n                        \"Code\": \"02\",\r\n                        \"Description\": \"desc\"\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"IN\",\r\n                            \"Description\": \"IN\"\r\n                        },\r\n                        \"Length\": \"2\",\r\n                        \"Width\": \"2\",\r\n                        \"Height\": \"2\"\r\n                    },\r\n                    \"PackageWeight\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"LBS\",\r\n                            \"Description\": \"LBS\"\r\n                        },\r\n                        \"Weight\": \"50\"\r\n                    },\r\n                    \"PackageServiceOptions\": {\r\n                        \"DryIce\": {\r\n                            \"RegulationSet\": \"CFR\",\r\n                            \"DryIceWeight\": {\r\n                                \"UnitOfMeasurement\": {\r\n                                    \"Code\": \"01\",\r\n                                    \"Description\": \"LBS\"\r\n                                },\r\n                                \"Weight\": \"50\"\r\n                            }\r\n                        },\r\n                        \"PackedByStoreIndicator\": \" \",\r\n                        \"PackageIdentifier\": \"123\"\r\n                    }\r\n                }\r\n            ]\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\"\r\n            }\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Shipping Hazmat Goods Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\"\r\n            },\r\n            \"SubVersion\": \"1701\"\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"Ship WS test\",\r\n            \"Shipper\": {\r\n                \"Name\": \"ShipperName\",\r\n                \"AttentionName\": \"ShipperZs Attn Name\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1115554758\",\r\n                    \"Extension\": \"1\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"FaxNumber\": \"8002222222\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"12380 Morris Road\",\r\n                    \"City\": \"LUTHERVILLE TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"Happy Dog Pet Supply\",\r\n                \"AttentionName\": \"1160b_74\",\r\n                \"Phone\": {\r\n                    \"Number\": \"9225377171\"\r\n                },\r\n                \"Address\": {\r\n                    \"AddressLine\": \"460 Rue du Valibout\",\r\n                    \"City\": \"SMITHFIELD\",\r\n                    \"StateProvinceCode\": \"RI\",\r\n                    \"PostalCode\": \"02917\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"T and T Designs\",\r\n                \"AttentionName\": \"1160b_74\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567890\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"12380 Morris Road\",\r\n                    \"City\": \"LUTHERVILLE TIMONIUM\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": \" \"\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"UPS Worldwide Saver\"\r\n            },\r\n            \"ItemizedChargesRequestedIndicator\": \" \",\r\n            \"Package\": {\r\n                \"Description\": \"UPS Worldwide Saver\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\"\r\n                    },\r\n                    \"Length\": \"6\",\r\n                    \"Width\": \"9\",\r\n                    \"Height\": \"7\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\"\r\n                    },\r\n                    \"Weight\": \"68\"\r\n                },\r\n                \"PackageServiceOptions\": {\r\n                    \"PackageIdentifier\": \"12380\",\r\n                    \"HazMat\": {\r\n                        \"PackagingTypeQuantity\": \"1\",\r\n                        \"SubRiskClass\": \" \",\r\n                        \"TechnicalName\": \"OXYGEN/NITROGEN\",\r\n                        \"ClassDivisionNumber\": \"2.2\",\r\n                        \"Quantity\": \"6\",\r\n                        \"UOM\": \"kg\",\r\n                        \"PackagingType\": \"Fibreboard Box\",\r\n                        \"IDNumber\": \"UN3480\",\r\n                        \"ProperShippingName\": \"Lithium Ion Batteries\",\r\n                        \"PackagingGroupType\": \" \",\r\n                        \"PackagingInstructionCode\": \"Pack\",\r\n                        \"EmergencyPhone\": \"9253702575\",\r\n                        \"EmergencyContact\": \"Shipping Dept.\",\r\n                        \"RegulationSet\": \"CFR\",\r\n                        \"TransportationMode\": \"CAO\",\r\n                        \"CommodityRegulatedLevelCode\": \"FR\",\r\n                        \"TransportCategory\": \"xyz\",\r\n                        \"TunnelRestrictionCode\": \"xyz\",\r\n                        \"ChemicalRecordIdentifier\": \"40\"\r\n                    }\r\n                }\r\n            },\r\n            \"NumOfPiecesInShipment\": \"10000\"\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\",\r\n                \"Description\": \"GIF\"\r\n            },\r\n            \"HTTPUserAgent\": \"Mozilla/4.5\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Billing Third Party Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"SubVersion\": \"1901\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \" \"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"Payments\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_name\",\r\n                \"AttentionName\": \"Shipper_name\",\r\n                \"CompanyDisplayableName\": \"Shipper_name\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"FaxNumber\": \"1234\",\r\n                \"EMailAddress\": \" \",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipperAddress\",\r\n                        \"ShipperAddress\",\r\n                        \"ShipperAddress\"\r\n                    ],\r\n                    \"City\": \"01-222 Warszawa\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"1222\",\r\n                    \"CountryCode\": \"PL\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipToName\",\r\n                \"AttentionName\": \"ShipToName\",\r\n                \"CompanyDisplayableName\": \"ShipToName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"FaxNumber\": \"1234\",\r\n                \"EMailAddress\": \" \",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipToAddress\",\r\n                        \"ShipToAddress\",\r\n                        \"ShipToAddress\"\r\n                    ],\r\n                    \"City\": \"01-222 Warszawa\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"1222\",\r\n                    \"CountryCode\": \"PL\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"AttentionName\": \"ShipFromName\",\r\n                \"CompanyDisplayableName\": \"ShipFromName\",\r\n                \"TaxIdentificationNumber\": \"1234\",\r\n                \"TaxIDType\": {\r\n                    \"Code\": \"EIN\",\r\n                    \"Description\": \"EIN\"\r\n                },\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"ShipFromAccountNumber\": \" \",\r\n                \"FaxNumber\": \"1234\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"ShipFromAddress\",\r\n                        \"ShipFromAddress\",\r\n                        \"ShipFromAddress\"\r\n                    ],\r\n                    \"City\": \"01-222 Warszawa\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"1222\",\r\n                    \"CountryCode\": \"PL\"\r\n                },\r\n                \"EMailAddress\": \" \"\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillThirdParty\": {\r\n                        \"AccountNumber\": \" \",\r\n                        \"Name\": \" \",\r\n                        \"AttentionName\": \" \",\r\n                        \"VatTaxID\": \"1234AB\",\r\n                        \"TaxIDType\": \"01\",\r\n                        \"CertifiedElectronicMail\": \"abc@123.123\",\r\n                        \"InterchangeSystemCode\": \"SDI\",\r\n                        \"SuppressPrintInvoiceIndicator\": \" \",\r\n                        \"Address\": {\r\n                            \"AddressLine\": \" \",\r\n                            \"City\": \" \",\r\n                            \"StateProvinceCode\": \" \",\r\n                            \"PostalCode\": \"30005\",\r\n                            \"CountryCode\": \"US\"\r\n                        }\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"011\",\r\n                \"Description\": \"Standard\"\r\n            },\r\n            \"InvoiceLineTotal\": {\r\n                \"CurrencyCode\": \"USD\",\r\n                \"MonetaryValue\": \"10\"\r\n            },\r\n            \"NumOfPiecesInShipment\": \"1\",\r\n            \"USPSEndorsement\": \"5\",\r\n            \"CostCenter\": \"123\",\r\n            \"PackageID\": \"1\",\r\n            \"InformationSourceCode\": \"A3\",\r\n            \"ShipmentServiceOptions\": \"            \",\r\n            \"Package\": {\r\n                \"Description\": \"IF\",\r\n                \"NumOfPieces\": \"10\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"desc\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"CM\",\r\n                        \"Description\": \"CM\"\r\n                    },\r\n                    \"Length\": \"2\",\r\n                    \"Width\": \"2\",\r\n                    \"Height\": \"3\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"KGS\",\r\n                        \"Description\": \"LBS\"\r\n                    },\r\n                    \"Weight\": \"50\"\r\n                }\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\",\r\n                \"Description\": \"GIF\"\r\n            }\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Multi-Piece Shipping Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"SubVersion\": \"1701\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"?\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Package\": [\r\n                {\r\n                    \"PackageWeight\": {\r\n                        \"Weight\": \"50\",\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Description\": \"desc\",\r\n                            \"Code\": \"LBS\"\r\n                        }\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"Height\": \"2\",\r\n                        \"Width\": \"2\",\r\n                        \"Length\": \"02\",\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Description\": \"desc\",\r\n                            \"Code\": \"IN\"\r\n                        }\r\n                    },\r\n                    \"Packaging\": {\r\n                        \"Description\": \"desc\",\r\n                        \"Code\": \"02\"\r\n                    },\r\n                    \"Description\": \"desc\"\r\n                },\r\n                {\r\n                    \"PackageWeight\": {\r\n                        \"Weight\": \"50\",\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Description\": \"desc\",\r\n                            \"Code\": \"LBS\"\r\n                        }\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"Height\": \"2\",\r\n                        \"Width\": \"2\",\r\n                        \"Length\": \"02\",\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Description\": \"desc\",\r\n                            \"Code\": \"IN\"\r\n                        }\r\n                    },\r\n                    \"Packaging\": {\r\n                        \"Description\": \"desc\",\r\n                        \"Code\": \"02\"\r\n                    },\r\n                    \"Description\": \"desc\"\r\n                },\r\n                {\r\n                    \"Description\": \"desc\",\r\n                    \"Packaging\": {\r\n                        \"Code\": \"02\",\r\n                        \"Description\": \"desc\"\r\n                    },\r\n                    \"Dimensions\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"IN\",\r\n                            \"Description\": \"desc\"\r\n                        },\r\n                        \"Length\": \"02\",\r\n                        \"Width\": \"2\",\r\n                        \"Height\": \"2\"\r\n                    },\r\n                    \"PackageWeight\": {\r\n                        \"UnitOfMeasurement\": {\r\n                            \"Code\": \"LBS\",\r\n                            \"Description\": \"desc\"\r\n                        },\r\n                        \"Weight\": \"50\"\r\n                    }\r\n                }\r\n            ],\r\n            \"Description\": \"UPS Premier\",\r\n            \"Shipper\": {\r\n                \"Name\": \"ShipperName\",\r\n                \"AttentionName\": \"GA\",\r\n                \"CompanyDisplayableName\": \"GA\",\r\n                \"TaxIdentificationNumber\": \"12345\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"12\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"FaxNumber\": \"2134\",\r\n                \"EMailAddress\": \" \",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"address\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ship\",\r\n                \"AttentionName\": \"GA\",\r\n                \"CompanyDisplayableName\": \"GA\",\r\n                \"TaxIdentificationNumber\": \"1234\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"12\"\r\n                },\r\n                \"FaxNumber\": \"1234\",\r\n                \"EMailAddress\": \" \",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"AddressLine\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\",\r\n                    \"ResidentialAddressIndicator\": \"Y\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ship\",\r\n                \"AttentionName\": \"GA\",\r\n                \"CompanyDisplayableName\": \"ShipFrom_CompanyDisplayableName\",\r\n                \"TaxIdentificationNumber\": \"5555555555\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"12\"\r\n                },\r\n                \"FaxNumber\": \"5555555555\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"AddressLine\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                },\r\n                \"EMailAddress\": \" \"\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"01\",\r\n                \"Description\": \"desc\"\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"ZPL\",\r\n                \"Description\": \"desc\"\r\n            },\r\n            \"HTTPUserAgent\": \"Mozilla/4.5\",\r\n            \"LabelStockSize\": {\r\n                \"Height\": \"6\",\r\n                \"Width\": \"4\"\r\n            }\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Ship to a UPS Access Point Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"String\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"D2R shipments\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper Name\",\r\n                \"AttentionName\": \"Attn. Name\",\r\n                \"CompanyDisplayableName\": \"Shipper company\",\r\n                \"TaxIdentificationNumber\": \"456789\",\r\n                \"Phone\": {\r\n                    \"Number\": \"5555555555\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"EMailAddress\": \" \",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"AddressLine1\",\r\n                    \"City\": \"BOLTON\",\r\n                    \"StateProvinceCode\": \"ON\",\r\n                    \"PostalCode\": \"20999\",\r\n                    \"CountryCode\": \"DE\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipTo Name\",\r\n                \"AttentionName\": \"ShipTo Attn. Name\",\r\n                \"CompanyDisplayableName\": \"ShipTo Company\",\r\n                \"Phone\": {\r\n                    \"Number\": \"6787462345\"\r\n                },\r\n                \"EMailAddress\": \" \",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"Morris Rd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"ON\",\r\n                    \"PostalCode\": \"L7E5C1\",\r\n                    \"CountryCode\": \"CA\"\r\n                }\r\n            },\r\n            \"AlternateDeliveryAddress\": {\r\n                \"AttentionName\": \"Attn. Name\",\r\n                \"Name\": \"Alt. Name\",\r\n                \"UPSAccessPointID\": \"GB00088\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"Morris RD\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"ON\",\r\n                    \"PostalCode\": \"20999\",\r\n                    \"CountryCode\": \"DE\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFrom Name\",\r\n                \"AttentionName\": \"ShipFrom Attn. Name\",\r\n                \"CompanyDisplayableName\": \"ShipFrom company\",\r\n                \"Phone\": {\r\n                    \"Number\": \"6787463456\"\r\n                },\r\n                \"ShipFromAccountNumber\": \" \",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"Old Alpharetta rd\",\r\n                    \"City\": \"BOLTON\",\r\n                    \"StateProvinceCode\": \"ON\",\r\n                    \"PostalCode\": \"20999\",\r\n                    \"CountryCode\": \"DE\"\r\n                },\r\n                \"EMailAddress\": \" \"\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": \" \"\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"11\",\r\n                \"Description\": \"Express\"\r\n            },\r\n            \"ShipmentIndicationType\": {\r\n                \"Code\": \"01\",\r\n                \"Description\": \"D2R shipment\"\r\n            },\r\n            \"ShipmentServiceOptions\": {\r\n                \"Notification\": {\r\n                    \"NotificationCode\": \"012\",\r\n                    \"EMail\": {\r\n                        \"EMailAddress\": \" \"\r\n                    },\r\n                    \"VoiceMessage\": {\r\n                        \"PhoneNumber\": \"5555555555\"\r\n                    },\r\n                    \"TextMessage\": {\r\n                        \"PhoneNumber\": \"5555555555\"\r\n                    },\r\n                    \"Locale\": {\r\n                        \"Language\": \"ENG\",\r\n                        \"Dialect\": \"US\"\r\n                    }\r\n                }\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \"D2R shipment\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"D2R package\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"CM\",\r\n                        \"Description\": \"Centemeters\"\r\n                    },\r\n                    \"Length\": \"5\",\r\n                    \"Width\": \"6\",\r\n                    \"Height\": \"7\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"KGS\",\r\n                        \"Description\": \"Kilograms\"\r\n                    },\r\n                    \"Weight\": \"15\"\r\n                },\r\n                \"PackageServiceOptions\": {\r\n                    \"DeclaredValue\": {\r\n                        \"Type\": {\r\n                            \"Code\": \"01\",\r\n                            \"Description\": \"Declared value\"\r\n                        },\r\n                        \"CurrencyCode\": \"EUR\",\r\n                        \"MonetaryValue\": \"10.30\"\r\n                    }\r\n                }\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\"\r\n            },\r\n            \"LabelStockSize\": {\r\n                \"Height\": \"6\",\r\n                \"Width\": \"4\"\r\n            }\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "World Wide Economy Shipping Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"SubVersion\": \"2108\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"Worldwide econmoy Parcel\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_name\",\r\n                \"AttentionName\": \"UPS\",\r\n                \"CompanyDisplayableName\": \"Shipper_name\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"FaxNumber\": \"1234\",\r\n                \"EMailAddress\": \"\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"2311 York Rd\",\r\n                        \"2311 York Rd\",\r\n                        \"2311 York Rd\"\r\n                    ],\r\n                    \"City\": \"Lutherville Timonium\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"Happy Dog Pet Supply\",\r\n                \"AttentionName\": \"ShipToName\",\r\n                \"CompanyDisplayableName\": \"ShipToName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"FaxNumber\": \"1234\",\r\n                \"EMailAddress\": \"\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"12380 Morris Road\",\r\n                        \"12380 Morris Road\",\r\n                        \"12380 Morris Road\"\r\n                    ],\r\n                    \"City\": \"STARZACH\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"72181\",\r\n                    \"CountryCode\": \"DE\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"UPS\",\r\n                \"AttentionName\": \"ShipFromName\",\r\n                \"CompanyDisplayableName\": \"ShipFromName\",\r\n                \"TaxIdentificationNumber\": \"1234\",\r\n                \"TaxIDType\": {\r\n                    \"Code\": \"EIN\",\r\n                    \"Description\": \"EIN\"\r\n                },\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"ShipFromAccountNumber\": \"\",\r\n                \"FaxNumber\": \"1234\",\r\n                \"Address\": {\r\n                    \"AddressLine\": [\r\n                        \"2311 York Rd\",\r\n                        \"2311 York Rd\",\r\n                        \"2311 York Rd\"\r\n                    ],\r\n                    \"City\": \"Lutherville Timonium\",\r\n                    \"StateProvinceCode\": \"MD\",\r\n                    \"PostalCode\": \"21093\",\r\n                    \"CountryCode\": \"US\"\r\n                },\r\n                \"EMailAddress\": \"\"\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": \"\"\r\n                    }\r\n                }\r\n            },\r\n            \"ShipmentRatingOptions\": {\r\n                \"NegotiatedRatesIndicator\": \"Y\"\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"072\",\r\n                \"Description\": \"UPS Worldwide Economy DDP\"\r\n            },\r\n            \"NumOfPiecesInShipment\": \"\",\r\n            \"ShipmentValueThresholdCode\": \"\",\r\n            \"ShipmentServiceOptions\": {\r\n                \"Notification\": {\r\n                    \"NotificationCode\": \"6\",\r\n                    \"EMail\": {\r\n                        \"EMailAddress\": \"emailAddressHere\",\r\n                        \"UndeliverableEMailAddress\": \"emailAddressHere\",\r\n                        \"FromEMailAddress\": \"emailAddressHere\",\r\n                        \"FromName\": \"\",\r\n                        \"Memo\": \"1905\"\r\n                    }\r\n                },\r\n                \"MasterCartonIndicator\": \"Y\"\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \"Worldwide econmoy Postal\",\r\n                \"NumOfPieces\": \"10\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Customer Supplied Package\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"IN\"\r\n                    },\r\n                    \"Length\": \"10\",\r\n                    \"Width\": \"10\",\r\n                    \"Height\": \"10\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\",\r\n                        \"Description\": \"Pounds\"\r\n                    },\r\n                    \"Weight\": \"0.1\"\r\n                }\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\",\r\n                \"Description\": \"GIF\"\r\n            },\r\n            \"HTTPUserAgent\": \"Mozilla/4.5\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Proactive Response Shipping Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"String\"\r\n            },\r\n            \"SubVersion\": \"1701\"\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"1701\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_Name\",\r\n                \"AttentionName\": \"Shipper_AttentionName\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"Address\": {\r\n                    \"AddressLine\": \"12380 Morris Rd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipTo_CompanyName\",\r\n                \"AttentionName\": \"ShipTo_AttentionName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567890\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"793 Foothill Blvd\",\r\n                    \"City\": \"San Luis Obispo\",\r\n                    \"StateProvinceCode\": \"CA\",\r\n                    \"PostalCode\": \"93405\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFrom_CompanyName\",\r\n                \"AttentionName\": \"ShipFrom_AttentionName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\"\r\n                },\r\n                \"FaxNumber\": \"1234567890\",\r\n                \"TaxIdentificationNumber\": \"123456\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"12380 Morris Rd\",\r\n                    \"City\": \"Alpharetta\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"30005\",\r\n                    \"CountryCode\": \"US\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": {{shipper_number}}\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"03\",\r\n                \"Description\": \"Ground\"\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \"Package Description\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"02\",\r\n                    \"Description\": \"Customer Supplied Package\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"IN\",\r\n                        \"Description\": \"Inches\"\r\n                    },\r\n                    \"Length\": \"10\",\r\n                    \"Width\": \"10\",\r\n                    \"Height\": \"10\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"LBS\"\r\n                    },\r\n                    \"Weight\": \"1\"\r\n                },\r\n                \"PackageServiceOptions\": {\r\n                    \"ProactiveIndicator\": \"X\"\r\n                }\r\n            }\r\n        },\r\n        \"LabelSpecification\": {\r\n            \"LabelImageFormat\": {\r\n                \"Code\": \"GIF\"\r\n            }\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Shipping with EEI Form Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"SubVersion\": \"1901\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"IF\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_name\",\r\n                \"AttentionName\": \"Shipper_name\",\r\n                \"CompanyDisplayableName\": \"Shipper_name\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"ShipperNumber\": {{testAccount}},\r\n                \"FaxNumber\": \"8002222222\",\r\n                \"EMailAddress\": \"\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2 South Main Street\",\r\n                    \"City\": \"LONDON\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"TW59NR\",\r\n                    \"CountryCode\": \"GB\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipToName\",\r\n                \"AttentionName\": \"ShipToName\",\r\n                \"CompanyDisplayableName\": \"ShipToName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"FaxNumber\": \"1234\",\r\n                \"EMailAddress\": \"\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"103 Avenue des Champs-Élysées\",\r\n                    \"City\": \"Paris\",\r\n                    \"StateProvinceCode\": \"\",\r\n                    \"PostalCode\": \"75008\",\r\n                    \"CountryCode\": \"FR\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"AttentionName\": \"ShipFromName\",\r\n                \"CompanyDisplayableName\": \"ShipFromName\",\r\n                \"TaxIdentificationNumber\": \"1234\",\r\n                \"TaxIDType\": {\r\n                    \"Code\": \"EIN\",\r\n                    \"Description\": \"IF\"\r\n                },\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"FaxNumber\": \"1234\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2 South Main Street\",\r\n                    \"City\": \"TW59NR\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"TW59NR\",\r\n                    \"CountryCode\": \"GB\"\r\n                },\r\n                \"EMailAddress\": \"\",\r\n                \"VendorInfo\": {\r\n                    \"VendorCollectIDTypeCode\": \"0356\",\r\n                    \"VendorCollectIDNumber\": \"IMDEU1234567\",\r\n                    \"ConsigneeType\": \"01\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": \"{{testAccount}}\"\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"96\",\r\n                \"Description\": \"IF\"\r\n            },\r\n            \"InvoiceLineTotal\": {\r\n                \"CurrencyCode\": \"USD\",\r\n                \"MonetaryValue\": \"10\"\r\n            },\r\n            \"NumOfPiecesInShipment\": \"1\",\r\n            \"ShipmentServiceOptions\": {\r\n                \"InternationalForms\": {\r\n                    \"FormType\": [\r\n                        \"11\",\r\n                        \"01\"\r\n                    ],\r\n                    \"CN22Form\": {\r\n                        \"LabelSize\": \"6\",\r\n                        \"PrintsPerPage\": \"1\",\r\n                        \"LabelPrintType\": \"pdf\",\r\n                        \"CN22Type\": \"1\",\r\n                        \"CN22OtherDescription\": \"test cn22\",\r\n                        \"FoldHereText\": \"fold\",\r\n                        \"CN22Content\": {\r\n                            \"CN22ContentQuantity\": \"300\",\r\n                            \"CN22ContentDescription\": \"desc\",\r\n                            \"CN22ContentWeight\": {\r\n                                \"UnitOfMeasurement\": {\r\n                                    \"Code\": \"LBS\",\r\n                                    \"Description\": \"LBS\"\r\n                                },\r\n                                \"Weight\": \"70\"\r\n                            },\r\n                            \"CN22ContentTotalValue\": \"2\",\r\n                            \"CN22ContentCurrencyCode\": \"USD\",\r\n                            \"CN22ContentCountryOfOrigin\": \"US\",\r\n                            \"CN22ContentTariffNumber\": \"4565655\"\r\n                        }\r\n                    },\r\n                    \"FormGroupIdName\": \"Invoice\",\r\n                    \"SEDFilingOption\": \"\",\r\n                    \"EEIFilingOption\": {\r\n                        \"Code\": \"1\",\r\n                        \"EMailAddress\": \"\",\r\n                        \"Description\": \"EEI\",\r\n                        \"UPSFiled\": {\r\n                            \"POA\": {\r\n                                \"Code\": \"1\",\r\n                                \"Description\": \"POA\"\r\n                            }\r\n                        },\r\n                        \"ShipperFiled\": {\r\n                            \"Code\": \"B\",\r\n                            \"Description\": \"ShipperFiled\",\r\n                            \"PreDepartureITNNumber\": \"\",\r\n                            \"ExemptionLegend\": \"30.2(d)(2)\",\r\n                            \"EEIShipmentReferenceNumber\": \"1234\"\r\n                        }\r\n                    },\r\n                    \"Contacts\": {\r\n                        \"ForwardAgent\": {\r\n                            \"CompanyName\": \"UPS\",\r\n                            \"TaxIdentificationNumber\": \"94-308351500\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"AddressLine\",\r\n                                \"City\": \"Alpharetta\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"Town\": \"Town\",\r\n                                \"PostalCode\": \"30005\",\r\n                                \"CountryCode\": \"US\"\r\n                            }\r\n                        },\r\n                        \"UltimateConsignee\": {\r\n                            \"CompanyName\": \"UPS\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"Address\",\r\n                                \"City\": \"Alpharetta\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"Town\": \"TOWN\",\r\n                                \"PostalCode\": \"30005\",\r\n                                \"CountryCode\": \"US\"\r\n                            },\r\n                            \"UltimateConsigneeType\": {\r\n                                \"Code\": \"D\",\r\n                                \"Description\": \"Direct Consumer\"\r\n                            }\r\n                        },\r\n                        \"Producer\": {\r\n                            \"Option\": \"\",\r\n                            \"CompanyName\": \"ProducerCompanyName\",\r\n                            \"TaxIdentificationNumber\": \"1234\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"Address\",\r\n                                \"City\": \"Marietta\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"Town\": \"Town\",\r\n                                \"PostalCode\": \"166222\",\r\n                                \"CountryCode\": \"CA\"\r\n                            },\r\n                            \"AttentionName\": \"Name\",\r\n                            \"Phone\": {\r\n                                \"Number\": \"1234567890\",\r\n                                \"Extension\": \"1234\"\r\n                            },\r\n                            \"EMailAddress\": \"\"\r\n                        },\r\n                        \"SoldTo\": {\r\n                            \"Name\": \"ACME Designs\",\r\n                            \"AttentionName\": \"ACME Designs\",\r\n                            \"TaxIdentificationNumber\": \"1234\",\r\n                            \"Phone\": {\r\n                                \"Number\": \"1234567890\",\r\n                                \"Extension\": \"1234\"\r\n                            },\r\n                            \"Option\": \"01\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"103 Avenue des Champs-Élysées\",\r\n                                \"City\": \"Paris\",\r\n                                \"StateProvinceCode\": \"\",\r\n                                \"PostalCode\": \"75008\",\r\n                                \"CountryCode\": \"FR\"\r\n                            },\r\n                            \"EMailAddress\": \"\"\r\n                        }\r\n                    },\r\n                    \"Product\": {\r\n                        \"Description\": \"Widgets\",\r\n                        \"Unit\": {\r\n                            \"Number\": \"1\",\r\n                            \"UnitOfMeasurement\": {\r\n                                \"Code\": \"KGS\",\r\n                                \"Description\": \"LBS\"\r\n                            },\r\n                            \"Value\": \"1\"\r\n                        },\r\n                        \"CommodityCode\": \"12345679\",\r\n                        \"PartNumber\": \"1234\",\r\n                        \"OriginCountryCode\": \"US\",\r\n                        \"JointProductionIndicator\": \"\",\r\n                        \"NetCostCode\": \"NC\",\r\n                        \"NetCostDateRange\": {\r\n                            \"BeginDate\": \"20220115\",\r\n                            \"EndDate\": \"20220816\"\r\n                        },\r\n                        \"PreferenceCriteria\": \"A\",\r\n                        \"ProducerInfo\": \"Yes\",\r\n                        \"MarksAndNumbers\": \"1\",\r\n                        \"NumberOfPackagesPerCommodity\": \"1\",\r\n                        \"ProductWeight\": {\r\n                            \"UnitOfMeasurement\": {\r\n                                \"Code\": \"KGS\",\r\n                                \"Description\": \"Description\"\r\n                            },\r\n                            \"Weight\": \"10\"\r\n                        },\r\n                        \"ScheduleB\": {\r\n                            \"Number\": \"12345\",\r\n                            \"Quantity\": \"5\",\r\n                            \"UnitOfMeasurement\": {\r\n                                \"Code\": \"PCS\",\r\n                                \"Description\": \"PCS\"\r\n                            }\r\n                        },\r\n                        \"ExportType\": \"D\",\r\n                        \"SEDTotalValue\": \"123.45\",\r\n                        \"PackingListInfo\": {\r\n                            \"PackageAssociated\": {\r\n                                \"PackageNumber\": \"01\",\r\n                                \"ProductAmount\": \"147\"\r\n                            }\r\n                        },\r\n                        \"EEIInformation\": {\r\n                            \"ExportInformation\": \"OS\",\r\n                            \"License\": {\r\n                                \"Number\": \"123.16B2\",\r\n                                \"Code\": \"C30\",\r\n                                \"LicenseLineValue\": \"\",\r\n                                \"ECCNNumber\": \"EAR99\"\r\n                            }\r\n                        }\r\n                    },\r\n                    \"InvoiceNumber\": \"asdf123\",\r\n                    \"InvoiceDate\": \"20130410\",\r\n                    \"PurchaseOrderNumber\": \"999jjj777\",\r\n                    \"TermsOfShipment\": \"CFR\",\r\n                    \"ReasonForExport\": \"Sale\",\r\n                    \"Comments\": \"Enter in any extra information about the current shipment.\",\r\n                    \"Discount\": {\r\n                        \"MonetaryValue\": \"100\"\r\n                    },\r\n                    \"FreightCharges\": {\r\n                        \"MonetaryValue\": \"75\"\r\n                    },\r\n                    \"InsuranceCharges\": {\r\n                        \"MonetaryValue\": \"789\"\r\n                    },\r\n                    \"OtherCharges\": {\r\n                        \"MonetaryValue\": \"10\",\r\n                        \"Description\": \"10\"\r\n                    },\r\n                    \"CurrencyCode\": \"USD\",\r\n                    \"BlanketPeriod\": {\r\n                        \"BeginDate\": \"20130420\",\r\n                        \"EndDate\": \"20130430\"\r\n                    },\r\n                    \"ExportDate\": \"20210406\",\r\n                    \"ExportingCarrier\": \"A\",\r\n                    \"CarrierID\": \"IATA\",\r\n                    \"InBondCode\": \"70\",\r\n                    \"EntryNumber\": \"1A34567876545360\",\r\n                    \"PointOfOrigin\": \"MS\",\r\n                    \"PointOfOriginType\": \"S\",\r\n                    \"ModeOfTransport\": \"Rail\",\r\n                    \"PortOfExport\": \"Overland\",\r\n                    \"PortOfUnloading\": \"Germany\",\r\n                    \"LoadingPier\": \"Pier 17 Dock 31\",\r\n                    \"PartiesToTransaction\": \"N\",\r\n                    \"License\": {\r\n                        \"Number\": \"\",\r\n                        \"Date\": \"\",\r\n                        \"ExceptionCode\": \"\"\r\n                    },\r\n                    \"ECCNNumber\": \"\"\r\n                }\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \"IF\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"30\",\r\n                    \"Description\": \"IF\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"CM\",\r\n                        \"Description\": \"IF\"\r\n                    },\r\n                    \"Length\": \"50\",\r\n                    \"Width\": \"37\",\r\n                    \"Height\": \"40\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"KGS\",\r\n                        \"Description\": \"IF\"\r\n                    },\r\n                    \"Weight\": \"50\"\r\n                }\r\n            },\r\n            \"USPSEndorsement\": \"\",\r\n            \"CostCenter\": \"123\",\r\n            \"PackageID\": \"\",\r\n            \"InformationSourceCode\": \"\",\r\n            \"ShipmentValueThresholdCode\": \"01\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Shipping with Tax ID Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ShipmentRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": \"nonvalidate\",\r\n            \"SubVersion\": \"1901\",\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\",\r\n                \"TransactionIdentifier\": \"\"\r\n            }\r\n        },\r\n        \"Shipment\": {\r\n            \"Description\": \"IF\",\r\n            \"Shipper\": {\r\n                \"Name\": \"Shipper_name\",\r\n                \"AttentionName\": \"Shipper_name\",\r\n                \"CompanyDisplayableName\": \"Shipper_name\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"ShipperNumber\": {{shipper_number}},\r\n                \"FaxNumber\": \"8002222222\",\r\n                \"EMailAddress\": \"\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2 South Main Street\",\r\n                    \"City\": \"LONDON\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"TW59NR\",\r\n                    \"CountryCode\": \"GB\"\r\n                }\r\n            },\r\n            \"ShipTo\": {\r\n                \"Name\": \"ShipToName\",\r\n                \"AttentionName\": \"ShipToName\",\r\n                \"CompanyDisplayableName\": \"ShipToName\",\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"FaxNumber\": \"1234\",\r\n                \"EMailAddress\": \"\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2311 York Rd\",\r\n                    \"City\": \"STARZACH\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"72181\",\r\n                    \"CountryCode\": \"DE\"\r\n                }\r\n            },\r\n            \"ShipFrom\": {\r\n                \"Name\": \"ShipFromName\",\r\n                \"AttentionName\": \"ShipFromName\",\r\n                \"CompanyDisplayableName\": \"ShipFromName\",\r\n                \"TaxIdentificationNumber\": \"1234\",\r\n                \"TaxIDType\": {\r\n                    \"Code\": \"EIN\",\r\n                    \"Description\": \"IF\"\r\n                },\r\n                \"Phone\": {\r\n                    \"Number\": \"1234567890\",\r\n                    \"Extension\": \"1234\"\r\n                },\r\n                \"FaxNumber\": \"1234\",\r\n                \"Address\": {\r\n                    \"AddressLine\": \"2 South Main Street\",\r\n                    \"City\": \"TW59NR\",\r\n                    \"StateProvinceCode\": \"GA\",\r\n                    \"PostalCode\": \"TW59NR\",\r\n                    \"CountryCode\": \"GB\"\r\n                },\r\n                \"EMailAddress\": \"\",\r\n                \"VendorInfo\": {\r\n                    \"VendorCollectIDTypeCode\": \"0356\",\r\n                    \"VendorCollectIDNumber\": \"IMDEU1234567\",\r\n                    \"ConsigneeType\": \"01\"\r\n                }\r\n            },\r\n            \"PaymentInformation\": {\r\n                \"ShipmentCharge\": {\r\n                    \"Type\": \"01\",\r\n                    \"BillShipper\": {\r\n                        \"AccountNumber\": \"AccountNumber\"\r\n                    }\r\n                }\r\n            },\r\n            \"Service\": {\r\n                \"Code\": \"96\",\r\n                \"Description\": \"IF\"\r\n            },\r\n            \"InvoiceLineTotal\": {\r\n                \"CurrencyCode\": \"USD\",\r\n                \"MonetaryValue\": \"10\"\r\n            },\r\n            \"NumOfPiecesInShipment\": \"1\",\r\n            \"ShipmentServiceOptions\": {\r\n                \"InternationalForms\": {\r\n                    \"FormType\": \"01\",\r\n                    \"CN22Form\": {\r\n                        \"LabelSize\": \"6\",\r\n                        \"PrintsPerPage\": \"1\",\r\n                        \"LabelPrintType\": \"pdf\",\r\n                        \"CN22Type\": \"1\",\r\n                        \"CN22OtherDescription\": \"test cn22\",\r\n                        \"FoldHereText\": \"fold\",\r\n                        \"CN22Content\": {\r\n                            \"CN22ContentQuantity\": \"300\",\r\n                            \"CN22ContentDescription\": \"desc\",\r\n                            \"CN22ContentWeight\": {\r\n                                \"UnitOfMeasurement\": {\r\n                                    \"Code\": \"LBS\",\r\n                                    \"Description\": \"LBS\"\r\n                                },\r\n                                \"Weight\": \"70\"\r\n                            },\r\n                            \"CN22ContentTotalValue\": \"2\",\r\n                            \"CN22ContentCurrencyCode\": \"USD\",\r\n                            \"CN22ContentCountryOfOrigin\": \"US\",\r\n                            \"CN22ContentTariffNumber\": \"4565655\"\r\n                        }\r\n                    },\r\n                    \"FormGroupIdName\": \"Invoice\",\r\n                    \"SEDFilingOption\": \"\",\r\n                    \"EEIFilingOption\": {\r\n                        \"Code\": \"1\",\r\n                        \"EMailAddress\": \"\",\r\n                        \"Description\": \"EEI\",\r\n                        \"UPSFiled\": {\r\n                            \"POA\": {\r\n                                \"Code\": \"1\",\r\n                                \"Description\": \"POA\"\r\n                            }\r\n                        },\r\n                        \"ShipperFiled\": {\r\n                            \"Code\": \"B\",\r\n                            \"Description\": \"ShipperFiled\",\r\n                            \"PreDepartureITNNumber\": \"\",\r\n                            \"ExemptionLegend\": \"\",\r\n                            \"EEIShipmentReferenceNumber\": \"1234\"\r\n                        }\r\n                    },\r\n                    \"Contacts\": {\r\n                        \"ForwardAgent\": {\r\n                            \"CompanyName\": \"UPS\",\r\n                            \"TaxIdentificationNumber\": \"12345\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"AddressLine\",\r\n                                \"City\": \"Alpharetta\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"Town\": \"Town\",\r\n                                \"PostalCode\": \"30005\",\r\n                                \"CountryCode\": \"US\"\r\n                            }\r\n                        },\r\n                        \"UltimateConsignee\": {\r\n                            \"CompanyName\": \"UPS\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"Address\",\r\n                                \"City\": \"Alpharetta\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"Town\": \"TOWN\",\r\n                                \"PostalCode\": \"30005\",\r\n                                \"CountryCode\": \"US\"\r\n                            },\r\n                            \"UltimateConsigneeType\": {\r\n                                \"Code\": \"D\",\r\n                                \"Description\": \"Direct Consumer\"\r\n                            }\r\n                        },\r\n                        \"Producer\": {\r\n                            \"Option\": \"\",\r\n                            \"CompanyName\": \"ProducerCompanyName\",\r\n                            \"TaxIdentificationNumber\": \"1234\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"Address\",\r\n                                \"City\": \"Marietta\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"Town\": \"Town\",\r\n                                \"PostalCode\": \"166222\",\r\n                                \"CountryCode\": \"CA\"\r\n                            },\r\n                            \"AttentionName\": \"Name\",\r\n                            \"Phone\": {\r\n                                \"Number\": \"1234567890\",\r\n                                \"Extension\": \"1234\"\r\n                            },\r\n                            \"EMailAddress\": \"\"\r\n                        },\r\n                        \"SoldTo\": {\r\n                            \"Name\": \"ACME Designs\",\r\n                            \"AttentionName\": \"ACME Designs\",\r\n                            \"TaxIdentificationNumber\": \"1234\",\r\n                            \"Phone\": {\r\n                                \"Number\": \"1234567890\",\r\n                                \"Extension\": \"1234\"\r\n                            },\r\n                            \"Option\": \"01\",\r\n                            \"Address\": {\r\n                                \"AddressLine\": \"Address\",\r\n                                \"City\": \"STARZACH\",\r\n                                \"StateProvinceCode\": \"GA\",\r\n                                \"Town\": \"town\",\r\n                                \"PostalCode\": \"72181\",\r\n                                \"CountryCode\": \"DE\"\r\n                            },\r\n                            \"EMailAddress\": \"\"\r\n                        }\r\n                    },\r\n                    \"Product\": {\r\n                        \"Description\": \"Description\",\r\n                        \"Unit\": {\r\n                            \"Number\": \"1\",\r\n                            \"UnitOfMeasurement\": {\r\n                                \"Code\": \"KGS\",\r\n                                \"Description\": \"LBS\"\r\n                            },\r\n                            \"Value\": \"1\"\r\n                        },\r\n                        \"CommodityCode\": \"12345679\",\r\n                        \"PartNumber\": \"1234\",\r\n                        \"OriginCountryCode\": \"US\",\r\n                        \"JointProductionIndicator\": \"\",\r\n                        \"NetCostCode\": \"NC\",\r\n                        \"NetCostDateRange\": {\r\n                            \"BeginDate\": \"20110115\",\r\n                            \"EndDate\": \"20110816\"\r\n                        },\r\n                        \"PreferenceCriteria\": \"A\",\r\n                        \"ProducerInfo\": \"Yes\",\r\n                        \"MarksAndNumbers\": \"1\",\r\n                        \"NumberOfPackagesPerCommodity\": \"1\",\r\n                        \"ProductWeight\": {\r\n                            \"UnitOfMeasurement\": {\r\n                                \"Code\": \"KGS\",\r\n                                \"Description\": \"Desc\"\r\n                            },\r\n                            \"Weight\": \"10\"\r\n                        },\r\n                        \"ScheduleB\": {\r\n                            \"Number\": \"12345\",\r\n                            \"Quantity\": \"5\",\r\n                            \"UnitOfMeasurement\": {\r\n                                \"Code\": \"PCS\",\r\n                                \"Description\": \"PCS\"\r\n                            }\r\n                        },\r\n                        \"ExportType\": \"D\",\r\n                        \"SEDTotalValue\": \"123.45\",\r\n                        \"PackingListInfo\": {\r\n                            \"PackageAssociated\": {\r\n                                \"PackageNumber\": \"01\",\r\n                                \"ProductAmount\": \"147\"\r\n                            }\r\n                        },\r\n                        \"EEIInformation\": {\r\n                            \"ExportInformation\": \"OS\",\r\n                            \"License\": {\r\n                                \"Number\": \"123.16B2\",\r\n                                \"Code\": \"C30\",\r\n                                \"LicenseLineValue\": \"\",\r\n                                \"ECCNNumber\": \"EAR99\"\r\n                            }\r\n                        }\r\n                    },\r\n                    \"InvoiceNumber\": \"asdf123\",\r\n                    \"InvoiceDate\": \"20130410\",\r\n                    \"PurchaseOrderNumber\": \"999jjj777\",\r\n                    \"TermsOfShipment\": \"CFR\",\r\n                    \"ReasonForExport\": \"Sale\",\r\n                    \"Comments\": \"Enter in any extra information about the current shipment.\",\r\n                    \"Discount\": {\r\n                        \"MonetaryValue\": \"100\"\r\n                    },\r\n                    \"FreightCharges\": {\r\n                        \"MonetaryValue\": \"75\"\r\n                    },\r\n                    \"InsuranceCharges\": {\r\n                        \"MonetaryValue\": \"789\"\r\n                    },\r\n                    \"OtherCharges\": {\r\n                        \"MonetaryValue\": \"10\",\r\n                        \"Description\": \"10\"\r\n                    },\r\n                    \"CurrencyCode\": \"USD\",\r\n                    \"BlanketPeriod\": {\r\n                        \"BeginDate\": \"20130420\",\r\n                        \"EndDate\": \"20130430\"\r\n                    },\r\n                    \"ExportDate\": \"20210406\",\r\n                    \"ExportingCarrier\": \"A\",\r\n                    \"CarrierID\": \"IATA\",\r\n                    \"InBondCode\": \"70\",\r\n                    \"EntryNumber\": \"1A34567876545360\",\r\n                    \"PointOfOrigin\": \"MS\",\r\n                    \"PointOfOriginType\": \"MS\",\r\n                    \"ModeOfTransport\": \"Rail\",\r\n                    \"PortOfExport\": \"Overland\",\r\n                    \"PortOfUnloading\": \"Germany\",\r\n                    \"LoadingPier\": \"Pier 17 Dock 31\",\r\n                    \"PartiesToTransaction\": \"N\",\r\n                    \"License\": {\r\n                        \"Number\": \"\",\r\n                        \"Date\": \"\",\r\n                        \"ExceptionCode\": \"\"\r\n                    },\r\n                    \"ECCNNumber\": \"\"\r\n                }\r\n            },\r\n            \"Package\": {\r\n                \"Description\": \"IF\",\r\n                \"Packaging\": {\r\n                    \"Code\": \"30\",\r\n                    \"Description\": \"IF\"\r\n                },\r\n                \"Dimensions\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"CM\",\r\n                        \"Description\": \"IF\"\r\n                    },\r\n                    \"Length\": \"50\",\r\n                    \"Width\": \"37\",\r\n                    \"Height\": \"40\"\r\n                },\r\n                \"PackageWeight\": {\r\n                    \"UnitOfMeasurement\": {\r\n                        \"Code\": \"KGS\",\r\n                        \"Description\": \"IF\"\r\n                    },\r\n                    \"Weight\": \"50\"\r\n                }\r\n            },\r\n            \"USPSEndorsement\": \"\",\r\n            \"CostCenter\": \"123\",\r\n            \"PackageID\": \"\",\r\n            \"InformationSourceCode\": \"\",\r\n            \"ShipmentValueThresholdCode\": \"01\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/ship",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "ship"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2403",
+              "description": "Supported values: v2403"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Void Shipment Example Request",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/shipments/:version/void/cancel/:shipmentidentificationnumber?trackingnumber",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "shipments",
+            ":version",
+            "void",
+            "cancel",
+            ":shipmentidentificationnumber"
+          ],
+          "query": [
+            {
+              "key": "trackingnumber",
+              "value": null,
+              "description": "The package's tracking number. You may have up to 20 different tracking numbers listed. If more than one tracking number, pass this value with a coma separating each number. Alpha-numeric. Must pass 1Z rules. Must be upper case. Length 18"
+            }
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2",
+              "description": "API Version"
+            },
+            {
+              "key": "shipmentidentificationnumber",
+              "value": "testing",
+              "description": "The shipment's identification number Alpha-numeric. Must pass 1Z rules. Must be upper case. Length 18\n\n"
+            }
+          ]
+        },
+        "description": "The HTTP DELETE request takes in a UPS 1Z (**shipmentidentification**) and will voice/cancel the label and associated charges."
+      },
+      "response": [
+        {
+          "name": "Void Shipment Success",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/shipments/:version/void/cancel/:shipmentidentificationnumber?trackingnumber",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                ":version",
+                "void",
+                "cancel",
+                ":shipmentidentificationnumber"
+              ],
+              "query": [
+                {
+                  "key": "trackingnumber",
+                  "value": null,
+                  "description": "The package's tracking number. You may have up to 20 different tracking numbers listed. If more than one tracking number, pass this value with a coma separating each number. Alpha-numeric. Must pass 1Z rules. Must be upper case. Length 18"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "API Version"
+                },
+                {
+                  "key": "shipmentidentificationnumber",
+                  "value": "testing",
+                  "description": "The shipment's identification number Alpha-numeric. Must pass 1Z rules. Must be upper case. Length 18\n\n"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"VoidShipmentResponse\": {\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            }\n        },\n        \"SummaryResult\": {\n            \"Status\": {\n                \"Code\": \"1\",\n                \"Description\": \"Voided\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Label Recovery Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"LabelRecoveryRequest  \": {\r\n        \"Request  \": {\r\n            \"RequestOption  \": \"Non_Validate  \",\r\n            \"SubVersion  \": \"1903  \",\r\n            \"TransactionReference  \": {\r\n                \"CustomerContext  \": \"  \",\r\n                \"TransactionIdentifier  \": \"  \"\r\n            }\r\n        },\r\n        \"LabelSpecification  \": {\r\n            \"HTTPUserAgent  \": \"Mozilla/4.5  \",\r\n            \"LabelImageFormat  \": {\r\n                \"Code  \": \"ZPL  \"\r\n            },\r\n            \"LabelStockSize  \": {\r\n                \"Height  \": \"6  \",\r\n                \"Width  \": \"4  \"\r\n            }\r\n        },\r\n        \"Translate  \": {\r\n            \"LanguageCode  \": \"eng  \",\r\n            \"DialectCode  \": \"US  \",\r\n            \"Code  \": \"01  \"\r\n        },\r\n        \"LabelDelivery  \": {\r\n            \"LabelLinkIndicator  \": \"  \",\r\n            \"ResendEmailIndicator  \": \"  \"\r\n        },\r\n        \"TrackingNumber  \": \"1Z12345E8791315509  \"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/labels/:version/recovery",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "labels",
+            ":version",
+            "recovery"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v1",
+              "description": "v1 original features of the application. No support for CODTurn-inPage, HighValueReport or InternationalForms features returned in the response v1701 includes support for CODTurn-inPage features returned in the response. V1903"
+            }
+          ]
+        },
+        "description": "This HTTP POST request takes in a **TrackingNumber** and returns the associated label and documents in Base64 encoding."
+      },
+      "response": [
+        {
+          "name": "Label Recovery Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"LabelRecoveryRequest  \": {\r\n        \"Request  \": {\r\n            \"RequestOption  \": \"Non_Validate  \",\r\n            \"SubVersion  \": \"1903  \",\r\n            \"TransactionReference  \": {\r\n                \"CustomerContext  \": \"  \",\r\n                \"TransactionIdentifier  \": \"  \"\r\n            }\r\n        },\r\n        \"LabelSpecification  \": {\r\n            \"HTTPUserAgent  \": \"Mozilla/4.5  \",\r\n            \"LabelImageFormat  \": {\r\n                \"Code  \": \"ZPL  \"\r\n            },\r\n            \"LabelStockSize  \": {\r\n                \"Height  \": \"6  \",\r\n                \"Width  \": \"4  \"\r\n            }\r\n        },\r\n        \"Translate  \": {\r\n            \"LanguageCode  \": \"eng  \",\r\n            \"DialectCode  \": \"US  \",\r\n            \"Code  \": \"01  \"\r\n        },\r\n        \"LabelDelivery  \": {\r\n            \"LabelLinkIndicator  \": \"  \",\r\n            \"ResendEmailIndicator  \": \"  \"\r\n        },\r\n        \"TrackingNumber  \": \"1Z12345E8791315509  \"\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/labels/:version/recovery",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "labels",
+                ":version",
+                "recovery"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "v1 original features of the application. No support for CODTurn-inPage, HighValueReport or InternationalForms features returned in the response v1701 includes support for CODTurn-inPage features returned in the response. V1903"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"LabelRecoveryResponse\": {\n        \"LabelResults\": {\n            \"LabelImage\": {\n                \"GraphicImage\": \"Cl5YQV5MUk5eTU5ZXk1GTixOX...\",\n                \"InternationalSignatureGraphicImage\": \"Cl5YQV5MUk5eTU5ZXk1GTixOXkxIMTAsMTJeTUNZXlBP...\",\n                \"LabelImageFormat\": {\n                    \"Code\": \"zpl\"\n                },\n                \"URL\": \"https://www.ups.com/uel/llp/1Z12345E8791315413/link/labelAll/XLBR/5jypHwwiOHml02HH6IUGJtBCdaRly8nwdfEPuvEVjece/en_US?loc=en_US&pdr=false\"\n            },\n            \"Receipt\": \"\",\n            \"TrackingNumber\": \"1Z12345E8791315413\"\n        },\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            },\n            \"TransactionReference\": \"\"\n        },\n        \"ShipmentIdentificationNumber\": \"1Z12345E8791315413\"\n    }\n}"
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// if (Number(pm.globals.get(\"expiry_time\")) < (new Date().getTime() + 10000)) {",
+          "//     const jwtt = {",
+          "//     url: `${pm.environment.get(\"base_url\")}security/v1/oauth/token`,",
+          "//     method: 'POST',",
+          "//     header: {",
+          "//         'Content-Type': 'application/x-www-form-urlencoded',",
+          "//         'Authorization': \"Basic \" + btoa(pm.globals.get(\"client_id\") + \":\" + pm.globals.get(\"client_secret\"))",
+          "//     },",
+          "//     body: {",
+          "//         mode: 'urlencoded',",
+          "//         urlencoded: [",
+          "//             {key: 'grant_type', value: 'client_credentials'},",
+          "//             {key: 'scope', value: '<scope details>'}",
+          "//         ]",
+          "//     }",
+          "// }",
+          "// pm.sendRequest(jwtt, (err, res) => {",
+          "//         if (err != null) {",
+          "//             throw new Error(\"Access Denied.\");",
+          "//         } else {",
+          "//             pm.globals.set(\"bearer_token\", res.json().access_token);",
+          "//             pm.globals.set(\"expiry_time\", Number(res.json().issued_at) + (Number(res.json().expires_in) * 1000));",
+          "//         }",
+          "//     })",
+          "// }"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://wwwcie.ups.com",
+      "type": "string"
+    }
+  ]
+}

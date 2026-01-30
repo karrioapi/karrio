@@ -190,9 +190,12 @@ class PickupRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
+    parcels_count: int = None
     shipment_identifiers: List[str] = []
     package_location: str = None
     instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     options: Dict = {}
     metadata: Dict = {}
 
@@ -211,6 +214,8 @@ class PickupUpdateRequest:
     shipment_identifiers: List[str] = []
     package_location: str = None
     instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     options: Dict = {}
 
 
@@ -251,9 +256,14 @@ class ChargeDetails:
     """Karrio unified charge data type."""
 
     name: str = None
-    amount: float = None
+    amount: float = None  # Sell price (shown to customer)
     currency: str = None
     id: str = None
+
+    # Enhanced fields for accounting and transparency
+    cost: float = None  # COGS - Cost of Goods Sold (internal)
+    charge_type: str = None  # "base" | "surcharge" | "addon" | "tax"
+    metadata: Dict = None  # Extra metadata (only set when needed)
 
 
 @attr.s(auto_attribs=True)
@@ -463,6 +473,7 @@ class PickupDetails:
     pickup_charge: ChargeDetails = JStruct[ChargeDetails]
     ready_time: str = None
     closing_time: str = None
+    pickup_type: str = None  # one_time, daily, recurring
     meta: dict = None
     id: str = None
 
@@ -709,6 +720,85 @@ class ServiceRate:
     transit_time: float = None
 
 
+# SERVICE LEVEL FEATURES (Structured feature definitions)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@attr.s(auto_attribs=True)
+class ServiceLevelFeatures:
+    """Structured feature definitions for a shipping service.
+
+    All fields are optional with sensible defaults. These features are used for:
+    - Filtering available services based on requirements
+    - Setting default options during shipping method configuration
+    - Displaying service capabilities in the UI
+    """
+
+    # First Mile: How parcels get to the carrier
+    # "pick_up" = carrier picks up from sender
+    # "drop_off" = sender drops off at carrier location
+    # "pick_up_and_drop_off" = both options available
+    first_mile: str = None
+
+    # Last Mile: How parcels are delivered to recipient
+    # "home_delivery" = delivered to recipient's address
+    # "service_point" = delivered to pickup point/locker
+    # "mailbox" = delivered to mailbox (small items)
+    last_mile: str = None
+
+    # Form Factor: Type of package the service supports
+    # "letter" = flat mail/documents
+    # "parcel" = standard packages
+    # "mailbox" = fits in standard mailbox
+    # "pallet" = freight/palletized goods
+    form_factor: str = None
+
+    # Type of Shipments: Business model support
+    # True/False for each, both can be True
+    b2c: bool = None  # Business to Consumer
+    b2b: bool = None  # Business to Business
+
+    # Shipment Direction
+    # "outbound" = from sender to recipient
+    # "returns" = return shipments
+    # "both" = supports both directions
+    shipment_type: str = None
+
+    # Age Verification
+    # None = no age check
+    # "16" = 16+ verification
+    # "18" = 18+ verification
+    age_check: str = None
+
+    # Signature Required by default
+    signature: bool = None
+
+    # Tracking
+    tracked: bool = None
+
+    # Insurance available
+    insurance: bool = None
+
+    # Express/Priority service
+    express: bool = None
+
+    # Dangerous goods support
+    dangerous_goods: bool = None
+
+    # Weekend delivery options
+    saturday_delivery: bool = None
+    sunday_delivery: bool = None
+
+    # Multi-package shipment support
+    multicollo: bool = None
+
+    # Neighbor delivery allowed
+    neighbor_delivery: bool = None
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+
 @attr.s(auto_attribs=True)
 class ServiceLevel:
     """Karrio unified service level data type.
@@ -755,6 +845,13 @@ class ServiceLevel:
     # Volumetric weight
     max_volume: float = None  # Maximum volume in liters
 
+    # Dimensional/Volumetric weight calculation
+    dim_factor: float = None  # Divisor: 5000-6000 for cm/kg, 139-166 for in/lb
+    use_volumetric: bool = False  # Use max(actual, volumetric) for rate calc
+
+    # Origin restrictions (optional - inherits from rate sheet if not set)
+    origin_countries: List[str] = []
+
     # Destination supports
     domicile: bool = None
     international: bool = None
@@ -762,6 +859,10 @@ class ServiceLevel:
     # Estimated delivery
     transit_days: int = None
     transit_time: float = None
+
+    # Service features as structured object
+    # Contains first_mile, last_mile, form_factor, b2c, b2b, shipment_type, etc.
+    features: ServiceLevelFeatures = JStruct[ServiceLevelFeatures]
 
     metadata: Dict = {}
 

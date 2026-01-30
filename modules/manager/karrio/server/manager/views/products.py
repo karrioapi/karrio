@@ -65,6 +65,11 @@ class ProductList(GenericAPIView):
 
         Products are reusable commodity definitions that can be used
         in customs declarations and shipment items.
+
+        Query Parameters:
+        - label: Filter by meta.label (case-insensitive contains)
+        - keyword: Search across label, title, sku, description, hs_code
+        - usage: Filter by meta.usage (exact match in array)
         """,
         responses={
             200: Products(),
@@ -76,9 +81,11 @@ class ProductList(GenericAPIView):
         """
         Retrieve all stored products.
         """
+        from django.db.models import Q
+
         # Filter to only show product templates (those with meta.label)
         # Also exclude products linked to other entities (parcels, customs)
-        products = models.Commodity.access_by(request).filter(
+        queryset = models.Commodity.access_by(request).filter(
             meta__label__isnull=False,  # Only templates with labels
             **{
                 f"{prop}__isnull": True
@@ -86,7 +93,28 @@ class ProductList(GenericAPIView):
                 if prop != "org"
             }
         )
-        serializer = Commodity(products, many=True)
+
+        # Apply query parameter filters
+        label = request.query_params.get("label")
+        keyword = request.query_params.get("keyword")
+        usage = request.query_params.get("usage")
+
+        if label:
+            queryset = queryset.filter(meta__label__icontains=label)
+
+        if keyword:
+            queryset = queryset.filter(
+                Q(meta__label__icontains=keyword)
+                | Q(title__icontains=keyword)
+                | Q(sku__icontains=keyword)
+                | Q(description__icontains=keyword)
+                | Q(hs_code__icontains=keyword)
+            )
+
+        if usage:
+            queryset = queryset.filter(meta__usage__contains=usage)
+
+        serializer = Commodity(queryset, many=True)
         response = self.paginate_queryset(serializer.data)
 
         return self.get_paginated_response(response)

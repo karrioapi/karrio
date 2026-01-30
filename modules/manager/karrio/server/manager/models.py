@@ -4,6 +4,7 @@ import django.conf as conf
 import django.urls as urls
 import django.db.models as models
 import django.db.models.fields as fields
+from django.contrib.contenttypes.fields import GenericRelation
 
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
@@ -189,6 +190,12 @@ class Address(core.OwnedEntity):
         help_text="Template metadata: label, is_default, usage[]",
     )
 
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="address",
+    )
+
     @property
     def is_template(self) -> bool:
         """Check if this address is a template (has meta with label)."""
@@ -287,6 +294,12 @@ class Parcel(core.OwnedEntity):
         null=True,
         default=functools.partial(utils.identity, value={}),
         help_text="Template metadata: label, is_default",
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="parcel",
     )
 
     def delete(self, *args, **kwargs):
@@ -520,6 +533,12 @@ class Pickup(core.OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     shipments = models.ManyToManyField("Shipment", related_name="shipment_pickup")
 
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="pickup",
+    )
+
     def delete(self, *args, **kwargs):
         return super().delete(*args, **kwargs)
 
@@ -561,6 +580,20 @@ class Pickup(core.OwnedEntity):
         if self.pk is None:
             return []
         return [shipment.tracking_number for shipment in self.shipments.all()]
+
+    @property
+    def pickup_type(self) -> typing.Optional[str]:
+        """Get pickup type from meta field (one_time, daily, recurring)."""
+        if self.meta is None:
+            return "one_time"
+        return self.meta.get("pickup_type", "one_time")
+
+    @property
+    def recurrence(self) -> typing.Optional[dict]:
+        """Get recurrence config from meta field."""
+        if self.meta is None:
+            return None
+        return self.meta.get("recurrence")
 
 
 @core.register_model
@@ -655,6 +688,12 @@ class Tracking(core.OwnedEntity):
         "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
     )
 
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="tracking",
+    )
+
     @property
     def object_type(self):
         return "tracker"
@@ -727,6 +766,7 @@ class Shipment(core.OwnedEntity):
         "metadata",
         "created_by",
         "reference",
+        "applied_fees",  # Accounting: addons + surcharge COGS values
         # Embedded JSON fields
         "shipper",
         "recipient",
@@ -860,6 +900,12 @@ class Shipment(core.OwnedEntity):
     extra_documents = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
     )
+    applied_fees = models.JSONField(
+        blank=True,
+        null=True,
+        default=functools.partial(utils.identity, value=[]),
+        help_text="Applied fees for accounting: addons + surcharge COGS values",
+    )
 
     # ─────────────────────────────────────────────────────────────────
     # CARRIER SNAPSHOT (consistent with Tracking, Pickup, Manifest, DocumentUploadRecord)
@@ -880,6 +926,12 @@ class Shipment(core.OwnedEntity):
         related_name="shipments",
         blank=True,
         null=True,
+    )
+
+    # Metafields via GenericRelation
+    metafields = GenericRelation(
+        "core.Metafield",
+        related_query_name="shipment",
     )
 
     def delete(self, *args, **kwargs):

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: 3.0.0
-  title: DHL Parcel DE Pickup API
+  title: DHL Germany Pickup API
   description: >
     Note:
       This is the specification of the DP-DHL Group Parcel DE Pickup API. This web service allows business customers to order, cancel and get the status of their pick up orders (Einzelabholung, Bedarfsabholung und Einmalige Abholung).
@@ -18,14 +18,14 @@ tags:
 paths:
   /:
     summary: general functionality
-    
+
     get:
      description: Returns the current version of the API as major.minor.patch. Supports content negotiation (json and html) and does __not__ require authentication.
      operationId: getVersion
      summary: Return API version
      tags:
       - General
-    
+
      responses:
         '200':
           description: Major, minor, and build number being returned as x.y.z
@@ -36,19 +36,19 @@ paths:
                 properties:
                   amp:
                     type: object
-                    properties: 
-                      name: 
-                        type: string 
+                    properties:
+                      name:
+                        type: string
                         example: pp-parcel-pickup
                       version:
                         type: string
                         description: "Sandbox version is >= Prod version"
                         pattern: '^v\d{1,2}.\d{1,2}[.\d{1,5}]$'
                         example: 'v1.0.0'
-                      rev: 
+                      rev:
                         type: string
                         example: '13'
-                      env: 
+                      env:
                         type: string
                         example: prod
         '429':
@@ -59,7 +59,7 @@ paths:
       summary: Places a parcel pick up order for a number of parcels.
       description: The root ressource to placing orders.
       tags:
-        - Orders           
+        - Orders
       requestBody:
         description: The object containing details about the pick up to be ordered.
         content:
@@ -124,7 +124,7 @@ paths:
       summary: Cancels pickup order(s).
       description: This operation cancels one (or several) pickup order(s).
       tags:
-        - Orders           
+        - Orders
       parameters:
         - in: query
           name: orderID

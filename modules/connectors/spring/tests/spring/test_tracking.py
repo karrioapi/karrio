@@ -19,14 +19,14 @@ class TestSpringTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
-        print(f"Generated request: {lib.to_dict(request.serialize())}")
+
         self.assertEqual(lib.to_dict(request.serialize()), TrackingRequest)
 
     def test_get_tracking(self):
         with patch("karrio.mappers.spring.proxy.lib.run_asynchronously") as mock_async:
             mock_async.return_value = [("LXAB00000000NL", "{}")]
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
-            print(f"run_asynchronously called: {mock_async.called}")
+
             self.assertTrue(mock_async.called)
 
     def test_parse_tracking_response(self):
@@ -35,7 +35,7 @@ class TestSpringTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(f"Parsed response: {lib.to_dict(parsed_response)}")
+
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
@@ -44,8 +44,10 @@ class TestSpringTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(f"Error response: {lib.to_dict(parsed_response)}")
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingErrorResponse)
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedTrackingErrorResponse
+            )
 
 
 if __name__ == "__main__":

@@ -2025,7 +2025,7 @@ export interface update_parcel {
 }
 
 export interface update_parcelVariables {
-  data: UpdateParcelInput2;
+  data: UpdateParcelInput;
 }
 
 
@@ -2085,7 +2085,7 @@ export interface update_address {
 }
 
 export interface update_addressVariables {
-  data: UpdateAddressInput2;
+  data: UpdateAddressInput;
 }
 
 
@@ -4936,6 +4936,189 @@ export interface GetManifestVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: get_pickups
+// ====================================================
+
+export interface get_pickups_pickups_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_pickups_pickups_edges_node_address {
+  id: string | null;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum | null;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+}
+
+export interface get_pickups_pickups_edges_node_pickup_charge {
+  name: string | null;
+  amount: number | null;
+  currency: CurrencyCodeEnum;
+}
+
+export interface get_pickups_pickups_edges_node_pickup_carrier {
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
+}
+
+export interface get_pickups_pickups_edges_node {
+  id: string;
+  object_type: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  confirmation_number: string | null;
+  pickup_date: string | null;
+  ready_time: string | null;
+  closing_time: string | null;
+  instruction: string | null;
+  package_location: string | null;
+  test_mode: boolean;
+  address: get_pickups_pickups_edges_node_address | null;
+  pickup_charge: get_pickups_pickups_edges_node_pickup_charge | null;
+  pickup_carrier: get_pickups_pickups_edges_node_pickup_carrier | null;
+  tracking_numbers: string[];
+  options: any;
+  metadata: any;
+  meta: any | null;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface get_pickups_pickups_edges {
+  node: get_pickups_pickups_edges_node;
+}
+
+export interface get_pickups_pickups {
+  page_info: get_pickups_pickups_page_info;
+  edges: get_pickups_pickups_edges[];
+}
+
+export interface get_pickups {
+  pickups: get_pickups_pickups;
+}
+
+export interface get_pickupsVariables {
+  filter?: PickupFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_pickup
+// ====================================================
+
+export interface get_pickup_pickup_address {
+  id: string | null;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum | null;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+}
+
+export interface get_pickup_pickup_pickup_charge {
+  name: string | null;
+  amount: number | null;
+  currency: CurrencyCodeEnum;
+}
+
+export interface get_pickup_pickup_pickup_carrier {
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
+}
+
+export interface get_pickup_pickup_parcels {
+  id: string | null;
+  weight: number | null;
+  width: number | null;
+  height: number | null;
+  length: number | null;
+  packaging_type: string | null;
+  package_preset: string | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+}
+
+export interface get_pickup_pickup_shipments {
+  id: string;
+  tracking_number: string | null;
+  status: ShipmentStatusEnum;
+}
+
+export interface get_pickup_pickup_created_by {
+  email: string;
+  full_name: string;
+}
+
+export interface get_pickup_pickup {
+  id: string;
+  object_type: string;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  confirmation_number: string | null;
+  pickup_date: string | null;
+  ready_time: string | null;
+  closing_time: string | null;
+  instruction: string | null;
+  package_location: string | null;
+  test_mode: boolean;
+  address: get_pickup_pickup_address | null;
+  pickup_charge: get_pickup_pickup_pickup_charge | null;
+  pickup_carrier: get_pickup_pickup_pickup_carrier | null;
+  parcels: get_pickup_pickup_parcels[];
+  tracking_numbers: string[];
+  shipments: get_pickup_pickup_shipments[];
+  options: any;
+  metadata: any;
+  meta: any | null;
+  created_at: any;
+  updated_at: any;
+  created_by: get_pickup_pickup_created_by;
+}
+
+export interface get_pickup {
+  pickup: get_pickup_pickup | null;
+}
+
+export interface get_pickupVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GetAPIKeys
 // ====================================================
 
@@ -5714,6 +5897,7 @@ export interface AddressFilter {
   first?: number | null;
   label?: string | null;
   keyword?: string | null;
+  usage?: string | null;
   address?: string | null;
 }
 
@@ -5800,6 +5984,8 @@ export interface PartialShipmentMutationInput {
 
 // null
 export interface UpdateAddressInput {
+  id: string;
+  meta?: any | null;
   country_code?: CountryCodeEnum | null;
   postal_code?: string | null;
   city?: string | null;
@@ -5815,11 +6001,12 @@ export interface UpdateAddressInput {
   address_line1?: string | null;
   address_line2?: string | null;
   validate_location?: boolean | null;
-  id?: string | null;
 }
 
 // null
 export interface UpdateParcelInput {
+  id: string;
+  meta?: any | null;
   weight?: number | null;
   weight_unit?: WeightUnitEnum | null;
   width?: number | null;
@@ -5834,7 +6021,6 @@ export interface UpdateParcelInput {
   reference_number?: string | null;
   freight_class?: string | null;
   items?: UpdateCommodityInput[] | null;
-  id?: string | null;
 }
 
 // null
@@ -5896,6 +6082,7 @@ export interface TemplateFilter {
   first?: number | null;
   label?: string | null;
   keyword?: string | null;
+  usage?: string | null;
 }
 
 // null
@@ -5917,13 +6104,7 @@ export interface SystemCarrierMutationInput {
 
 // null
 export interface CreateParcelInput {
-  label: string;
-  parcel: ParcelInput;
-  is_default?: boolean | null;
-}
-
-// null
-export interface ParcelInput {
+  meta: any;
   weight: number;
   weight_unit: WeightUnitEnum;
   width?: number | null;
@@ -5957,22 +6138,8 @@ export interface CommodityInput {
 }
 
 // null
-export interface UpdateParcelInput2 {
-  label?: string | null;
-  parcel?: UpdateParcelInput | null;
-  is_default?: boolean | null;
-  id: string;
-}
-
-// null
 export interface CreateAddressInput {
-  label: string;
-  address: AddressInput;
-  is_default?: boolean | null;
-}
-
-// null
-export interface AddressInput {
+  meta: any;
   country_code?: CountryCodeEnum | null;
   postal_code?: string | null;
   city?: string | null;
@@ -5991,26 +6158,19 @@ export interface AddressInput {
 }
 
 // null
-export interface UpdateAddressInput2 {
-  label?: string | null;
-  address?: UpdateAddressInput | null;
-  is_default?: boolean | null;
-  id: string;
-}
-
-// null
 export interface ProductFilter {
   offset?: number | null;
   first?: number | null;
   label?: string | null;
   keyword?: string | null;
+  usage?: string | null;
   sku?: string | null;
   origin_country?: CountryCodeEnum | null;
 }
 
 // null
 export interface CreateProductInput {
-  label: string;
+  meta: any;
   weight: number;
   weight_unit: WeightUnitEnum;
   quantity?: number | null;
@@ -6021,14 +6181,13 @@ export interface CreateProductInput {
   value_amount?: number | null;
   value_currency?: CurrencyCodeEnum | null;
   origin_country?: CountryCodeEnum | null;
-  is_default?: boolean | null;
   metadata?: any | null;
 }
 
 // null
 export interface UpdateProductInput {
   id: string;
-  label?: string | null;
+  meta?: any | null;
   weight?: number | null;
   weight_unit?: WeightUnitEnum | null;
   quantity?: number | null;
@@ -6039,7 +6198,6 @@ export interface UpdateProductInput {
   value_amount?: number | null;
   value_currency?: CurrencyCodeEnum | null;
   origin_country?: CountryCodeEnum | null;
-  is_default?: boolean | null;
   metadata?: any | null;
 }
 
@@ -6394,6 +6552,25 @@ export interface CreateOrderMutationInput {
 }
 
 // null
+export interface AddressInput {
+  country_code?: CountryCodeEnum | null;
+  postal_code?: string | null;
+  city?: string | null;
+  federal_tax_id?: string | null;
+  state_tax_id?: string | null;
+  person_name?: string | null;
+  company_name?: string | null;
+  email?: string | null;
+  phone_number?: string | null;
+  state_code?: string | null;
+  residential?: boolean | null;
+  street_number?: string | null;
+  address_line1?: string | null;
+  address_line2?: string | null;
+  validate_location?: boolean | null;
+}
+
+// null
 export interface UpdateOrderMutationInput {
   id: string;
   order_id?: string | null;
@@ -6450,6 +6627,25 @@ export interface ManifestFilter {
   created_after?: any | null;
   created_before?: any | null;
   carrier_name?: string[] | null;
+}
+
+// null
+export interface PickupFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+  id?: string[] | null;
+  confirmation_number?: string | null;
+  pickup_date_after?: string | null;
+  pickup_date_before?: string | null;
+  created_after?: any | null;
+  created_before?: any | null;
+  carrier_name?: string[] | null;
+  address?: string | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  meta_key?: string | null;
+  meta_value?: string | null;
 }
 
 // null

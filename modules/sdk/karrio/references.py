@@ -462,6 +462,131 @@ def detect_hooks_methods(hooks_type: object) -> typing.List[str]:
 COMMON_FIELDS = ["id", "carrier_id", "test_mode", "carrier_name", "services"]
 
 
+def _normalize_option_meta(meta: typing.Optional[dict]) -> typing.Optional[dict]:
+    """
+    Normalize option meta to ensure configurable defaults to True.
+
+    This ensures all options are configurable in the shipping method editor by default,
+    unless explicitly set to False.
+    """
+    if meta is None:
+        return {"configurable": True}
+
+    normalized = dict(meta)
+    if "configurable" not in normalized:
+        normalized["configurable"] = True
+
+    return normalized
+
+
+def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    """
+    Extract nested field definitions from an attrs class type.
+
+    Args:
+        _type: A type that may be an attrs class with __attrs_attrs__
+
+    Returns:
+        Dictionary of field definitions or None if not an attrs class
+    """
+    if not hasattr(_type, "__attrs_attrs__"):
+        return None
+
+    fields = {}
+    for attr_field in _type.__attrs_attrs__:
+        field_type = attr_field.type
+        # Handle Optional types
+        field_type_str = str(field_type)
+        actual_type = field_type
+
+        # Extract the inner type from Optional[X] or typing.Optional[X]
+        if "Optional" in field_type_str:
+            # Try to get the actual type from __args__
+            if hasattr(field_type, "__args__") and field_type.__args__:
+                actual_type = field_type.__args__[0]
+
+        # Check for nested object types recursively
+        nested_fields = None
+        if hasattr(actual_type, "__attrs_attrs__"):
+            nested_fields = extract_nested_fields(actual_type)
+
+        # Extract enum values if the type is an enum
+        enum_values = None
+        if "enum" in str(actual_type).lower():
+            try:
+                enum_values = [e.name for e in actual_type]
+            except Exception:
+                pass
+
+        field_def = lib.to_dict(
+            dict(
+                name=attr_field.name,
+                type=parse_type(actual_type),
+                required="NOTHING" in str(attr_field.default),
+                default=lib.identity(
+                    lib.to_dict(lib.to_json(attr_field.default))
+                    if "NOTHING" not in str(attr_field.default)
+                    else None
+                ),
+                enum=enum_values,
+                fields=nested_fields,
+            )
+        )
+        fields[attr_field.name] = field_def
+
+    return fields if fields else None
+
+
+def extract_list_item_type(_type: type) -> typing.Optional[str]:
+    """
+    Extract the item type name from a List type.
+
+    Args:
+        _type: A type that may be a List[X]
+
+    Returns:
+        String name of the item type or None if not a list with attrs class items
+    """
+    type_str = str(_type)
+
+    # Check if it's a List type
+    if "List" not in type_str and "list" not in type_str:
+        return None
+
+    # Try to get the inner type from __args__
+    if hasattr(_type, "__args__") and _type.__args__:
+        inner_type = _type.__args__[0]
+        if hasattr(inner_type, "__attrs_attrs__"):
+            return getattr(inner_type, "__name__", str(inner_type))
+
+    return None
+
+
+def extract_list_item_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    """
+    Extract nested field definitions from the item type of a List.
+
+    Args:
+        _type: A type that may be a List[X] where X is an attrs class
+
+    Returns:
+        Dictionary of field definitions or None if not a list with attrs class items
+    """
+    type_str = str(_type)
+
+    # Check if it's a List type
+    if "List" not in type_str and "list" not in type_str:
+        return None
+
+    # Try to get the inner type from __args__
+    if hasattr(_type, "__args__") and _type.__args__:
+        inner_type = _type.__args__[0]
+        if hasattr(inner_type, "__attrs_attrs__"):
+            return extract_nested_fields(inner_type)
+
+    return None
+
+
 def collect_references(
     plugin_registry: dict = None,
 ) -> dict:
@@ -518,7 +643,7 @@ def collect_references(
                     type=parse_type(c.value.type),
                     default=c.value.default,
                     help=c.value.help,
-                    meta=c.value.meta,
+                    meta=_normalize_option_meta(c.value.meta),
                     enum=lib.identity(
                         None
                         if "enum" not in str(c.value.type).lower()
@@ -546,6 +671,9 @@ def collect_references(
                         if "enum" not in str(c.value.type).lower()
                         else [c.name for c in c.value.type]
                     ),
+                    # Extract item schema for list types (e.g., List[ServiceBillingNumberType])
+                    item_type=extract_list_item_type(c.value.type),
+                    fields=extract_list_item_fields(c.value.type),
                 )
             )
             for c in list(mapper.get("connection_configs", []))
@@ -676,10 +804,11 @@ def collect_references(
         },
         # ratesheets - carrier default rate sheet configurations
         # Contains shared zones, services with zone_ids, and service_rates mappings
+        # All enabled carriers are included - those without service_levels get empty defaults
         "ratesheets": {
             key: transform_to_shared_zones_format(mapper.get("service_levels") or [])
             for key, mapper in PROVIDERS.items()
-            if key in enabled_carrier_ids and mapper.get("service_levels") is not None
+            if key in enabled_carrier_ids
         },
         "integration_status": {
             carrier_id: metadata_obj.status
@@ -774,64 +903,6 @@ def parse_type(_type: type) -> str:
         return "object"
 
     return str(_type)
-
-
-def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
-    """
-    Extract nested field definitions from an attrs class type.
-
-    Args:
-        _type: A type that may be an attrs class with __attrs_attrs__
-
-    Returns:
-        Dictionary of field definitions or None if not an attrs class
-    """
-    if not hasattr(_type, "__attrs_attrs__"):
-        return None
-
-    fields = {}
-    for attr_field in _type.__attrs_attrs__:
-        field_type = attr_field.type
-        # Handle Optional types
-        field_type_str = str(field_type)
-        actual_type = field_type
-
-        # Extract the inner type from Optional[X] or typing.Optional[X]
-        if "Optional" in field_type_str:
-            # Try to get the actual type from __args__
-            if hasattr(field_type, "__args__") and field_type.__args__:
-                actual_type = field_type.__args__[0]
-
-        # Check for nested object types recursively
-        nested_fields = None
-        if hasattr(actual_type, "__attrs_attrs__"):
-            nested_fields = extract_nested_fields(actual_type)
-
-        # Extract enum values if the type is an enum
-        enum_values = None
-        if "enum" in str(actual_type).lower():
-            try:
-                enum_values = [e.name for e in actual_type]
-            except Exception:
-                pass
-
-        field_def = lib.to_dict(
-            dict(
-                name=attr_field.name,
-                type=parse_type(actual_type),
-                required="NOTHING" in str(attr_field.default),
-                default=lib.identity(
-                    lib.to_dict(lib.to_json(attr_field.default))
-                    if "NOTHING" not in str(attr_field.default)
-                    else None
-                ),
-                enum=enum_values,
-                fields=nested_fields,
-            )
-        )
-        fields[attr_field.name] = field_def
-
-    return fields if fields else None
 
 
 def get_carrier_details(

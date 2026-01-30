@@ -697,7 +697,7 @@ class Pickups:
         )
 
 
-@utils.post_processing(methods=["fetch"])
+@utils.post_processing(methods=["fetch", "resolve"])
 class Rates:
     post_process_functions: typing.List[typing.Callable] = []
 
@@ -761,6 +761,120 @@ class Rates:
                 "service_name": service_name,
                 "rate_provider": rate_provider,  # TODO: deprecate rate_provider
                 "carrier_connection_id": carrier.id,
+            }
+
+            return lib.to_object(
+                datatypes.Rate,
+                {
+                    **lib.to_dict(rate),
+                    "id": f"rat_{uuid.uuid4().hex}",
+                    "test_mode": carrier.test_mode,
+                    "meta": meta,
+                },
+            )
+
+        formated_rates: typing.List[datatypes.Rate] = sorted(
+            map(process_rate, rates), key=lambda rate: rate.total_charge
+        )
+
+        return lib.to_object(
+            datatypes.RateResponse, dict(rates=formated_rates, messages=messages)
+        )
+
+    @staticmethod
+    @utils.with_telemetry("rates_resolve")
+    def resolve(
+        payload: dict,
+        carriers: typing.List[providers.CarrierConnection] = None,
+        raise_on_error: bool = True,
+        **carrier_filters,
+    ) -> datatypes.RateResponse:
+        """Resolve rates using static rate sheets only (no carrier API calls).
+
+        Unlike fetch(), this method:
+        - Uses rate sheet data (services, zones, surcharges) directly
+        - Never calls carrier APIs
+        - Requires carriers to have rate_sheet with services
+
+        Args:
+            payload: Rate request payload (shipper, recipient, parcels, options)
+            carriers: List of carrier connections to resolve rates for
+            raise_on_error: Raise exception if no rates found
+            **carrier_filters: Additional filters for carrier lookup
+
+        Returns:
+            RateResponse with resolved rates
+        """
+        services = payload.get("services", [])
+        carrier_ids = payload.get("carrier_ids", [])
+        carriers = carriers or Carriers.list(
+            **{
+                "active": True,
+                "capability": "rating",
+                "carrier_ids": carrier_ids,
+                "services": services,
+                **carrier_filters,
+            }
+        )
+
+        if raise_on_error and len(carriers) == 0:
+            raise NotFound("No active carrier connection found to process the request")
+
+        # Build carrier settings with rate sheet services
+        carrier_settings = []
+        carriers_with_services = []
+
+        for carrier in carriers:
+            # Get services from rate sheet or carrier defaults
+            carrier_services = carrier.services
+            if not carrier_services:
+                continue
+
+            carriers_with_services.append(carrier)
+            # Pass carrier.data directly - it's duck-type compatible with RatingMixinProxy
+            carrier_settings.append(carrier.data)
+
+        if raise_on_error and len(carrier_settings) == 0:
+            raise NotFound("No carrier with rate sheet services found to process the request")
+
+        request = karrio.Rating.resolve(lib.to_object(datatypes.RateRequest, payload))
+
+        # The request call is wrapped in utils.identity to simplify mocking in tests
+        rates, messages = utils.identity(
+            lambda: request.from_(*carrier_settings).parse()
+        )
+
+        if raise_on_error and not any(rates) and any(messages):
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
+            )
+
+        def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
+            carrier = next(
+                (c for c in carriers_with_services if c.carrier_id == rate.carrier_id),
+                None,
+            )
+            if carrier is None:
+                return rate
+
+            rate_provider = (
+                (rate.meta or {}).get("rate_provider")
+                or getattr(carrier, "custom_carrier_name", None)
+                or rate.carrier_name
+            ).lower()
+            service_name = utils.upper(
+                (rate.meta or {}).get("service_name") or rate.service
+            )
+
+            meta = {
+                **(rate.meta or {}),
+                "ext": carrier.ext,
+                "carrier": rate_provider,
+                "service_name": service_name,
+                "rate_provider": rate_provider,
+                "carrier_connection_id": carrier.id,
+                "rate_source": "static",
             }
 
             return lib.to_object(

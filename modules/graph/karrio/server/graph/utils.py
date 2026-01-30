@@ -81,6 +81,73 @@ MetafieldTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 )
 
 
+# ─────────────────────────────────────────────────────────────────
+# Workspace Config Enums (for printing options and shipping defaults)
+# ─────────────────────────────────────────────────────────────────
+
+LABEL_SIZES = [
+    ("A4", "A4"),
+    ("A5", "A5"),
+    ("A6", "A6"),
+    ("LETTER", "LETTER"),
+    ("SIZE_4_x_6", "4x6"),
+    ("SIZE_4_x_8", "4x8"),
+]
+LabelSizeEnum: typing.Any = strawberry.enum(
+    lib.Enum("LabelSizeEnum", LABEL_SIZES)
+)
+
+EXPORT_REASONS = [
+    ("sale", "sale"),
+    ("gift", "gift"),
+    ("sample", "sample"),
+    ("return", "return"),
+    ("repair", "repair"),
+    ("personal_effects", "personal_effects"),
+    ("other", "other"),
+]
+ExportReasonEnum: typing.Any = strawberry.enum(
+    lib.Enum("ExportReasonEnum", EXPORT_REASONS)
+)
+
+FIRST_MILE_OPTIONS = [
+    ("pickup", "pickup"),
+    ("drop_off", "drop_off"),
+]
+FirstMileEnum: typing.Any = strawberry.enum(
+    lib.Enum("FirstMileEnum", FIRST_MILE_OPTIONS)
+)
+
+LAST_MILE_OPTIONS = [
+    ("home_delivery", "home_delivery"),
+    ("service_point", "service_point"),
+    ("mailbox", "mailbox"),
+    ("po_box", "po_box"),
+]
+LastMileEnum: typing.Any = strawberry.enum(
+    lib.Enum("LastMileEnum", LAST_MILE_OPTIONS)
+)
+
+FORM_FACTOR_OPTIONS = [
+    ("letter", "letter"),
+    ("parcel", "parcel"),
+    ("mailbox", "mailbox"),
+    ("pallet", "pallet"),
+    ("long", "long"),
+]
+FormFactorEnum: typing.Any = strawberry.enum(
+    lib.Enum("FormFactorEnum", FORM_FACTOR_OPTIONS)
+)
+
+AGE_CHECK_OPTIONS = [
+    ("AGE_16", "16"),
+    ("AGE_18", "18"),
+]
+AgeCheckEnum: typing.Any = strawberry.enum(
+    lib.Enum("AgeCheckEnum", AGE_CHECK_OPTIONS)
+)
+
+
 class MetadataObjectType(lib.Enum):
     carrier = providers.CarrierConnection
     commodity = manager.Commodity

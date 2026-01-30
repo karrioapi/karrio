@@ -15,6 +15,75 @@
 
 ---
 
+## PRD Guidelines
+
+When creating PRDs, use the template at [`PRDs/TEMPLATE.md`](./PRDs/TEMPLATE.md):
+
+1. **Study existing code first** - search for similar patterns, utilities, and implementations to reuse
+2. **Always start from the template** - maintains consistency across PRDs
+3. **Include architecture diagrams** - use ASCII art for overview, sequence, and dataflow diagrams
+4. **Use tables over prose** - easier to scan and maintain
+5. **Show Before/After code** - makes changes concrete in Problem Statement
+6. **Follow AGENTS.md exactly** - code examples must match original author style and test patterns
+
+### PRD Types and Focus Areas
+
+| Type | Focus | Key Sections |
+|------|-------|--------------|
+| Integration | API mapping, field translation, carrier quirks | Technical Design, Field Reference, Testing |
+| Refactoring | Architecture changes, migration strategy | Alternatives Considered, Migration & Rollback |
+| Enhancement | Additive features, enum extensions | Goals, Edge Cases, Backward Compatibility |
+| Architecture | System design, cross-cutting concerns | All sections, Security Considerations |
+
+### Required Sections (All PRDs)
+
+- Metadata block (table format)
+- Executive Summary with Key Architecture Decisions
+- Problem Statement with Current/Desired State code
+- Goals & Success Criteria (tables)
+- Alternatives Considered (decision table)
+- Technical Design with diagrams
+- Edge Cases & Failure Modes
+- Implementation Plan (phased tables)
+- Testing Strategy with code examples
+- Risk Assessment (table)
+- Migration & Rollback plan
+
+### Writing Style
+
+- Technical but accessible
+- Heavy use of tables over prose
+- Before/After code comparisons
+- No user stories - use technical specs with acceptance criteria
+- Bold for emphasis, inline code for technical terms
+- ASCII diagrams required: architecture overview, sequence diagrams, dataflow diagrams
+
+### Before Writing a PRD
+
+1. **Search the codebase** for similar implementations and patterns
+2. **Identify reusable utilities** in `karrio.lib`, `@karrio/hooks`, `@karrio/ui`
+3. **Study existing test files** in related modules for testing patterns
+4. **Document findings** in the "Existing Code Analysis" section
+
+### Interactive PRD Creation
+
+PRDs should be created iteratively with user input:
+
+1. **Draft** - Create initial structure with known information
+2. **Identify gaps** - Flag edge cases, ambiguities, and decision points
+3. **Ask questions** - Prompt user for clarification before finalizing architecture
+4. **Document decisions** - Record answers in "Open Questions & Decisions" section
+5. **Iterate** - Repeat until all decisions are resolved
+
+**When to ask clarifying questions:**
+- Multiple valid architectural approaches exist
+- Edge cases have no clear handling strategy
+- Trade-offs require business/product input
+- Scope boundaries are unclear
+- Backward compatibility decisions needed
+
+---
+
 ## Domain Context: Shipping & Logistics
 
 Karrio is a **universal shipping API** that abstracts carrier integrations. Key domain concepts:
@@ -266,6 +335,7 @@ import {
 - ❌ **DO NOT** catch bare `Exception`—be specific
 - ❌ **DO NOT** use mutable default arguments
 - ❌ **DO NOT** import `*` except from designated re-export modules
+- ❌ **DO NOT** use raw SQL (`RunSQL`) in Django migrations—use only Django migration operations (`AddField`, `RemoveField`, `RenameField`, `AlterField`, `RunPython`, etc.) to ensure compatibility across SQLite, PostgreSQL, and MySQL
 
 ### TypeScript/React
 - ❌ **DO NOT** use `class` components—use functional components

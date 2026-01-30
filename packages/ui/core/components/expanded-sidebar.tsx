@@ -88,6 +88,18 @@ export const ExpandedSidebar = (): JSX.Element => {
         </AppLink>
 
         <AppLink
+          href="/pickups"
+          className={"menu-item " + activeClass("/pickups")}
+          shallow={false}
+          prefetch={false}
+        >
+          <i
+            className={`fa fa-box pr-2 ${isActive("/pickups") ? "" : "has-text-grey"}`}
+          ></i>
+          <span className="has-text-weight-bold">Pickups</span>
+        </AppLink>
+
+        <AppLink
           href="/trackers"
           className={"menu-item " + activeClass("/trackers")}
           shallow={false}

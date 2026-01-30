@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.1`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.3`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2026.1.1
+ * The version of the OpenAPI document: 2026.1.3
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2225,11 +2225,10 @@ export interface DhlExpress {
     'account_country_code'?: string | null;
 }
 export interface DhlParcelDe {
-    'username': string;
-    'password': string;
-    'client_id': string;
-    'client_secret': string;
-    'billing_number'?: string | null;
+    'username'?: string | null;
+    'password'?: string | null;
+    'client_id'?: string | null;
+    'client_secret'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface DhlPoland {
@@ -5105,6 +5104,14 @@ export interface Pickup {
      */
     'closing_time'?: string | null;
     /**
+     * The pickup scheduling type.<br/>         - one_time: Single pickup on a specific date<br/>         - daily: Recurring pickup every business day<br/>         - recurring: Custom recurring schedule         
+     */
+    'pickup_type'?: PickupPickupTypeEnum | null;
+    /**
+     * Recurrence configuration for recurring pickups.<br/>         Example: {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\", \"friday\"]}         
+     */
+    'recurrence'?: { [key: string]: any; } | null;
+    /**
      * User metadata for the pickup
      */
     'metadata'?: { [key: string]: any; };
@@ -5120,6 +5127,10 @@ export interface Pickup {
      * The shipment parcels to pickup.
      */
     'parcels': Array<Parcel>;
+    /**
+     * The number of parcels to be picked up (alternative to providing parcels array)
+     */
+    'parcels_count'?: number | null;
     /**
      * The pickup instruction.<br/>         eg: Handle with care.         
      */
@@ -5137,6 +5148,15 @@ export interface Pickup {
      */
     'test_mode': boolean;
 }
+
+export const PickupPickupTypeEnum = {
+    OneTime: 'one_time',
+    Daily: 'daily',
+    Recurring: 'recurring'
+} as const;
+
+export type PickupPickupTypeEnum = typeof PickupPickupTypeEnum[keyof typeof PickupPickupTypeEnum];
+
 export interface PickupCancelData {
     /**
      * The reason of the pickup cancellation
@@ -5171,6 +5191,10 @@ export interface PickupData {
      */
     'address'?: AddressData;
     /**
+     * The number of parcels to be picked up (alternative to linking shipments)
+     */
+    'parcels_count'?: number | null;
+    /**
      * The ready time for pickup.<br/>         Time Format: `HH:MM`         
      */
     'ready_time': string;
@@ -5187,18 +5211,35 @@ export interface PickupData {
      */
     'package_location'?: string | null;
     /**
+     * The pickup scheduling type.<br/>         - one_time: Single pickup on a specific date<br/>         - daily: Recurring pickup every business day<br/>         - recurring: Custom recurring schedule         
+     */
+    'pickup_type'?: PickupDataPickupTypeEnum;
+    /**
+     * Recurrence configuration for recurring pickups.<br/>         Example: {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\", \"friday\"], \"end_date\": \"2024-12-31\"}         
+     */
+    'recurrence'?: { [key: string]: any; } | null;
+    /**
      * Advanced carrier specific pickup options
      */
     'options'?: { [key: string]: any; } | null;
     /**
-     * The list of shipments to be picked up
+     * The list of shipments to be picked up (optional if parcels_count provided)
      */
-    'tracking_numbers': Array<string>;
+    'tracking_numbers'?: Array<string>;
     /**
      * User metadata for the pickup
      */
     'metadata'?: { [key: string]: any; };
 }
+
+export const PickupDataPickupTypeEnum = {
+    OneTime: 'one_time',
+    Daily: 'daily',
+    Recurring: 'recurring'
+} as const;
+
+export type PickupDataPickupTypeEnum = typeof PickupDataPickupTypeEnum[keyof typeof PickupDataPickupTypeEnum];
+
 export interface PickupList {
     'count'?: number | null;
     'next'?: string | null;
@@ -5213,11 +5254,15 @@ export interface PickupRequest {
     /**
      * The pickup address
      */
-    'address': AddressData;
+    'address'?: AddressData;
     /**
      * The shipment parcels to pickup.
      */
-    'parcels': Array<ParcelData>;
+    'parcels'?: Array<ParcelData>;
+    /**
+     * The number of parcels to be picked up (alternative to providing parcels array)
+     */
+    'parcels_count'?: number | null;
     /**
      * The ready time for pickup.<br/>         Time Format: `HH:MM`         
      */
@@ -5235,10 +5280,27 @@ export interface PickupRequest {
      */
     'package_location'?: string | null;
     /**
+     * The pickup scheduling type.<br/>         - one_time: Single pickup on a specific date<br/>         - daily: Recurring pickup every business day<br/>         - recurring: Custom recurring schedule         
+     */
+    'pickup_type'?: PickupRequestPickupTypeEnum;
+    /**
+     * Recurrence configuration for recurring pickups.<br/>         Example: {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\", \"friday\"], \"end_date\": \"2024-12-31\"}         
+     */
+    'recurrence'?: { [key: string]: any; } | null;
+    /**
      * Advanced carrier specific pickup options
      */
     'options'?: { [key: string]: any; } | null;
 }
+
+export const PickupRequestPickupTypeEnum = {
+    OneTime: 'one_time',
+    Daily: 'daily',
+    Recurring: 'recurring'
+} as const;
+
+export type PickupRequestPickupTypeEnum = typeof PickupRequestPickupTypeEnum[keyof typeof PickupRequestPickupTypeEnum];
+
 export interface PickupResponse {
     /**
      * The list of note or warning messages
@@ -5259,6 +5321,10 @@ export interface PickupUpdateData {
      */
     'address'?: AddressData;
     /**
+     * The number of parcels to be picked up (alternative to linking shipments)
+     */
+    'parcels_count'?: number | null;
+    /**
      * The ready time for pickup.
      */
     'ready_time'?: string | null;
@@ -5274,6 +5340,14 @@ export interface PickupUpdateData {
      * The package(s) location.<br/>         eg: Behind the entrance door.         
      */
     'package_location'?: string | null;
+    /**
+     * The pickup scheduling type.<br/>         - one_time: Single pickup on a specific date<br/>         - daily: Recurring pickup every business day<br/>         - recurring: Custom recurring schedule         
+     */
+    'pickup_type'?: PickupUpdateDataPickupTypeEnum;
+    /**
+     * Recurrence configuration for recurring pickups.<br/>         Example: {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\", \"friday\"], \"end_date\": \"2024-12-31\"}         
+     */
+    'recurrence'?: { [key: string]: any; } | null;
     /**
      * Advanced carrier specific pickup options
      */
@@ -5291,6 +5365,15 @@ export interface PickupUpdateData {
      */
     'confirmation_number': string;
 }
+
+export const PickupUpdateDataPickupTypeEnum = {
+    OneTime: 'one_time',
+    Daily: 'daily',
+    Recurring: 'recurring'
+} as const;
+
+export type PickupUpdateDataPickupTypeEnum = typeof PickupUpdateDataPickupTypeEnum[keyof typeof PickupUpdateDataPickupTypeEnum];
+
 export interface PickupUpdateRequest {
     /**
      * The expected pickup date.<br/>         Date Format: `YYYY-MM-DD`         
@@ -5325,10 +5408,27 @@ export interface PickupUpdateRequest {
      */
     'package_location'?: string | null;
     /**
+     * The pickup scheduling type.<br/>         - one_time: Single pickup on a specific date<br/>         - daily: Recurring pickup every business day<br/>         - recurring: Custom recurring schedule         
+     */
+    'pickup_type'?: PickupUpdateRequestPickupTypeEnum;
+    /**
+     * Recurrence configuration for recurring pickups.<br/>         Example: {\"frequency\": \"weekly\", \"days_of_week\": [\"monday\", \"wednesday\", \"friday\"], \"end_date\": \"2024-12-31\"}         
+     */
+    'recurrence'?: { [key: string]: any; } | null;
+    /**
      * Advanced carrier specific pickup options
      */
     'options'?: { [key: string]: any; } | null;
 }
+
+export const PickupUpdateRequestPickupTypeEnum = {
+    OneTime: 'one_time',
+    Daily: 'daily',
+    Recurring: 'recurring'
+} as const;
+
+export type PickupUpdateRequestPickupTypeEnum = typeof PickupUpdateRequestPickupTypeEnum[keyof typeof PickupUpdateRequestPickupTypeEnum];
+
 export interface Postat {
     'client_id': string;
     'org_unit_id': string;
@@ -7170,7 +7270,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
-         * Retrieve all addresses.
+         *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all addresses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7349,7 +7449,7 @@ export const AddressesApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Retrieve all addresses.
+         *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all addresses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7417,7 +7517,7 @@ export const AddressesApiFactory = function (configuration?: Configuration, base
             return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Retrieve all addresses.
+         *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all addresses
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7505,7 +7605,7 @@ export class AddressesApi extends BaseAPI {
     }
 
     /**
-     * Retrieve all addresses.
+     *          Retrieve all addresses.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, address fields, contact info         - usage: Filter by meta.usage (exact match in array)         
      * @summary List all addresses
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11497,7 +11597,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Retrieve all stored parcels.
+         *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all parcels
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11676,7 +11776,7 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Retrieve all stored parcels.
+         *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all parcels
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11744,7 +11844,7 @@ export const ParcelsApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Retrieve all stored parcels.
+         *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all parcels
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11832,7 +11932,7 @@ export class ParcelsApi extends BaseAPI {
     }
 
     /**
-     * Retrieve all stored parcels.
+     *          Retrieve all stored parcels.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search by label         - usage: Filter by meta.usage (exact match in array)         
      * @summary List all parcels
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11926,10 +12026,18 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
+         * @param {string} [address] 
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [confirmationNumber] 
+         * @param {string} [createdAfter] 
+         * @param {string} [createdBefore] 
+         * @param {string} [keyword] 
+         * @param {string} [pickupDateAfter] 
+         * @param {string} [pickupDateBefore] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/pickups`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11955,6 +12063,46 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
 
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (address !== undefined) {
+                localVarQueryParameter['address'] = address;
+            }
+
+            if (carrierName !== undefined) {
+                localVarQueryParameter['carrier_name'] = carrierName;
+            }
+
+            if (confirmationNumber !== undefined) {
+                localVarQueryParameter['confirmation_number'] = confirmationNumber;
+            }
+
+            if (createdAfter !== undefined) {
+                localVarQueryParameter['created_after'] = (createdAfter as any instanceof Date) ?
+                    (createdAfter as any).toISOString() :
+                    createdAfter;
+            }
+
+            if (createdBefore !== undefined) {
+                localVarQueryParameter['created_before'] = (createdBefore as any instanceof Date) ?
+                    (createdBefore as any).toISOString() :
+                    createdBefore;
+            }
+
+            if (keyword !== undefined) {
+                localVarQueryParameter['keyword'] = keyword;
+            }
+
+            if (pickupDateAfter !== undefined) {
+                localVarQueryParameter['pickup_date_after'] = (pickupDateAfter as any instanceof Date) ?
+                    (pickupDateAfter as any).toISOString().substring(0,10) :
+                    pickupDateAfter;
+            }
+
+            if (pickupDateBefore !== undefined) {
+                localVarQueryParameter['pickup_date_before'] = (pickupDateBefore as any instanceof Date) ?
+                    (pickupDateBefore as any).toISOString().substring(0,10) :
+                    pickupDateBefore;
+            }
 
 
     
@@ -12149,11 +12297,19 @@ export const PickupsApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
+         * @param {string} [address] 
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [confirmationNumber] 
+         * @param {string} [createdAfter] 
+         * @param {string} [createdBefore] 
+         * @param {string} [keyword] 
+         * @param {string} [pickupDateAfter] 
+         * @param {string} [pickupDateBefore] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
+        async list(address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, confirmationNumber, createdAfter, createdBefore, keyword, pickupDateAfter, pickupDateBefore, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['PickupsApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12221,11 +12377,12 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
+         * @param {PickupsApiListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(options?: AxiosRequestConfig): AxiosPromise<PickupList> {
-            return localVarFp.list(options).then((request) => request(axios, basePath));
+        list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<PickupList> {
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve a scheduled pickup.
@@ -12267,6 +12424,30 @@ export interface PickupsApiCancelRequest {
     readonly id: string
 
     readonly pickupCancelData?: PickupCancelData
+}
+
+/**
+ * Request parameters for list operation in PickupsApi.
+ */
+export interface PickupsApiListRequest {
+    readonly address?: string
+
+    /**
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     */
+    readonly carrierName?: string
+
+    readonly confirmationNumber?: string
+
+    readonly createdAfter?: string
+
+    readonly createdBefore?: string
+
+    readonly keyword?: string
+
+    readonly pickupDateAfter?: string
+
+    readonly pickupDateBefore?: string
 }
 
 /**
@@ -12312,11 +12493,12 @@ export class PickupsApi extends BaseAPI {
     /**
      * Retrieve all scheduled pickups.
      * @summary List shipment pickups
+     * @param {PickupsApiListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public list(options?: AxiosRequestConfig) {
-        return PickupsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
+    public list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig) {
+        return PickupsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -12459,7 +12641,7 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all products
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12638,7 +12820,7 @@ export const ProductsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all products
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12706,7 +12888,7 @@ export const ProductsApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+         *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
          * @summary List all products
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -12794,7 +12976,7 @@ export class ProductsApi extends BaseAPI {
     }
 
     /**
-     *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.         
+     *          Retrieve all product templates.          Products are reusable commodity definitions that can be used         in customs declarations and shipment items.          Query Parameters:         - label: Filter by meta.label (case-insensitive contains)         - keyword: Search across label, title, sku, description, hs_code         - usage: Filter by meta.usage (exact match in array)         
      * @summary List all products
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

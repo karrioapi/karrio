@@ -46,7 +46,7 @@ class TestAddress(GraphTestCase):
         address = self._create_address().data
         response = self.query(
             """
-            mutation update_address($data: UpdateAddressInput2!) {
+            mutation update_address($data: UpdateAddressInput!) {
               update_address(input: $data) {
                 address {
                   id
@@ -144,7 +144,7 @@ class TestParcel(GraphTestCase):
         parcel = self._create_parcel().data
         response = self.query(
             """
-            mutation update_parcel($data: UpdateParcelInput2!) {
+            mutation update_parcel($data: UpdateParcelInput!) {
               update_parcel(input: $data) {
                 parcel {
                   id
@@ -200,18 +200,16 @@ class TestParcel(GraphTestCase):
 
 ADDRESS_DATA = {
     "data": {
-        "label": "Warehouse",
-        "address": {
-            "address_line1": "125 Church St",
-            "person_name": "John Doe",
-            "company_name": "A corp.",
-            "phone_number": "514 000 0000",
-            "city": "Moncton",
-            "country_code": "CA",
-            "postal_code": "E1C4Z8",
-            "residential": False,
-            "state_code": "NB",
-        },
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "meta": {"label": "Warehouse"},
     }
 }
 
@@ -242,12 +240,10 @@ ADDRESS_RESPONSE = {
 
 ADDRESS_UPDATE_DATA = {
     "data": {
-        "label": "Warehouse Update",
-        "address": {
-            "city": "Moncton",
-            "email": "test@gmail.com",
-            "person_name": "John Moe",
-        },
+        "city": "Moncton",
+        "email": "test@gmail.com",
+        "person_name": "John Moe",
+        "meta": {"label": "Warehouse Update"},
     }
 }
 
@@ -278,12 +274,10 @@ ADDRESS_UPDATE_RESPONSE = {
 
 PARCEL_DATA = {
     "data": {
-        "label": "Purple Pack",
-        "parcel": {
-            "weight": 1,
-            "weight_unit": "KG",
-            "package_preset": "canadapost_corrugated_small_box",
-        },
+        "weight": 1,
+        "weight_unit": "KG",
+        "package_preset": "canadapost_corrugated_small_box",
+        "meta": {"label": "Purple Pack"},
     }
 }
 
@@ -309,10 +303,8 @@ PARCEL_RESPONSE = {
 
 PARCEL_UPDATE_DATA = {
     "data": {
-        "parcel": {
-            "weight": 0.45,
-            "weight_unit": "LB",
-        }
+        "weight": 0.45,
+        "weight_unit": "LB",
     }
 }
 
@@ -436,7 +428,6 @@ class TestProduct(GraphTestCase):
 
 PRODUCT_DATA = {
     "data": {
-        "label": "Test Product",
         "weight": 1.5,
         "weight_unit": "KG",
         "quantity": 1,
@@ -447,6 +438,7 @@ PRODUCT_DATA = {
         "value_amount": 99.99,
         "value_currency": "USD",
         "origin_country": "US",
+        "meta": {"label": "Test Product"},
     }
 }
 
@@ -474,9 +466,9 @@ PRODUCT_RESPONSE = {
 
 PRODUCT_UPDATE_DATA = {
     "data": {
-        "label": "Updated Product",
         "weight": 2.0,
         "title": "Updated Title",
+        "meta": {"label": "Updated Product"},
     }
 }
 

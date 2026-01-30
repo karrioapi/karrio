@@ -89,6 +89,35 @@ class CarrierSettings:
             ]
         }
 
+    @property
+    def shipping_services(self):
+        """Alias for services to be compatible with RatingMixinProxy.
+
+        Converts service dicts to ServiceLevel objects if needed.
+        """
+        import karrio.lib as lib
+        from karrio.core.models import ServiceLevel
+
+        services = getattr(self, "services", [])
+        return [
+            lib.to_object(ServiceLevel, s) if isinstance(s, dict) else s
+            for s in services
+        ]
+
+    @property
+    def account_country_code(self):
+        """Account country code for rate calculation, falls back from config or metadata."""
+        return (
+            getattr(self, "_account_country_code", None)
+            or (getattr(self, "config", None) or {}).get("account_country_code")
+            or (getattr(self, "metadata", None) or {}).get("account_country_code")
+        )
+
+    @account_country_code.setter
+    def account_country_code(self, value):
+        """Set account country code."""
+        self._account_country_code = value
+
     @classmethod
     def create(cls, data: dict):
         return cls(**data)
@@ -134,11 +163,14 @@ class PickupRequest(BasePickupRequest):
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
 
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
+    parcels_count: int = None
     shipment_identifiers: typing.List[str] = []
     package_location: str = None
+    instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     metadata: typing.Dict = {}
     options: typing.Dict = {}
-    instruction: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -152,8 +184,10 @@ class PickupUpdateRequest(BasePickupUpdateRequest):
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
     shipment_identifiers: typing.List[str] = []
     package_location: str = None
-    options: typing.Dict = {}
     instruction: str = None
+    pickup_type: str = "one_time"  # one_time, daily, recurring
+    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
+    options: typing.Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -274,6 +308,8 @@ class Pickup:
     pickup_charge: ChargeDetails = jstruct.JStruct[ChargeDetails]
     instruction: str = None
     package_location: str = None
+    pickup_type: str = None  # one_time, daily, recurring
+    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
     metadata: typing.Dict = {}
     options: typing.Dict = {}
     meta: dict = {}

@@ -241,23 +241,61 @@ class RateSheet(core.OwnedEntity):
     # SERVICE RATE MANAGEMENT
     # ─────────────────────────────────────────────────────────────────
 
-    def get_service_rate(self, service_id: str, zone_id: str) -> dict:
-        """Get a service rate by service_id and zone_id."""
+    def _make_rate_key(self, rate: dict) -> str:
+        """Generate a unique key for a rate entry including weight brackets."""
+        service_id = rate.get("service_id", "")
+        zone_id = rate.get("zone_id", "")
+        min_weight = rate.get("min_weight", 0)
+        max_weight = rate.get("max_weight", 0)
+        return f"{service_id}:{zone_id}:{min_weight}:{max_weight}"
+
+    def get_service_rate(self, service_id: str, zone_id: str, min_weight: float = None, max_weight: float = None) -> dict:
+        """Get a service rate by service_id, zone_id, and optionally weight range."""
         for rate in self.service_rates or []:
             if rate.get("service_id") == service_id and rate.get("zone_id") == zone_id:
-                return rate
+                if min_weight is not None and max_weight is not None:
+                    if rate.get("min_weight") == min_weight and rate.get("max_weight") == max_weight:
+                        return rate
+                else:
+                    return rate
         return None
 
-    def update_service_rate(self, service_id: str, zone_id: str, rate_data: dict) -> dict:
-        """Update or create a service-zone rate mapping."""
-        service_rates = list(self.service_rates or [])
+    def get_service_rates(self, service_id: str, zone_id: str) -> list:
+        """Get all service rates for a service_id and zone_id combination."""
+        return [
+            rate for rate in self.service_rates or []
+            if rate.get("service_id") == service_id and rate.get("zone_id") == zone_id
+        ]
 
+    def update_service_rate(self, service_id: str, zone_id: str, rate_data: dict) -> dict:
+        """Update or create a service-zone rate mapping.
+        Uses (service_id, zone_id, min_weight, max_weight) as the unique key.
+        Falls back to (service_id, zone_id) match when no exact key match exists."""
+        service_rates = list(self.service_rates or [])
+        min_weight = rate_data.get("min_weight", 0)
+        max_weight = rate_data.get("max_weight", 0)
+        target_key = f"{service_id}:{zone_id}:{min_weight}:{max_weight}"
+
+        # First try exact composite key match
         for i, rate in enumerate(service_rates):
-            if rate.get("service_id") == service_id and rate.get("zone_id") == zone_id:
+            rate_key = self._make_rate_key(rate)
+            if rate_key == target_key:
                 service_rates[i] = {"service_id": service_id, "zone_id": zone_id, **rate_data}
                 self.service_rates = service_rates
                 self.save(update_fields=["service_rates"])
                 return service_rates[i]
+
+        # Fallback: match by (service_id, zone_id) if a single entry exists
+        matches = [
+            (i, r) for i, r in enumerate(service_rates)
+            if r.get("service_id") == service_id and r.get("zone_id") == zone_id
+        ]
+        if len(matches) == 1:
+            idx = matches[0][0]
+            service_rates[idx] = {"service_id": service_id, "zone_id": zone_id, **rate_data}
+            self.service_rates = service_rates
+            self.save(update_fields=["service_rates"])
+            return service_rates[idx]
 
         # Create new rate record
         new_rate = {"service_id": service_id, "zone_id": zone_id, **rate_data}
@@ -269,13 +307,15 @@ class RateSheet(core.OwnedEntity):
     def batch_update_service_rates(self, updates: list):
         """
         Batch update service rates.
-        updates format: [{'service_id': str, 'zone_id': str, 'rate': float, 'cost': float, ...}, ...]
+        Uses (service_id, zone_id, min_weight, max_weight) as the unique key.
+        updates format: [{'service_id': str, 'zone_id': str, 'rate': float, 'cost': float,
+                          'min_weight': float, 'max_weight': float, ...}, ...]
         """
         service_rates = list(self.service_rates or [])
         rate_map = {}
 
         for i, rate in enumerate(service_rates):
-            key = f"{rate.get('service_id')}:{rate.get('zone_id')}"
+            key = self._make_rate_key(rate)
             rate_map[key] = i
 
         for update in updates:
@@ -284,7 +324,7 @@ class RateSheet(core.OwnedEntity):
             if not service_id or not zone_id:
                 continue
 
-            key = f"{service_id}:{zone_id}"
+            key = self._make_rate_key(update)
 
             if key in rate_map:
                 service_rates[rate_map[key]] = {**service_rates[rate_map[key]], **update}
@@ -295,13 +335,22 @@ class RateSheet(core.OwnedEntity):
         self.service_rates = service_rates
         self.save(update_fields=["service_rates"])
 
-    def remove_service_rate(self, service_id: str, zone_id: str):
-        """Remove a service-zone rate mapping."""
-        service_rates = [
-            sr
-            for sr in (self.service_rates or [])
-            if not (sr.get("service_id") == service_id and sr.get("zone_id") == zone_id)
-        ]
+    def remove_service_rate(self, service_id: str, zone_id: str, min_weight: float = None, max_weight: float = None):
+        """Remove a service-zone rate mapping.
+        If min_weight and max_weight are provided, removes only the specific weight bracket.
+        Otherwise, removes all rates for the service+zone combination."""
+        if min_weight is not None and max_weight is not None:
+            target_key = f"{service_id}:{zone_id}:{min_weight}:{max_weight}"
+            service_rates = [
+                sr for sr in (self.service_rates or [])
+                if self._make_rate_key(sr) != target_key
+            ]
+        else:
+            service_rates = [
+                sr
+                for sr in (self.service_rates or [])
+                if not (sr.get("service_id") == service_id and sr.get("zone_id") == zone_id)
+            ]
         self.service_rates = service_rates
         self.save(update_fields=["service_rates"])
 

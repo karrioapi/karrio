@@ -903,11 +903,18 @@ class PickupRequest(serializers.Serializer):
         Date Format: `YYYY-MM-DD`
         """,
     )
-    address = AddressData(required=True, help_text="The pickup address")
+    address = AddressData(required=False, help_text="The pickup address")
     parcels = ParcelData(
         many=True,
-        allow_empty=False,
+        required=False,
+        allow_empty=True,
         help_text="The shipment parcels to pickup.",
+    )
+    parcels_count = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        min_value=1,
+        help_text="The number of parcels to be picked up (alternative to providing parcels array)",
     )
     ready_time = serializers.CharField(
         required=True,
@@ -939,6 +946,23 @@ class PickupRequest(serializers.Serializer):
         max_length=50,
         help_text="""The package(s) location.<br/>
         eg: Behind the entrance door.
+        """,
+    )
+    pickup_type = serializers.ChoiceField(
+        choices=[("one_time", "one_time"), ("daily", "daily"), ("recurring", "recurring")],
+        default="one_time",
+        required=False,
+        help_text="""The pickup scheduling type.<br/>
+        - one_time: Single pickup on a specific date<br/>
+        - daily: Recurring pickup every business day<br/>
+        - recurring: Custom recurring schedule
+        """,
+    )
+    recurrence = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""Recurrence configuration for recurring pickups.<br/>
+        Example: {"frequency": "weekly", "days_of_week": ["monday", "wednesday", "friday"], "end_date": "2024-12-31"}
         """,
     )
     options = serializers.PlainDictField(
@@ -1002,6 +1026,23 @@ class PickupUpdateRequest(serializers.Serializer):
         eg: Behind the entrance door.
         """,
     )
+    pickup_type = serializers.ChoiceField(
+        choices=[("one_time", "one_time"), ("daily", "daily"), ("recurring", "recurring")],
+        default="one_time",
+        required=False,
+        help_text="""The pickup scheduling type.<br/>
+        - one_time: Single pickup on a specific date<br/>
+        - daily: Recurring pickup every business day<br/>
+        - recurring: Custom recurring schedule
+        """,
+    )
+    recurrence = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""Recurrence configuration for recurring pickups.<br/>
+        Example: {"frequency": "weekly", "days_of_week": ["monday", "wednesday", "friday"], "end_date": "2024-12-31"}
+        """,
+    )
     options = serializers.PlainDictField(
         required=False,
         allow_null=True,
@@ -1034,6 +1075,24 @@ class PickupDetails(serializers.Serializer):
         required=False,
         allow_null=True,
         help_text="The pickup expected closing or late time",
+    )
+    pickup_type = serializers.ChoiceField(
+        choices=[("one_time", "one_time"), ("daily", "daily"), ("recurring", "recurring")],
+        default="one_time",
+        required=False,
+        allow_null=True,
+        help_text="""The pickup scheduling type.<br/>
+        - one_time: Single pickup on a specific date<br/>
+        - daily: Recurring pickup every business day<br/>
+        - recurring: Custom recurring schedule
+        """,
+    )
+    recurrence = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="""Recurrence configuration for recurring pickups.<br/>
+        Example: {"frequency": "weekly", "days_of_week": ["monday", "wednesday", "friday"]}
+        """,
     )
     metadata = serializers.PlainDictField(
         required=False, default={}, help_text="User metadata for the pickup"

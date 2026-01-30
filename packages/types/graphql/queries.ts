@@ -1468,7 +1468,7 @@ export const CREATE_PARCEL = gql`
 `;
 
 export const UPDATE_PARCEL = gql`
-  mutation update_parcel($data: UpdateParcelInput2!) {
+  mutation update_parcel($data: UpdateParcelInput!) {
     update_parcel(input: $data) {
       parcel {
         id
@@ -1496,7 +1496,7 @@ export const CREATE_ADDRESS = gql`
 `;
 
 export const UPDATE_ADDRESS = gql`
-  mutation update_address($data: UpdateAddressInput2!) {
+  mutation update_address($data: UpdateAddressInput!) {
     update_address(input: $data) {
       address {
         id
@@ -2682,8 +2682,28 @@ export const UPDATE_RATE_SHEET = gql`
           max_weight
           weight_unit
           active
+          dim_factor
+          use_volumetric
           zone_ids
           surcharge_ids
+          features {
+            first_mile
+            last_mile
+            form_factor
+            b2c
+            b2b
+            shipment_type
+            age_check
+            signature
+            tracked
+            insurance
+            express
+            dangerous_goods
+            saturday_delivery
+            sunday_delivery
+            multicollo
+            neighbor_delivery
+          }
         }
       }
       errors {
@@ -2727,8 +2747,28 @@ export const DELETE_RATE_SHEET_SERVICE = gql`
           max_weight
           weight_unit
           active
+          dim_factor
+          use_volumetric
           zone_ids
           surcharge_ids
+          features {
+            first_mile
+            last_mile
+            form_factor
+            b2c
+            b2b
+            shipment_type
+            age_check
+            signature
+            tracked
+            insurance
+            express
+            dangerous_goods
+            saturday_delivery
+            sunday_delivery
+            multicollo
+            neighbor_delivery
+          }
         }
       }
       errors {
@@ -3035,10 +3075,30 @@ export const GET_RATE_SHEET = gql`
         dimension_unit
         max_weight
         weight_unit
+        dim_factor
+        use_volumetric
         domicile
         international
         zone_ids
         surcharge_ids
+        features {
+          first_mile
+          last_mile
+          form_factor
+          b2c
+          b2b
+          shipment_type
+          age_check
+          signature
+          tracked
+          insurance
+          express
+          dangerous_goods
+          saturday_delivery
+          sunday_delivery
+          multicollo
+          neighbor_delivery
+        }
       }
       carriers {
         id
@@ -3110,10 +3170,30 @@ export const GET_RATE_SHEETS = gql`
             dimension_unit
             max_weight
             weight_unit
+            dim_factor
+            use_volumetric
             domicile
             international
             zone_ids
             surcharge_ids
+            features {
+              first_mile
+              last_mile
+              form_factor
+              b2c
+              b2b
+              shipment_type
+              age_check
+              signature
+              tracked
+              insurance
+              express
+              dangerous_goods
+              saturday_delivery
+              sunday_delivery
+              multicollo
+              neighbor_delivery
+            }
           }
           carriers {
             id
@@ -3366,6 +3446,148 @@ export const GET_MANIFEST = gql`
       meta
       created_at
       updated_at
+    }
+  }
+`;
+
+//#endregion
+
+// -----------------------------------------------------------
+// Pickup queries
+// -----------------------------------------------------------
+//#region
+
+export const GET_PICKUPS = gql`
+  query get_pickups($filter: PickupFilter) {
+    pickups(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          object_type
+          carrier_id
+          carrier_name
+          confirmation_number
+          pickup_date
+          ready_time
+          closing_time
+          instruction
+          package_location
+          test_mode
+          address {
+            id
+            postal_code
+            city
+            person_name
+            company_name
+            country_code
+            email
+            phone_number
+            state_code
+            residential
+            street_number
+            address_line1
+            address_line2
+          }
+          pickup_charge {
+            name
+            amount
+            currency
+          }
+          pickup_carrier {
+            connection_id
+            connection_type
+            carrier_code
+            carrier_id
+            carrier_name
+            test_mode
+          }
+          tracking_numbers
+          options
+          metadata
+          meta
+          created_at
+          updated_at
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PICKUP = gql`
+  query get_pickup($id: String!) {
+    pickup(id: $id) {
+      id
+      object_type
+      carrier_id
+      carrier_name
+      confirmation_number
+      pickup_date
+      ready_time
+      closing_time
+      instruction
+      package_location
+      test_mode
+      address {
+        id
+        postal_code
+        city
+        person_name
+        company_name
+        country_code
+        email
+        phone_number
+        state_code
+        residential
+        street_number
+        address_line1
+        address_line2
+      }
+      pickup_charge {
+        name
+        amount
+        currency
+      }
+      pickup_carrier {
+        connection_id
+        connection_type
+        carrier_code
+        carrier_id
+        carrier_name
+        test_mode
+      }
+      parcels {
+        id
+        weight
+        width
+        height
+        length
+        packaging_type
+        package_preset
+        weight_unit
+        dimension_unit
+      }
+      tracking_numbers
+      shipments {
+        id
+        tracking_number
+        status
+      }
+      options
+      metadata
+      meta
+      created_at
+      updated_at
+      created_by {
+        email
+        full_name
+      }
     }
   }
 `;

@@ -6,6 +6,8 @@ import django.conf as conf
 import django.db.models as models
 import django.utils.translation as translation
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 import karrio.server.core.models.base as core
 import karrio.server.core.models.entity as entity
@@ -19,6 +21,9 @@ class Metafield(entity.OwnedEntity):
         db_table = "metafield"
         verbose_name = "Metafield"
         verbose_name_plural = "Metafields"
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
 
     id = models.CharField(
         max_length=50,
@@ -37,6 +42,23 @@ class Metafield(entity.OwnedEntity):
     )
     is_required = models.BooleanField(null=False, default=False)
 
+    # Generic relation to any object
+    content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        help_text="The type of object this metafield is attached to",
+    )
+    object_id = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text="The ID of the object this metafield is attached to",
+    )
+    content_object = GenericForeignKey("content_type", "object_id")
+
     # Related fields
     created_by = models.ForeignKey(
         conf.settings.AUTH_USER_MODEL,
@@ -45,6 +67,32 @@ class Metafield(entity.OwnedEntity):
         on_delete=models.CASCADE,
         editable=False,
     )
+
+    @classmethod
+    def access_by(cls, context, manager: str = "objects"):
+        """Custom access control for metafields.
+
+        Metafield uses GenericForeignKey and has no direct 'org' FK,
+        so the default OrganizationAccess filter (which references org__id)
+        cannot be applied. Instead, we scope via created_by directly.
+        """
+        if isinstance(context, dict):
+            user = context.get("user", context)
+            org = context.get("org")
+        else:
+            user = getattr(context, "user", context)
+            org = getattr(context, "org", None)
+
+        user_id = getattr(user, "id", None)
+        queryset = getattr(cls, manager, cls.objects)
+
+        # Use truthiness (not identity) to handle SimpleLazyObject wrapping None
+        if org:
+            return queryset.filter(
+                models.Q(created_by__in=org.users.all())
+            )
+
+        return queryset.filter(models.Q(created_by__id=user_id))
 
     @property
     def object_type(self):

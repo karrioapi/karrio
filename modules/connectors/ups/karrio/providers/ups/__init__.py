@@ -14,3 +14,9 @@ from karrio.providers.ups.document import (
     parse_document_upload_response,
     document_upload_request,
 )
+from karrio.providers.ups.pickup import (
+    parse_pickup_response,
+    parse_pickup_cancel_response,
+    pickup_request,
+    pickup_cancel_request,
+)

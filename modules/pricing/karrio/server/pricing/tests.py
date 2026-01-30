@@ -315,30 +315,27 @@ class TestFeeCapture(TestCase):
                 "extra_charges": [
                     {"id": self.markup.id, "name": "test_markup", "amount": 5.0, "currency": "USD"},
                 ],
-            },
-            carrier={
-                "connection_id": "car_123",
-                "connection_type": "account",
-                "carrier_code": "fedex",
-                "carrier_id": "fedex",
-                "carrier_name": "fedex",
-                "test_mode": True,
+                "meta": {
+                    "carrier_code": "fedex",
+                    "carrier_connection_id": "car_123",
+                },
             },
             created_by=user,
         )
 
         # Verify fee was captured by the signal (don't call manually)
-        fees = models.Fee.objects.filter(shipment=shipment)
+        fees = models.Fee.objects.filter(shipment_id=shipment.id)
         self.assertEqual(fees.count(), 1)
 
         fee = fees.first()
-        self.assertEqual(fee.markup, self.markup)
+        self.assertEqual(fee.markup_id, self.markup.id)
         self.assertEqual(fee.name, "test_markup")
         self.assertEqual(fee.amount, 5.0)
         self.assertEqual(fee.currency, "USD")
         self.assertEqual(fee.carrier_code, "fedex")
         self.assertEqual(fee.service_code, "fedex_ground")
         self.assertEqual(fee.connection_id, "car_123")
+        self.assertEqual(fee.test_mode, True)
 
     def test_capture_fees_function_directly(self):
         """Test the capture_fees_for_shipment function in isolation.
@@ -371,30 +368,26 @@ class TestFeeCapture(TestCase):
                 "extra_charges": [
                     {"id": self.markup.id, "name": "test_markup", "amount": 5.0, "currency": "USD"},
                 ],
-            },
-            carrier={
-                "connection_id": "car_123",
-                "connection_type": "account",
-                "carrier_code": "fedex",
-                "carrier_id": "fedex",
-                "carrier_name": "fedex",
-                "test_mode": True,
+                "meta": {
+                    "carrier_code": "fedex",
+                    "carrier_connection_id": "car_123",
+                },
             },
             created_by=user,
         )
 
         # No fees should exist yet
-        self.assertEqual(models.Fee.objects.filter(shipment=shipment).count(), 0)
+        self.assertEqual(models.Fee.objects.filter(shipment_id=shipment.id).count(), 0)
 
         # Manually capture fees
         signals.capture_fees_for_shipment(shipment)
 
         # Verify fee was captured
-        fees = models.Fee.objects.filter(shipment=shipment)
+        fees = models.Fee.objects.filter(shipment_id=shipment.id)
         self.assertEqual(fees.count(), 1)
 
         fee = fees.first()
-        self.assertEqual(fee.markup, self.markup)
+        self.assertEqual(fee.markup_id, self.markup.id)
         self.assertEqual(fee.amount, 5.0)
 
     def test_no_duplicate_fee_capture(self):
@@ -433,14 +426,14 @@ class TestFeeCapture(TestCase):
         )
 
         # Fee should already exist from signal
-        fees = models.Fee.objects.filter(shipment=shipment)
+        fees = models.Fee.objects.filter(shipment_id=shipment.id)
         self.assertEqual(fees.count(), 1)
 
         # Save again - signal should not create duplicate
         shipment.save()
 
         # Still only one fee
-        fees = models.Fee.objects.filter(shipment=shipment)
+        fees = models.Fee.objects.filter(shipment_id=shipment.id)
         self.assertEqual(fees.count(), 1)
 
 

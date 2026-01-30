@@ -1,0 +1,539 @@
+{
+  "info": {
+    "_postman_id": "ee617b20-f052-4f25-9eca-7f7b8a1c5146",
+    "name": "UPS Paperless Documents",
+    "description": "Upload document images and link to your international shipments.\n\nVisit the full [UPS Paperless Documents Documentation](https://developer.ups.com/api/reference?loc=en_US#tag/Paperless_other) for more details!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20452875"
+  },
+  "item": [
+    {
+      "name": "Delete Paperless Document Example Request",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "ShipperNumber",
+            "value": "{{shipper_number}}",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "DocumentId",
+            "value": "",
+            "description": "DocumentId representing uploaded document to Forms History. Only one DocumentID will be accepted for delete request.",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/paperlessdocuments/:version/DocumentId/ShipperNumber",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "paperlessdocuments",
+            ":version",
+            "DocumentId",
+            "ShipperNumber"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v1",
+              "description": "Version of API"
+            }
+          ]
+        },
+        "description": "This HTTP DELETE request allows a user to provide their **ShipperNumber** along with a **DocumentId** in order to remove a previously uploaded and pushed document.\n\n**Note:** Your UPS Shipper Account Number must be enabled to upload forms created offline."
+      },
+      "response": [
+        {
+          "name": "Delete Paperless Document Example Request",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "ShipperNumber",
+                "value": "{{shipper_number}}",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "DocumentId",
+                "value": "",
+                "description": "DocumentId representing uploaded document to Forms History. Only one DocumentID will be accepted for delete request.",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/paperlessdocuments/:version/DocumentId/ShipperNumber",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paperlessdocuments",
+                ":version",
+                "DocumentId",
+                "ShipperNumber"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Version of API"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\r\n    \"DeleteResponse\": {\r\n        \"Response\": {\r\n            \"ResponseStatus\": {\r\n                \"Code\": \"1\",\r\n                \"Description\": \"Success\"\r\n            },\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"Your Customer Context\"\r\n            }\r\n        }\r\n    }\r\n}"
+        }
+      ]
+    },
+    {
+      "name": "Paperless Document Push Image Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "ShipperNumber",
+            "value": "{{shipper_number}}",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"PushToImageRepositoryRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"Your Customer Context\"\r\n            }\r\n        },\r\n        \"FormsHistoryDocumentID\": {\r\n            \"DocumentID\": [\"2016-01-18-11.01.07.589501\"]\r\n        },\r\n        \"ShipmentIdentifier\": \"Your Package Shipment Identifier\",\r\n        \"ShipmentDateAndTime\": \"2016-01-18-11.01.07\",\r\n        \"ShipmentType\": \"1\",\r\n        \"TrackingNumber\": \"Your Package Tracking Number\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/paperlessdocuments/:version/image",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "paperlessdocuments",
+            ":version",
+            "image"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2",
+              "description": "Version of API"
+            }
+          ]
+        },
+        "description": "This HTTP POST request allows the user to push a group of **DocumentID**s to a common **formsHistoryDocumentID** that will returned in the response.\n\n**Note:** Your UPS Shipper Account Number must be enabled to upload forms created offline."
+      },
+      "response": [
+        {
+          "name": "Paperless Document Push Image Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "ShipperNumber",
+                "value": "{{shipper_number}}",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"PushToImageRepositoryRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"Your Customer Context\"\r\n            }\r\n        },\r\n        \"FormsHistoryDocumentID\": {\r\n            \"DocumentID\": \"2016-01-18-11.01.07.589501\"\r\n        },\r\n        \"ShipmentIdentifier\": \"Your Package Shipment Identifier\",\r\n        \"ShipmentDateAndTime\": \"2016-01-18-11.01.07\",\r\n        \"ShipmentType\": \"1\",\r\n        \"TrackingNumber\": \"Your Package Tracking Number\"\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/paperlessdocuments/:version/image",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paperlessdocuments",
+                ":version",
+                "image"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Version of API"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"PushToImageRepositoryResponse\": {\n        \"FormsGroupID\": \"2016-01-18-11.09.01.244847\",\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            },\n            \"TransactionReference\": {\n                \"CustomerContext\": \"Your Customer Context\"\n            }\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Upload Paperless Document Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "ShipperNumber",
+            "value": "{{shipper_number}}",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"UploadRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\"\r\n            }\r\n        },\r\n        \"UserCreatedForm\": {\r\n            \"UserCreatedFormFileName\": \"TestFile.txt\",\r\n            \"UserCreatedFormFileFormat\": \"txt\",\r\n            \"UserCreatedFormDocumentType\": \"013\",\r\n            \"UserCreatedFormFile\": \"Tm90aWNlDQpJbiBhbGwgY29tbXVuaWNhdGlvbnMgd2l0aCBVUFMgY29uY2VybmluZyB0aGlzIGRvY3VtZW50LCBwbGVhc2UgcmVmZXIgdG8gdGhlIGRvY3VtZW50IGRhdGUgbG9jYXRlZCBvbiB0aGUgY292ZXIuDQpDb3B5cmlnaHQNClRoZSB1c2UsIGRpc2Nsb3N1cmUsIHJlcHJvZHVjdGlvbiwgbW9kaWZpY2F0aW9uLCB0cmFuc2Zlciwgb3IgdHJhbnNtaXR0YWwgb2YgdGhpcyB3b3JrIGZvciBhbnkgcHVycG9zZSBpbiBhbnkgZm9ybSBvciBieSBhbnkgbWVhbnMgd2l0aG91dCB0aGUgd3JpdHRlbiBwZXJtaXNzaW9uIG9mIFVuaXRlZCBQYXJjZWwgU2VydmljZSBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLg0KwqkgQ29weXJpZ2h0IDIwMTYgVW5pdGVkIFBhcmNlbCBTZXJ2aWNlIG9mIEFtZXJpY2EsIEluYy4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4NClRyYWRlbWFya3MNClVQUyBPbkxpbmXCriBpcyBhIHJlZ2lzdGVyZWQgdHJhZGVtYXJrIG9mIFVuaXRlZCBQYXJjZWwgU2VydmljZSBvZiBBbWVyaWNhLCBJbmMuIEFsbCBvdGhlciB0cmFkZW1hcmtzIGFyZSB0aGUgcHJvcGVydHkgb2YgdGhlaXIgcmVzcGVjdGl2ZSBvd25lcnMuDQpTb21lIG9mIHRoZSBVUFMgY29ycG9yYXRlIGFwcGxpY2F0aW9ucyB1c2UgVS5TLiBjaXR5LCBzdGF0ZSwgYW5kIHBvc3RhbCBjb2RlIGluZm9ybWF0aW9uIG9idGFpbmVkIGJ5IFVuaXRlZCBQYXJjZWwgU2VydmljZSBvZiBBbWVyaWNhLCBJbmMuIHVuZGVyIGEgbm9uLWV4Y2x1c2l2ZSBsaWNlbnNlIGZyb20gdGhlIFVuaXRlZCBTdGF0ZXMgUG9zdGFsIFNlcnZpY2UuIA0K\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/paperlessdocuments/:version/upload",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "paperlessdocuments",
+            ":version",
+            "upload"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2",
+              "description": "Version of API"
+            }
+          ]
+        },
+        "description": "This HTTP POST request allows the user to upload a **UserCreatedFormFile** and receive a **DocumentID** that can be utilized while placing a shipping request.\n\n**Note:** Your UPS Shipper Account Number must be enabled to upload forms created offline."
+      },
+      "response": [
+        {
+          "name": "Upload Paperless Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "transId",
+                "value": "",
+                "description": "An identifier unique to the request. Length 32",
+                "type": "text"
+              },
+              {
+                "key": "transactionSrc",
+                "value": "testing",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "ShipperNumber",
+                "value": "{{shipper_number}}",
+                "description": "An identifier of the client/source application that is making the request.Length 512",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"UploadRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"\"\r\n            }\r\n        },\r\n        \"UserCreatedForm\": {\r\n            \"UserCreatedFormFileName\": \"TestFile.txt\",\r\n            \"UserCreatedFormFileFormat\": \"txt\",\r\n            \"UserCreatedFormDocumentType\": \"013\",\r\n            \"UserCreatedFormFile\": \"Tm90aWNlDQpJbiBhbGwgY29tbXVuaWNhdGlvbnMgd2l0aCBVUFMgY29uY2VybmluZyB0aGlzIGRvY3VtZW50LCBwbGVhc2UgcmVmZXIgdG8gdGhlIGRvY3VtZW50IGRhdGUgbG9jYXRlZCBvbiB0aGUgY292ZXIuDQpDb3B5cmlnaHQNClRoZSB1c2UsIGRpc2Nsb3N1cmUsIHJlcHJvZHVjdGlvbiwgbW9kaWZpY2F0aW9uLCB0cmFuc2Zlciwgb3IgdHJhbnNtaXR0YWwgb2YgdGhpcyB3b3JrIGZvciBhbnkgcHVycG9zZSBpbiBhbnkgZm9ybSBvciBieSBhbnkgbWVhbnMgd2l0aG91dCB0aGUgd3JpdHRlbiBwZXJtaXNzaW9uIG9mIFVuaXRlZCBQYXJjZWwgU2VydmljZSBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLg0KwqkgQ29weXJpZ2h0IDIwMTYgVW5pdGVkIFBhcmNlbCBTZXJ2aWNlIG9mIEFtZXJpY2EsIEluYy4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4NClRyYWRlbWFya3MNClVQUyBPbkxpbmXCriBpcyBhIHJlZ2lzdGVyZWQgdHJhZGVtYXJrIG9mIFVuaXRlZCBQYXJjZWwgU2VydmljZSBvZiBBbWVyaWNhLCBJbmMuIEFsbCBvdGhlciB0cmFkZW1hcmtzIGFyZSB0aGUgcHJvcGVydHkgb2YgdGhlaXIgcmVzcGVjdGl2ZSBvd25lcnMuDQpTb21lIG9mIHRoZSBVUFMgY29ycG9yYXRlIGFwcGxpY2F0aW9ucyB1c2UgVS5TLiBjaXR5LCBzdGF0ZSwgYW5kIHBvc3RhbCBjb2RlIGluZm9ybWF0aW9uIG9idGFpbmVkIGJ5IFVuaXRlZCBQYXJjZWwgU2VydmljZSBvZiBBbWVyaWNhLCBJbmMuIHVuZGVyIGEgbm9uLWV4Y2x1c2l2ZSBsaWNlbnNlIGZyb20gdGhlIFVuaXRlZCBTdGF0ZXMgUG9zdGFsIFNlcnZpY2UuIA0K\"\r\n        }\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/paperlessdocuments/:version/upload",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paperlessdocuments",
+                ":version",
+                "upload"
+              ],
+              "variable": [
+                {
+                  "key": "version",
+                  "value": "v1",
+                  "description": "Version of API"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "name": "Content-Type",
+              "value": "application/json",
+              "description": "",
+              "type": "text"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"UploadResponse\": {\n        \"FormsHistoryDocumentID\": {\n            \"DocumentID\": \"2016-01-18-11.01.07.589501\"\n        },\n        \"Response\": {\n            \"ResponseStatus\": {\n                \"Code\": \"1\",\n                \"Description\": \"Success\"\n            },\n            \"TransactionReference\": {}\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Upload with document type 010 Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "ShipperNumber",
+            "value": "{{shipper_number}}",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"UploadRequest\": {\r\n        \"Request\": {\r\n            \"RequestOption\": null,\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"df25efe0-899b-4c03-9534-557ae1c90b66\"\r\n            }\r\n        },\r\n        \"ShipperNumber\": \"\",\r\n        \"UserCreatedForm\": {\r\n            \"UserCreatedFormDocumentType\": \"010\",\r\n            \"UserCreatedFormFile\": \"JVBERi0xLjUKJeLjz9MKMyAwIG9iago8PC9MZW5ndGggMTI1MC9GaWx0ZXIvRmxhdGVEZWNvZGU+PnN0cmVhbQp4nLVXXVPjNhR9z6+4Tx2YgcSWv3lq+NpmC5SSdNud4UWxbxIvthVkGcj+nf7RXslOcJPA1ttZmAHH0T336Nwj6eqxdzrpOT6ELoNJ0ruY9H7Xbywwv/0otJwIHnqDSxtsGjHr2eYb+uRZEET0Ku8d3PL4IS3mcJWWCgYwKp5EGiP8BGOMK5mqFZxjnHHJVSqKw8kXnWZvEga29a8kjgdBYJsksPfnN5mghDucocQixhOY3B5brsfciL2XyN5K5NBkXKvvmUwXL0shFcEOk0RiWb7PONzGsaMG56NYFPAnZvGiI4IVmfgJkpzDOBZVoboh+FHYcPijSBV4RzBZIHzgCp/5qiNUGBqgUynyqZCimnecjR8EDZdrlCWuyjTBjgh+YOLPfvEZODd/dYz2/JYWmMCvZNVE5HB/cM3TIuNFcn/4vld2IB2vgZxgdgI6eJP5wLKZ43p+EEZWR1TW2C/n6Q7qF/JS/1l76WcleVHOMzHlGb4stUH7sehXD9383jb8OWbpE8rVdxm+7XjjWP2HKv2tlb4L07b994K8Ot+O4BQ5TQvGSiJ2W0Gvvr/BZ/gs5Lvq7gvfuP7mc9fQxu62ZVle19hts48VLfp3C7pjxB/k7x9t8O3l5IWOyfZpOIEbsTML+umIF7C1KPwFRuf/G5EEsdz6/JTpE5WJDs4kfUqTimcdqbn1EXkmijKdFzkWCsZVnnO52mZ5KsRDNzuA56z3iTb+J55VuI3+t2f1O+vKLAN+KTGdLxSciVLt4LpBPwwa3EdqUR57DD4S/Ie6XdnAMXBDw3WTyTQnfI5Qpl91S5KkRL+kPqSlQjs8YOtw34SPFOZgn+wf7Dv1YNYMZjT7h/kRbbb0EOfwUj8BPTav9gDZ/ltp2Vujt/M6TV62ycvWedlO3v9SFNdx+0Fd9FGuuyFOJT+G2wx5iSCRJxBzibMqy1bvQu+exy5z+81GMLw/hGGWwVyIpIRnauFgaTZ9TrCwpMLRDjZdQY5ApzQsaDeHKWIBaQH5CmIqoiG2FGVJuwQVlapMXaAJpVO+v6dqRMB2mrm1lgUxuRENkdc8PEmIgRKgqH2KW+4nUrxYgaD3suF8BIWQQKKYb2qkKeq2mJSSKeEQvSkueDYDMdsJ73dU0XLWKp4R91FNOjFtNqUiAeHi6uJscjc6G17BaHJxPdb59TwacSCjbn2/Qk7EdhQ6pyyTRVpCuUiXRoNEYElzVloYRZ2UmdKCf+UyEVVZK3AEONcTnFU5HgGf6TNdM6VnlKIUGY1YUqzqUzvWuKtEJG7Fg+YrKkm+mJZ0lhmbtUmGbK3AQqnlyWCQiZhnC719+JbjB4O0mAmZm0vHIOHFnDJW5TE56XjDcgA0BHJBVdOj241gO1Vg7+hxYVTnOfBnXXO14MoIMOOZnoM+do1KOV/Rein0LSXX8+LTDLWjljR9uh1pclCZr3VtSJ+81PbQH4ZPqSFvzH/N6SJFe9frnWoYK7CjyOroHMe317pd1s6hdUd+brxTz0Sn51PxVMvSiAhUfSWrejHGQkqMNway4bln0R4dug5s/7/70NN5rVCLyDy9BZAkvbHZv9tKe+BQT8o2SgdG6TEtOq4qiXtqQxGMtSLqO+ruzeub9Db87Mh7k5+1n+A51Xqfb94gx1y4xCltzMxpov4BS1LYBAplbmRzdHJlYW0KZW5kb2JqCjcgMCBvYmoKPDwvUGFnZXMgNCAwIFIvVHlwZS9DYXRhbG9nPj4KZW5kb2JqCjggMCBvYmoKPDwvQ3JlYXRpb25EYXRlKEQ6MjAyMzAyMjQxMTIyMzYrMDAnMDAnKS9Qcm9kdWNlcihpVGV4dFNoYXJwIDUuMC4wIFwoY1wpIDFUM1hUIEJWQkEpL0F1dGhvcihUcmFuc2dsb2JhbCBFeHByZXNzKS9Nb2REYXRlKEQ6MjAyMzAyMjQxMTIyMzYrMDAnMDAnKS9DcmVhdG9yKFRyYW5zZ2xvYmFsIEV4cHJlc3MpPj4KZW5kb2JqCjYgMCBvYmoKPDwvVHlwZS9PYmpTdG0vTGVuZ3RoIDIyMy9GaWx0ZXIvRmxhdGVEZWNvZGUvTiA0L0ZpcnN0IDIyPj5zdHJlYW0KeJyVUNGKwjAQ/JV9vHs4N4kGFKRwVcsVOShauIPSh167SEATaVLx/t5NUZ/v8jKZnWE2GQ0CJEgtQYFSC5jBVChYLrH8PRMWzYHwkzrTpO5aCfbqhYb5TNUs9WQD+wXscOVsYOZhOtIdeTf0LXnOyViKwPGjlvG2eEkSLHrX7ilAhcU6AyzpGgDzE+9M77i6Y14nfJ7Pipm4H35CJHEiMW08jeMPOl4omLZ5S92xw41tXWfsAb+MfbfePPh/0/4SFNvymJff5YueiIl4xa3pfKXjd2vuaOC+JPtvJZNzfwplbmRzdHJlYW0KZW5kb2JqCjkgMCBvYmoKPDwvV1sxIDIgMl0vSW5mbyA4IDAgUi9Sb290IDcgMCBSL1R5cGUvWFJlZi9JbmRleFswIDEwXS9GaWx0ZXIvRmxhdGVEZWNvZGUvTGVuZ3RoIDQ1L1NpemUgMTAvSUQgWzw5MjMwZDQ0NmJmM2E2NDg5YmVmZGM3YTRiZWUzMmY0Zj48NzYyNGI1MDU3ODdmYTNkZDZhNzJhOGNlYThjNDU1ODc+XT4+c3RyZWFtCnicY2Bg+P+fiYGNgRFEMDEy8DMwgFjMIIKBkU0JSLCagogkBhD4/x8AcAoE/wplbmRzdHJlYW0KZW5kb2JqCnN0YXJ0eHJlZgoxODg1CiUlRU9GCg==\",\r\n            \"UserCreatedFormFileFormat\": \"pdf\",\r\n            \"UserCreatedFormFileName\": \"TP-0452492_PackingList.pdf\"\r\n        }\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/paperlessdocuments/:version/upload",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "paperlessdocuments",
+            ":version",
+            "upload"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2",
+              "description": "Version of API"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Upload with document type 002 Example Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "transId",
+            "value": "",
+            "description": "An identifier unique to the request. Length 32",
+            "type": "text"
+          },
+          {
+            "key": "transactionSrc",
+            "value": "testing",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "ShipperNumber",
+            "value": "{{shipper_number}}",
+            "description": "An identifier of the client/source application that is making the request.Length 512",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"UploadRequest\": {\r\n        \"Request\": {\r\n            \"TransactionReference\": {\r\n                \"CustomerContext\": \"06266e54656e4284805be4d45786ee96\"\r\n            }\r\n        },\r\n        \"UserCreatedForm\": [\r\n            {\r\n                \"UserCreatedFormFileName\": \"iShipTestFile04.txt\",\r\n                \"UserCreatedFormFileFormat\": \"txt\",\r\n                \"UserCreatedFormDocumentType\": \"002\",\r\n                \"UserCreatedFormFile\": \"Tm90aWNlDQpJbiBhbGwgY29tbXVuaWNhdGlvbnMgd2l0aCBVUFMgY29uY2VybmluZyB0aGlzIGRvY3VtZW50LCBwbGVhc2UgcmVmZXIgdG8gdGhlIGRvY3VtZW50IGRhdGUgbG9jYXRlZCBvbiB0aGUgY292ZXIuDQpDb3B5cmlnaHQNClRoZSB1c2UsIGRpc2Nsb3N1cmUsIHJlcHJvZHVjdGlvbiwgbW9kaWZpY2F0aW9uLCB0cmFuc2Zlciwgb3IgdHJhbnNtaXR0YWwgb2YgdGhpcyB3b3JrIGZvciBhbnkgcHVycG9zZSBpbiBhbnkgZm9ybSBvciBieSBhbnkgbWVhbnMgd2l0aG91dCB0aGUgd3JpdHRlbiBwZXJtaXNzaW9uIG9mIFVuaXRlZCBQYXJjZWwgU2VydmljZSBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLg0KwqkgQ29weXJpZ2h0IDIwMTYgVW5pdGVkIFBhcmNlbCBTZXJ2aWNlIG9mIEFtZXJpY2EsIEluYy4gQWxsIFJpZ2h0cyBSZXNlcnZlZC4NClRyYWRlbWFya3MNClVQUyBPbkxpbmXCriBpcyBhIHJlZ2lzdGVyZWQgdHJhZGVtYXJrIG9mIFVuaXRlZCBQYXJjZWwgU2VydmljZSBvZiBBbWVyaWNhLCBJbmMuIEFsbCBvdGhlciB0cmFkZW1hcmtzIGFyZSB0aGUgcHJvcGVydHkgb2YgdGhlaXIgcmVzcGVjdGl2ZSBvd25lcnMuDQpTb21lIG9mIHRoZSBVUFMgY29ycG9yYXRlIGFwcGxpY2F0aW9ucyB1c2UgVS5TLiBjaXR5LCBzdGF0ZSwgYW5kIHBvc3RhbCBjb2RlIGluZm9ybWF0aW9uIG9idGFpbmVkIGJ5IFVuaXRlZCBQYXJjZWwgU2VydmljZSBvZiBBbWVyaWNhLCBJbmMuIHVuZGVyIGEgbm9uLWV4Y2x1c2l2ZSBsaWNlbnNlIGZyb20gdGhlIFVuaXRlZCBTdGF0ZXMgUG9zdGFsIFNlcnZpY2UuIA0K\"\r\n            }\r\n        ],\r\n        \"ShipperNumber\": \"\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/paperlessdocuments/:version/upload",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "paperlessdocuments",
+            ":version",
+            "upload"
+          ],
+          "variable": [
+            {
+              "key": "version",
+              "value": "v2",
+              "description": "Version of API"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://wwwcie.ups.com",
+      "type": "string"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import {
   Building2,
   BarChart3,
   Workflow,
+  Package,
 } from "lucide-react"
 
 
@@ -50,6 +51,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Shipments",
       url: "/shipments",
       icon: Truck,
+    },
+    {
+      title: "Pickups",
+      url: "/pickups",
+      icon: Package,
     },
     {
       title: "Trackers",

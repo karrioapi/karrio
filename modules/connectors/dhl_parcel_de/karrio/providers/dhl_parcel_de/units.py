@@ -1,10 +1,158 @@
 import csv
+import attr
+import typing
 import pathlib
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
 
 import karrio.schemas.dhl_parcel_de.shipping_request as ship_req
+
+
+# System config schema for runtime settings (e.g., API credentials)
+# Format: Dict[str, Tuple[default_value, description, type]]
+# Note: The actual env values are read by the server (constance.py) using decouple
+SYSTEM_CONFIG = {
+    "DHL_PARCEL_DE_USERNAME": (
+        "",
+        "DHL Parcel DE API username for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_PASSWORD": (
+        "",
+        "DHL Parcel DE API password for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_CLIENT_ID": (
+        "",
+        "DHL Parcel DE OAuth client ID for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_CLIENT_SECRET": (
+        "",
+        "DHL Parcel DE OAuth client secret for production",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_USERNAME": (
+        "user-valid",
+        "DHL Parcel DE API username for sandbox/test mode",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_PASSWORD": (
+        "SandboxPasswort2023!",
+        "DHL Parcel DE API password for sandbox/test mode",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_CLIENT_ID": (
+        "",
+        "DHL Parcel DE OAuth client ID for sandbox/test mode",
+        str,
+    ),
+    "DHL_PARCEL_DE_SANDBOX_CLIENT_SECRET": (
+        "",
+        "DHL Parcel DE OAuth client secret for sandbox/test mode",
+        str,
+    ),
+}
+
+
+class ShippingService(lib.Enum):
+    """Carrier specific services"""
+
+    dhl_parcel_de_paket = "V01PAK"
+    dhl_parcel_de_kleinpaket = "V62KP"
+    dhl_parcel_de_europaket = "V54EPAK"
+    dhl_parcel_de_paket_international = "V53WPAK"
+    dhl_parcel_de_warenpost_international = "V66WPI"
+
+
+@attr.s(auto_attribs=True)
+class ServiceBillingNumberType:
+    """Typed object for service-specific billing number configuration."""
+
+    service: ShippingService  # Required: shipping service enum
+    billing_number: str  # Required: billing number for this service
+
+    name: typing.Optional[str] = None  # Optional: friendly name for this entry
+
+
+# Default test/sandbox billing numbers from DHL documentation
+# https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2
+DEFAULT_TEST_BILLING_NUMBERS: typing.List[ServiceBillingNumberType] = [
+    # V01PAK - DHL Paket (incl. services)
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_paket", billing_number="33333333330102"
+    ),
+    # V53WPAK - DHL Paket International
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_paket_international", billing_number="33333333335301"
+    ),
+    # V54EPAK - DHL Europaket
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_europaket", billing_number="33333333335401"
+    ),
+    # V62KP - DHL Kleinpaket
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_kleinpaket", billing_number="33333333336201"
+    ),
+    # V66WPI - Warenpost International
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_warenpost_international", billing_number="33333333336601"
+    ),
+]
+
+# Default test billing number (V01PAK with services)
+DEFAULT_TEST_BILLING_NUMBER = "33333333330102"
+
+
+class LabelType(lib.Enum):
+    """Carrier specific label type"""
+
+    PDF_A4 = ("PDF", "A4")
+    ZPL2_A4 = ("ZPL2", "A4")
+    PDF_910_300_700 = ("PDF", "910-300-700")
+    ZPL2_910_300_700 = ("ZPL2", "910-300-700")
+    PDF_910_300_700_oz = ("PDF", "910-300-700-oz")
+    ZPL2_910_300_700_oz = ("ZPL2", "910-300-700-oz")
+    PDF_910_300_710 = ("PDF", "910-300-710")
+    ZPL2_910_300_710 = ("ZPL2", "910-300-710")
+    PDF_910_300_600 = ("PDF", "910-300-600")
+    ZPL2_910_300_600 = ("ZPL2", "910-300-600")
+    PDF_910_300_610 = ("PDF", "910-300-610")
+    ZPL2_910_300_610 = ("ZPL2", "910-300-610")
+    PDF_910_300_400 = ("PDF", "910-300-400")
+    ZPL2_910_300_400 = ("ZPL2", "910-300-400")
+    PDF_910_300_410 = ("PDF", "910-300-410")
+    ZPL2_910_300_410 = ("ZPL2", "910-300-410")
+    PDF_910_300_300 = ("PDF", "910-300-300")
+    ZPL2_910_300_300 = ("ZPL2", "910-300-300")
+    PDF_910_300_300_oz = ("PDF", "910-300-300-oz")
+    ZPL2_910_300_300_oz = ("ZPL2", "910-300-300-oz")
+
+    """ Unified Label type mapping """
+    PDF = PDF_A4
+    ZPL = ZPL2_A4
+    PNG = PDF_A4
+
+
+class ConnectionConfig(lib.Enum):
+    label_type = lib.OptionEnum(
+        "label_type",
+        lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
+    )
+    language = lib.OptionEnum(
+        "language",
+        lib.units.create_enum("Language", ["de", "en"]),
+    )
+    default_billing_number = lib.OptionEnum("default_billing_number")
+    service_billing_numbers = lib.OptionEnum(
+        "service_billing_numbers", typing.List[ServiceBillingNumberType]
+    )
+    profile = lib.OptionEnum("profile")
+    cost_center = lib.OptionEnum("cost_center")
+    creation_software = lib.OptionEnum("creation_software")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
 
 
 class PackagingType(lib.StrEnum):
@@ -48,41 +196,11 @@ class Incoterm(lib.StrEnum):
     DXV = "DXV"
 
 
-class LabelType(lib.Enum):
-    """Carrier specific label type"""
-
-    PDF_A4 = ("PDF", "A4")
-    ZPL2_A4 = ("ZPL2", "A4")
-    PDF_910_300_700 = ("PDF", "910-300-700")
-    ZPL2_910_300_700 = ("ZPL2", "910-300-700")
-    PDF_910_300_700_oz = ("PDF", "910-300-700-oz")
-    ZPL2_910_300_700_oz = ("ZPL2", "910-300-700-oz")
-    PDF_910_300_710 = ("PDF", "910-300-710")
-    ZPL2_910_300_710 = ("ZPL2", "910-300-710")
-    PDF_910_300_600 = ("PDF", "910-300-600")
-    ZPL2_910_300_600 = ("ZPL2", "910-300-600")
-    PDF_910_300_610 = ("PDF", "910-300-610")
-    ZPL2_910_300_610 = ("ZPL2", "910-300-610")
-    PDF_910_300_400 = ("PDF", "910-300-400")
-    ZPL2_910_300_400 = ("ZPL2", "910-300-400")
-    PDF_910_300_410 = ("PDF", "910-300-410")
-    ZPL2_910_300_410 = ("ZPL2", "910-300-410")
-    PDF_910_300_300 = ("PDF", "910-300-300")
-    ZPL2_910_300_300 = ("ZPL2", "910-300-300")
-    PDF_910_300_300_oz = ("PDF", "910-300-300-oz")
-    ZPL2_910_300_300_oz = ("ZPL2", "910-300-300-oz")
-
-    """ Unified Label type mapping """
-    PDF = PDF_A4
-    ZPL = ZPL2_A4
-    PNG = PDF_A4
-
-
 class ShippingDocumentCategory(lib.StrEnum):
     """Carrier specific document category types.
 
-    Maps DHL Parcel DE document types to standard ShippingDocumentCategory.
-    Values match the exact syntax used by DHL Parcel DE API.
+    Maps DHL Germany document types to standard ShippingDocumentCategory.
+    Values match the exact syntax used by DHL Germany API.
     """
 
     shipping_label = "shippingLabel"
@@ -98,35 +216,6 @@ class ShippingDocumentCategory(lib.StrEnum):
     warenpost_international = "warenpostInternational"
     error_label = "errorLabel"
     qr_code = "qrCode"
-
-
-class ConnectionConfig(lib.Enum):
-    profile = lib.OptionEnum("profile")
-    cost_center = lib.OptionEnum("cost_center")
-    creation_software = lib.OptionEnum("creation_software")
-    shipping_options = lib.OptionEnum("shipping_options", list)
-    shipping_services = lib.OptionEnum("shipping_services", list)
-    language = lib.OptionEnum(
-        "language",
-        lib.units.create_enum("Language", ["de", "en"]),
-    )
-    label_type = lib.OptionEnum(
-        "label_type",
-        lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
-    )
-
-
-class ShippingService(lib.Enum):
-    """Carrier specific services"""
-
-    dhl_parcel_de_paket = "V01PAK"
-    dhl_parcel_de_kleinpaket = "V62KP"
-    dhl_parcel_de_europaket = "V54EPAK"
-    dhl_parcel_de_paket_international = "V53WPAK"
-    dhl_parcel_de_warenpost_international = "V66WPI"
-
-    # Alias for backwards compatibility (Warenpost replaced by Kleinpaket as of 2025)
-    dhl_parcel_de_warenpost = dhl_parcel_de_kleinpaket
 
 
 class ShippingOption(lib.Enum):
@@ -258,14 +347,58 @@ class CustomsOption(lib.Enum):
 
 
 class TrackingStatus(lib.Enum):
-    delivered = ["delivered"]
-    in_transit = ["transit"]
-    delivery_failed = ["failure"]
-    delivery_delayed = ["unknown"]
+    """Maps DHL Parcel DE tracking codes to normalized status.
+
+    ICE (International Coded Event) codes from DHL Parcel DE Tracking API:
+    - SHRCU: Shipment received at collection unit
+    - LDTMV: Loaded to/moving on transportation
+    - PCKDU: Picked up
+    - ULFMV: Unloaded from transportation
+    - SRTED: Sorted
+    - DLVRD: Delivered
+    - ARRVD: Arrived
+    - HLDCC: Held at customs
+
+    RIC (Reason Instruction Code) codes:
+    - PCKST: Packstation
+    - MVMTV: Movement
+    - PUBCR: Public carrier
+    - UNLDD: Unloaded
+    - NRQRD: No reason required
+    - OTHER: Other
+
+    Standard event codes:
+    - ES: Einlieferung / Posting
+    - AA: Processing at origin parcel center
+    - AE: Pick-up successful
+    - EE: Destination parcel center
+    - PO: Loaded onto delivery vehicle
+    - ZU: Delivery successful
+    """
+
+    delivered = ["delivered", "dlvrd", "zu"]
+    in_transit = [
+        "transit",
+        "shrcu",
+        "ldtmv",
+        "pckdu",
+        "ulfmv",
+        "srted",
+        "arrvd",
+        "hldcc",
+        "es",
+        "aa",
+        "ae",
+        "ee",
+        "po",
+    ]
+    delivery_failed = ["failure", "ntdel", "rtrnd", "adurs"]
+    delivery_delayed = ["unknown", "delay"]
+    out_for_delivery = ["po", "in delivery"]
 
 
 class TrackingIncidentReason(lib.Enum):
-    """Maps DHL Parcel DE exception codes to normalized TrackingIncidentReason."""
+    """Maps DHL Germany exception codes to normalized TrackingIncidentReason."""
 
     # Carrier-caused issues
     carrier_damaged_parcel = ["damaged", "package_damaged", "parcel_damaged"]

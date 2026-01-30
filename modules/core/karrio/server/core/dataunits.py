@@ -100,6 +100,51 @@ def contextual_metadata(request: Request):
     }
 
 
+def _get_system_credentials_status() -> dict:
+    """Compute which carriers have system credentials configured.
+
+    Returns dict like:
+    {
+        "dhl_parcel_de": {"production": True, "sandbox": False},
+        "teleship": {"production": True, "sandbox": True},
+    }
+    """
+    result = {}
+
+    for carrier_id, metadata_obj in ref.PLUGIN_METADATA.items():
+        system_config = metadata_obj.get("system_config")
+        if not system_config:
+            continue
+
+        # Group env vars by production/sandbox
+        prod_vars = [k for k in system_config.keys() if "SANDBOX" not in k]
+        sandbox_vars = [k for k in system_config.keys() if "SANDBOX" in k]
+
+        # Check if production credentials are set (all vars must be non-empty)
+        prod_configured = False
+        if prod_vars:
+            prod_configured = all(
+                bool(getattr(config, var, None))
+                for var in prod_vars
+            )
+
+        # Check if sandbox credentials are set (all vars must be non-empty)
+        sandbox_configured = False
+        if sandbox_vars:
+            sandbox_configured = all(
+                bool(getattr(config, var, None))
+                for var in sandbox_vars
+            )
+
+        if prod_configured or sandbox_configured:
+            result[carrier_id] = {
+                "production": prod_configured,
+                "sandbox": sandbox_configured,
+            }
+
+    return result
+
+
 def contextual_reference(request: Request = None, reduced: bool = True):
     import karrio.server.core.gateway as gateway
     import karrio.server.core.validators as validators
@@ -110,12 +155,20 @@ def contextual_reference(request: Request = None, reduced: bool = True):
     is_authenticated = lib.identity(
         request.user.is_authenticated if hasattr(request, "user") else False
     )
+
+    # Compute system credentials availability
+    system_credentials_carriers = lib.failsafe(
+        lambda: _get_system_credentials_status(),
+        {},
+    )
+
     references = {
         **contextual_metadata(request),
         "ADDRESS_AUTO_COMPLETE": lib.failsafe(
             lambda: validators.Address.get_info(is_authenticated),
             None,
         ),
+        "system_credentials_carriers": system_credentials_carriers,
         **{
             k: v
             for k, v in REFERENCE_MODELS.items()

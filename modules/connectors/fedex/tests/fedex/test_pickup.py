@@ -18,9 +18,25 @@ class TestFedExPickup(unittest.TestCase):
 
         self.assertEqual(request.serialize(), PickupRequest)
 
+    def test_create_pickup_request_with_seconds_in_time(self):
+        """Test that times with seconds (HH:MM:SS) are normalized to HH:MM format."""
+        payload_with_seconds = models.PickupRequest(**PickupPayloadWithSeconds)
+        request = gateway.mapper.create_pickup_request(payload_with_seconds)
+
+        # Should produce the same output as PickupRequest (times normalized)
+        self.assertEqual(request.serialize(), PickupRequest)
+
     def test_create_update_pickup_request(self):
         request = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
 
+        self.assertEqual(request.serialize(), PickupUpdateRequest)
+
+    def test_create_update_pickup_request_with_seconds_in_time(self):
+        """Test that update request times with seconds (HH:MM:SS) are normalized."""
+        payload_with_seconds = models.PickupUpdateRequest(**PickupUpdatePayloadWithSeconds)
+        request = gateway.mapper.create_pickup_update_request(payload_with_seconds)
+
+        # Should produce the same output as PickupUpdateRequest (times normalized)
         self.assertEqual(request.serialize(), PickupUpdateRequest)
 
     def test_create_cancel_pickup_request(self):
@@ -108,11 +124,62 @@ PickupPayload = {
     },
 }
 
+PickupPayloadWithSeconds = {
+    "pickup_date": "2013-10-19",
+    "ready_time": "11:00:00",  # HH:MM:SS format (some browsers send this)
+    "closing_time": "09:20:00",  # HH:MM:SS format
+    "package_location": "behind the front desk",
+    "address": {
+        "company_name": "XYZ Inc.",
+        "address_line1": "456 Oak Avenue",
+        "address_line2": "Suite 789",
+        "city": "Springfield",
+        "postal_code": "62701",
+        "country_code": "US",
+        "person_name": "Jane Smith",
+        "phone_number": "2175551234",
+        "state_code": "IL",
+        "email": "jane.smith@xyz.com",
+        "residential": False,
+    },
+    "parcels": [{"weight": 20, "weight_unit": "LB"}],
+    "options": {
+        "fedex_carrier_code": "FDXE",
+        "fedex_pickup_address_type": "BUSINESS",
+    },
+}
+
 PickupUpdatePayload = {
     "confirmation_number": "XXX561073",
     "pickup_date": "2013-10-19",
     "ready_time": "11:00",
     "closing_time": "09:20",
+    "package_location": "behind the front desk",
+    "address": {
+        "company_name": "XYZ Inc.",
+        "address_line1": "456 Oak Avenue",
+        "address_line2": "Suite 789",
+        "city": "Springfield",
+        "postal_code": "62701",
+        "country_code": "US",
+        "person_name": "Jane Smith",
+        "phone_number": "2175551234",
+        "state_code": "IL",
+        "email": "jane.smith@xyz.com",
+        "residential": False,
+    },
+    "parcels": [{"weight": 20, "weight_unit": "LB"}],
+    "options": {
+        "fedex_carrier_code": "FDXE",
+        "fedex_pickup_address_type": "BUSINESS",
+    },
+}
+
+PickupUpdatePayloadWithSeconds = {
+    "confirmation_number": "XXX561073",
+    "pickup_date": "2013-10-19",
+    "ready_time": "11:00:00",  # HH:MM:SS format
+    "closing_time": "09:20:00",  # HH:MM:SS format
     "package_location": "behind the front desk",
     "address": {
         "company_name": "XYZ Inc.",
@@ -205,13 +272,14 @@ PickupRequest = {
                 "phoneNumber": "2175551234",
             },
         },
-        "readyDateTimestamp": "2013-10-19T09:20:00Z",
+        "readyDateTimestamp": "2013-10-19T11:00:00Z",
     },
     "packageCount": 1,
     "pickupNotificationDetail": {
         "emailDetails": [{"address": "jane.smith@xyz.com", "locale": "en_US"}],
         "format": "TEXT",
     },
+    "pickupType": "ON_CALL",
     "totalWeight": {"units": "LB", "value": 20.0},
 }
 
@@ -238,7 +306,7 @@ PickupUpdateRequest = {
                 "phoneNumber": "2175551234",
             },
         },
-        "readyDateTimestamp": "2013-10-19T09:20:00Z",
+        "readyDateTimestamp": "2013-10-19T11:00:00Z",
     },
     "packageCount": 1,
     "pickupNotificationDetail": {

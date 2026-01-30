@@ -8,6 +8,11 @@ import karrio.core.errors as errors
 import karrio.core.models as models
 import karrio.api.gateway as gateway
 from karrio.core.utils.logger import logger
+from karrio.universal.mappers.rating_proxy import RatingMixinProxy
+from karrio.universal.providers.rating import (
+    RatingMixinSettings,
+    parse_rate_response,
+)
 
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
@@ -140,6 +145,35 @@ class IRequestFromMany:
     def from_(self, *gateways: gateway.Gateway) -> IDeserialize:
         """Execute the request action(s) from the provided gateway(s)"""
         return self.action(list({_.settings.carrier_id: _ for _ in gateways}.values()))
+
+
+def _is_rating_compatible(obj) -> bool:
+    """Check if object is duck-type compatible with RatingMixinProxy requirements."""
+    return all(hasattr(obj, attr) for attr in ["carrier_id", "shipping_services"])
+
+
+@attr.s(auto_attribs=True)
+class IResolveFromMany:
+    """A lazy resolve (from rate sheet settings) type class for static rate resolution."""
+
+    action: typing.Callable[[typing.List[typing.Any]], IDeserialize]
+
+    def from_(self, *carrier_settings) -> IDeserialize:
+        """Resolve rates using provided carrier settings with rate sheet data.
+
+        Args:
+            carrier_settings: One or more carrier settings objects with:
+                - carrier_id, carrier_name (optional), account_country_code (optional)
+                - shipping_services: List of ServiceLevel with zones/surcharges
+
+        Returns:
+            IDeserialize: Lazy deserializer with (rates, messages) tuple
+        """
+        # Filter to only include settings that are duck-type compatible
+        settings_list = [s for s in carrier_settings if _is_rating_compatible(s)]
+        # Deduplicate by carrier_id
+        unique_settings = list({s.carrier_id: s for s in settings_list}.values())
+        return self.action(unique_settings)
 
 
 class Address:
@@ -344,6 +378,60 @@ class Rating:
             return IDeserialize(flatten)
 
         return IRequestFromMany(action)
+
+    @staticmethod
+    def resolve(args: typing.Union[models.RateRequest, dict]) -> IResolveFromMany:
+        """Resolve shipment rates from static rate sheets (no API calls).
+
+        Unlike fetch(), this method uses rate sheet data directly without
+        calling carrier APIs. It requires carrier settings with services
+        containing zones and surcharges.
+
+        Args:
+            args (Union[RateRequest, dict]): the rate request payload
+
+        Returns:
+            IResolveFromMany: a lazy resolve dataclass instance
+        """
+        logger.debug("Resolving shipment rates from rate sheets", payload=lib.to_dict(args))
+        payload = lib.to_object(models.RateRequest, lib.to_dict(args))
+
+        def action(settings_list: typing.List[RatingMixinSettings]):
+            def process(settings: RatingMixinSettings):
+                try:
+                    proxy = RatingMixinProxy(settings=settings)
+                    request: lib.Serializable = lib.Serializable(payload)
+                    response = proxy.get_rates(request)
+                    return parse_rate_response(response, settings)
+                except Exception as error:
+                    logger.exception(
+                        "Rate resolution failed", carrier=settings.carrier_name
+                    )
+                    return (
+                        None,
+                        [
+                            models.Message(
+                                code="SHIPPING_SDK_RESOLVE_ERROR",
+                                carrier_name=settings.carrier_name,
+                                carrier_id=settings.carrier_id,
+                                message=f"{error}",
+                            )
+                        ],
+                    )
+
+            responses: typing.List[typing.Any] = lib.run_asynchronously(process, settings_list)
+
+            def flatten(*args):
+                flattened_rates = sum(
+                    (rates for rates, _ in responses if rates is not None),
+                    [],
+                )
+                messages = sum((m for _, m in responses), [])
+                return flattened_rates, messages
+
+            return IDeserialize(flatten)
+
+        return IResolveFromMany(action)
 
 
 class Shipment:
