@@ -47,19 +47,19 @@ def shipment_cancel_request(
 ) -> lib.Serializable:
     """Create a shipment cancellation request for the PostAT SOAP API."""
     # Build request using generated schema types
-    request = lib.Envelope(
-        Body=lib.Body(
-            postat_void.VoidShipmentType(
-                row=[
-                    postat_void.VoidShipmentRowType(
-                        TrackingNumber=payload.shipment_identifier,
-                        OrgUnitID=settings.org_unit_id,
-                        OrgUnitGuid=settings.org_unit_guid,
-                    )
-                ]
+    void_shipment = postat_void.VoidShipmentType(
+        row=[
+            postat_void.VoidShipmentRowType(
+                TrackingNumber=payload.shipment_identifier,
+                OrgUnitID=settings.org_unit_id,
+                OrgUnitGuid=settings.org_unit_guid,
             )
-        )
+        ]
     )
+    # Set proper element name for PostAT API (VoidShipment, not VoidShipmentType)
+    void_shipment.original_tagname_ = "VoidShipment"
 
-    return lib.Serializable(request, lib.envelope_serializer)
+    request = lib.Envelope(Body=lib.Body(void_shipment))
+
+    return lib.Serializable(request, provider_utils.standard_request_serializer)
     

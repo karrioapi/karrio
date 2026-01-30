@@ -1,2 +1,1 @@
-
-from postat.test_shipment import *
+from tests.postat.test_shipment import *
