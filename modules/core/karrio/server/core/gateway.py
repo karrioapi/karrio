@@ -121,7 +121,8 @@ class Connections:
         # Capability filter
         if "capability" in list_filter:
             carrier_queryset = carrier_queryset.filter(
-                capabilities__icontains=list_filter["capability"]
+                Q(capabilities__icontains=list_filter["capability"])
+                | Q(capabilities=[])  # Empty = all connector-supported capabilities
             )
             # Brokered: check overrides first, then system
             brokered_queryset = brokered_queryset.filter(
@@ -129,6 +130,10 @@ class Connections:
                 | Q(
                     capabilities_overrides=[],
                     system_connection__capabilities__icontains=list_filter["capability"],
+                )
+                | Q(
+                    capabilities_overrides=[],
+                    system_connection__capabilities=[],
                 )
             )
 
