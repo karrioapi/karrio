@@ -1,0 +1,17 @@
+service_code,service_name,carrier_service_code,features,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,currency,weight_unit,dimension_unit,transit_days,domicile,international
+ups_ground,UPS Ground,03,"tracked,b2c,b2b,first_mile,last_mile",US Domestic,US,0.01,70,108,30,30,USD,LB,IN,,true,false
+ups_3_day_select,UPS 3 Day Select,12,"tracked,b2c,b2b,first_mile,last_mile",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,3,true,false
+ups_2nd_day_air,UPS 2nd Day Air,02,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,2,true,false
+ups_2nd_day_air_am,UPS 2nd Day Air A.M.,59,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,2,true,false
+ups_next_day_air,UPS Next Day Air,01,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,1,true,false
+ups_next_day_air_saver,UPS Next Day Air Saver,13,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,1,true,false
+ups_next_day_air_early,UPS Next Day Air Early,14,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,1,true,false
+ups_standard,UPS Standard,11,"tracked,b2c,b2b,first_mile,last_mile",International,,0.01,150,108,30,30,USD,LB,IN,,false,true
+ups_worldwide_express,UPS Worldwide Express,07,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,150,108,30,30,USD,LB,IN,,false,true
+ups_worldwide_expedited,UPS Worldwide Expedited,08,"tracked,b2c,b2b,first_mile,last_mile",International,,0.01,150,108,30,30,USD,LB,IN,,false,true
+ups_worldwide_express_plus,UPS Worldwide Express Plus,54,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,150,108,30,30,USD,LB,IN,,false,true
+ups_worldwide_saver,UPS Worldwide Saver,65,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,150,108,30,30,USD,LB,IN,,false,true
+ups_standard_eu,UPS Standard EU,11,"tracked,b2c,b2b,first_mile,last_mile",EU,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,70,120,60,60,EUR,KG,CM,,true,true
+ups_express_eu,UPS Express EU,07,"tracked,b2c,b2b,first_mile,last_mile,express",EU,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,70,120,60,60,EUR,KG,CM,,true,true
+ups_expedited_eu,UPS Expedited EU,08,"tracked,b2c,b2b,first_mile,last_mile",EU,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,70,120,60,60,EUR,KG,CM,,true,true
+ups_access_point_economy_eu,UPS Access Point Economy EU,70,"tracked,b2c,first_mile,service_point",EU,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,20,60,40,40,EUR,KG,CM,,true,true

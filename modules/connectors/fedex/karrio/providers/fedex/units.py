@@ -1,6 +1,9 @@
+import csv
+import pathlib
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.utils as utils
+import karrio.core.models as models
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -587,3 +590,60 @@ class ShippingDocumentCategory(lib.StrEnum):
     packing_list = "PACKING_LIST"
     shipping_label = "LABEL"
     other = "OTHER"
+
+
+def load_services_from_csv() -> list:
+    """
+    Load service definitions from CSV file.
+    CSV format: service_code,service_name,carrier_service_code,features,zone_label,country_codes,
+                min_weight,max_weight,max_length,max_width,max_height,currency,weight_unit,
+                dimension_unit,transit_days,domicile,international
+    """
+    csv_path = pathlib.Path(__file__).resolve().parent / "services.csv"
+
+    if not csv_path.exists():
+        return []
+
+    services_dict: dict[str, dict] = {}
+
+    with open(csv_path, newline="", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            service_code = row["service_code"]
+            zone_label = row.get("zone_label", "")
+            country_codes_str = row.get("country_codes", "")
+            country_codes = [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+
+            zone = models.ServiceZone(
+                label=zone_label if zone_label else None,
+                rate=0.0,
+                transit_days=int(row["transit_days"]) if row.get("transit_days") else None,
+                country_codes=country_codes,
+            )
+
+            if service_code not in services_dict:
+                services_dict[service_code] = {
+                    "service_name": row["service_name"],
+                    "service_code": service_code,
+                    "carrier_service_code": row.get("carrier_service_code", service_code),
+                    "currency": row.get("currency", "USD"),
+                    "weight_unit": row.get("weight_unit", "LB"),
+                    "dimension_unit": row.get("dimension_unit", "IN"),
+                    "min_weight": float(row["min_weight"]) if row.get("min_weight") else None,
+                    "max_weight": float(row["max_weight"]) if row.get("max_weight") else None,
+                    "max_length": float(row["max_length"]) if row.get("max_length") else None,
+                    "max_width": float(row["max_width"]) if row.get("max_width") else None,
+                    "max_height": float(row["max_height"]) if row.get("max_height") else None,
+                    "domicile": row.get("domicile", "").lower() == "true",
+                    "international": row.get("international", "").lower() == "true" or None,
+                    "zones": [zone],
+                }
+            else:
+                services_dict[service_code]["zones"].append(zone)
+
+    return [
+        models.ServiceLevel(**service_data) for service_data in services_dict.values()
+    ]
+
+
+DEFAULT_SERVICES = load_services_from_csv()

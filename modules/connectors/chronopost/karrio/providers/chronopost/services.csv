@@ -1,0 +1,6 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+1,Chronopost 13,France,FR,0.01,30.0,100,70,50,0.0,EUR,1,true,false
+16,Chronopost 18,France,FR,0.01,30.0,100,70,50,0.0,EUR,1,true,false
+86,Chronopost Relais,France,FR,0.01,20.0,100,60,40,0.0,EUR,2,true,false
+17,Chronopost Express International,Europe,"DE,BE,NL,LU,ES,IT,PT,AT,DK,FI,GR,IE,SE,GB,PL,CZ",0.01,30.0,100,70,50,0.0,EUR,2,false,true
+44,Chronopost Classic International,Europe,"DE,BE,NL,LU,ES,IT,PT,AT,DK,FI,GR,IE,SE,GB,PL,CZ",0.01,30.0,100,70,50,0.0,EUR,3,false,true

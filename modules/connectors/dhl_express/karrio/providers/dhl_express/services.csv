@@ -1,0 +1,15 @@
+service_code,service_name,carrier_service_code,features,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,currency,weight_unit,dimension_unit,transit_days,domicile,international
+dhl_express_worldwide,DHL Express Worldwide,U,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_express_worldwide_doc,DHL Express Worldwide (Documents),D,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,2.5,120,80,80,EUR,KG,CM,,false,true
+dhl_express_worldwide_nondoc,DHL Express Worldwide (Non-Documents),P,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_express_12_00,DHL Express 12:00,T,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_express_12_00_nondoc,DHL Express 12:00 (Non-Documents),Y,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_express_9_00,DHL Express 9:00,K,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_express_10_30,DHL Express 10:30,L,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_economy_select,DHL Economy Select,W,"tracked,b2c,b2b,first_mile,last_mile",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_express_domestic,DHL Express Domestic,N,"tracked,b2c,b2b,first_mile,last_mile,express",Domestic,,0.01,70,120,80,80,EUR,KG,CM,,true,false
+dhl_domestic_express_12_00,DHL Domestic Express 12:00,1,"tracked,b2c,b2b,first_mile,last_mile,express",Domestic,,0.01,70,120,80,80,EUR,KG,CM,,true,false
+dhl_express_envelope,DHL Express Envelope,X,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,0.5,35,27.5,1,EUR,KG,CM,,false,true
+dhl_globalmail,DHL GlobalMail,R,"tracked,b2c,first_mile,last_mile",International,,0.01,2.0,60,40,40,EUR,KG,CM,,false,true
+dhl_medical_express,DHL Medical Express,C,"tracked,b2b,first_mile,last_mile,express",International,,0.01,70,120,80,80,EUR,KG,CM,,false,true
+dhl_same_day,DHL Same Day,S,"tracked,b2c,b2b,first_mile,last_mile,express",Domestic,,0.01,70,120,80,80,EUR,KG,CM,,true,false

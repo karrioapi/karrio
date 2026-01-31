@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "karrio_dpd_meta"
 version = "2026.1.3"
-description = "Karrio - DPD Group Shipping Extension"
+description = "Karrio - DPD Meta Shipping Extension"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "LGPL-3.0"

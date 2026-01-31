@@ -1,0 +1,18 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+bpack 24h Pro,bpack 24h Pro,Belgium Domestic,BE,0.01,30.0,120,60,60,0.0,EUR,1,true,false
+bpack 24h business,bpack 24h Business,Belgium Domestic,BE,0.01,30.0,120,60,60,0.0,EUR,1,true,false
+bpack Bus,bpack Bus,Belgium Domestic,BE,0.01,30.0,120,60,60,0.0,EUR,2,true,false
+bpack Pallet,bpack Pallet,Belgium Domestic,BE,0.01,1000.0,120,80,200,0.0,EUR,2,true,false
+bpack Easy Retour,bpack Easy Retour,Belgium Domestic,BE,0.01,30.0,120,60,60,0.0,EUR,2,true,false
+bpack XL,bpack XL,Belgium Domestic,BE,0.01,50.0,200,120,120,0.0,EUR,2,true,false
+bpack@bpost,bpack at bpost,Belgium Domestic,BE,0.01,30.0,120,60,60,0.0,EUR,1,true,false
+bpack 24/7,bpack 24/7,Belgium Domestic,BE,0.01,30.0,120,60,60,0.0,EUR,1,true,false
+bpack World Business,bpack World Business,Europe,"AT,CH,DE,DK,ES,FI,FR,GB,GR,HU,IE,IT,LU,NL,NO,PL,PT,SE,CZ,SK",0.01,30.0,120,60,60,0.0,EUR,3,false,true
+bpack World Business,bpack World Business,World,"US,CA,AU,JP,CN,KR,SG,HK,BR,MX,ZA,AE,IL,IN",0.01,30.0,120,60,60,0.0,EUR,7,false,true
+bpack World Express Pro,bpack World Express Pro,Europe,"AT,CH,DE,DK,ES,FI,FR,GB,GR,HU,IE,IT,LU,NL,NO,PL,PT,SE,CZ,SK",0.01,30.0,120,60,60,0.0,EUR,2,false,true
+bpack World Express Pro,bpack World Express Pro,World,"US,CA,AU,JP,CN,KR,SG,HK,BR,MX,ZA,AE,IL,IN",0.01,30.0,120,60,60,0.0,EUR,4,false,true
+bpack Europe Business,bpack Europe Business,EU Countries,"AT,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,30.0,120,60,60,0.0,EUR,3,false,true
+bpack World Easy Return,bpack World Easy Return,EU Countries,"AT,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,30.0,120,60,60,0.0,EUR,5,false,true
+bpack World Easy Return,bpack World Easy Return,World,"US,CA,AU,JP,CN,KR,SG,HK,BR,MX,ZA,GB,CH,NO",0.01,30.0,120,60,60,0.0,EUR,10,false,true
+bpack@bpost international,bpack at bpost International,EU Countries,"AT,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,30.0,120,60,60,0.0,EUR,4,false,true
+bpack 24/7 international,bpack 24/7 International,EU Countries,"AT,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,30.0,120,60,60,0.0,EUR,4,false,true

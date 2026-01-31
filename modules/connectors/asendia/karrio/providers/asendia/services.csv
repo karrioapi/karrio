@@ -1,0 +1,13 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+EPAQSTD,e-PAQ Standard,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+EPAQSTD_CUP,e-PAQ Standard Collection,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+EPAQPLUS,e-PAQ Plus,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+EPAQPLUS_CUP,e-PAQ Plus Collection,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+EPAQELITE,e-PAQ Elite,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+EPAQELITE_CUP,e-PAQ Elite Collection,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+EPAQRET,e-PAQ Returns,EU Returns,"AT,BE,CH,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,31.5,,,,0.0,EUR,,false,true
+EPAQRETDOM,e-PAQ Returns Domestic,Domestic,,0.01,31.5,,,,0.0,EUR,,true,false
+CROAD,Country Road,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+CROADPLUS,Country Road Plus,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
+PRIORITY,Priority,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
+PRIORITYTRK,Priority Tracked,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
