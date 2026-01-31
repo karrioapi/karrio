@@ -1,3 +1,26 @@
+# Karrio 2026.1.4
+
+## Changes
+
+### Feat
+
+- feat: enrich carrier connectors with services CSV data and configuration annotations
+- feat: add HTTP-only cookie authentication for JWT tokens
+
+### Fix
+
+- fix: various fixes for gateway, pickups, label creation and pricing
+- sec(fix): potential fix for code scanning alert no. 60: construction of a cookie using user-supplied input
+
+### Chore
+
+- chore: upgrade Next.js to 16.1.5
+- chore: fix frontend builds for Next.js 16 compatibility (Turbopack, CSS import ordering, deprecated APIs)
+- chore: add MANIFEST.in files for connector service CSV packaging
+- chore: fix SDK tracking tests for DHL Parcel DE, Hermes and DPD connectors
+
+---
+
 # Karrio 2026.1.3
 
 ## Changes

@@ -24,7 +24,7 @@ django-email-verification==0.3.3
 django-extensions==4.1
 django-filter==25.2
 django-formtools==2.5.1
-django-health-check==3.20.8
+django-health-check==3.21.0
 django-import-export==4.4.0
 django-oauth-toolkit==3.2.0
 django-organizations==2.5.0
@@ -128,14 +128,14 @@ opentelemetry-util-http==0.60b1
 packaging==26.0
 phonenumbers==9.0.22
 pillow==12.1.0
-posthog==7.7.0
-protobuf==6.33.4
+posthog==7.8.0
+protobuf==6.33.5
 psutil==7.2.2
 psycopg2-binary==2.9.11
 py_soap @ file://${PWD}/modules/soap
 pycparser==3.0
 pydyf==0.12.1
-PyJWT==2.10.1
+PyJWT==2.11.0
 PyPDF2==3.0.1
 pyphen==0.17.2
 python-barcode==0.16.1

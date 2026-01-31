@@ -46,7 +46,7 @@ $footer-padding: 1rem 1.5rem;
 $footer-background-color: $white;
 
 // Import only what you need from Bulma
-@import "../../node_modules/bulma/bulma.sass";
+@import "bulma/bulma.sass";
 
 .isolated-card {
   margin: 0px auto;

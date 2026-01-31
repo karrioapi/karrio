@@ -7,13 +7,14 @@ All URIs are relative to *http://localhost*
 |[**authenticate**](#authenticate) | **POST** /api/token | Obtain auth token pair|
 |[**generateResourceToken**](#generateresourcetoken) | **POST** /api/tokens | Generate resource access token|
 |[**getVerifiedToken**](#getverifiedtoken) | **POST** /api/token/verified | Get verified JWT token|
+|[**logout**](#logout) | **POST** /api/logout | Logout|
 |[**refreshToken**](#refreshtoken) | **POST** /api/token/refresh | Refresh auth token|
 |[**verifyToken**](#verifytoken) | **POST** /api/token/verify | Verify token|
 
 # **authenticate**
 > TokenPair authenticate(tokenObtainPair)
 
-Authenticate the user and return a token pair
+Authenticate the user and return a token pair. Tokens are stored in HTTP-only cookies.
 
 ### Example
 
@@ -119,7 +120,7 @@ const { status, data } = await apiInstance.generateResourceToken(
 # **getVerifiedToken**
 > TokenPair getVerifiedToken(verifiedTokenObtainPair)
 
-Get a verified JWT token pair by submitting a Two-Factor authentication code.
+Get a verified JWT token pair by submitting a Two-Factor authentication code. Tokens are stored in HTTP-only cookies.
 
 ### Example
 
@@ -168,10 +169,62 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **logout**
+> { [key: string]: any; } logout(tokenVerify)
+
+Clear authentication cookies and logout the user. Accessible without authentication.
+
+### Example
+
+```typescript
+import {
+    AuthApi,
+    Configuration,
+    TokenVerify
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new AuthApi(configuration);
+
+let tokenVerify: TokenVerify; //
+
+const { status, data } = await apiInstance.logout(
+    tokenVerify
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **tokenVerify** | **TokenVerify**|  | |
+
+
+### Return type
+
+**{ [key: string]: any; }**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **refreshToken**
 > TokenPair refreshToken(tokenRefresh)
 
-Authenticate the user and return a token pair
+Refresh the authentication token. Tokens are stored in HTTP-only cookies.
 
 ### Example
 

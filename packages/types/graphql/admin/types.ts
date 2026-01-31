@@ -345,6 +345,25 @@ export interface GetRateSheets_rate_sheets_edges_node_service_rates {
   max_weight: number | null;
 }
 
+export interface GetRateSheets_rate_sheets_edges_node_services_features {
+  first_mile: string | null;
+  last_mile: string | null;
+  form_factor: string | null;
+  b2c: boolean | null;
+  b2b: boolean | null;
+  shipment_type: string | null;
+  age_check: string | null;
+  signature: boolean | null;
+  tracked: boolean | null;
+  insurance: boolean | null;
+  express: boolean | null;
+  dangerous_goods: boolean | null;
+  saturday_delivery: boolean | null;
+  sunday_delivery: boolean | null;
+  multicollo: boolean | null;
+  neighbor_delivery: boolean | null;
+}
+
 export interface GetRateSheets_rate_sheets_edges_node_services {
   id: string;
   service_name: string | null;
@@ -359,8 +378,11 @@ export interface GetRateSheets_rate_sheets_edges_node_services {
   max_weight: number | null;
   weight_unit: WeightUnitEnum | null;
   active: boolean | null;
+  dim_factor: number | null;
+  use_volumetric: boolean | null;
   zone_ids: string[];
   surcharge_ids: string[];
+  features: GetRateSheets_rate_sheets_edges_node_services_features;
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_carriers {
@@ -449,6 +471,25 @@ export interface GetRateSheet_rate_sheet_service_rates {
   transit_time: number | null;
 }
 
+export interface GetRateSheet_rate_sheet_services_features {
+  first_mile: string | null;
+  last_mile: string | null;
+  form_factor: string | null;
+  b2c: boolean | null;
+  b2b: boolean | null;
+  shipment_type: string | null;
+  age_check: string | null;
+  signature: boolean | null;
+  tracked: boolean | null;
+  insurance: boolean | null;
+  express: boolean | null;
+  dangerous_goods: boolean | null;
+  saturday_delivery: boolean | null;
+  sunday_delivery: boolean | null;
+  multicollo: boolean | null;
+  neighbor_delivery: boolean | null;
+}
+
 export interface GetRateSheet_rate_sheet_services {
   id: string;
   object_type: string;
@@ -466,10 +507,13 @@ export interface GetRateSheet_rate_sheet_services {
   dimension_unit: DimensionUnitEnum | null;
   max_weight: number | null;
   weight_unit: WeightUnitEnum | null;
+  dim_factor: number | null;
+  use_volumetric: boolean | null;
   domicile: boolean | null;
   international: boolean | null;
   zone_ids: string[];
   surcharge_ids: string[];
+  features: GetRateSheet_rate_sheet_services_features;
 }
 
 export interface GetRateSheet_rate_sheet_carriers {
@@ -2809,6 +2853,7 @@ export interface MarkupFilter {
   name?: string | null;
   active?: boolean | null;
   markup_type?: MarkupTypeEnum | null;
+  account_id?: string | null;
 }
 
 // null
@@ -3084,11 +3129,34 @@ export interface CreateServiceLevelInput {
   weight_unit?: WeightUnitEnum | null;
   max_volume?: number | null;
   cost?: number | null;
+  dim_factor?: number | null;
+  use_volumetric?: boolean | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  features?: ServiceLevelFeaturesInput | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
+}
+
+// null
+export interface ServiceLevelFeaturesInput {
+  first_mile?: string | null;
+  last_mile?: string | null;
+  form_factor?: string | null;
+  b2c?: boolean | null;
+  b2b?: boolean | null;
+  shipment_type?: string | null;
+  age_check?: string | null;
+  signature?: boolean | null;
+  tracked?: boolean | null;
+  insurance?: boolean | null;
+  express?: boolean | null;
+  dangerous_goods?: boolean | null;
+  saturday_delivery?: boolean | null;
+  sunday_delivery?: boolean | null;
+  multicollo?: boolean | null;
+  neighbor_delivery?: boolean | null;
 }
 
 // null
@@ -3164,8 +3232,11 @@ export interface UpdateServiceLevelInput {
   weight_unit?: WeightUnitEnum | null;
   max_volume?: number | null;
   cost?: number | null;
+  dim_factor?: number | null;
+  use_volumetric?: boolean | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  features?: ServiceLevelFeaturesInput | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;

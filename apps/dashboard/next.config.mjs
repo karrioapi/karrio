@@ -82,7 +82,10 @@ const nextConfig = {
     "@karrio/app-store",
   ],
   sassOptions: {
-    includePaths: [path.join("src", "styles")],
+    includePaths: [
+      path.join("src", "styles"),
+      path.resolve(__dirname, "../../node_modules"),
+    ],
   },
   async headers() {
     return [

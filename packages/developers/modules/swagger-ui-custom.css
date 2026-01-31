@@ -1,3 +1,6 @@
+/* Import Karrio brand font */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
+
 /* Dark-mode friendly inline badge/label chips (e.g., Accept header chip) */
 .swagger-ui .response-content-type .content-type>label,
 .swagger-ui .response-col_description .response-controls .response-controls-header>label,
@@ -24,9 +27,6 @@
 /* ==========================================================================
 Swagger UI Custom Styling for Karrio
 ========================================================================== */
-
-/* Import Karrio brand font */
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
 
 /* Brand Colors mapped to drawer theme tokens */
 .devtools-theme.dark {

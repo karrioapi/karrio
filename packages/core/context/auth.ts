@@ -5,7 +5,7 @@ import {
   KARRIO_API,
   computeTestMode,
 } from "@karrio/lib";
-import { cookies, headers, type UnsafeUnwrappedHeaders } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getCurrentDomain, loadMetadata } from "@karrio/core/context/main";
 import Credentials from "next-auth/providers/credentials";
 import NextAuth from "next-auth";

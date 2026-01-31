@@ -278,15 +278,16 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    """Hermes tracking status mapping."""
+    """Hermes tracking status mapping based on Hermes event codes."""
 
-    on_hold = ["on_hold"]
-    delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
-    delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
-    ready_for_pickup = ["ready_for_pickup"]
+    pending = ["0000"]
+    in_transit = ["1000", "2000"]
+    out_for_delivery = ["3000"]
+    delivered = ["3500"]
+    delivery_failed = ["4000", "4500"]
+    ready_for_pickup = ["5000"]
+    on_hold = ["6000"]
+    delivery_delayed = ["7000"]
 
 
 class LabelType(lib.StrEnum):

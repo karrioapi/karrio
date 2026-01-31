@@ -553,9 +553,9 @@ class CustomsOption(lib.Enum):
 
 
 class TrackingStatus(lib.Enum):
-    delivered = ["delivered"]
-    in_transit = ["transit"]
-    delivery_failed = ["failure"]
+    delivered = ["delivered", "dlvrd"]
+    in_transit = ["transit", "srted", "ulfmv", "ldtmv", "pckdu", "shrcu"]
+    delivery_failed = ["failure", "ndelv"]
     delivery_delayed = ["unknown"]
 
 

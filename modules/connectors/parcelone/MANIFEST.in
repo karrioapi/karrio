@@ -1,1 +1,2 @@
 recursive-include karrio/schemas *
+include karrio/providers/parcelone/services.csv
