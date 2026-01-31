@@ -18,6 +18,8 @@ from rest_framework.authentication import (
 from rest_framework_simplejwt.authentication import (
     JWTAuthentication as BaseJWTAuthentication,
 )
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+
 from oauth2_provider.contrib.rest_framework import (
     OAuth2Authentication as BaseOAuth2Authentication,
 )
@@ -114,32 +116,54 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
 
 
 class JWTAuthentication(BaseJWTAuthentication):
+    """JWT Authentication that supports both HTTP-only cookies and Authorization header.
+    Checks cookies first, then falls back to Authorization header for backward compatibility.
+    """
+
     @catch_auth_exception
     def authenticate(self, request):
-        auth = super().authenticate(request)
+        # Try cookie first, then fall back to Authorization header
+        cookie_name = getattr(settings, "JWT_AUTH_COOKIE", "karrio_access_token")
+        raw_token = request.COOKIES.get(cookie_name)
 
-        if auth is not None:
-            user, token = auth
+        if not raw_token:
+            header = self.get_header(request)
+            if header is None:
+                return None
+            raw_token = self.get_raw_token(header)
 
-            request.user = user
-            request.token = token
-            request.test_mode = get_request_test_mode(request)
-            request.otp_is_verified = token.get("is_verified") or False
-            request.org = SimpleLazyObject(
-                functools.partial(
-                    get_request_org,
-                    request,
-                    user,
-                    org_id=request.META.get("HTTP_X_ORG_ID"),
-                )
+        if raw_token is None:
+            return None
+
+        try:
+            validated_token = self.get_validated_token(raw_token)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        user = self.get_user(validated_token)
+
+        if user is None:
+            return None
+
+        request.user = user
+        request.token = validated_token
+        request.test_mode = get_request_test_mode(request)
+        request.otp_is_verified = validated_token.get("is_verified") or False
+        request.org = SimpleLazyObject(
+            functools.partial(
+                get_request_org,
+                request,
+                user,
+                org_id=request.META.get("HTTP_X_ORG_ID"),
+            )
+        )
+
+        if not validated_token.get("is_verified"):
+            raise exceptions.AuthenticationFailed(
+                _("Authentication token not verified"), code="otp_not_verified"
             )
 
-            if not token.get("is_verified"):
-                raise exceptions.AuthenticationFailed(
-                    _("Authentication token not verified"), code="otp_not_verified"
-                )
-
-        return auth
+        return (user, validated_token)
 
 
 class OAuth2Authentication(BaseOAuth2Authentication):
