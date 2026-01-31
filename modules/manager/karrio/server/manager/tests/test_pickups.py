@@ -210,6 +210,107 @@ class TestPickupDetails(TestFixture):
             self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
 
 
+class TestPickupScheduleNewAPI(TestFixture):
+    """Tests for the new POST /v1/pickups endpoint with carrier_code in body."""
+
+    def test_schedule_pickup_with_carrier_code(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA_NEW_API)
+            response_data = json.loads(response.content)
+
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertDictEqual(response_data, PICKUP_RESPONSE)
+
+    def test_schedule_pickup_with_connection_id(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA_WITH_CONNECTION_ID)
+            response_data = json.loads(response.content)
+
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["confirmation_number"], "27241")
+            self.assertEqual(response_data["carrier_name"], "canadapost")
+            self.assertEqual(response_data["carrier_id"], "canadapost")
+
+    def test_schedule_pickup_standalone_with_carrier_code(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA_NEW_API_STANDALONE)
+            response_data = json.loads(response.content)
+
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["confirmation_number"], "27241")
+
+    def test_schedule_pickup_validation_no_source_new_api(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+        data = {
+            "carrier_code": "canadapost",
+            "pickup_date": "2020-10-25",
+            "ready_time": "13:00",
+            "closing_time": "17:00",
+            "address": {
+                "address_line1": "125 Church St",
+                "person_name": "John Doe",
+                "city": "Moncton",
+                "country_code": "CA",
+                "postal_code": "E1C4Z8",
+            },
+        }
+
+        response = self.client.post(f"{url}", data)
+
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = json.loads(response.content)
+        self.assertIn("errors", response_data)
+
+
+class TestLegacyEndpointDeprecation(TestFixture):
+    """Tests for the legacy endpoint deprecation headers."""
+
+    def test_legacy_endpoint_returns_deprecation_headers(self):
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA)
+
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response["Deprecation"], "true")
+            self.assertIn("successor-version", response["Link"])
+            self.assertIn("/v1/pickups", response["Link"])
+
+    def test_legacy_endpoint_still_creates_pickup(self):
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA)
+            response_data = json.loads(response.content)
+
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["confirmation_number"], "27241")
+            self.assertEqual(response_data["carrier_name"], "canadapost")
+
+
 PICKUP_DATA = {
     "pickup_date": "2020-10-25",
     "ready_time": "13:00",
@@ -399,6 +500,7 @@ PICKUP_RESPONSE = {
     "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
+    "carrier_code": "canadapost",
     "confirmation_number": "27241",
     "pickup_date": "2020-10-25",
     "pickup_charge": {
@@ -468,6 +570,7 @@ PICKUP_UPDATE_RESPONSE = {
     "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
+    "carrier_code": "canadapost",
     "confirmation_number": "00110215",
     "pickup_date": "2020-10-25",
     "pickup_charge": {
@@ -537,6 +640,7 @@ PICKUP_CANCEL_RESPONSE = {
     "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
+    "carrier_code": "canadapost",
     "confirmation_number": "00110215",
     "pickup_date": "2020-10-25",
     "pickup_charge": {
@@ -578,4 +682,83 @@ PICKUP_CANCEL_RESPONSE = {
     "metadata": {},
     "test_mode": True,
     "meta": ANY,
+}
+
+# ─────────────────────────────────────────────────────────────────
+# NEW API TEST DATA (POST /v1/pickups/schedule with carrier_code)
+# ─────────────────────────────────────────────────────────────────
+
+PICKUP_DATA_NEW_API = {
+    "carrier_code": "canadapost",
+    "pickup_date": "2020-10-25",
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "instruction": "Should not be folded",
+    "package_location": "At the main entrance hall",
+    "address": {
+        "id": "adr_aabbccddeeff",
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "email": "john@a.com",
+        "validate_location": False,
+        "validation": None,
+    },
+    "tracking_numbers": ["123456789012"],
+}
+
+PICKUP_DATA_WITH_CONNECTION_ID = {
+    "carrier_code": "canadapost",
+    "pickup_date": "2020-10-25",
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "instruction": "Should not be folded",
+    "package_location": "At the main entrance hall",
+    "address": {
+        "id": "adr_aabbccddeeff",
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "email": "john@a.com",
+        "validate_location": False,
+        "validation": None,
+    },
+    "tracking_numbers": ["123456789012"],
+    "options": {
+        "connection_id": "canadapost",
+    },
+}
+
+PICKUP_DATA_NEW_API_STANDALONE = {
+    "carrier_code": "canadapost",
+    "pickup_date": "2020-10-25",
+    "ready_time": "13:00",
+    "closing_time": "17:00",
+    "instruction": "Handle with care",
+    "package_location": "Front desk",
+    "address": {
+        "address_line1": "125 Church St",
+        "person_name": "John Doe",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+        "email": "john@a.com",
+    },
+    "parcels_count": 3,
 }

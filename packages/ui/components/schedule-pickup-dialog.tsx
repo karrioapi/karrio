@@ -85,6 +85,7 @@ type PickupFormData = {
   packages_per_month: number | undefined;
   package_dimensions: PackageDimensions;
   carrier_name: string;
+  connection_id: string;
   pickup_date: Date | undefined;
   ready_time: string;
   closing_time: string;
@@ -104,6 +105,7 @@ const DEFAULT_FORM_DATA: PickupFormData = {
   packages_per_month: undefined,
   package_dimensions: { length: undefined, width: undefined, height: undefined, weight: undefined },
   carrier_name: "",
+  connection_id: "",
   pickup_date: new Date(),
   ready_time: "09:00",
   closing_time: "18:00",
@@ -229,6 +231,13 @@ export function SchedulePickupDialog({
 
       if (!prev.carrier_name && shipment?.carrier_name) {
         newData.carrier_name = shipment.carrier_name;
+        // Auto-select the matching connection for the shipment's carrier
+        const conn = allConnections.find(
+          (c) => c.carrier_name === shipment.carrier_name,
+        );
+        if (conn) {
+          newData.connection_id = conn.id;
+        }
       }
 
       return newData;
@@ -272,7 +281,7 @@ export function SchedulePickupDialog({
       return;
     }
 
-    if (!formData.carrier_name) {
+    if (!formData.connection_id) {
       toast({
         variant: "destructive",
         title: "Validation Error",
@@ -321,6 +330,7 @@ export function SchedulePickupDialog({
 
     try {
       const payload: Record<string, any> = {
+        carrier_code: formData.carrier_name,
         pickup_date: format(formData.pickup_date, "yyyy-MM-dd"),
         ready_time: formData.ready_time,
         closing_time: formData.closing_time,
@@ -329,6 +339,9 @@ export function SchedulePickupDialog({
         pickup_type: formData.pickup_type,
         address: formData.address,
         parcels_count: formData.parcels_count,
+        options: {
+          connection_id: formData.connection_id,
+        },
       };
 
       if (formData.custom_reference) {
@@ -358,10 +371,7 @@ export function SchedulePickupDialog({
         }
       }
 
-      const result = await mutation.schedulePickup.mutateAsync({
-        carrierName: formData.carrier_name,
-        data: payload,
-      });
+      const result = await mutation.schedulePickup.mutateAsync(payload);
 
       toast({
         title: "Pickup Scheduled",
@@ -386,7 +396,7 @@ export function SchedulePickupDialog({
 
   const isValid =
     (formData.address?.address_line1 || formData.address_id) &&
-    formData.carrier_name &&
+    formData.connection_id &&
     formData.pickup_date &&
     formData.ready_time &&
     formData.closing_time &&
@@ -504,10 +514,17 @@ export function SchedulePickupDialog({
             <div className="space-y-2">
               <Label htmlFor="carrier">Carrier</Label>
               <Select
-                value={formData.carrier_name}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, carrier_name: value }))
-                }
+                value={formData.connection_id}
+                onValueChange={(value) => {
+                  const conn = allConnections.find((c) => c.id === value);
+                  if (conn) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      carrier_name: conn.carrier_name,
+                      connection_id: conn.id,
+                    }));
+                  }
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a carrier" />
@@ -516,7 +533,7 @@ export function SchedulePickupDialog({
                   {allConnections.map((connection) => (
                     <SelectItem
                       key={connection.id}
-                      value={connection.carrier_name}
+                      value={connection.id}
                     >
                       <div className="flex items-center gap-2">
                         <CarrierImage

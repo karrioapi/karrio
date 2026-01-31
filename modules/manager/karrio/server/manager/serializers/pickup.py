@@ -156,10 +156,20 @@ class PickupSerializer(PickupRequest):
 @owned_model_serializer
 class PickupData(PickupSerializer):
     def create(self, validated_data: dict, context: Context, **kwargs) -> models.Pickup:
-        carrier_filter = validated_data["carrier_filter"]
+        carrier_filter = validated_data.get("carrier_filter") or {}
+        carrier_code = validated_data.get("carrier_code")
+        options = validated_data.get("options") or {}
+        connection_id = options.get("connection_id")
         parcels_count = validated_data.get("parcels_count")
         pickup_type = validated_data.get("pickup_type", "one_time")
         recurrence = validated_data.get("recurrence") or {}
+
+        # Build carrier filter from body fields when no URL-based filter provided
+        if not carrier_filter:
+            if carrier_code:
+                carrier_filter["carrier_name"] = carrier_code
+            if connection_id:
+                carrier_filter["carrier_id"] = connection_id
 
         # Extract shipment identifiers only if shipments linked
         shipment_identifiers = []
@@ -199,7 +209,7 @@ class PickupData(PickupSerializer):
 
         # Build request data directly (address is now a JSON dict)
         # Exclude non-serializable fields from request data
-        excluded_keys = {"created_by", "carrier_filter", "tracking_numbers", "parcels_count", "recurrence"}
+        excluded_keys = {"created_by", "carrier_filter", "carrier_code", "tracking_numbers", "parcels_count", "recurrence"}
         filtered_data = {k: v for k, v in validated_data.items() if k not in excluded_keys}
 
         request_data = {
