@@ -896,6 +896,13 @@ class TrackingRequest(serializers.Serializer):
     ]
 )
 class PickupRequest(serializers.Serializer):
+    carrier_code = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        allow_null=True,
+        help_text="""The carrier code for the pickup (e.g., 'canadapost', 'fedex').<br/>
+        Required when using `POST /v1/pickups`.""",
+    )
     pickup_date = serializers.CharField(
         required=True,
         validators=[validators.valid_date_format("pickup_date")],
