@@ -136,10 +136,12 @@ export function usePickupMutation(id?: string) {
   );
 
   const schedulePickup = useMutation(
-    ({ carrierName, data }: { carrierName: string; data: any }) =>
+    (data: any) =>
       handleFailure(
-        karrio.pickups
-          .schedule({ carrierName, pickupData: data })
+        karrio.axios
+          .post("/v1/pickups", data, {
+            headers: { "Content-Type": "application/json" },
+          })
           .then(({ data }) => data),
       ),
     { onSuccess: invalidateCache, onError },
