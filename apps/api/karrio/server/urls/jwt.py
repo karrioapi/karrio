@@ -277,10 +277,11 @@ class TokenRefresh(jwt_views.TokenRefreshView):
 
         data = serializer.validated_data
         access = data["access"]
-        refresh = data.get("refresh", refresh_token)
+        refresh = data.get("refresh")
 
-        response = _build_token_response(access, refresh)
-        set_auth_cookies(response, access, refresh)
+        response = _build_token_response(access, refresh or refresh_token)
+        if refresh is not None:
+            set_auth_cookies(response, access, refresh)
 
         return response
 
@@ -324,10 +325,11 @@ class VerifiedTokenPair(jwt_views.TokenVerifyView):
 
         data = serializer.validated_data
         access = data["access"]
-        refresh = data.get("refresh", refresh_token)
+        refresh = data.get("refresh")
 
-        response = _build_token_response(access, refresh)
-        set_auth_cookies(response, access, refresh)
+        response = _build_token_response(access, refresh or refresh_token)
+        if refresh is not None:
+            set_auth_cookies(response, access, refresh)
 
         return response
 
