@@ -1,0 +1,41 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+CL,CL,Belgium,BE,0.01,31.5,175,,,0.0,EUR,1,true,true
+CL,CL,Germany,DE,0.01,3.0,175,,,0.0,EUR,1,true,true
+CL,CL,Germany,DE,3.0,10.0,175,,,0.0,EUR,1,true,true
+CL,CL,Germany,DE,10.0,20.0,175,,,0.0,EUR,1,true,true
+CL,CL,Germany,DE,20.0,31.5,175,,,0.0,EUR,1,true,true
+CL,CL,Zone 1A,"AT,LU,NL",0.01,5.0,175,,,0.0,EUR,2-3,false,true
+CL,CL,Zone 1A,"AT,LU,NL",5.0,10.0,175,,,0.0,EUR,2-3,false,true
+CL,CL,Zone 1A,"AT,LU,NL",10.0,20.0,175,,,0.0,EUR,2-3,false,true
+CL,CL,Zone 1A,"AT,LU,NL",20.0,31.5,175,,,0.0,EUR,2-3,false,true
+CL,DPD CLASSIC,Zone 1B,"CZ,FR,PL",0.01,5.0,175,,,0.0,EUR,3-4,false,true
+CL,DPD CLASSIC,Zone 1B,"CZ,FR,PL",5.0,10.0,175,,,0.0,EUR,3-4,false,true
+CL,DPD CLASSIC,Zone 1B,"CZ,FR,PL",10.0,20.0,175,,,0.0,EUR,3-4,false,true
+CL,DPD CLASSIC,Zone 1B,"CZ,FR,PL",20.0,31.5,175,,,0.0,EUR,3-4,false,true
+CL,DPD CLASSIC,Zone 1C,"DK,IT,SI,SK,HR,HU,MC",0.01,5.0,175,,,0.0,EUR,3-5,false,true
+CL,DPD CLASSIC,Zone 1C,"DK,IT,SI,SK,HR,HU,MC",5.0,10.0,175,,,0.0,EUR,3-5,false,true
+CL,DPD CLASSIC,Zone 1C,"DK,IT,SI,SK,HR,HU,MC",10.0,20.0,175,,,0.0,EUR,3-5,false,true
+CL,DPD CLASSIC,Zone 1C,"DK,IT,SI,SK,HR,HU,MC",20.0,31.5,175,,,0.0,EUR,3-5,false,true
+CL,DPD CLASSIC,Zone 1D,"PT,ES",0.01,5.0,175,,,0.0,EUR,4-6,false,true
+CL,DPD CLASSIC,Zone 1D,"PT,ES",5.0,10.0,175,,,0.0,EUR,4-6,false,true
+CL,DPD CLASSIC,Zone 1D,"PT,ES",10.0,20.0,175,,,0.0,EUR,4-6,false,true
+CL,DPD CLASSIC,Zone 1D,"PT,ES",20.0,31.5,175,,,0.0,EUR,4-6,false,true
+CL,DPD CLASSIC,Zone 1E,"BG,EE,FI,LV,LT,RO,SE",0.01,5.0,175,,,0.0,EUR,4-7,false,true
+CL,DPD CLASSIC,Zone 1E,"BG,EE,FI,LV,LT,RO,SE",5.0,10.0,175,,,0.0,EUR,4-7,false,true
+CL,DPD CLASSIC,Zone 1E,"BG,EE,FI,LV,LT,RO,SE",10.0,20.0,175,,,0.0,EUR,4-7,false,true
+CL,DPD CLASSIC,Zone 1E,"BG,EE,FI,LV,LT,RO,SE",20.0,31.5,175,,,0.0,EUR,4-7,false,true
+CL,DPD CLASSIC,Zone 1F,"GR,GB,IE",0.01,5.0,175,,,0.0,EUR,5-8,false,true
+CL,DPD CLASSIC,Zone 1F,"GR,GB,IE",5.0,10.0,175,,,0.0,EUR,5-8,false,true
+CL,DPD CLASSIC,Zone 1F,"GR,GB,IE",10.0,20.0,175,,,0.0,EUR,5-8,false,true
+CL,DPD CLASSIC,Zone 1F,"GR,GB,IE",20.0,31.5,175,,,0.0,EUR,5-8,false,true
+CL,DPD CLASSIC,Zone 1G,"NO,CH",0.01,5.0,175,,,0.0,EUR,4-6,false,true
+CL,DPD CLASSIC,Zone 1G,"NO,CH",5.0,10.0,175,,,0.0,EUR,4-6,false,true
+CL,DPD CLASSIC,Zone 1G,"NO,CH",10.0,20.0,175,,,0.0,EUR,4-6,false,true
+CL,DPD CLASSIC,Zone 1G,"NO,CH",20.0,31.5,175,,,0.0,EUR,4-6,false,true
+E10,DPD Express 10h,Germany,DE,0.01,31.5,175,,,0.0,EUR,1,true,false
+E10,DPD Express 10h,Belgium,BE,0.01,31.5,175,,,0.0,EUR,1,true,true
+E12,DPD Express 12h,Germany,DE,0.01,31.5,175,,,0.0,EUR,1,true,false
+E12,DPD Express 12h,Belgium,BE,0.01,31.5,175,,,0.0,EUR,1,true,true
+E18,DPD Express 18h Guarantee,Germany,DE,0.01,31.5,175,,,0.0,EUR,1,true,false
+E18,DPD Express 18h Guarantee,Belgium,BE,0.01,31.5,175,,,0.0,EUR,1,true,true
+B2B MSG option,DPD B2B MSG option,Belgium,BE,0.01,31.5,175,,,0.0,EUR,1,true,true

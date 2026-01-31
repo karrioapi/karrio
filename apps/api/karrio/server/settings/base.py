@@ -513,6 +513,15 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
+# JWT Cookie settings for HTTP-only cookie authentication
+JWT_AUTH_COOKIE = config("JWT_AUTH_COOKIE", default="karrio_access_token")
+JWT_REFRESH_COOKIE = config("JWT_REFRESH_COOKIE", default="karrio_refresh_token")
+JWT_AUTH_COOKIE_SECURE = config(
+    "JWT_AUTH_COOKIE_SECURE", default=USE_HTTPS, cast=bool
+)
+JWT_AUTH_COOKIE_SAMESITE = config("JWT_AUTH_COOKIE_SAMESITE", default="Lax")
+JWT_AUTH_COOKIE_PATH = config("JWT_AUTH_COOKIE_PATH", default="/")
+
 # OAuth2 config
 OIDC_RSA_PRIVATE_KEY = config("OIDC_RSA_PRIVATE_KEY", default="").replace("\\n", "\n")
 OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"

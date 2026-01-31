@@ -164,7 +164,11 @@ class PickupCancel(APIView):
 
 router.urls.append(path("pickups", PickupList.as_view(), name="shipment-pickup-list"))
 router.urls.append(
-    path("pickups/<str:pk>", PickupDetails.as_view(), name="shipment-pickup-details")
+    path(
+        "pickups/<str:carrier_name>/schedule",
+        PickupRequest.as_view(),
+        name="shipment-pickup-request",
+    )
 )
 router.urls.append(
     path(
@@ -172,9 +176,5 @@ router.urls.append(
     )
 )
 router.urls.append(
-    path(
-        "pickups/<str:carrier_name>/schedule",
-        PickupRequest.as_view(),
-        name="shipment-pickup-request",
-    )
+    path("pickups/<str:pk>", PickupDetails.as_view(), name="shipment-pickup-details")
 )

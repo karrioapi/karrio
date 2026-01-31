@@ -12,8 +12,8 @@ import karrio.providers.dpd_meta.utils as utils
 # The entrypoint is defined in pyproject.toml under [project.entry-points."karrio.plugins"]
 METADATA = PluginMetadata(
     id="dpd_meta",
-    label="DPD Group",
-    description="DPD Group shipping integration for Karrio",
+    label="DPD Meta",
+    description="DPD Meta shipping integration for Karrio",
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,

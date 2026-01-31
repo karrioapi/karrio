@@ -15,39 +15,22 @@ async function loadAppRoute(appId: string, apiPath: string) {
   console.log(`Loading app route: ${appId}/${apiPath}`);
 
   try {
-    // Try package alias import first
+    // Use webpackIgnore to prevent bundler static analysis of dynamic paths.
+    // These imports are resolved at runtime on the server.
     const packagePath = `@karrio/app-store/apps/${appId}/api/${apiPath}/route`;
-    console.log(`Trying package import: ${packagePath}`);
-    const routeModule = await import(packagePath);
-    console.log(`Successfully loaded package import: ${packagePath}`);
+    const routeModule = await import(/* webpackIgnore: true */ packagePath);
     routeCache.set(cacheKey, routeModule);
     return routeModule;
   } catch (error) {
-    console.log(`Package import failed: ${error.message}`);
     try {
-      // Fallback to relative import (8 levels up from dashboard route to workspace root)
-      const relativePath = `../../../../../../../../packages/app-store/apps/${appId}/api/${apiPath}/route`;
-      console.log(`Trying relative import: ${relativePath}`);
-      const routeModule = await import(relativePath);
-      console.log(`Successfully loaded relative import: ${relativePath}`);
+      // Fallback to direct file system path
+      const directPath = join(process.cwd(), 'packages', 'app-store', 'apps', appId, 'api', apiPath, 'route.ts');
+      const routeModule = await import(/* webpackIgnore: true */ directPath);
       routeCache.set(cacheKey, routeModule);
       return routeModule;
-    } catch (fallbackError) {
-      console.log(`Relative import failed: ${fallbackError.message}`);
-
-      // Try one more approach - direct file system path
-      try {
-        const directPath = join(process.cwd(), 'packages', 'app-store', 'apps', appId, 'api', apiPath, 'route.ts');
-        console.log(`Trying direct file path: ${directPath}`);
-        const routeModule = await import(directPath);
-        console.log(`Successfully loaded direct import: ${directPath}`);
-        routeCache.set(cacheKey, routeModule);
-        return routeModule;
-      } catch (directError) {
-        console.log(`Direct import failed: ${directError.message}`);
-        console.error(`Failed to load app route ${appId}/${apiPath}:`, { error, fallbackError, directError });
-        throw new Error(`Route not found: ${appId}/${apiPath}`);
-      }
+    } catch (directError) {
+      console.error(`Failed to load app route ${appId}/${apiPath}:`, { error, directError });
+      throw new Error(`Route not found: ${appId}/${apiPath}`);
     }
   }
 }

@@ -64,48 +64,198 @@ class ShippingService(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options."""
 
-    # Hermes services as options
-    hermes_tan_service = lib.OptionEnum("tanService", bool)
-    hermes_limited_quantities = lib.OptionEnum("limitedQuantitiesService", bool, meta=dict(category="DANGEROUS_GOOD"))
-    hermes_bulk_goods = lib.OptionEnum("bulkGoodService", bool)
-    hermes_household_signature = lib.OptionEnum("householdSignatureService", bool, meta=dict(category="SIGNATURE"))
-    hermes_compact_parcel = lib.OptionEnum("compactParcelService", bool)
-    hermes_next_day = lib.OptionEnum("nextDayService", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    hermes_signature = lib.OptionEnum("signatureService", bool, meta=dict(category="SIGNATURE"))
-    hermes_redirection_prohibited = lib.OptionEnum("redirectionProhibitedService", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    hermes_exclude_parcel_shop_auth = lib.OptionEnum("excludeParcelShopAuthorization", bool, meta=dict(category="PUDO"))
-    hermes_late_injection = lib.OptionEnum("lateInjectionService", bool)
+    # Delivery Options (Zustelloptionen tab)
+    hermes_next_day = lib.OptionEnum(
+        "nextDayService", bool,
+        help="Enable next-day delivery service",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_bulk_goods = lib.OptionEnum(
+        "bulkGoodService", bool,
+        help="Mark shipment as bulky goods (Sperrgut)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_compact_parcel = lib.OptionEnum(
+        "compactParcelService", bool,
+        help="Enable compact parcel service",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_redirection_prohibited = lib.OptionEnum(
+        "redirectionProhibitedService", bool,
+        help="Do not allow redirection to neighbor",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_stated_day = lib.OptionEnum(
+        "statedDay", str,
+        help="Specific delivery date (YYYY-MM-DD format)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_time_slot = lib.OptionEnum(
+        "timeSlot", str,
+        help="Delivery time slot (FORENOON, NOON, AFTERNOON, EVENING)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_express = lib.OptionEnum(
+        "expressService", bool,
+        help="Enable express delivery service",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_after_hours_delivery = lib.OptionEnum(
+        "afterHoursDeliveryService", bool,
+        help="Enable after-hours delivery (Feierabendservice)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    hermes_parcel_class = lib.OptionEnum(
+        "parcelClass", str,
+        help="Parcel size class (XS, S, M, L, XL)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
 
-    # Cash on delivery
-    hermes_cod_amount = lib.OptionEnum("codAmount", float, meta=dict(category="COD"))
-    hermes_cod_currency = lib.OptionEnum("codCurrency", str, meta=dict(category="COD"))
+    # Signature Options
+    hermes_signature = lib.OptionEnum(
+        "signatureService", bool,
+        help="Require signature upon delivery",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+    hermes_household_signature = lib.OptionEnum(
+        "householdSignatureService", bool,
+        help="Require household member signature",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+    hermes_ident_id = lib.OptionEnum(
+        "identID", str,
+        help="ID number for identity verification",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+    hermes_ident_type = lib.OptionEnum(
+        "identType", str,
+        help="Type of ID for verification (e.g., GERMAN_IDENTITY_CARD)",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+    hermes_ident_fsk = lib.OptionEnum(
+        "identVerifyFsk", str,
+        help="Minimum age verification (e.g., 18)",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+    hermes_ident_birthday = lib.OptionEnum(
+        "identVerifyBirthday", str,
+        help="Verify recipient birthday (YYYY-MM-DD)",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
 
-    # Customer alert service
-    hermes_notification_email = lib.OptionEnum("notificationEmail", str, meta=dict(category="NOTIFICATION"))
-    hermes_notification_type = lib.OptionEnum("notificationType", str, meta=dict(category="NOTIFICATION"))  # EMAIL, SMS, EMAIL_SMS
+    # PUDO Options (Parcel Shop)
+    hermes_parcel_shop_id = lib.OptionEnum(
+        "psID", str,
+        help="Hermes ParcelShop ID for delivery",
+        meta=dict(category="PUDO", configurable=True)
+    )
+    hermes_parcel_shop_selection_rule = lib.OptionEnum(
+        "psSelectionRule", str,
+        help="ParcelShop selection rule (SELECT_BY_ID, SELECT_BY_RECEIVER_ADDRESS)",
+        meta=dict(category="PUDO", configurable=True)
+    )
+    hermes_parcel_shop_customer_firstname = lib.OptionEnum(
+        "psCustomerFirstName", str,
+        help="Customer first name for ParcelShop pickup",
+        meta=dict(category="PUDO", configurable=True)
+    )
+    hermes_parcel_shop_customer_lastname = lib.OptionEnum(
+        "psCustomerLastName", str,
+        help="Customer last name for ParcelShop pickup",
+        meta=dict(category="PUDO", configurable=True)
+    )
+    hermes_exclude_parcel_shop_auth = lib.OptionEnum(
+        "excludeParcelShopAuthorization", bool,
+        help="Exclude ParcelShop delivery authorization",
+        meta=dict(category="PUDO", configurable=True)
+    )
 
-    # Stated day service
-    hermes_stated_day = lib.OptionEnum("statedDay", str, meta=dict(category="DELIVERY_OPTIONS"))  # YYYY-MM-DD format
+    # Notification Options
+    hermes_notification_email = lib.OptionEnum(
+        "notificationEmail", str,
+        help="Email for delivery notifications",
+        meta=dict(category="NOTIFICATION", configurable=True)
+    )
+    hermes_notification_type = lib.OptionEnum(
+        "notificationType", str,
+        help="Notification type (EMAIL, SMS, EMAIL_SMS)",
+        meta=dict(category="NOTIFICATION", configurable=True)
+    )
 
-    # Stated time service
-    hermes_time_slot = lib.OptionEnum("timeSlot", str, meta=dict(category="DELIVERY_OPTIONS"))  # FORENOON, NOON, AFTERNOON, EVENING
+    # COD Options (Cash on Delivery)
+    hermes_cod_amount = lib.OptionEnum(
+        "codAmount", float,
+        help="Cash on delivery amount",
+        meta=dict(category="COD", configurable=True)
+    )
+    hermes_cod_currency = lib.OptionEnum(
+        "codCurrency", str,
+        help="Currency for COD amount",
+        meta=dict(category="COD", configurable=True)
+    )
+    hermes_cod_distribution = lib.OptionEnum(
+        "codDistribution", str,
+        help="COD distribution method (e.g., transfer, check)",
+        meta=dict(category="COD", configurable=True)
+    )
 
-    # Ident service
-    hermes_ident_id = lib.OptionEnum("identID", str, meta=dict(category="SIGNATURE"))
-    hermes_ident_type = lib.OptionEnum("identType", str, meta=dict(category="SIGNATURE"))  # GERMAN_IDENTITY_CARD, etc.
-    hermes_ident_fsk = lib.OptionEnum("identVerifyFsk", str, meta=dict(category="SIGNATURE"))  # 18
-    hermes_ident_birthday = lib.OptionEnum("identVerifyBirthday", str, meta=dict(category="SIGNATURE"))  # YYYY-MM-DD
+    # Dangerous Goods
+    hermes_limited_quantities = lib.OptionEnum(
+        "limitedQuantitiesService", bool,
+        help="Mark shipment as containing limited quantity hazardous materials",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True)
+    )
 
-    # Parcel shop delivery
-    hermes_parcel_shop_id = lib.OptionEnum("psID", str, meta=dict(category="PUDO"))
-    hermes_parcel_shop_selection_rule = lib.OptionEnum("psSelectionRule", str, meta=dict(category="PUDO"))  # SELECT_BY_ID, SELECT_BY_RECEIVER_ADDRESS
-    hermes_parcel_shop_customer_firstname = lib.OptionEnum("psCustomerFirstName", str, meta=dict(category="PUDO"))
-    hermes_parcel_shop_customer_lastname = lib.OptionEnum("psCustomerLastName", str, meta=dict(category="PUDO"))
+    # Return Options
+    hermes_return_enabled = lib.OptionEnum(
+        "returnService", bool,
+        help="Enable return label for this shipment",
+        meta=dict(category="RETURN", configurable=True)
+    )
+    hermes_include_return_label = lib.OptionEnum(
+        "includeReturnLabel", bool,
+        help="Include a pre-printed return label inside the package",
+        meta=dict(category="RETURN", configurable=True)
+    )
+    hermes_digital_sales_return = lib.OptionEnum(
+        "digitalSalesReturn", bool,
+        help="Enable digital sales return (digitale Verkaufsretoure)",
+        meta=dict(category="RETURN", configurable=True)
+    )
 
-    # Multipart service
-    hermes_part_number = lib.OptionEnum("partNumber", int)
-    hermes_number_of_parts = lib.OptionEnum("numberOfParts", int)
-    hermes_parent_shipment_order_id = lib.OptionEnum("parentShipmentOrderID", str)
+    # Reference/Instructions Options
+    hermes_customer_reference_1 = lib.OptionEnum(
+        "customerReference1", str,
+        help="Customer reference field 1 (Kundenreferenz 1)",
+        meta=dict(category="INSTRUCTIONS", configurable=True)
+    )
+    hermes_customer_reference_2 = lib.OptionEnum(
+        "customerReference2", str,
+        help="Customer reference field 2 (Kundenreferenz 2)",
+        meta=dict(category="INSTRUCTIONS", configurable=True)
+    )
+
+    # Internal/Multipart Options (not configurable in shipping method editor)
+    hermes_tan_service = lib.OptionEnum(
+        "tanService", bool,
+        meta=dict(configurable=False)
+    )
+    hermes_late_injection = lib.OptionEnum(
+        "lateInjectionService", bool,
+        meta=dict(configurable=False)
+    )
+    hermes_part_number = lib.OptionEnum(
+        "partNumber", int,
+        meta=dict(configurable=False)
+    )
+    hermes_number_of_parts = lib.OptionEnum(
+        "numberOfParts", int,
+        meta=dict(configurable=False)
+    )
+    hermes_parent_shipment_order_id = lib.OptionEnum(
+        "parentShipmentOrderID", str,
+        meta=dict(configurable=False)
+    )
 
     """Unified Option type mapping."""
     signature_required = hermes_signature
@@ -128,247 +278,16 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    """Hermes tracking status mapping.
+    """Hermes tracking status mapping based on Hermes event codes."""
 
-    Maps Hermes 2x2 event codes (4-digit) to Karrio unified statuses.
-    Based on Hermes Germany Eventcodes.csv.
-    """
-
-    pending = [
-        "0000",  # Die Sendung wurde Hermes elektronisch angekündigt
-        "0600",  # Shipment has not arrived at the depot (1st notice)
-        "0700",  # Shipment has not arrived at the depot (2nd notice)
-        "0800",  # Shipment has not arrived at the depot (7 days)
-        "0900",  # Shipment has not arrived at the depot (28 days)
-    ]
-    picked_up = [
-        "1000",  # Die Sendung hat das Lager des Auftraggebers verlassen
-        "1900",  # Shipment accepted after collection
-        "1901",  # Shipment arrived at branch by self-delivery
-        "1910",  # Shipment received on tour
-    ]
-    in_transit = [
-        "1510",  # Sendung am LC umgeschlagen (sorted at logistics center)
-        "1610",  # Shipment in international transit
-        "1710",  # Customs export created
-        "1720",  # Customs clearance completed
-        "1810",  # Handed to partner carrier (international)
-        "1820",  # Handed to partner carrier (international)
-        "2000",  # Die Sendung ist eingetroffen (arrived at depot)
-        "2100",  # Arrived without advice data
-        "2300",  # Automatic shipment received
-        "2400",  # Shipment handed in at ParcelShop
-    ]
-    out_for_delivery = [
-        "3000",  # Die Sendung ist auf Zustelltour gegangen
-        "3010",  # Shipment has left depot on tour
-        "3300",  # Sorted for delivery tour (automatic)
-    ]
-    ready_for_pickup = [
-        "3410",  # Die Sendung liegt im PaketShop zur Abholung bereit
-        "3430",  # Handed over to island carrier
-    ]
-    delivered = [
-        "3500",  # Die Sendung wurde zugestellt
-        "3510",  # Shipment delivered (with scanner)
-        "3511",  # Delivered in letterbox
-        "3520",  # Shipment delivered (without scanner)
-        "3530",  # Collected by recipient from ParcelShop
-        "7500",  # Return shipment arrived at client
-    ]
-    delivery_failed = [
-        "3710",  # Annahmeverweigerung (refused)
-        "3715",  # COD not paid
-        "3720",  # Address not found
-        "3731",  # Recipient not present (1st attempt)
-        "3732",  # Recipient not present (2nd attempt)
-        "3733",  # Recipient not present (3rd attempt)
-        "3734",  # Recipient not present (4th attempt)
-        "3740",  # Damage detected
-        "3750",  # Tour cancellation
-        "3751",  # Incorrect TAN (1st attempt)
-        "3752",  # Incorrect TAN (2nd attempt)
-        "3753",  # Incorrect TAN (3rd attempt)
-        "3754",  # Incorrect TAN (4th attempt)
-        "3760",  # Return shipment collected
-        "3761",  # Return shipment taken
-        "3780",  # Misdirected
-        "3782",  # Ident failed - photo mismatch
-        "3783",  # Ident failed - name mismatch
-        "3784",  # Ident failed - DOB mismatch
-        "3785",  # Ident failed - document mismatch
-        "3786",  # Ident failed - PIN code
-        "3787",  # Ident failed - age verification
-        "3795",  # Shipment stopped
-    ]
-    on_hold = [
-        "1730",  # Held by customs
-        "1751",  # Rejected by customs
-        "4100",  # Sendung wird aufbewahrt (shipment stored)
-        "4500",  # Stored (stocktaking)
-        "4610",  # ParcelShop - high volume, cannot pick up
-        "4620",  # ParcelShop - shipment not available
-        "4630",  # ParcelShop - shipment not found
-        "4690",  # Status corrected at ParcelShop
-    ]
-    delivery_delayed = [
-        "4010",  # Return - refused
-        "4015",  # Return - COD not paid
-        "4020",  # Return - address not found
-        "4024",  # Return - too large/heavy for ParcelShop
-        "4025",  # Shipment returned to depot
-        "4031",  # Return - N1 (1st attempt failed)
-        "4032",  # Return - N2 (2nd attempt failed)
-        "4033",  # Return - N3 (3rd attempt failed)
-        "4034",  # Return - N4 (4th attempt failed)
-        "4035",  # Return - not collected from ParcelShop
-        "4040",  # Return - damage
-        "4050",  # Return - tour cancellation
-        "4051",  # Return - TAN 1
-        "4052",  # Return - TAN 2
-        "4053",  # Return - TAN 3
-        "4054",  # Return - TAN 4
-        "4060",  # Return shipment received (pickup)
-        "4061",  # Return shipment received (take-away)
-        "4062",  # Return handed in at ParcelShop
-        "4070",  # Tour departure cancelled
-        "4072",  # Return cancelled (correction)
-        "4080",  # Misdirected
-        "4081",  # Ident failed
-        "4082",  # Ident failed - photo
-        "4083",  # Ident failed - name
-        "4084",  # Ident failed - DOB
-        "4085",  # Ident failed - document
-        "4086",  # Ident failed - PIN
-        "4087",  # Ident failed - age
-        "4095",  # Delivery stopped
-    ]
-    return_to_sender = [
-        "1520",  # Return shipment sorted
-        "6080",  # Rückversand (return shipment)
-        "6081",  # Return - refused
-        "6082",  # Return - address not readable
-        "6083",  # Return - address not found
-        "6084",  # Return - receiver not met
-        "6085",  # Return - damage
-        "6086",  # Return - sorting error
-        "6087",  # Return - technical issue
-        "6088",  # Redirected at receiver request
-        "6089",  # Return - returns
-        "6090",  # Forwarded to logistics center
-        "6092",  # Return - ident failed
-        "6093",  # Return - not collected from ParcelShop
-        "6094",  # Return - COD not paid
-        "6096",  # Return - too large/heavy for ParcelShop
-        "6098",  # Return - incorrect TAN
-        "6099",  # Return - delivery stopped
-    ]
-
-
-class TrackingIncidentReason(lib.Enum):
-    """Maps Hermes exception codes to normalized incident reasons.
-
-    Based on Hermes Germany Eventcodes.csv.
-    Maps carrier-specific exception/status codes to standardized
-    incident reasons for tracking events.
-    """
-
-    # Consignee-caused issues
-    consignee_refused = [
-        "3710",  # Annahmeverweigerung
-        "4010",  # Return - refused
-        "6081",  # Return - refused
-    ]
-    consignee_not_home = [
-        "3731",  # Recipient not present (1st attempt)
-        "3732",  # Recipient not present (2nd attempt)
-        "3733",  # Recipient not present (3rd attempt)
-        "3734",  # Recipient not present (4th attempt)
-        "4031",  # Return - N1
-        "4032",  # Return - N2
-        "4033",  # Return - N3
-        "4034",  # Return - N4
-        "6084",  # Return - receiver not met
-    ]
-    consignee_incorrect_address = [
-        "3720",  # Address not found
-        "4020",  # Return - address not found
-        "6082",  # Return - address not readable
-        "6083",  # Return - address not found
-    ]
-    consignee_not_available = [
-        "4035",  # Not collected from ParcelShop
-        "6093",  # Return - not collected from ParcelShop
-    ]
-    consignee_cod_unpaid = [
-        "3715",  # COD not paid
-        "4015",  # Return - COD not paid
-        "6094",  # Return - COD not paid
-    ]
-    consignee_id_failed = [
-        "3782",  # Ident failed - photo mismatch
-        "3783",  # Ident failed - name mismatch
-        "3784",  # Ident failed - DOB mismatch
-        "3785",  # Ident failed - document mismatch
-        "3786",  # Ident failed - PIN code
-        "3787",  # Ident failed - age verification
-        "4081",  # Ident failed
-        "4082",  # Ident failed - photo
-        "4083",  # Ident failed - name
-        "4084",  # Ident failed - DOB
-        "4085",  # Ident failed - document
-        "4086",  # Ident failed - PIN
-        "4087",  # Ident failed - age
-        "6092",  # Return - ident failed
-    ]
-    consignee_tan_invalid = [
-        "3751",  # Incorrect TAN (1st attempt)
-        "3752",  # Incorrect TAN (2nd attempt)
-        "3753",  # Incorrect TAN (3rd attempt)
-        "3754",  # Incorrect TAN (4th attempt)
-        "4051",  # Return - TAN 1
-        "4052",  # Return - TAN 2
-        "4053",  # Return - TAN 3
-        "4054",  # Return - TAN 4
-        "6098",  # Return - incorrect TAN
-    ]
-
-    # Carrier-caused issues
-    carrier_damaged_parcel = [
-        "3740",  # Damage detected
-        "4040",  # Return - damage
-        "6085",  # Return - damage
-    ]
-    carrier_sorting_error = [
-        "3780",  # Misdirected
-        "4080",  # Misdirected
-        "6086",  # Return - sorting error
-        "6087",  # Return - technical issue
-    ]
-    carrier_not_enough_time = [
-        "3750",  # Tour cancellation
-        "4050",  # Return - tour cancellation
-        "4070",  # Tour departure cancelled
-    ]
-    carrier_parcel_too_large = [
-        "4024",  # Return - too large/heavy for ParcelShop
-        "6096",  # Return - too large/heavy for ParcelShop
-    ]
-
-    # Customs-related issues
-    customs_delay = [
-        "1730",  # Held by customs
-    ]
-    customs_rejected = [
-        "1751",  # Rejected by customs
-    ]
-
-    # Shipment stopped
-    shipment_stopped = [
-        "3795",  # Shipment stopped
-        "4095",  # Delivery stopped
-        "6099",  # Return - delivery stopped
-    ]
+    pending = ["0000"]
+    in_transit = ["1000", "2000"]
+    out_for_delivery = ["3000"]
+    delivered = ["3500"]
+    delivery_failed = ["4000", "4500"]
+    ready_for_pickup = ["5000"]
+    on_hold = ["6000"]
+    delivery_delayed = ["7000"]
 
 
 class LabelType(lib.StrEnum):

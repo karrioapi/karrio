@@ -20,7 +20,7 @@ def parse_pickup_response(
     messages = error.parse_error_response(response, settings)
     pickup_details = lib.identity(
         _extract_details(response, settings, _response.ctx)
-        if response.get("confirmation") is not None
+        if isinstance(response, dict) and response.get("confirmation") is not None
         else None
     )
 
@@ -62,10 +62,12 @@ def pickup_request(
     # DHL Parcel DE only supports one-time pickups via API
     pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
     if pickup_type not in ("one_time", None):
-        raise lib.exceptions.FieldError({
-            "pickup_type": f"DHL Parcel DE only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
-            "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
-        })
+        raise lib.exceptions.FieldError(
+            {
+                "pickup_type": f"DHL Parcel DE only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+                "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
+            }
+        )
 
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
@@ -94,8 +96,13 @@ def pickup_request(
         ),
     )
 
-    billing_number = options.billing_number.state or settings.get_billing_number()
-    pickup_date_type = options.dhl_parcel_de_pickup_date_type.state or ("ASAP" if not payload.pickup_date else "Date")
+    billing_number = (
+        settings.connection_config.pickup_billing_number.state
+        or options.billing_number.state
+    )
+    pickup_date_type = options.dhl_parcel_de_pickup_date_type.state or (
+        "ASAP" if not payload.pickup_date else "Date"
+    )
     location_type = options.dhl_parcel_de_pickup_location_type.state or "Address"
     transportation_type = options.dhl_parcel_de_transportation_type.state or "PAKET"
     send_confirmation = options.dhl_parcel_de_send_confirmation_email.state
@@ -103,12 +110,9 @@ def pickup_request(
 
     # Build the request
     request = dhl.PickupRequestType(
-        customerDetails=lib.identity(
-            dhl.CustomerDetailsType(
-                billingNumber=billing_number,
-            )
-            if billing_number
-            else None
+        customerDetails=dhl.CustomerDetailsType(
+            accountNumber=None,
+            billingNumber=billing_number,
         ),
         pickupLocation=dhl.PickupLocationType(
             type=location_type,
@@ -118,8 +122,19 @@ def pickup_request(
                     name2=lib.identity(
                         address.person_name if address.company_name else None
                     ),
-                    addressStreet=address.street_name or address.street,
-                    addressHouse=address.street_number,
+                    addressStreet=lib.identity(
+                        address.street_name
+                        if address.street_number
+                        else address.address_line1
+                    ),
+                    addressHouse=lib.text(
+                        (
+                            address.street_number
+                            if address.street_number
+                            else address.address_line2
+                        ),
+                        max=10,
+                    ),
                     postalCode=address.postal_code,
                     city=address.city,
                     country=address.country_code,
@@ -150,7 +165,8 @@ def pickup_request(
                         sendPickupConfirmationEmail=send_confirmation,
                         sendPickupTimeWindowEmail=send_time_window,
                     )
-                    if address.email and (send_confirmation is not None or send_time_window is not None)
+                    if address.email
+                    and (send_confirmation is not None or send_time_window is not None)
                     else None
                 ),
             )
@@ -176,7 +192,11 @@ def pickup_request(
                     transportationType=transportation_type,
                     size=options.dhl_parcel_de_shipment_size.state,
                 )
-                for _ in range(len(packages) or 1)
+                for _ in range(
+                    len(packages)
+                    if (payload.options or {}).get("shipment_identifiers")
+                    else 1
+                )
             ]
         ),
     )

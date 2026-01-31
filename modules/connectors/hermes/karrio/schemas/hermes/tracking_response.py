@@ -5,7 +5,6 @@ import typing
 
 @attr.s(auto_attribs=True)
 class TimeSlotType:
-    timeSlotfrom: typing.Optional[str] = None
     to: typing.Optional[str] = None
 
 

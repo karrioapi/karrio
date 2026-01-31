@@ -46,8 +46,10 @@ def apply_custom_markups(context: Context, result):
         # Filter markups that either:
         # 1. Have the current organization in their organization_ids list
         # 2. Have an empty organization_ids list (system-wide markups)
+        # Note: icontains is used instead of __contains for cross-DB
+        # compatibility (SQLite does not support JSON containment lookups).
         _filters = (
-            Q(active=True, organization_ids__contains=[org_id])
+            Q(active=True, organization_ids__icontains=org_id)
             | Q(active=True, organization_ids=[]),
         )
     else:

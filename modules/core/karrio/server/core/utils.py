@@ -949,12 +949,27 @@ def load_and_apply_shipping_method(
         )
 
     # Load the shipping method with access control
+    # Try AccountShippingMethod (mtd_*) first, then BrokeredShippingMethod (bsm_*)
     try:
-        method = ShippingMethod.access_by(context).get(
-            id=shipping_method_id,
-            is_active=True,
+        from karrio.server.shipping.models import BrokeredShippingMethod
+
+        lookup_strategies = [
+            lambda: ShippingMethod.access_by(context).get(
+                id=shipping_method_id, is_active=True
+            ),
+            lambda: (
+                BrokeredShippingMethod.access_by(context)
+                .with_effective_config()
+                .get(id=shipping_method_id, is_enabled=True)
+            ),
+        ]
+        method = next(
+            filter(None, (failsafe(fn) for fn in lookup_strategies)), None
         )
-    except ShippingMethod.DoesNotExist:
+    except Exception:
+        method = None
+
+    if method is None:
         raise exceptions.APIException(
             f"Shipping method '{shipping_method_id}' not found or inactive.",
             code="shipping_method_not_found",
@@ -967,7 +982,7 @@ def load_and_apply_shipping_method(
     logger.info(
         "Applied shipping method to shipment",
         shipping_method_id=method.id,
-        shipping_method_name=method.name,
+        shipping_method_name=getattr(method, "name", None) or getattr(method, "effective_display_name", ""),
         carrier_service=method.carrier_service,
     )
 

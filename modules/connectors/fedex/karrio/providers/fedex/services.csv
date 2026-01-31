@@ -1,0 +1,15 @@
+service_code,service_name,carrier_service_code,features,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,currency,weight_unit,dimension_unit,transit_days,domicile,international
+fedex_ground,FedEx Ground,FEDEX_GROUND,"tracked,b2c,b2b,first_mile,last_mile",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,,true,false
+fedex_ground_home_delivery,FedEx Ground Home Delivery,GROUND_HOME_DELIVERY,"tracked,b2c,last_mile",US Domestic,US,0.01,150,108,30,30,USD,LB,IN,,true,false
+fedex_express_saver,FedEx Express Saver,FEDEX_EXPRESS_SAVER,"tracked,b2c,b2b,first_mile,last_mile",US Domestic,US,0.01,150,119,80,70,USD,LB,IN,3,true,false
+fedex_2_day,FedEx 2Day,FEDEX_2_DAY,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,119,80,70,USD,LB,IN,2,true,false
+fedex_2_day_am,FedEx 2Day A.M.,FEDEX_2_DAY_AM,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,119,80,70,USD,LB,IN,2,true,false
+fedex_standard_overnight,FedEx Standard Overnight,STANDARD_OVERNIGHT,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,119,80,70,USD,LB,IN,1,true,false
+fedex_priority_overnight,FedEx Priority Overnight,PRIORITY_OVERNIGHT,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,119,80,70,USD,LB,IN,1,true,false
+fedex_first_overnight,FedEx First Overnight,FIRST_OVERNIGHT,"tracked,b2c,b2b,first_mile,last_mile,express",US Domestic,US,0.01,150,119,80,70,USD,LB,IN,1,true,false
+fedex_international_economy,FedEx International Economy,INTERNATIONAL_ECONOMY,"tracked,b2c,b2b,first_mile,last_mile",International,,0.01,150,119,80,70,USD,LB,IN,,false,true
+fedex_international_priority,FedEx International Priority,FEDEX_INTERNATIONAL_PRIORITY,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,150,119,80,70,USD,LB,IN,,false,true
+fedex_international_priority_express,FedEx International Priority Express,FEDEX_INTERNATIONAL_PRIORITY_EXPRESS,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,150,119,80,70,USD,LB,IN,,false,true
+fedex_international_first,FedEx International First,INTERNATIONAL_FIRST,"tracked,b2c,b2b,first_mile,last_mile,express",International,,0.01,150,119,80,70,USD,LB,IN,,false,true
+fedex_international_connect_plus,FedEx International Connect Plus,FEDEX_INTERNATIONAL_CONNECT_PLUS,"tracked,b2c,b2b,first_mile,last_mile",Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,70,120,60,60,EUR,KG,CM,,true,true
+fedex_regional_economy,FedEx Regional Economy,FEDEX_REGIONAL_ECONOMY,"tracked,b2c,b2b,first_mile,last_mile",Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,70,120,60,60,EUR,KG,CM,,true,true

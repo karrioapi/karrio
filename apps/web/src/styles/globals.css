@@ -1,3 +1,5 @@
+@import '@docsearch/css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -281,7 +283,6 @@ html[data-theme="dark"] * {
 }
 
 /* #region DocSearch Styles */
-@import '@docsearch/css';
 
 :root {
   --docsearch-primary-color: hsl(var(--primary));

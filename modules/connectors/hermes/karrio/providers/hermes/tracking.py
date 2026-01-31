@@ -20,12 +20,11 @@ def _match_status(code: str) -> typing.Optional[str]:
 
 
 def _match_reason(code: str) -> typing.Optional[str]:
-    """Match Hermes event code against TrackingIncidentReason enum values."""
-    if not code:
-        return None
-    for reason in list(provider_units.TrackingIncidentReason):
-        if code in reason.value:
-            return reason.name
+    """Match Hermes event code against incident reasons.
+
+    Hermes uses numeric codes that map to statuses, not specific incident reasons.
+    Returns None as Hermes does not provide granular incident reason codes.
+    """
     return None
 
 

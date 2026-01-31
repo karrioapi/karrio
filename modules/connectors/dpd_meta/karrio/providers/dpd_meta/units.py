@@ -90,7 +90,9 @@ class ConnectionConfig(lib.Enum):
     label_type = lib.OptionEnum("label_type", LabelPaperFormat, "A4")
     label_format = lib.OptionEnum("label_format", LabelFormat, "PDF")
     label_paper_format = lib.OptionEnum("label_paper_format", LabelPaperFormat)
-    label_printer_position = lib.OptionEnum("label_printer_position", LabelPrinterPosition)
+    label_printer_position = lib.OptionEnum(
+        "label_printer_position", LabelPrinterPosition
+    )
     dropoff_type = lib.OptionEnum("dropoff_type", DropOffType)
     simulate = lib.OptionEnum("simulate", bool)
     extra_barcode = lib.OptionEnum("extra_barcode", bool)
@@ -234,33 +236,259 @@ class CustomsContentType(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    dpd_meta_saturday_delivery = lib.OptionEnum("saturday_delivery", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    dpd_meta_label_format = lib.OptionEnum("label_format", str)
-    dpd_meta_label_paper_format = lib.OptionEnum("label_paper_format", str)
-    dpd_meta_label_printer_position = lib.OptionEnum("label_printer_position", str)
-    dpd_meta_dropoff_type = lib.OptionEnum("dropoff_type", str, meta=dict(category="PUDO"))
-    dpd_meta_simulate = lib.OptionEnum("simulate", bool)
-    dpd_meta_extra_barcode = lib.OptionEnum("extra_barcode", bool)
-    dpd_meta_with_document = lib.OptionEnum("with_document", bool)
-    dpd_meta_notification_email = lib.OptionEnum("notification_email", str, meta=dict(category="NOTIFICATION"))
-    dpd_meta_notification_sms = lib.OptionEnum("notification_sms", str, meta=dict(category="NOTIFICATION"))
-    dpd_meta_delivery_date_from = lib.OptionEnum("delivery_date_from", str, meta=dict(category="DELIVERY_OPTIONS"))
-    dpd_meta_delivery_date_to = lib.OptionEnum("delivery_date_to", str, meta=dict(category="DELIVERY_OPTIONS"))
-    dpd_meta_delivery_time_from = lib.OptionEnum("delivery_time_from", str, meta=dict(category="DELIVERY_OPTIONS"))
-    dpd_meta_delivery_time_to = lib.OptionEnum("delivery_time_to", str, meta=dict(category="DELIVERY_OPTIONS"))
+    # --- Delivery Options (Zustelloptionen) ---
+    dpd_meta_saturday_delivery = lib.OptionEnum(
+        "saturday_delivery",
+        bool,
+        help="Enable Saturday delivery service",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
+    dpd_meta_small_parcel = lib.OptionEnum(
+        "small_parcel",
+        bool,
+        help="Mark shipment as small package (Kleinpaket) for reduced rates",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
+    dpd_meta_exchange_service = lib.OptionEnum(
+        "exchange_service",
+        bool,
+        help="Enable exchange service (Austauschservice) — simultaneous delivery and pickup",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
+    dpd_meta_ex_works = lib.OptionEnum(
+        "ex_works",
+        bool,
+        help="Enable EX Works delivery mode",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
+    dpd_meta_delivery_date_from = lib.OptionEnum(
+        "delivery_date_from",
+        str,
+        help="Earliest delivery date (YYYY-MM-DD)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
+    dpd_meta_delivery_date_to = lib.OptionEnum(
+        "delivery_date_to",
+        str,
+        help="Latest delivery date (YYYY-MM-DD)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
+    dpd_meta_delivery_time_from = lib.OptionEnum(
+        "delivery_time_from",
+        str,
+        help="Earliest delivery time (HH:MM)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
+    dpd_meta_delivery_time_to = lib.OptionEnum(
+        "delivery_time_to",
+        str,
+        help="Latest delivery time (HH:MM)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
+    )
 
-    """COD options"""
-    dpd_meta_cod_collect_type = lib.OptionEnum("cod_collect_type", str, meta=dict(category="COD"))
-    dpd_meta_cod_bank_code = lib.OptionEnum("cod_bank_code", str, meta=dict(category="COD"))
-    dpd_meta_cod_bank_name = lib.OptionEnum("cod_bank_name", str, meta=dict(category="COD"))
-    dpd_meta_cod_bank_account_number = lib.OptionEnum("cod_bank_account_number", str, meta=dict(category="COD"))
-    dpd_meta_cod_bank_account_name = lib.OptionEnum("cod_bank_account_name", str, meta=dict(category="COD"))
-    dpd_meta_cod_iban = lib.OptionEnum("cod_iban", str, meta=dict(category="COD"))
-    dpd_meta_cod_bic = lib.OptionEnum("cod_bic", str, meta=dict(category="COD"))
-    dpd_meta_cod_purpose = lib.OptionEnum("cod_purpose", str, meta=dict(category="COD"))
+    # --- PUDO (Parcel Shop) Options ---
+    dpd_meta_dropoff_type = lib.OptionEnum(
+        "dropoff_type",
+        str,
+        help="Drop-off type for parcel shop delivery (FULL_LABEL, QR_CODE, BOTH)",
+        meta=dict(category="PUDO", configurable=True),
+    )
+    dpd_meta_parcel_shop_id = lib.OptionEnum(
+        "parcel_shop_id",
+        str,
+        help="DPD ParcelShop ID for shop delivery",
+        meta=dict(category="PUDO", configurable=True),
+    )
+
+    # --- Notification Options (Predict) ---
+    dpd_meta_notification_email = lib.OptionEnum(
+        "notification_email",
+        str,
+        help="Email for delivery notifications (Predict service)",
+        meta=dict(category="NOTIFICATION", configurable=True),
+    )
+    dpd_meta_notification_sms = lib.OptionEnum(
+        "notification_sms",
+        str,
+        help="SMS number for delivery notifications",
+        meta=dict(category="NOTIFICATION", configurable=True),
+    )
+
+    # --- Insurance Options (Zusatzversicherung) ---
+    dpd_meta_insurance_description = lib.OptionEnum(
+        "insurance_description",
+        str,
+        help="Free text description for additional insurance purpose",
+        meta=dict(category="INSURANCE", configurable=True),
+    )
+
+    # --- COD Options (Nachnahme) ---
+    dpd_meta_cod_collect_type = lib.OptionEnum(
+        "cod_collect_type",
+        str,
+        help="COD collection type (cash, cheque, etc.)",
+        meta=dict(category="COD", configurable=True),
+    )
+    dpd_meta_cod_bank_code = lib.OptionEnum(
+        "cod_bank_code",
+        str,
+        help="Bank code for COD payment",
+        meta=dict(category="COD", configurable=False),
+    )
+    dpd_meta_cod_bank_name = lib.OptionEnum(
+        "cod_bank_name",
+        str,
+        help="Bank name for COD payment",
+        meta=dict(category="COD", configurable=False),
+    )
+    dpd_meta_cod_bank_account_number = lib.OptionEnum(
+        "cod_bank_account_number",
+        str,
+        help="Bank account number for COD payment",
+        meta=dict(category="COD", configurable=False),
+    )
+    dpd_meta_cod_bank_account_name = lib.OptionEnum(
+        "cod_bank_account_name",
+        str,
+        help="Account holder name for COD payment",
+        meta=dict(category="COD", configurable=False),
+    )
+    dpd_meta_cod_iban = lib.OptionEnum(
+        "cod_iban",
+        str,
+        help="IBAN for COD payment",
+        meta=dict(category="COD", configurable=False),
+    )
+    dpd_meta_cod_bic = lib.OptionEnum(
+        "cod_bic",
+        str,
+        help="BIC/SWIFT code for COD payment",
+        meta=dict(category="COD", configurable=False),
+    )
+    dpd_meta_cod_purpose = lib.OptionEnum(
+        "cod_purpose",
+        str,
+        help="Purpose text for COD payment",
+        meta=dict(category="COD", configurable=True),
+    )
+
+    # --- Dangerous Goods Options (Gefahrgut Versand) ---
+    dpd_meta_dangerous_goods = lib.OptionEnum(
+        "dangerous_goods",
+        bool,
+        help="Enable shipment of dangerous goods (Gefahrgut)",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_identification_class = lib.OptionEnum(
+        "dg_identification_class",
+        str,
+        help="Hazard identification number (Identifikationsklasse)",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_un_number = lib.OptionEnum(
+        "dg_un_number",
+        str,
+        help="UN number for the hazardous material",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_weight = lib.OptionEnum(
+        "dg_weight",
+        float,
+        help="Weight of dangerous goods package in kg",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_description = lib.OptionEnum(
+        "dg_description",
+        str,
+        help="Detailed description of the dangerous goods",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_hazard_factor = lib.OptionEnum(
+        "dg_hazard_factor",
+        str,
+        help="Factor defining the risk level of the hazardous goods",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_hazard_class = lib.OptionEnum(
+        "dg_hazard_class",
+        str,
+        help="Official hazard classification (e.g. 3 for flammable liquids)",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_nag_entry = lib.OptionEnum(
+        "dg_nag_entry",
+        str,
+        help="Not otherwise specified (N.A.G.) entry for hazardous goods",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_packing_group = lib.OptionEnum(
+        "dg_packing_group",
+        str,
+        help="Packing group (I, II, III) indicating packaging strength",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_packing_code = lib.OptionEnum(
+        "dg_packing_code",
+        str,
+        help="DPD-specific packaging code for dangerous goods",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_subsidiary_risks = lib.OptionEnum(
+        "dg_subsidiary_risks",
+        str,
+        help="Additional hazard classifications (subsidiary risks)",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+    dpd_meta_dg_tunnel_restriction_code = lib.OptionEnum(
+        "dg_tunnel_restriction_code",
+        str,
+        help="Code defining tunnel access restrictions for hazardous goods",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
+    )
+
+    # --- Return Options (Retoure) ---
+    dpd_meta_return_enabled = lib.OptionEnum(
+        "return_enabled",
+        bool,
+        help="Enable DPD return label creation",
+        meta=dict(category="RETURN", configurable=True),
+    )
+    dpd_meta_return_description = lib.OptionEnum(
+        "return_description",
+        str,
+        help="Description or reason for the return shipment",
+        meta=dict(category="RETURN", configurable=True),
+    )
+    dpd_meta_include_return_label = lib.OptionEnum(
+        "include_return_label",
+        bool,
+        help="Add a printed return label with the outbound shipment (Beilegeretoure)",
+        meta=dict(category="RETURN", configurable=True),
+    )
+
+    # --- Label Options (internal — not configurable in shipping method editor) ---
+    dpd_meta_label_format = lib.OptionEnum(
+        "label_format", str, meta=dict(configurable=False)
+    )
+    dpd_meta_label_paper_format = lib.OptionEnum(
+        "label_paper_format", str, meta=dict(configurable=False)
+    )
+    dpd_meta_label_printer_position = lib.OptionEnum(
+        "label_printer_position", str, meta=dict(configurable=False)
+    )
+
+    # --- Internal/Debug Options (not configurable) ---
+    dpd_meta_simulate = lib.OptionEnum("simulate", bool, meta=dict(configurable=False))
+    dpd_meta_extra_barcode = lib.OptionEnum(
+        "extra_barcode", bool, meta=dict(configurable=False)
+    )
+    dpd_meta_with_document = lib.OptionEnum(
+        "with_document", bool, meta=dict(configurable=False)
+    )
 
     """Unified Option type mapping"""
     saturday_delivery = dpd_meta_saturday_delivery
+    dangerous_good = dpd_meta_dangerous_goods
     label_format = dpd_meta_label_format
     label_paper_format = dpd_meta_label_paper_format
     label_printer_position = dpd_meta_label_printer_position
@@ -268,10 +496,27 @@ class ShippingOption(lib.Enum):
     simulate = dpd_meta_simulate
     extra_barcode = dpd_meta_extra_barcode
     with_document = dpd_meta_with_document
-    cash_on_delivery = lib.OptionEnum("cash_on_delivery", float, meta=dict(category="COD"))
-    insurance = lib.OptionEnum("insurance", float, meta=dict(category="INSURANCE"))
-    declared_value = lib.OptionEnum("declared_value", float)
-    currency = lib.OptionEnum("currency", str)
+    cash_on_delivery = lib.OptionEnum(
+        "cash_on_delivery",
+        float,
+        help="Cash on delivery amount",
+        meta=dict(category="COD", configurable=True),
+    )
+    insurance = lib.OptionEnum(
+        "insurance",
+        float,
+        help="Additional insurance value",
+        meta=dict(category="INSURANCE", configurable=False),
+    )
+    declared_value = lib.OptionEnum(
+        "declared_value",
+        float,
+        help="Declared value for customs",
+        meta=dict(category="INVOICE", configurable=True),
+    )
+    currency = lib.OptionEnum(
+        "currency", str, help="Currency code for values", meta=dict(configurable=False)
+    )
 
 
 def shipping_options_initializer(

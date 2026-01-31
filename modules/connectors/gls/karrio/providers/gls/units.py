@@ -31,18 +31,141 @@ class ShippingService(lib.StrEnum):
 
 class ShippingOption(lib.Enum):
     """GLS Group specific options"""
-    gls_guaranteed24 = lib.OptionEnum("GUARANTEED24", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    gls_saturday_delivery = lib.OptionEnum("SaturdayService", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    gls_flex_delivery = lib.OptionEnum("FlexDeliveryService", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    gls_deposit_service = lib.OptionEnum("DepositService", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    gls_pick_and_return = lib.OptionEnum("PickAndReturnService", bool, meta=dict(category="RETURN"))
-    gls_shop_delivery = lib.OptionEnum("ShopDeliveryService", bool, meta=dict(category="PUDO"))
-    gls_addressee_only = lib.OptionEnum("AddresseeOnlyService", bool, meta=dict(category="SIGNATURE"))
-    gls_premium = lib.OptionEnum("PremiumService", bool)
+
+    # Delivery Options (Zustelloptionen tab)
+    gls_guaranteed24 = lib.OptionEnum(
+        "GUARANTEED24", bool,
+        help="Guaranteed next-day delivery service",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    gls_saturday_delivery = lib.OptionEnum(
+        "SaturdayService", bool,
+        help="Enable Saturday delivery",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    gls_flex_delivery = lib.OptionEnum(
+        "FlexDeliveryService", bool,
+        help="Notify recipient about delivery options",
+        meta=dict(category="NOTIFICATION", configurable=True)
+    )
+    gls_deposit_service = lib.OptionEnum(
+        "DepositService", bool,
+        help="Enable delivery to a predefined deposit location",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    gls_deposit_description = lib.OptionEnum(
+        "DepositDescription", str,
+        help="Description of the deposit location (e.g., 'Behind the garage')",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    gls_deposit_contact = lib.OptionEnum(
+        "DepositContact", str,
+        help="Contact person at the deposit location",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    gls_express_parcel = lib.OptionEnum(
+        "ExpressParcel", bool,
+        help="Enable express shipping",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+    gls_time_definite_service = lib.OptionEnum(
+        "TimeDefiniteService", str,
+        help="Set specific delivery time (before 8 AM, 9 AM, 10 AM, 12 PM)",
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+    )
+
+    # PUDO Options (Parcel Shop)
+    gls_shop_delivery = lib.OptionEnum(
+        "ShopDeliveryService", bool,
+        help="Delivery to a GLS ParcelShop",
+        meta=dict(category="PUDO", configurable=True)
+    )
+    gls_shop_id = lib.OptionEnum(
+        "ShopID", str,
+        help="GLS ParcelShop ID for delivery",
+        meta=dict(category="PUDO", configurable=True)
+    )
+    gls_shop_auto_determine = lib.OptionEnum(
+        "ShopAutoSelect", bool,
+        help="Automatically determine nearest GLS ParcelShop based on recipient address",
+        meta=dict(category="PUDO", configurable=True)
+    )
+
+    # Signature Options
+    gls_addressee_only = lib.OptionEnum(
+        "AddresseeOnlyService", bool,
+        help="Delivery only to the addressee (no neighbor delivery)",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+    gls_signature_service = lib.OptionEnum(
+        "SignatureService", bool,
+        help="Require signature upon delivery",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+    gls_ident_pin_service = lib.OptionEnum(
+        "IdentPINService", bool,
+        help="Identification via PIN code at delivery",
+        meta=dict(category="SIGNATURE", configurable=True)
+    )
+
+    # Insurance Options
+    gls_add_on_liability = lib.OptionEnum(
+        "AddOnLiabilityService", bool,
+        help="Add extra liability coverage for shipments",
+        meta=dict(category="INSURANCE", configurable=True)
+    )
+
+    # Return Options
+    gls_pick_and_return = lib.OptionEnum(
+        "PickAndReturnService", bool,
+        help="Enable pick and return service",
+        meta=dict(category="RETURN", configurable=True)
+    )
+    gls_shop_return = lib.OptionEnum(
+        "ShopReturnService", bool,
+        help="Add a pre-printed return label inside the package",
+        meta=dict(category="RETURN", configurable=True)
+    )
+    gls_return_enabled = lib.OptionEnum(
+        "ReturnService", bool,
+        help="Enable return label generation for this shipment",
+        meta=dict(category="RETURN", configurable=True)
+    )
+
+    # Dangerous Goods
+    gls_limited_quantity = lib.OptionEnum(
+        "LimitedQuantity", bool,
+        help="Mark shipment as containing limited quantity hazardous materials",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True)
+    )
+    gls_limited_quantity_weight = lib.OptionEnum(
+        "LimitedQuantityWeight", float,
+        help="Weight of limited quantity hazardous material in kg",
+        meta=dict(category="DANGEROUS_GOOD", configurable=True)
+    )
+
+    # COD Options (Cash on Delivery)
+    gls_cod_reference = lib.OptionEnum(
+        "CODReference", str,
+        help="Reference number for cash on delivery payment",
+        meta=dict(category="COD", configurable=True)
+    )
+
+    # Premium/Other
+    gls_premium = lib.OptionEnum(
+        "PremiumService", bool,
+        help="Enable premium service",
+        meta=dict(configurable=True)
+    )
 
     """Standard option mappings"""
-    insurance = lib.OptionEnum("insurance", float, meta=dict(category="INSURANCE"))
+    insurance = lib.OptionEnum(
+        "insurance", float,
+        help="Insurance value for the shipment",
+        meta=dict(category="INSURANCE", configurable=True)
+    )
     saturday_delivery = gls_saturday_delivery
+    dangerous_good = gls_limited_quantity
 
 
 def shipping_options_initializer(

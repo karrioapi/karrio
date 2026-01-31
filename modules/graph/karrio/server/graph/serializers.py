@@ -361,11 +361,15 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
     ) -> None:
         """Process service rates for the rate sheet.
 
+        Uses batch_update_service_rates() to avoid the single-entry fallback
+        in update_service_rate() which overwrites previous weight brackets.
+
         Args:
             service_rates_data: List of service rate dicts with service_id, zone_id, rate, etc.
             temp_to_real_id_map: Optional mapping of temp-{idx} IDs to real service IDs.
         """
         temp_to_real_id_map = temp_to_real_id_map or {}
+        batch_updates = []
 
         for rate_data in service_rates_data:
             rate_dict = {k: v for k, v in rate_data.items() if v is not None}
@@ -377,7 +381,12 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
                 service_id = temp_to_real_id_map.get(service_id, service_id)
 
             if service_id and zone_id:
-                self.instance.update_service_rate(service_id, zone_id, rate_dict)
+                batch_updates.append(
+                    {"service_id": service_id, "zone_id": zone_id, **rate_dict}
+                )
+
+        if batch_updates:
+            self.instance.batch_update_service_rates(batch_updates)
 
     def build_temp_to_real_service_map(self, services_data: list) -> dict:
         """Build mapping from temp-{idx} IDs to real service IDs by service_code."""

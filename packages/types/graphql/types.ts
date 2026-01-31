@@ -3787,6 +3787,25 @@ export interface UpdateRateSheet_update_rate_sheet_rate_sheet_service_rates {
   max_weight: number | null;
 }
 
+export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services_features {
+  first_mile: string | null;
+  last_mile: string | null;
+  form_factor: string | null;
+  b2c: boolean | null;
+  b2b: boolean | null;
+  shipment_type: string | null;
+  age_check: string | null;
+  signature: boolean | null;
+  tracked: boolean | null;
+  insurance: boolean | null;
+  express: boolean | null;
+  dangerous_goods: boolean | null;
+  saturday_delivery: boolean | null;
+  sunday_delivery: boolean | null;
+  multicollo: boolean | null;
+  neighbor_delivery: boolean | null;
+}
+
 export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services {
   id: string;
   service_name: string | null;
@@ -3801,8 +3820,11 @@ export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services {
   max_weight: number | null;
   weight_unit: WeightUnitEnum | null;
   active: boolean | null;
+  dim_factor: number | null;
+  use_volumetric: boolean | null;
   zone_ids: string[];
   surcharge_ids: string[];
+  features: UpdateRateSheet_update_rate_sheet_rate_sheet_services_features;
 }
 
 export interface UpdateRateSheet_update_rate_sheet_rate_sheet {
@@ -3867,6 +3889,25 @@ export interface DeleteRateSheetVariables {
 // GraphQL mutation operation: DeleteRateSheetService
 // ====================================================
 
+export interface DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_services_features {
+  first_mile: string | null;
+  last_mile: string | null;
+  form_factor: string | null;
+  b2c: boolean | null;
+  b2b: boolean | null;
+  shipment_type: string | null;
+  age_check: string | null;
+  signature: boolean | null;
+  tracked: boolean | null;
+  insurance: boolean | null;
+  express: boolean | null;
+  dangerous_goods: boolean | null;
+  saturday_delivery: boolean | null;
+  sunday_delivery: boolean | null;
+  multicollo: boolean | null;
+  neighbor_delivery: boolean | null;
+}
+
 export interface DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_services {
   id: string;
   service_name: string | null;
@@ -3881,8 +3922,11 @@ export interface DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_ser
   max_weight: number | null;
   weight_unit: WeightUnitEnum | null;
   active: boolean | null;
+  dim_factor: number | null;
+  use_volumetric: boolean | null;
   zone_ids: string[];
   surcharge_ids: string[];
+  features: DeleteRateSheetService_delete_rate_sheet_service_rate_sheet_services_features;
 }
 
 export interface DeleteRateSheetService_delete_rate_sheet_service_rate_sheet {
@@ -4375,6 +4419,25 @@ export interface GetRateSheet_rate_sheet_service_rates {
   transit_time: number | null;
 }
 
+export interface GetRateSheet_rate_sheet_services_features {
+  first_mile: string | null;
+  last_mile: string | null;
+  form_factor: string | null;
+  b2c: boolean | null;
+  b2b: boolean | null;
+  shipment_type: string | null;
+  age_check: string | null;
+  signature: boolean | null;
+  tracked: boolean | null;
+  insurance: boolean | null;
+  express: boolean | null;
+  dangerous_goods: boolean | null;
+  saturday_delivery: boolean | null;
+  sunday_delivery: boolean | null;
+  multicollo: boolean | null;
+  neighbor_delivery: boolean | null;
+}
+
 export interface GetRateSheet_rate_sheet_services {
   id: string;
   object_type: string;
@@ -4392,10 +4455,13 @@ export interface GetRateSheet_rate_sheet_services {
   dimension_unit: DimensionUnitEnum | null;
   max_weight: number | null;
   weight_unit: WeightUnitEnum | null;
+  dim_factor: number | null;
+  use_volumetric: boolean | null;
   domicile: boolean | null;
   international: boolean | null;
   zone_ids: string[];
   surcharge_ids: string[];
+  features: GetRateSheet_rate_sheet_services_features;
 }
 
 export interface GetRateSheet_rate_sheet_carriers {
@@ -4472,6 +4538,25 @@ export interface GetRateSheets_rate_sheets_edges_node_service_rates {
   max_weight: number | null;
 }
 
+export interface GetRateSheets_rate_sheets_edges_node_services_features {
+  first_mile: string | null;
+  last_mile: string | null;
+  form_factor: string | null;
+  b2c: boolean | null;
+  b2b: boolean | null;
+  shipment_type: string | null;
+  age_check: string | null;
+  signature: boolean | null;
+  tracked: boolean | null;
+  insurance: boolean | null;
+  express: boolean | null;
+  dangerous_goods: boolean | null;
+  saturday_delivery: boolean | null;
+  sunday_delivery: boolean | null;
+  multicollo: boolean | null;
+  neighbor_delivery: boolean | null;
+}
+
 export interface GetRateSheets_rate_sheets_edges_node_services {
   id: string;
   service_name: string | null;
@@ -4488,10 +4573,13 @@ export interface GetRateSheets_rate_sheets_edges_node_services {
   dimension_unit: DimensionUnitEnum | null;
   max_weight: number | null;
   weight_unit: WeightUnitEnum | null;
+  dim_factor: number | null;
+  use_volumetric: boolean | null;
   domicile: boolean | null;
   international: boolean | null;
   zone_ids: string[];
   surcharge_ids: string[];
+  features: GetRateSheets_rate_sheets_edges_node_services_features;
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_carriers {
@@ -5883,6 +5971,50 @@ export enum BatchOperationStatus {
   running = "running",
 }
 
+export enum LabelSizeEnum {
+  A4 = "A4",
+  A5 = "A5",
+  A6 = "A6",
+  LETTER = "LETTER",
+  SIZE_4_x_6 = "SIZE_4_x_6",
+  SIZE_4_x_8 = "SIZE_4_x_8",
+}
+
+export enum ExportReasonEnum {
+  gift = "gift",
+  other = "other",
+  personal_effects = "personal_effects",
+  repair = "repair",
+  return = "return",
+  sale = "sale",
+  sample = "sample",
+}
+
+export enum FirstMileEnum {
+  drop_off = "drop_off",
+  pickup = "pickup",
+}
+
+export enum LastMileEnum {
+  home_delivery = "home_delivery",
+  mailbox = "mailbox",
+  po_box = "po_box",
+  service_point = "service_point",
+}
+
+export enum FormFactorEnum {
+  letter = "letter",
+  long = "long",
+  mailbox = "mailbox",
+  pallet = "pallet",
+  parcel = "parcel",
+}
+
+export enum AgeCheckEnum {
+  AGE_16 = "AGE_16",
+  AGE_18 = "AGE_18",
+}
+
 // null
 export interface UsageFilter {
   date_after?: string | null;
@@ -6362,11 +6494,34 @@ export interface CreateServiceLevelInput {
   weight_unit?: WeightUnitEnum | null;
   max_volume?: number | null;
   cost?: number | null;
+  dim_factor?: number | null;
+  use_volumetric?: boolean | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  features?: ServiceLevelFeaturesInput | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
+}
+
+// null
+export interface ServiceLevelFeaturesInput {
+  first_mile?: string | null;
+  last_mile?: string | null;
+  form_factor?: string | null;
+  b2c?: boolean | null;
+  b2b?: boolean | null;
+  shipment_type?: string | null;
+  age_check?: string | null;
+  signature?: boolean | null;
+  tracked?: boolean | null;
+  insurance?: boolean | null;
+  express?: boolean | null;
+  dangerous_goods?: boolean | null;
+  saturday_delivery?: boolean | null;
+  sunday_delivery?: boolean | null;
+  multicollo?: boolean | null;
+  neighbor_delivery?: boolean | null;
 }
 
 // null
@@ -6442,8 +6597,11 @@ export interface UpdateServiceLevelInput {
   weight_unit?: WeightUnitEnum | null;
   max_volume?: number | null;
   cost?: number | null;
+  dim_factor?: number | null;
+  use_volumetric?: boolean | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  features?: ServiceLevelFeaturesInput | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
@@ -6617,6 +6775,28 @@ export interface WorkspaceConfigMutationInput {
   label_message_2?: string | null;
   label_message_3?: string | null;
   label_logo?: string | null;
+  print_label_size?: LabelSizeEnum | null;
+  print_label_show_options?: boolean | null;
+  print_return_label_size?: LabelSizeEnum | null;
+  print_return_label_show_options?: boolean | null;
+  print_customs_size?: LabelSizeEnum | null;
+  print_customs_show_options?: boolean | null;
+  print_customs_with_label?: boolean | null;
+  print_customs_copies?: number | null;
+  default_parcel_weight?: number | null;
+  default_shipping_service?: string | null;
+  default_shipping_carrier?: string | null;
+  default_export_reason?: ExportReasonEnum | null;
+  default_delivery_instructions?: string | null;
+  label_show_postage_paid_logo?: boolean | null;
+  label_show_qr_code?: boolean | null;
+  customs_use_order_as_invoice?: boolean | null;
+  pref_first_mile?: FirstMileEnum[] | null;
+  pref_last_mile?: LastMileEnum[] | null;
+  pref_form_factor?: FormFactorEnum[] | null;
+  pref_age_check?: AgeCheckEnum | null;
+  pref_signature_required?: boolean | null;
+  pref_max_lead_time_days?: number | null;
 }
 
 // null
