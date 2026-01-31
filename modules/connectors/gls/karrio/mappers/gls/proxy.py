@@ -20,7 +20,8 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             trace=self.trace_as("json"),
             method="POST",
             headers={
-                "Content-Type": "application/json",
+                "Content-Type": "application/glsVersion1+json",
+                "Accept": "application/glsVersion1+json",
                 "Authorization": f"Bearer {self.settings.access_token}",
             },
             on_error=provider_utils.parse_error_response,
@@ -36,7 +37,8 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             trace=self.trace_as("json"),
             method="POST",
             headers={
-                "Content-Type": "application/json",
+                "Content-Type": "application/glsVersion1+json",
+                "Accept": "application/glsVersion1+json",
                 "Authorization": f"Bearer {self.settings.access_token}",
             },
             on_error=provider_utils.parse_error_response,
@@ -76,7 +78,8 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             trace=self.trace_as("json"),
             method="POST",
             headers={
-                "Content-Type": "application/json",
+                "Content-Type": "application/glsVersion1+json",
+                "Accept": "application/glsVersion1+json",
                 "Authorization": f"Bearer {self.settings.access_token}",
             },
             on_error=provider_utils.parse_error_response,
