@@ -3580,6 +3580,29 @@ export const GET_PICKUP = gql`
         id
         tracking_number
         status
+        service
+        carrier_name
+        carrier_id
+        tracker {
+          id
+          tracking_number
+          status
+          delivered
+          estimated_delivery
+          events {
+            description
+            location
+            code
+            date
+            time
+          }
+          messages {
+            carrier_name
+            carrier_id
+            message
+            code
+          }
+        }
       }
       options
       metadata

@@ -1,29 +1,33 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
-import { MoreHorizontal, Package, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Package, Trash2 } from "lucide-react";
 import {
+  errorToMessages,
   formatAddressLocationShort,
   formatAddressShort,
   formatDateTime,
   getURLSearchParams,
+  isNoneOrEmpty,
 } from "@karrio/lib";
+import {
+  PickupPreviewSheet,
+  PickupPreviewSheetContext,
+} from "@karrio/ui/components/pickup-preview-sheet";
 import { SchedulePickupDialog } from "@karrio/ui/components/schedule-pickup-dialog";
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
+import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { usePickups, usePickupMutation } from "@karrio/hooks/pickup";
 import { useLoader } from "@karrio/ui/core/components/loader";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { get_pickups_pickups_edges_node, NotificationType } from "@karrio/types";
+import { get_pickups_pickups_edges_node } from "@karrio/types";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { useSearchParams } from "next/navigation";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
-import { Badge } from "@karrio/ui/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -43,33 +47,14 @@ import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 
 type PickupType = get_pickups_pickups_edges_node;
 
-function formatErrorMessage(error: any): string {
-  if (error?.data?.errors && Array.isArray(error.data.errors)) {
-    return error.data.errors
-      .map((e: any) => e.message || JSON.stringify(e))
-      .join("; ");
-  }
-  if (error?.errors && Array.isArray(error.errors)) {
-    return error.errors
-      .map((e: any) => e.message || JSON.stringify(e))
-      .join("; ");
-  }
-  if (error?.message) {
-    return error.message;
-  }
-  if (typeof error === "string") {
-    return error;
-  }
-  return "An unexpected error occurred";
-}
-
-export default function PickupsPage() {
+function PickupsContent() {
   const searchParams = useSearchParams();
   const { setLoading } = useLoader();
   const { toast } = useToast();
-  const { references } = useAPIMetadata();
   const [allChecked, setAllChecked] = React.useState(false);
+  const [initialized, setInitialized] = React.useState(false);
   const [selection, setSelection] = React.useState<string[]>([]);
+  const { previewPickup } = React.useContext(PickupPreviewSheetContext);
   const [cancelDialogOpen, setCancelDialogOpen] = React.useState(false);
   const [pickupToCancel, setPickupToCancel] = React.useState<PickupType | null>(null);
   const { user_connections } = useCarrierConnections();
@@ -83,6 +68,25 @@ export default function PickupsPage() {
     setVariablesToURL: true,
     preloadNextPage: true,
   });
+
+  const getFilterOptions = () => [
+    {
+      label: "All",
+      value: ["scheduled", "picked_up", "closed"],
+    },
+    {
+      label: "Scheduled",
+      value: ["scheduled"],
+    },
+    {
+      label: "Picked up",
+      value: ["closed"],
+    },
+    {
+      label: "Cancelled",
+      value: ["cancelled"],
+    },
+  ];
 
   const updateFilter = (extra: Partial<any> = {}) => {
     const query = {
@@ -151,11 +155,13 @@ export default function PickupsPage() {
       setCancelDialogOpen(false);
       setPickupToCancel(null);
     } catch (error: any) {
-      const errorMessage = formatErrorMessage(error);
+      const messages = errorToMessages(error);
       toast({
         variant: "destructive",
         title: "Failed to cancel pickup",
-        description: errorMessage,
+        description: messages
+          .map((m: any) => (typeof m === "string" ? m : m.message || JSON.stringify(m)))
+          .join("; "),
       });
     }
   };
@@ -177,6 +183,17 @@ export default function PickupsPage() {
     updatedSelection(selection, pickups);
   }, [selection, pickups]);
 
+  React.useEffect(() => {
+    if (
+      query.isFetched &&
+      !initialized &&
+      !isNoneOrEmpty(searchParams.get("modal"))
+    ) {
+      previewPickup(searchParams.get("modal") as string);
+      setInitialized(true);
+    }
+  }, [searchParams.get("modal"), query.isFetched]);
+
   return (
     <>
       {/* Header */}
@@ -191,6 +208,13 @@ export default function PickupsPage() {
           <SchedulePickupDialog onScheduled={() => query.refetch()} />
         </div>
       </header>
+
+      {/* Status Filter Tabs */}
+      <FiltersCard
+        filters={getFilterOptions()}
+        activeFilter={filter?.status || []}
+        onFilterChange={(status) => updateFilter({ status, offset: 0 })}
+      />
 
       {/* Loading State */}
       {!query.isFetched && query.isFetching && <Spinner />}
@@ -232,7 +256,10 @@ export default function PickupsPage() {
                           aria-label={`Select ${pickup.id}`}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell
+                        className="cursor-pointer"
+                        onClick={() => previewPickup(pickup.id)}
+                      >
                         <div className="flex items-center gap-3">
                           <CarrierImage
                             carrier_name={pickup.carrier_name || ""}
@@ -251,10 +278,16 @@ export default function PickupsPage() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell
+                        className="cursor-pointer"
+                        onClick={() => previewPickup(pickup.id)}
+                      >
                         <StatusBadge status={pickup.status || "scheduled"} />
                       </TableCell>
-                      <TableCell>
+                      <TableCell
+                        className="cursor-pointer"
+                        onClick={() => previewPickup(pickup.id)}
+                      >
                         <div className="flex flex-col">
                           <span className="text-sm">
                             {formatAddressShort(pickup.address as any) || "-"}
@@ -264,19 +297,28 @@ export default function PickupsPage() {
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell
+                        className="cursor-pointer"
+                        onClick={() => previewPickup(pickup.id)}
+                      >
                         <span className="text-sm">
                           {pickup.pickup_date || "-"}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell
+                        className="cursor-pointer"
+                        onClick={() => previewPickup(pickup.id)}
+                      >
                         <span className="text-sm">
                           {pickup.ready_time && pickup.closing_time
                             ? `${pickup.ready_time} - ${pickup.closing_time}`
                             : pickup.ready_time || pickup.closing_time || "-"}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell
+                        className="cursor-pointer"
+                        onClick={() => previewPickup(pickup.id)}
+                      >
                         <span className="text-sm text-muted-foreground">
                           {formatDateTime(pickup.created_at)}
                         </span>
@@ -294,6 +336,12 @@ export default function PickupsPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => previewPickup(pickup.id)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              View details
+                            </DropdownMenuItem>
                             {!["cancelled", "closed"].includes(pickup.status || "") && (
                               <DropdownMenuItem
                                 onClick={() => openCancelDialog(pickup)}
@@ -301,11 +349,6 @@ export default function PickupsPage() {
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Cancel Pickup
-                              </DropdownMenuItem>
-                            )}
-                            {["cancelled", "closed"].includes(pickup.status || "") && (
-                              <DropdownMenuItem disabled className="text-muted-foreground">
-                                No actions available
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -375,5 +418,13 @@ export default function PickupsPage() {
         onConfirm={handleCancelPickup}
       />
     </>
+  );
+}
+
+export default function PickupsPage() {
+  return (
+    <PickupPreviewSheet>
+      <PickupsContent />
+    </PickupPreviewSheet>
   );
 }

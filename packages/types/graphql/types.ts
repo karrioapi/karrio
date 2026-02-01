@@ -5072,6 +5072,7 @@ export interface get_pickups_pickups_edges_node {
   carrier_id: string | null;
   carrier_name: string | null;
   confirmation_number: string | null;
+  status: string;
   pickup_date: string | null;
   ready_time: string | null;
   closing_time: string | null;
@@ -5157,10 +5158,39 @@ export interface get_pickup_pickup_parcels {
   dimension_unit: DimensionUnitEnum | null;
 }
 
+export interface get_pickup_pickup_shipments_tracker_events {
+  description: string | null;
+  location: string | null;
+  code: string | null;
+  date: string | null;
+  time: string | null;
+}
+
+export interface get_pickup_pickup_shipments_tracker_messages {
+  carrier_name: string | null;
+  carrier_id: string | null;
+  message: string | null;
+  code: string | null;
+}
+
+export interface get_pickup_pickup_shipments_tracker {
+  id: string;
+  tracking_number: string;
+  status: TrackerStatusEnum;
+  delivered: boolean | null;
+  estimated_delivery: any | null;
+  events: get_pickup_pickup_shipments_tracker_events[];
+  messages: get_pickup_pickup_shipments_tracker_messages[];
+}
+
 export interface get_pickup_pickup_shipments {
   id: string;
   tracking_number: string | null;
   status: ShipmentStatusEnum;
+  service: string | null;
+  carrier_name: string | null;
+  carrier_id: string | null;
+  tracker: get_pickup_pickup_shipments_tracker | null;
 }
 
 export interface get_pickup_pickup_created_by {
@@ -5174,6 +5204,7 @@ export interface get_pickup_pickup {
   carrier_id: string | null;
   carrier_name: string | null;
   confirmation_number: string | null;
+  status: string;
   pickup_date: string | null;
   ready_time: string | null;
   closing_time: string | null;
@@ -5923,6 +5954,9 @@ export enum EventTypes {
   order_delivered = "order_delivered",
   order_fulfilled = "order_fulfilled",
   order_updated = "order_updated",
+  pickup_cancelled = "pickup_cancelled",
+  pickup_closed = "pickup_closed",
+  pickup_scheduled = "pickup_scheduled",
   shipment_cancelled = "shipment_cancelled",
   shipment_delivery_failed = "shipment_delivery_failed",
   shipment_fulfilled = "shipment_fulfilled",
@@ -6815,6 +6849,7 @@ export interface PickupFilter {
   first?: number | null;
   keyword?: string | null;
   id?: string[] | null;
+  status?: string[] | null;
   confirmation_number?: string | null;
   pickup_date_after?: string | null;
   pickup_date_before?: string | null;
