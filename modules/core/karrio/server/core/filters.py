@@ -741,6 +741,14 @@ class PickupFilters(filters.FilterSet):
         lookup_expr="in",
         help_text="pickup id(s).",
     )
+    status = filters.MultipleChoiceFilter(
+        field_name="status",
+        choices=[(c.value, c.value) for c in list(serializers.PickupStatus)],
+        help_text=f"""
+        pickup status
+        Values: {', '.join([f"`{s.name}`" for s in list(serializers.PickupStatus)])}
+        """,
+    )
     confirmation_number = filters.CharFilter(
         field_name="confirmation_number",
         lookup_expr="icontains",
@@ -804,6 +812,15 @@ class PickupFilters(filters.FilterSet):
             "keyword",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "status",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            description=(
+                "The pickup status. <br/>"
+                f"Values: {', '.join([f'`{s.name}`' for s in list(serializers.PickupStatus)])}"
+            ),
         ),
         openapi.OpenApiParameter(
             "confirmation_number",

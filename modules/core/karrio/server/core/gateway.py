@@ -569,7 +569,7 @@ class Pickups:
     @staticmethod
     @utils.with_telemetry("pickup_schedule")
     def schedule(
-        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, context=None, **carrier_filters
     ) -> datatypes.PickupResponse:
         carrier = carrier or Carriers.first(
             **{
@@ -619,7 +619,7 @@ class Pickups:
     @staticmethod
     @utils.with_telemetry("pickup_update")
     def update(
-        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, context=None, **carrier_filters
     ) -> datatypes.PickupResponse:
         carrier = carrier or Carriers.first(
             **{
@@ -660,7 +660,7 @@ class Pickups:
     @staticmethod
     @utils.with_telemetry("pickup_cancel")
     def cancel(
-        payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
+        payload: dict, carrier: providers.CarrierConnection = None, context=None, **carrier_filters
     ) -> datatypes.ConfirmationResponse:
         carrier = carrier or Carriers.first(
             **{

@@ -7,6 +7,13 @@ import karrio.server.core.dataunits as dataunits
 import karrio.server.core.validators as validators
 
 
+class PickupStatus(utils.Enum):
+    scheduled = "scheduled"
+    picked_up = "picked_up"
+    cancelled = "cancelled"
+    closed = "closed"
+
+
 class ShipmentStatus(utils.Enum):
     draft = "draft"
     purchased = "purchased"
@@ -36,6 +43,7 @@ class TrackerStatus(utils.Enum):
 
 Serializer = serializers.Serializer
 HTTP_STATUS = [getattr(drf.status, a) for a in dir(drf.status) if "HTTP" in a]
+PICKUP_STATUS = [(c.name, c.name) for c in list(PickupStatus)]
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
 TRACKER_STATUS = [(c.name, c.name) for c in list(TrackerStatus)]
 INCOTERMS = [(c.name, c.name) for c in list(units.Incoterm)]
@@ -1068,6 +1076,12 @@ class PickupDetails(serializers.Serializer):
     )
     confirmation_number = serializers.CharField(
         required=True, help_text="The pickup confirmation identifier"
+    )
+    status = serializers.ChoiceField(
+        required=False,
+        default=PickupStatus.scheduled.value,
+        choices=PICKUP_STATUS,
+        help_text="The current pickup status",
     )
     pickup_date = serializers.CharField(
         required=False, allow_null=True, help_text="The pickup date"
