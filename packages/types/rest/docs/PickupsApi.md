@@ -5,9 +5,10 @@ All URIs are relative to *http://localhost*
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
 |[**cancel**](#cancel) | **POST** /v1/pickups/{id}/cancel | Cancel a pickup|
+|[**create**](#create) | **POST** /v1/pickups | Schedule a pickup|
 |[**list**](#list) | **GET** /v1/pickups | List shipment pickups|
 |[**retrieve**](#retrieve) | **GET** /v1/pickups/{id} | Retrieve a pickup|
-|[**schedule**](#schedule) | **POST** /v1/pickups/{carrier_name}/schedule | Schedule a pickup|
+|[**schedule**](#schedule) | **POST** /v1/pickups/{carrier_name}/schedule | Schedule a pickup (deprecated)|
 |[**update**](#update) | **POST** /v1/pickups/{id} | Update a pickup|
 
 # **cancel**
@@ -69,6 +70,61 @@ const { status, data } = await apiInstance.cancel(
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **create**
+> Pickup create(pickupData)
+
+Schedule a pickup for one or many shipments with labels already purchased.  The carrier is identified by `carrier_code` in the request body. Use `options.connection_id` to target a specific carrier connection.
+
+### Example
+
+```typescript
+import {
+    PickupsApi,
+    Configuration,
+    PickupData
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new PickupsApi(configuration);
+
+let pickupData: PickupData; //
+
+const { status, data } = await apiInstance.create(
+    pickupData
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **pickupData** | **PickupData**|  | |
+
+
+### Return type
+
+**Pickup**
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [JWT](../README.md#JWT), [TokenBasic](../README.md#TokenBasic), [Token](../README.md#Token)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** |  |  -  |
+|**400** |  |  -  |
+|**424** |  |  -  |
+|**500** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **list**
 > PickupList list()
 
@@ -93,6 +149,7 @@ let createdBefore: string; // (optional) (default to undefined)
 let keyword: string; // (optional) (default to undefined)
 let pickupDateAfter: string; // (optional) (default to undefined)
 let pickupDateBefore: string; // (optional) (default to undefined)
+let status: string; //The pickup status. <br/>Values: `scheduled`, `picked_up`, `cancelled`, `closed` (optional) (default to undefined)
 
 const { status, data } = await apiInstance.list(
     address,
@@ -102,7 +159,8 @@ const { status, data } = await apiInstance.list(
     createdBefore,
     keyword,
     pickupDateAfter,
-    pickupDateBefore
+    pickupDateBefore,
+    status
 );
 ```
 
@@ -118,6 +176,7 @@ const { status, data } = await apiInstance.list(
 | **keyword** | [**string**] |  | (optional) defaults to undefined|
 | **pickupDateAfter** | [**string**] |  | (optional) defaults to undefined|
 | **pickupDateBefore** | [**string**] |  | (optional) defaults to undefined|
+| **status** | [**string**] | The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60; | (optional) defaults to undefined|
 
 
 ### Return type
@@ -199,7 +258,7 @@ const { status, data } = await apiInstance.retrieve(
 # **schedule**
 > Pickup schedule(pickupData)
 
-Schedule a pickup for one or many shipments with labels already purchased.
+Schedule a pickup for one or many shipments with labels already purchased.  **Deprecated**: Use `POST /v1/pickups` with `carrier_code` in the request body instead.
 
 ### Example
 
