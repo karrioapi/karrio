@@ -50,7 +50,7 @@ export function usePickups({
   function setFilter(options: PickupFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
       if (["modal"].includes(key)) return acc;
-      if (["carrier_name"].includes(key))
+      if (["carrier_name", "status"].includes(key))
         return {
           ...acc,
           [key]: []

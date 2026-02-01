@@ -4,6 +4,7 @@ import * as React from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Package, Plus, X, Loader2, MapPin, Clock, Truck, Info, RefreshCw, Hand, AlertCircle } from "lucide-react";
 import { cn } from "@karrio/ui/lib/utils";
+import { errorToMessages } from "@karrio/lib";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { usePickupMutation } from "@karrio/hooks/pickup";
@@ -125,26 +126,6 @@ const DAYS_OF_WEEK = [
 ];
 
 const MAX_INSTRUCTION_LENGTH = 500;
-
-function formatErrorMessage(error: any): string {
-  if (error?.data?.errors && Array.isArray(error.data.errors)) {
-    return error.data.errors
-      .map((e: any) => e.message || JSON.stringify(e))
-      .join("; ");
-  }
-  if (error?.errors && Array.isArray(error.errors)) {
-    return error.errors
-      .map((e: any) => e.message || JSON.stringify(e))
-      .join("; ");
-  }
-  if (error?.message) {
-    return error.message;
-  }
-  if (typeof error === "string") {
-    return error;
-  }
-  return "An unexpected error occurred";
-}
 
 function formatAddressDisplay(address: Partial<AddressType>): string {
   const parts = [
@@ -383,11 +364,13 @@ export function SchedulePickupDialog({
       setFormData(DEFAULT_FORM_DATA);
       setShowShipmentLinking(false);
     } catch (error: any) {
-      const errorMessage = formatErrorMessage(error);
+      const messages = errorToMessages(error);
       toast({
         variant: "destructive",
         title: "Failed to schedule pickup",
-        description: errorMessage,
+        description: messages
+          .map((m: any) => (typeof m === "string" ? m : m.message || JSON.stringify(m)))
+          .join("; "),
       });
     } finally {
       setIsSubmitting(false);
