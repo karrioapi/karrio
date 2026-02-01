@@ -1,5 +1,4 @@
 import json
-import logging
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
@@ -7,7 +6,6 @@ from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
 from karrio.server.manager.tests.test_shipments import TestShipmentFixture
 from karrio.server.core.utils import create_carrier_snapshot
 import karrio.server.manager.models as models
-
 
 class TestFixture(TestShipmentFixture):
     def setUp(self) -> None:
@@ -43,7 +41,6 @@ class TestFixture(TestShipmentFixture):
         self.shipment.carrier = create_carrier_snapshot(self.carrier)
         self.shipment.save()
 
-
 class TestPickupSchedule(TestFixture):
     def test_schedule_pickup(self):
         url = reverse(
@@ -56,7 +53,6 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertDictEqual(response_data, PICKUP_RESPONSE)
 
@@ -72,7 +68,6 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_STANDALONE)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["confirmation_number"], "27241")
             self.assertEqual(response_data["status"], "scheduled")
@@ -86,7 +81,6 @@ class TestPickupSchedule(TestFixture):
 
         response = self.client.post(f"{url}", PICKUP_DATA_NO_SOURCE)
 
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response_data = json.loads(response.content)
         self.assertIn("errors", response_data)
@@ -100,7 +94,6 @@ class TestPickupSchedule(TestFixture):
 
         response = self.client.post(f"{url}", PICKUP_DATA_STANDALONE_NO_ADDRESS)
 
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response_data = json.loads(response.content)
         self.assertIn("errors", response_data)
@@ -116,7 +109,6 @@ class TestPickupSchedule(TestFixture):
             mock.return_value = SCHEDULE_RETURNED_VALUE
             response = self.client.post(f"{url}", PICKUP_DATA)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_schedule_pickup_with_pickup_type_one_time(self):
@@ -131,7 +123,6 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_ONE_TIME)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["pickup_type"], "one_time")
             self.assertIsNone(response_data["recurrence"])
@@ -148,7 +139,6 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_DAILY)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["pickup_type"], "daily")
 
@@ -164,13 +154,11 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_RECURRING)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["pickup_type"], "recurring")
             self.assertIsNotNone(response_data["recurrence"])
             self.assertEqual(response_data["recurrence"]["frequency"], "weekly")
             self.assertIn("monday", response_data["recurrence"]["days_of_week"])
-
 
 class TestPickupDetails(TestFixture):
     def setUp(self) -> None:
@@ -201,7 +189,6 @@ class TestPickupDetails(TestFixture):
             response = self.client.post(url, PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_UPDATE_RESPONSE)
 
@@ -216,10 +203,8 @@ class TestPickupDetails(TestFixture):
             response = self.client.post(url, {})
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
-
 
 class TestPickupStatusLifecycle(TestFixture):
     """Tests for pickup status lifecycle transitions."""
@@ -243,7 +228,6 @@ class TestPickupStatusLifecycle(TestFixture):
 
     def test_pickup_created_with_scheduled_status(self):
         """New pickups should default to 'scheduled' status."""
-        print(self.pickup.status)
         self.assertEqual(self.pickup.status, "scheduled")
 
     def test_cancel_sets_cancelled_status(self):
@@ -258,7 +242,6 @@ class TestPickupStatusLifecycle(TestFixture):
             response = self.client.post(url, {})
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(response_data["status"], "cancelled")
 
@@ -279,7 +262,6 @@ class TestPickupStatusLifecycle(TestFixture):
 
         # Pickup should still be queryable
         pickup = models.Pickup.objects.get(pk=self.pickup.pk)
-        print(pickup.status)
         self.assertEqual(pickup.status, "cancelled")
 
     def test_schedule_creates_with_scheduled_status(self):
@@ -297,10 +279,8 @@ class TestPickupStatusLifecycle(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["status"], "scheduled")
-
 
 class TestPickupStatusFilter(TestFixture):
     """Tests for pickup status filtering."""
@@ -348,7 +328,6 @@ class TestPickupStatusFilter(TestFixture):
         response = self.client.get(f"{url}?status=scheduled")
         response_data = json.loads(response.content)
 
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         confirmation_numbers = [r["confirmation_number"] for r in response_data["results"]]
         self.assertIn("SCH001", confirmation_numbers)
@@ -361,7 +340,6 @@ class TestPickupStatusFilter(TestFixture):
         response = self.client.get(f"{url}?status=cancelled")
         response_data = json.loads(response.content)
 
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         confirmation_numbers = [r["confirmation_number"] for r in response_data["results"]]
         self.assertIn("CAN001", confirmation_numbers)
@@ -370,16 +348,14 @@ class TestPickupStatusFilter(TestFixture):
     def test_filter_by_multiple_statuses(self):
         url = reverse("karrio.server.manager:shipment-pickup-list")
 
-        response = self.client.get(f"{url}?status=scheduled,closed")
+        response = self.client.get(f"{url}?status=scheduled&status=closed")
         response_data = json.loads(response.content)
 
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         confirmation_numbers = [r["confirmation_number"] for r in response_data["results"]]
         self.assertIn("SCH001", confirmation_numbers)
         self.assertIn("CLO001", confirmation_numbers)
         self.assertNotIn("CAN001", confirmation_numbers)
-
 
 class TestPickupGuardrails(TestFixture):
     """Tests for pickup status guardrails preventing invalid mutations."""
@@ -412,7 +388,7 @@ class TestPickupGuardrails(TestFixture):
         )
 
         response = self.client.post(url, PICKUP_UPDATE_DATA)
-        print(response)
+
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     def test_update_closed_pickup_returns_409(self):
@@ -426,7 +402,7 @@ class TestPickupGuardrails(TestFixture):
         )
 
         response = self.client.post(url, PICKUP_UPDATE_DATA)
-        print(response)
+
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     def test_cancel_closed_pickup_returns_409(self):
@@ -440,7 +416,7 @@ class TestPickupGuardrails(TestFixture):
         )
 
         response = self.client.post(url, {})
-        print(response)
+
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     def test_recancel_returns_409(self):
@@ -454,7 +430,7 @@ class TestPickupGuardrails(TestFixture):
         )
 
         response = self.client.post(url, {})
-        print(response)
+
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     def test_update_picked_up_pickup_returns_409(self):
@@ -468,7 +444,7 @@ class TestPickupGuardrails(TestFixture):
         )
 
         response = self.client.post(url, PICKUP_UPDATE_DATA)
-        print(response)
+
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     def test_cancel_picked_up_pickup_allowed(self):
@@ -484,7 +460,7 @@ class TestPickupGuardrails(TestFixture):
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = CANCEL_RETURNED_VALUE
             response = self.client.post(url, {})
-            print(response)
+
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_metadata_update_allowed_on_cancelled(self):
@@ -500,10 +476,9 @@ class TestPickupGuardrails(TestFixture):
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = UPDATE_RETURNED_VALUE
             response = self.client.post(url, {"metadata": {"note": "important"}})
-            print(response)
+
             # Metadata-only updates bypass the guard
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-
 
 class TestPickupScheduleNewAPI(TestFixture):
     """Tests for the new POST /v1/pickups endpoint with carrier_code in body."""
@@ -516,7 +491,6 @@ class TestPickupScheduleNewAPI(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_NEW_API)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertDictEqual(response_data, PICKUP_RESPONSE)
 
@@ -528,7 +502,6 @@ class TestPickupScheduleNewAPI(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_WITH_CONNECTION_ID)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["confirmation_number"], "27241")
             self.assertEqual(response_data["carrier_name"], "canadapost")
@@ -542,7 +515,6 @@ class TestPickupScheduleNewAPI(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_NEW_API_STANDALONE)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["confirmation_number"], "27241")
 
@@ -564,11 +536,9 @@ class TestPickupScheduleNewAPI(TestFixture):
 
         response = self.client.post(f"{url}", data)
 
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response_data = json.loads(response.content)
         self.assertIn("errors", response_data)
-
 
 class TestLegacyEndpointDeprecation(TestFixture):
     """Tests for the legacy endpoint deprecation headers."""
@@ -583,7 +553,6 @@ class TestLegacyEndpointDeprecation(TestFixture):
             mock.return_value = SCHEDULE_RETURNED_VALUE
             response = self.client.post(f"{url}", PICKUP_DATA)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response["Deprecation"], "true")
             self.assertIn("successor-version", response["Link"])
@@ -600,11 +569,9 @@ class TestLegacyEndpointDeprecation(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
 
-            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["confirmation_number"], "27241")
             self.assertEqual(response_data["carrier_name"], "canadapost")
-
 
 PICKUP_DATA = {
     "pickup_date": "2020-10-25",
@@ -753,7 +720,6 @@ PICKUP_UPDATE_DATA = {
     "address": {"person_name": "Janet Jackson"},
 }
 
-
 SCHEDULE_RETURNED_VALUE = [
     PickupDetails(
         carrier_id="canadapost",
@@ -788,7 +754,6 @@ CANCEL_RETURNED_VALUE = [
     ),
     [],
 ]
-
 
 PICKUP_RESPONSE = {
     "id": ANY,
