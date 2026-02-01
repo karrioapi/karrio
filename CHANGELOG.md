@@ -1,3 +1,32 @@
+# Karrio 2026.1.5
+
+## Changes
+
+### Feat
+
+- feat: add carrier-agnostic POST /v1/pickups endpoint with carrier_code and options.connection_id
+- feat: add pickup status tracking with lifecycle events (scheduled, picked_up, cancelled, closed)
+- feat(core): add pickup status filtering and carrier-agnostic scheduling support
+- feat(dashboard): update pickup scheduling to use new carrier-agnostic API
+- feat(dashboard): update pickup scheduling dialog and hooks for new API
+- feat(dashboard): add pickup detail sheet with activity timeline, tracking records, and related shipments
+
+### Test
+
+- test: extend pickup API test coverage for status transitions and lifecycle events
+
+### Chore
+
+- chore: update API schemas and generated types for pickup enhancements
+
+### Docs
+
+- docs: add Pickup API Modernization PRD
+- docs: prepare PRD for carrier_name/carrier_id future refactoring
+- docs: rename carrier connection architecture document
+
+---
+
 # Karrio 2026.1.4
 
 ## Changes
