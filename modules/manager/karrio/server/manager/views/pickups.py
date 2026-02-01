@@ -9,6 +9,7 @@ from karrio.server.core.logging import logger
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import PickupFilters
 from karrio.server.manager.router import router
+from karrio.server.core.serializers import PickupStatus
 from karrio.server.manager.serializers import (
     PaginatedResult,
     Pickup,
@@ -17,6 +18,7 @@ from karrio.server.manager.serializers import (
     PickupData,
     PickupUpdateData,
     PickupCancelData,
+    can_mutate_pickup,
 )
 import karrio.server.manager.models as models
 import karrio.server.openapi as openapi
@@ -161,6 +163,15 @@ class PickupDetails(APIView):
         Modify a pickup for one or many shipments with labels already purchased.
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
+        can_mutate_pickup(pickup, update=True, payload=request.data)
+
+        # Metadata-only updates skip the carrier API call
+        if list((request.data or {}).keys()) == ["metadata"]:
+            existing = pickup.metadata or {}
+            pickup.metadata = {**existing, **(request.data["metadata"] or {})}
+            pickup.save(update_fields=["metadata", "updated_at"])
+            return Response(Pickup(pickup).data, status=status.HTTP_200_OK)
+
         instance = (
             PickupUpdateData.map(pickup, data=request.data, context=request)
             .save()
@@ -192,6 +203,11 @@ class PickupCancel(APIView):
         """
         pickup = models.Pickup.access_by(request).get(pk=pk)
 
+        # Idempotent re-cancel: return 409 if already cancelled
+        if pickup.status == PickupStatus.cancelled.value:
+            return Response(Pickup(pickup).data, status=status.HTTP_409_CONFLICT)
+
+        can_mutate_pickup(pickup, cancel=True)
         update = PickupCancelData.map(pickup, data=request.data).save().instance
 
         return Response(Pickup(update).data)

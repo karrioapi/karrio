@@ -3474,6 +3474,7 @@ export const GET_PICKUPS = gql`
           carrier_id
           carrier_name
           confirmation_number
+          status
           pickup_date
           ready_time
           closing_time
@@ -3528,6 +3529,7 @@ export const GET_PICKUP = gql`
       carrier_id
       carrier_name
       confirmation_number
+      status
       pickup_date
       ready_time
       closing_time

@@ -472,6 +472,7 @@ class Pickup(core.OwnedEntity):
         "created_by",
         "metadata",
         "meta",
+        "status",
         "address",  # Embedded JSON field
         "carrier",  # Carrier snapshot
     ]
@@ -496,6 +497,11 @@ class Pickup(core.OwnedEntity):
     closing_time = models.CharField(max_length=5, blank=False)
     instruction = models.CharField(max_length=250, null=True, blank=True)
     package_location = models.CharField(max_length=250, null=True, blank=True)
+    status = models.CharField(
+        max_length=25,
+        default="scheduled",
+        db_index=True,
+    )
 
     # ─────────────────────────────────────────────────────────────────
     # EMBEDDED JSON FIELDS

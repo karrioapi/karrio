@@ -56,6 +56,7 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA)
             response_data = json.loads(response.content)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertDictEqual(response_data, PICKUP_RESPONSE)
 
@@ -71,8 +72,10 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_STANDALONE)
             response_data = json.loads(response.content)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["confirmation_number"], "27241")
+            self.assertEqual(response_data["status"], "scheduled")
 
     def test_schedule_pickup_validation_no_source(self):
         """Test that validation fails when neither tracking_numbers nor parcels_count is provided."""
@@ -83,6 +86,7 @@ class TestPickupSchedule(TestFixture):
 
         response = self.client.post(f"{url}", PICKUP_DATA_NO_SOURCE)
 
+        print(response)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response_data = json.loads(response.content)
         self.assertIn("errors", response_data)
@@ -96,6 +100,7 @@ class TestPickupSchedule(TestFixture):
 
         response = self.client.post(f"{url}", PICKUP_DATA_STANDALONE_NO_ADDRESS)
 
+        print(response)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response_data = json.loads(response.content)
         self.assertIn("errors", response_data)
@@ -111,6 +116,7 @@ class TestPickupSchedule(TestFixture):
             mock.return_value = SCHEDULE_RETURNED_VALUE
             response = self.client.post(f"{url}", PICKUP_DATA)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_schedule_pickup_with_pickup_type_one_time(self):
@@ -125,6 +131,7 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_ONE_TIME)
             response_data = json.loads(response.content)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["pickup_type"], "one_time")
             self.assertIsNone(response_data["recurrence"])
@@ -141,6 +148,7 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_DAILY)
             response_data = json.loads(response.content)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["pickup_type"], "daily")
 
@@ -156,6 +164,7 @@ class TestPickupSchedule(TestFixture):
             response = self.client.post(f"{url}", PICKUP_DATA_RECURRING)
             response_data = json.loads(response.content)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["pickup_type"], "recurring")
             self.assertIsNotNone(response_data["recurrence"])
@@ -192,6 +201,7 @@ class TestPickupDetails(TestFixture):
             response = self.client.post(url, PICKUP_UPDATE_DATA)
             response_data = json.loads(response.content)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_UPDATE_RESPONSE)
 
@@ -206,8 +216,293 @@ class TestPickupDetails(TestFixture):
             response = self.client.post(url, {})
             response_data = json.loads(response.content)
 
+            print(response)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
+
+
+class TestPickupStatusLifecycle(TestFixture):
+    """Tests for pickup status lifecycle transitions."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.pickup: models.Pickup = models.Pickup.objects.create(
+            address=self.address_data,
+            carrier=create_carrier_snapshot(self.carrier),
+            created_by=self.user,
+            test_mode=True,
+            pickup_date="2020-10-25",
+            ready_time="13:00",
+            closing_time="17:00",
+            instruction="Should not be folded",
+            package_location="At the main entrance hall",
+            confirmation_number="00110215",
+            pickup_charge={"name": "Pickup fees", "amount": 0.0, "currency": "CAD"},
+        )
+        self.pickup.shipments.set([self.shipment])
+
+    def test_pickup_created_with_scheduled_status(self):
+        """New pickups should default to 'scheduled' status."""
+        print(self.pickup.status)
+        self.assertEqual(self.pickup.status, "scheduled")
+
+    def test_cancel_sets_cancelled_status(self):
+        """Cancelling a pickup sets status to 'cancelled' instead of deleting."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-cancel",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CANCEL_RETURNED_VALUE
+            response = self.client.post(url, {})
+            response_data = json.loads(response.content)
+
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response_data["status"], "cancelled")
+
+            # Pickup should still exist in the database
+            self.pickup.refresh_from_db()
+            self.assertEqual(self.pickup.status, "cancelled")
+
+    def test_cancelled_pickup_still_exists(self):
+        """Cancelled pickups are not deleted from the database."""
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-cancel",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CANCEL_RETURNED_VALUE
+            self.client.post(url, {})
+
+        # Pickup should still be queryable
+        pickup = models.Pickup.objects.get(pk=self.pickup.pk)
+        print(pickup.status)
+        self.assertEqual(pickup.status, "cancelled")
+
+    def test_schedule_creates_with_scheduled_status(self):
+        """Scheduling a pickup via API creates it with 'scheduled' status."""
+        # Free the shipment from the existing pickup so it can be re-scheduled
+        self.pickup.shipments.clear()
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA)
+            response_data = json.loads(response.content)
+
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response_data["status"], "scheduled")
+
+
+class TestPickupStatusFilter(TestFixture):
+    """Tests for pickup status filtering."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        # Create pickups with different statuses
+        self.scheduled_pickup = models.Pickup.objects.create(
+            address=self.address_data,
+            carrier=create_carrier_snapshot(self.carrier),
+            created_by=self.user,
+            test_mode=True,
+            pickup_date="2020-10-25",
+            ready_time="13:00",
+            closing_time="17:00",
+            confirmation_number="SCH001",
+            status="scheduled",
+        )
+        self.cancelled_pickup = models.Pickup.objects.create(
+            address=self.address_data,
+            carrier=create_carrier_snapshot(self.carrier),
+            created_by=self.user,
+            test_mode=True,
+            pickup_date="2020-10-26",
+            ready_time="13:00",
+            closing_time="17:00",
+            confirmation_number="CAN001",
+            status="cancelled",
+        )
+        self.closed_pickup = models.Pickup.objects.create(
+            address=self.address_data,
+            carrier=create_carrier_snapshot(self.carrier),
+            created_by=self.user,
+            test_mode=True,
+            pickup_date="2020-10-27",
+            ready_time="13:00",
+            closing_time="17:00",
+            confirmation_number="CLO001",
+            status="closed",
+        )
+
+    def test_filter_by_scheduled_status(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+
+        response = self.client.get(f"{url}?status=scheduled")
+        response_data = json.loads(response.content)
+
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        confirmation_numbers = [r["confirmation_number"] for r in response_data["results"]]
+        self.assertIn("SCH001", confirmation_numbers)
+        self.assertNotIn("CAN001", confirmation_numbers)
+        self.assertNotIn("CLO001", confirmation_numbers)
+
+    def test_filter_by_cancelled_status(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+
+        response = self.client.get(f"{url}?status=cancelled")
+        response_data = json.loads(response.content)
+
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        confirmation_numbers = [r["confirmation_number"] for r in response_data["results"]]
+        self.assertIn("CAN001", confirmation_numbers)
+        self.assertNotIn("SCH001", confirmation_numbers)
+
+    def test_filter_by_multiple_statuses(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+
+        response = self.client.get(f"{url}?status=scheduled,closed")
+        response_data = json.loads(response.content)
+
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        confirmation_numbers = [r["confirmation_number"] for r in response_data["results"]]
+        self.assertIn("SCH001", confirmation_numbers)
+        self.assertIn("CLO001", confirmation_numbers)
+        self.assertNotIn("CAN001", confirmation_numbers)
+
+
+class TestPickupGuardrails(TestFixture):
+    """Tests for pickup status guardrails preventing invalid mutations."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.pickup: models.Pickup = models.Pickup.objects.create(
+            address=self.address_data,
+            carrier=create_carrier_snapshot(self.carrier),
+            created_by=self.user,
+            test_mode=True,
+            pickup_date="2020-10-25",
+            ready_time="13:00",
+            closing_time="17:00",
+            instruction="Should not be folded",
+            package_location="At the main entrance hall",
+            confirmation_number="00110215",
+            pickup_charge={"name": "Pickup fees", "amount": 0.0, "currency": "CAD"},
+        )
+        self.pickup.shipments.set([self.shipment])
+
+    def test_update_cancelled_pickup_returns_409(self):
+        """Cannot update a cancelled pickup."""
+        self.pickup.status = "cancelled"
+        self.pickup.save(update_fields=["status"])
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        response = self.client.post(url, PICKUP_UPDATE_DATA)
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+    def test_update_closed_pickup_returns_409(self):
+        """Cannot update a closed pickup."""
+        self.pickup.status = "closed"
+        self.pickup.save(update_fields=["status"])
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        response = self.client.post(url, PICKUP_UPDATE_DATA)
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+    def test_cancel_closed_pickup_returns_409(self):
+        """Cannot cancel a closed pickup."""
+        self.pickup.status = "closed"
+        self.pickup.save(update_fields=["status"])
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-cancel",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        response = self.client.post(url, {})
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+    def test_recancel_returns_409(self):
+        """Re-cancelling an already cancelled pickup returns 409."""
+        self.pickup.status = "cancelled"
+        self.pickup.save(update_fields=["status"])
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-cancel",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        response = self.client.post(url, {})
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+    def test_update_picked_up_pickup_returns_409(self):
+        """Cannot update a picked_up pickup."""
+        self.pickup.status = "picked_up"
+        self.pickup.save(update_fields=["status"])
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        response = self.client.post(url, PICKUP_UPDATE_DATA)
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+    def test_cancel_picked_up_pickup_allowed(self):
+        """Can cancel a picked_up pickup (but not update it)."""
+        self.pickup.status = "picked_up"
+        self.pickup.save(update_fields=["status"])
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-cancel",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CANCEL_RETURNED_VALUE
+            response = self.client.post(url, {})
+            print(response)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_metadata_update_allowed_on_cancelled(self):
+        """Metadata-only updates are allowed regardless of status."""
+        self.pickup.status = "cancelled"
+        self.pickup.save(update_fields=["status"])
+
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = UPDATE_RETURNED_VALUE
+            response = self.client.post(url, {"metadata": {"note": "important"}})
+            print(response)
+            # Metadata-only updates bypass the guard
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class TestPickupScheduleNewAPI(TestFixture):
@@ -502,6 +797,7 @@ PICKUP_RESPONSE = {
     "carrier_id": "canadapost",
     "carrier_code": "canadapost",
     "confirmation_number": "27241",
+    "status": "scheduled",
     "pickup_date": "2020-10-25",
     "pickup_charge": {
         "name": "Pickup fees",
@@ -572,6 +868,7 @@ PICKUP_UPDATE_RESPONSE = {
     "carrier_id": "canadapost",
     "carrier_code": "canadapost",
     "confirmation_number": "00110215",
+    "status": "scheduled",
     "pickup_date": "2020-10-25",
     "pickup_charge": {
         "name": "Pickup fees",
@@ -636,23 +933,24 @@ PICKUP_UPDATE_RESPONSE = {
 }
 
 PICKUP_CANCEL_RESPONSE = {
-    "id": None,  # Deleted pickup has no id
+    "id": ANY,
     "object_type": "pickup",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
     "carrier_code": "canadapost",
     "confirmation_number": "00110215",
+    "status": "cancelled",
     "pickup_date": "2020-10-25",
     "pickup_charge": {
         "name": "Pickup fees",
         "amount": 0.0,
         "currency": "CAD",
-        "id": None,
+        "id": ANY,
     },
     "ready_time": "13:00",
     "closing_time": "17:00",
     "address": {
-        "id": "adr_001122334455",  # JSON address retains its id
+        "id": "adr_001122334455",
         "postal_code": "E1C4Z8",
         "city": "Moncton",
         "federal_tax_id": None,
@@ -672,7 +970,28 @@ PICKUP_CANCEL_RESPONSE = {
         "validation": None,
         "meta": {},
     },
-    "parcels": [],  # Deleted pickup has no parcels
+    "parcels": [
+        {
+            "id": ANY,
+            "object_type": "parcel",
+            "weight": 1.0,
+            "width": None,
+            "height": None,
+            "length": None,
+            "packaging_type": None,
+            "package_preset": "canadapost_corrugated_small_box",
+            "description": None,
+            "content": None,
+            "is_document": False,
+            "items": [],
+            "weight_unit": "KG",
+            "dimension_unit": None,
+            "freight_class": None,
+            "reference_number": ANY,
+            "options": {},
+            "meta": {},
+        }
+    ],
     "parcels_count": None,
     "instruction": "Should not be folded",
     "package_location": "At the main entrance hall",

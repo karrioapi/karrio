@@ -71,6 +71,7 @@ class ManifestFilter(utils.Paginated):
 class PickupFilter(utils.Paginated):
     keyword: typing.Optional[str] = strawberry.UNSET
     id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    status: typing.Optional[typing.List[str]] = strawberry.UNSET
     confirmation_number: typing.Optional[str] = strawberry.UNSET
     pickup_date_after: typing.Optional[str] = strawberry.UNSET
     pickup_date_before: typing.Optional[str] = strawberry.UNSET

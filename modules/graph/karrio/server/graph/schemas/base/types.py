@@ -1520,6 +1520,7 @@ class PickupType:
     id: str
     object_type: str
     confirmation_number: typing.Optional[str]
+    status: str
     pickup_date: typing.Optional[str]
     ready_time: typing.Optional[str]
     closing_time: typing.Optional[str]

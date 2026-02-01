@@ -13,6 +13,7 @@ def register_signals():
     signals.post_save.connect(shipment_updated, sender=models.Shipment)
     signals.post_delete.connect(shipment_cancelled, sender=models.Shipment)
     signals.post_save.connect(tracker_updated, sender=models.Tracking)
+    signals.post_save.connect(pickup_updated, sender=models.Pickup)
 
     logger.info("Karrio events signals registered")
 
@@ -121,6 +122,50 @@ def tracker_updated(
         return
 
     data = serializers.TrackingStatus(instance).data
+    event_at = instance.updated_at
+    context = dict(
+        user_id=utils.failsafe(lambda: instance.created_by.id),
+        test_mode=instance.test_mode,
+        org_id=utils.failsafe(
+            lambda: instance.org.first().id if hasattr(instance, "org") else None
+        ),
+    )
+
+    if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
+        return
+
+    tasks.notify_webhooks(event, data, event_at, context, schema=settings.schema)
+
+
+@utils.disable_for_loaddata
+@utils.error_wrapper
+def pickup_updated(
+    sender, instance, created, raw, using, update_fields, *args, **kwargs
+):
+    """Pickup related events:
+    - pickup scheduled (created)
+    - pickup cancelled (status changed to cancelled)
+    - pickup closed (status changed to closed)
+    """
+    changes = update_fields or []
+    status_updated = "status" in changes
+
+    if created:
+        event = EventTypes.pickup_scheduled.value
+    elif (
+        status_updated
+        and instance.status == serializers.PickupStatus.cancelled.value
+    ):
+        event = EventTypes.pickup_cancelled.value
+    elif (
+        status_updated
+        and instance.status == serializers.PickupStatus.closed.value
+    ):
+        event = EventTypes.pickup_closed.value
+    else:
+        return
+
+    data = serializers.Pickup(instance).data
     event_at = instance.updated_at
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),

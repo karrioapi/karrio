@@ -11,6 +11,7 @@ import {
 } from "@karrio/lib";
 import { SchedulePickupDialog } from "@karrio/ui/components/schedule-pickup-dialog";
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
@@ -209,6 +210,7 @@ export default function PickupsPage() {
                     />
                   </TableHead>
                   <TableHead>Carrier</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead>Pickup Date</TableHead>
                   <TableHead>Time Window</TableHead>
@@ -250,6 +252,9 @@ export default function PickupsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
+                        <StatusBadge status={pickup.status || "scheduled"} />
+                      </TableCell>
+                      <TableCell>
                         <div className="flex flex-col">
                           <span className="text-sm">
                             {formatAddressShort(pickup.address as any) || "-"}
@@ -289,13 +294,20 @@ export default function PickupsPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => openCancelDialog(pickup)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Cancel Pickup
-                            </DropdownMenuItem>
+                            {!["cancelled", "closed"].includes(pickup.status || "") && (
+                              <DropdownMenuItem
+                                onClick={() => openCancelDialog(pickup)}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Cancel Pickup
+                              </DropdownMenuItem>
+                            )}
+                            {["cancelled", "closed"].includes(pickup.status || "") && (
+                              <DropdownMenuItem disabled className="text-muted-foreground">
+                                No actions available
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
