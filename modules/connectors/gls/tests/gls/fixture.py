@@ -23,6 +23,7 @@ gateway = karrio.gateway["gls"].create(
     {
         "client_id": client_id,
         "client_secret": client_secret,
+        "contact_id": "TEST_CONTACT_ID",
         "test_mode": True,
     },
     cache=lib.Cache(**cached_auth),
