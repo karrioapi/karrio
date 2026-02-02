@@ -89,7 +89,7 @@ def shipment_request(
     )
 
     label_format = payload.label_type or "PDF"
-    contact_id = settings.connection_config.contact_id.state
+    contact_id = settings.contact_id
 
     # Build the shipment request matching vendor spec (PascalCase)
     request = gls_request.ShipmentRequestType(
@@ -107,6 +107,7 @@ def shipment_request(
                     CountryCode=shipper.country_code or "",
                     ContactPerson=shipper.person_name,
                     FixedLinePhonenumber=shipper.phone_number,
+                    Email=shipper.email,
                 ),
             ),
             Consignee=gls_request.ConsigneeType(
@@ -120,6 +121,7 @@ def shipment_request(
                     CountryCode=recipient.country_code or "",
                     ContactPerson=recipient.person_name,
                     FixedLinePhonenumber=recipient.phone_number,
+                    Email=recipient.email,
                 ),
             ),
             ShipmentUnit=[

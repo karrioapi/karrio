@@ -17,6 +17,9 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     client_id: str
     client_secret: str
 
+    # Account identifier (required for shipment creation)
+    contact_id: str = None
+
     # generic properties
     id: str = None
     test_mode: bool = False

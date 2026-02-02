@@ -12,6 +12,9 @@ class Settings(core.Settings):
     client_id: str
     client_secret: str
 
+    # Account identifier (required for shipment creation)
+    contact_id: str = None
+
     @property
     def carrier_name(self):
         return "gls"
@@ -93,7 +96,6 @@ def login(settings: Settings):
 class ConnectionConfig(lib.Enum):
     """GLS Group connection configuration."""
 
-    contact_id = lib.OptionEnum("contact_id", str)
     label_format = lib.OptionEnum("label_format", str)
     printer_language = lib.OptionEnum("printer_language", str)
     template_name = lib.OptionEnum("template_name", str)
