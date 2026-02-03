@@ -109,9 +109,10 @@ export default function Page() {
 
     //#endregion
 
+    const searchParamsString = searchParams?.toString() ?? "";
     React.useEffect(() => {
       updateFilter();
-    }, [searchParams]);
+    }, [searchParamsString]);
     React.useEffect(() => {
       loader.setLoading(query.isLoading);
     }, [query.isLoading]);

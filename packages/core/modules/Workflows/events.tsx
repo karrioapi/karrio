@@ -41,9 +41,10 @@ export const WorkflowEventList = ({
     setFilter(query);
   };
 
+  const searchParamsString = searchParams?.toString() ?? "";
   React.useEffect(() => {
     updateFilter();
-  }, [searchParams]);
+  }, [searchParamsString]);
   React.useEffect(() => {
     loader.setLoading(query.isFetching);
   }, [query.isFetching]);

@@ -171,9 +171,10 @@ function PickupsContent() {
     setCancelDialogOpen(true);
   };
 
+  const searchParamsString = searchParams?.toString() ?? "";
   React.useEffect(() => {
     updateFilter();
-  }, [searchParams]);
+  }, [searchParamsString]);
 
   React.useEffect(() => {
     setLoading(query.isLoading);
