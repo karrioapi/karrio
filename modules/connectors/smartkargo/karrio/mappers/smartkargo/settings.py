@@ -8,9 +8,11 @@ import karrio.providers.smartkargo.utils as provider_utils
 class Settings(provider_utils.Settings):
     """SmartKargo connection settings."""
 
-    # Add carrier specific API connection properties here
+    # SmartKargo API key (passed as 'code' header)
     api_key: str
+    # Shipper account credentials
     account_number: str = None
+    account_id: str = None
 
     # generic properties
     id: str = None
