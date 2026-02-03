@@ -73,9 +73,10 @@ export const TrackersFilter = ({ context }: TrackersFilterComponent): JSX.Elemen
     setOpen(false);
   };
 
-  useEffect(() => { 
-    dispatch({ name: 'full', value: variables }) 
-  }, [variables]);
+  const variablesKey = JSON.stringify(variables);
+  useEffect(() => {
+    dispatch({ name: 'full', value: variables })
+  }, [variablesKey]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

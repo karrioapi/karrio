@@ -32,6 +32,7 @@ import {
 import { Button } from "@karrio/ui/components/ui/button";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
+import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
@@ -102,9 +103,10 @@ export default function TrackersPage(pageProps: any) {
       }
     ];
 
+    const searchParamsString = searchParams?.toString() ?? "";
     useEffect(() => {
       updateFilter();
-    }, [searchParams]);
+    }, [searchParamsString]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
@@ -190,9 +192,13 @@ export default function TrackersPage(pageProps: any) {
                             className="text-ellipsis"
                             style={{ maxWidth: "190px", lineHeight: "16px" }}
                           >
-                            <span className="text-blue-600 font-bold">
+                            <AppLink
+                              className="text-blue-600 font-bold hover:underline"
+                              href={`/trackers/${tracker.id}`}
+                              onClick={preventPropagation}
+                            >
                               {tracker.tracking_number}
-                            </span>
+                            </AppLink>
                             <br />
                             <span className="text-ellipsis">
                               {formatRef(

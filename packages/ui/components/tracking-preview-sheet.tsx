@@ -10,10 +10,13 @@ import {
   TrackerType,
   TrackingEventType,
 } from "@karrio/types";
+import { ActivityTimeline } from "@karrio/ui/components/activity-timeline";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import React, { useRef, useState, useContext } from "react";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLocation } from "@karrio/hooks/location";
+import { useEvents } from "@karrio/hooks/event";
+import { useLogs } from "@karrio/hooks/log";
 import {
   Sheet,
   SheetContent,
@@ -369,6 +372,23 @@ export const TrackingPreview = ({
                     </div>
                   )}
 
+                  {/* Activity Section */}
+                  {tracker?.id && (
+                    <div className="border-t pt-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold">Activity</h3>
+                        <AppLink
+                          href={`/trackers/${tracker.id}`}
+                          className="text-sm text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1"
+                        >
+                          View all
+                          <ExternalLink className="w-3 h-3" />
+                        </AppLink>
+                      </div>
+                      <TrackerActivityPreview trackerId={tracker.id} />
+                    </div>
+                  )}
+
                   {/* Share Section */}
                   <div className="border-t pt-4 space-y-3">
                     <Label className="text-sm font-medium">Share</Label>
@@ -406,6 +426,19 @@ export const TrackingPreview = ({
         </SheetContent>
       </Sheet>
     </>
+  );
+};
+
+const TrackerActivityPreview = ({ trackerId }: { trackerId: string }) => {
+  const { query: logs } = useLogs({ entity_id: trackerId });
+  const { query: events } = useEvents({ entity_id: trackerId });
+
+  return (
+    <ActivityTimeline
+      logs={logs}
+      events={events}
+      stacked
+    />
   );
 };
 
