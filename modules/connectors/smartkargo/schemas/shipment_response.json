@@ -1,0 +1,14 @@
+{
+  "shipmentResponse": {
+    "trackingNumber": "1Z999999999999999",
+    "shipmentIdentifier": "SHIP123456",
+    "labelType": "PDF",
+    "label": "base64_encoded_label_data",
+    "documents": {
+      "invoice": "base64_encoded_invoice_data"
+    },
+    "meta": {
+      "serviceCode": "EXPRESS"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "rateResponse": {
+    "rates": [
+      {
+        "serviceCode": "EXPRESS",
+        "serviceName": "Express Shipping",
+        "totalCharge": 25.99,
+        "currency": "USD",
+        "transitDays": 2
+      },
+      {
+        "serviceCode": "GROUND",
+        "serviceName": "Ground Shipping",
+        "totalCharge": 12.99,
+        "currency": "USD",
+        "transitDays": 5
+      }
+    ]
+  }
+}
