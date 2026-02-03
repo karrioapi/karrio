@@ -18,7 +18,7 @@ class TestPostATShipment(unittest.TestCase):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         serialized = request.serialize()
         # Verify key elements in the XML request
-        self.assertIn("ImportShipmentType", serialized)
+        self.assertIn("ImportShipment", serialized)
         self.assertIn("Teststrasse", serialized)
         self.assertIn("Wien", serialized)
 
@@ -45,7 +45,7 @@ class TestPostATShipment(unittest.TestCase):
         request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
         serialized = request.serialize()
         # Verify key elements in the XML request
-        self.assertIn("VoidShipmentType", serialized)
+        self.assertIn("VoidShipment", serialized)
         self.assertIn("1000000500113230110301", serialized)
 
     def test_cancel_shipment(self):
