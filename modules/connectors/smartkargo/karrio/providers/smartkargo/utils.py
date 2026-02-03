@@ -1,18 +1,17 @@
+"""SmartKargo connection utilities."""
 
-import base64
-import datetime
 import karrio.lib as lib
 import karrio.core as core
-import karrio.core.errors as errors
-from karrio.core.utils.caching import ThreadSafeTokenManager
 
 
 class Settings(core.Settings):
     """SmartKargo connection settings."""
 
-    # Add carrier specific api connection properties here
+    # SmartKargo API key (passed as 'code' header)
     api_key: str
+    # Shipper account credentials
     account_number: str = None
+    account_id: str = None
 
     @property
     def carrier_name(self):
@@ -21,15 +20,14 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://carrier.api"
+            "https://uatihub.smartkargo.com/ihub-uat-mt-api-function"
             if self.test_mode
-            else "https://sandbox.carrier.api"
+            else "https://ihub.smartkargo.com/ihub-mt-api-function"
         )
 
-    # """uncomment the following code block to expose a carrier tracking url."""
-    # @property
-    # def tracking_url(self):
-    #     return "https://www.carrier.com/tracking?tracking-id={}"
+    @property
+    def tracking_url(self):
+        return "https://www.deliverdirect.com/tracking?ref={}"
 
     @property
     def connection_config(self) -> lib.units.Options:

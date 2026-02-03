@@ -1,18 +1,12 @@
+"""SmartKargo carrier units and mappings."""
 
 import karrio.lib as lib
 import karrio.core.units as units
 
 
-class ConnectionConfig(lib.Enum):
-    """Carrier connection configuration options."""
-
-    shipping_options = lib.OptionEnum("shipping_options", list)
-    shipping_services = lib.OptionEnum("shipping_services", list)
-    label_type = lib.OptionEnum("label_type", str, "PDF")  # Example of label type config with PDF default
-
-
 class PackagingType(lib.StrEnum):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -25,19 +19,50 @@ class PackagingType(lib.StrEnum):
     your_packaging = PACKAGE
 
 
+class PaymentMode(lib.StrEnum):
+    """SmartKargo payment modes"""
+
+    PX = "PX"  # Billed (typically used)
+    PP = "PP"  # Prepaid at the time of tender
+    CC = "CC"  # Collected from Consignee at delivery
+
+
+class WeightUnit(lib.StrEnum):
+    """SmartKargo weight units"""
+
+    KG = "KG"   # Kilograms
+    LBR = "LBR"  # Pounds
+
+
+class DimensionUnit(lib.StrEnum):
+    """SmartKargo dimension/volume units"""
+
+    CMQ = "CMQ"  # Centimeters
+    CFT = "CFT"  # Inches (feet)
+
+
 class ShippingService(lib.StrEnum):
-    """ Carrier specific services """
-    smartkargo_standard_service = "SmartKargo Standard Service"
+    """SmartKargo shipping services"""
+
+    smartkargo_express = "EXP"      # eCommerce Express
+    smartkargo_priority = "EPR"     # eCommerce Priority
+    smartkargo_postal = "EPS"       # eCommerce Postal
+    smartkargo_standard = "EST"     # eCommerce Standard
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
-    # smartkargo_option = lib.OptionEnum("code")
+    """Carrier specific options"""
+
+    smartkargo_insurance = lib.OptionEnum("insuranceRequired", bool)
+    smartkargo_declared_value = lib.OptionEnum("declaredValue", float)
+    smartkargo_delivery_type = lib.OptionEnum("deliveryType", str)
+    smartkargo_channel = lib.OptionEnum("channel", str)
+    smartkargo_label_ref2 = lib.OptionEnum("labelRef2", str)
+    smartkargo_special_handling = lib.OptionEnum("specialHandlingType", str)
 
     """ Unified Option type mapping """
-    # insurance = smartkargo_coverage  #  maps unified karrio option to carrier specific
-
-    pass
+    insurance = smartkargo_insurance
+    declared_value = smartkargo_declared_value
 
 
 def shipping_options_initializer(
@@ -58,51 +83,34 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    """Maps carrier tracking status codes to normalized Karrio statuses."""
-    pending = ["PENDING", "CREATED", "LABEL_PRINTED"]
-    picked_up = ["PICKED_UP", "COLLECTED"]
-    on_hold = ["ON_HOLD", "HELD"]
-    delivered = ["DELIVERED", "POD"]
-    in_transit = ["IN_TRANSIT", "DEPARTED", "ARRIVED"]
-    delivery_failed = ["FAILED", "NOT_DELIVERED", "REFUSED"]
-    delivery_delayed = ["DELAYED", "RESCHEDULED"]
-    out_for_delivery = ["OUT_FOR_DELIVERY"]
-    ready_for_pickup = ["READY_FOR_PICKUP"]
+    """Maps SmartKargo tracking event codes to normalized Karrio statuses."""
+
+    pending = ["BKD"]  # Electronic information submitted by shipper
+    picked_up = ["RCS"]  # Shipment Picked up by Carrier
+    in_transit = ["DEP", "RCF"]  # Departed / Recovered at partner store
+    out_for_delivery = ["GDL"]  # Package left partner store for consignee door
+    delivered = ["DDL", "DLD"]  # Successfully delivered / Delivered and left at door
+    delivery_failed = ["ADL"]  # Delivery attempted but failed
+    on_hold = ["RCU"]  # Reminder sent to customer
 
 
 class TrackingIncidentReason(lib.Enum):
-    """Maps carrier exception codes to normalized incident reasons.
-
-    These codes map carrier-specific exception/status codes to standardized
-    incident reasons for tracking events. The reason field helps identify
-    why a delivery exception occurred.
-
-    Update this enum with actual carrier-specific exception codes.
-    """
-    # Carrier-caused issues
-    carrier_damaged_parcel = ["DAMAGED", "DMG"]
-    carrier_sorting_error = ["MISROUTED", "MSR"]
-    carrier_address_not_found = ["ADDRESS_NOT_FOUND", "ANF"]
-    carrier_parcel_lost = ["LOST", "LP"]
-    carrier_not_enough_time = ["LATE", "NO_TIME"]
-    carrier_vehicle_issue = ["VEHICLE_BREAKDOWN", "VB"]
+    """Maps SmartKargo exception codes to normalized incident reasons."""
 
     # Consignee-caused issues
-    consignee_refused = ["REFUSED", "RJ"]
-    consignee_business_closed = ["BUSINESS_CLOSED", "BC"]
-    consignee_not_available = ["NOT_AVAILABLE", "NA"]
-    consignee_not_home = ["NOT_HOME", "NH"]
-    consignee_incorrect_address = ["WRONG_ADDRESS", "IA"]
-    consignee_access_restricted = ["ACCESS_RESTRICTED", "AR"]
+    consignee_not_available = ["ADL"]  # Partner reached address but couldn't deliver
+    consignee_not_home = ["ADL"]
 
-    # Customs-related issues
-    customs_delay = ["CUSTOMS_DELAY", "CD"]
-    customs_documentation = ["CUSTOMS_DOCS", "CM"]
-    customs_duties_unpaid = ["DUTIES_UNPAID", "DU"]
-
-    # Weather/Force majeure
-    weather_delay = ["WEATHER", "WE"]
-    natural_disaster = ["NATURAL_DISASTER", "ND"]
+    # Delivery notifications
+    delivery_exception_hold = ["RCU"]  # Reminder sent to customer
 
     # Unknown
     unknown = []
+
+
+class ConnectionConfig(lib.Enum):
+    """SmartKargo connection configuration options."""
+
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+    label_type = lib.OptionEnum("label_type", str)  # PDF or ZPL
