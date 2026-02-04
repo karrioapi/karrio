@@ -1,15 +1,5 @@
 """Karrio SmartKargo tracking API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract tracking details and events from the response to populate TrackingDetails
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., TrackingRequestType),
-# while XML schema types don't have this suffix (e.g., TrackingRequest).
-
-import karrio.schemas.smartkargo.tracking_request as smartkargo_req
 import karrio.schemas.smartkargo.tracking_response as smartkargo_res
 
 import typing
@@ -37,53 +27,58 @@ def parse_tracking_response(
     tracking_details = [
         _extract_details(details, settings, tracking_number)
         for tracking_number, details in responses
+        if _has_valid_tracking(details)
     ]
 
     return tracking_details, messages
 
 
+def _has_valid_tracking(data: dict) -> bool:
+    """Check if the response contains valid tracking data."""
+    # SmartKargo returns an array of events or an error object
+    if isinstance(data, list) and any(data):
+        return True
+    return False
+
+
 def _extract_details(
-    data: dict,
+    data: typing.List[dict],
     settings: provider_utils.Settings,
-    tracking_number: str = None,
+    tracking_number: str,
 ) -> models.TrackingDetails:
+    """Extract tracking details from SmartKargo tracking response.
+
+    SmartKargo returns an array of tracking events, each with:
+    - eventType: status code (BKD, RCS, DEP, DDL, etc.)
+    - eventDate: ISO datetime string
+    - eventLocation: location code
+    - description: human-readable description
     """
-    Extract tracking details from carrier response data
+    # Convert events to typed objects
+    events = [
+        lib.to_object(smartkargo_res.TrackingResponseElementType, event)
+        for event in data
+    ]
 
-    data: The carrier-specific tracking data structure
-    settings: The carrier connection settings
-    tracking_number: The tracking number being tracked
+    # Sort events by date (most recent first)
+    sorted_events = sorted(
+        events,
+        key=lambda e: e.eventDate or "",
+        reverse=True,
+    )
 
-    Returns a TrackingDetails object with extracted tracking information
-    """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    tracking_details = lib.to_object(smartkargo_res.TrackingResponseType, data)
-
-    # Extract tracking status and information
-    status_code = tracking_details.statusCode if hasattr(tracking_details, 'statusCode') else ""
-    status_detail = tracking_details.statusDescription if hasattr(tracking_details, 'statusDescription') else ""
-    est_delivery = tracking_details.estimatedDeliveryDate if hasattr(tracking_details, 'estimatedDeliveryDate') else None
-
-    # Extract events
-    events = []
-    if hasattr(tracking_details, 'events') and tracking_details.events:
-        for event in tracking_details.events:
-            events.append({
-                "date": event.date if hasattr(event, 'date') else "",
-                "time": event.time if hasattr(event, 'time') else "",
-                "code": event.code if hasattr(event, 'code') else "",
-                "description": event.description if hasattr(event, 'description') else "",
-                "location": event.location if hasattr(event, 'location') else "",
-                "reason": event.reason if hasattr(event, 'reason') else ""
-            })
-    
+    # Get latest event for status
+    latest_event = sorted_events[0] if sorted_events else None
+    latest_status_code = latest_event.eventType if latest_event else ""
 
     # Map carrier status to karrio standard tracking status
-    status = (
-        provider_units.TrackingStatus.find(status_code).name
-        or provider_units.TrackingStatus.in_transit.name
+    status = next(
+        (
+            s.name
+            for s in list(provider_units.TrackingStatus)
+            if latest_status_code in s.value
+        ),
+        "in_transit",
     )
 
     return models.TrackingDetails(
@@ -92,26 +87,45 @@ def _extract_details(
         tracking_number=tracking_number,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event["date"]),
-                description=event["description"],
-                code=event["code"],
-                time=lib.flocaltime(event["time"]),
-                location=event["location"],
-                # REQUIRED: ISO 8601 timestamp
+                date=lib.fdate(event.eventDate, "%Y-%m-%dT%H:%M:%S"),
+                description=event.description,
+                code=event.eventType,
+                time=lib.ftime(event.eventDate, "%Y-%m-%dT%H:%M:%S"),
+                location=event.eventLocation,
                 timestamp=lib.fiso_timestamp(
-                    lib.fdate(event["date"]),
-                    lib.ftime(event["time"]),
+                    event.eventDate,
+                    current_format="%Y-%m-%dT%H:%M:%S",
                 ),
-                # REQUIRED: normalized status at event level
-                status=provider_units.TrackingStatus.find(event["code"]).name,
-                # Incident reason for exception events (from TrackingIncidentReason enum)
-                reason=provider_units.TrackingIncidentReason.find(event["code"]).name,
+                status=next(
+                    (
+                        s.name
+                        for s in list(provider_units.TrackingStatus)
+                        if event.eventType in s.value
+                    ),
+                    None,
+                ),
+                reason=next(
+                    (
+                        r.name
+                        for r in list(provider_units.TrackingIncidentReason)
+                        if event.eventType in r.value
+                    ),
+                    None,
+                ),
             )
-            for event in events
+            for event in sorted_events
         ],
-        estimated_delivery=lib.fdate(est_delivery) if est_delivery else None,
-        delivered=status == "delivered",
+        estimated_delivery=None,
+        delivered=(status == "delivered"),
         status=status,
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(tracking_number),
+        ),
+        meta=dict(
+            prefix=latest_event.prefix if latest_event else None,
+            air_waybill=latest_event.airWaybill if latest_event else None,
+            package_reference=latest_event.packageReference if latest_event else None,
+        ),
     )
 
 
@@ -119,29 +133,15 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    """Create a tracking request for SmartKargo API.
+
+    SmartKargo tracking uses GET with packageReference query parameter.
+    The proxy handles the actual HTTP request format.
     """
-    Create a tracking request for the carrier API
-
-    payload: The standardized TrackingRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
-    # Extract the tracking number(s) from payload
-    tracking_numbers = payload.tracking_numbers
-    reference = payload.reference
-
-    
-    # For JSON API request
-    request = smartkargo_req.TrackingRequestType(
-        trackingInfo={
-            "trackingNumbers": tracking_numbers,
-            "reference": reference,
-            "language": payload.language_code or "en",
-        },
-        # Add account credentials
-        accountNumber=settings.account_number,
-    )
-    
+    # Build list of tracking request payloads
+    request = [
+        dict(tracking_number=tracking_number)
+        for tracking_number in payload.tracking_numbers
+    ]
 
     return lib.Serializable(request, lib.to_dict)
