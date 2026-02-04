@@ -22,11 +22,11 @@ def parse_rate_response(
     status = response.get("status", "")
     details = response.get("details") or []
 
-    rates = [
-        _extract_details(detail, settings)
-        for detail in details
+    rates = (
+        [_extract_details(detail, settings) for detail in details]
         if status.upper() == "QUOTED"
-    ]
+        else []
+    )
 
     return rates, messages
 
@@ -42,28 +42,27 @@ def _extract_details(
     service = provider_units.ShippingService.map(detail.serviceType)
     transit_days = detail.slaInDays
 
-    # Calculate total charge (total + tax)
-    total_charge = lib.to_money(detail.total or 0)
-    tax = lib.to_money(detail.totalTax or 0)
+    # Build charges list with raw values (easyship pattern)
+    charges = [
+        ("Base Rate", detail.total),
+        ("Tax", detail.totalTax),
+    ]
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=service.name_or_key,
-        total_charge=total_charge + tax,
+        total_charge=lib.to_money(detail.total or 0) + lib.to_money(detail.totalTax or 0),
         currency="USD",
         transit_days=transit_days,
         extra_charges=[
             models.ChargeDetails(
-                name="Base Rate",
-                amount=total_charge,
+                name=name,
+                amount=lib.to_money(amount),
                 currency="USD",
-            ),
-            models.ChargeDetails(
-                name="Tax",
-                amount=tax,
-                currency="USD",
-            ),
+            )
+            for name, amount in charges
+            if amount is not None and amount > 0
         ],
         meta=dict(
             service_name=service.name_or_key,
@@ -89,14 +88,17 @@ def rate_request(
     )
 
     # Determine weight and dimension units
+    # SmartKargo uses KG/LBR for weight and CMQ/CFT for volume
+    # Typically KG correlates with CM dimensions, LB with IN
+    is_metric = packages.weight_unit == "KG"
     weight_unit = (
         provider_units.WeightUnit.KG.value
-        if packages.weight_unit.value == "KG"
+        if is_metric
         else provider_units.WeightUnit.LBR.value
     )
     dimension_unit = (
         provider_units.DimensionUnit.CMQ.value
-        if packages.dimension_unit.value == "CM"
+        if is_metric
         else provider_units.DimensionUnit.CFT.value
     )
 
@@ -108,15 +110,11 @@ def rate_request(
 
     # Build the request using generated schema types
     request = smartkargo_req.RateRequestType(
-        reference=payload.reference or lib.guid(),
-        issueDate=lib.fdatetime(
-            payload.shipment_date,
-            current_format="%Y-%m-%d",
-            output_format="%Y-%m-%d %H:%M",
-        ) if payload.shipment_date else None,
+        reference=payload.reference or f"RATE-{lib.guid()}",
+        issueDate=None,  # Not required for rate quotes
         packages=[
             smartkargo_req.PackageType(
-                reference=f"PKG-{package.parcel.id or lib.guid()}",
+                reference=package.parcel.reference_number or f"PKG-{index}",
                 commodityType=options.smartkargo_commodity_type.state or "9999",
                 serviceType=service_type,
                 paymentMode=provider_units.PaymentMode.PX.value,
@@ -176,7 +174,7 @@ def rate_request(
                     ),
                 ],
             )
-            for package in packages
+            for index, package in enumerate(packages, start=1)
         ],
     )
 
