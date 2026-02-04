@@ -1,20 +1,10 @@
 """Karrio SmartKargo shipment API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract shipment details from the response
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., ShipmentRequestType),
-# while XML schema types don't have this suffix (e.g., ShipmentRequest).
-
-import karrio.schemas.smartkargo.shipment_request as smartkargo_req
+import karrio.schemas.smartkargo.rate_request as smartkargo_req
 import karrio.schemas.smartkargo.shipment_response as smartkargo_res
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.smartkargo.error as error
 import karrio.providers.smartkargo.utils as provider_utils
@@ -22,84 +12,74 @@ import karrio.providers.smartkargo.units as provider_units
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[dict],
+    _response: lib.Deserializable[typing.Tuple[dict, typing.List[dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
-    response = _response.deserialize()
+    response, labels = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
     # Check if we have valid shipment data
-    
-    has_shipment = "shipment" in response if hasattr(response, 'get') else False
-    
+    shipments = response.get("shipments") or []
+    status = response.get("status", "")
+    valid = response.get("valid", "")
+    label_type = _response.ctx.get("label_type", "PDF") if _response.ctx else "PDF"
 
-    shipment = _extract_details(response, settings) if has_shipment else None
+    # Extract details from all shipments for multi-piece handling
+    shipment_details = [
+        (f"{idx}", _extract_details(shipment_data, label_data, label_type, settings))
+        for idx, (shipment_data, label_data) in enumerate(
+            zip(shipments, labels + [{}] * (len(shipments) - len(labels))), start=1
+        )
+        if shipment_data.get("status") == "Booked"
+    ] if status == "Processed" and valid == "Yes" and any(shipments) else []
+
+    # Use lib.to_multi_piece_shipment for proper multi-package handling
+    shipment = lib.to_multi_piece_shipment(shipment_details) if shipment_details else None
 
     return shipment, messages
 
 
 def _extract_details(
     data: dict,
+    label_data: dict,
+    label_type: str,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    """
-    Extract shipment details from carrier response data
+    """Extract shipment details from SmartKargo booking response."""
+    shipment = lib.to_object(smartkargo_res.ShipmentType, data)
 
-    data: The carrier-specific shipment data structure
-    settings: The carrier connection settings
+    # Build tracking number from prefix + airWaybill
+    tracking_number = f"{shipment.prefix}{shipment.airWaybill}"
 
-    Returns a ShipmentDetails object with extracted shipment information
-    """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    response_obj = lib.to_object(smartkargo_res.ShipmentResponseType, data)
+    # Extract label from label response
+    label_content = label_data.get("base64Content", "")
+    # Remove data URI prefix if present (e.g., "data:application/pdf;base64,")
+    if label_content and ";base64," in label_content:
+        label_content = label_content.split(";base64,")[1]
 
-    # Access the shipment data
-    shipment = response_obj.shipment if hasattr(response_obj, 'shipment') else None
-
-    if shipment:
-        # Extract tracking info
-        tracking_number = shipment.trackingNumber if hasattr(shipment, 'trackingNumber') else ""
-        shipment_id = shipment.shipmentId if hasattr(shipment, 'shipmentId') else ""
-
-        # Extract label info
-        label_data = shipment.labelData if hasattr(shipment, 'labelData') else None
-        label_format = label_data.format if label_data and hasattr(label_data, 'format') else "PDF"
-        label_base64 = label_data.image if label_data and hasattr(label_data, 'image') else ""
-
-        # Extract optional invoice
-        invoice_base64 = shipment.invoiceImage if hasattr(shipment, 'invoiceImage') else ""
-
-        # Extract service code for metadata
-        service_code = shipment.serviceCode if hasattr(shipment, 'serviceCode') else ""
-    else:
-        tracking_number = ""
-        shipment_id = ""
-        label_format = "PDF"
-        label_base64 = ""
-        invoice_base64 = ""
-        service_code = ""
-    
-
-    documents = models.Documents(
-        label=label_base64,
-    )
-
-    # Add invoice if present
-    if invoice_base64:
-        documents.invoice = invoice_base64
+    # Map service type to service name
+    service = provider_units.ShippingService.map(shipment.serviceType)
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_number,
-        shipment_identifier=shipment_id,
-        label_type=label_format,
-        docs=documents,
+        shipment_identifier=shipment.packageReference,
+        label_type=label_type,
+        docs=models.Documents(label=label_content),
         meta=dict(
-            service_code=service_code,
-            # Add any other relevant metadata from the carrier's response
+            service_name=service.name_or_key,
+            service_type=shipment.serviceType,
+            prefix=shipment.prefix,
+            air_waybill=shipment.airWaybill,
+            header_reference=shipment.headerReference,
+            package_reference=shipment.packageReference,
+            estimated_delivery=shipment.estimatedDeliveryDate,
+            origin=shipment.origin,
+            label_url=shipment.labelUrl,
+            total_charge=shipment.total,
+            currency=shipment.currency,
+            carrier_tracking_link=settings.tracking_url.format(tracking_number),
         ),
     )
 
@@ -108,18 +88,10 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """
-    Create a shipment request for the carrier API
-
-    payload: The standardized ShipmentRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
-    # Convert karrio models to carrier-specific format
+    """Create a shipment request for SmartKargo booking API."""
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    packages = lib.to_packages(payload.parcels)
+    packages = lib.to_packages(payload.parcels, required=["weight"])
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
@@ -127,55 +99,97 @@ def shipment_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Create the carrier-specific request object
-    
-    # For JSON API request
-    request = smartkargo_req.ShipmentRequestType(
-        # Map shipper details
-        shipper={
-            "addressLine1": shipper.address_line1,
-            "city": shipper.city,
-            "postalCode": shipper.postal_code,
-            "countryCode": shipper.country_code,
-            "stateCode": shipper.state_code,
-            "personName": shipper.person_name,
-            "companyName": shipper.company_name,
-            "phoneNumber": shipper.phone_number,
-            "email": shipper.email,
-        },
-        # Map recipient details
-        recipient={
-            "addressLine1": recipient.address_line1,
-            "city": recipient.city,
-            "postalCode": recipient.postal_code,
-            "countryCode": recipient.country_code,
-            "stateCode": recipient.state_code,
-            "personName": recipient.person_name,
-            "companyName": recipient.company_name,
-            "phoneNumber": recipient.phone_number,
-            "email": recipient.email,
-        },
-        # Map package details
+    # Determine weight and dimension units based on package collection
+    weight_unit = (
+        provider_units.WeightUnit.KG.value
+        if packages.weight_unit.value == "KG"
+        else provider_units.WeightUnit.LBR.value
+    )
+    dimension_unit = (
+        provider_units.DimensionUnit.CMQ.value
+        if packages.dimension_unit.value == "CM"
+        else provider_units.DimensionUnit.CFT.value
+    )
+
+    # Get label type from payload or connection config
+    label_type = (
+        payload.label_type
+        or settings.connection_config.label_type.state
+        or "PDF"
+    )
+
+    # Build the request using generated schema types (same structure as rate request)
+    request = smartkargo_req.RateRequestType(
+        reference=payload.reference or lib.guid(),
+        issueDate=lib.fdatetime(
+            payload.shipment_date,
+            current_format="%Y-%m-%d",
+            output_format="%Y-%m-%d %H:%M",
+        ) if payload.shipment_date else None,
         packages=[
-            {
-                "weight": package.weight.value,
-                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
-                "length": package.length.value if package.length else None,
-                "width": package.width.value if package.width else None,
-                "height": package.height.value if package.height else None,
-                "dimensionUnit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
-                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
-            }
+            smartkargo_req.PackageType(
+                reference=f"PKG-{package.parcel.id or lib.guid()}",
+                commodityType=options.smartkargo_commodity_type.state or "9999",
+                serviceType=service,
+                paymentMode=provider_units.PaymentMode.PX.value,
+                packageDescription=package.parcel.description or "General Shipment",
+                totalPackages=1,
+                totalPieces=1,
+                grossVolumeUnitMeasure=dimension_unit,
+                totalGrossWeight=package.weight.value,
+                grossWeightUnitMeasure=weight_unit,
+                insuranceRequired=options.insurance.state is not None,
+                declaredValue=lib.to_money(options.declared_value.state or options.insurance.state or 0),
+                specialHandlingType=options.smartkargo_special_handling.state,
+                deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
+                channel=options.smartkargo_channel.state or "Direct",
+                labelRef2=options.smartkargo_label_ref2.state,
+                dimensions=[
+                    smartkargo_req.DimensionType(
+                        pieces=1,
+                        height=package.height.value,
+                        width=package.width.value,
+                        length=package.length.value,
+                        grossWeight=package.weight.value,
+                    )
+                ],
+                participants=[
+                    # Shipper participant (required)
+                    smartkargo_req.ParticipantType(
+                        type="Shipper",
+                        primaryId=settings.account_id,
+                        additionalId=None,
+                        account=settings.account_number,
+                        name=shipper.company_name or shipper.person_name,
+                        postCode=shipper.postal_code,
+                        street=shipper.street,
+                        street2=shipper.address_line2,
+                        city=shipper.city,
+                        state=shipper.state_code,
+                        countryId=shipper.country_code,
+                        phoneNumber=shipper.phone_number,
+                        email=shipper.email,
+                    ),
+                    # Consignee participant (required)
+                    smartkargo_req.ParticipantType(
+                        type="Consignee",
+                        primaryId=None,
+                        additionalId=None,
+                        account=None,
+                        name=recipient.company_name or recipient.person_name,
+                        postCode=recipient.postal_code,
+                        street=recipient.street,
+                        street2=recipient.address_line2,
+                        city=recipient.city,
+                        state=recipient.state_code,
+                        countryId=recipient.country_code,
+                        phoneNumber=recipient.phone_number,
+                        email=recipient.email,
+                    ),
+                ],
+            )
             for package in packages
         ],
-        # Add service code
-        serviceCode=service,
-        # Add account information
-        customerNumber=settings.customer_number,
-        # Add label details
-        labelFormat=payload.label_type or "PDF",
-        # Add any other required fields for this carrier's API
     )
-    
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(request, lib.to_dict, ctx=dict(label_type=label_type))

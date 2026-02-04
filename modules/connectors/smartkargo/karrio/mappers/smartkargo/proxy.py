@@ -35,7 +35,56 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        shipment_response = lib.to_dict(response)
+
+        # Step 2: Fetch labels asynchronously for each booked shipment
+        shipments = shipment_response.get("shipments") or []
+        label_type = request.ctx.get("label_type", "PDF") if request.ctx else "PDF"
+
+        # Build label fetch requests with index to maintain order
+        label_requests = [
+            dict(
+                index=idx,
+                prefix=shipment.get("prefix"),
+                air_waybill=shipment.get("airWaybill"),
+                label_type=label_type,
+            )
+            for idx, shipment in enumerate(shipments)
+            if shipment.get("prefix")
+            and shipment.get("airWaybill")
+            and shipment.get("status") == "Booked"
+        ]
+
+        # Initialize labels list with empty dicts for all shipments
+        labels = [{} for _ in shipments]
+
+        # Fetch labels asynchronously for better performance
+        if label_requests:
+            label_responses = lib.run_asynchronously(
+                lambda payload: (
+                    payload["index"],
+                    lib.request(
+                        url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['air_waybill']}&labelType={payload['label_type']}",
+                        trace=self.trace_as("json"),
+                        method="GET",
+                        headers={
+                            "Content-Type": "application/json",
+                            "code": self.settings.api_key,
+                        },
+                    ),
+                ),
+                label_requests,
+            )
+            # Place labels at correct indices
+            for idx, resp in label_responses:
+                labels[idx] = lib.to_dict(resp)
+
+        # Combine shipment response with labels and pass context
+        return lib.Deserializable(
+            (shipment_response, labels),
+            lambda data: data,
+            ctx=request.ctx,
+        )
 
     def get_label(self, request: lib.Serializable) -> lib.Deserializable[str]:
         """Fetch label for a shipment using prefix and airWaybill."""
@@ -44,6 +93,21 @@ class Proxy(proxy.Proxy):
             url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['airWaybill']}&labelType={payload.get('labelType', 'PDF')}",
             trace=self.trace_as("json"),
             method="GET",
+            headers={
+                "Content-Type": "application/json",
+                "code": self.settings.api_key,
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Cancel a shipment."""
+        payload = request.serialize()
+        response = lib.request(
+            url=f"{self.settings.server_url}/void?prefix={payload['prefix']}&airWaybill={payload['airWaybill']}",
+            trace=self.trace_as("json"),
+            method="DELETE",
             headers={
                 "Content-Type": "application/json",
                 "code": self.settings.api_key,
