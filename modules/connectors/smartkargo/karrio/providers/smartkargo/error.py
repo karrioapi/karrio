@@ -13,9 +13,10 @@ def parse_error_response(
 ) -> typing.List[models.Message]:
     """Parse SmartKargo API error response.
 
-    SmartKargo errors come in two formats:
-    1. Validation errors: {"status": "ERROR", "validations": [{"property": "...", "message": "..."}]}
-    2. General errors: {"status": "ERROR", "details": "..."}
+    SmartKargo errors come in several formats per API manual (Pages 11-12, 20-24):
+    1. Validation errors: {"status": "Rejected", "validations": [{"property": "...", "message": "...", "packageReference": "..."}]}
+    2. Error object: {"error": {"code": "...", "message": "..."}}
+    3. Status-based: {"status": "Error/Failed/Rejected", "details": "..."}
     """
     responses = response if isinstance(response, list) else [response]
     errors: typing.List[models.Message] = []
@@ -25,10 +26,25 @@ def parse_error_response(
             continue
 
         status = res.get("status", "")
+        valid = res.get("valid", "")
+
+        # Check for explicit error object
+        error_obj = res.get("error")
+        if error_obj and isinstance(error_obj, dict):
+            errors.append(
+                models.Message(
+                    carrier_id=settings.carrier_id,
+                    carrier_name=settings.carrier_name,
+                    code=error_obj.get("code", "ERROR"),
+                    message=error_obj.get("message", "Unknown error"),
+                    details={**kwargs},
+                )
+            )
+            continue
 
         # Skip successful responses
-        if status.upper() in ["OK", "SUCCESS", ""]:
-            # Check for validation errors in successful responses (warnings)
+        if status.upper() in ["PROCESSED", "QUOTED", "SUCCESS", "OK", ""] and valid.upper() != "NO":
+            # Check for validation warnings in successful responses
             validations = res.get("validations") or []
             if not validations:
                 continue
@@ -41,7 +57,7 @@ def parse_error_response(
                     models.Message(
                         carrier_id=settings.carrier_id,
                         carrier_name=settings.carrier_name,
-                        code=validation.get("property", "VALIDATION_ERROR"),
+                        code=validation.get("property") or validation.get("code", "VALIDATION_ERROR"),
                         message=validation.get("message", "Unknown validation error"),
                         details={
                             "package_reference": validation.get("packageReference"),
@@ -52,7 +68,7 @@ def parse_error_response(
 
         # Extract general error details
         details = res.get("details")
-        if details and status.upper() == "ERROR":
+        if details and status.upper() in ["ERROR", "FAILED", "REJECTED"]:
             errors.append(
                 models.Message(
                     carrier_id=settings.carrier_id,
@@ -64,7 +80,7 @@ def parse_error_response(
             )
 
         # Handle case where there's an error status but no details
-        if status.upper() == "ERROR" and not validations and not details:
+        if status.upper() in ["ERROR", "FAILED", "REJECTED"] and not validations and not details and not error_obj:
             errors.append(
                 models.Message(
                     carrier_id=settings.carrier_id,
