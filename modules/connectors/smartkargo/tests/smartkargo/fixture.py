@@ -8,7 +8,8 @@ gateway = karrio.gateway["smartkargo"].create(
         id="123456789",
         test_mode=True,
         carrier_id="smartkargo",
-        account_number="123456789",
         api_key="TEST_API_KEY",
+        account_number="TEST_ACCOUNT",
+        account_id="TEST_ID",
     )
 )

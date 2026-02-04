@@ -1,20 +1,10 @@
 """Karrio SmartKargo rate API implementation."""
 
-# IMPLEMENTATION INSTRUCTIONS:
-# 1. Uncomment the imports when the schema types are generated
-# 2. Import the specific request and response types you need
-# 3. Create a request instance with the appropriate request type
-# 4. Extract data from the response to populate the RateDetails
-#
-# NOTE: JSON schema types are generated with "Type" suffix (e.g., RateRequestType),
-# while XML schema types don't have this suffix (e.g., RateRequest).
-
 import karrio.schemas.smartkargo.rate_request as smartkargo_req
 import karrio.schemas.smartkargo.rate_response as smartkargo_res
 
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.smartkargo.error as error
 import karrio.providers.smartkargo.utils as provider_utils
@@ -26,15 +16,17 @@ def parse_rate_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-
     messages = error.parse_error_response(response, settings)
 
-    # Extract rate objects from the response - adjust based on carrier API structure
-    
-    # For JSON APIs, find the path to rate objects
-    rate_objects = response.get("rates", []) if hasattr(response, 'get') else []
-    rates = [_extract_details(rate, settings) for rate in rate_objects]
-    
+    # Check if response has valid rate details
+    status = response.get("status", "")
+    details = response.get("details") or []
+
+    rates = [
+        _extract_details(detail, settings)
+        for detail in details
+        if status.upper() == "QUOTED"
+    ]
 
     return rates, messages
 
@@ -43,34 +35,40 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    """
-    Extract rate details from carrier response data
+    """Extract rate details from SmartKargo quotation response."""
+    detail = lib.to_object(smartkargo_res.DetailType, data)
 
-    data: The carrier-specific rate data structure
-    settings: The carrier connection settings
+    # Map service type to ShippingService enum
+    service = provider_units.ShippingService.map(detail.serviceType)
+    transit_days = detail.slaInDays
 
-    Returns a RateDetails object with extracted rate information
-    """
-    # Convert the carrier data to a proper object for easy attribute access
-    
-    # For JSON APIs, convert dict to proper response object
-    rate = lib.to_object(smartkargo_res.RateResponseType, data)
-
-    # Now access data through the object attributes
-    service = providers.ShippingService.map(rate.serviceCode)
-    currency = rate.currency if hasattr(rate, 'currency') else "USD"
-    
+    # Calculate total charge (total + tax)
+    total_charge = lib.to_money(detail.total or 0)
+    tax = lib.to_money(detail.totalTax or 0)
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=service,
-        total_charge=lib.to_money(rate.total_charge, currency),
-        currency=currency,
-        transit_days=rate.transit_days,
+        service=service.name_or_key,
+        total_charge=total_charge + tax,
+        currency="USD",
+        transit_days=transit_days,
+        extra_charges=[
+            models.ChargeDetails(
+                name="Base Rate",
+                amount=total_charge,
+                currency="USD",
+            ),
+            models.ChargeDetails(
+                name="Tax",
+                amount=tax,
+                currency="USD",
+            ),
+        ],
         meta=dict(
             service_name=service.name_or_key,
-            # Add any other useful metadata from the carrier response
+            service_type=detail.serviceType,
+            estimated_delivery=detail.deliveryDateBasedOnShipment,
         ),
     )
 
@@ -79,18 +77,10 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """
-    Create a rate request for the carrier API
-
-    payload: The standardized RateRequest from karrio
-    settings: The carrier connection settings
-
-    Returns a Serializable object that can be sent to the carrier API
-    """
-    # Convert karrio models to carrier-specific format
+    """Create a rate request for SmartKargo quotation API."""
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    packages = lib.to_packages(payload.parcels)
+    packages = lib.to_packages(payload.parcels, required=["weight"])
     services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
@@ -98,55 +88,96 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Create the carrier-specific request object
-    
-    # For JSON API request
+    # Determine weight and dimension units
+    weight_unit = (
+        provider_units.WeightUnit.KG.value
+        if packages.weight_unit.value == "KG"
+        else provider_units.WeightUnit.LBR.value
+    )
+    dimension_unit = (
+        provider_units.DimensionUnit.CMQ.value
+        if packages.dimension_unit.value == "CM"
+        else provider_units.DimensionUnit.CFT.value
+    )
+
+    # Get service type if specified (empty returns all available services)
+    service_type = next(
+        (provider_units.ShippingService.map(s).value for s in services),
+        "",
+    ) if any(services) else ""
+
+    # Build the request using generated schema types
     request = smartkargo_req.RateRequestType(
-        # Map shipper details
-        shipper={
-            "addressLine1": shipper.address_line1,
-            "city": shipper.city,
-            "postalCode": shipper.postal_code,
-            "countryCode": shipper.country_code,
-            "stateCode": shipper.state_code,
-            "personName": shipper.person_name,
-            "companyName": shipper.company_name,
-            "phoneNumber": shipper.phone_number,
-            "email": shipper.email,
-        },
-        # Map recipient details
-        recipient={
-            "addressLine1": recipient.address_line1,
-            "city": recipient.city,
-            "postalCode": recipient.postal_code,
-            "countryCode": recipient.country_code,
-            "stateCode": recipient.state_code,
-            "personName": recipient.person_name,
-            "companyName": recipient.company_name,
-            "phoneNumber": recipient.phone_number,
-            "email": recipient.email,
-        },
-        # Map package details
+        reference=payload.reference or lib.guid(),
+        issueDate=lib.fdatetime(
+            payload.shipment_date,
+            current_format="%Y-%m-%d",
+            output_format="%Y-%m-%d %H:%M",
+        ) if payload.shipment_date else None,
         packages=[
-            {
-                "weight": package.weight.value,
-                "weightUnit": provider_units.WeightUnit[package.weight.unit].value,
-                "length": package.length.value if package.length else None,
-                "width": package.width.value if package.width else None,
-                "height": package.height.value if package.height else None,
-                "dimensionUnit": provider_units.DimensionUnit[package.dimension_unit].value if package.dimension_unit else None,
-                "packagingType": provider_units.PackagingType[package.packaging_type or 'your_packaging'].value,
-            }
+            smartkargo_req.PackageType(
+                reference=f"PKG-{package.parcel.id or lib.guid()}",
+                commodityType=options.smartkargo_commodity_type.state or "9999",
+                serviceType=service_type,
+                paymentMode=provider_units.PaymentMode.PX.value,
+                packageDescription=package.parcel.description or "General Shipment",
+                totalPackages=1,
+                totalPieces=1,
+                grossVolumeUnitMeasure=dimension_unit,
+                totalGrossWeight=package.weight.value,
+                grossWeightUnitMeasure=weight_unit,
+                insuranceRequired=options.insurance.state is not None,
+                declaredValue=lib.to_money(options.declared_value.state or options.insurance.state or 0),
+                specialHandlingType=options.smartkargo_special_handling.state,
+                deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
+                channel=options.smartkargo_channel.state or "Direct",
+                labelRef2=options.smartkargo_label_ref2.state,
+                dimensions=[
+                    smartkargo_req.DimensionType(
+                        pieces=1,
+                        height=package.height.value,
+                        width=package.width.value,
+                        length=package.length.value,
+                        grossWeight=package.weight.value,
+                    )
+                ],
+                participants=[
+                    # Shipper participant (required)
+                    smartkargo_req.ParticipantType(
+                        type="Shipper",
+                        primaryId=settings.account_id,
+                        additionalId=None,
+                        account=settings.account_number,
+                        name=shipper.company_name or shipper.person_name,
+                        postCode=shipper.postal_code,
+                        street=shipper.street,
+                        street2=shipper.address_line2,
+                        city=shipper.city,
+                        state=shipper.state_code,
+                        countryId=shipper.country_code,
+                        phoneNumber=shipper.phone_number,
+                        email=shipper.email,
+                    ),
+                    # Consignee participant (required)
+                    smartkargo_req.ParticipantType(
+                        type="Consignee",
+                        primaryId=None,
+                        additionalId=None,
+                        account=None,
+                        name=recipient.company_name or recipient.person_name,
+                        postCode=recipient.postal_code,
+                        street=recipient.street,
+                        street2=recipient.address_line2,
+                        city=recipient.city,
+                        state=recipient.state_code,
+                        countryId=recipient.country_code,
+                        phoneNumber=recipient.phone_number,
+                        email=recipient.email,
+                    ),
+                ],
+            )
             for package in packages
         ],
-        # Add service code
-        serviceCode=service,
-        # Add account information
-        customerNumber=settings.customer_number,
-        # Add label details
-        labelFormat=payload.label_type or "PDF",
-        # Add any other required fields for the carrier API
     )
-    
 
     return lib.Serializable(request, lib.to_dict)
