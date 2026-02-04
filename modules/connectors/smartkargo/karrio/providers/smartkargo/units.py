@@ -59,6 +59,7 @@ class ShippingOption(lib.Enum):
     smartkargo_channel = lib.OptionEnum("channel", str)
     smartkargo_label_ref2 = lib.OptionEnum("labelRef2", str)
     smartkargo_special_handling = lib.OptionEnum("specialHandlingType", str)
+    smartkargo_commodity_type = lib.OptionEnum("commodityType", str)
 
     """ Unified Option type mapping """
     insurance = smartkargo_insurance
