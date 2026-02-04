@@ -100,14 +100,17 @@ def shipment_request(
     )
 
     # Determine weight and dimension units based on package collection
+    # SmartKargo uses KG/LBR for weight and CMQ/CFT for volume
+    # Typically KG correlates with CM dimensions, LB with IN
+    is_metric = packages.weight_unit == "KG"
     weight_unit = (
         provider_units.WeightUnit.KG.value
-        if packages.weight_unit.value == "KG"
+        if is_metric
         else provider_units.WeightUnit.LBR.value
     )
     dimension_unit = (
         provider_units.DimensionUnit.CMQ.value
-        if packages.dimension_unit.value == "CM"
+        if is_metric
         else provider_units.DimensionUnit.CFT.value
     )
 
@@ -118,17 +121,20 @@ def shipment_request(
         or "PDF"
     )
 
+    # Get shipment date from options if provided
+    shipment_date = options.shipment_date.state
+
     # Build the request using generated schema types (same structure as rate request)
     request = smartkargo_req.RateRequestType(
-        reference=payload.reference or lib.guid(),
+        reference=payload.reference or f"SHIP-{lib.guid()}",
         issueDate=lib.fdatetime(
-            payload.shipment_date,
+            shipment_date,
             current_format="%Y-%m-%d",
             output_format="%Y-%m-%d %H:%M",
-        ) if payload.shipment_date else None,
+        ) if shipment_date else None,
         packages=[
             smartkargo_req.PackageType(
-                reference=f"PKG-{package.parcel.id or lib.guid()}",
+                reference=package.parcel.reference_number or f"PKG-{index}",
                 commodityType=options.smartkargo_commodity_type.state or "9999",
                 serviceType=service,
                 paymentMode=provider_units.PaymentMode.PX.value,
@@ -188,7 +194,7 @@ def shipment_request(
                     ),
                 ],
             )
-            for package in packages
+            for index, package in enumerate(packages, start=1)
         ],
     )
 
