@@ -8,8 +8,12 @@
 - feat: add pickup status tracking with lifecycle events (scheduled, picked_up, cancelled, closed)
 - feat(core): add pickup status filtering and carrier-agnostic scheduling support
 - feat(dashboard): update pickup scheduling to use new carrier-agnostic API
-- feat(dashboard): update pickup scheduling dialog and hooks for new API
+- feat(dashboard): redesign pickup scheduling dialog with relevant karrio pickup fields
 - feat(dashboard): add pickup detail sheet with activity timeline, tracking records, and related shipments
+
+### Fix
+
+- fix(postat): correct SOAP element names in shipment test assertions
 
 ### Test
 
