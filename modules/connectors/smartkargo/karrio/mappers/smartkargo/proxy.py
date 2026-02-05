@@ -10,7 +10,7 @@ class Proxy(proxy.Proxy):
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/quotation?version=2.0",
+            url=f"{self.settings.server_url}/quotation",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
