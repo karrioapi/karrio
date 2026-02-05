@@ -1,58 +1,276 @@
 service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
-TRCK,Spring Tracked,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
-SIGN,Spring Signature,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
-UNTR,Spring Untracked,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-CLLCT,Spring Collect Service,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
-PPTT,PostNL Packet Tracked,PPTT Countries,"AU,AT,BE,BG,BR,BY,CA,CH,CN,CY,CZ,DK,DE,EE,ES,FI,FR,GB,GF,GI,GP,GR,HK,HR,HU,ID,IE,IL,IS,IT,JP,KR,LB,LT,LU,LV,MQ,MT,MY,NL,NO,NZ,PL,PT,RE,RO,RS,RU,SA,SE,SG,SI,SK,TH,TR,US",0.01,2.0,,,,0.0,EUR,,false,true
-PPTR,PostNL Packet Registered,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-PPNT,PostNL Packet Non Tracked,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-PPBBT,PostNL Packet Boxable Bag & Trace,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-PPBT,PostNL Packet Bag & Trace,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-PPBTT,PostNL Packet Boxable Tracked,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-PPBNT,PostNL Packet Boxable Non Tracked,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-PPLEU,PostNL Parcel EU,EU Countries,"AT,BE,BG,CY,CZ,DK,DE,EE,FI,FR,GR,HR,HU,IE,LT,LU,LV,MT,NL,PL,RO,SE,SI,SK",0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPND,PostNL Parcel Benelux - No sign,Benelux,"NL,BE",0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPNDS,PostNL Parcel Benelux - Sign,Benelux,"NL,BE",0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPHD,PostNL Parcel Benelux - No sign No neighbor,Benelux,"NL,BE",0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPHDS,PostNL Parcel Benelux - Sign No neighbor,Benelux,"NL,BE",0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPLUP,PostNL Parcel Benelux - UPU,Benelux,"NL,BE",0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPLGE,PostNL Parcel GlobalPack EMS,Worldwide,,0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPLGU,PostNL Parcel GlobalPack UPU,Worldwide,,0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPLEP,PostNL Parcel EPG,EU,,0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPNEU,PostNL Parcel EPG NonEU,Non-EU,,0.01,30.0,120,60,60,0.0,EUR,,false,true
-PPLLW,PostNL Lightweight China,China,CN,0.01,2.0,,,,0.0,EUR,,false,true
-PPLCS,PostNL Collect Service,Worldwide,,0.01,30.0,,,,0.0,EUR,,false,true
-RM24,Royal Mail Tracked 24 - No sign,United Kingdom,GB,0.01,20.0,,,,0.0,GBP,,true,false
-RM24S,Royal Mail Tracked 24 - Sign,United Kingdom,GB,0.01,20.0,,,,0.0,GBP,,true,false
-RM48,Royal Mail Tracked 48 - No sign,United Kingdom,GB,0.01,20.0,,,,0.0,GBP,,true,false
-RM482,Royal Mail Tracked 48 - No sign 2,United Kingdom,GB,0.01,20.0,,,,0.0,GBP,,true,false
-RM48S,Royal Mail Tracked 48 - Sign,United Kingdom,GB,0.01,20.0,,,,0.0,GBP,,true,false
-SEND,Sending Mainland,Spain/Portugal Mainland,"ES,PT",0.01,20.0,,,,0.0,EUR,,true,false
-SEND2,Sending Islands,Spain/Portugal Islands,"ES,PT",0.01,20.0,,,,0.0,EUR,,true,false
-ITCR,Italian Post Crono,Italy,IT,0.01,20.0,,,,0.0,EUR,,true,false
-ITCRX,Italian Post Crono Express,Italy,IT,0.01,20.0,,,,0.0,EUR,,true,false
-DPDDE,DPD DE,Germany,DE,0.01,31.5,,,,0.0,EUR,,true,false
-HEHDS,Hermes - Sign,Germany,DE,0.01,20.0,,,,0.0,EUR,,true,false
-HEDCS,Hermes Germany Collect Service,Germany,DE,0.01,20.0,,,,0.0,EUR,,true,false
-CPHD,Colis Prive - No sign,France,FR,0.01,20.0,,,,0.0,EUR,,true,false
-CPHDS,Colis Prive - Sign,France,FR,0.01,20.0,,,,0.0,EUR,,true,false
-SCST,Spring Com Standard - No sign,USA,US,0.01,10.5,,,,0.0,USD,,false,true
-SCSTS,Spring Com Standard - Sign,USA,US,0.01,10.5,,,,0.0,USD,,false,true
-SCEX,Spring Com Express - No sign,USA,US,0.01,10.5,,,,0.0,USD,,false,true
-SCEXS,Spring Com Express - Sign,USA,US,0.01,10.5,,,,0.0,USD,,false,true
-UPGR,USA Parcel Ground - No sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPGRS,USA Parcel Ground - Sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPEX,USA Parcel Express - No sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPEXS,USA Parcel Express - Sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPMA,USA Parcel Max - No sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPMAS,USA Parcel Max - Sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPDG,USA Parcel Ground DG - No sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UDGS,USA Parcel Ground DG - Sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPPDG,USA Parcel Plus Ground DG - No sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-UPDGS,USA Parcel Plus Ground DG - Sign,USA,US,0.01,31.5,,,,0.0,USD,,false,true
-PACHD,Packeta,Packeta Countries,,0.01,31.5,,,,0.0,EUR,,false,true
-MABNT,MailAlliance Boxable Non Tracked,Worldwide,,0.01,2.0,,,,0.0,EUR,,false,true
-ATEHD,Austrian Post - Eurodis Home Delivery,Austria,AT,0.01,31.5,,,,0.0,EUR,,true,false
-EXPR,Spring Express,Worldwide,,0.01,31.5,,,,0.0,EUR,,false,true
-BACK,Spring BACK Returns,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,31.5,,,,0.0,EUR,,false,true
-BACKT,Spring BACK Tracked,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,31.5,,,,0.0,EUR,,false,true
+TRCK,Spring Tracked,Worldwide,,0.01,0.5,,,,4.90,EUR,7-14,false,true
+TRCK,Spring Tracked,Worldwide,,0.5,1.0,,,,5.90,EUR,7-14,false,true
+TRCK,Spring Tracked,Worldwide,,1.0,1.5,,,,6.90,EUR,7-14,false,true
+TRCK,Spring Tracked,Worldwide,,1.5,2.0,,,,7.90,EUR,7-14,false,true
+SIGN,Spring Signature,Worldwide,,0.01,0.5,,,,5.90,EUR,7-14,false,true
+SIGN,Spring Signature,Worldwide,,0.5,1.0,,,,7.90,EUR,7-14,false,true
+SIGN,Spring Signature,Worldwide,,1.0,1.5,,,,9.90,EUR,7-14,false,true
+SIGN,Spring Signature,Worldwide,,1.5,2.0,,,,11.90,EUR,7-14,false,true
+UNTR,Spring Untracked,Worldwide,,0.01,0.5,,,,1.90,EUR,10-21,false,true
+UNTR,Spring Untracked,Worldwide,,0.5,1.0,,,,2.50,EUR,10-21,false,true
+UNTR,Spring Untracked,Worldwide,,1.0,1.5,,,,2.90,EUR,10-21,false,true
+UNTR,Spring Untracked,Worldwide,,1.5,2.0,,,,3.50,EUR,10-21,false,true
+CLLCT,Spring Collect Service,Worldwide,,0.01,0.5,,,,3.50,EUR,5-10,false,true
+CLLCT,Spring Collect Service,Worldwide,,0.5,1.0,,,,4.50,EUR,5-10,false,true
+CLLCT,Spring Collect Service,Worldwide,,1.0,2.0,,,,5.90,EUR,5-10,false,true
+CLLCT,Spring Collect Service,Worldwide,,2.0,5.0,,,,8.50,EUR,5-10,false,true
+CLLCT,Spring Collect Service,Worldwide,,5.0,10.0,,,,12.90,EUR,5-10,false,true
+CLLCT,Spring Collect Service,Worldwide,,10.0,20.0,,,,18.90,EUR,5-10,false,true
+CLLCT,Spring Collect Service,Worldwide,,20.0,31.5,,,,25.90,EUR,5-10,false,true
+EXPR,Spring Express,Worldwide,,0.01,0.5,,,,12.50,EUR,3-5,false,true
+EXPR,Spring Express,Worldwide,,0.5,2.0,,,,15.90,EUR,3-5,false,true
+EXPR,Spring Express,Worldwide,,2.0,5.0,,,,18.50,EUR,3-5,false,true
+EXPR,Spring Express,Worldwide,,5.0,10.0,,,,24.90,EUR,3-5,false,true
+EXPR,Spring Express,Worldwide,,10.0,20.0,,,,35.90,EUR,3-5,false,true
+EXPR,Spring Express,Worldwide,,20.0,31.5,,,,48.50,EUR,3-5,false,true
+PPTT,PostNL Packet Tracked,PPTT Countries,"AU,AT,BE,BG,BR,BY,CA,CH,CN,CY,CZ,DK,DE,EE,ES,FI,FR,GB,GF,GI,GP,GR,HK,HR,HU,ID,IE,IL,IS,IT,JP,KR,LB,LT,LU,LV,MQ,MT,MY,NL,NO,NZ,PL,PT,RE,RO,RS,RU,SA,SE,SG,SI,SK,TH,TR,US",0.01,0.5,,,,2.50,EUR,5-10,false,true
+PPTT,PostNL Packet Tracked,PPTT Countries,"AU,AT,BE,BG,BR,BY,CA,CH,CN,CY,CZ,DK,DE,EE,ES,FI,FR,GB,GF,GI,GP,GR,HK,HR,HU,ID,IE,IL,IS,IT,JP,KR,LB,LT,LU,LV,MQ,MT,MY,NL,NO,NZ,PL,PT,RE,RO,RS,RU,SA,SE,SG,SI,SK,TH,TR,US",0.5,1.0,,,,3.50,EUR,5-10,false,true
+PPTT,PostNL Packet Tracked,PPTT Countries,"AU,AT,BE,BG,BR,BY,CA,CH,CN,CY,CZ,DK,DE,EE,ES,FI,FR,GB,GF,GI,GP,GR,HK,HR,HU,ID,IE,IL,IS,IT,JP,KR,LB,LT,LU,LV,MQ,MT,MY,NL,NO,NZ,PL,PT,RE,RO,RS,RU,SA,SE,SG,SI,SK,TH,TR,US",1.0,1.5,,,,4.50,EUR,5-10,false,true
+PPTT,PostNL Packet Tracked,PPTT Countries,"AU,AT,BE,BG,BR,BY,CA,CH,CN,CY,CZ,DK,DE,EE,ES,FI,FR,GB,GF,GI,GP,GR,HK,HR,HU,ID,IE,IL,IS,IT,JP,KR,LB,LT,LU,LV,MQ,MT,MY,NL,NO,NZ,PL,PT,RE,RO,RS,RU,SA,SE,SG,SI,SK,TH,TR,US",1.5,2.0,,,,5.50,EUR,5-10,false,true
+PPTR,PostNL Packet Registered,Worldwide,,0.01,0.5,,,,3.80,EUR,5-10,false,true
+PPTR,PostNL Packet Registered,Worldwide,,0.5,1.0,,,,4.80,EUR,5-10,false,true
+PPTR,PostNL Packet Registered,Worldwide,,1.0,1.5,,,,5.80,EUR,5-10,false,true
+PPTR,PostNL Packet Registered,Worldwide,,1.5,2.0,,,,6.80,EUR,5-10,false,true
+PPNT,PostNL Packet Non Tracked,Worldwide,,0.01,0.5,,,,1.50,EUR,10-21,false,true
+PPNT,PostNL Packet Non Tracked,Worldwide,,0.5,1.0,,,,2.10,EUR,10-21,false,true
+PPNT,PostNL Packet Non Tracked,Worldwide,,1.0,1.5,,,,2.50,EUR,10-21,false,true
+PPNT,PostNL Packet Non Tracked,Worldwide,,1.5,2.0,,,,3.20,EUR,10-21,false,true
+PPBBT,PostNL Packet Boxable Bag & Trace,Worldwide,,0.01,0.5,,,,2.20,EUR,7-14,false,true
+PPBBT,PostNL Packet Boxable Bag & Trace,Worldwide,,0.5,1.0,,,,2.90,EUR,7-14,false,true
+PPBBT,PostNL Packet Boxable Bag & Trace,Worldwide,,1.0,1.5,,,,3.20,EUR,7-14,false,true
+PPBBT,PostNL Packet Boxable Bag & Trace,Worldwide,,1.5,2.0,,,,3.80,EUR,7-14,false,true
+PPBT,PostNL Packet Bag & Trace,Worldwide,,0.01,0.5,,,,1.90,EUR,7-14,false,true
+PPBT,PostNL Packet Bag & Trace,Worldwide,,0.5,1.0,,,,2.50,EUR,7-14,false,true
+PPBT,PostNL Packet Bag & Trace,Worldwide,,1.0,1.5,,,,2.90,EUR,7-14,false,true
+PPBT,PostNL Packet Bag & Trace,Worldwide,,1.5,2.0,,,,3.50,EUR,7-14,false,true
+PPBTT,PostNL Packet Boxable Tracked,Worldwide,,0.01,0.5,,,,2.70,EUR,5-10,false,true
+PPBTT,PostNL Packet Boxable Tracked,Worldwide,,0.5,1.0,,,,3.50,EUR,5-10,false,true
+PPBTT,PostNL Packet Boxable Tracked,Worldwide,,1.0,1.5,,,,3.70,EUR,5-10,false,true
+PPBTT,PostNL Packet Boxable Tracked,Worldwide,,1.5,2.0,,,,4.20,EUR,5-10,false,true
+PPBNT,PostNL Packet Boxable Non Tracked,Worldwide,,0.01,0.5,,,,1.40,EUR,10-21,false,true
+PPBNT,PostNL Packet Boxable Non Tracked,Worldwide,,0.5,1.0,,,,1.90,EUR,10-21,false,true
+PPBNT,PostNL Packet Boxable Non Tracked,Worldwide,,1.0,1.5,,,,2.40,EUR,10-21,false,true
+PPBNT,PostNL Packet Boxable Non Tracked,Worldwide,,1.5,2.0,,,,2.90,EUR,10-21,false,true
+PPLEU,PostNL Parcel EU,EU Countries,"AT,BE,BG,CY,CZ,DK,DE,EE,FI,FR,GR,HR,HU,IE,LT,LU,LV,MT,NL,PL,RO,SE,SI,SK",0.01,2.0,120,60,60,6.50,EUR,3-7,false,true
+PPLEU,PostNL Parcel EU,EU Countries,"AT,BE,BG,CY,CZ,DK,DE,EE,FI,FR,GR,HR,HU,IE,LT,LU,LV,MT,NL,PL,RO,SE,SI,SK",2.0,5.0,120,60,60,8.50,EUR,3-7,false,true
+PPLEU,PostNL Parcel EU,EU Countries,"AT,BE,BG,CY,CZ,DK,DE,EE,FI,FR,GR,HR,HU,IE,LT,LU,LV,MT,NL,PL,RO,SE,SI,SK",5.0,10.0,120,60,60,11.50,EUR,3-7,false,true
+PPLEU,PostNL Parcel EU,EU Countries,"AT,BE,BG,CY,CZ,DK,DE,EE,FI,FR,GR,HR,HU,IE,LT,LU,LV,MT,NL,PL,RO,SE,SI,SK",10.0,20.0,120,60,60,16.50,EUR,3-7,false,true
+PPLEU,PostNL Parcel EU,EU Countries,"AT,BE,BG,CY,CZ,DK,DE,EE,FI,FR,GR,HR,HU,IE,LT,LU,LV,MT,NL,PL,RO,SE,SI,SK",20.0,30.0,120,60,60,22.50,EUR,3-7,false,true
+PPND,PostNL Parcel Benelux - No sign,Benelux,"NL,BE",0.01,2.0,120,60,60,4.50,EUR,1-2,false,true
+PPND,PostNL Parcel Benelux - No sign,Benelux,"NL,BE",2.0,5.0,120,60,60,5.90,EUR,1-2,false,true
+PPND,PostNL Parcel Benelux - No sign,Benelux,"NL,BE",5.0,10.0,120,60,60,7.90,EUR,1-2,false,true
+PPND,PostNL Parcel Benelux - No sign,Benelux,"NL,BE",10.0,20.0,120,60,60,10.90,EUR,1-2,false,true
+PPND,PostNL Parcel Benelux - No sign,Benelux,"NL,BE",20.0,30.0,120,60,60,14.90,EUR,1-2,false,true
+PPNDS,PostNL Parcel Benelux - Sign,Benelux,"NL,BE",0.01,2.0,120,60,60,5.10,EUR,1-2,false,true
+PPNDS,PostNL Parcel Benelux - Sign,Benelux,"NL,BE",2.0,5.0,120,60,60,6.50,EUR,1-2,false,true
+PPNDS,PostNL Parcel Benelux - Sign,Benelux,"NL,BE",5.0,10.0,120,60,60,8.50,EUR,1-2,false,true
+PPNDS,PostNL Parcel Benelux - Sign,Benelux,"NL,BE",10.0,20.0,120,60,60,11.50,EUR,1-2,false,true
+PPNDS,PostNL Parcel Benelux - Sign,Benelux,"NL,BE",20.0,30.0,120,60,60,15.90,EUR,1-2,false,true
+PPHD,PostNL Parcel Benelux - No sign No neighbor,Benelux,"NL,BE",0.01,2.0,120,60,60,5.80,EUR,1-2,false,true
+PPHD,PostNL Parcel Benelux - No sign No neighbor,Benelux,"NL,BE",2.0,5.0,120,60,60,7.20,EUR,1-2,false,true
+PPHD,PostNL Parcel Benelux - No sign No neighbor,Benelux,"NL,BE",5.0,10.0,120,60,60,9.20,EUR,1-2,false,true
+PPHD,PostNL Parcel Benelux - No sign No neighbor,Benelux,"NL,BE",10.0,20.0,120,60,60,12.50,EUR,1-2,false,true
+PPHD,PostNL Parcel Benelux - No sign No neighbor,Benelux,"NL,BE",20.0,30.0,120,60,60,16.90,EUR,1-2,false,true
+PPHDS,PostNL Parcel Benelux - Sign No neighbor,Benelux,"NL,BE",0.01,2.0,120,60,60,6.40,EUR,1-2,false,true
+PPHDS,PostNL Parcel Benelux - Sign No neighbor,Benelux,"NL,BE",2.0,5.0,120,60,60,7.80,EUR,1-2,false,true
+PPHDS,PostNL Parcel Benelux - Sign No neighbor,Benelux,"NL,BE",5.0,10.0,120,60,60,9.90,EUR,1-2,false,true
+PPHDS,PostNL Parcel Benelux - Sign No neighbor,Benelux,"NL,BE",10.0,20.0,120,60,60,13.20,EUR,1-2,false,true
+PPHDS,PostNL Parcel Benelux - Sign No neighbor,Benelux,"NL,BE",20.0,30.0,120,60,60,17.90,EUR,1-2,false,true
+PPLUP,PostNL Parcel Benelux - UPU,Benelux,"NL,BE",0.01,2.0,120,60,60,5.50,EUR,1-2,false,true
+PPLUP,PostNL Parcel Benelux - UPU,Benelux,"NL,BE",2.0,5.0,120,60,60,6.90,EUR,1-2,false,true
+PPLUP,PostNL Parcel Benelux - UPU,Benelux,"NL,BE",5.0,10.0,120,60,60,8.90,EUR,1-2,false,true
+PPLUP,PostNL Parcel Benelux - UPU,Benelux,"NL,BE",10.0,20.0,120,60,60,12.20,EUR,1-2,false,true
+PPLUP,PostNL Parcel Benelux - UPU,Benelux,"NL,BE",20.0,30.0,120,60,60,16.50,EUR,1-2,false,true
+PPLGE,PostNL Parcel GlobalPack EMS,Worldwide,,0.01,2.0,120,60,60,14.50,EUR,3-7,false,true
+PPLGE,PostNL Parcel GlobalPack EMS,Worldwide,,2.0,5.0,120,60,60,18.50,EUR,3-7,false,true
+PPLGE,PostNL Parcel GlobalPack EMS,Worldwide,,5.0,10.0,120,60,60,24.50,EUR,3-7,false,true
+PPLGE,PostNL Parcel GlobalPack EMS,Worldwide,,10.0,20.0,120,60,60,34.50,EUR,3-7,false,true
+PPLGE,PostNL Parcel GlobalPack EMS,Worldwide,,20.0,30.0,120,60,60,45.50,EUR,3-7,false,true
+PPLGU,PostNL Parcel GlobalPack UPU,Worldwide,,0.01,2.0,120,60,60,9.90,EUR,5-10,false,true
+PPLGU,PostNL Parcel GlobalPack UPU,Worldwide,,2.0,5.0,120,60,60,12.90,EUR,5-10,false,true
+PPLGU,PostNL Parcel GlobalPack UPU,Worldwide,,5.0,10.0,120,60,60,16.90,EUR,5-10,false,true
+PPLGU,PostNL Parcel GlobalPack UPU,Worldwide,,10.0,20.0,120,60,60,22.90,EUR,5-10,false,true
+PPLGU,PostNL Parcel GlobalPack UPU,Worldwide,,20.0,30.0,120,60,60,29.90,EUR,5-10,false,true
+PPLEP,PostNL Parcel EPG,EU,,0.01,2.0,120,60,60,7.50,EUR,3-7,false,true
+PPLEP,PostNL Parcel EPG,EU,,2.0,5.0,120,60,60,9.50,EUR,3-7,false,true
+PPLEP,PostNL Parcel EPG,EU,,5.0,10.0,120,60,60,12.50,EUR,3-7,false,true
+PPLEP,PostNL Parcel EPG,EU,,10.0,20.0,120,60,60,17.50,EUR,3-7,false,true
+PPLEP,PostNL Parcel EPG,EU,,20.0,30.0,120,60,60,23.50,EUR,3-7,false,true
+PPNEU,PostNL Parcel EPG NonEU,Non-EU,,0.01,2.0,120,60,60,11.50,EUR,5-10,false,true
+PPNEU,PostNL Parcel EPG NonEU,Non-EU,,2.0,5.0,120,60,60,14.50,EUR,5-10,false,true
+PPNEU,PostNL Parcel EPG NonEU,Non-EU,,5.0,10.0,120,60,60,18.50,EUR,5-10,false,true
+PPNEU,PostNL Parcel EPG NonEU,Non-EU,,10.0,20.0,120,60,60,25.50,EUR,5-10,false,true
+PPNEU,PostNL Parcel EPG NonEU,Non-EU,,20.0,30.0,120,60,60,33.50,EUR,5-10,false,true
+PPLLW,PostNL Lightweight China,China,CN,0.01,0.5,,,,2.20,EUR,10-21,false,true
+PPLLW,PostNL Lightweight China,China,CN,0.5,1.0,,,,2.90,EUR,10-21,false,true
+PPLLW,PostNL Lightweight China,China,CN,1.0,1.5,,,,3.20,EUR,10-21,false,true
+PPLLW,PostNL Lightweight China,China,CN,1.5,2.0,,,,3.80,EUR,10-21,false,true
+PPLCS,PostNL Collect Service,Worldwide,,0.01,2.0,,,,4.50,EUR,3-7,false,true
+PPLCS,PostNL Collect Service,Worldwide,,2.0,5.0,,,,5.50,EUR,3-7,false,true
+PPLCS,PostNL Collect Service,Worldwide,,5.0,10.0,,,,7.50,EUR,3-7,false,true
+PPLCS,PostNL Collect Service,Worldwide,,10.0,20.0,,,,10.50,EUR,3-7,false,true
+PPLCS,PostNL Collect Service,Worldwide,,20.0,30.0,,,,14.50,EUR,3-7,false,true
+RM24,Royal Mail Tracked 24 - No sign,United Kingdom,GB,0.01,1.0,,,,3.50,GBP,1,true,false
+RM24,Royal Mail Tracked 24 - No sign,United Kingdom,GB,1.0,2.0,,,,4.50,GBP,1,true,false
+RM24,Royal Mail Tracked 24 - No sign,United Kingdom,GB,2.0,5.0,,,,5.90,GBP,1,true,false
+RM24,Royal Mail Tracked 24 - No sign,United Kingdom,GB,5.0,10.0,,,,8.50,GBP,1,true,false
+RM24,Royal Mail Tracked 24 - No sign,United Kingdom,GB,10.0,20.0,,,,12.50,GBP,1,true,false
+RM24S,Royal Mail Tracked 24 - Sign,United Kingdom,GB,0.01,1.0,,,,4.20,GBP,1,true,false
+RM24S,Royal Mail Tracked 24 - Sign,United Kingdom,GB,1.0,2.0,,,,5.20,GBP,1,true,false
+RM24S,Royal Mail Tracked 24 - Sign,United Kingdom,GB,2.0,5.0,,,,6.50,GBP,1,true,false
+RM24S,Royal Mail Tracked 24 - Sign,United Kingdom,GB,5.0,10.0,,,,9.20,GBP,1,true,false
+RM24S,Royal Mail Tracked 24 - Sign,United Kingdom,GB,10.0,20.0,,,,13.20,GBP,1,true,false
+RM48,Royal Mail Tracked 48 - No sign,United Kingdom,GB,0.01,1.0,,,,2.50,GBP,2,true,false
+RM48,Royal Mail Tracked 48 - No sign,United Kingdom,GB,1.0,2.0,,,,3.50,GBP,2,true,false
+RM48,Royal Mail Tracked 48 - No sign,United Kingdom,GB,2.0,5.0,,,,4.90,GBP,2,true,false
+RM48,Royal Mail Tracked 48 - No sign,United Kingdom,GB,5.0,10.0,,,,7.50,GBP,2,true,false
+RM48,Royal Mail Tracked 48 - No sign,United Kingdom,GB,10.0,20.0,,,,10.90,GBP,2,true,false
+RM482,Royal Mail Tracked 48 - No sign 2,United Kingdom,GB,0.01,1.0,,,,2.80,GBP,2,true,false
+RM482,Royal Mail Tracked 48 - No sign 2,United Kingdom,GB,1.0,2.0,,,,3.80,GBP,2,true,false
+RM482,Royal Mail Tracked 48 - No sign 2,United Kingdom,GB,2.0,5.0,,,,5.20,GBP,2,true,false
+RM482,Royal Mail Tracked 48 - No sign 2,United Kingdom,GB,5.0,10.0,,,,7.90,GBP,2,true,false
+RM482,Royal Mail Tracked 48 - No sign 2,United Kingdom,GB,10.0,20.0,,,,11.50,GBP,2,true,false
+RM48S,Royal Mail Tracked 48 - Sign,United Kingdom,GB,0.01,1.0,,,,3.20,GBP,2,true,false
+RM48S,Royal Mail Tracked 48 - Sign,United Kingdom,GB,1.0,2.0,,,,4.20,GBP,2,true,false
+RM48S,Royal Mail Tracked 48 - Sign,United Kingdom,GB,2.0,5.0,,,,5.50,GBP,2,true,false
+RM48S,Royal Mail Tracked 48 - Sign,United Kingdom,GB,5.0,10.0,,,,8.20,GBP,2,true,false
+RM48S,Royal Mail Tracked 48 - Sign,United Kingdom,GB,10.0,20.0,,,,11.90,GBP,2,true,false
+SEND,Sending Mainland,Spain/Portugal Mainland,"ES,PT",0.01,1.0,,,,3.90,EUR,2-3,true,false
+SEND,Sending Mainland,Spain/Portugal Mainland,"ES,PT",1.0,3.0,,,,4.90,EUR,2-3,true,false
+SEND,Sending Mainland,Spain/Portugal Mainland,"ES,PT",3.0,5.0,,,,5.90,EUR,2-3,true,false
+SEND,Sending Mainland,Spain/Portugal Mainland,"ES,PT",5.0,10.0,,,,7.50,EUR,2-3,true,false
+SEND,Sending Mainland,Spain/Portugal Mainland,"ES,PT",10.0,20.0,,,,10.50,EUR,2-3,true,false
+SEND2,Sending Islands,Spain/Portugal Islands,"ES,PT",0.01,1.0,,,,5.50,EUR,3-5,true,false
+SEND2,Sending Islands,Spain/Portugal Islands,"ES,PT",1.0,3.0,,,,6.50,EUR,3-5,true,false
+SEND2,Sending Islands,Spain/Portugal Islands,"ES,PT",3.0,5.0,,,,7.50,EUR,3-5,true,false
+SEND2,Sending Islands,Spain/Portugal Islands,"ES,PT",5.0,10.0,,,,9.50,EUR,3-5,true,false
+SEND2,Sending Islands,Spain/Portugal Islands,"ES,PT",10.0,20.0,,,,13.50,EUR,3-5,true,false
+ITCR,Italian Post Crono,Italy,IT,0.01,1.0,,,,5.90,EUR,2-3,true,false
+ITCR,Italian Post Crono,Italy,IT,1.0,3.0,,,,6.90,EUR,2-3,true,false
+ITCR,Italian Post Crono,Italy,IT,3.0,5.0,,,,7.90,EUR,2-3,true,false
+ITCR,Italian Post Crono,Italy,IT,5.0,10.0,,,,9.90,EUR,2-3,true,false
+ITCR,Italian Post Crono,Italy,IT,10.0,20.0,,,,13.90,EUR,2-3,true,false
+ITCRX,Italian Post Crono Express,Italy,IT,0.01,1.0,,,,7.90,EUR,1,true,false
+ITCRX,Italian Post Crono Express,Italy,IT,1.0,3.0,,,,9.90,EUR,1,true,false
+ITCRX,Italian Post Crono Express,Italy,IT,3.0,5.0,,,,11.90,EUR,1,true,false
+ITCRX,Italian Post Crono Express,Italy,IT,5.0,10.0,,,,14.90,EUR,1,true,false
+ITCRX,Italian Post Crono Express,Italy,IT,10.0,20.0,,,,19.90,EUR,1,true,false
+DPDDE,DPD DE,Germany,DE,0.01,3.0,,,,3.49,EUR,1-2,true,false
+DPDDE,DPD DE,Germany,DE,3.0,5.0,,,,4.49,EUR,1-2,true,false
+DPDDE,DPD DE,Germany,DE,5.0,10.0,,,,5.49,EUR,1-2,true,false
+DPDDE,DPD DE,Germany,DE,10.0,20.0,,,,6.99,EUR,1-2,true,false
+DPDDE,DPD DE,Germany,DE,20.0,31.5,,,,8.99,EUR,1-2,true,false
+HEHDS,Hermes - Sign,Germany,DE,0.01,1.0,,,,3.50,EUR,2-3,true,false
+HEHDS,Hermes - Sign,Germany,DE,1.0,5.0,,,,4.50,EUR,2-3,true,false
+HEHDS,Hermes - Sign,Germany,DE,5.0,10.0,,,,5.50,EUR,2-3,true,false
+HEHDS,Hermes - Sign,Germany,DE,10.0,20.0,,,,7.50,EUR,2-3,true,false
+HEDCS,Hermes Germany Collect Service,Germany,DE,0.01,1.0,,,,2.90,EUR,2-3,true,false
+HEDCS,Hermes Germany Collect Service,Germany,DE,1.0,5.0,,,,3.50,EUR,2-3,true,false
+HEDCS,Hermes Germany Collect Service,Germany,DE,5.0,10.0,,,,4.50,EUR,2-3,true,false
+HEDCS,Hermes Germany Collect Service,Germany,DE,10.0,20.0,,,,6.50,EUR,2-3,true,false
+CPHD,Colis Prive - No sign,France,FR,0.01,1.0,,,,4.50,EUR,2-3,true,false
+CPHD,Colis Prive - No sign,France,FR,1.0,3.0,,,,5.50,EUR,2-3,true,false
+CPHD,Colis Prive - No sign,France,FR,3.0,5.0,,,,5.90,EUR,2-3,true,false
+CPHD,Colis Prive - No sign,France,FR,5.0,10.0,,,,7.50,EUR,2-3,true,false
+CPHD,Colis Prive - No sign,France,FR,10.0,20.0,,,,10.50,EUR,2-3,true,false
+CPHDS,Colis Prive - Sign,France,FR,0.01,1.0,,,,5.50,EUR,2-3,true,false
+CPHDS,Colis Prive - Sign,France,FR,1.0,3.0,,,,6.50,EUR,2-3,true,false
+CPHDS,Colis Prive - Sign,France,FR,3.0,5.0,,,,6.90,EUR,2-3,true,false
+CPHDS,Colis Prive - Sign,France,FR,5.0,10.0,,,,8.50,EUR,2-3,true,false
+CPHDS,Colis Prive - Sign,France,FR,10.0,20.0,,,,11.90,EUR,2-3,true,false
+SCST,Spring Com Standard - No sign,USA,US,0.01,0.5,,,,5.50,USD,5-10,false,true
+SCST,Spring Com Standard - No sign,USA,US,0.5,1.0,,,,6.50,USD,5-10,false,true
+SCST,Spring Com Standard - No sign,USA,US,1.0,2.0,,,,7.50,USD,5-10,false,true
+SCST,Spring Com Standard - No sign,USA,US,2.0,5.0,,,,8.50,USD,5-10,false,true
+SCST,Spring Com Standard - No sign,USA,US,5.0,10.5,,,,11.50,USD,5-10,false,true
+SCSTS,Spring Com Standard - Sign,USA,US,0.01,0.5,,,,6.50,USD,5-10,false,true
+SCSTS,Spring Com Standard - Sign,USA,US,0.5,1.0,,,,7.50,USD,5-10,false,true
+SCSTS,Spring Com Standard - Sign,USA,US,1.0,2.0,,,,8.50,USD,5-10,false,true
+SCSTS,Spring Com Standard - Sign,USA,US,2.0,5.0,,,,9.50,USD,5-10,false,true
+SCSTS,Spring Com Standard - Sign,USA,US,5.0,10.5,,,,12.50,USD,5-10,false,true
+SCEX,Spring Com Express - No sign,USA,US,0.01,0.5,,,,10.90,USD,3-5,false,true
+SCEX,Spring Com Express - No sign,USA,US,0.5,1.0,,,,12.90,USD,3-5,false,true
+SCEX,Spring Com Express - No sign,USA,US,1.0,2.0,,,,14.90,USD,3-5,false,true
+SCEX,Spring Com Express - No sign,USA,US,2.0,5.0,,,,17.90,USD,3-5,false,true
+SCEX,Spring Com Express - No sign,USA,US,5.0,10.5,,,,22.90,USD,3-5,false,true
+SCEXS,Spring Com Express - Sign,USA,US,0.01,0.5,,,,11.90,USD,3-5,false,true
+SCEXS,Spring Com Express - Sign,USA,US,0.5,1.0,,,,13.90,USD,3-5,false,true
+SCEXS,Spring Com Express - Sign,USA,US,1.0,2.0,,,,15.90,USD,3-5,false,true
+SCEXS,Spring Com Express - Sign,USA,US,2.0,5.0,,,,18.90,USD,3-5,false,true
+SCEXS,Spring Com Express - Sign,USA,US,5.0,10.5,,,,23.90,USD,3-5,false,true
+UPGR,USA Parcel Ground - No sign,USA,US,0.01,1.0,,,,6.90,USD,5-8,false,true
+UPGR,USA Parcel Ground - No sign,USA,US,1.0,5.0,,,,9.90,USD,5-8,false,true
+UPGR,USA Parcel Ground - No sign,USA,US,5.0,10.0,,,,12.90,USD,5-8,false,true
+UPGR,USA Parcel Ground - No sign,USA,US,10.0,20.0,,,,18.90,USD,5-8,false,true
+UPGR,USA Parcel Ground - No sign,USA,US,20.0,31.5,,,,25.90,USD,5-8,false,true
+UPGRS,USA Parcel Ground - Sign,USA,US,0.01,1.0,,,,7.90,USD,5-8,false,true
+UPGRS,USA Parcel Ground - Sign,USA,US,1.0,5.0,,,,10.90,USD,5-8,false,true
+UPGRS,USA Parcel Ground - Sign,USA,US,5.0,10.0,,,,13.90,USD,5-8,false,true
+UPGRS,USA Parcel Ground - Sign,USA,US,10.0,20.0,,,,19.90,USD,5-8,false,true
+UPGRS,USA Parcel Ground - Sign,USA,US,20.0,31.5,,,,26.90,USD,5-8,false,true
+UPEX,USA Parcel Express - No sign,USA,US,0.01,1.0,,,,14.90,USD,2-4,false,true
+UPEX,USA Parcel Express - No sign,USA,US,1.0,5.0,,,,18.90,USD,2-4,false,true
+UPEX,USA Parcel Express - No sign,USA,US,5.0,10.0,,,,24.90,USD,2-4,false,true
+UPEX,USA Parcel Express - No sign,USA,US,10.0,20.0,,,,34.90,USD,2-4,false,true
+UPEX,USA Parcel Express - No sign,USA,US,20.0,31.5,,,,45.90,USD,2-4,false,true
+UPEXS,USA Parcel Express - Sign,USA,US,0.01,1.0,,,,15.90,USD,2-4,false,true
+UPEXS,USA Parcel Express - Sign,USA,US,1.0,5.0,,,,19.90,USD,2-4,false,true
+UPEXS,USA Parcel Express - Sign,USA,US,5.0,10.0,,,,25.90,USD,2-4,false,true
+UPEXS,USA Parcel Express - Sign,USA,US,10.0,20.0,,,,35.90,USD,2-4,false,true
+UPEXS,USA Parcel Express - Sign,USA,US,20.0,31.5,,,,46.90,USD,2-4,false,true
+UPMA,USA Parcel Max - No sign,USA,US,0.01,1.0,,,,10.90,USD,3-5,false,true
+UPMA,USA Parcel Max - No sign,USA,US,1.0,5.0,,,,14.90,USD,3-5,false,true
+UPMA,USA Parcel Max - No sign,USA,US,5.0,10.0,,,,19.90,USD,3-5,false,true
+UPMA,USA Parcel Max - No sign,USA,US,10.0,20.0,,,,28.90,USD,3-5,false,true
+UPMA,USA Parcel Max - No sign,USA,US,20.0,31.5,,,,38.90,USD,3-5,false,true
+UPMAS,USA Parcel Max - Sign,USA,US,0.01,1.0,,,,11.90,USD,3-5,false,true
+UPMAS,USA Parcel Max - Sign,USA,US,1.0,5.0,,,,15.90,USD,3-5,false,true
+UPMAS,USA Parcel Max - Sign,USA,US,5.0,10.0,,,,20.90,USD,3-5,false,true
+UPMAS,USA Parcel Max - Sign,USA,US,10.0,20.0,,,,29.90,USD,3-5,false,true
+UPMAS,USA Parcel Max - Sign,USA,US,20.0,31.5,,,,39.90,USD,3-5,false,true
+UPDG,USA Parcel Ground DG - No sign,USA,US,0.01,1.0,,,,8.90,USD,5-8,false,true
+UPDG,USA Parcel Ground DG - No sign,USA,US,1.0,5.0,,,,12.90,USD,5-8,false,true
+UPDG,USA Parcel Ground DG - No sign,USA,US,5.0,10.0,,,,16.90,USD,5-8,false,true
+UPDG,USA Parcel Ground DG - No sign,USA,US,10.0,20.0,,,,22.90,USD,5-8,false,true
+UPDG,USA Parcel Ground DG - No sign,USA,US,20.0,31.5,,,,30.90,USD,5-8,false,true
+UDGS,USA Parcel Ground DG - Sign,USA,US,0.01,1.0,,,,9.90,USD,5-8,false,true
+UDGS,USA Parcel Ground DG - Sign,USA,US,1.0,5.0,,,,13.90,USD,5-8,false,true
+UDGS,USA Parcel Ground DG - Sign,USA,US,5.0,10.0,,,,17.90,USD,5-8,false,true
+UDGS,USA Parcel Ground DG - Sign,USA,US,10.0,20.0,,,,23.90,USD,5-8,false,true
+UDGS,USA Parcel Ground DG - Sign,USA,US,20.0,31.5,,,,31.90,USD,5-8,false,true
+UPPDG,USA Parcel Plus Ground DG - No sign,USA,US,0.01,1.0,,,,11.90,USD,3-5,false,true
+UPPDG,USA Parcel Plus Ground DG - No sign,USA,US,1.0,5.0,,,,15.90,USD,3-5,false,true
+UPPDG,USA Parcel Plus Ground DG - No sign,USA,US,5.0,10.0,,,,20.90,USD,3-5,false,true
+UPPDG,USA Parcel Plus Ground DG - No sign,USA,US,10.0,20.0,,,,28.90,USD,3-5,false,true
+UPPDG,USA Parcel Plus Ground DG - No sign,USA,US,20.0,31.5,,,,38.90,USD,3-5,false,true
+UPDGS,USA Parcel Plus Ground DG - Sign,USA,US,0.01,1.0,,,,12.90,USD,3-5,false,true
+UPDGS,USA Parcel Plus Ground DG - Sign,USA,US,1.0,5.0,,,,16.90,USD,3-5,false,true
+UPDGS,USA Parcel Plus Ground DG - Sign,USA,US,5.0,10.0,,,,21.90,USD,3-5,false,true
+UPDGS,USA Parcel Plus Ground DG - Sign,USA,US,10.0,20.0,,,,29.90,USD,3-5,false,true
+UPDGS,USA Parcel Plus Ground DG - Sign,USA,US,20.0,31.5,,,,39.90,USD,3-5,false,true
+PACHD,Packeta,Packeta Countries,,0.01,1.0,,,,3.50,EUR,3-7,false,true
+PACHD,Packeta,Packeta Countries,,1.0,2.0,,,,4.50,EUR,3-7,false,true
+PACHD,Packeta,Packeta Countries,,2.0,5.0,,,,5.90,EUR,3-7,false,true
+PACHD,Packeta,Packeta Countries,,5.0,10.0,,,,8.50,EUR,3-7,false,true
+PACHD,Packeta,Packeta Countries,,10.0,20.0,,,,12.50,EUR,3-7,false,true
+PACHD,Packeta,Packeta Countries,,20.0,31.5,,,,16.50,EUR,3-7,false,true
+MABNT,MailAlliance Boxable Non Tracked,Worldwide,,0.01,0.5,,,,1.50,EUR,10-21,false,true
+MABNT,MailAlliance Boxable Non Tracked,Worldwide,,0.5,1.0,,,,2.10,EUR,10-21,false,true
+MABNT,MailAlliance Boxable Non Tracked,Worldwide,,1.0,1.5,,,,2.50,EUR,10-21,false,true
+MABNT,MailAlliance Boxable Non Tracked,Worldwide,,1.5,2.0,,,,3.20,EUR,10-21,false,true
+ATEHD,Austrian Post - Eurodis Home Delivery,Austria,AT,0.01,2.0,,,,5.90,EUR,1-3,true,false
+ATEHD,Austrian Post - Eurodis Home Delivery,Austria,AT,2.0,5.0,,,,7.90,EUR,1-3,true,false
+ATEHD,Austrian Post - Eurodis Home Delivery,Austria,AT,5.0,10.0,,,,10.90,EUR,1-3,true,false
+ATEHD,Austrian Post - Eurodis Home Delivery,Austria,AT,10.0,20.0,,,,14.90,EUR,1-3,true,false
+ATEHD,Austrian Post - Eurodis Home Delivery,Austria,AT,20.0,31.5,,,,19.90,EUR,1-3,true,false
+BACK,Spring BACK Returns,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,2.0,,,,3.90,EUR,5-10,false,true
+BACK,Spring BACK Returns,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",2.0,5.0,,,,5.50,EUR,5-10,false,true
+BACK,Spring BACK Returns,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",5.0,10.0,,,,7.50,EUR,5-10,false,true
+BACK,Spring BACK Returns,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",10.0,20.0,,,,10.50,EUR,5-10,false,true
+BACK,Spring BACK Returns,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",20.0,31.5,,,,14.50,EUR,5-10,false,true
+BACKT,Spring BACK Tracked,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",0.01,2.0,,,,4.90,EUR,5-10,false,true
+BACKT,Spring BACK Tracked,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",2.0,5.0,,,,6.50,EUR,5-10,false,true
+BACKT,Spring BACK Tracked,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",5.0,10.0,,,,8.50,EUR,5-10,false,true
+BACKT,Spring BACK Tracked,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",10.0,20.0,,,,11.50,EUR,5-10,false,true
+BACKT,Spring BACK Tracked,Return Countries,"AT,BE,CZ,DE,DK,EE,ES,FI,FR,GR,HU,HR,IE,IT,LT,LU,LV,MT,NL,PL,PT,RO,SE,SI,SK",20.0,31.5,,,,15.50,EUR,5-10,false,true

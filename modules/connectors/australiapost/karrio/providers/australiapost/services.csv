@@ -1,0 +1,59 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+T28,Parcel Post,Australia,AU,0.01,0.5,105,50,50,8.95,AUD,3-5,true,false
+T28,Parcel Post,Australia,AU,0.5,1.0,105,50,50,10.50,AUD,3-5,true,false
+T28,Parcel Post,Australia,AU,1.0,3.0,105,50,50,12.50,AUD,3-5,true,false
+T28,Parcel Post,Australia,AU,3.0,5.0,105,50,50,14.95,AUD,3-5,true,false
+T28,Parcel Post,Australia,AU,5.0,10.0,105,50,50,18.95,AUD,3-5,true,false
+T28,Parcel Post,Australia,AU,10.0,22.0,105,50,50,25.95,AUD,3-5,true,false
+E34,Express Post,Australia,AU,0.01,0.5,105,50,50,12.95,AUD,1-2,true,false
+E34,Express Post,Australia,AU,0.5,1.0,105,50,50,14.50,AUD,1-2,true,false
+E34,Express Post,Australia,AU,1.0,3.0,105,50,50,17.50,AUD,1-2,true,false
+E34,Express Post,Australia,AU,3.0,5.0,105,50,50,20.95,AUD,1-2,true,false
+E34,Express Post,Australia,AU,5.0,10.0,105,50,50,26.95,AUD,1-2,true,false
+E34,Express Post,Australia,AU,10.0,22.0,105,50,50,35.95,AUD,1-2,true,false
+3D55,Parcel Post Signature,Australia,AU,0.01,0.5,105,50,50,10.95,AUD,3-5,true,false
+3D55,Parcel Post Signature,Australia,AU,0.5,1.0,105,50,50,12.50,AUD,3-5,true,false
+3D55,Parcel Post Signature,Australia,AU,1.0,3.0,105,50,50,14.95,AUD,3-5,true,false
+3D55,Parcel Post Signature,Australia,AU,3.0,5.0,105,50,50,17.50,AUD,3-5,true,false
+3D55,Parcel Post Signature,Australia,AU,5.0,10.0,105,50,50,21.95,AUD,3-5,true,false
+3D55,Parcel Post Signature,Australia,AU,10.0,22.0,105,50,50,29.95,AUD,3-5,true,false
+3J55,Express Post Signature,Australia,AU,0.01,0.5,105,50,50,14.95,AUD,1-2,true,false
+3J55,Express Post Signature,Australia,AU,0.5,1.0,105,50,50,16.50,AUD,1-2,true,false
+3J55,Express Post Signature,Australia,AU,1.0,3.0,105,50,50,19.95,AUD,1-2,true,false
+3J55,Express Post Signature,Australia,AU,3.0,5.0,105,50,50,23.50,AUD,1-2,true,false
+3J55,Express Post Signature,Australia,AU,5.0,10.0,105,50,50,29.95,AUD,1-2,true,false
+3J55,Express Post Signature,Australia,AU,10.0,22.0,105,50,50,39.95,AUD,1-2,true,false
+PTI8,Intl Standard Pack & Track,Asia Pacific,"NZ,SG,HK,JP,KR,MY,TH,ID,PH,IN,CN",0.01,0.5,105,50,50,15.90,AUD,6-10,false,true
+PTI8,Intl Standard Pack & Track,Asia Pacific,"NZ,SG,HK,JP,KR,MY,TH,ID,PH,IN,CN",0.5,1.0,105,50,50,19.90,AUD,6-10,false,true
+PTI8,Intl Standard Pack & Track,Asia Pacific,"NZ,SG,HK,JP,KR,MY,TH,ID,PH,IN,CN",1.0,2.0,105,50,50,25.90,AUD,6-10,false,true
+PTI8,Intl Standard Pack & Track,Asia Pacific,"NZ,SG,HK,JP,KR,MY,TH,ID,PH,IN,CN",2.0,5.0,105,50,50,35.90,AUD,6-10,false,true
+PTI8,Intl Standard Pack & Track,Asia Pacific,"NZ,SG,HK,JP,KR,MY,TH,ID,PH,IN,CN",5.0,10.0,105,50,50,49.90,AUD,6-10,false,true
+PTI8,Intl Standard Pack & Track,Asia Pacific,"NZ,SG,HK,JP,KR,MY,TH,ID,PH,IN,CN",10.0,22.0,105,50,50,69.90,AUD,6-10,false,true
+PTI7,Intl Standard with Signature,Worldwide,,0.01,0.5,105,50,50,18.90,AUD,6-10,false,true
+PTI7,Intl Standard with Signature,Worldwide,,0.5,1.0,105,50,50,22.90,AUD,6-10,false,true
+PTI7,Intl Standard with Signature,Worldwide,,1.0,2.0,105,50,50,29.90,AUD,6-10,false,true
+PTI7,Intl Standard with Signature,Worldwide,,2.0,5.0,105,50,50,39.90,AUD,6-10,false,true
+PTI7,Intl Standard with Signature,Worldwide,,5.0,10.0,105,50,50,55.90,AUD,6-10,false,true
+PTI7,Intl Standard with Signature,Worldwide,,10.0,22.0,105,50,50,79.90,AUD,6-10,false,true
+ECM8,Intl Express Merchandise,Worldwide,,0.01,0.5,105,50,50,29.90,AUD,2-4,false,true
+ECM8,Intl Express Merchandise,Worldwide,,0.5,1.0,105,50,50,35.90,AUD,2-4,false,true
+ECM8,Intl Express Merchandise,Worldwide,,1.0,2.0,105,50,50,45.90,AUD,2-4,false,true
+ECM8,Intl Express Merchandise,Worldwide,,2.0,5.0,105,50,50,59.90,AUD,2-4,false,true
+ECM8,Intl Express Merchandise,Worldwide,,5.0,10.0,105,50,50,79.90,AUD,2-4,false,true
+ECM8,Intl Express Merchandise,Worldwide,,10.0,22.0,105,50,50,109.90,AUD,2-4,false,true
+ECD8,Intl Express Documents,Worldwide,,0.01,0.5,35,25,5,25.90,AUD,2-4,false,true
+ECD8,Intl Express Documents,Worldwide,,0.5,1.0,35,25,5,29.90,AUD,2-4,false,true
+ECD8,Intl Express Documents,Worldwide,,1.0,1.5,35,25,5,32.90,AUD,2-4,false,true
+ECD8,Intl Express Documents,Worldwide,,1.5,2.0,35,25,5,35.90,AUD,2-4,false,true
+PR,eParcel Post Returns,Australia,AU,0.01,0.5,105,50,50,7.50,AUD,3-5,true,false
+PR,eParcel Post Returns,Australia,AU,0.5,1.0,105,50,50,8.90,AUD,3-5,true,false
+PR,eParcel Post Returns,Australia,AU,1.0,3.0,105,50,50,10.90,AUD,3-5,true,false
+PR,eParcel Post Returns,Australia,AU,3.0,5.0,105,50,50,12.90,AUD,3-5,true,false
+PR,eParcel Post Returns,Australia,AU,5.0,10.0,105,50,50,16.90,AUD,3-5,true,false
+PR,eParcel Post Returns,Australia,AU,10.0,22.0,105,50,50,22.90,AUD,3-5,true,false
+XPR,Express eParcel Post Returns,Australia,AU,0.01,0.5,105,50,50,10.50,AUD,1-2,true,false
+XPR,Express eParcel Post Returns,Australia,AU,0.5,1.0,105,50,50,12.50,AUD,1-2,true,false
+XPR,Express eParcel Post Returns,Australia,AU,1.0,3.0,105,50,50,15.50,AUD,1-2,true,false
+XPR,Express eParcel Post Returns,Australia,AU,3.0,5.0,105,50,50,18.50,AUD,1-2,true,false
+XPR,Express eParcel Post Returns,Australia,AU,5.0,10.0,105,50,50,23.50,AUD,1-2,true,false
+XPR,Express eParcel Post Returns,Australia,AU,10.0,22.0,105,50,50,31.50,AUD,1-2,true,false

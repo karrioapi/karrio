@@ -2199,6 +2199,434 @@ UPDATE_SERVICE_ZONE_IDS_RESPONSE = {
     }
 }
 
+class TestPerServiceWeightRangeScenarios(GraphTestCase):
+    """Tests for per-service weight range interactions.
+
+    These tests verify the correct scoping behavior of weight range operations:
+    - Global operations (add_weight_range, remove_weight_range) affect ALL services
+    - Per-service operations (update_service_rate, delete_service_rate) affect ONE service
+    - Editing a weight range on one service must NOT affect other services
+    - Deleting a weight range from one service must NOT affect other services
+
+    Scenarios covered:
+    ─────────────────────────────────────────────────────────────────────────────
+    SCENARIO 1: add_weight_range creates rows for ALL services (global)
+    SCENARIO 2: remove_weight_range removes from ALL services (global)
+    SCENARIO 3: delete_service_rate removes from ONE service only
+    SCENARIO 4: Per-service weight range edit (delete old + create new) scoped correctly
+    SCENARIO 5: Per-service weight range delete does not affect other services
+    SCENARIO 6: Services can have different weight ranges independently
+    SCENARIO 7: update_service_rate creates a new entry (implicit add for one service)
+    SCENARIO 8: get_weight_ranges derives from ALL services' rates (union)
+    SCENARIO 9: Overlapping weight range validation on add_weight_range
+    SCENARIO 10: Weight range with negative/invalid values rejected
+    """
+
+    def setUp(self):
+        super().setUp()
+
+        self.rate_sheet = providers.RateSheet.objects.create(
+            name="Weight Range Scoping Test",
+            carrier_name="dhl_germany",
+            slug="wr_scoping_test",
+            zones=[
+                {"id": "zone_de", "label": "Germany", "country_codes": ["DE"]},
+                {"id": "zone_eu", "label": "EU", "country_codes": ["FR", "IT", "ES"]},
+            ],
+            service_rates=[],
+            created_by=self.user,
+        )
+
+        self.svc_paket = providers.ServiceLevel.objects.create(
+            service_name="DHL Paket",
+            service_code="dhl_paket",
+            carrier_service_code="V01PAK",
+            currency="EUR",
+            zone_ids=["zone_de"],
+            created_by=self.user,
+        )
+        self.svc_kleinpaket = providers.ServiceLevel.objects.create(
+            service_name="DHL Kleinpaket",
+            service_code="dhl_kleinpaket",
+            carrier_service_code="V62WP",
+            currency="EUR",
+            zone_ids=["zone_de"],
+            created_by=self.user,
+        )
+        self.rate_sheet.services.add(self.svc_paket, self.svc_kleinpaket)
+
+        # Seed: Paket has 3 weight ranges, Kleinpaket has 2 (different set)
+        self.rate_sheet.service_rates = [
+            # DHL Paket: 0-1, 1-5, 5-10
+            {"service_id": self.svc_paket.id, "zone_id": "zone_de", "rate": 3.99, "min_weight": 0, "max_weight": 1},
+            {"service_id": self.svc_paket.id, "zone_id": "zone_de", "rate": 5.49, "min_weight": 1, "max_weight": 5},
+            {"service_id": self.svc_paket.id, "zone_id": "zone_de", "rate": 8.99, "min_weight": 5, "max_weight": 10},
+            # DHL Kleinpaket: 0-0.5, 0.5-1
+            {"service_id": self.svc_kleinpaket.id, "zone_id": "zone_de", "rate": 2.49, "min_weight": 0, "max_weight": 0.5},
+            {"service_id": self.svc_kleinpaket.id, "zone_id": "zone_de", "rate": 3.39, "min_weight": 0.5, "max_weight": 1},
+        ]
+        self.rate_sheet.save()
+
+    # =========================================================================
+    # SCENARIO 1: add_weight_range is GLOBAL (creates for all services)
+    # =========================================================================
+
+    def test_add_weight_range_creates_for_all_services(self):
+        """add_weight_range creates rate=0 entries for ALL service+zone combos."""
+        self.rate_sheet.add_weight_range(min_weight=10, max_weight=20)
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        # Both services should get new entries
+        paket_new = [
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 10
+        ]
+        klein_new = [
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_kleinpaket.id and r["min_weight"] == 10
+        ]
+        self.assertEqual(len(paket_new), 1, "Paket should get the new weight range")
+        self.assertEqual(len(klein_new), 1, "Kleinpaket should get the new weight range")
+        self.assertEqual(paket_new[0]["rate"], 0, "New entries should have rate=0")
+        self.assertEqual(klein_new[0]["rate"], 0, "New entries should have rate=0")
+
+    # =========================================================================
+    # SCENARIO 2: remove_weight_range is GLOBAL (removes from all services)
+    # =========================================================================
+
+    def test_remove_weight_range_removes_from_all_services(self):
+        """remove_weight_range deletes matching entries from ALL services."""
+        # Add a shared weight range first
+        self.rate_sheet.add_weight_range(min_weight=10, max_weight=20)
+        self.rate_sheet.refresh_from_db()
+        total_before = len(self.rate_sheet.service_rates)
+
+        # Remove it globally
+        self.rate_sheet.remove_weight_range(min_weight=10, max_weight=20)
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        remaining = [
+            r for r in self.rate_sheet.service_rates
+            if r.get("min_weight") == 10 and r.get("max_weight") == 20
+        ]
+        self.assertEqual(len(remaining), 0, "All entries with 10-20 should be gone")
+        # Original entries still intact
+        self.assertEqual(len(self.rate_sheet.service_rates), 5, "Original 5 entries should remain")
+
+    # =========================================================================
+    # SCENARIO 3: delete_service_rate removes from ONE service only
+    # =========================================================================
+
+    def test_delete_service_rate_scoped_to_one_service(self):
+        """remove_service_rate with weight bracket only affects the specified service."""
+        # Add a shared weight range (both services get it)
+        self.rate_sheet.add_weight_range(min_weight=10, max_weight=20)
+        self.rate_sheet.refresh_from_db()
+
+        # Delete only from Kleinpaket
+        self.rate_sheet.remove_service_rate(
+            service_id=self.svc_kleinpaket.id,
+            zone_id="zone_de",
+            min_weight=10,
+            max_weight=20,
+        )
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        # Paket should still have it
+        paket_remaining = [
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r.get("min_weight") == 10
+        ]
+        klein_remaining = [
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_kleinpaket.id and r.get("min_weight") == 10
+        ]
+        self.assertEqual(len(paket_remaining), 1, "Paket still has 10-20")
+        self.assertEqual(len(klein_remaining), 0, "Kleinpaket 10-20 was removed")
+
+    # =========================================================================
+    # SCENARIO 4: Per-service weight range edit (delete old + create new)
+    # =========================================================================
+
+    def test_per_service_weight_range_edit_does_not_affect_other_services(self):
+        """Editing a weight range on one service (delete old + add new) should NOT
+        create rows on other services. This simulates the frontend's per-service
+        EditWeightRangeDialog flow: deleteServiceRate + updateServiceRate."""
+
+        # Edit Paket's 5-10 range to 5-15 (per-service, NOT global)
+        old_rate = next(
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 5 and r["max_weight"] == 10
+        )
+
+        # Step 1: Delete old entry (per-service)
+        self.rate_sheet.remove_service_rate(
+            service_id=self.svc_paket.id,
+            zone_id="zone_de",
+            min_weight=5,
+            max_weight=10,
+        )
+
+        # Step 2: Create new entry with updated max_weight (per-service)
+        self.rate_sheet.update_service_rate(
+            service_id=self.svc_paket.id,
+            zone_id="zone_de",
+            rate_data={"rate": old_rate["rate"], "min_weight": 5, "max_weight": 15},
+        )
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        # Verify Paket has new range
+        paket_rates = [r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_paket.id]
+        paket_weights = [(r["min_weight"], r["max_weight"]) for r in paket_rates]
+        self.assertIn((5, 15), paket_weights, "Paket should have 5-15")
+        self.assertNotIn((5, 10), paket_weights, "Paket should NOT have 5-10 anymore")
+
+        # Verify Kleinpaket is UNCHANGED
+        klein_rates = [r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_kleinpaket.id]
+        klein_weights = [(r["min_weight"], r["max_weight"]) for r in klein_rates]
+        self.assertEqual(
+            sorted(klein_weights),
+            [(0, 0.5), (0.5, 1)],
+            "Kleinpaket should be completely unaffected",
+        )
+
+        # Total entries should be same (3 Paket + 2 Kleinpaket = 5)
+        self.assertEqual(len(self.rate_sheet.service_rates), 5)
+
+    # =========================================================================
+    # SCENARIO 5: Per-service weight range delete does NOT affect others
+    # =========================================================================
+
+    def test_per_service_weight_range_delete_does_not_affect_others(self):
+        """Deleting a weight range from one service by removing all its zone rates
+        should NOT affect other services' rates for different weight ranges."""
+
+        # Delete all Paket's 5-10 entries (simulate removing a weight range row)
+        self.rate_sheet.remove_service_rate(
+            service_id=self.svc_paket.id,
+            zone_id="zone_de",
+            min_weight=5,
+            max_weight=10,
+        )
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        # Paket should have 2 ranges now
+        paket_rates = [r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_paket.id]
+        self.assertEqual(len(paket_rates), 2, "Paket should have 2 ranges left")
+
+        # Kleinpaket unchanged
+        klein_rates = [r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_kleinpaket.id]
+        self.assertEqual(len(klein_rates), 2, "Kleinpaket should still have 2 ranges")
+
+    # =========================================================================
+    # SCENARIO 6: Services can have different weight ranges independently
+    # =========================================================================
+
+    def test_services_have_independent_weight_ranges(self):
+        """Each service can have its own set of weight ranges that don't overlap
+        with other services."""
+
+        paket_ranges = set()
+        klein_ranges = set()
+        for r in self.rate_sheet.service_rates:
+            key = (r["min_weight"], r["max_weight"])
+            if r["service_id"] == self.svc_paket.id:
+                paket_ranges.add(key)
+            else:
+                klein_ranges.add(key)
+
+        print(f"Paket ranges: {paket_ranges}")
+        print(f"Klein ranges: {klein_ranges}")
+
+        self.assertEqual(paket_ranges, {(0, 1), (1, 5), (5, 10)})
+        self.assertEqual(klein_ranges, {(0, 0.5), (0.5, 1)})
+        # They are different sets
+        self.assertNotEqual(paket_ranges, klein_ranges)
+
+    # =========================================================================
+    # SCENARIO 7: update_service_rate creates implicit per-service entry
+    # =========================================================================
+
+    def test_update_service_rate_creates_entry_for_single_service(self):
+        """update_service_rate can create a new weight bracket for a single service
+        without affecting other services."""
+
+        # Add a 10-20 range to Kleinpaket only (via update_service_rate)
+        self.rate_sheet.update_service_rate(
+            service_id=self.svc_kleinpaket.id,
+            zone_id="zone_de",
+            rate_data={"rate": 12.50, "min_weight": 10, "max_weight": 20},
+        )
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        # Kleinpaket now has 3 ranges
+        klein_rates = [r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_kleinpaket.id]
+        self.assertEqual(len(klein_rates), 3)
+        new_rate = next(r for r in klein_rates if r["min_weight"] == 10)
+        self.assertEqual(new_rate["rate"], 12.50)
+
+        # Paket should NOT have 10-20
+        paket_has_10_20 = any(
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 10
+        )
+        self.assertFalse(paket_has_10_20, "Paket should NOT get the 10-20 range")
+
+    # =========================================================================
+    # SCENARIO 8: get_weight_ranges is union across all services
+    # =========================================================================
+
+    def test_get_weight_ranges_union_all_services(self):
+        """get_weight_ranges returns the union of all weight ranges across services."""
+        ranges = self.rate_sheet.get_weight_ranges()
+        range_tuples = [(r["min_weight"], r["max_weight"]) for r in ranges]
+
+        print(f"All ranges: {range_tuples}")
+
+        # Union of Paket (0-1, 1-5, 5-10) and Kleinpaket (0-0.5, 0.5-1)
+        expected = {(0, 0.5), (0, 1), (0.5, 1), (1, 5), (5, 10)}
+        self.assertEqual(set(range_tuples), expected)
+
+    # =========================================================================
+    # SCENARIO 9: add_weight_range overlap validation
+    # =========================================================================
+
+    def test_add_weight_range_rejects_overlap(self):
+        """add_weight_range raises ValueError when the new range overlaps existing ones."""
+        with self.assertRaises(ValueError) as ctx:
+            self.rate_sheet.add_weight_range(min_weight=0, max_weight=2)
+
+        print(str(ctx.exception))
+        self.assertIn("overlaps", str(ctx.exception).lower())
+
+    # =========================================================================
+    # SCENARIO 10: Input validation on add_weight_range
+    # =========================================================================
+
+    def test_add_weight_range_rejects_invalid_inputs(self):
+        """add_weight_range rejects negative min_weight and max <= min."""
+        with self.assertRaises(ValueError):
+            self.rate_sheet.add_weight_range(min_weight=-1, max_weight=5)
+
+        with self.assertRaises(ValueError):
+            self.rate_sheet.add_weight_range(min_weight=5, max_weight=3)
+
+        with self.assertRaises(ValueError):
+            self.rate_sheet.add_weight_range(min_weight=5, max_weight=5)
+
+    # =========================================================================
+    # SCENARIO 11: Multi-zone per-service edit
+    # =========================================================================
+
+    def test_per_service_edit_with_multiple_zones(self):
+        """When a service has rates in multiple zones, editing a weight range should
+        re-key all zone entries for that service only."""
+
+        # Give Paket a zone_eu entry at 5-10
+        self.rate_sheet.update_service_rate(
+            service_id=self.svc_paket.id,
+            zone_id="zone_eu",
+            rate_data={"rate": 12.99, "min_weight": 5, "max_weight": 10},
+        )
+        self.rate_sheet.refresh_from_db()
+
+        # Now simulate per-service edit: change 5-10 → 5-15 for Paket
+        # Delete old entries for Paket 5-10 (both zones)
+        paket_old = [
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 5 and r["max_weight"] == 10
+        ]
+        for r in paket_old:
+            self.rate_sheet.remove_service_rate(
+                service_id=r["service_id"], zone_id=r["zone_id"],
+                min_weight=5, max_weight=10,
+            )
+
+        # Add new entries with 5-15
+        for r in paket_old:
+            self.rate_sheet.update_service_rate(
+                service_id=r["service_id"], zone_id=r["zone_id"],
+                rate_data={"rate": r["rate"], "min_weight": 5, "max_weight": 15},
+            )
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        # Paket should have 5-15 in both zones
+        paket_de = next(
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["zone_id"] == "zone_de" and r["min_weight"] == 5
+        )
+        paket_eu = next(
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["zone_id"] == "zone_eu" and r["min_weight"] == 5
+        )
+        self.assertEqual(paket_de["max_weight"], 15)
+        self.assertEqual(paket_eu["max_weight"], 15)
+        self.assertEqual(paket_de["rate"], 8.99)
+        self.assertEqual(paket_eu["rate"], 12.99)
+
+        # Kleinpaket completely unaffected
+        klein_rates = [r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_kleinpaket.id]
+        self.assertEqual(len(klein_rates), 2, "Kleinpaket unchanged")
+
+    # =========================================================================
+    # SCENARIO 12: Deleting all zones' rates for a weight range on one service
+    # =========================================================================
+
+    def test_delete_weight_range_from_one_service_all_zones(self):
+        """When deleting a weight range from a service with multiple zones,
+        each zone's entry must be deleted individually."""
+
+        # Add zone_eu to Paket
+        self.svc_paket.zone_ids = ["zone_de", "zone_eu"]
+        self.svc_paket.save()
+        self.rate_sheet.update_service_rate(
+            service_id=self.svc_paket.id, zone_id="zone_eu",
+            rate_data={"rate": 7.99, "min_weight": 1, "max_weight": 5},
+        )
+        self.rate_sheet.refresh_from_db()
+
+        # Delete Paket's 1-5 range from ALL zones (per-service)
+        paket_1_5 = [
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 1 and r["max_weight"] == 5
+        ]
+        self.assertEqual(len(paket_1_5), 2, "Paket has 1-5 in 2 zones")
+
+        for r in paket_1_5:
+            self.rate_sheet.remove_service_rate(
+                service_id=r["service_id"], zone_id=r["zone_id"],
+                min_weight=1, max_weight=5,
+            )
+        self.rate_sheet.refresh_from_db()
+
+        print(self.rate_sheet.service_rates)
+
+        # Paket should have no 1-5 entries
+        paket_1_5_after = [
+            r for r in self.rate_sheet.service_rates
+            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 1 and r["max_weight"] == 5
+        ]
+        self.assertEqual(len(paket_1_5_after), 0)
+
+        # Kleinpaket unchanged
+        klein_rates = [r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_kleinpaket.id]
+        self.assertEqual(len(klein_rates), 2)
+
+
 UPDATE_SERVICE_SURCHARGE_IDS_RESPONSE = {
     "data": {
         "update_service_surcharge_ids": {

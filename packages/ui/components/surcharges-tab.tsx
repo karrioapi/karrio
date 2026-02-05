@@ -1,230 +1,227 @@
 "use client";
 
 import React from "react";
-import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
-import { Label } from "@karrio/ui/components/ui/label";
+import { PlusIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@karrio/ui/components/ui/select";
-import { PlusIcon, TrashIcon, Link2Icon } from "@radix-ui/react-icons";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@karrio/ui/components/ui/popover";
 import type {
   SharedSurcharge,
   ServiceLevelWithZones,
 } from "@karrio/ui/components/rate-sheet-editor";
 
+function cn(...classes: (string | boolean | undefined | null)[]): string {
+  return classes.filter(Boolean).join(" ");
+}
+
+interface SurchargePreset {
+  id: string;
+  name: string;
+  amount: number;
+  surcharge_type: string;
+}
+
 interface SurchargesTabProps {
   surcharges: SharedSurcharge[];
   services: ServiceLevelWithZones[];
-  onUpdateSurcharge: (
-    surchargeId: string,
-    updates: Partial<SharedSurcharge>
-  ) => void;
+  onEditSurcharge: (surcharge: SharedSurcharge) => void;
   onAddSurcharge: () => void;
   onRemoveSurcharge: (surchargeId: string) => void;
-  onToggleServiceSurcharge: (
-    serviceId: string,
-    surchargeId: string,
-    linked: boolean
-  ) => void;
+  surchargePresets?: SurchargePreset[];
+  onAddSurchargeFromPreset?: (presetSurchargeId: string) => void;
+  onCloneSurcharge?: (surcharge: SharedSurcharge) => void;
 }
-
-const SURCHARGE_TYPES = [
-  { value: "fixed", label: "Fixed Amount" },
-  { value: "percentage", label: "Percentage" },
-];
 
 export function SurchargesTab({
   surcharges,
   services,
-  onUpdateSurcharge,
+  onEditSurcharge,
   onAddSurcharge,
   onRemoveSurcharge,
-  onToggleServiceSurcharge,
+  surchargePresets,
+  onAddSurchargeFromPreset,
+  onCloneSurcharge,
 }: SurchargesTabProps) {
-  // Helper to check if a service has a surcharge linked
-  const isServiceLinked = (serviceId: string, surchargeId: string): boolean => {
-    const service = services.find((s) => s.id === serviceId);
-    return service?.surcharge_ids?.includes(surchargeId) ?? false;
-  };
-
-  // Get linked services count for a surcharge
   const getLinkedServicesCount = (surchargeId: string): number => {
     return services.filter((s) => s.surcharge_ids?.includes(surchargeId)).length;
   };
+
+  const formatAmount = (surcharge: SharedSurcharge): string => {
+    if (surcharge.surcharge_type === "percentage") {
+      return `${surcharge.amount ?? 0}%`;
+    }
+    return `${surcharge.amount ?? 0}`;
+  };
+
+  const formatType = (surcharge: SharedSurcharge): string => {
+    return surcharge.surcharge_type === "percentage" ? "Percentage" : "Fixed Amount";
+  };
+
+  const AddSurchargePopover = ({ align = "end" }: { align?: "start" | "end" | "center" }) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors">
+          <PlusIcon className="h-4 w-4" />
+          Add Surcharge
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align={align} className="w-56 p-2" sideOffset={8}>
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground px-2 py-1">Add surcharge</p>
+
+          {surchargePresets && surchargePresets.length > 0 && (
+            <>
+              <div className="max-h-48 overflow-y-auto space-y-0.5">
+                {surchargePresets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => onAddSurchargeFromPreset?.(preset.id)}
+                    className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors truncate"
+                    title={`${preset.name} (${preset.surcharge_type === "percentage" ? `${preset.amount}%` : preset.amount})`}
+                  >
+                    {preset.name}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-border my-1" />
+            </>
+          )}
+
+          {surcharges.length > 0 && onCloneSurcharge && (
+            <>
+              <p className="text-xs text-muted-foreground px-2 py-0.5">Clone existing</p>
+              <div className="max-h-32 overflow-y-auto space-y-0.5">
+                {surcharges.map((surcharge) => (
+                  <button
+                    key={surcharge.id}
+                    onClick={() => onCloneSurcharge(surcharge)}
+                    className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors truncate text-muted-foreground"
+                    title={`Clone ${surcharge.name}`}
+                  >
+                    {surcharge.name || "Unnamed"}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-border my-1" />
+            </>
+          )}
+
+          <button
+            onClick={onAddSurcharge}
+            className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors flex items-center gap-1.5 text-primary font-medium"
+          >
+            <PlusIcon className="h-3.5 w-3.5" />
+            Create new surcharge
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 
   if (surcharges.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-8">
         <p className="mb-4">No surcharges configured yet.</p>
-        <Button onClick={onAddSurcharge}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Surcharge
-        </Button>
+        <AddSurchargePopover align="center" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 h-full overflow-y-auto pr-2">
+    <div className="space-y-4 h-full overflow-y-auto pr-2">
       <div className="flex items-center justify-between sticky top-0 bg-background z-10 py-2">
         <h3 className="text-lg font-medium">Surcharge Configuration</h3>
-        <Button onClick={onAddSurcharge}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Surcharge
-        </Button>
+        <AddSurchargePopover />
       </div>
 
-      <div className="grid gap-4 grid-cols-1 pb-6">
-        {surcharges.map((surcharge, index) => (
+      {surcharges.map((surcharge, index) => {
+        const linkedCount = getLinkedServicesCount(surcharge.id);
+
+        return (
           <div
             key={surcharge.id}
-            className="p-4 bg-card border border-border rounded-lg shadow-sm space-y-4 relative group"
+            className="bg-card border border-border rounded-lg shadow-sm hover:border-primary/50 transition-colors"
           >
-            <div className="flex items-center justify-between gap-2">
-              <h4 className="text-base font-semibold text-foreground">
-                {surcharge.name || `Surcharge ${index + 1}`}
-              </h4>
-              <div className="flex items-center gap-2">
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={surcharge.active ?? false}
-                    onChange={(e) =>
-                      onUpdateSurcharge(surcharge.id, {
-                        active: e.target.checked,
-                      })
-                    }
-                    className="rounded border-border"
-                  />
-                  Active
-                </label>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onRemoveSurcharge(surcharge.id)}
-                  className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                  title="Remove Surcharge"
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3">
-              <div>
-                <Label className="text-xs mb-1 block">Name</Label>
-                <Input
-                  value={surcharge.name || ""}
-                  onChange={(e) =>
-                    onUpdateSurcharge(surcharge.id, { name: e.target.value })
-                  }
-                  placeholder="Fuel Surcharge"
-                />
-              </div>
-
-              <div>
-                <Label className="text-xs mb-1 block">Type</Label>
-                <Select
-                  value={surcharge.surcharge_type || "fixed"}
-                  onValueChange={(val) =>
-                    onUpdateSurcharge(surcharge.id, { surcharge_type: val })
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SURCHARGE_TYPES.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-xs mb-1 block">
-                  Amount {surcharge.surcharge_type === "percentage" ? "(%)" : ""}
-                </Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={surcharge.amount?.toString() || "0"}
-                  onChange={(e) =>
-                    onUpdateSurcharge(surcharge.id, {
-                      amount: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div>
-                <Label className="text-xs mb-1 block">Cost (COGS)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={surcharge.cost?.toString() || ""}
-                  onChange={(e) =>
-                    onUpdateSurcharge(surcharge.id, {
-                      cost: e.target.value ? parseFloat(e.target.value) : null,
-                    })
-                  }
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-
-            {/* Service Linking Section */}
-            {services.length > 0 && (
-              <div className="pt-3 border-t border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <Link2Icon className="h-4 w-4 text-muted-foreground" />
-                  <Label className="text-xs">
-                    Linked Services ({getLinkedServicesCount(surcharge.id)} of{" "}
-                    {services.length})
-                  </Label>
+            <div className="px-6 py-4 space-y-4">
+              {/* Header with name, active badge, and actions */}
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <h4 className="font-semibold text-foreground text-base">
+                    {surcharge.name || `Surcharge ${index + 1}`}
+                  </h4>
+                  <span
+                    className={cn(
+                      "inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold",
+                      surcharge.active
+                        ? "bg-green-500 text-white dark:bg-green-600 dark:text-white"
+                        : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                    )}
+                  >
+                    {surcharge.active ? "Active" : "Inactive"}
+                  </span>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {services.map((service) => {
-                    const isLinked = isServiceLinked(service.id, surcharge.id);
-                    return (
-                      <button
-                        key={service.id}
-                        onClick={() =>
-                          onToggleServiceSurcharge(
-                            service.id,
-                            surcharge.id,
-                            !isLinked
-                          )
-                        }
-                        className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
-                          isLinked
-                            ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
-                            : "bg-background text-muted-foreground border-border hover:bg-accent hover:text-foreground"
-                        }`}
-                        title={
-                          isLinked
-                            ? `Unlink from ${service.service_name}`
-                            : `Link to ${service.service_name}`
-                        }
-                      >
-                        {service.service_name || service.service_code}
-                      </button>
-                    );
-                  })}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => onEditSurcharge(surcharge)}
+                    className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded transition-colors"
+                    title="Edit Surcharge"
+                  >
+                    <Pencil1Icon className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => onRemoveSurcharge(surcharge.id)}
+                    className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded transition-colors"
+                    title="Delete Surcharge"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
-            )}
+
+              {/* Surcharge details grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Type:
+                  </div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {formatType(surcharge)}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Amount:
+                  </div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {formatAmount(surcharge)}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Cost (COGS):
+                  </div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {surcharge.cost != null ? surcharge.cost : "\u2014"}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Linked Services:
+                  </div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {linkedCount} of {services.length}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }

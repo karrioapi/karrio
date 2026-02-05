@@ -14,6 +14,7 @@ METADATA = metadata.PluginMetadata(
     # Data Units
     is_hub=False,
     services=units.ShippingService,
+    service_levels=units.DEFAULT_SERVICES,
     options=units.ShippingOption,
     connection_configs=units.ConnectionConfig,
     has_intl_accounts=True,

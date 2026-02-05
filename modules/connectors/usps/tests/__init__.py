@@ -1,4 +1,5 @@
 
+from tests.usps.test_authentication import *
 from tests.usps.test_rate import *
 from tests.usps.test_pickup import *
 from tests.usps.test_tracking import *

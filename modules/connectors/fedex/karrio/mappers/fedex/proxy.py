@@ -204,6 +204,7 @@ class Proxy(proxy.Proxy):
                 headers={"content-Type": "application/x-www-form-urlencoded"},
                 data=urllib.parse.urlencode(auth_type.data),
                 decoder=lib.to_dict,
+                on_error=lib.error_decoder,
             )
             messages = provider_error.parse_error_response(response, self.settings)
 

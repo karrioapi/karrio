@@ -1,0 +1,19 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+STANDARD-PICKUP,Standard Pickup,Australia,AU,0.01,0.5,120,60,60,6.95,AUD,3-7,true,false
+STANDARD-PICKUP,Standard Pickup,Australia,AU,0.5,1.0,120,60,60,7.95,AUD,3-7,true,false
+STANDARD-PICKUP,Standard Pickup,Australia,AU,1.0,3.0,120,60,60,9.95,AUD,3-7,true,false
+STANDARD-PICKUP,Standard Pickup,Australia,AU,3.0,5.0,120,60,60,11.95,AUD,3-7,true,false
+STANDARD-PICKUP,Standard Pickup,Australia,AU,5.0,10.0,120,60,60,15.95,AUD,3-7,true,false
+STANDARD-PICKUP,Standard Pickup,Australia,AU,10.0,25.0,120,60,60,21.95,AUD,3-7,true,false
+STANDARD-DROPOFF,Standard Dropoff,Australia,AU,0.01,0.5,120,60,60,5.95,AUD,3-7,true,false
+STANDARD-DROPOFF,Standard Dropoff,Australia,AU,0.5,1.0,120,60,60,6.95,AUD,3-7,true,false
+STANDARD-DROPOFF,Standard Dropoff,Australia,AU,1.0,3.0,120,60,60,8.95,AUD,3-7,true,false
+STANDARD-DROPOFF,Standard Dropoff,Australia,AU,3.0,5.0,120,60,60,10.95,AUD,3-7,true,false
+STANDARD-DROPOFF,Standard Dropoff,Australia,AU,5.0,10.0,120,60,60,14.95,AUD,3-7,true,false
+STANDARD-DROPOFF,Standard Dropoff,Australia,AU,10.0,25.0,120,60,60,19.95,AUD,3-7,true,false
+EXPRESS-PICKUP,Express Pickup,Australia,AU,0.01,0.5,120,60,60,9.95,AUD,1-3,true,false
+EXPRESS-PICKUP,Express Pickup,Australia,AU,0.5,1.0,120,60,60,11.95,AUD,1-3,true,false
+EXPRESS-PICKUP,Express Pickup,Australia,AU,1.0,3.0,120,60,60,14.95,AUD,1-3,true,false
+EXPRESS-PICKUP,Express Pickup,Australia,AU,3.0,5.0,120,60,60,17.95,AUD,1-3,true,false
+EXPRESS-PICKUP,Express Pickup,Australia,AU,5.0,10.0,120,60,60,22.95,AUD,1-3,true,false
+EXPRESS-PICKUP,Express Pickup,Australia,AU,10.0,25.0,120,60,60,29.95,AUD,1-3,true,false

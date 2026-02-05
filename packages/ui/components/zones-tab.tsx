@@ -1,19 +1,12 @@
 "use client";
 
 import React from "react";
-import { Button } from "@karrio/ui/components/ui/button";
-import { Input } from "@karrio/ui/components/ui/input";
-import { Label } from "@karrio/ui/components/ui/label";
-import { MultiSelect } from "@karrio/ui/components/multi-select";
+import { PlusIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@karrio/ui/components/ui/select";
-import { WEIGHT_UNITS } from "@karrio/types";
-import { PlusIcon, TrashIcon } from "@radix-ui/react-icons";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@karrio/ui/components/ui/popover";
 import type {
   EmbeddedZone,
   ServiceLevelWithZones,
@@ -24,46 +17,40 @@ interface MultiSelectOption {
   label: string;
 }
 
+interface ZonePreset {
+  id: string;
+  label: string;
+  countries: number;
+}
+
 interface ZonesTabProps {
   services: ServiceLevelWithZones[];
   sharedZonesFromParent?: EmbeddedZone[];
   onUpdateZone: (zoneLabel: string, updates: Partial<EmbeddedZone>) => void;
+  onEditZone: (zone: EmbeddedZone) => void;
   onAddZone: () => void;
   onRemoveZone: (zoneLabel: string) => void;
   countryOptions: MultiSelectOption[];
-  getZoneTextValue?: (
-    zoneLabel: string,
-    field: "cities" | "postal_codes",
-    currentArray: string[] | undefined | null
-  ) => string;
-  setZoneTextValue?: (
-    zoneLabel: string,
-    field: "cities" | "postal_codes",
-    text: string
-  ) => void;
-  persistZoneTextValue?: (
-    zoneLabel: string,
-    field: "cities" | "postal_codes"
-  ) => void;
+  zonePresets?: ZonePreset[];
+  onAddZoneFromPreset?: (presetZoneId: string) => void;
+  onCloneZone?: (zone: EmbeddedZone) => void;
 }
 
 export function ZonesTab({
   services,
   sharedZonesFromParent = [],
-  onUpdateZone,
+  onEditZone,
   onAddZone,
   onRemoveZone,
-  countryOptions,
-  getZoneTextValue,
-  setZoneTextValue,
-  persistZoneTextValue,
+  zonePresets,
+  onAddZoneFromPreset,
+  onCloneZone,
 }: ZonesTabProps) {
   // Build combined zones list from service zones first, then unlinked zones from parent
-  const zones = React.useMemo(() => {
+  const zones = (() => {
     const zonesMap = new Map<string, EmbeddedZone>();
     const orderedZones: EmbeddedZone[] = [];
 
-    // Add linked zones from services first (maintains their order)
     services.flatMap((s) => s.zones || []).forEach((zone) => {
       const key = zone.label || zone.id;
       if (!zonesMap.has(key)) {
@@ -72,7 +59,6 @@ export function ZonesTab({
       }
     });
 
-    // Then add unlinked zones from parent (these are newly added zones - appear at end)
     sharedZonesFromParent.forEach((zone) => {
       const key = zone.label || zone.id;
       if (!zonesMap.has(key)) {
@@ -82,221 +68,186 @@ export function ZonesTab({
     });
 
     return orderedZones;
-  }, [services, sharedZonesFromParent]);
+  })();
+
+  // Count how many services link to a given zone
+  const getLinkedServicesCount = (zone: EmbeddedZone): number => {
+    return services.filter((s) =>
+      (s.zones || []).some((z) => z.id === zone.id || z.label === zone.label)
+    ).length;
+  };
+
+  // Format country codes for display
+  const formatCountries = (codes?: string[]): string => {
+    if (!codes || codes.length === 0) return "\u2014";
+    if (codes.length <= 4) return codes.join(", ");
+    return `${codes.slice(0, 4).join(", ")} (+${codes.length - 4})`;
+  };
+
+  const AddZonePopover = ({ align = "end" }: { align?: "start" | "end" | "center" }) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors">
+          <PlusIcon className="h-4 w-4" />
+          Add Zone
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align={align} className="w-56 p-2" sideOffset={8}>
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground px-2 py-1">Add zone</p>
+
+          {zonePresets && zonePresets.length > 0 && (
+            <>
+              <div className="max-h-48 overflow-y-auto space-y-0.5">
+                {zonePresets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => onAddZoneFromPreset?.(preset.id)}
+                    className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors truncate"
+                    title={`${preset.label} (${preset.countries} countries)`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-border my-1" />
+            </>
+          )}
+
+          {zones.length > 0 && onCloneZone && (
+            <>
+              <p className="text-xs text-muted-foreground px-2 py-0.5">Clone existing</p>
+              <div className="max-h-32 overflow-y-auto space-y-0.5">
+                {zones.map((zone) => (
+                  <button
+                    key={zone.id}
+                    onClick={() => onCloneZone(zone)}
+                    className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors truncate text-muted-foreground"
+                    title={`Clone ${zone.label}`}
+                  >
+                    {zone.label}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-border my-1" />
+            </>
+          )}
+
+          <button
+            onClick={onAddZone}
+            className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors flex items-center gap-1.5 text-primary font-medium"
+          >
+            <PlusIcon className="h-3.5 w-3.5" />
+            Create new zone
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 
   if (zones.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-8">
         <p className="mb-4">No zones configured yet.</p>
-        <Button onClick={onAddZone}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Zone
-        </Button>
+        <AddZonePopover align="center" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 h-full overflow-y-auto pr-2">
+    <div className="space-y-4 h-full overflow-y-auto pr-2">
       <div className="flex items-center justify-between sticky top-0 bg-background z-10 py-2">
         <h3 className="text-lg font-medium">Zone Configuration</h3>
-        <Button onClick={onAddZone}>
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Add Zone
-        </Button>
+        <AddZonePopover />
       </div>
 
-      <div className="grid gap-4 grid-cols-1 pb-6">
-        {zones.map((zone, index) => {
-          const zoneKey = zone.label || zone.id;
-          return (
-            <div
-              key={zone.id || index}
-              className="p-4 bg-card border border-border rounded-lg shadow-sm space-y-4 relative group"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <h4 className="text-base font-semibold text-foreground">
+      {zones.map((zone, index) => {
+        const zoneKey = zone.label || zone.id;
+        const linkedCount = getLinkedServicesCount(zone);
+        const countriesDisplay = formatCountries(zone.country_codes);
+        const hasCities = zone.cities && zone.cities.length > 0;
+        const hasPostalCodes = zone.postal_codes && zone.postal_codes.length > 0;
+
+        return (
+          <div
+            key={zone.id || index}
+            className="bg-card border border-border rounded-lg shadow-sm hover:border-primary/50 transition-colors"
+          >
+            <div className="px-6 py-4 space-y-4">
+              {/* Header with zone name and actions */}
+              <div className="flex items-center justify-between gap-4">
+                <h4 className="font-semibold text-foreground text-base">
                   {zone.label || `Zone ${index + 1}`}
                 </h4>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onRemoveZone(zoneKey)}
-                  className="text-muted-foreground hover:text-destructive"
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                <div>
-                  <Label className="text-xs mb-1 block">Label</Label>
-                  <Input
-                    value={zone.label || ""}
-                    onChange={(e) =>
-                      onUpdateZone(zoneKey, { label: e.target.value })
-                    }
-                    placeholder={`Zone ${index + 1}`}
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-xs mb-1 block">Country Codes</Label>
-                  <MultiSelect
-                    options={countryOptions}
-                    value={zone.country_codes || []}
-                    onValueChange={(vals) => {
-                      const unique = Array.from(
-                        new Set(vals.map((v) => v.toUpperCase()))
-                      );
-                      onUpdateZone(zoneKey, { country_codes: unique });
-                    }}
-                    placeholder="Select countries"
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-xs mb-1 block">
-                    Cities (comma separated)
-                  </Label>
-                  <Input
-                    value={
-                      getZoneTextValue && setZoneTextValue && persistZoneTextValue
-                        ? getZoneTextValue(zoneKey, "cities", zone.cities)
-                        : zone.cities?.join(", ") || ""
-                    }
-                    onChange={(e) => {
-                      if (setZoneTextValue) {
-                        setZoneTextValue(zoneKey, "cities", e.target.value);
-                      } else {
-                        onUpdateZone(zoneKey, {
-                          cities: e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        });
-                      }
-                    }}
-                    onBlur={() => {
-                      if (persistZoneTextValue) {
-                        persistZoneTextValue(zoneKey, "cities");
-                      }
-                    }}
-                    placeholder="New York, Toronto"
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-xs mb-1 block">
-                    Postal Codes (comma separated)
-                  </Label>
-                  <Input
-                    value={
-                      getZoneTextValue && setZoneTextValue && persistZoneTextValue
-                        ? getZoneTextValue(
-                            zoneKey,
-                            "postal_codes",
-                            zone.postal_codes
-                          )
-                        : zone.postal_codes?.join(", ") || ""
-                    }
-                    onChange={(e) => {
-                      if (setZoneTextValue) {
-                        setZoneTextValue(zoneKey, "postal_codes", e.target.value);
-                      } else {
-                        onUpdateZone(zoneKey, {
-                          postal_codes: e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        });
-                      }
-                    }}
-                    onBlur={() => {
-                      if (persistZoneTextValue) {
-                        persistZoneTextValue(zoneKey, "postal_codes");
-                      }
-                    }}
-                    placeholder="10001, 94105"
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-xs mb-1 block">Transit Days</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={zone.transit_days?.toString() || ""}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      const parsed = val ? parseInt(val, 10) : null;
-                      const sanitized =
-                        parsed !== null && parsed < 0 ? 0 : parsed;
-                      onUpdateZone(zoneKey, { transit_days: sanitized });
-                    }}
-                    placeholder="2"
-                  />
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => onEditZone(zone)}
+                    className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded transition-colors"
+                    title="Edit Zone"
+                  >
+                    <Pencil1Icon className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => onRemoveZone(zoneKey)}
+                    className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded transition-colors"
+                    title="Delete Zone"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
 
-              {/* Weight Constraints Section */}
-              <div className="pt-3 mt-3 border-t border-border">
-                <h5 className="text-sm font-medium text-foreground mb-3">Weight Limits</h5>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <Label className="text-xs mb-1 block">Min Weight</Label>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      min={0}
-                      value={zone.min_weight?.toString() || ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const parsed = val ? parseFloat(val) : null;
-                        onUpdateZone(zoneKey, { min_weight: parsed });
-                      }}
-                      placeholder="0"
-                    />
+              {/* Zone details grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Countries:
                   </div>
-                  <div>
-                    <Label className="text-xs mb-1 block">Max Weight</Label>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      min={0}
-                      value={zone.max_weight?.toString() || ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const parsed = val ? parseFloat(val) : null;
-                        onUpdateZone(zoneKey, { max_weight: parsed });
-                      }}
-                      placeholder="No limit"
-                    />
+                  <div className="text-sm font-semibold text-foreground truncate">
+                    {countriesDisplay}
                   </div>
-                  <div>
-                    <Label className="text-xs mb-1 block">Weight Unit</Label>
-                    <Select
-                      value={zone.weight_unit || ""}
-                      onValueChange={(value) => onUpdateZone(zoneKey, { weight_unit: value || null })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select unit" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {WEIGHT_UNITS.map((unit) => (
-                          <SelectItem key={unit} value={unit}>
-                            {unit}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Transit Days:
+                  </div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {zone.transit_days ?? "\u2014"}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Cities:
+                  </div>
+                  <div className="text-sm font-semibold text-foreground truncate">
+                    {hasCities ? zone.cities!.join(", ") : "\u2014"}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Postal Codes:
+                  </div>
+                  <div className="text-sm font-semibold text-foreground truncate">
+                    {hasPostalCodes ? zone.postal_codes!.join(", ") : "\u2014"}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    Linked Services:
+                  </div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {linkedCount} of {services.length}
                   </div>
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

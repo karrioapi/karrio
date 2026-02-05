@@ -15,6 +15,7 @@ METADATA = metadata.PluginMetadata(
     options=units.ShippingOption,
     package_presets=units.PackagePresets,
     services=units.ServiceType,
+    service_levels=units.DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
     # New fields
     website="https://www.canadapost-postescanada.ca/cpc/en/home.page",

@@ -13,6 +13,9 @@ METADATA = metadata.PluginMetadata(
     Settings=mappers.Settings,
     # Data Units
     is_hub=False,
+    services=units.ShippingService,
+    options=units.ShippingOption,
+    service_levels=units.DEFAULT_SERVICES,
     # New fields
     website="https://www.laposte.fr/",
     documentation="https://www.lapostegroupe.com/en/services-mail-parcels-business-unit",

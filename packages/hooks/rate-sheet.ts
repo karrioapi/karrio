@@ -23,6 +23,9 @@ import {
   BATCH_UPDATE_SERVICE_RATES,
   UPDATE_SERVICE_ZONE_IDS,
   UPDATE_SERVICE_SURCHARGE_IDS,
+  ADD_WEIGHT_RANGE,
+  REMOVE_WEIGHT_RANGE,
+  DELETE_SERVICE_RATE,
   DeleteMutationInput,
   GetRateSheets_rate_sheets_edges_node,
 } from "@karrio/types/graphql";
@@ -222,6 +225,28 @@ export function useRateSheetMutation() {
     { onSuccess: invalidateCache, onError }
   );
 
+  // Weight Range Mutations
+  const addWeightRange = useMutation(
+    (data: { rate_sheet_id: string; min_weight: number; max_weight: number }) => karrio.graphql.request<any>(
+      gqlstr(ADD_WEIGHT_RANGE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const removeWeightRange = useMutation(
+    (data: { rate_sheet_id: string; min_weight: number; max_weight: number }) => karrio.graphql.request<any>(
+      gqlstr(REMOVE_WEIGHT_RANGE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
+  const deleteServiceRate = useMutation(
+    (data: { rate_sheet_id: string; service_id: string; zone_id: string; min_weight?: number; max_weight?: number }) => karrio.graphql.request<any>(
+      gqlstr(DELETE_SERVICE_RATE), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+
   // Service Zone/Surcharge Assignment Mutations
   const updateServiceZoneIds = useMutation(
     (data: { rate_sheet_id: string; service_id: string; zone_ids: string[] }) => karrio.graphql.request<any>(
@@ -254,6 +279,10 @@ export function useRateSheetMutation() {
     // Service Rate mutations
     updateServiceRate,
     batchUpdateServiceRates,
+    // Weight Range mutations
+    addWeightRange,
+    removeWeightRange,
+    deleteServiceRate,
     // Service assignment mutations
     updateServiceZoneIds,
     updateServiceSurchargeIds,

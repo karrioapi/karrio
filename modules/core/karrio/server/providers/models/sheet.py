@@ -355,6 +355,72 @@ class RateSheet(core.OwnedEntity):
         self.save(update_fields=["service_rates"])
 
     # ─────────────────────────────────────────────────────────────────
+    # WEIGHT RANGE MANAGEMENT
+    # ─────────────────────────────────────────────────────────────────
+
+    def get_weight_ranges(self) -> list:
+        """Derive unique (min_weight, max_weight) pairs from service_rates,
+        excluding (0, 0) flat-rate entries, sorted by max_weight."""
+        seen = set()
+        ranges = []
+        for rate in self.service_rates or []:
+            min_w = float(rate.get("min_weight", 0))
+            max_w = float(rate.get("max_weight", 0))
+            if (min_w, max_w) == (0, 0):
+                continue
+            key = (min_w, max_w)
+            if key not in seen:
+                seen.add(key)
+                ranges.append({"min_weight": min_w, "max_weight": max_w})
+        return sorted(ranges, key=lambda r: r["max_weight"])
+
+    def add_weight_range(self, min_weight: float, max_weight: float):
+        """Create service_rate entries (rate=0) for all service+zone combos
+        at this weight range, skipping entries that already exist."""
+        if min_weight < 0:
+            raise ValueError("min_weight must be >= 0")
+        if max_weight <= min_weight:
+            raise ValueError("max_weight must be greater than min_weight")
+
+        existing_ranges = self.get_weight_ranges()
+        for r in existing_ranges:
+            if min_weight < r["max_weight"] and max_weight > r["min_weight"]:
+                raise ValueError(
+                    f"Weight range {min_weight}-{max_weight} overlaps with "
+                    f"existing range {r['min_weight']}-{r['max_weight']}"
+                )
+
+        service_rates = list(self.service_rates or [])
+        existing_keys = {self._make_rate_key(r) for r in service_rates}
+
+        for service in self.services.all():
+            for zone_id in service.zone_ids or []:
+                new_rate = {
+                    "service_id": service.id,
+                    "zone_id": zone_id,
+                    "rate": 0,
+                    "min_weight": min_weight,
+                    "max_weight": max_weight,
+                }
+                if self._make_rate_key(new_rate) not in existing_keys:
+                    service_rates.append(new_rate)
+
+        self.service_rates = service_rates
+        self.save(update_fields=["service_rates"])
+
+    def remove_weight_range(self, min_weight: float, max_weight: float):
+        """Delete all service_rate entries matching this weight range."""
+        service_rates = [
+            sr for sr in (self.service_rates or [])
+            if not (
+                float(sr.get("min_weight", 0)) == min_weight
+                and float(sr.get("max_weight", 0)) == max_weight
+            )
+        ]
+        self.service_rates = service_rates
+        self.save(update_fields=["service_rates"])
+
+    # ─────────────────────────────────────────────────────────────────
     # RATE CALCULATION
     # ─────────────────────────────────────────────────────────────────
 

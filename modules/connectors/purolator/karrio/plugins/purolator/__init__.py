@@ -16,6 +16,7 @@ METADATA = metadata.PluginMetadata(
     package_presets=units.PackagePresets,
     packaging_types=units.PackagingType,
     services=units.ShippingService,
+    service_levels=units.DEFAULT_SERVICES,
     # New fields
     website="https://www.purolator.com",
     description="Purolator Inc. is a Canadian courier company, delivering parcels and freight in Canada and internationally.",

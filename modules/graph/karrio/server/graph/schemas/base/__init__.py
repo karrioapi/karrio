@@ -433,6 +433,28 @@ class Mutation:
         return mutations.BatchUpdateServiceRatesMutation.mutate(info, **input.to_dict())
 
     # ─────────────────────────────────────────────────────────────────
+    # WEIGHT RANGE MUTATIONS
+    # ─────────────────────────────────────────────────────────────────
+
+    @strawberry.mutation
+    def add_weight_range(
+        self, info: Info, input: inputs.AddWeightRangeMutationInput
+    ) -> mutations.AddWeightRangeMutation:
+        return mutations.AddWeightRangeMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def remove_weight_range(
+        self, info: Info, input: inputs.RemoveWeightRangeMutationInput
+    ) -> mutations.RemoveWeightRangeMutation:
+        return mutations.RemoveWeightRangeMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_service_rate(
+        self, info: Info, input: inputs.DeleteServiceRateMutationInput
+    ) -> mutations.DeleteServiceRateMutation:
+        return mutations.DeleteServiceRateMutation.mutate(info, **input.to_dict())
+
+    # ─────────────────────────────────────────────────────────────────
     # SERVICE ZONE/SURCHARGE ASSIGNMENT MUTATIONS
     # ─────────────────────────────────────────────────────────────────
 

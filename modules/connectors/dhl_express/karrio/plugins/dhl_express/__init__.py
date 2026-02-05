@@ -16,6 +16,7 @@ METADATA = metadata.PluginMetadata(
     package_presets=units.PackagePresets,
     packaging_types=units.DCTPackageType,
     services=units.ShippingService,
+    service_levels=units.DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
     has_intl_accounts=True,
     # New fields

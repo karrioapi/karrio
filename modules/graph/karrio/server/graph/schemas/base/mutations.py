@@ -883,6 +883,86 @@ class BatchUpdateServiceRatesMutation(utils.BaseMutation):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# WEIGHT RANGE MUTATIONS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class AddWeightRangeMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.AddWeightRangeMutationInput
+    ) -> "AddWeightRangeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+
+        rate_sheet.add_weight_range(
+            min_weight=input["min_weight"],
+            max_weight=input["max_weight"],
+        )
+
+        return AddWeightRangeMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class RemoveWeightRangeMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.RemoveWeightRangeMutationInput
+    ) -> "RemoveWeightRangeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+
+        rate_sheet.remove_weight_range(
+            min_weight=input["min_weight"],
+            max_weight=input["max_weight"],
+        )
+
+        return RemoveWeightRangeMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class DeleteServiceRateMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    def mutate(
+        info: Info, **input: inputs.DeleteServiceRateMutationInput
+    ) -> "DeleteServiceRateMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
+            id=input["rate_sheet_id"]
+        )
+
+        min_weight = input.get("min_weight")
+        max_weight = input.get("max_weight")
+        if utils.is_unset(min_weight):
+            min_weight = None
+        if utils.is_unset(max_weight):
+            max_weight = None
+
+        rate_sheet.remove_service_rate(
+            service_id=input["service_id"],
+            zone_id=input["zone_id"],
+            min_weight=min_weight,
+            max_weight=max_weight,
+        )
+
+        return DeleteServiceRateMutation(rate_sheet=rate_sheet)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # SERVICE ZONE/SURCHARGE ASSIGNMENT MUTATIONS
 # ─────────────────────────────────────────────────────────────────────────────
 

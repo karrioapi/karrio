@@ -15,6 +15,7 @@ METADATA = metadata.PluginMetadata(
     # Data Units
     options=units.ShippingOption,
     services=units.ShippingService,
+    service_levels=units.DEFAULT_SERVICES,
     has_intl_accounts=True,
     # New fields
     website="https://www.sendle.com",

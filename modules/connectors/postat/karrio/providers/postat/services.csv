@@ -1,5 +1,21 @@
 service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
-10,PostAT Standard Domestic,Austria,AT,0.01,31.5,150,60,60,0.0,EUR,1-3,true,false
-20,PostAT Express Domestic,Austria,AT,0.01,31.5,150,60,60,0.0,EUR,1,true,false
-30,PostAT International Standard,Europe,"DE,CH,CZ,HU,SK,SI,IT,PL,BE,NL,FR,LU,GB,ES,PT,DK,SE,FI,NO,IE,GR,HR,BG,RO,LT,LV,EE,CY,MT",0.01,31.5,150,60,60,0.0,EUR,3-7,false,true
-40,PostAT International Express,Worldwide,,0.01,31.5,150,60,60,0.0,EUR,2-5,false,true
+10,PostAT Standard Domestic,Austria,AT,0.01,2.0,150,60,60,4.90,EUR,1-3,true,false
+10,PostAT Standard Domestic,Austria,AT,2.0,5.0,150,60,60,6.90,EUR,1-3,true,false
+10,PostAT Standard Domestic,Austria,AT,5.0,10.0,150,60,60,8.90,EUR,1-3,true,false
+10,PostAT Standard Domestic,Austria,AT,10.0,20.0,150,60,60,11.90,EUR,1-3,true,false
+10,PostAT Standard Domestic,Austria,AT,20.0,31.5,150,60,60,14.90,EUR,1-3,true,false
+20,PostAT Express Domestic,Austria,AT,0.01,2.0,150,60,60,9.90,EUR,1,true,false
+20,PostAT Express Domestic,Austria,AT,2.0,5.0,150,60,60,12.90,EUR,1,true,false
+20,PostAT Express Domestic,Austria,AT,5.0,10.0,150,60,60,15.90,EUR,1,true,false
+20,PostAT Express Domestic,Austria,AT,10.0,20.0,150,60,60,19.90,EUR,1,true,false
+20,PostAT Express Domestic,Austria,AT,20.0,31.5,150,60,60,24.90,EUR,1,true,false
+30,PostAT International Standard,Europe,"DE,CH,CZ,HU,SK,SI,IT,PL,BE,NL,FR,LU,GB,ES,PT,DK,SE,FI,NO,IE,GR,HR,BG,RO,LT,LV,EE,CY,MT",0.01,2.0,150,60,60,10.90,EUR,3-7,false,true
+30,PostAT International Standard,Europe,"DE,CH,CZ,HU,SK,SI,IT,PL,BE,NL,FR,LU,GB,ES,PT,DK,SE,FI,NO,IE,GR,HR,BG,RO,LT,LV,EE,CY,MT",2.0,5.0,150,60,60,14.90,EUR,3-7,false,true
+30,PostAT International Standard,Europe,"DE,CH,CZ,HU,SK,SI,IT,PL,BE,NL,FR,LU,GB,ES,PT,DK,SE,FI,NO,IE,GR,HR,BG,RO,LT,LV,EE,CY,MT",5.0,10.0,150,60,60,18.90,EUR,3-7,false,true
+30,PostAT International Standard,Europe,"DE,CH,CZ,HU,SK,SI,IT,PL,BE,NL,FR,LU,GB,ES,PT,DK,SE,FI,NO,IE,GR,HR,BG,RO,LT,LV,EE,CY,MT",10.0,20.0,150,60,60,24.90,EUR,3-7,false,true
+30,PostAT International Standard,Europe,"DE,CH,CZ,HU,SK,SI,IT,PL,BE,NL,FR,LU,GB,ES,PT,DK,SE,FI,NO,IE,GR,HR,BG,RO,LT,LV,EE,CY,MT",20.0,31.5,150,60,60,32.90,EUR,3-7,false,true
+40,PostAT International Express,Worldwide,,0.01,2.0,150,60,60,18.90,EUR,2-5,false,true
+40,PostAT International Express,Worldwide,,2.0,5.0,150,60,60,24.90,EUR,2-5,false,true
+40,PostAT International Express,Worldwide,,5.0,10.0,150,60,60,32.90,EUR,2-5,false,true
+40,PostAT International Express,Worldwide,,10.0,20.0,150,60,60,45.90,EUR,2-5,false,true
+40,PostAT International Express,Worldwide,,20.0,31.5,150,60,60,59.90,EUR,2-5,false,true

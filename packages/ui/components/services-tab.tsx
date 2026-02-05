@@ -1,37 +1,118 @@
 "use client";
 
 import React from "react";
-import { Button } from "@karrio/ui/components/ui/button";
-import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import { PlusIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@karrio/ui/components/ui/popover";
 import type { ServiceLevelWithZones } from "@karrio/ui/components/rate-sheet-editor";
 
 function cn(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
+interface ServicePreset {
+  code: string;
+  name: string;
+}
+
 interface ServicesTabProps {
   services: ServiceLevelWithZones[];
   onEditService: (service: ServiceLevelWithZones) => void;
   onDeleteService: (service: ServiceLevelWithZones) => void;
+  onAddService: () => void;
+  servicePresets?: ServicePreset[];
+  onAddServiceFromPreset?: (serviceCode: string) => void;
+  onCloneService?: (service: ServiceLevelWithZones) => void;
 }
 
 export function ServicesTab({
   services,
   onEditService,
   onDeleteService,
+  onAddService,
+  servicePresets,
+  onAddServiceFromPreset,
+  onCloneService,
 }: ServicesTabProps) {
+  const AddServicePopover = ({ align = "end" }: { align?: "start" | "end" | "center" }) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors">
+          <PlusIcon className="h-4 w-4" />
+          Add Service
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align={align} className="w-56 p-2" sideOffset={8}>
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground px-2 py-1">Add service</p>
+
+          {servicePresets && servicePresets.length > 0 && onAddServiceFromPreset && (
+            <>
+              <div className="max-h-48 overflow-y-auto space-y-0.5">
+                {servicePresets.map((preset) => (
+                  <button
+                    key={preset.code}
+                    onClick={() => onAddServiceFromPreset(preset.code)}
+                    className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors truncate"
+                    title={preset.name}
+                  >
+                    {preset.name || preset.code}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-border my-1" />
+            </>
+          )}
+
+          {services.length > 0 && onCloneService && (
+            <>
+              <p className="text-xs text-muted-foreground px-2 py-0.5">Clone existing</p>
+              <div className="max-h-32 overflow-y-auto space-y-0.5">
+                {services.map((service) => (
+                  <button
+                    key={service.id}
+                    onClick={() => onCloneService(service)}
+                    className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors truncate text-muted-foreground"
+                    title={`Clone ${service.service_name}`}
+                  >
+                    {service.service_name || service.service_code}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-border my-1" />
+            </>
+          )}
+
+          <button
+            onClick={onAddService}
+            className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-accent transition-colors flex items-center gap-1.5 text-primary font-medium"
+          >
+            <PlusIcon className="h-3.5 w-3.5" />
+            Create new service
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+
   if (services.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-8">
-        <p>
-          No services added yet. Add a service from the sidebar to get started.
-        </p>
+        <p className="mb-4">No services added yet.</p>
+        <AddServicePopover align="center" />
       </div>
     );
   }
 
   return (
     <div className="space-y-4 h-full overflow-y-auto pr-2">
+      <div className="flex items-center justify-between sticky top-0 bg-background z-10 py-2">
+        <h3 className="text-lg font-medium">Service Configuration</h3>
+        <AddServicePopover />
+      </div>
       {services.map((service) => (
         <div
           key={service.id || service.service_code}
@@ -45,24 +126,20 @@ export function ServicesTab({
                 {service.service_name}
               </h4>
               <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <button
                   onClick={() => onEditService(service)}
+                  className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded transition-colors"
                   title="Edit Service"
-                  className="h-8 w-8"
                 >
                   <Pencil1Icon className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                </button>
+                <button
                   onClick={() => onDeleteService(service)}
+                  className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded transition-colors"
                   title="Delete Service"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                 >
                   <TrashIcon className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </div>
 
@@ -87,19 +164,7 @@ export function ServicesTab({
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="text-sm font-medium text-muted-foreground whitespace-nowrap flex items-center gap-1.5">
-                  <svg
-                    className="h-3.5 w-3.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12,6 12,12 16,14" />
-                  </svg>
+                <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
                   Transit Days:
                 </div>
                 <div className="text-sm font-semibold text-foreground">
@@ -108,19 +173,7 @@ export function ServicesTab({
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="text-sm font-medium text-muted-foreground whitespace-nowrap flex items-center gap-1.5">
-                  <svg
-                    className="h-3.5 w-3.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                  </svg>
+                <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
                   Max Weight:
                 </div>
                 <div className="text-sm font-semibold text-foreground">
@@ -131,18 +184,7 @@ export function ServicesTab({
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="text-sm font-medium text-muted-foreground whitespace-nowrap flex items-center gap-1.5">
-                  <svg
-                    className="h-3.5 w-3.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                  </svg>
+                <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
                   Zones:
                 </div>
                 <div className="text-sm font-semibold text-foreground">

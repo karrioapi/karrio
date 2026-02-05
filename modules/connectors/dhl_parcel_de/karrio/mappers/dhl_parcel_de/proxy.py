@@ -39,6 +39,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                     "content-Type": "application/x-www-form-urlencoded",
                 },
                 decoder=lib.to_dict,
+                on_error=lib.error_decoder,
                 max_retries=2,
             )
             messages = provider_error.parse_error_response(response, self.settings)

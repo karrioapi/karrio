@@ -18,70 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@karrio/ui/components/ui/select";
+import { MultiSelect } from "@karrio/ui/components/multi-select";
 import { CURRENCY_OPTIONS, DIMENSION_UNITS, WEIGHT_UNITS } from "@karrio/types";
 import { isEqual } from "@karrio/lib";
-import { Cross2Icon, ChevronRightIcon } from "@radix-ui/react-icons";
+import { cn } from "@karrio/ui/lib/utils";
+import { Cross2Icon } from "@radix-ui/react-icons";
 import React from "react";
-
-// =============================================================================
-// COLLAPSIBLE SECTION COMPONENT
-// =============================================================================
-
-interface CollapsibleSectionProps {
-  title: string;
-  description?: string;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-}
-
-function CollapsibleSection({ title, description, defaultOpen = false, children }: CollapsibleSectionProps) {
-  const [isOpen, setIsOpen] = React.useState(defaultOpen);
-
-  return (
-    <div className={`
-      rounded-lg border transition-all duration-200
-      ${isOpen
-        ? "border-border bg-muted/20 shadow-sm"
-        : "border-transparent hover:border-border/50 hover:bg-muted/10"
-      }
-    `}>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`
-          w-full flex items-center justify-between p-3 text-left transition-colors rounded-lg
-          ${isOpen ? "border-b border-border/50" : ""}
-        `}
-      >
-        <div className="flex items-center gap-2.5">
-          <div className={`
-            flex items-center justify-center w-6 h-6 rounded-md transition-colors
-            ${isOpen ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}
-          `}>
-            <ChevronRightIcon className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`} />
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-foreground">{title}</h3>
-            {description && !isOpen && (
-              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{description}</p>
-            )}
-          </div>
-        </div>
-        <div className={`
-          text-xs px-2 py-0.5 rounded-full transition-opacity
-          ${isOpen ? "opacity-0" : "opacity-100 bg-muted text-muted-foreground"}
-        `}>
-          Configure
-        </div>
-      </button>
-      {isOpen && (
-        <div className="p-3 pt-2">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // =============================================================================
 // CONSTANTS
@@ -150,6 +92,8 @@ const fromSelectValue = (val: string | null | undefined): string => {
 // TYPES
 // =============================================================================
 
+type ServiceEditorTab = "general" | "transit" | "features" | "logistics" | "limits" | "surcharges";
+
 interface Surcharge {
   id: string;
   name?: string | null;
@@ -165,6 +109,7 @@ interface ServiceEditorModalProps {
   onSubmit: (service: any) => void;
   trigger?: React.ReactElement;
   availableSurcharges?: Surcharge[];
+  servicePresets?: Array<{ code: string; name: string }>;
 }
 
 const DEFAULT_SERVICE = {
@@ -246,9 +191,24 @@ export const ServiceEditorModal = ({
   onSubmit,
   trigger,
   availableSurcharges = [],
+  servicePresets = [],
 }: ServiceEditorModalProps) => {
   const [formData, setFormData] = React.useState(service || DEFAULT_SERVICE);
   const [loading, setLoading] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<ServiceEditorTab>("general");
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
+
+  const tabs = React.useMemo(() => {
+    const base: { id: ServiceEditorTab; label: string }[] = [
+      { id: "general", label: "General" },
+      { id: "transit", label: "Transit" },
+      { id: "features", label: "Features" },
+      { id: "logistics", label: "Logistics" },
+      { id: "limits", label: "Limits" },
+    ];
+    if (availableSurcharges.length > 0) base.push({ id: "surcharges", label: "Surcharges" });
+    return base;
+  }, [availableSurcharges.length]);
 
   React.useEffect(() => {
     if (service) {
@@ -256,14 +216,40 @@ export const ServiceEditorModal = ({
     } else {
       setFormData(DEFAULT_SERVICE);
     }
+    setActiveTab("general");
+    setErrors({});
   }, [service]);
 
   const handleChange = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.service_name?.trim()) newErrors.service_name = "Required";
+    if (!formData.service_code?.trim()) newErrors.service_code = "Required";
+    else if (!/^[a-z0-9_]+$/.test(formData.service_code))
+      newErrors.service_code = "Only lowercase letters, numbers, and underscores";
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      setActiveTab("general");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     setLoading(true);
 
     try {
@@ -309,14 +295,6 @@ export const ServiceEditorModal = ({
   const isEditing = !!service?.id;
   const hasChanges = !isEqual(formData, service || DEFAULT_SERVICE);
 
-  // Count configured features for summary
-  const selectedFeaturesCount = (formData.features || []).length;
-  const logisticsConfigured = [formData.first_mile, formData.last_mile, formData.form_factor, formData.age_check]
-    .filter(v => v && v.trim() !== "").length;
-  const weightConfigured = formData.min_weight || formData.max_weight;
-  const dimensionConfigured = formData.max_length || formData.max_width || formData.max_height;
-  const surchargesSelected = (formData.surcharge_ids || []).length;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-xl max-h-[90vh] p-0 flex flex-col">
@@ -328,13 +306,60 @@ export const ServiceEditorModal = ({
           <p className="text-xs text-muted-foreground">Configure service details and settings</p>
         </DialogHeader>
 
+        {/* Tab Bar */}
+        <div className="border-b border-border px-4 shrink-0">
+          <div className="flex">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "flex-1 py-2 text-xs font-medium border-b-2 transition-colors",
+                  activeTab === tab.id
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 min-h-0 space-y-3">
+        <div className="flex-1 overflow-y-auto px-4 py-3 min-h-0">
           <form onSubmit={handleSubmit} className="space-y-3">
 
-            {/* Basic Information - Always Visible */}
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+            {/* General Tab */}
+            {activeTab === "general" && (
+              <div className="space-y-3">
+                {!isEditing && servicePresets.length > 0 && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Prefill from carrier service</Label>
+                    <Select
+                      value=""
+                      onValueChange={(code) => {
+                        const preset = servicePresets.find(p => p.code === code);
+                        if (preset) {
+                          handleChange("service_name", preset.name);
+                          handleChange("service_code", code);
+                          handleChange("carrier_service_code", code);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select a preset..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {servicePresets.map(p => (
+                          <SelectItem key={p.code} value={p.code}>{p.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 <div className="space-y-1.5">
                   <Label htmlFor="service_name" className="text-xs">Service Name <span className="text-destructive">*</span></Label>
                   <Input
@@ -342,9 +367,9 @@ export const ServiceEditorModal = ({
                     value={formData.service_name}
                     onChange={(e) => handleChange("service_name", e.target.value)}
                     placeholder="Standard Service"
-                    className="h-9"
-                    required
+                    className={cn("h-9", errors.service_name && "border-destructive")}
                   />
+                  {errors.service_name && <p className="text-xs text-destructive">{errors.service_name}</p>}
                 </div>
 
                 <div className="space-y-1.5">
@@ -354,15 +379,11 @@ export const ServiceEditorModal = ({
                     value={formData.service_code}
                     onChange={(e) => handleChange("service_code", e.target.value)}
                     placeholder="standard_service"
-                    pattern="^[a-z0-9_]+$"
-                    title="Only lowercase letters, numbers, and underscores"
-                    className="h-9"
-                    required
+                    className={cn("h-9", errors.service_code && "border-destructive")}
                   />
+                  {errors.service_code && <p className="text-xs text-destructive">{errors.service_code}</p>}
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="carrier_service_code" className="text-xs">Carrier Service Code</Label>
                   <Input
@@ -392,56 +413,53 @@ export const ServiceEditorModal = ({
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="description" className="text-xs">Description</Label>
-                <Input
-                  id="description"
-                  value={formData.description || ""}
-                  onChange={(e) => handleChange("description", e.target.value)}
-                  placeholder="Optional service description"
-                  className="h-9"
-                />
-              </div>
-
-              {/* Service Type & Active - Horizontal */}
-              <div className="flex flex-wrap items-center gap-4 pt-1">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="domicile"
-                    checked={formData.domicile}
-                    onCheckedChange={(checked) => handleChange("domicile", checked)}
+                <div className="space-y-1.5">
+                  <Label htmlFor="description" className="text-xs">Description</Label>
+                  <Input
+                    id="description"
+                    value={formData.description || ""}
+                    onChange={(e) => handleChange("description", e.target.value)}
+                    placeholder="Optional service description"
+                    className="h-9"
                   />
-                  <Label htmlFor="domicile" className="text-xs cursor-pointer">National/Domestic</Label>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="international"
-                    checked={formData.international}
-                    onCheckedChange={(checked) => handleChange("international", checked)}
-                  />
-                  <Label htmlFor="international" className="text-xs cursor-pointer">International</Label>
-                </div>
+                {/* Service Type & Active - Horizontal */}
+                <div className="flex flex-wrap items-center gap-4 pt-1">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="domicile"
+                      checked={formData.domicile}
+                      onCheckedChange={(checked) => handleChange("domicile", checked)}
+                    />
+                    <Label htmlFor="domicile" className="text-xs cursor-pointer">National/Domestic</Label>
+                  </div>
 
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="active"
-                    checked={formData.active}
-                    onCheckedChange={(checked) => handleChange("active", checked)}
-                  />
-                  <Label htmlFor="active" className="text-xs cursor-pointer">Active</Label>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="international"
+                      checked={formData.international}
+                      onCheckedChange={(checked) => handleChange("international", checked)}
+                    />
+                    <Label htmlFor="international" className="text-xs cursor-pointer">International</Label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="active"
+                      checked={formData.active}
+                      onCheckedChange={(checked) => handleChange("active", checked)}
+                    />
+                    <Label htmlFor="active" className="text-xs cursor-pointer">Active</Label>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Transit Configuration - Collapsible */}
-            <CollapsibleSection
-              title="Transit Time"
-              description={formData.transit_days ? `${formData.transit_days} days` : "Not configured"}
-            >
-              <div className="grid grid-cols-2 gap-3">
+            {/* Transit Tab */}
+            {activeTab === "transit" && (
+              <div className="space-y-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="transit_days" className="text-xs">Transit Days</Label>
                   <Input
@@ -469,277 +487,226 @@ export const ServiceEditorModal = ({
                   />
                 </div>
               </div>
-            </CollapsibleSection>
+            )}
 
-            {/* Service Features - Collapsible */}
-            <CollapsibleSection
-              title="Service Features"
-              description={selectedFeaturesCount > 0 ? `${selectedFeaturesCount} selected` : "None selected"}
-            >
-              <div className="flex flex-wrap gap-1.5">
-                {SERVICE_FEATURES.map((feature) => {
-                  const isSelected = (formData.features || []).includes(feature.value);
-                  return (
-                    <button
-                      key={feature.value}
-                      type="button"
-                      onClick={() => {
-                        const currentFeatures = formData.features || [];
-                        const newFeatures = isSelected
-                          ? currentFeatures.filter((f: string) => f !== feature.value)
-                          : [...currentFeatures, feature.value];
-                        handleChange("features", newFeatures);
-                      }}
-                      className={`px-2.5 py-1 text-xs font-medium rounded-full border transition-colors ${
-                        isSelected
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-background text-foreground border-border hover:border-primary/50"
-                      }`}
+            {/* Features Tab */}
+            {activeTab === "features" && (
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Service Features</Label>
+                  <MultiSelect
+                    options={SERVICE_FEATURES}
+                    value={formData.features || []}
+                    onValueChange={(values) => handleChange("features", values)}
+                    placeholder="Select features..."
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Logistics Tab */}
+            {activeTab === "logistics" && (
+              <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="first_mile" className="text-xs">First Mile</Label>
+                    <Select
+                      value={toSelectValue(formData.first_mile)}
+                      onValueChange={(value) => handleChange("first_mile", fromSelectValue(value))}
                     >
-                      {feature.label}
-                    </button>
-                  );
-                })}
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Not specified" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FIRST_MILE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="last_mile" className="text-xs">Last Mile</Label>
+                    <Select
+                      value={toSelectValue(formData.last_mile)}
+                      onValueChange={(value) => handleChange("last_mile", fromSelectValue(value))}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Not specified" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {LAST_MILE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="form_factor" className="text-xs">Form Factor</Label>
+                    <Select
+                      value={toSelectValue(formData.form_factor)}
+                      onValueChange={(value) => handleChange("form_factor", fromSelectValue(value))}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Not specified" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FORM_FACTOR_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="age_check" className="text-xs">Age Check</Label>
+                    <Select
+                      value={toSelectValue(formData.age_check)}
+                      onValueChange={(value) => handleChange("age_check", fromSelectValue(value))}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Not required" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AGE_CHECK_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
               </div>
-              {(formData.features || []).length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-2 pt-2 border-t border-border">
-                  <span className="text-xs text-muted-foreground">Selected:</span>
-                  {(formData.features || []).map((featureValue: string) => {
-                    const feature = SERVICE_FEATURES.find((f) => f.value === featureValue);
-                    return (
-                      <span
-                        key={featureValue}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full"
+            )}
+
+            {/* Limits Tab (merged Weight + Dimensions) */}
+            {activeTab === "limits" && (
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Weight</h4>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="min_weight" className="text-xs">Min Weight</Label>
+                    <Input
+                      id="min_weight"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.min_weight || ""}
+                      onChange={(e) => handleChange("min_weight", e.target.value ? parseFloat(e.target.value) : null)}
+                      placeholder="0"
+                      className="h-9"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="max_weight" className="text-xs">Max Weight</Label>
+                    <Input
+                      id="max_weight"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={formData.max_weight || ""}
+                      onChange={(e) => handleChange("max_weight", e.target.value ? parseFloat(e.target.value) : null)}
+                      placeholder="No limit"
+                      className="h-9"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="weight_unit" className="text-xs">Weight Unit</Label>
+                    <Select
+                      value={formData.weight_unit}
+                      onValueChange={(value) => handleChange("weight_unit", value)}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WEIGHT_UNITS.map((unit) => (
+                          <SelectItem key={unit} value={unit}>
+                            {unit}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="border-t border-border pt-4 space-y-3">
+                  <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Dimensions</h4>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="max_length" className="text-xs">Max Length</Label>
+                      <Input
+                        id="max_length"
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        value={formData.max_length || ""}
+                        onChange={(e) => handleChange("max_length", e.target.value ? parseFloat(e.target.value) : null)}
+                        placeholder="No limit"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="max_width" className="text-xs">Max Width</Label>
+                      <Input
+                        id="max_width"
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        value={formData.max_width || ""}
+                        onChange={(e) => handleChange("max_width", e.target.value ? parseFloat(e.target.value) : null)}
+                        placeholder="No limit"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="max_height" className="text-xs">Max Height</Label>
+                      <Input
+                        id="max_height"
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        value={formData.max_height || ""}
+                        onChange={(e) => handleChange("max_height", e.target.value ? parseFloat(e.target.value) : null)}
+                        placeholder="No limit"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="dimension_unit" className="text-xs">Dimension Unit</Label>
+                      <Select
+                        value={formData.dimension_unit}
+                        onValueChange={(value) => handleChange("dimension_unit", value)}
                       >
-                        {feature?.label || featureValue}
-                        <button
-                          type="button"
-                          onClick={() => handleChange("features", (formData.features || []).filter((f: string) => f !== featureValue))}
-                          className="hover:bg-primary/20 rounded-full p-0.5"
-                        >
-                          <Cross2Icon className="h-2.5 w-2.5" />
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
-            </CollapsibleSection>
-
-            {/* Logistics Options - Collapsible */}
-            <CollapsibleSection
-              title="Logistics Options"
-              description={logisticsConfigured > 0 ? `${logisticsConfigured} configured` : "Not configured"}
-            >
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="first_mile" className="text-xs">First Mile</Label>
-                  <Select
-                    value={toSelectValue(formData.first_mile)}
-                    onValueChange={(value) => handleChange("first_mile", fromSelectValue(value))}
-                  >
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Not specified" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {FIRST_MILE_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="last_mile" className="text-xs">Last Mile</Label>
-                  <Select
-                    value={toSelectValue(formData.last_mile)}
-                    onValueChange={(value) => handleChange("last_mile", fromSelectValue(value))}
-                  >
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Not specified" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LAST_MILE_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="form_factor" className="text-xs">Form Factor</Label>
-                  <Select
-                    value={toSelectValue(formData.form_factor)}
-                    onValueChange={(value) => handleChange("form_factor", fromSelectValue(value))}
-                  >
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Not specified" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {FORM_FACTOR_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="age_check" className="text-xs">Age Check</Label>
-                  <Select
-                    value={toSelectValue(formData.age_check)}
-                    onValueChange={(value) => handleChange("age_check", fromSelectValue(value))}
-                  >
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Not required" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AGE_CHECK_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        <SelectTrigger className="h-9">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DIMENSION_UNITS.map((unit) => (
+                            <SelectItem key={unit} value={unit}>
+                              {unit}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                 </div>
               </div>
-            </CollapsibleSection>
+            )}
 
-            {/* Weight Limits - Collapsible */}
-            <CollapsibleSection
-              title="Weight Limits"
-              description={weightConfigured ? `${formData.min_weight || 0} - ${formData.max_weight || '∞'} ${formData.weight_unit}` : "Not configured"}
-            >
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="min_weight" className="text-xs">Min Weight</Label>
-                  <Input
-                    id="min_weight"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={formData.min_weight || ""}
-                    onChange={(e) => handleChange("min_weight", e.target.value ? parseFloat(e.target.value) : null)}
-                    placeholder="0"
-                    className="h-9"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="max_weight" className="text-xs">Max Weight</Label>
-                  <Input
-                    id="max_weight"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={formData.max_weight || ""}
-                    onChange={(e) => handleChange("max_weight", e.target.value ? parseFloat(e.target.value) : null)}
-                    placeholder="No limit"
-                    className="h-9"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-3 space-y-1.5">
-                <Label htmlFor="weight_unit" className="text-xs">Weight Unit</Label>
-                <Select
-                  value={formData.weight_unit}
-                  onValueChange={(value) => handleChange("weight_unit", value)}
-                >
-                  <SelectTrigger className="h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {WEIGHT_UNITS.map((unit) => (
-                      <SelectItem key={unit} value={unit}>
-                        {unit}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CollapsibleSection>
-
-            {/* Dimension Limits - Collapsible */}
-            <CollapsibleSection
-              title="Dimension Limits"
-              description={dimensionConfigured ? `Max L×W×H: ${formData.max_length || '-'}×${formData.max_width || '-'}×${formData.max_height || '-'} ${formData.dimension_unit}` : "Not configured"}
-            >
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="max_length" className="text-xs">Max Length</Label>
-                  <Input
-                    id="max_length"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={formData.max_length || ""}
-                    onChange={(e) => handleChange("max_length", e.target.value ? parseFloat(e.target.value) : null)}
-                    placeholder="No limit"
-                    className="h-9"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="max_width" className="text-xs">Max Width</Label>
-                  <Input
-                    id="max_width"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={formData.max_width || ""}
-                    onChange={(e) => handleChange("max_width", e.target.value ? parseFloat(e.target.value) : null)}
-                    placeholder="No limit"
-                    className="h-9"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="max_height" className="text-xs">Max Height</Label>
-                  <Input
-                    id="max_height"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={formData.max_height || ""}
-                    onChange={(e) => handleChange("max_height", e.target.value ? parseFloat(e.target.value) : null)}
-                    placeholder="No limit"
-                    className="h-9"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="dimension_unit" className="text-xs">Dimension Unit</Label>
-                  <Select
-                    value={formData.dimension_unit}
-                    onValueChange={(value) => handleChange("dimension_unit", value)}
-                  >
-                    <SelectTrigger className="h-9">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {DIMENSION_UNITS.map((unit) => (
-                        <SelectItem key={unit} value={unit}>
-                          {unit}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CollapsibleSection>
-
-            {/* Surcharges - Collapsible (only if available) */}
-            {availableSurcharges.length > 0 && (
-              <CollapsibleSection
-                title="Applied Surcharges"
-                description={surchargesSelected > 0 ? `${surchargesSelected} selected` : "None selected"}
-              >
+            {/* Surcharges Tab (conditional) */}
+            {activeTab === "surcharges" && availableSurcharges.length > 0 && (
+              <div className="space-y-3">
                 <div className="border border-border rounded-md p-2 space-y-1.5 max-h-32 overflow-y-auto">
                   {availableSurcharges.map((surcharge) => {
                     const isSelected = (formData.surcharge_ids || []).includes(surcharge.id);
@@ -798,7 +765,7 @@ export const ServiceEditorModal = ({
                     })}
                   </div>
                 )}
-              </CollapsibleSection>
+              </div>
             )}
           </form>
         </div>

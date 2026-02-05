@@ -1,3 +1,6 @@
+import csv
+import pathlib
+
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -100,47 +103,43 @@ def shipping_options_initializer(
     return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
-DEFAULT_SERVICES = [
-    models.ServiceLevel(
-        service_name="DHL Poland Premium",
-        service_code="dhl_poland_premium",
-        currency="EUR",
-        domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
-    ),
-    models.ServiceLevel(
-        service_name="DHL Poland Polska",
-        service_code="dhl_poland_polska",
-        currency="EUR",
-        domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
-    ),
-    models.ServiceLevel(
-        service_name="DHL Poland 09",
-        service_code="dhl_poland_09",
-        currency="EUR",
-        domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
-    ),
-    models.ServiceLevel(
-        service_name="DHL Poland 12",
-        service_code="dhl_poland_12",
-        currency="EUR",
-        domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
-    ),
-    models.ServiceLevel(
-        service_name="DHL Poland Connect",
-        service_code="dhl_poland_connect",
-        currency="EUR",
-        international=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
-    ),
-    models.ServiceLevel(
-        service_name="DHL Poland International",
-        service_code="dhl_poland_international",
-        currency="EUR",
-        international=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
-    ),
-]
+def load_services_from_csv() -> list:
+    csv_path = pathlib.Path(__file__).resolve().parent / "services.csv"
+    if not csv_path.exists():
+        return []
+    services_dict: dict[str, dict] = {}
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            service_code = row["service_code"]
+            karrio_service_code = Service.map(service_code).name_or_key
+            if karrio_service_code not in services_dict:
+                services_dict[karrio_service_code] = {
+                    "service_name": row["service_name"],
+                    "service_code": karrio_service_code,
+                    "currency": row.get("currency", "PLN"),
+                    "min_weight": float(row["min_weight"]) if row.get("min_weight") else None,
+                    "max_weight": float(row["max_weight"]) if row.get("max_weight") else None,
+                    "max_length": float(row["max_length"]) if row.get("max_length") else None,
+                    "max_width": float(row["max_width"]) if row.get("max_width") else None,
+                    "max_height": float(row["max_height"]) if row.get("max_height") else None,
+                    "weight_unit": "KG",
+                    "dimension_unit": "CM",
+                    "domicile": (row.get("domicile") or "").lower() == "true",
+                    "international": True if (row.get("international") or "").lower() == "true" else None,
+                    "zones": [],
+                }
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
+            zone = models.ServiceZone(
+                label=row.get("zone_label", "Default Zone"),
+                rate=float(row.get("rate", 0.0)),
+                min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
+                max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
+                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                country_codes=country_codes if country_codes else None,
+            )
+            services_dict[karrio_service_code]["zones"].append(zone)
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
+
+
+DEFAULT_SERVICES = load_services_from_csv()

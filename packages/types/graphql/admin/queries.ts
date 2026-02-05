@@ -244,6 +244,8 @@ export const GET_RATE_SHEETS = gql`
             cost
             min_weight
             max_weight
+            transit_days
+            transit_time
           }
           services {
             id
@@ -1073,6 +1075,8 @@ export const UPDATE_SERVICE_RATE = gql`
           cost
           min_weight
           max_weight
+          transit_days
+          transit_time
         }
       }
       errors {
@@ -1093,6 +1097,86 @@ export const BATCH_UPDATE_SERVICE_RATES = gql`
           zone_id
           rate
           cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Weight Range Mutations
+// -----------------------------------------------------------
+
+export const ADD_WEIGHT_RANGE = gql`
+  mutation AddWeightRange($input: AddWeightRangeMutationInput!) {
+    add_weight_range(input: $input) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const REMOVE_WEIGHT_RANGE = gql`
+  mutation RemoveWeightRange($input: RemoveWeightRangeMutationInput!) {
+    remove_weight_range(input: $input) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SERVICE_RATE = gql`
+  mutation DeleteServiceRate($input: DeleteServiceRateMutationInput!) {
+    delete_service_rate(input: $input) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
         }
       }
       errors {

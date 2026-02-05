@@ -1,19 +1,90 @@
 service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
-PA1_basic,Parcel.One Basic,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,2-3,true,false
-PA1_eco,Parcel.One Eco,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,3-5,true,false
-PA1_eco,Parcel.One Eco,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,5-7,false,true
-PA1_premium,Parcel.One Premium,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1-2,true,false
-PA1_premium,Parcel.One Premium,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,3-5,false,true
-PA1_express,Parcel.One Express,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1,true,false
-PA1_express,Parcel.One Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,2-3,false,true
-DHL_PAKET,DHL Paket,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1-2,true,false
-DHL_PAKETINT,DHL Paket International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,3-5,false,true
-DHL_EXPRESS,DHL Express,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,1,true,false
-DHL_EXPRESS,DHL Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,120,60,60,0.0,EUR,1-2,false,true
-DHL_RETOURE,DHL Retoure,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,2-3,true,false
-UPS_STANDARD,UPS Standard,Germany,DE,0.01,31.5,150,75,75,0.0,EUR,1-2,true,false
-UPS_STANDARD,UPS Standard,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,150,75,75,0.0,EUR,3-5,false,true
-UPS_EXPRESS,UPS Express,Germany,DE,0.01,31.5,150,75,75,0.0,EUR,1,true,false
-UPS_EXPRESS,UPS Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,150,75,75,0.0,EUR,1-2,false,true
-UPS_EXPSAVER,UPS Express Saver,Germany,DE,0.01,31.5,150,75,75,0.0,EUR,1,true,false
-UPS_EXPSAVER,UPS Express Saver,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,31.5,150,75,75,0.0,EUR,2-3,false,true
+PA1_basic,Parcel.One Basic,Germany,DE,0.01,2.0,120,60,60,4.49,EUR,2-3,true,false
+PA1_basic,Parcel.One Basic,Germany,DE,2.0,5.0,120,60,60,5.49,EUR,2-3,true,false
+PA1_basic,Parcel.One Basic,Germany,DE,5.0,10.0,120,60,60,6.99,EUR,2-3,true,false
+PA1_basic,Parcel.One Basic,Germany,DE,10.0,20.0,120,60,60,8.49,EUR,2-3,true,false
+PA1_basic,Parcel.One Basic,Germany,DE,20.0,31.5,120,60,60,10.99,EUR,2-3,true,false
+PA1_eco,Parcel.One Eco,Germany,DE,0.01,2.0,120,60,60,3.29,EUR,3-5,true,false
+PA1_eco,Parcel.One Eco,Germany,DE,2.0,5.0,120,60,60,4.29,EUR,3-5,true,false
+PA1_eco,Parcel.One Eco,Germany,DE,5.0,10.0,120,60,60,5.49,EUR,3-5,true,false
+PA1_eco,Parcel.One Eco,Germany,DE,10.0,20.0,120,60,60,7.29,EUR,3-5,true,false
+PA1_eco,Parcel.One Eco,Germany,DE,20.0,31.5,120,60,60,9.49,EUR,3-5,true,false
+PA1_eco,Parcel.One Eco,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,120,60,60,6.99,EUR,5-7,false,true
+PA1_eco,Parcel.One Eco,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,120,60,60,8.49,EUR,5-7,false,true
+PA1_eco,Parcel.One Eco,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,120,60,60,10.99,EUR,5-7,false,true
+PA1_eco,Parcel.One Eco,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,120,60,60,14.49,EUR,5-7,false,true
+PA1_eco,Parcel.One Eco,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,120,60,60,18.99,EUR,5-7,false,true
+PA1_premium,Parcel.One Premium,Germany,DE,0.01,2.0,120,60,60,6.49,EUR,1-2,true,false
+PA1_premium,Parcel.One Premium,Germany,DE,2.0,5.0,120,60,60,7.99,EUR,1-2,true,false
+PA1_premium,Parcel.One Premium,Germany,DE,5.0,10.0,120,60,60,9.99,EUR,1-2,true,false
+PA1_premium,Parcel.One Premium,Germany,DE,10.0,20.0,120,60,60,12.49,EUR,1-2,true,false
+PA1_premium,Parcel.One Premium,Germany,DE,20.0,31.5,120,60,60,15.99,EUR,1-2,true,false
+PA1_premium,Parcel.One Premium,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,120,60,60,11.99,EUR,3-5,false,true
+PA1_premium,Parcel.One Premium,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,120,60,60,14.99,EUR,3-5,false,true
+PA1_premium,Parcel.One Premium,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,120,60,60,18.49,EUR,3-5,false,true
+PA1_premium,Parcel.One Premium,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,120,60,60,22.99,EUR,3-5,false,true
+PA1_premium,Parcel.One Premium,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,120,60,60,28.99,EUR,3-5,false,true
+PA1_express,Parcel.One Express,Germany,DE,0.01,2.0,120,60,60,10.99,EUR,1,true,false
+PA1_express,Parcel.One Express,Germany,DE,2.0,5.0,120,60,60,12.99,EUR,1,true,false
+PA1_express,Parcel.One Express,Germany,DE,5.0,10.0,120,60,60,15.99,EUR,1,true,false
+PA1_express,Parcel.One Express,Germany,DE,10.0,20.0,120,60,60,19.99,EUR,1,true,false
+PA1_express,Parcel.One Express,Germany,DE,20.0,31.5,120,60,60,24.99,EUR,1,true,false
+PA1_express,Parcel.One Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,120,60,60,18.99,EUR,2-3,false,true
+PA1_express,Parcel.One Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,120,60,60,22.99,EUR,2-3,false,true
+PA1_express,Parcel.One Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,120,60,60,27.99,EUR,2-3,false,true
+PA1_express,Parcel.One Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,120,60,60,34.99,EUR,2-3,false,true
+PA1_express,Parcel.One Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,120,60,60,42.99,EUR,2-3,false,true
+DHL_PAKET,DHL Paket,Germany,DE,0.01,2.0,120,60,60,5.99,EUR,1-2,true,false
+DHL_PAKET,DHL Paket,Germany,DE,2.0,5.0,120,60,60,6.99,EUR,1-2,true,false
+DHL_PAKET,DHL Paket,Germany,DE,5.0,10.0,120,60,60,9.49,EUR,1-2,true,false
+DHL_PAKET,DHL Paket,Germany,DE,10.0,20.0,120,60,60,15.99,EUR,1-2,true,false
+DHL_PAKET,DHL Paket,Germany,DE,20.0,31.5,120,60,60,18.99,EUR,1-2,true,false
+DHL_PAKETINT,DHL Paket International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,120,60,60,11.99,EUR,3-5,false,true
+DHL_PAKETINT,DHL Paket International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,120,60,60,13.99,EUR,3-5,false,true
+DHL_PAKETINT,DHL Paket International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,120,60,60,17.49,EUR,3-5,false,true
+DHL_PAKETINT,DHL Paket International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,120,60,60,23.99,EUR,3-5,false,true
+DHL_PAKETINT,DHL Paket International,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,120,60,60,29.99,EUR,3-5,false,true
+DHL_EXPRESS,DHL Express,Germany,DE,0.01,2.0,120,60,60,12.90,EUR,1,true,false
+DHL_EXPRESS,DHL Express,Germany,DE,2.0,5.0,120,60,60,14.90,EUR,1,true,false
+DHL_EXPRESS,DHL Express,Germany,DE,5.0,10.0,120,60,60,17.90,EUR,1,true,false
+DHL_EXPRESS,DHL Express,Germany,DE,10.0,20.0,120,60,60,22.90,EUR,1,true,false
+DHL_EXPRESS,DHL Express,Germany,DE,20.0,31.5,120,60,60,28.90,EUR,1,true,false
+DHL_EXPRESS,DHL Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,120,60,60,21.90,EUR,1-2,false,true
+DHL_EXPRESS,DHL Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,120,60,60,24.90,EUR,1-2,false,true
+DHL_EXPRESS,DHL Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,120,60,60,29.90,EUR,1-2,false,true
+DHL_EXPRESS,DHL Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,120,60,60,36.90,EUR,1-2,false,true
+DHL_EXPRESS,DHL Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,120,60,60,44.90,EUR,1-2,false,true
+DHL_RETOURE,DHL Retoure,Germany,DE,0.01,5.0,120,60,60,4.49,EUR,2-3,true,false
+DHL_RETOURE,DHL Retoure,Germany,DE,5.0,10.0,120,60,60,5.49,EUR,2-3,true,false
+DHL_RETOURE,DHL Retoure,Germany,DE,10.0,20.0,120,60,60,6.49,EUR,2-3,true,false
+DHL_RETOURE,DHL Retoure,Germany,DE,20.0,31.5,120,60,60,7.99,EUR,2-3,true,false
+UPS_STANDARD,UPS Standard,Germany,DE,0.01,2.0,150,75,75,6.49,EUR,1-2,true,false
+UPS_STANDARD,UPS Standard,Germany,DE,2.0,5.0,150,75,75,7.99,EUR,1-2,true,false
+UPS_STANDARD,UPS Standard,Germany,DE,5.0,10.0,150,75,75,9.99,EUR,1-2,true,false
+UPS_STANDARD,UPS Standard,Germany,DE,10.0,20.0,150,75,75,13.49,EUR,1-2,true,false
+UPS_STANDARD,UPS Standard,Germany,DE,20.0,31.5,150,75,75,17.99,EUR,1-2,true,false
+UPS_STANDARD,UPS Standard,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,150,75,75,12.49,EUR,3-5,false,true
+UPS_STANDARD,UPS Standard,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,150,75,75,14.99,EUR,3-5,false,true
+UPS_STANDARD,UPS Standard,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,150,75,75,18.49,EUR,3-5,false,true
+UPS_STANDARD,UPS Standard,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,150,75,75,23.99,EUR,3-5,false,true
+UPS_STANDARD,UPS Standard,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,150,75,75,29.99,EUR,3-5,false,true
+UPS_EXPRESS,UPS Express,Germany,DE,0.01,2.0,150,75,75,12.49,EUR,1,true,false
+UPS_EXPRESS,UPS Express,Germany,DE,2.0,5.0,150,75,75,14.99,EUR,1,true,false
+UPS_EXPRESS,UPS Express,Germany,DE,5.0,10.0,150,75,75,17.99,EUR,1,true,false
+UPS_EXPRESS,UPS Express,Germany,DE,10.0,20.0,150,75,75,22.49,EUR,1,true,false
+UPS_EXPRESS,UPS Express,Germany,DE,20.0,31.5,150,75,75,27.99,EUR,1,true,false
+UPS_EXPRESS,UPS Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,150,75,75,21.99,EUR,1-2,false,true
+UPS_EXPRESS,UPS Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,150,75,75,24.99,EUR,1-2,false,true
+UPS_EXPRESS,UPS Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,150,75,75,29.99,EUR,1-2,false,true
+UPS_EXPRESS,UPS Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,150,75,75,37.99,EUR,1-2,false,true
+UPS_EXPRESS,UPS Express,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,150,75,75,45.99,EUR,1-2,false,true
+UPS_EXPSAVER,UPS Express Saver,Germany,DE,0.01,2.0,150,75,75,10.49,EUR,1,true,false
+UPS_EXPSAVER,UPS Express Saver,Germany,DE,2.0,5.0,150,75,75,12.49,EUR,1,true,false
+UPS_EXPSAVER,UPS Express Saver,Germany,DE,5.0,10.0,150,75,75,14.99,EUR,1,true,false
+UPS_EXPSAVER,UPS Express Saver,Germany,DE,10.0,20.0,150,75,75,18.99,EUR,1,true,false
+UPS_EXPSAVER,UPS Express Saver,Germany,DE,20.0,31.5,150,75,75,23.99,EUR,1,true,false
+UPS_EXPSAVER,UPS Express Saver,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",0.01,2.0,150,75,75,17.49,EUR,2-3,false,true
+UPS_EXPSAVER,UPS Express Saver,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",2.0,5.0,150,75,75,19.99,EUR,2-3,false,true
+UPS_EXPSAVER,UPS Express Saver,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",5.0,10.0,150,75,75,23.49,EUR,2-3,false,true
+UPS_EXPSAVER,UPS Express Saver,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",10.0,20.0,150,75,75,29.99,EUR,2-3,false,true
+UPS_EXPSAVER,UPS Express Saver,Europe,"AT,BE,CH,CZ,DK,ES,FI,FR,GB,HU,IE,IT,LU,NL,PL,PT,SE,SK",20.0,31.5,150,75,75,37.99,EUR,2-3,false,true

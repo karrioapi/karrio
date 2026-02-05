@@ -7,6 +7,7 @@ import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.errors as errors
 import karrio.providers.dhl_parcel_de.error as error
 import karrio.providers.dhl_parcel_de.utils as provider_utils
 

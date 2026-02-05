@@ -1,0 +1,76 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+P,Express Worldwide,International,,0.01,0.5,120,80,80,29.90,EUR,,false,true
+P,Express Worldwide,International,,0.5,2,120,80,80,35.90,EUR,,false,true
+P,Express Worldwide,International,,2,5,120,80,80,45.90,EUR,,false,true
+P,Express Worldwide,International,,5,10,120,80,80,62.90,EUR,,false,true
+P,Express Worldwide,International,,10,20,120,80,80,89.90,EUR,,false,true
+P,Express Worldwide,International,,20,30,120,80,80,119.90,EUR,,false,true
+P,Express Worldwide,International,,30,70,120,80,80,159.90,EUR,,false,true
+D,Express Worldwide (Documents),International,,0.01,0.5,120,80,80,22.90,EUR,,false,true
+D,Express Worldwide (Documents),International,,0.5,1,120,80,80,27.90,EUR,,false,true
+D,Express Worldwide (Documents),International,,1,2,120,80,80,32.90,EUR,,false,true
+D,Express Worldwide (Documents),International,,2,2.5,120,80,80,35.90,EUR,,false,true
+T,Express 12:00,International,,0.01,0.5,120,80,80,39.90,EUR,,false,true
+T,Express 12:00,International,,0.5,2,120,80,80,45.90,EUR,,false,true
+T,Express 12:00,International,,2,5,120,80,80,55.90,EUR,,false,true
+T,Express 12:00,International,,5,10,120,80,80,75.90,EUR,,false,true
+T,Express 12:00,International,,10,20,120,80,80,109.90,EUR,,false,true
+T,Express 12:00,International,,20,30,120,80,80,149.90,EUR,,false,true
+T,Express 12:00,International,,30,70,120,80,80,199.90,EUR,,false,true
+Y,Express 9:00,International,,0.01,0.5,120,80,80,49.90,EUR,,false,true
+Y,Express 9:00,International,,0.5,2,120,80,80,55.90,EUR,,false,true
+Y,Express 9:00,International,,2,5,120,80,80,65.90,EUR,,false,true
+Y,Express 9:00,International,,5,10,120,80,80,89.90,EUR,,false,true
+Y,Express 9:00,International,,10,20,120,80,80,129.90,EUR,,false,true
+Y,Express 9:00,International,,20,30,120,80,80,179.90,EUR,,false,true
+Y,Express 9:00,International,,30,70,120,80,80,239.90,EUR,,false,true
+K,Express 10:30,International,,0.01,0.5,120,80,80,44.90,EUR,,false,true
+K,Express 10:30,International,,0.5,2,120,80,80,49.90,EUR,,false,true
+K,Express 10:30,International,,2,5,120,80,80,59.90,EUR,,false,true
+K,Express 10:30,International,,5,10,120,80,80,82.90,EUR,,false,true
+K,Express 10:30,International,,10,20,120,80,80,119.90,EUR,,false,true
+K,Express 10:30,International,,20,30,120,80,80,164.90,EUR,,false,true
+K,Express 10:30,International,,30,70,120,80,80,219.90,EUR,,false,true
+8,Express Easy,International,,0.01,0.5,120,80,80,22.90,EUR,,false,true
+8,Express Easy,International,,0.5,2,120,80,80,28.90,EUR,,false,true
+8,Express Easy,International,,2,5,120,80,80,35.90,EUR,,false,true
+8,Express Easy,International,,5,10,120,80,80,49.90,EUR,,false,true
+8,Express Easy,International,,10,20,120,80,80,69.90,EUR,,false,true
+8,Express Easy,International,,20,31.5,120,80,80,89.90,EUR,,false,true
+W,Economy Select,International,,0.01,0.5,120,80,80,19.90,EUR,,false,true
+W,Economy Select,International,,0.5,2,120,80,80,24.90,EUR,,false,true
+W,Economy Select,International,,2,5,120,80,80,32.90,EUR,,false,true
+W,Economy Select,International,,5,10,120,80,80,45.90,EUR,,false,true
+W,Economy Select,International,,10,20,120,80,80,65.90,EUR,,false,true
+W,Economy Select,International,,20,30,120,80,80,89.90,EUR,,false,true
+W,Economy Select,International,,30,70,120,80,80,119.90,EUR,,false,true
+N,Express Domestic,Domestic,,0.01,0.5,120,80,80,14.90,EUR,,true,false
+N,Express Domestic,Domestic,,0.5,2,120,80,80,17.90,EUR,,true,false
+N,Express Domestic,Domestic,,2,5,120,80,80,22.90,EUR,,true,false
+N,Express Domestic,Domestic,,5,10,120,80,80,29.90,EUR,,true,false
+N,Express Domestic,Domestic,,10,20,120,80,80,42.90,EUR,,true,false
+N,Express Domestic,Domestic,,20,30,120,80,80,55.90,EUR,,true,false
+N,Express Domestic,Domestic,,30,70,120,80,80,75.90,EUR,,true,false
+1,Express Domestic 12:00,Domestic,,0.01,0.5,120,80,80,19.90,EUR,,true,false
+1,Express Domestic 12:00,Domestic,,0.5,2,120,80,80,22.90,EUR,,true,false
+1,Express Domestic 12:00,Domestic,,2,5,120,80,80,29.90,EUR,,true,false
+1,Express Domestic 12:00,Domestic,,5,10,120,80,80,39.90,EUR,,true,false
+1,Express Domestic 12:00,Domestic,,10,20,120,80,80,55.90,EUR,,true,false
+1,Express Domestic 12:00,Domestic,,20,30,120,80,80,72.90,EUR,,true,false
+1,Express Domestic 12:00,Domestic,,30,70,120,80,80,95.90,EUR,,true,false
+X,Express Envelope,International,,0.01,0.3,35,27.5,1,22.90,EUR,,false,true
+X,Express Envelope,International,,0.3,0.5,35,27.5,1,25.90,EUR,,false,true
+G,GlobalMail,International,,0.01,0.5,60,40,40,5.50,EUR,,false,true
+G,GlobalMail,International,,0.5,1,60,40,40,6.90,EUR,,false,true
+G,GlobalMail,International,,1,1.5,60,40,40,8.50,EUR,,false,true
+G,GlobalMail,International,,1.5,2,60,40,40,10.50,EUR,,false,true
+R,GlobalMail Business,International,,0.01,0.5,60,40,40,4.50,EUR,,false,true
+R,GlobalMail Business,International,,0.5,1,60,40,40,5.90,EUR,,false,true
+R,GlobalMail Business,International,,1,1.5,60,40,40,7.50,EUR,,false,true
+R,GlobalMail Business,International,,1.5,2,60,40,40,9.50,EUR,,false,true
+S,Same Day,Domestic,,0.01,2,120,80,80,69.90,EUR,,true,false
+S,Same Day,Domestic,,2,5,120,80,80,79.90,EUR,,true,false
+S,Same Day,Domestic,,5,10,120,80,80,89.90,EUR,,true,false
+S,Same Day,Domestic,,10,20,120,80,80,109.90,EUR,,true,false
+S,Same Day,Domestic,,20,30,120,80,80,139.90,EUR,,true,false
+S,Same Day,Domestic,,30,70,120,80,80,179.90,EUR,,true,false

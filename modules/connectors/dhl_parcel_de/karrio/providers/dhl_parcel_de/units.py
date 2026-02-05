@@ -686,8 +686,10 @@ def load_services_from_csv() -> list:
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
+                min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
+                max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
                 transit_days=(
-                    int(row["transit_days"]) if row.get("transit_days") else None
+                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None
                 ),
                 country_codes=country_codes if country_codes else None,
             )

@@ -349,6 +349,19 @@ class WorkspaceConfigType:
 
     # endregion
 
+    # ─────────────────────────────────────────────────────────────────
+    # Workspace Settings
+    # ─────────────────────────────────────────────────────────────────
+    # region
+
+    @strawberry.field
+    def shipping_app_test_mode(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("shipping_app_test_mode")
+
+    # endregion
+
     @staticmethod
     @utils.authentication_required
     def resolve(info) -> typing.Optional["WorkspaceConfigType"]:

@@ -38,7 +38,7 @@ if REDIS_URL is not None:
 
     # Extract values from REDIS_URL (these supersede granular env vars)
     REDIS_HOST = parsed.hostname
-    REDIS_PORT = parsed.port or 6379
+    REDIS_PORT = parsed.port or 10000  # Azure Managed Redis default port
     REDIS_USERNAME = parsed.username or "default"
     REDIS_PASSWORD = parsed.password
 

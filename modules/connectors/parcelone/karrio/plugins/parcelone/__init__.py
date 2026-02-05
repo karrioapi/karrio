@@ -21,6 +21,7 @@ METADATA = PluginMetadata(
     is_hub=True,  # ParcelOne is a multi-carrier hub
     options=units.ShippingOption,
     services=units.ShippingService,
+    service_levels=units.DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
     # Extra info
     website="https://parcel.one",

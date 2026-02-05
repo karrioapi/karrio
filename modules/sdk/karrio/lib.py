@@ -8,6 +8,7 @@ import urllib.error
 import karrio.core.utils as utils
 import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.errors as exceptions
 from karrio.core.utils.logger import logger
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
@@ -932,6 +933,7 @@ def run_asynchronously(
 
 
 HttpResponse = utils.HttpResponse
+error_decoder = utils.error_decoder
 
 
 def request(
