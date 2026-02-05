@@ -42,12 +42,13 @@ class Proxy(proxy.Proxy):
         label_type = request.ctx.get("label_type", "PDF") if request.ctx else "PDF"
 
         # Build label fetch requests with index to maintain order
+        # API manual: format=zpl for ZPL, omit parameter for PDF (default)
+        format_param = "&format=zpl" if label_type.upper() == "ZPL" else ""
         label_requests = [
             dict(
                 index=idx,
                 prefix=shipment.get("prefix"),
                 air_waybill=shipment.get("airWaybill"),
-                label_type=label_type,
             )
             for idx, shipment in enumerate(shipments)
             if shipment.get("prefix")
@@ -64,7 +65,7 @@ class Proxy(proxy.Proxy):
                 lambda payload: (
                     payload["index"],
                     lib.request(
-                        url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['air_waybill']}&labelType={payload['label_type']}",
+                        url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['air_waybill']}{format_param}",
                         trace=self.trace_as("json"),
                         method="GET",
                         headers={
@@ -89,8 +90,11 @@ class Proxy(proxy.Proxy):
     def get_label(self, request: lib.Serializable) -> lib.Deserializable[str]:
         """Fetch label for a shipment using prefix and airWaybill."""
         payload = request.serialize()
+        # API manual: format=zpl for ZPL, omit parameter for PDF (default)
+        label_type = payload.get('labelType', 'PDF')
+        format_param = "&format=zpl" if label_type.upper() == "ZPL" else ""
         response = lib.request(
-            url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['airWaybill']}&labelType={payload.get('labelType', 'PDF')}",
+            url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['airWaybill']}{format_param}",
             trace=self.trace_as("json"),
             method="GET",
             headers={
