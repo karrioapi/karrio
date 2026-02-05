@@ -1,4 +1,3 @@
-
-from smartkargo.test_rate import *
-from smartkargo.test_tracking import *
-from smartkargo.test_shipment import *
+from tests.smartkargo.test_rate import *
+from tests.smartkargo.test_tracking import *
+from tests.smartkargo.test_shipment import *
