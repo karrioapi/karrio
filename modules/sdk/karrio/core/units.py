@@ -1057,7 +1057,7 @@ class Packages(typing.Iterable[Package]):
         max_weight = max_weight or self._max_weight
 
         if any(check is not None for check in [required, max_weight]):
-            validation_errors = {}
+            validation_errors: typing.Dict[str, typing.Union[errors.FieldErrorCode, str, dict]] = {}
             for index, package in enumerate(self._items):
                 if required is not None:
                     for field in required:

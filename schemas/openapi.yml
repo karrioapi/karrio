@@ -12941,6 +12941,9 @@ components:
           type: string
         client_secret:
           type: string
+        contact_id:
+          type: string
+          nullable: true
         account_country_code:
           type: string
           nullable: true
@@ -14937,6 +14940,12 @@ tags:
     | landmark_maxipak_scan_premium_ups_standard_ddp | LGINTUPST |
     | landmark_maxipak_scan_premium_ups_standard_ddu | LGINTUPSTU |
     | landmark_maxipak_scan_pddp | LGINTBPMO |
+    | landmark_minipak_scan_pddp | LGINTBPIO |
+
+    ### La Poste
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | laposte_standard_service | La Poste Standard Service |
 
     ### Locate2u
     | Code         | Service Name |

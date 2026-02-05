@@ -71,6 +71,7 @@ class ShippingServiceName(lib.StrEnum):
     landmark_maxipak_scan_premium_ups_standard_ddp = "MaxiPak Scan Premium UPS Standard DDP"
     landmark_maxipak_scan_premium_ups_standard_ddu = "MaxiPak Scan Premium UPS Standard DDU"
     landmark_maxipak_scan_pddp = "MaxiPak Scan Postal DDP"
+    landmark_minipak_scan_pddp = "MiniPak Scan Postal DDP"
     # fmt: on
 
 
@@ -97,6 +98,8 @@ class ShippingService(lib.StrEnum):
     landmark_maxipak_scan_premium_ups_standard_ddu = "LGINTUPSTU"
     # maxipak scan premium pddp
     landmark_maxipak_scan_pddp = "LGINTBPMO"
+    # minipak scan postal ddp
+    landmark_minipak_scan_pddp = "LGINTBPIO"
 
     landmark_maxipak_scan_premium = landmark_maxipak_scan_premium_ups_standard_ddp
 

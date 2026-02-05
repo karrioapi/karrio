@@ -2762,6 +2762,7 @@ export type GeodisLanguageEnum = typeof GeodisLanguageEnum[keyof typeof GeodisLa
 export interface Gls {
     'client_id': string;
     'client_secret': string;
+    'contact_id'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface HayPost {

@@ -247,11 +247,11 @@ export function RateSheetCsvPreview({
       // Pre-build surcharge amounts for this service (Set for O(1) membership check)
       const linkedIds = new Set(service.surcharge_ids || []);
       const surchAmounts: Record<string, number> = {};
-      for (const [sid, amount] of surchargeAmountMap) {
+      surchargeAmountMap.forEach((amount, sid) => {
         if (linkedIds.has(sid)) {
           surchAmounts[sid] = amount;
         }
-      }
+      });
 
       const isReturn =
         (service.features || []).includes("returns") ||

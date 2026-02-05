@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_dhl_poland"
-version = "2026.1.4"
+version = "2026.1.5"
 description = "Karrio - DHL Parcel Poland Shipping Extension"
 readme = "README.md"
 requires-python = ">=3.11"

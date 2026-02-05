@@ -337,18 +337,17 @@ def load_services_from_csv() -> list:
             # Map carrier service code to karrio service code
             karrio_service_code = ShippingService.map(service_code).name_or_key
 
+            row_min_weight = float(row["min_weight"]) if row.get("min_weight") else None
+            row_max_weight = float(row["max_weight"]) if row.get("max_weight") else None
+
             # Initialize service if not exists
             if karrio_service_code not in services_dict:
                 services_dict[karrio_service_code] = {
                     "service_name": service_name,
                     "service_code": karrio_service_code,
                     "currency": row.get("currency", "EUR"),
-                    "min_weight": (
-                        float(row["min_weight"]) if row.get("min_weight") else None
-                    ),
-                    "max_weight": (
-                        float(row["max_weight"]) if row.get("max_weight") else None
-                    ),
+                    "min_weight": row_min_weight,
+                    "max_weight": row_max_weight,
                     "max_length": (
                         float(row["max_length"]) if row.get("max_length") else None
                     ),
@@ -366,6 +365,15 @@ def load_services_from_csv() -> list:
                     ),
                     "zones": [],
                 }
+            else:
+                # Update service-level weight bounds to cover all zones
+                current = services_dict[karrio_service_code]
+                if row_min_weight is not None:
+                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
+                        current["min_weight"] = row_min_weight
+                if row_max_weight is not None:
+                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
+                        current["max_weight"] = row_max_weight
 
             # Parse country codes
             country_codes = [
@@ -376,8 +384,8 @@ def load_services_from_csv() -> list:
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
-                min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
-                max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
+                min_weight=row_min_weight,
+                max_weight=row_max_weight,
                 transit_days=(
                     int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None
                 ),

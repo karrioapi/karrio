@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_canadapost"
-version = "2026.1.4"
+version = "2026.1.5"
 description = "Karrio - Canada Post Shipping Extension"
 readme = "README.md"
 requires-python = ">=3.11"

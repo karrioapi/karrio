@@ -358,6 +358,26 @@ ParsedRateResponse = [
             "total_charge": 3.75,
             "transit_days": 12,
         },
+        {
+            "carrier_id": "landmark",
+            "carrier_name": "landmark",
+            "currency": "GBP",
+            "extra_charges": [
+                {
+                    "amount": 3.5,
+                    "currency": "GBP",
+                    "name": "Base Charge",
+                }
+            ],
+            "meta": {
+                "service_name": "MiniPak Scan Postal DDP",
+                "shipping_charges": 3.5,
+                "shipping_currency": "GBP",
+            },
+            "service": "landmark_minipak_scan_pddp",
+            "total_charge": 3.5,
+            "transit_days": 12,
+        },
     ],
     [],
 ]

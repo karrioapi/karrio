@@ -113,28 +113,39 @@ def load_services_from_csv() -> list:
         for row in reader:
             service_code = row["service_code"]
             karrio_service_code = Service.map(service_code).name_or_key
+            row_min_weight = float(row["min_weight"]) if row.get("min_weight") else None
+            row_max_weight = float(row["max_weight"]) if row.get("max_weight") else None
             if karrio_service_code not in services_dict:
                 services_dict[karrio_service_code] = {
                     "service_name": row["service_name"],
                     "service_code": karrio_service_code,
                     "currency": row.get("currency", "PLN"),
-                    "min_weight": float(row["min_weight"]) if row.get("min_weight") else None,
-                    "max_weight": float(row["max_weight"]) if row.get("max_weight") else None,
+                    "min_weight": row_min_weight,
+                    "max_weight": row_max_weight,
                     "max_length": float(row["max_length"]) if row.get("max_length") else None,
                     "max_width": float(row["max_width"]) if row.get("max_width") else None,
                     "max_height": float(row["max_height"]) if row.get("max_height") else None,
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
-                    "domicile": (row.get("domicile") or "").lower() == "true",
+                    "domicile": True if (row.get("domicile") or "").lower() == "true" else None,
                     "international": True if (row.get("international") or "").lower() == "true" else None,
                     "zones": [],
                 }
+            else:
+                # Update service-level weight bounds to cover all zones
+                current = services_dict[karrio_service_code]
+                if row_min_weight is not None:
+                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
+                        current["min_weight"] = row_min_weight
+                if row_max_weight is not None:
+                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
+                        current["max_weight"] = row_max_weight
             country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
-                min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
-                max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
+                min_weight=row_min_weight,
+                max_weight=row_max_weight,
                 transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
                 country_codes=country_codes if country_codes else None,
             )

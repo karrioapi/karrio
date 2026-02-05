@@ -199,18 +199,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 0.0,
+                    "amount": 6.99,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Standard",
-                "shipping_charges": 0.0,
+                "shipping_charges": 6.99,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_standard",
-            "total_charge": 0.0,
+            "total_charge": 6.99,
             "transit_days": 2,
         },
         {
@@ -219,18 +219,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 0.0,
+                    "amount": 9.99,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Next Day",
-                "shipping_charges": 0.0,
+                "shipping_charges": 9.99,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_next_day",
-            "total_charge": 0.0,
+            "total_charge": 9.99,
             "transit_days": 1,
         },
         {
@@ -239,18 +239,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 0.0,
+                    "amount": 6.99,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Stated Day",
-                "shipping_charges": 0.0,
+                "shipping_charges": 6.99,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_stated_day",
-            "total_charge": 0.0,
+            "total_charge": 6.99,
             "transit_days": 1,
         },
         {
@@ -259,18 +259,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 0.0,
+                    "amount": 4.99,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Parcel Shop",
-                "shipping_charges": 0.0,
+                "shipping_charges": 4.99,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_parcel_shop",
-            "total_charge": 0.0,
+            "total_charge": 4.99,
             "transit_days": 2,
         },
     ],
