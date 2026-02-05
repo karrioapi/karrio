@@ -1,6 +1,19 @@
 service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
-V01PAK,DHL Paket,Germany,DE,0.01,31.5,120,60,60,0.0,EUR,,true,false
-V62KP,DHL Kleinpaket,Germany,DE,0.01,1.0,35.3,25,5,0.0,EUR,,true,false
-V54EPAK,DHL EuroPaket,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,31.5,120,60,60,0.0,EUR,,false,true
-V53WPAK,DHL Paket International,Rest of World,,0.01,31.5,120,60,60,0.0,EUR,,false,true
-V66WPI,DHL Warenpost International,Rest of World,,0.01,1.0,35.3,25,5,0.0,EUR,,false,true
+V62KP,DHL Kleinpaket,Germany,DE,0.01,1.0,35.3,25,5,3.39,EUR,1-2,true,false
+V01PAK,DHL Paket,Germany,DE,0.01,2.0,120,60,60,7.50,EUR,1-2,true,false
+V01PAK,DHL Paket,Germany,DE,2.0,5.0,120,60,60,7.50,EUR,1-2,true,false
+V01PAK,DHL Paket,Germany,DE,5.0,10.0,120,60,60,10.30,EUR,1-2,true,false
+V01PAK,DHL Paket,Germany,DE,10.0,20.0,120,60,60,18.80,EUR,1-2,true,false
+V01PAK,DHL Paket,Germany,DE,20.0,31.5,120,60,60,19.97,EUR,1-2,true,false
+V54EPAK,DHL EuroPaket,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,2.0,120,60,60,13.99,EUR,3-5,false,true
+V54EPAK,DHL EuroPaket,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",2.0,5.0,120,60,60,15.99,EUR,3-5,false,true
+V54EPAK,DHL EuroPaket,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",5.0,10.0,120,60,60,19.99,EUR,3-5,false,true
+V54EPAK,DHL EuroPaket,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",10.0,20.0,120,60,60,28.99,EUR,3-5,false,true
+V54EPAK,DHL EuroPaket,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",20.0,31.5,120,60,60,34.99,EUR,3-5,false,true
+V53WPAK,DHL Paket International,Rest of World,,0.01,2.0,120,60,60,15.99,EUR,5-10,false,true
+V53WPAK,DHL Paket International,Rest of World,,2.0,5.0,120,60,60,18.99,EUR,5-10,false,true
+V53WPAK,DHL Paket International,Rest of World,,5.0,10.0,120,60,60,24.99,EUR,5-10,false,true
+V53WPAK,DHL Paket International,Rest of World,,10.0,20.0,120,60,60,35.99,EUR,5-10,false,true
+V53WPAK,DHL Paket International,Rest of World,,20.0,31.5,120,60,60,44.99,EUR,5-10,false,true
+V66WPI,DHL Warenpost International,Rest of World,,0.01,0.5,35.3,25,5,3.99,EUR,7-14,false,true
+V66WPI,DHL Warenpost International,Rest of World,,0.5,1.0,35.3,25,5,5.49,EUR,7-14,false,true

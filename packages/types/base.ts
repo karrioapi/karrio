@@ -364,6 +364,13 @@ export interface References {
       transit_days?: number;
       transit_time?: number;
     }>;
+    surcharges?: Array<{
+      id: string;
+      name: string;
+      amount?: number;
+      cost?: number;
+      surcharge_type?: string;
+    }>;
   }>;
   connection_configs: Collection<
     Collection<{

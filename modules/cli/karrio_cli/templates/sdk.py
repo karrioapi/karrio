@@ -686,6 +686,7 @@ class Proxy(proxy.Proxy):
         #             "client_secret": self.settings.client_secret,
         #         }),
         #         decoder=lib.to_dict,
+        #         on_error=lib.error_decoder,
         #     )
         #
         #     messages = provider_error.parse_error_response(response, self.settings)

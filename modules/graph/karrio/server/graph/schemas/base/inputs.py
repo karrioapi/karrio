@@ -71,6 +71,7 @@ class ManifestFilter(utils.Paginated):
 class PickupFilter(utils.Paginated):
     keyword: typing.Optional[str] = strawberry.UNSET
     id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    status: typing.Optional[typing.List[str]] = strawberry.UNSET
     confirmation_number: typing.Optional[str] = strawberry.UNSET
     pickup_date_after: typing.Optional[str] = strawberry.UNSET
     pickup_date_before: typing.Optional[str] = strawberry.UNSET
@@ -193,6 +194,11 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     pref_age_check: typing.Optional[utils.AgeCheckEnum] = strawberry.UNSET
     pref_signature_required: typing.Optional[bool] = strawberry.UNSET
     pref_max_lead_time_days: typing.Optional[int] = strawberry.UNSET
+
+    # ─────────────────────────────────────────────────────────────────
+    # Workspace Settings
+    # ─────────────────────────────────────────────────────────────────
+    shipping_app_test_mode: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
@@ -935,6 +941,40 @@ class BatchUpdateServiceRatesMutationInput(utils.BaseInput):
 
     rate_sheet_id: str
     rates: typing.List[ServiceRateInput]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# WEIGHT RANGE INPUTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.input
+class AddWeightRangeMutationInput(utils.BaseInput):
+    """Add a weight range to a rate sheet (creates rate entries for all service+zone combos)."""
+
+    rate_sheet_id: str
+    min_weight: float
+    max_weight: float
+
+
+@strawberry.input
+class RemoveWeightRangeMutationInput(utils.BaseInput):
+    """Remove a weight range and all its associated rate entries."""
+
+    rate_sheet_id: str
+    min_weight: float
+    max_weight: float
+
+
+@strawberry.input
+class DeleteServiceRateMutationInput(utils.BaseInput):
+    """Delete a specific service rate entry."""
+
+    rate_sheet_id: str
+    service_id: str
+    zone_id: str
+    min_weight: typing.Optional[float] = strawberry.UNSET
+    max_weight: typing.Optional[float] = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────

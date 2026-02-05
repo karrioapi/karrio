@@ -34,11 +34,17 @@ def apply_custom_markups(context: Context, result):
     Apply active markups to rate quotes.
 
     This function is called after rates are fetched from carriers.
-    It applies all active markups that match the organization context.
+    It applies all active markups that match the organization context
+    and the tenant's pricing plan.
 
     Markup scoping via organization_ids JSONField:
     - Markups with org ID in organization_ids apply only to that org
     - Markups with empty organization_ids are system-wide
+
+    Plan filtering via metadata.plan:
+    - Markups with no plan in metadata are global (apply to all plans)
+    - Markups with metadata.plan only apply when the tenant's plan matches
+    - Plan is resolved from: request filter > org metadata > default "launch"
     """
     org_id = getattr(context.org, "id", None)
 
@@ -58,9 +64,38 @@ def apply_custom_markups(context: Context, result):
 
     markups = models.Markup.objects.filter(*_filters)
 
+    # Resolve the tenant's plan for plan-based markup filtering.
+    # Priority: explicit request filter > org metadata > default "launch"
+    request_plan = None
+    context_data = None
+    if hasattr(context, "_full_data"):
+        context_data = context._full_data
+    elif hasattr(context, "data"):
+        context_data = context.data
+
+    if context_data:
+        filters = context_data.get("filters") or {}
+        request_plan = filters.get("plan")
+
+    if request_plan:
+        tenant_plan = request_plan
+    else:
+        org_metadata = getattr(
+            getattr(context, "org", None), "metadata", {}
+        ) or {}
+        tenant_plan = org_metadata.get("plan", "launch")
+
+    # Filter markups by plan:
+    # Apply if markup has no plan in metadata (global) OR plan matches tenant's plan
+    def matches_plan(markup):
+        markup_plan = (markup.metadata or {}).get("plan")
+        return markup_plan is None or markup_plan == tenant_plan
+
+    applicable_markups = [m for m in markups if matches_plan(m)]
+
     return functools.reduce(
         lambda cumulated_result, markup: markup.apply_charge(cumulated_result),
-        markups,
+        applicable_markups,
         result,
     )
 

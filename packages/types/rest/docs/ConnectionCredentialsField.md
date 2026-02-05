@@ -47,6 +47,7 @@ Name | Type | Description | Notes
 **custom_carrier_name** | **string** |  | [default to undefined]
 **identifier** | **string** |  | [default to undefined]
 **code_client** | **string** |  | [optional] [default to undefined]
+**contact_id** | **string** |  | [optional] [default to undefined]
 **customer_type** | **string** |  | [default to undefined]
 **region** | **string** |  | [optional] [default to 'Landmark CMH']
 **lang** | **string** | Indicates a lang string | [optional] [default to undefined]
@@ -120,6 +121,7 @@ const instance: ConnectionCredentialsField = {
     custom_carrier_name,
     identifier,
     code_client,
+    contact_id,
     customer_type,
     region,
     lang,

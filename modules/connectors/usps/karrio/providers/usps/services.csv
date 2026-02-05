@@ -1,0 +1,35 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+USPS_GROUND_ADVANTAGE,Ground Advantage,USA,US,0.01,1.0,108,61,61,4.50,USD,2-5,true,false
+USPS_GROUND_ADVANTAGE,Ground Advantage,USA,US,1.0,4.0,108,61,61,5.50,USD,2-5,true,false
+USPS_GROUND_ADVANTAGE,Ground Advantage,USA,US,4.0,8.0,108,61,61,7.50,USD,2-5,true,false
+USPS_GROUND_ADVANTAGE,Ground Advantage,USA,US,8.0,16.0,108,61,61,9.50,USD,2-5,true,false
+USPS_GROUND_ADVANTAGE,Ground Advantage,USA,US,16.0,31.5,108,61,61,12.50,USD,2-5,true,false
+PRIORITY_MAIL,Priority Mail,USA,US,0.01,1.0,108,61,61,7.70,USD,1-3,true,false
+PRIORITY_MAIL,Priority Mail,USA,US,1.0,3.0,108,61,61,8.70,USD,1-3,true,false
+PRIORITY_MAIL,Priority Mail,USA,US,3.0,5.0,108,61,61,10.50,USD,1-3,true,false
+PRIORITY_MAIL,Priority Mail,USA,US,5.0,10.0,108,61,61,14.50,USD,1-3,true,false
+PRIORITY_MAIL,Priority Mail,USA,US,10.0,20.0,108,61,61,19.90,USD,1-3,true,false
+PRIORITY_MAIL,Priority Mail,USA,US,20.0,31.5,108,61,61,26.50,USD,1-3,true,false
+PRIORITY_MAIL_EXPRESS,Priority Mail Express,USA,US,0.01,0.5,108,61,61,22.85,USD,1-2,true,false
+PRIORITY_MAIL_EXPRESS,Priority Mail Express,USA,US,0.5,2.0,108,61,61,26.35,USD,1-2,true,false
+PRIORITY_MAIL_EXPRESS,Priority Mail Express,USA,US,2.0,5.0,108,61,61,32.50,USD,1-2,true,false
+PRIORITY_MAIL_EXPRESS,Priority Mail Express,USA,US,5.0,10.0,108,61,61,42.50,USD,1-2,true,false
+PRIORITY_MAIL_EXPRESS,Priority Mail Express,USA,US,10.0,20.0,108,61,61,56.50,USD,1-2,true,false
+PRIORITY_MAIL_EXPRESS,Priority Mail Express,USA,US,20.0,31.5,108,61,61,72.50,USD,1-2,true,false
+PARCEL_SELECT,Parcel Select,USA,US,0.01,1.0,108,61,61,5.90,USD,2-8,true,false
+PARCEL_SELECT,Parcel Select,USA,US,1.0,5.0,108,61,61,7.90,USD,2-8,true,false
+PARCEL_SELECT,Parcel Select,USA,US,5.0,10.0,108,61,61,10.90,USD,2-8,true,false
+PARCEL_SELECT,Parcel Select,USA,US,10.0,20.0,108,61,61,14.90,USD,2-8,true,false
+PARCEL_SELECT,Parcel Select,USA,US,20.0,31.5,108,61,61,19.90,USD,2-8,true,false
+MEDIA_MAIL,Media Mail,USA,US,0.01,1.0,108,61,61,2.49,USD,2-8,true,false
+MEDIA_MAIL,Media Mail,USA,US,1.0,2.0,108,61,61,2.89,USD,2-8,true,false
+MEDIA_MAIL,Media Mail,USA,US,2.0,3.0,108,61,61,3.19,USD,2-8,true,false
+MEDIA_MAIL,Media Mail,USA,US,3.0,5.0,108,61,61,3.49,USD,2-8,true,false
+MEDIA_MAIL,Media Mail,USA,US,5.0,10.0,108,61,61,4.49,USD,2-8,true,false
+MEDIA_MAIL,Media Mail,USA,US,10.0,31.5,108,61,61,6.49,USD,2-8,true,false
+LIBRARY_MAIL,Library Mail,USA,US,0.01,1.0,108,61,61,1.89,USD,2-8,true,false
+LIBRARY_MAIL,Library Mail,USA,US,1.0,2.0,108,61,61,2.29,USD,2-8,true,false
+LIBRARY_MAIL,Library Mail,USA,US,2.0,3.0,108,61,61,2.59,USD,2-8,true,false
+LIBRARY_MAIL,Library Mail,USA,US,3.0,5.0,108,61,61,2.89,USD,2-8,true,false
+LIBRARY_MAIL,Library Mail,USA,US,5.0,10.0,108,61,61,3.79,USD,2-8,true,false
+LIBRARY_MAIL,Library Mail,USA,US,10.0,31.5,108,61,61,5.49,USD,2-8,true,false

@@ -12,6 +12,9 @@ class Settings(core.Settings):
     client_id: str
     client_secret: str
 
+    # Account identifier (required for shipment creation)
+    contact_id: str = None
+
     @property
     def carrier_name(self):
         return "gls"
@@ -99,11 +102,38 @@ class ConnectionConfig(lib.Enum):
 
 
 def parse_error_response(response):
-    """Parse the error response from the GLS API."""
+    """Parse the error response from the GLS API.
+
+    GLS ShipIT Farm API returns errors in response headers (not body):
+      - error: error code
+      - message: error description
+    """
     content = lib.failsafe(lambda: lib.decode(response.read()))
 
     if any(content or ""):
-        return content
+        # Try to parse as JSON first; if not valid JSON, wrap it as an error
+        parsed = lib.failsafe(lambda: lib.to_dict(content))
+        if parsed is not None:
+            return content
+        # Non-JSON body (e.g. plain text error message from GLS)
+        return lib.to_json(dict(
+            errors=[dict(
+                code=str(response.code),
+                message=content,
+            )]
+        ))
+
+    # GLS returns errors in headers with empty body
+    error_code = lib.failsafe(lambda: response.headers.get("error"))
+    message = lib.failsafe(lambda: response.headers.get("message"))
+
+    if error_code or message:
+        return lib.to_json(dict(
+            errors=[dict(
+                code=error_code or str(response.code),
+                message=message or response.reason,
+            )]
+        ))
 
     return lib.to_json(
         dict(errors=[dict(code=str(response.code), message=response.reason)])

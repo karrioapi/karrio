@@ -1,0 +1,65 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+DOM.RP,Regular Parcel,Canada,CA,0.01,1.0,200,130,130,9.99,CAD,4-9,true,false
+DOM.RP,Regular Parcel,Canada,CA,1.0,2.0,200,130,130,11.99,CAD,4-9,true,false
+DOM.RP,Regular Parcel,Canada,CA,2.0,5.0,200,130,130,12.99,CAD,4-9,true,false
+DOM.RP,Regular Parcel,Canada,CA,5.0,10.0,200,130,130,16.99,CAD,4-9,true,false
+DOM.RP,Regular Parcel,Canada,CA,10.0,20.0,200,130,130,22.99,CAD,4-9,true,false
+DOM.RP,Regular Parcel,Canada,CA,20.0,30.0,200,130,130,29.99,CAD,4-9,true,false
+DOM.EP,Expedited Parcel,Canada,CA,0.01,1.0,200,130,130,11.99,CAD,2-4,true,false
+DOM.EP,Expedited Parcel,Canada,CA,1.0,2.0,200,130,130,13.99,CAD,2-4,true,false
+DOM.EP,Expedited Parcel,Canada,CA,2.0,5.0,200,130,130,14.99,CAD,2-4,true,false
+DOM.EP,Expedited Parcel,Canada,CA,5.0,10.0,200,130,130,19.99,CAD,2-4,true,false
+DOM.EP,Expedited Parcel,Canada,CA,10.0,20.0,200,130,130,26.99,CAD,2-4,true,false
+DOM.EP,Expedited Parcel,Canada,CA,20.0,30.0,200,130,130,34.99,CAD,2-4,true,false
+DOM.XP,Xpresspost,Canada,CA,0.01,1.0,200,130,130,14.99,CAD,1-2,true,false
+DOM.XP,Xpresspost,Canada,CA,1.0,2.0,200,130,130,16.99,CAD,1-2,true,false
+DOM.XP,Xpresspost,Canada,CA,2.0,5.0,200,130,130,18.99,CAD,1-2,true,false
+DOM.XP,Xpresspost,Canada,CA,5.0,10.0,200,130,130,25.99,CAD,1-2,true,false
+DOM.XP,Xpresspost,Canada,CA,10.0,20.0,200,130,130,35.99,CAD,1-2,true,false
+DOM.XP,Xpresspost,Canada,CA,20.0,30.0,200,130,130,45.99,CAD,1-2,true,false
+DOM.PC,Priority,Canada,CA,0.01,1.0,200,130,130,24.99,CAD,1,true,false
+DOM.PC,Priority,Canada,CA,1.0,2.0,200,130,130,27.99,CAD,1,true,false
+DOM.PC,Priority,Canada,CA,2.0,5.0,200,130,130,29.99,CAD,1,true,false
+DOM.PC,Priority,Canada,CA,5.0,10.0,200,130,130,39.99,CAD,1,true,false
+DOM.PC,Priority,Canada,CA,10.0,20.0,200,130,130,54.99,CAD,1,true,false
+DOM.PC,Priority,Canada,CA,20.0,30.0,200,130,130,72.99,CAD,1,true,false
+USA.EP,Expedited Parcel USA,USA,US,0.01,1.0,150,100,100,16.99,CAD,4-7,false,true
+USA.EP,Expedited Parcel USA,USA,US,1.0,2.0,150,100,100,19.99,CAD,4-7,false,true
+USA.EP,Expedited Parcel USA,USA,US,2.0,5.0,150,100,100,22.99,CAD,4-7,false,true
+USA.EP,Expedited Parcel USA,USA,US,5.0,10.0,150,100,100,29.99,CAD,4-7,false,true
+USA.EP,Expedited Parcel USA,USA,US,10.0,20.0,150,100,100,42.99,CAD,4-7,false,true
+USA.EP,Expedited Parcel USA,USA,US,20.0,30.0,150,100,100,56.99,CAD,4-7,false,true
+USA.XP,Xpresspost USA,USA,US,0.01,1.0,150,100,100,22.99,CAD,2-3,false,true
+USA.XP,Xpresspost USA,USA,US,1.0,2.0,150,100,100,25.99,CAD,2-3,false,true
+USA.XP,Xpresspost USA,USA,US,2.0,5.0,150,100,100,28.99,CAD,2-3,false,true
+USA.XP,Xpresspost USA,USA,US,5.0,10.0,150,100,100,37.99,CAD,2-3,false,true
+USA.XP,Xpresspost USA,USA,US,10.0,20.0,150,100,100,52.99,CAD,2-3,false,true
+USA.XP,Xpresspost USA,USA,US,20.0,30.0,150,100,100,69.99,CAD,2-3,false,true
+USA.TP,Tracked Packet USA,USA,US,0.01,0.5,38,27,5,9.99,CAD,4-7,false,true
+USA.TP,Tracked Packet USA,USA,US,0.5,1.0,38,27,5,11.99,CAD,4-7,false,true
+USA.TP,Tracked Packet USA,USA,US,1.0,1.5,38,27,5,12.99,CAD,4-7,false,true
+USA.TP,Tracked Packet USA,USA,US,1.5,2.0,38,27,5,14.99,CAD,4-7,false,true
+USA.SP.AIR,Small Packet USA Air,USA,US,0.01,0.25,38,27,5,5.99,CAD,5-8,false,true
+USA.SP.AIR,Small Packet USA Air,USA,US,0.25,0.5,38,27,5,7.49,CAD,5-8,false,true
+USA.SP.AIR,Small Packet USA Air,USA,US,0.5,0.75,38,27,5,8.99,CAD,5-8,false,true
+USA.SP.AIR,Small Packet USA Air,USA,US,0.75,1.0,38,27,5,10.49,CAD,5-8,false,true
+INT.XP,Xpresspost International,Worldwide,,0.01,1.0,150,100,100,35.99,CAD,4-7,false,true
+INT.XP,Xpresspost International,Worldwide,,1.0,2.0,150,100,100,39.99,CAD,4-7,false,true
+INT.XP,Xpresspost International,Worldwide,,2.0,5.0,150,100,100,45.99,CAD,4-7,false,true
+INT.XP,Xpresspost International,Worldwide,,5.0,10.0,150,100,100,59.99,CAD,4-7,false,true
+INT.XP,Xpresspost International,Worldwide,,10.0,20.0,150,100,100,85.99,CAD,4-7,false,true
+INT.XP,Xpresspost International,Worldwide,,20.0,30.0,150,100,100,115.99,CAD,4-7,false,true
+INT.IP.AIR,International Parcel Air,Worldwide,,0.01,1.0,150,100,100,25.99,CAD,6-12,false,true
+INT.IP.AIR,International Parcel Air,Worldwide,,1.0,2.0,150,100,100,29.99,CAD,6-12,false,true
+INT.IP.AIR,International Parcel Air,Worldwide,,2.0,5.0,150,100,100,35.99,CAD,6-12,false,true
+INT.IP.AIR,International Parcel Air,Worldwide,,5.0,10.0,150,100,100,49.99,CAD,6-12,false,true
+INT.IP.AIR,International Parcel Air,Worldwide,,10.0,20.0,150,100,100,72.99,CAD,6-12,false,true
+INT.IP.AIR,International Parcel Air,Worldwide,,20.0,30.0,150,100,100,99.99,CAD,6-12,false,true
+INT.TP,Tracked Packet International,Worldwide,,0.01,0.5,38,27,5,13.99,CAD,6-10,false,true
+INT.TP,Tracked Packet International,Worldwide,,0.5,1.0,38,27,5,16.99,CAD,6-10,false,true
+INT.TP,Tracked Packet International,Worldwide,,1.0,1.5,38,27,5,18.99,CAD,6-10,false,true
+INT.TP,Tracked Packet International,Worldwide,,1.5,2.0,38,27,5,21.99,CAD,6-10,false,true
+INT.SP.AIR,Small Packet International Air,Worldwide,,0.01,0.5,38,27,5,8.99,CAD,6-10,false,true
+INT.SP.AIR,Small Packet International Air,Worldwide,,0.5,1.0,38,27,5,10.99,CAD,6-10,false,true
+INT.SP.AIR,Small Packet International Air,Worldwide,,1.0,1.5,38,27,5,12.99,CAD,6-10,false,true
+INT.SP.AIR,Small Packet International Air,Worldwide,,1.5,2.0,38,27,5,14.99,CAD,6-10,false,true

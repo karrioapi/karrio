@@ -1,0 +1,23 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE,First-Class Package International,Worldwide,,0.01,0.5,61,46,46,10.50,USD,7-21,false,true
+FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE,First-Class Package International,Worldwide,,0.5,1.0,61,46,46,13.50,USD,7-21,false,true
+FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE,First-Class Package International,Worldwide,,1.0,1.5,61,46,46,15.50,USD,7-21,false,true
+FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE,First-Class Package International,Worldwide,,1.5,2.0,61,46,46,17.50,USD,7-21,false,true
+PRIORITY_MAIL_INTERNATIONAL,Priority Mail International,Worldwide,,0.01,1.0,108,61,61,35.95,USD,6-10,false,true
+PRIORITY_MAIL_INTERNATIONAL,Priority Mail International,Worldwide,,1.0,2.0,108,61,61,39.95,USD,6-10,false,true
+PRIORITY_MAIL_INTERNATIONAL,Priority Mail International,Worldwide,,2.0,4.0,108,61,61,45.95,USD,6-10,false,true
+PRIORITY_MAIL_INTERNATIONAL,Priority Mail International,Worldwide,,4.0,8.0,108,61,61,55.95,USD,6-10,false,true
+PRIORITY_MAIL_INTERNATIONAL,Priority Mail International,Worldwide,,8.0,16.0,108,61,61,72.95,USD,6-10,false,true
+PRIORITY_MAIL_INTERNATIONAL,Priority Mail International,Worldwide,,16.0,31.5,108,61,61,95.95,USD,6-10,false,true
+PRIORITY_MAIL_EXPRESS_INTERNATIONAL,Priority Mail Express International,Worldwide,,0.01,0.5,108,61,61,45.95,USD,3-5,false,true
+PRIORITY_MAIL_EXPRESS_INTERNATIONAL,Priority Mail Express International,Worldwide,,0.5,2.0,108,61,61,52.95,USD,3-5,false,true
+PRIORITY_MAIL_EXPRESS_INTERNATIONAL,Priority Mail Express International,Worldwide,,2.0,4.0,108,61,61,59.95,USD,3-5,false,true
+PRIORITY_MAIL_EXPRESS_INTERNATIONAL,Priority Mail Express International,Worldwide,,4.0,8.0,108,61,61,72.95,USD,3-5,false,true
+PRIORITY_MAIL_EXPRESS_INTERNATIONAL,Priority Mail Express International,Worldwide,,8.0,16.0,108,61,61,95.95,USD,3-5,false,true
+PRIORITY_MAIL_EXPRESS_INTERNATIONAL,Priority Mail Express International,Worldwide,,16.0,31.5,108,61,61,125.95,USD,3-5,false,true
+GLOBAL_EXPRESS_GUARANTEED,Global Express Guaranteed,Worldwide,,0.01,0.5,108,61,61,65.95,USD,1-3,false,true
+GLOBAL_EXPRESS_GUARANTEED,Global Express Guaranteed,Worldwide,,0.5,2.0,108,61,61,75.95,USD,1-3,false,true
+GLOBAL_EXPRESS_GUARANTEED,Global Express Guaranteed,Worldwide,,2.0,4.0,108,61,61,89.95,USD,1-3,false,true
+GLOBAL_EXPRESS_GUARANTEED,Global Express Guaranteed,Worldwide,,4.0,8.0,108,61,61,109.95,USD,1-3,false,true
+GLOBAL_EXPRESS_GUARANTEED,Global Express Guaranteed,Worldwide,,8.0,16.0,108,61,61,145.95,USD,1-3,false,true
+GLOBAL_EXPRESS_GUARANTEED,Global Express Guaranteed,Worldwide,,16.0,31.5,108,61,61,195.95,USD,1-3,false,true

@@ -1,0 +1,73 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+PurolatorExpress,Purolator Express,Canada,CA,0.01,1.0,122,76,76,14.99,CAD,1,true,false
+PurolatorExpress,Purolator Express,Canada,CA,1.0,5.0,122,76,76,18.99,CAD,1,true,false
+PurolatorExpress,Purolator Express,Canada,CA,5.0,10.0,122,76,76,24.99,CAD,1,true,false
+PurolatorExpress,Purolator Express,Canada,CA,10.0,20.0,122,76,76,34.99,CAD,1,true,false
+PurolatorExpress,Purolator Express,Canada,CA,20.0,30.0,122,76,76,44.99,CAD,1,true,false
+PurolatorExpress,Purolator Express,Canada,CA,30.0,70.0,122,76,76,64.99,CAD,1,true,false
+PurolatorExpress9AM,Purolator Express 9AM,Canada,CA,0.01,1.0,122,76,76,22.99,CAD,1,true,false
+PurolatorExpress9AM,Purolator Express 9AM,Canada,CA,1.0,5.0,122,76,76,28.99,CAD,1,true,false
+PurolatorExpress9AM,Purolator Express 9AM,Canada,CA,5.0,10.0,122,76,76,37.99,CAD,1,true,false
+PurolatorExpress9AM,Purolator Express 9AM,Canada,CA,10.0,20.0,122,76,76,52.99,CAD,1,true,false
+PurolatorExpress9AM,Purolator Express 9AM,Canada,CA,20.0,30.0,122,76,76,68.99,CAD,1,true,false
+PurolatorExpress9AM,Purolator Express 9AM,Canada,CA,30.0,70.0,122,76,76,99.99,CAD,1,true,false
+PurolatorExpress10:30AM,Purolator Express 10:30AM,Canada,CA,0.01,1.0,122,76,76,19.99,CAD,1,true,false
+PurolatorExpress10:30AM,Purolator Express 10:30AM,Canada,CA,1.0,5.0,122,76,76,25.99,CAD,1,true,false
+PurolatorExpress10:30AM,Purolator Express 10:30AM,Canada,CA,5.0,10.0,122,76,76,33.99,CAD,1,true,false
+PurolatorExpress10:30AM,Purolator Express 10:30AM,Canada,CA,10.0,20.0,122,76,76,47.99,CAD,1,true,false
+PurolatorExpress10:30AM,Purolator Express 10:30AM,Canada,CA,20.0,30.0,122,76,76,62.99,CAD,1,true,false
+PurolatorExpress10:30AM,Purolator Express 10:30AM,Canada,CA,30.0,70.0,122,76,76,89.99,CAD,1,true,false
+PurolatorExpress12PM,Purolator Express 12PM,Canada,CA,0.01,1.0,122,76,76,16.99,CAD,1,true,false
+PurolatorExpress12PM,Purolator Express 12PM,Canada,CA,1.0,5.0,122,76,76,22.99,CAD,1,true,false
+PurolatorExpress12PM,Purolator Express 12PM,Canada,CA,5.0,10.0,122,76,76,29.99,CAD,1,true,false
+PurolatorExpress12PM,Purolator Express 12PM,Canada,CA,10.0,20.0,122,76,76,42.99,CAD,1,true,false
+PurolatorExpress12PM,Purolator Express 12PM,Canada,CA,20.0,30.0,122,76,76,55.99,CAD,1,true,false
+PurolatorExpress12PM,Purolator Express 12PM,Canada,CA,30.0,70.0,122,76,76,79.99,CAD,1,true,false
+PurolatorExpressEvening,Purolator Express Evening,Canada,CA,0.01,1.0,122,76,76,15.99,CAD,1,true,false
+PurolatorExpressEvening,Purolator Express Evening,Canada,CA,1.0,5.0,122,76,76,19.99,CAD,1,true,false
+PurolatorExpressEvening,Purolator Express Evening,Canada,CA,5.0,10.0,122,76,76,25.99,CAD,1,true,false
+PurolatorExpressEvening,Purolator Express Evening,Canada,CA,10.0,20.0,122,76,76,36.99,CAD,1,true,false
+PurolatorExpressEvening,Purolator Express Evening,Canada,CA,20.0,30.0,122,76,76,47.99,CAD,1,true,false
+PurolatorExpressEvening,Purolator Express Evening,Canada,CA,30.0,70.0,122,76,76,69.99,CAD,1,true,false
+PurolatorGround,Purolator Ground,Canada,CA,0.01,1.0,122,76,76,8.99,CAD,2-5,true,false
+PurolatorGround,Purolator Ground,Canada,CA,1.0,5.0,122,76,76,12.99,CAD,2-5,true,false
+PurolatorGround,Purolator Ground,Canada,CA,5.0,10.0,122,76,76,17.99,CAD,2-5,true,false
+PurolatorGround,Purolator Ground,Canada,CA,10.0,20.0,122,76,76,24.99,CAD,2-5,true,false
+PurolatorGround,Purolator Ground,Canada,CA,20.0,30.0,122,76,76,34.99,CAD,2-5,true,false
+PurolatorGround,Purolator Ground,Canada,CA,30.0,70.0,122,76,76,49.99,CAD,2-5,true,false
+PurolatorGround9AM,Purolator Ground 9AM,Canada,CA,0.01,1.0,122,76,76,12.99,CAD,2-5,true,false
+PurolatorGround9AM,Purolator Ground 9AM,Canada,CA,1.0,5.0,122,76,76,16.99,CAD,2-5,true,false
+PurolatorGround9AM,Purolator Ground 9AM,Canada,CA,5.0,10.0,122,76,76,22.99,CAD,2-5,true,false
+PurolatorGround9AM,Purolator Ground 9AM,Canada,CA,10.0,20.0,122,76,76,32.99,CAD,2-5,true,false
+PurolatorGround9AM,Purolator Ground 9AM,Canada,CA,20.0,30.0,122,76,76,42.99,CAD,2-5,true,false
+PurolatorGround9AM,Purolator Ground 9AM,Canada,CA,30.0,70.0,122,76,76,62.99,CAD,2-5,true,false
+PurolatorExpressU.S.,Purolator Express U.S.,USA,US,0.01,1.0,122,76,76,25.99,CAD,2-3,false,true
+PurolatorExpressU.S.,Purolator Express U.S.,USA,US,1.0,5.0,122,76,76,32.99,CAD,2-3,false,true
+PurolatorExpressU.S.,Purolator Express U.S.,USA,US,5.0,10.0,122,76,76,42.99,CAD,2-3,false,true
+PurolatorExpressU.S.,Purolator Express U.S.,USA,US,10.0,20.0,122,76,76,59.99,CAD,2-3,false,true
+PurolatorExpressU.S.,Purolator Express U.S.,USA,US,20.0,30.0,122,76,76,79.99,CAD,2-3,false,true
+PurolatorExpressU.S.,Purolator Express U.S.,USA,US,30.0,70.0,122,76,76,115.99,CAD,2-3,false,true
+PurolatorExpressU.S.9AM,Purolator Express U.S. 9AM,USA,US,0.01,1.0,122,76,76,35.99,CAD,1-2,false,true
+PurolatorExpressU.S.9AM,Purolator Express U.S. 9AM,USA,US,1.0,5.0,122,76,76,45.99,CAD,1-2,false,true
+PurolatorExpressU.S.9AM,Purolator Express U.S. 9AM,USA,US,5.0,10.0,122,76,76,59.99,CAD,1-2,false,true
+PurolatorExpressU.S.9AM,Purolator Express U.S. 9AM,USA,US,10.0,20.0,122,76,76,82.99,CAD,1-2,false,true
+PurolatorExpressU.S.9AM,Purolator Express U.S. 9AM,USA,US,20.0,30.0,122,76,76,109.99,CAD,1-2,false,true
+PurolatorExpressU.S.9AM,Purolator Express U.S. 9AM,USA,US,30.0,70.0,122,76,76,159.99,CAD,1-2,false,true
+PurolatorGroundU.S.,Purolator Ground U.S.,USA,US,0.01,1.0,122,76,76,17.99,CAD,5-7,false,true
+PurolatorGroundU.S.,Purolator Ground U.S.,USA,US,1.0,5.0,122,76,76,24.99,CAD,5-7,false,true
+PurolatorGroundU.S.,Purolator Ground U.S.,USA,US,5.0,10.0,122,76,76,32.99,CAD,5-7,false,true
+PurolatorGroundU.S.,Purolator Ground U.S.,USA,US,10.0,20.0,122,76,76,45.99,CAD,5-7,false,true
+PurolatorGroundU.S.,Purolator Ground U.S.,USA,US,20.0,30.0,122,76,76,59.99,CAD,5-7,false,true
+PurolatorGroundU.S.,Purolator Ground U.S.,USA,US,30.0,70.0,122,76,76,85.99,CAD,5-7,false,true
+PurolatorExpressInternational,Purolator Express International,Worldwide,,0.01,1.0,122,76,76,42.99,CAD,2-5,false,true
+PurolatorExpressInternational,Purolator Express International,Worldwide,,1.0,5.0,122,76,76,55.99,CAD,2-5,false,true
+PurolatorExpressInternational,Purolator Express International,Worldwide,,5.0,10.0,122,76,76,72.99,CAD,2-5,false,true
+PurolatorExpressInternational,Purolator Express International,Worldwide,,10.0,20.0,122,76,76,99.99,CAD,2-5,false,true
+PurolatorExpressInternational,Purolator Express International,Worldwide,,20.0,30.0,122,76,76,135.99,CAD,2-5,false,true
+PurolatorExpressInternational,Purolator Express International,Worldwide,,30.0,70.0,122,76,76,195.99,CAD,2-5,false,true
+PurolatorExpressInternational9AM,Purolator Express International 9AM,Worldwide,,0.01,1.0,122,76,76,58.99,CAD,1-3,false,true
+PurolatorExpressInternational9AM,Purolator Express International 9AM,Worldwide,,1.0,5.0,122,76,76,75.99,CAD,1-3,false,true
+PurolatorExpressInternational9AM,Purolator Express International 9AM,Worldwide,,5.0,10.0,122,76,76,99.99,CAD,1-3,false,true
+PurolatorExpressInternational9AM,Purolator Express International 9AM,Worldwide,,10.0,20.0,122,76,76,139.99,CAD,1-3,false,true
+PurolatorExpressInternational9AM,Purolator Express International 9AM,Worldwide,,20.0,30.0,122,76,76,189.99,CAD,1-3,false,true
+PurolatorExpressInternational9AM,Purolator Express International 9AM,Worldwide,,30.0,70.0,122,76,76,275.99,CAD,1-3,false,true

@@ -71,6 +71,7 @@ class ShippingServiceName(lib.StrEnum):
     landmark_maxipak_scan_premium_ups_standard_ddp = "MaxiPak Scan Premium UPS Standard DDP"
     landmark_maxipak_scan_premium_ups_standard_ddu = "MaxiPak Scan Premium UPS Standard DDU"
     landmark_maxipak_scan_pddp = "MaxiPak Scan Postal DDP"
+    landmark_minipak_scan_pddp = "MiniPak Scan Postal DDP"
     # fmt: on
 
 
@@ -97,6 +98,8 @@ class ShippingService(lib.StrEnum):
     landmark_maxipak_scan_premium_ups_standard_ddu = "LGINTUPSTU"
     # maxipak scan premium pddp
     landmark_maxipak_scan_pddp = "LGINTBPMO"
+    # minipak scan postal ddp
+    landmark_minipak_scan_pddp = "LGINTBPIO"
 
     landmark_maxipak_scan_premium = landmark_maxipak_scan_premium_ups_standard_ddp
 
@@ -272,8 +275,10 @@ def load_services_from_csv() -> list:
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
+                min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
+                max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
                 transit_days=(
-                    int(row["transit_days"]) if row.get("transit_days") else None
+                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None
                 ),
                 country_codes=country_codes,
             )

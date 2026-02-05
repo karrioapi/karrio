@@ -35,7 +35,7 @@ class Proxy(proxy.Proxy):
                 "prices",
                 "shipments",
             ]
-            result = lib.request(
+            response = lib.request(
                 url=f"{self.settings.server_url}/oauth2/v3/token",
                 trace=self.settings.trace_as("json"),
                 method="POST",
@@ -48,10 +48,10 @@ class Proxy(proxy.Proxy):
                         scope=" ".join(API_SCOPES),
                     )
                 ),
+                decoder=lib.to_dict,
+                on_error=lib.error_decoder,
                 max_retries=2,
             )
-
-            response = lib.to_dict(result)
             messages = provider_error.parse_error_response(response, self.settings)
 
             if any(messages):

@@ -2,6 +2,7 @@ import io
 import typing
 import base64
 import jinja2
+import jinja2.sandbox
 import weasyprint
 from django.db.models import Sum
 import weasyprint.text.fonts as fonts
@@ -35,6 +36,7 @@ UNITS = {
     "CountryISO": lib.units.CountryISO.as_dict(),
     **dataunits.REFERENCE_MODELS,
 }
+SANDBOXED_ENV = jinja2.sandbox.SandboxedEnvironment()
 
 
 class TemplateRenderingError(Exception):
@@ -89,7 +91,7 @@ class Documents:
             result = {}
             for key, value in options.get("prefetch", {}).items():
                 try:
-                    template_obj = jinja2.Template(value)
+                    template_obj = SANDBOXED_ENV.from_string(value)
                     rendered = template_obj.render(
                         **ctx,
                         metadata=metadata,
@@ -104,7 +106,7 @@ class Documents:
             return result
 
         try:
-            jinja_template = jinja2.Template(template)
+            jinja_template = SANDBOXED_ENV.from_string(template)
         except jinja2.TemplateSyntaxError as e:
             raise TemplateRenderingError(
                 f"Template syntax error: {e.message}",

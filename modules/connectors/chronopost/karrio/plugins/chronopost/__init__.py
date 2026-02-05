@@ -13,6 +13,7 @@ METADATA = metadata.PluginMetadata(
     Settings=mappers.Settings,
     # Data Units
     services=units.ShippingService,
+    service_levels=units.DEFAULT_SERVICES,
     options=units.ShippingOption,
     # New fields
     website="https://www.chronopost.fr/en",

@@ -197,9 +197,10 @@ export default function Page(pageProps: any) {
       }
     ];
 
+    const searchParamsString = searchParams?.toString() ?? "";
     useEffect(() => {
       updateFilter();
-    }, [searchParams]);
+    }, [searchParamsString]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);

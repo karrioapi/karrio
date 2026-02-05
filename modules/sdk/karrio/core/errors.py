@@ -47,9 +47,12 @@ class FieldError(ShippingSDKDetailedError):
 
     code = "SHIPPING_SDK_FIELD_ERROR"
 
-    def __init__(self, fields: typing.Dict[str, FieldErrorCode]):
+    def __init__(self, fields: typing.Dict[str, typing.Union[FieldErrorCode, str, dict]]):
         super().__init__("Invalid request payload")
-        self.details = {name: code.value for name, code in fields.items()}
+        self.details = {
+            name: code.value if isinstance(code, FieldErrorCode) else code
+            for name, code in fields.items()
+        }
 
 
 class ParsedMessagesError(ShippingSDKDetailedError):

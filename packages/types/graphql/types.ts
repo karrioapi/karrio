@@ -3785,6 +3785,8 @@ export interface UpdateRateSheet_update_rate_sheet_rate_sheet_service_rates {
   cost: number | null;
   min_weight: number | null;
   max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
 }
 
 export interface UpdateRateSheet_update_rate_sheet_rate_sheet_services_features {
@@ -4243,6 +4245,8 @@ export interface UpdateServiceRate_update_service_rate_rate_sheet_service_rates 
   cost: number | null;
   min_weight: number | null;
   max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
 }
 
 export interface UpdateServiceRate_update_service_rate_rate_sheet {
@@ -4281,6 +4285,10 @@ export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet_s
   zone_id: string;
   rate: number;
   cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
 }
 
 export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet {
@@ -4304,6 +4312,132 @@ export interface BatchUpdateServiceRates {
 
 export interface BatchUpdateServiceRatesVariables {
   data: BatchUpdateServiceRatesMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: AddWeightRange
+// ====================================================
+
+export interface AddWeightRange_add_weight_range_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface AddWeightRange_add_weight_range_rate_sheet {
+  id: string;
+  service_rates: AddWeightRange_add_weight_range_rate_sheet_service_rates[] | null;
+}
+
+export interface AddWeightRange_add_weight_range_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface AddWeightRange_add_weight_range {
+  rate_sheet: AddWeightRange_add_weight_range_rate_sheet | null;
+  errors: AddWeightRange_add_weight_range_errors[] | null;
+}
+
+export interface AddWeightRange {
+  add_weight_range: AddWeightRange_add_weight_range;
+}
+
+export interface AddWeightRangeVariables {
+  data: AddWeightRangeMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RemoveWeightRange
+// ====================================================
+
+export interface RemoveWeightRange_remove_weight_range_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface RemoveWeightRange_remove_weight_range_rate_sheet {
+  id: string;
+  service_rates: RemoveWeightRange_remove_weight_range_rate_sheet_service_rates[] | null;
+}
+
+export interface RemoveWeightRange_remove_weight_range_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface RemoveWeightRange_remove_weight_range {
+  rate_sheet: RemoveWeightRange_remove_weight_range_rate_sheet | null;
+  errors: RemoveWeightRange_remove_weight_range_errors[] | null;
+}
+
+export interface RemoveWeightRange {
+  remove_weight_range: RemoveWeightRange_remove_weight_range;
+}
+
+export interface RemoveWeightRangeVariables {
+  data: RemoveWeightRangeMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteServiceRate
+// ====================================================
+
+export interface DeleteServiceRate_delete_service_rate_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface DeleteServiceRate_delete_service_rate_rate_sheet {
+  id: string;
+  service_rates: DeleteServiceRate_delete_service_rate_rate_sheet_service_rates[] | null;
+}
+
+export interface DeleteServiceRate_delete_service_rate_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteServiceRate_delete_service_rate {
+  rate_sheet: DeleteServiceRate_delete_service_rate_rate_sheet | null;
+  errors: DeleteServiceRate_delete_service_rate_errors[] | null;
+}
+
+export interface DeleteServiceRate {
+  delete_service_rate: DeleteServiceRate_delete_service_rate;
+}
+
+export interface DeleteServiceRateVariables {
+  data: DeleteServiceRateMutationInput;
 }
 
 
@@ -4536,6 +4670,8 @@ export interface GetRateSheets_rate_sheets_edges_node_service_rates {
   cost: number | null;
   min_weight: number | null;
   max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_services_features {
@@ -5072,6 +5208,7 @@ export interface get_pickups_pickups_edges_node {
   carrier_id: string | null;
   carrier_name: string | null;
   confirmation_number: string | null;
+  status: string;
   pickup_date: string | null;
   ready_time: string | null;
   closing_time: string | null;
@@ -5157,10 +5294,39 @@ export interface get_pickup_pickup_parcels {
   dimension_unit: DimensionUnitEnum | null;
 }
 
+export interface get_pickup_pickup_shipments_tracker_events {
+  description: string | null;
+  location: string | null;
+  code: string | null;
+  date: string | null;
+  time: string | null;
+}
+
+export interface get_pickup_pickup_shipments_tracker_messages {
+  carrier_name: string | null;
+  carrier_id: string | null;
+  message: string | null;
+  code: string | null;
+}
+
+export interface get_pickup_pickup_shipments_tracker {
+  id: string;
+  tracking_number: string;
+  status: TrackerStatusEnum;
+  delivered: boolean | null;
+  estimated_delivery: any | null;
+  events: get_pickup_pickup_shipments_tracker_events[];
+  messages: get_pickup_pickup_shipments_tracker_messages[];
+}
+
 export interface get_pickup_pickup_shipments {
   id: string;
   tracking_number: string | null;
   status: ShipmentStatusEnum;
+  service: string | null;
+  carrier_name: string | null;
+  carrier_id: string | null;
+  tracker: get_pickup_pickup_shipments_tracker | null;
 }
 
 export interface get_pickup_pickup_created_by {
@@ -5174,6 +5340,7 @@ export interface get_pickup_pickup {
   carrier_id: string | null;
   carrier_name: string | null;
   confirmation_number: string | null;
+  status: string;
   pickup_date: string | null;
   ready_time: string | null;
   closing_time: string | null;
@@ -5923,6 +6090,9 @@ export enum EventTypes {
   order_delivered = "order_delivered",
   order_fulfilled = "order_fulfilled",
   order_updated = "order_updated",
+  pickup_cancelled = "pickup_cancelled",
+  pickup_closed = "pickup_closed",
+  pickup_scheduled = "pickup_scheduled",
   shipment_cancelled = "shipment_cancelled",
   shipment_delivery_failed = "shipment_delivery_failed",
   shipment_fulfilled = "shipment_fulfilled",
@@ -6677,6 +6847,29 @@ export interface BatchUpdateServiceRatesMutationInput {
 }
 
 // null
+export interface AddWeightRangeMutationInput {
+  rate_sheet_id: string;
+  min_weight: number;
+  max_weight: number;
+}
+
+// null
+export interface RemoveWeightRangeMutationInput {
+  rate_sheet_id: string;
+  min_weight: number;
+  max_weight: number;
+}
+
+// null
+export interface DeleteServiceRateMutationInput {
+  rate_sheet_id: string;
+  service_id: string;
+  zone_id: string;
+  min_weight?: number | null;
+  max_weight?: number | null;
+}
+
+// null
 export interface UpdateServiceZoneIdsMutationInput {
   rate_sheet_id: string;
   service_id: string;
@@ -6797,6 +6990,7 @@ export interface WorkspaceConfigMutationInput {
   pref_age_check?: AgeCheckEnum | null;
   pref_signature_required?: boolean | null;
   pref_max_lead_time_days?: number | null;
+  shipping_app_test_mode?: boolean | null;
 }
 
 // null
@@ -6815,6 +7009,7 @@ export interface PickupFilter {
   first?: number | null;
   keyword?: string | null;
   id?: string[] | null;
+  status?: string[] | null;
   confirmation_number?: string | null;
   pickup_date_after?: string | null;
   pickup_date_before?: string | null;

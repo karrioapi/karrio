@@ -20,7 +20,7 @@ class Proxy(proxy.Proxy):
 
         def fetch_token():
             merchant_id = self.settings.connection_config.merchant_id.state
-            result = lib.request(
+            response = lib.request(
                 url=f"{self.settings.server_url}/security/v1/oauth/token",
                 trace=self.trace_as("json"),
                 method="POST",
@@ -30,8 +30,9 @@ class Proxy(proxy.Proxy):
                     **({"x-merchant-id": merchant_id} if merchant_id else {}),
                 },
                 data="grant_type=client_credentials",
+                decoder=lib.to_dict,
+                on_error=lib.error_decoder,
             )
-            response = lib.to_dict(result)
             messages = provider_error.parse_error_response(response, self.settings)
 
             if any(messages):

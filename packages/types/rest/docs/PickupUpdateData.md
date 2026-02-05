@@ -5,6 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**carrier_code** | **string** | The carrier code for the pickup (e.g., \&#39;canadapost\&#39;, \&#39;fedex\&#39;).&lt;br/&gt;         Required when using &#x60;POST /v1/pickups&#x60;. | [optional] [default to undefined]
 **pickup_date** | **string** | The expected pickup date.&lt;br/&gt;         Date Format: YYYY-MM-DD          | [optional] [default to undefined]
 **address** | [**AddressData**](AddressData.md) | The pickup address | [optional] [default to undefined]
 **parcels_count** | **number** | The number of parcels to be picked up (alternative to linking shipments) | [optional] [default to undefined]
@@ -25,6 +26,7 @@ Name | Type | Description | Notes
 import { PickupUpdateData } from './api';
 
 const instance: PickupUpdateData = {
+    carrier_code,
     pickup_date,
     address,
     parcels_count,

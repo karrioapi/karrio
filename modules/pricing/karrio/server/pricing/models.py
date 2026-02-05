@@ -193,14 +193,22 @@ class Markup(core.Entity):
                 else (rate.total_charge * (typing.cast(float, self.amount) / 100))
             )
             total_charge = lib.to_decimal(rate.total_charge + amount)
-            extra_charges = rate.extra_charges + [
-                karrio.ChargeDetails(
-                    name=typing.cast(str, self.name),
-                    amount=amount,
-                    currency=rate.currency,
-                    id=self.id,
-                )
-            ]
+
+            # Only add to extra_charges if the markup is visible.
+            # Non-visible markups (e.g., plan-based platform fees) are
+            # included in total_charge but hidden from the breakdown.
+            extra_charges = (
+                rate.extra_charges + [
+                    karrio.ChargeDetails(
+                        name=typing.cast(str, self.name),
+                        amount=amount,
+                        currency=rate.currency,
+                        id=self.id,
+                    )
+                ]
+                if self.is_visible
+                else rate.extra_charges
+            )
 
             return datatypes.Rate(
                 **{

@@ -207,18 +207,19 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 0.0,
+                    "amount": 10.3,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "DHL Paket",
-                "shipping_charges": 0.0,
+                "shipping_charges": 10.3,
                 "shipping_currency": "EUR",
             },
             "service": "dhl_parcel_de_paket",
-            "total_charge": 0.0,
+            "total_charge": 10.3,
+            "transit_days": 1,
         }
     ],
     [],

@@ -1,6 +1,26 @@
 service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
-PARCEL,GLS Parcel,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,1,true,false
-EXPRESS,GLS Express,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,1,true,false
-GUARANTEED24,GLS Guaranteed24,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,1,true,false
-BUSINESSPARCEL,GLS Business Parcel,Germany,DE,0.01,31.5,200,60,60,0.0,EUR,2,true,false
-EUROBUSINESSPARCEL,GLS Euro Business Parcel,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,31.5,200,60,60,0.0,EUR,3,false,true
+PARCEL,GLS Parcel,Germany,DE,0.01,2.0,200,60,60,4.49,EUR,1-2,true,false
+PARCEL,GLS Parcel,Germany,DE,2.0,5.0,200,60,60,5.49,EUR,1-2,true,false
+PARCEL,GLS Parcel,Germany,DE,5.0,10.0,200,60,60,6.99,EUR,1-2,true,false
+PARCEL,GLS Parcel,Germany,DE,10.0,20.0,200,60,60,8.99,EUR,1-2,true,false
+PARCEL,GLS Parcel,Germany,DE,20.0,31.5,200,60,60,11.49,EUR,1-2,true,false
+BUSINESSPARCEL,GLS Business Parcel,Germany,DE,0.01,2.0,200,60,60,3.99,EUR,2,true,false
+BUSINESSPARCEL,GLS Business Parcel,Germany,DE,2.0,5.0,200,60,60,4.99,EUR,2,true,false
+BUSINESSPARCEL,GLS Business Parcel,Germany,DE,5.0,10.0,200,60,60,6.49,EUR,2,true,false
+BUSINESSPARCEL,GLS Business Parcel,Germany,DE,10.0,20.0,200,60,60,7.99,EUR,2,true,false
+BUSINESSPARCEL,GLS Business Parcel,Germany,DE,20.0,31.5,200,60,60,10.49,EUR,2,true,false
+EXPRESS,GLS Express,Germany,DE,0.01,2.0,200,60,60,12.99,EUR,1,true,false
+EXPRESS,GLS Express,Germany,DE,2.0,5.0,200,60,60,14.99,EUR,1,true,false
+EXPRESS,GLS Express,Germany,DE,5.0,10.0,200,60,60,17.99,EUR,1,true,false
+EXPRESS,GLS Express,Germany,DE,10.0,20.0,200,60,60,22.99,EUR,1,true,false
+EXPRESS,GLS Express,Germany,DE,20.0,31.5,200,60,60,28.99,EUR,1,true,false
+GUARANTEED24,GLS Guaranteed24,Germany,DE,0.01,2.0,200,60,60,10.49,EUR,1,true,false
+GUARANTEED24,GLS Guaranteed24,Germany,DE,2.0,5.0,200,60,60,12.49,EUR,1,true,false
+GUARANTEED24,GLS Guaranteed24,Germany,DE,5.0,10.0,200,60,60,14.99,EUR,1,true,false
+GUARANTEED24,GLS Guaranteed24,Germany,DE,10.0,20.0,200,60,60,18.99,EUR,1,true,false
+GUARANTEED24,GLS Guaranteed24,Germany,DE,20.0,31.5,200,60,60,24.99,EUR,1,true,false
+EUROBUSINESSPARCEL,GLS Euro Business Parcel,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",0.01,2.0,200,60,60,7.99,EUR,3-5,false,true
+EUROBUSINESSPARCEL,GLS Euro Business Parcel,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",2.0,5.0,200,60,60,9.99,EUR,3-5,false,true
+EUROBUSINESSPARCEL,GLS Euro Business Parcel,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",5.0,10.0,200,60,60,12.99,EUR,3-5,false,true
+EUROBUSINESSPARCEL,GLS Euro Business Parcel,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",10.0,20.0,200,60,60,17.99,EUR,3-5,false,true
+EUROBUSINESSPARCEL,GLS Euro Business Parcel,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE",20.0,31.5,200,60,60,23.99,EUR,3-5,false,true

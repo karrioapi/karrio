@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.4`.
+    The current version is `2026.1.5`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.4
+  version: 2026.1.5
 paths:
   /:
     get:
@@ -2499,6 +2499,12 @@ paths:
         schema:
           type: string
           format: date
+      - in: query
+        name: status
+        schema:
+          type: string
+        description: 'The pickup status. <br/>Values: `scheduled`, `picked_up`, `cancelled`,
+          `closed`'
       tags:
       - Pickups
       security:
@@ -2526,12 +2532,61 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: listPickups
+    post:
+      operationId: $$$$create
+      description: |-
+        Schedule a pickup for one or many shipments with labels already purchased.
+
+        The carrier is identified by `carrier_code` in the request body.
+        Use `options.connection_id` to target a specific carrier connection.
+      summary: Schedule a pickup
+      tags:
+      - Pickups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pickup'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: createPickup
   /v1/pickups/{carrier_name}/schedule:
     post:
       operationId: $$$$schedule
-      description: Schedule a pickup for one or many shipments with labels already
-        purchased.
-      summary: Schedule a pickup
+      description: |-
+        Schedule a pickup for one or many shipments with labels already purchased.
+
+        **Deprecated**: Use `POST /v1/pickups` with `carrier_code` in the request body instead.
+      summary: Schedule a pickup (deprecated)
       parameters:
       - in: path
         name: carrier_name
@@ -2551,6 +2606,7 @@ paths:
       - Token: []
       - OAuth2: []
       - JWT: []
+      deprecated: true
       responses:
         '201':
           content:
@@ -9835,6 +9891,9 @@ components:
             - shipment_delivery_failed
             - tracker_created
             - tracker_updated
+            - pickup_scheduled
+            - pickup_cancelled
+            - pickup_closed
             - order_created
             - order_updated
             - order_fulfilled
@@ -9845,7 +9904,7 @@ components:
             - batch_running
             - batch_completed
             type: string
-            x-spec-enum-id: 58b15b194a7f4598
+            x-spec-enum-id: 7310794d8b16bdaf
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -10038,6 +10097,16 @@ components:
         confirmation_number:
           type: string
           description: The pickup confirmation identifier
+        status:
+          enum:
+          - scheduled
+          - picked_up
+          - cancelled
+          - closed
+          type: string
+          x-spec-enum-id: 04b3c4e318bbbc64
+          default: scheduled
+          description: The current pickup status
         pickup_date:
           type: string
           nullable: true
@@ -10085,6 +10154,12 @@ components:
           additionalProperties: {}
           nullable: true
           description: provider specific metadata
+        carrier_code:
+          type: string
+          nullable: true
+          description: |-
+            The carrier code for the pickup (e.g., 'canadapost', 'fedex').<br/>
+                    Required when using `POST /v1/pickups`.
         address:
           allOf:
           - $ref: '#/components/schemas/Address'
@@ -10156,6 +10231,12 @@ components:
     PickupData:
       type: object
       properties:
+        carrier_code:
+          type: string
+          nullable: true
+          description: |-
+            The carrier code for the pickup (e.g., 'canadapost', 'fedex').<br/>
+                    Required when using `POST /v1/pickups`.
         pickup_date:
           type: string
           description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n
@@ -10251,6 +10332,12 @@ components:
     PickupRequest:
       type: object
       properties:
+        carrier_code:
+          type: string
+          nullable: true
+          description: |-
+            The carrier code for the pickup (e.g., 'canadapost', 'fedex').<br/>
+                    Required when using `POST /v1/pickups`.
         pickup_date:
           type: string
           description: "The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n
@@ -10332,6 +10419,12 @@ components:
     PickupUpdateData:
       type: object
       properties:
+        carrier_code:
+          type: string
+          nullable: true
+          description: |-
+            The carrier code for the pickup (e.g., 'canadapost', 'fedex').<br/>
+                    Required when using `POST /v1/pickups`.
         pickup_date:
           type: string
           description: "The expected pickup date.<br/>\n        Date Format: YYYY-MM-DD\n
@@ -12271,6 +12364,9 @@ components:
             - shipment_delivery_failed
             - tracker_created
             - tracker_updated
+            - pickup_scheduled
+            - pickup_cancelled
+            - pickup_closed
             - order_created
             - order_updated
             - order_fulfilled
@@ -12281,7 +12377,7 @@ components:
             - batch_running
             - batch_completed
             type: string
-            x-spec-enum-id: 58b15b194a7f4598
+            x-spec-enum-id: 7310794d8b16bdaf
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -12331,6 +12427,9 @@ components:
             - shipment_delivery_failed
             - tracker_created
             - tracker_updated
+            - pickup_scheduled
+            - pickup_cancelled
+            - pickup_closed
             - order_created
             - order_updated
             - order_fulfilled
@@ -12341,7 +12440,7 @@ components:
             - batch_running
             - batch_completed
             type: string
-            x-spec-enum-id: 58b15b194a7f4598
+            x-spec-enum-id: 7310794d8b16bdaf
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -12842,6 +12941,9 @@ components:
           type: string
         client_secret:
           type: string
+        contact_id:
+          type: string
+          nullable: true
         account_country_code:
           type: string
           nullable: true
@@ -14838,6 +14940,12 @@ tags:
     | landmark_maxipak_scan_premium_ups_standard_ddp | LGINTUPST |
     | landmark_maxipak_scan_premium_ups_standard_ddu | LGINTUPSTU |
     | landmark_maxipak_scan_pddp | LGINTBPMO |
+    | landmark_minipak_scan_pddp | LGINTBPIO |
+
+    ### La Poste
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | laposte_standard_service | La Poste Standard Service |
 
     ### Locate2u
     | Code         | Service Name |

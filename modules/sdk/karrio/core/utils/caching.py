@@ -13,8 +13,14 @@ class AbstractCache:
 
 
 class Cache(AbstractCache):
-    def __init__(self, cache: typing.Optional[AbstractCache] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        cache: typing.Optional[AbstractCache] = None,
+        version: str = "",
+        **kwargs,
+    ) -> None:
         self._cache = cache  # system cache
+        self._version = version  # connection version for cache invalidation
         self._values: typing.Dict[str, futures.Future] = {}  # shallow cache
 
         for key, value in kwargs.items():
@@ -91,10 +97,13 @@ class Cache(AbstractCache):
             )
             token = token_manager.get_token()
         """
+        _versioned_key = (
+            f"{cache_key}|v:{self._version}" if self._version else cache_key
+        )
         return ThreadSafeTokenManager(
             cache=self,
             refresh_func=refresh_func,
-            cache_key=cache_key,
+            cache_key=_versioned_key,
             buffer_minutes=buffer_minutes,
             token_field=token_field,
             expiry_field=expiry_field,
@@ -205,18 +214,14 @@ class ThreadSafeTokenManager:
                 return token
 
             # Still need to refresh - this thread will do it
-            try:
-                new_token_data = self.refresh_func()
-                self.cache.set(self.cache_key, new_token_data)
+            new_token_data = self.refresh_func()
+            self.cache.set(self.cache_key, new_token_data)
 
-                new_token = new_token_data.get(self.token_field)
-                if not new_token:
-                    raise ValueError("Token refresh function returned no token")
+            new_token = new_token_data.get(self.token_field)
+            if not new_token:
+                raise ValueError("Token refresh function returned no token")
 
-                return new_token
-
-            except Exception as e:
-                raise Exception(f"Token refresh failed: {str(e)}")
+            return new_token
 
     def get_state(self) -> str:
         """Get the current token state (valid token or refresh if needed).

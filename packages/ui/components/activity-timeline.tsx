@@ -37,6 +37,8 @@ interface ActivityTimelineProps {
     };
   };
   className?: string;
+  condensed?: boolean;
+  stacked?: boolean;
 }
 
 const TimelineDot = ({ activityType, statusCode, isSelected }: {
@@ -616,6 +618,8 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
   logs,
   events,
   className,
+  condensed = false,
+  stacked = false,
 }) => {
   const [selectedItem, setSelectedItem] = useState<ActivityItem | null>(null);
 
@@ -770,6 +774,71 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
     return (
       <div className="text-center py-8 text-gray-500">
         No activity to display
+      </div>
+    );
+  }
+
+  const displayActivities = condensed ? activities.slice(0, 5) : activities;
+
+  // Condensed mode: single-column list only, no split-panel viewer
+  if (condensed) {
+    return (
+      <div className={cn("bg-white", className)}>
+        <div className="overflow-auto bg-white max-h-64">
+          {displayActivities.map((item, index) => (
+            <ActivityListItem
+              key={getItemId(item, index)}
+              item={item}
+              index={index}
+              isLast={index === displayActivities.length - 1}
+              isSelected={false}
+              onSelect={() => {}}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Stacked layout: inline list/detail swap (stays within container)
+  if (stacked) {
+    return (
+      <div className={cn("bg-white", className)}>
+        {selectedItem ? (
+          <div>
+            <div className="flex items-center gap-2 p-3 border-b border-gray-200">
+              <button
+                onClick={handleCloseDetail}
+                className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </button>
+              <h3 className="font-medium text-gray-900 text-sm truncate">{getContentType(selectedItem)}</h3>
+            </div>
+            <RawContentViewer
+              content={selectedItem.activityType === 'event' ? selectedItem.content : selectedItem.requestContent}
+              contentType={getContentType(selectedItem)}
+              responseContent={selectedItem.activityType !== 'event' ? selectedItem.responseContent : undefined}
+              showTabs={selectedItem.activityType !== 'event'}
+              activityItem={selectedItem}
+            />
+          </div>
+        ) : (
+          <div className="overflow-auto bg-white max-h-[80vh]">
+            {activities.map((item, index) => (
+              <ActivityListItem
+                key={getItemId(item, index)}
+                item={item}
+                index={index}
+                isLast={index === activities.length - 1}
+                isSelected={false}
+                onSelect={handleSelectItem}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   }

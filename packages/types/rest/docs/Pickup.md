@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **carrier_name** | **string** | The pickup carrier | [default to undefined]
 **carrier_id** | **string** | The pickup carrier configured name | [default to undefined]
 **confirmation_number** | **string** | The pickup confirmation identifier | [default to undefined]
+**status** | **string** | The current pickup status | [optional] [default to StatusEnum_Scheduled]
 **pickup_date** | **string** | The pickup date | [optional] [default to undefined]
 **pickup_charge** | [**Charge**](Charge.md) | The pickup cost details | [optional] [default to undefined]
 **ready_time** | **string** | The pickup expected ready time | [optional] [default to undefined]
@@ -18,6 +19,7 @@ Name | Type | Description | Notes
 **recurrence** | **{ [key: string]: any; }** | Recurrence configuration for recurring pickups.&lt;br/&gt;         Example: {\&quot;frequency\&quot;: \&quot;weekly\&quot;, \&quot;days_of_week\&quot;: [\&quot;monday\&quot;, \&quot;wednesday\&quot;, \&quot;friday\&quot;]}          | [optional] [default to undefined]
 **metadata** | **{ [key: string]: any; }** | User metadata for the pickup | [optional] [default to undefined]
 **meta** | **{ [key: string]: any; }** | provider specific metadata | [optional] [default to undefined]
+**carrier_code** | **string** | The carrier code for the pickup (e.g., \&#39;canadapost\&#39;, \&#39;fedex\&#39;).&lt;br/&gt;         Required when using &#x60;POST /v1/pickups&#x60;. | [optional] [default to undefined]
 **address** | [**Address**](Address.md) | The pickup address | [default to undefined]
 **parcels** | [**Array&lt;Parcel&gt;**](Parcel.md) | The shipment parcels to pickup. | [default to undefined]
 **parcels_count** | **number** | The number of parcels to be picked up (alternative to providing parcels array) | [optional] [default to undefined]
@@ -37,6 +39,7 @@ const instance: Pickup = {
     carrier_name,
     carrier_id,
     confirmation_number,
+    status,
     pickup_date,
     pickup_charge,
     ready_time,
@@ -45,6 +48,7 @@ const instance: Pickup = {
     recurrence,
     metadata,
     meta,
+    carrier_code,
     address,
     parcels,
     parcels_count,

@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **client_id** | **string** |  | [default to undefined]
 **client_secret** | **string** |  | [default to undefined]
+**contact_id** | **string** |  | [optional] [default to undefined]
 **account_country_code** | **string** |  | [optional] [default to 'DE']
 
 ## Example
@@ -17,6 +18,7 @@ import { Gls } from './api';
 const instance: Gls = {
     client_id,
     client_secret,
+    contact_id,
     account_country_code,
 };
 ```

@@ -18,12 +18,12 @@ class TestGLSGroupShipment(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        # Basic validation
         request_dict = lib.to_dict(request.serialize())
-        self.assertIn("shipment", request_dict)
-        self.assertIn("sender", request_dict["shipment"])
-        self.assertIn("receiver", request_dict["shipment"])
-        self.assertIn("parcels", request_dict["shipment"])
+        print(request_dict)
+        self.assertIn("Shipment", request_dict)
+        self.assertIn("Shipper", request_dict["Shipment"])
+        self.assertIn("Consignee", request_dict["Shipment"])
+        self.assertIn("ShipmentUnit", request_dict["Shipment"])
 
     def test_create_shipment(self):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
@@ -42,6 +42,7 @@ class TestGLSGroupShipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
+            print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_error_response(self):
@@ -52,6 +53,7 @@ class TestGLSGroupShipment(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
+            print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentErrorResponse)
 
 
@@ -128,7 +130,6 @@ ErrorResponse = """{
   ]
 }"""
 
-# Parsed shipment response
 ParsedShipmentResponse = [
     {
         "carrier_id": "gls",
@@ -157,7 +158,6 @@ ParsedShipmentResponse = [
     []
 ]
 
-# Parsed error response
 ParsedShipmentErrorResponse = [
     None,
     [

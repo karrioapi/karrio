@@ -16,7 +16,7 @@ def parse_pickup_cancel_response(
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = any(lib.failsafe(lambda: response["output"]["pickupConfirmationCode"]))
+    success = lib.failsafe(lambda: response["output"]["pickupConfirmationCode"]) is not None
 
     confirmation = lib.identity(
         models.ConfirmationDetails(

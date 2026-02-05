@@ -1,5 +1,7 @@
 import typing
 
+from rest_framework import status as http_status
+
 from karrio.server import serializers
 from karrio.server.serializers import (
     owned_model_serializer,
@@ -12,15 +14,52 @@ from karrio.server.core.datatypes import Confirmation
 from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 from karrio.server.core.serializers import (
     Pickup,
+    PickupStatus,
     AddressData,
     PickupRequest,
     PickupUpdateRequest,
     PickupCancelRequest,
 )
+import karrio.server.core.exceptions as exceptions
 from karrio.server.manager.serializers import AddressSerializer
 import karrio.server.manager.models as models
 
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="pickup")
+
+
+def can_mutate_pickup(
+    pickup: models.Pickup,
+    update: bool = False,
+    cancel: bool = False,
+    payload: dict = None,
+):
+    # Allow metadata-only updates regardless of status
+    if update and [*(payload or {}).keys()] == ["metadata"]:
+        return
+
+    # Cannot update cancelled pickups
+    if update and pickup.status == PickupStatus.cancelled.value:
+        raise exceptions.APIException(
+            f"The pickup is '{pickup.status}' and cannot be updated",
+            code="state_error",
+            status_code=http_status.HTTP_409_CONFLICT,
+        )
+
+    # Cannot update or cancel closed pickups
+    if (update or cancel) and pickup.status == PickupStatus.closed.value:
+        raise exceptions.APIException(
+            f"The pickup is '{pickup.status}' and cannot be modified",
+            code="state_error",
+            status_code=http_status.HTTP_409_CONFLICT,
+        )
+
+    # Cannot update picked_up pickups (but can cancel)
+    if update and pickup.status == PickupStatus.picked_up.value:
+        raise exceptions.APIException(
+            f"The pickup is '{pickup.status}' and cannot be updated",
+            code="state_error",
+            status_code=http_status.HTTP_409_CONFLICT,
+        )
 
 
 def shipment_exists(value):
@@ -34,11 +73,18 @@ def shipment_exists(value):
             f"Shipment with the tracking numbers: {invalids} not found", code="invalid"
         )
 
-    if any(val.first().shipment_pickup.exists() for val in validation.values()):
+    if any(
+        val.first().shipment_pickup.exclude(
+            status__in=["cancelled", "closed"]
+        ).exists()
+        for val in validation.values()
+    ):
         scheduled = [
             key
             for key, val in validation.items()
-            if val.first().shipment_pickup.exists() is True
+            if val.first().shipment_pickup.exclude(
+                status__in=["cancelled", "closed"]
+            ).exists()
         ]
         raise serializers.ValidationError(
             f"The following shipments {scheduled} are already scheduled for pickups",
@@ -156,10 +202,20 @@ class PickupSerializer(PickupRequest):
 @owned_model_serializer
 class PickupData(PickupSerializer):
     def create(self, validated_data: dict, context: Context, **kwargs) -> models.Pickup:
-        carrier_filter = validated_data["carrier_filter"]
+        carrier_filter = validated_data.get("carrier_filter") or {}
+        carrier_code = validated_data.get("carrier_code")
+        options = validated_data.get("options") or {}
+        connection_id = options.get("connection_id")
         parcels_count = validated_data.get("parcels_count")
         pickup_type = validated_data.get("pickup_type", "one_time")
         recurrence = validated_data.get("recurrence") or {}
+
+        # Build carrier filter from body fields when no URL-based filter provided
+        if not carrier_filter:
+            if carrier_code:
+                carrier_filter["carrier_name"] = carrier_code
+            if connection_id:
+                carrier_filter["carrier_id"] = connection_id
 
         # Extract shipment identifiers only if shipments linked
         shipment_identifiers = []
@@ -199,7 +255,7 @@ class PickupData(PickupSerializer):
 
         # Build request data directly (address is now a JSON dict)
         # Exclude non-serializable fields from request data
-        excluded_keys = {"created_by", "carrier_filter", "tracking_numbers", "parcels_count", "recurrence"}
+        excluded_keys = {"created_by", "carrier_filter", "carrier_code", "tracking_numbers", "parcels_count", "recurrence"}
         filtered_data = {k: v for k, v in validated_data.items() if k not in excluded_keys}
 
         request_data = {
@@ -212,7 +268,7 @@ class PickupData(PickupSerializer):
             },
         }
 
-        response = Pickups.schedule(payload=request_data, carrier=carrier)
+        response = Pickups.schedule(payload=request_data, carrier=carrier, context=context)
         payload = {
             key: value
             for key, value in Pickup(response.pickup).data.items()
@@ -368,7 +424,7 @@ class PickupUpdateData(PickupSerializer):
 
         # Resolve carrier from snapshot for API call
         carrier = resolve_carrier(instance.carrier, context)
-        Pickups.update(payload=request_data, carrier=carrier)
+        Pickups.update(payload=request_data, carrier=carrier, context=context)
 
         data = validated_data.copy()
         for key, val in data.items():
@@ -406,7 +462,8 @@ class PickupCancelData(serializers.Serializer):
         )
         # Resolve carrier from snapshot for API call
         carrier = resolve_carrier(instance.carrier, context)
-        Pickups.cancel(payload=request.data, carrier=carrier)
-        instance.delete()
+        Pickups.cancel(payload=request.data, carrier=carrier, context=context)
+        instance.status = PickupStatus.cancelled.value
+        instance.save(update_fields=["status", "updated_at"])
 
         return instance

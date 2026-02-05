@@ -49,8 +49,24 @@ def periodic_data_archiving(*args, **kwargs):
     _run()
 
 
+@db_periodic_task(crontab(hour=0, minute=30))
+@with_task_telemetry("daily_pickup_close")
+def daily_pickup_close():
+    from karrio.server.events.task_definitions.base import pickup
+
+    @utils.run_on_all_tenants
+    def _run(**kwargs):
+        utils.failsafe(
+            lambda: pickup.close_past_pickups(),
+            "An error occurred during pickup auto-close: $error",
+        )
+
+    _run()
+
+
 TASK_DEFINITIONS = [
     background_trackers_update,
     periodic_data_archiving,
+    daily_pickup_close,
     notify_webhooks,
 ]

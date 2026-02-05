@@ -1,0 +1,32 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+eCommerce Standard Tracked,eCommerce Standard Tracked,USA,US,0.01,1.0,91,61,61,5.99,USD,5-8,true,false
+eCommerce Standard Tracked,eCommerce Standard Tracked,USA,US,1.0,5.0,91,61,61,8.99,USD,5-8,true,false
+eCommerce Standard Tracked,eCommerce Standard Tracked,USA,US,5.0,10.0,91,61,61,12.99,USD,5-8,true,false
+eCommerce Standard Tracked,eCommerce Standard Tracked,USA,US,10.0,22.0,91,61,61,18.99,USD,5-8,true,false
+eCommerce Standard Tracked,eCommerce Standard Tracked,International,,0.01,1.0,91,61,61,10.99,USD,7-14,false,true
+eCommerce Standard Tracked,eCommerce Standard Tracked,International,,1.0,5.0,91,61,61,14.99,USD,7-14,false,true
+eCommerce Standard Tracked,eCommerce Standard Tracked,International,,5.0,10.0,91,61,61,19.99,USD,7-14,false,true
+eCommerce Standard Tracked,eCommerce Standard Tracked,International,,10.0,22.0,91,61,61,28.99,USD,7-14,false,true
+eCommerce Express Tracked,eCommerce Express Tracked,USA,US,0.01,1.0,91,61,61,10.99,USD,2-4,true,false
+eCommerce Express Tracked,eCommerce Express Tracked,USA,US,1.0,5.0,91,61,61,14.99,USD,2-4,true,false
+eCommerce Express Tracked,eCommerce Express Tracked,USA,US,5.0,10.0,91,61,61,19.99,USD,2-4,true,false
+eCommerce Express Tracked,eCommerce Express Tracked,USA,US,10.0,22.0,91,61,61,28.99,USD,2-4,true,false
+eCommerce Express Tracked,eCommerce Express Tracked,International,,0.01,1.0,91,61,61,18.99,USD,3-7,false,true
+eCommerce Express Tracked,eCommerce Express Tracked,International,,1.0,5.0,91,61,61,24.99,USD,3-7,false,true
+eCommerce Express Tracked,eCommerce Express Tracked,International,,5.0,10.0,91,61,61,32.99,USD,3-7,false,true
+eCommerce Express Tracked,eCommerce Express Tracked,International,,10.0,22.0,91,61,61,45.99,USD,3-7,false,true
+Domestic Express,Domestic Express,USA,US,0.01,1.0,108,68,68,14.99,USD,1-2,true,false
+Domestic Express,Domestic Express,USA,US,1.0,5.0,108,68,68,18.99,USD,1-2,true,false
+Domestic Express,Domestic Express,USA,US,5.0,10.0,108,68,68,24.99,USD,1-2,true,false
+Domestic Express,Domestic Express,USA,US,10.0,20.0,108,68,68,32.99,USD,1-2,true,false
+Domestic Express,Domestic Express,USA,US,20.0,31.5,108,68,68,42.99,USD,1-2,true,false
+Domestic Standard,Domestic Standard,USA,US,0.01,1.0,108,68,68,8.99,USD,3-5,true,false
+Domestic Standard,Domestic Standard,USA,US,1.0,5.0,108,68,68,12.99,USD,3-5,true,false
+Domestic Standard,Domestic Standard,USA,US,5.0,10.0,108,68,68,16.99,USD,3-5,true,false
+Domestic Standard,Domestic Standard,USA,US,10.0,20.0,108,68,68,22.99,USD,3-5,true,false
+Domestic Standard,Domestic Standard,USA,US,20.0,31.5,108,68,68,29.99,USD,3-5,true,false
+Domestic Large Parcel,Domestic Large Parcel,USA,US,0.01,5.0,165,100,100,18.99,USD,3-5,true,false
+Domestic Large Parcel,Domestic Large Parcel,USA,US,5.0,10.0,165,100,100,25.99,USD,3-5,true,false
+Domestic Large Parcel,Domestic Large Parcel,USA,US,10.0,20.0,165,100,100,35.99,USD,3-5,true,false
+Domestic Large Parcel,Domestic Large Parcel,USA,US,20.0,40.0,165,100,100,48.99,USD,3-5,true,false
+Domestic Large Parcel,Domestic Large Parcel,USA,US,40.0,68.0,165,100,100,65.99,USD,3-5,true,false

@@ -33,6 +33,7 @@ class Proxy(proxy.Proxy):
                     )
                 ),
                 decoder=lib.to_dict,
+                on_error=lib.error_decoder,
             )
 
             messages = provider_error.parse_error_response(response, self.settings)

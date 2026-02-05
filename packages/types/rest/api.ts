@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.4`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.5`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2026.1.4
+ * The version of the OpenAPI document: 2026.1.5
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2762,6 +2762,7 @@ export type GeodisLanguageEnum = typeof GeodisLanguageEnum[keyof typeof GeodisLa
 export interface Gls {
     'client_id': string;
     'client_secret': string;
+    'contact_id'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface HayPost {
@@ -4881,6 +4882,9 @@ export const PatchedWebhookDataEnabledEventsEnum = {
     ShipmentDeliveryFailed: 'shipment_delivery_failed',
     TrackerCreated: 'tracker_created',
     TrackerUpdated: 'tracker_updated',
+    PickupScheduled: 'pickup_scheduled',
+    PickupCancelled: 'pickup_cancelled',
+    PickupClosed: 'pickup_closed',
     OrderCreated: 'order_created',
     OrderUpdated: 'order_updated',
     OrderFulfilled: 'order_fulfilled',
@@ -5088,6 +5092,10 @@ export interface Pickup {
      */
     'confirmation_number': string;
     /**
+     * The current pickup status
+     */
+    'status'?: PickupStatusEnum;
+    /**
      * The pickup date
      */
     'pickup_date'?: string | null;
@@ -5120,6 +5128,10 @@ export interface Pickup {
      */
     'meta'?: { [key: string]: any; } | null;
     /**
+     * The carrier code for the pickup (e.g., \'canadapost\', \'fedex\').<br/>         Required when using `POST /v1/pickups`.
+     */
+    'carrier_code'?: string | null;
+    /**
      * The pickup address
      */
     'address': Address;
@@ -5149,6 +5161,14 @@ export interface Pickup {
     'test_mode': boolean;
 }
 
+export const PickupStatusEnum = {
+    Scheduled: 'scheduled',
+    PickedUp: 'picked_up',
+    Cancelled: 'cancelled',
+    Closed: 'closed'
+} as const;
+
+export type PickupStatusEnum = typeof PickupStatusEnum[keyof typeof PickupStatusEnum];
 export const PickupPickupTypeEnum = {
     OneTime: 'one_time',
     Daily: 'daily',
@@ -5182,6 +5202,10 @@ export interface PickupCancelRequest {
     'reason'?: string;
 }
 export interface PickupData {
+    /**
+     * The carrier code for the pickup (e.g., \'canadapost\', \'fedex\').<br/>         Required when using `POST /v1/pickups`.
+     */
+    'carrier_code'?: string | null;
     /**
      * The expected pickup date.<br/>         Date Format: `YYYY-MM-DD`         
      */
@@ -5248,6 +5272,10 @@ export interface PickupList {
 }
 export interface PickupRequest {
     /**
+     * The carrier code for the pickup (e.g., \'canadapost\', \'fedex\').<br/>         Required when using `POST /v1/pickups`.
+     */
+    'carrier_code'?: string | null;
+    /**
      * The expected pickup date.<br/>         Date Format: `YYYY-MM-DD`         
      */
     'pickup_date': string;
@@ -5312,6 +5340,10 @@ export interface PickupResponse {
     'pickup'?: Pickup;
 }
 export interface PickupUpdateData {
+    /**
+     * The carrier code for the pickup (e.g., \'canadapost\', \'fedex\').<br/>         Required when using `POST /v1/pickups`.
+     */
+    'carrier_code'?: string | null;
     /**
      * The expected pickup date.<br/>         Date Format: YYYY-MM-DD         
      */
@@ -6942,6 +6974,9 @@ export const WebhookEnabledEventsEnum = {
     ShipmentDeliveryFailed: 'shipment_delivery_failed',
     TrackerCreated: 'tracker_created',
     TrackerUpdated: 'tracker_updated',
+    PickupScheduled: 'pickup_scheduled',
+    PickupCancelled: 'pickup_cancelled',
+    PickupClosed: 'pickup_closed',
     OrderCreated: 'order_created',
     OrderUpdated: 'order_updated',
     OrderFulfilled: 'order_fulfilled',
@@ -6984,6 +7019,9 @@ export const WebhookDataEnabledEventsEnum = {
     ShipmentDeliveryFailed: 'shipment_delivery_failed',
     TrackerCreated: 'tracker_created',
     TrackerUpdated: 'tracker_updated',
+    PickupScheduled: 'pickup_scheduled',
+    PickupCancelled: 'pickup_cancelled',
+    PickupClosed: 'pickup_closed',
     OrderCreated: 'order_created',
     OrderUpdated: 'order_updated',
     OrderFulfilled: 'order_fulfilled',
@@ -12101,6 +12139,56 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Schedule a pickup for one or many shipments with labels already purchased.  The carrier is identified by `carrier_code` in the request body. Use `options.connection_id` to target a specific carrier connection.
+         * @summary Schedule a pickup
+         * @param {PickupData} pickupData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (pickupData: PickupData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'pickupData' is not null or undefined
+            assertParamExists('create', 'pickupData', pickupData)
+            const localVarPath = `/v1/pickups`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(pickupData, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
          * @param {string} [address] 
@@ -12111,10 +12199,11 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {string} [keyword] 
          * @param {string} [pickupDateAfter] 
          * @param {string} [pickupDateBefore] 
+         * @param {string} [status] The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, status?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/pickups`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12181,6 +12270,10 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                     pickupDateBefore;
             }
 
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -12241,11 +12334,12 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Schedule a pickup for one or many shipments with labels already purchased.
-         * @summary Schedule a pickup
+         * Schedule a pickup for one or many shipments with labels already purchased.  **Deprecated**: Use `POST /v1/pickups` with `carrier_code` in the request body instead.
+         * @summary Schedule a pickup (deprecated)
          * @param {string} carrierName 
          * @param {PickupData} pickupData 
          * @param {*} [options] Override http request option.
+         * @deprecated
          * @throws {RequiredError}
          */
         schedule: async (carrierName: string, pickupData: PickupData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
@@ -12372,6 +12466,19 @@ export const PickupsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Schedule a pickup for one or many shipments with labels already purchased.  The carrier is identified by `carrier_code` in the request body. Use `options.connection_id` to target a specific carrier connection.
+         * @summary Schedule a pickup
+         * @param {PickupData} pickupData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(pickupData: PickupData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(pickupData, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['PickupsApi.create']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
          * @param {string} [address] 
@@ -12382,11 +12489,12 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {string} [keyword] 
          * @param {string} [pickupDateAfter] 
          * @param {string} [pickupDateBefore] 
+         * @param {string} [status] The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, confirmationNumber, createdAfter, createdBefore, keyword, pickupDateAfter, pickupDateBefore, options);
+        async list(address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, status?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, confirmationNumber, createdAfter, createdBefore, keyword, pickupDateAfter, pickupDateBefore, status, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['PickupsApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12405,11 +12513,12 @@ export const PickupsApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Schedule a pickup for one or many shipments with labels already purchased.
-         * @summary Schedule a pickup
+         * Schedule a pickup for one or many shipments with labels already purchased.  **Deprecated**: Use `POST /v1/pickups` with `carrier_code` in the request body instead.
+         * @summary Schedule a pickup (deprecated)
          * @param {string} carrierName 
          * @param {PickupData} pickupData 
          * @param {*} [options] Override http request option.
+         * @deprecated
          * @throws {RequiredError}
          */
         async schedule(carrierName: string, pickupData: PickupData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
@@ -12452,6 +12561,16 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.cancel(requestParameters.id, requestParameters.pickupCancelData, options).then((request) => request(axios, basePath));
         },
         /**
+         * Schedule a pickup for one or many shipments with labels already purchased.  The carrier is identified by `carrier_code` in the request body. Use `options.connection_id` to target a specific carrier connection.
+         * @summary Schedule a pickup
+         * @param {PickupsApiCreateRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(requestParameters: PickupsApiCreateRequest, options?: AxiosRequestConfig): AxiosPromise<Pickup> {
+            return localVarFp.create(requestParameters.pickupData, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
          * @param {PickupsApiListRequest} requestParameters Request parameters.
@@ -12459,7 +12578,7 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<PickupList> {
-            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.status, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve a scheduled pickup.
@@ -12472,10 +12591,11 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.retrieve(requestParameters.id, options).then((request) => request(axios, basePath));
         },
         /**
-         * Schedule a pickup for one or many shipments with labels already purchased.
-         * @summary Schedule a pickup
+         * Schedule a pickup for one or many shipments with labels already purchased.  **Deprecated**: Use `POST /v1/pickups` with `carrier_code` in the request body instead.
+         * @summary Schedule a pickup (deprecated)
          * @param {PickupsApiScheduleRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
+         * @deprecated
          * @throws {RequiredError}
          */
         schedule(requestParameters: PickupsApiScheduleRequest, options?: AxiosRequestConfig): AxiosPromise<Pickup> {
@@ -12504,6 +12624,13 @@ export interface PickupsApiCancelRequest {
 }
 
 /**
+ * Request parameters for create operation in PickupsApi.
+ */
+export interface PickupsApiCreateRequest {
+    readonly pickupData: PickupData
+}
+
+/**
  * Request parameters for list operation in PickupsApi.
  */
 export interface PickupsApiListRequest {
@@ -12525,6 +12652,11 @@ export interface PickupsApiListRequest {
     readonly pickupDateAfter?: string
 
     readonly pickupDateBefore?: string
+
+    /**
+     * The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60;
+     */
+    readonly status?: string
 }
 
 /**
@@ -12568,6 +12700,17 @@ export class PickupsApi extends BaseAPI {
     }
 
     /**
+     * Schedule a pickup for one or many shipments with labels already purchased.  The carrier is identified by `carrier_code` in the request body. Use `options.connection_id` to target a specific carrier connection.
+     * @summary Schedule a pickup
+     * @param {PickupsApiCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public create(requestParameters: PickupsApiCreateRequest, options?: AxiosRequestConfig) {
+        return PickupsApiFp(this.configuration).create(requestParameters.pickupData, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Retrieve all scheduled pickups.
      * @summary List shipment pickups
      * @param {PickupsApiListRequest} requestParameters Request parameters.
@@ -12575,7 +12718,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig) {
-        return PickupsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, options).then((request) => request(this.axios, this.basePath));
+        return PickupsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.status, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -12590,10 +12733,11 @@ export class PickupsApi extends BaseAPI {
     }
 
     /**
-     * Schedule a pickup for one or many shipments with labels already purchased.
-     * @summary Schedule a pickup
+     * Schedule a pickup for one or many shipments with labels already purchased.  **Deprecated**: Use `POST /v1/pickups` with `carrier_code` in the request body instead.
+     * @summary Schedule a pickup (deprecated)
      * @param {PickupsApiScheduleRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
+     * @deprecated
      * @throws {RequiredError}
      */
     public schedule(requestParameters: PickupsApiScheduleRequest, options?: AxiosRequestConfig) {

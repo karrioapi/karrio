@@ -343,6 +343,8 @@ export interface GetRateSheets_rate_sheets_edges_node_service_rates {
   cost: number | null;
   min_weight: number | null;
   max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_services_features {
@@ -1657,6 +1659,8 @@ export interface UpdateServiceRate_update_service_rate_rate_sheet_service_rates 
   cost: number | null;
   min_weight: number | null;
   max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
 }
 
 export interface UpdateServiceRate_update_service_rate_rate_sheet {
@@ -1695,6 +1699,10 @@ export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet_s
   zone_id: string;
   rate: number;
   cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
 }
 
 export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet {
@@ -1718,6 +1726,132 @@ export interface BatchUpdateServiceRates {
 
 export interface BatchUpdateServiceRatesVariables {
   input: BatchUpdateServiceRatesMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: AddWeightRange
+// ====================================================
+
+export interface AddWeightRange_add_weight_range_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface AddWeightRange_add_weight_range_rate_sheet {
+  id: string;
+  service_rates: AddWeightRange_add_weight_range_rate_sheet_service_rates[] | null;
+}
+
+export interface AddWeightRange_add_weight_range_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface AddWeightRange_add_weight_range {
+  rate_sheet: AddWeightRange_add_weight_range_rate_sheet | null;
+  errors: AddWeightRange_add_weight_range_errors[] | null;
+}
+
+export interface AddWeightRange {
+  add_weight_range: AddWeightRange_add_weight_range;
+}
+
+export interface AddWeightRangeVariables {
+  input: AddWeightRangeMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RemoveWeightRange
+// ====================================================
+
+export interface RemoveWeightRange_remove_weight_range_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface RemoveWeightRange_remove_weight_range_rate_sheet {
+  id: string;
+  service_rates: RemoveWeightRange_remove_weight_range_rate_sheet_service_rates[] | null;
+}
+
+export interface RemoveWeightRange_remove_weight_range_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface RemoveWeightRange_remove_weight_range {
+  rate_sheet: RemoveWeightRange_remove_weight_range_rate_sheet | null;
+  errors: RemoveWeightRange_remove_weight_range_errors[] | null;
+}
+
+export interface RemoveWeightRange {
+  remove_weight_range: RemoveWeightRange_remove_weight_range;
+}
+
+export interface RemoveWeightRangeVariables {
+  input: RemoveWeightRangeMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteServiceRate
+// ====================================================
+
+export interface DeleteServiceRate_delete_service_rate_rate_sheet_service_rates {
+  service_id: string;
+  zone_id: string;
+  rate: number;
+  cost: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface DeleteServiceRate_delete_service_rate_rate_sheet {
+  id: string;
+  service_rates: DeleteServiceRate_delete_service_rate_rate_sheet_service_rates[] | null;
+}
+
+export interface DeleteServiceRate_delete_service_rate_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteServiceRate_delete_service_rate {
+  rate_sheet: DeleteServiceRate_delete_service_rate_rate_sheet | null;
+  errors: DeleteServiceRate_delete_service_rate_errors[] | null;
+}
+
+export interface DeleteServiceRate {
+  delete_service_rate: DeleteServiceRate_delete_service_rate;
+}
+
+export interface DeleteServiceRateVariables {
+  input: DeleteServiceRateMutationInput;
 }
 
 
@@ -3314,6 +3448,29 @@ export interface UpdateServiceRateMutationInput {
 export interface BatchUpdateServiceRatesMutationInput {
   rate_sheet_id: string;
   rates: ServiceRateInput[];
+}
+
+// null
+export interface AddWeightRangeMutationInput {
+  rate_sheet_id: string;
+  min_weight: number;
+  max_weight: number;
+}
+
+// null
+export interface RemoveWeightRangeMutationInput {
+  rate_sheet_id: string;
+  min_weight: number;
+  max_weight: number;
+}
+
+// null
+export interface DeleteServiceRateMutationInput {
+  rate_sheet_id: string;
+  service_id: string;
+  zone_id: string;
+  min_weight?: number | null;
+  max_weight?: number | null;
 }
 
 // null

@@ -1,0 +1,20 @@
+{
+  "status": 400,
+  "success": 0,
+  "message": "Bad Request",
+  "type": "error",
+  "instance": "/shipment",
+  "errors": [
+    {
+      "ErrorNo": "E001",
+      "Message": "Invalid shipment data provided",
+      "StatusCode": "400"
+    },
+    {
+      "ErrorNo": "E002",
+      "Message": "Missing required field: PostalCode",
+      "StatusCode": "400"
+    }
+  ],
+  "UniqId": "649969a6f6e1"
+}

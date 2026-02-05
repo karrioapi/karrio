@@ -1,63 +1,253 @@
 {
-  "shipment": {
-    "product": "PARCEL",
-    "sender": {
-      "name1": "Sender Company",
-      "name2": "Department",
-      "name3": "Contact Person",
-      "street": "Main Street",
-      "houseNumber": "123A",
-      "zipCode": "12345-0000",
-      "city": "Berlin",
-      "country": "DE",
-      "contactPerson": "John Doe",
-      "phone": "+49301234567",
-      "email": "sender@example.com"
+  "Shipment": {
+    "ShipmentReference": ["ORDER123"],
+    "ShippingDate": "2025-01-16",
+    "IncotermCode": "DAP",
+    "Identifier": "KARRIO",
+    "Middleware": "",
+    "Product": "PARCEL",
+    "ExpressAltDeliveryAllowed": false,
+    "Consignee": {
+      "ConsigneeID": "",
+      "CostCenter": "",
+      "Category": "BUSINESS",
+      "Address": {
+        "Name1": "Receiver Company",
+        "Name2": "Department",
+        "Name3": "",
+        "CountryCode": "DE",
+        "Province": "",
+        "City": "Munich",
+        "Street": "Market Street",
+        "StreetNumber": "456B",
+        "ContactPerson": "Jane Smith",
+        "FixedLinePhonenumber": "+49891234567",
+        "MobilePhoneNumber": "",
+        "Email": "receiver@example.com",
+        "ZIPCode": "54321"
+      }
     },
-    "receiver": {
-      "name1": "Receiver Company",
-      "name2": "Department",
-      "name3": "Contact Person",
-      "street": "Market Street",
-      "houseNumber": "456B",
-      "zipCode": "54321-0000",
-      "city": "Munich",
-      "country": "DE",
-      "contactPerson": "Jane Smith",
-      "phone": "+49891234567",
-      "email": "receiver@example.com"
+    "Shipper": {
+      "ContactID": "CUSTOMER_CONTACT_ID",
+      "AlternativeShipperAddress": {
+        "Name1": "",
+        "Name2": "",
+        "Name3": "",
+        "CountryCode": "",
+        "Province": "",
+        "City": "",
+        "Street": "",
+        "StreetNumber": "",
+        "ContactPerson": "",
+        "FixedLinePhonenumber": "",
+        "MobilePhoneNumber": "",
+        "Email": "",
+        "ZIPCode": ""
+      },
+      "Address": {
+        "Name1": "Sender Company",
+        "Name2": "Department",
+        "Name3": "",
+        "CountryCode": "DE",
+        "Province": "",
+        "City": "Berlin",
+        "Street": "Main Street",
+        "StreetNumber": "123A",
+        "ContactPerson": "John Doe",
+        "FixedLinePhonenumber": "+49301234567",
+        "MobilePhoneNumber": "",
+        "Email": "sender@example.com",
+        "ZIPCode": "12345"
+      },
+      "FralphaCustomerReference": ""
     },
-    "parcels": [
+    "Carrier": "",
+    "ShipmentUnit": [
       {
-        "weight": 5.5,
-        "length": 30,
-        "width": 20,
-        "height": 15,
-        "references": [
+        "ShipmentUnitReference": ["REF123456"],
+        "PartnerParcelNumber": "",
+        "Weight": 5.5,
+        "Note1": "",
+        "Note2": "",
+        "Service": [
           {
-            "type": "CUSTOMER_REFERENCE",
-            "value": "REF123456"
+            "Cash": {
+              "ServiceName": "",
+              "Reason": "",
+              "Amount": 0.0,
+              "Currency": ""
+            },
+            "AddonLiability": {
+              "ServiceName": "",
+              "Amount": 0.0,
+              "Currency": "",
+              "ParcelContent": ""
+            },
+            "HazardousGoods": {
+              "ServiceName": "",
+              "HazardousGood": [
+                {
+                  "Weight": 0.0,
+                  "GlshazNo": ""
+                }
+              ]
+            },
+            "ExWorks": {
+              "ServiceName": ""
+            },
+            "LimitedQuantities": {
+              "ServiceName": "",
+              "Weight": 0.0
+            }
           }
-        ]
+        ],
+        "TrackID": "",
+        "Injected": false,
+        "ParcelNumber": "",
+        "Volume": {
+          "Width": "",
+          "Height": "",
+          "Length": "",
+          "ScannerStation": "",
+          "VolumetricType": "CALIBRATED"
+        },
+        "FralphaParcelReference": ""
       }
     ],
-    "services": [
+    "Service": [
       {
-        "type": "GUARANTEED24",
-        "details": {}
+        "Service": {
+          "ServiceName": "GUARANTEED24"
+        },
+        "ShopDelivery": {
+          "ServiceName": "",
+          "ParcelShopID": ""
+        },
+        "ShopReturn": {
+          "ServiceName": "",
+          "NumberOfLabels": 0
+        },
+        "Intercompany": {
+          "ServiceName": "",
+          "Address": {
+            "Name1": "",
+            "Name2": "",
+            "Name3": "",
+            "CountryCode": "",
+            "Province": "",
+            "City": "",
+            "Street": "",
+            "StreetNumber": "",
+            "ContactPerson": "",
+            "FixedLinePhonenumber": "",
+            "MobilePhoneNumber": "",
+            "Email": "",
+            "ZIPCode": ""
+          },
+          "NumberOfLabels": 0,
+          "ExpectedWeight": 0.0
+        },
+        "Exchange": {
+          "ServiceName": "",
+          "Address": {
+            "Name1": "",
+            "Name2": "",
+            "Name3": "",
+            "CountryCode": "",
+            "Province": "",
+            "City": "",
+            "Street": "",
+            "StreetNumber": "",
+            "ContactPerson": "",
+            "FixedLinePhonenumber": "",
+            "MobilePhoneNumber": "",
+            "Email": "",
+            "ZIPCode": ""
+          },
+          "ExpectedWeight": 0.0
+        },
+        "DeliveryAtWork": {
+          "ServiceName": "",
+          "RecipientName": "",
+          "AlternateRecipientName": "",
+          "Building": "",
+          "Floor": "",
+          "Room": "",
+          "Phonenumber": ""
+        },
+        "Deposit": {
+          "ServiceName": "",
+          "PlaceOfDeposit": ""
+        },
+        "IdentPin": {
+          "ServiceName": "",
+          "Pin": "",
+          "Birthdate": "2025-01-16T00:00:00Z"
+        },
+        "Ident": {
+          "ServiceName": "",
+          "Birthdate": "2025-01-16T00:00:00Z",
+          "Firstname": "",
+          "Lastname": "",
+          "Nationality": {
+            "CountryCode": "DE"
+          }
+        },
+        "PickAndShip": {
+          "ServiceName": "",
+          "PickupDate": "2025-01-16T00:00:00Z",
+          "SendEMailToShipper": false,
+          "SendEMailToConsignee": false,
+          "SendSMSToShipper": false
+        },
+        "PickAndReturn": {
+          "ServiceName": "",
+          "PickupDate": "2025-01-16T00:00:00Z",
+          "SendEMailToShipper": false,
+          "SendEMailToConsignee": false,
+          "SendSMSToShipper": false
+        }
       }
     ],
-    "shippingDate": "2025-01-16",
-    "references": [
-      {
-        "type": "CUSTOMER_REFERENCE",
-        "value": "ORDER123"
+    "Return": {
+      "Address": {
+        "Name1": "",
+        "Name2": "",
+        "Name3": "",
+        "CountryCode": "",
+        "Province": "",
+        "City": "",
+        "Street": "",
+        "StreetNumber": "",
+        "ContactPerson": "",
+        "FixedLinePhonenumber": "",
+        "MobilePhoneNumber": "",
+        "Email": "",
+        "ZIPCode": ""
       }
-    ],
-    "labelFormat": "PDF",
-    "printingOptions": {
-      "templateName": "STANDARD",
-      "printerLanguage": "PDF"
     }
-  }
+  },
+  "PrintingOptions": {
+    "ReturnLabels": {
+      "TemplateSet": "NONE",
+      "LabelFormat": "PDF"
+    },
+    "UseDefault": "",
+    "DefinePrinter": {
+      "LabelPrinter": "",
+      "DocumentPrinter": ""
+    }
+  },
+  "CustomContent": {
+    "CustomerLogo": [""],
+    "BarcodeContentType": "TRACK_ID",
+    "Barcode": "",
+    "BarcodeType": "EAN_128",
+    "HideShipperAddress": false
+  },
+  "ReturnOptions": {
+    "ReturnPrintData": true,
+    "ReturnRoutingInfo": true
+  },
+  "PartnerReference": ""
 }

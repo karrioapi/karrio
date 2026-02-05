@@ -19,6 +19,9 @@ import {
   BATCH_UPDATE_SERVICE_RATES,
   UPDATE_SERVICE_ZONE_IDS,
   UPDATE_SERVICE_SURCHARGE_IDS,
+  ADD_WEIGHT_RANGE,
+  REMOVE_WEIGHT_RANGE,
+  DELETE_SERVICE_RATE,
 } from "@karrio/types/graphql/admin/queries";
 import {
   GetRateSheets,
@@ -201,6 +204,31 @@ export function useRateSheetMutation() {
     onSuccess: invalidateCache,
   });
 
+  // Weight Range Mutations
+  const addWeightRange = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(ADD_WEIGHT_RANGE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const removeWeightRange = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(REMOVE_WEIGHT_RANGE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
+  const deleteServiceRate = useAuthenticatedMutation({
+    mutationFn: (input: any) => karrio.admin.request(
+      gqlstr(DELETE_SERVICE_RATE),
+      { variables: { input } }
+    ),
+    onSuccess: invalidateCache,
+  });
+
   // Service Zone/Surcharge Assignment Mutations
   const updateServiceZoneIds = useAuthenticatedMutation({
     mutationFn: (input: any) => karrio.admin.request(
@@ -235,6 +263,10 @@ export function useRateSheetMutation() {
     // Service Rate mutations
     updateServiceRate,
     batchUpdateServiceRates,
+    // Weight Range mutations
+    addWeightRange,
+    removeWeightRange,
+    deleteServiceRate,
     // Service assignment mutations
     updateServiceZoneIds,
     updateServiceSurchargeIds,

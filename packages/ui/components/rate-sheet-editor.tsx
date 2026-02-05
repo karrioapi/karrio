@@ -26,10 +26,21 @@ import {
 } from "@karrio/ui/components/ui/alert-dialog";
 import { ServiceEditorModal } from "@karrio/ui/components/modals/service-editor-modal";
 import { CURRENCY_OPTIONS, DIMENSION_UNITS, WEIGHT_UNITS } from "@karrio/types";
-import { RateSheetTable } from "@karrio/ui/components/rate-sheet-table";
-import { ZonesTab } from "@karrio/ui/components/zones-tab";
-import { ServicesTab } from "@karrio/ui/components/services-tab";
+import { deriveWeightRanges, type WeightRange, type ServiceRate } from "@karrio/ui/components/weight-rate-grid";
+import { ServiceRateDetailView } from "@karrio/ui/components/service-rate-detail-view";
+import { AddWeightRangeDialog } from "@karrio/ui/components/add-weight-range-dialog";
+import { AddServicePopover } from "@karrio/ui/components/add-service-popover";
+import { EditWeightRangeDialog } from "@karrio/ui/components/edit-weight-range-dialog";
 import { SurchargesTab } from "@karrio/ui/components/surcharges-tab";
+import { ZoneEditorDialog } from "@karrio/ui/components/zone-editor-dialog";
+import { SurchargeEditorDialog } from "@karrio/ui/components/surcharge-editor-dialog";
+import { ServiceRateEditorDialog } from "@karrio/ui/components/service-rate-editor-dialog";
+import { RateSheetCsvPreview } from "@karrio/ui/components/rate-sheet-csv-preview";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@karrio/ui/components/ui/popover";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -43,6 +54,7 @@ import {
   TrashIcon,
   Cross2Icon,
   HamburgerMenuIcon,
+  TableIcon,
 } from "@radix-ui/react-icons";
 import { Loader2 } from "lucide-react";
 
@@ -189,6 +201,9 @@ export const RateSheetEditor = ({
   const [services, setServices] = useState<ServiceLevelWithZones[]>([]);
   const [surcharges, setSurcharges] = useState<SharedSurcharge[]>([]);
   const [sharedZones, setSharedZones] = useState<EmbeddedZone[]>([]);
+  const [localServiceRates, setLocalServiceRates] = useState<ServiceRate[]>([]);
+  // Optimistic overlay for edit mode: when set, overrides existingRateSheet.service_rates
+  const [editModeRatesOverride, setEditModeRatesOverride] = useState<ServiceRate[] | null>(null);
 
   // Original state for change tracking
   const originalStateRef = useRef<OriginalState | null>(null);
@@ -208,22 +223,52 @@ export const RateSheetEditor = ({
   const [deleteZoneConfirmOpen, setDeleteZoneConfirmOpen] = useState(false);
 
   // Loading states
-  const [isLoadingDefaults, setIsLoadingDefaults] = useState(false);
   const [isDeletingService, setIsDeletingService] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // Tab state
   const [activeTab, setActiveTab] = useState<
-    "rate_sheet" | "zones" | "services" | "surcharges"
+    "rate_sheet" | "surcharges"
   >("rate_sheet");
+
+  // Weight range state
+  const [weightRangeDialogOpen, setWeightRangeDialogOpen] = useState(false);
+  const [detailServiceId, setDetailServiceId] = useState<string | null>(null);
+  const [removeWeightRangeConfirmOpen, setRemoveWeightRangeConfirmOpen] = useState(false);
+  const [weightRangeToRemove, setWeightRangeToRemove] = useState<{ min_weight: number; max_weight: number } | null>(null);
 
   // Mobile sidebar state
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Text buffer state for smooth typing
-  const [zoneTextBuffers, setZoneTextBuffers] = useState<
-    Record<string, Partial<Record<"cities" | "postal_codes", string>>>
-  >({});
+  // Zone editor dialog state
+  const [zoneEditorOpen, setZoneEditorOpen] = useState(false);
+  const [selectedZone, setSelectedZone] = useState<EmbeddedZone | null>(null);
+
+  // Surcharge editor dialog state
+  const [surchargeEditorOpen, setSurchargeEditorOpen] = useState(false);
+  const [selectedSurcharge, setSelectedSurcharge] = useState<SharedSurcharge | null>(null);
+
+  // Service rate editor dialog state
+  const [rateEditorOpen, setRateEditorOpen] = useState(false);
+  const [selectedRate, setSelectedRate] = useState<ServiceRate | null>(null);
+
+  // CSV preview state
+  const [csvPreviewOpen, setCsvPreviewOpen] = useState(false);
+
+  // Service add popover state
+  const [serviceAddPopoverOpen, setServiceAddPopoverOpen] = useState(false);
+
+  // Edit weight range dialog state
+  const [editWeightRangeDialogOpen, setEditWeightRangeDialogOpen] = useState(false);
+  const [weightRangeToEdit, setWeightRangeToEdit] = useState<WeightRange | null>(null);
+
+  // Staged/committed pattern refs
+  const zoneSaveRef = useRef(false);
+  const surchargeSaveRef = useRef(false);
+  const [pendingZoneServiceId, setPendingZoneServiceId] = useState<string | null>(null);
+
+  // Per-service pending weight ranges (edit mode)
+  const [editModePendingRanges, setEditModePendingRanges] = useState<Record<string, WeightRange[]>>({});
 
   // Hooks
   const { references, metadata } = useAPIMetadata();
@@ -270,7 +315,51 @@ export const RateSheetEditor = ({
   const connectedCarriers: RateSheetCarrier[] =
     (existingRateSheet?.carriers as RateSheetCarrier[]) ?? [];
 
+  const servicePresets = useMemo(() => {
+    if (!carrierName || !references?.ratesheets?.[carrierName]?.services) return [];
+    const existingCodes = new Set(services.map(s => s.service_code));
+    return references.ratesheets[carrierName].services
+      .filter((s: any) => !existingCodes.has(s.service_code))
+      .map((s: any) => ({ code: s.service_code, name: s.service_name }))
+      .sort((a: any, b: any) => a.name.localeCompare(b.name));
+  }, [carrierName, references?.ratesheets, services]);
+
+  const zonePresets = useMemo(() => {
+    if (!carrierName || !references?.ratesheets?.[carrierName]?.zones) return [];
+    const existingLabels = new Set(sharedZones.map(z => z.label));
+    return references.ratesheets[carrierName].zones
+      .filter((z: any) => z.label && !existingLabels.has(z.label))
+      .map((z: any) => ({ id: z.id, label: z.label, countries: (z.country_codes || []).length }))
+      .sort((a: any, b: any) => a.label.localeCompare(b.label));
+  }, [carrierName, references?.ratesheets, sharedZones]);
+
+  const surchargePresets = useMemo(() => {
+    if (!carrierName || !references?.ratesheets?.[carrierName]?.surcharges) return [];
+    const existingNames = new Set(surcharges.map(s => s.name));
+    return references.ratesheets[carrierName].surcharges
+      .filter((s: any) => s.name && !existingNames.has(s.name))
+      .map((s: any) => ({ id: s.id, name: s.name, amount: s.amount, surcharge_type: s.surcharge_type }))
+      .sort((a: any, b: any) => a.name.localeCompare(b.name));
+  }, [carrierName, references?.ratesheets, surcharges]);
+
   const isInitialLoading = isEditMode && isRateSheetLoading && !existingRateSheet;
+
+  // Auto-select first service tab when services change
+  useEffect(() => {
+    if (services.length > 0) {
+      const exists = detailServiceId && services.some(s => s.id === detailServiceId);
+      if (!exists) setDetailServiceId(services[0].id);
+    } else {
+      setDetailServiceId(null);
+    }
+  }, [services]);
+
+  // Clear optimistic overlay when server data refreshes (after mutation + refetch)
+  useEffect(() => {
+    if (editModeRatesOverride !== null) {
+      setEditModeRatesOverride(null);
+    }
+  }, [(existingRateSheet as any)?.service_rates]);
 
   // Load existing rate sheet data when in edit mode
   useEffect(() => {
@@ -328,25 +417,24 @@ export const RateSheetEditor = ({
         };
       });
 
-      const unlinkedZones: EmbeddedZone[] = existingSharedZones
-        .filter((z: any) => !linkedZoneIds.has(z.id))
-        .map((zone: any) => ({
-          id: zone.id,
-          label: zone.label || "",
-          rate: 0,
-          cost: null,
-          min_weight: zone.min_weight ?? null,
-          max_weight: zone.max_weight ?? null,
-          weight_unit: zone.weight_unit ?? null,
-          transit_days: zone.transit_days ?? null,
-          transit_time: zone.transit_time ?? null,
-          country_codes: zone.country_codes || [],
-          postal_codes: zone.postal_codes || [],
-          cities: zone.cities || [],
-        }));
+      // Store ALL zones in sharedZones so ServiceRateDetailView can find them via zone_ids
+      const allZones: EmbeddedZone[] = existingSharedZones.map((zone: any) => ({
+        id: zone.id,
+        label: zone.label || "",
+        rate: 0,
+        cost: null,
+        min_weight: zone.min_weight ?? null,
+        max_weight: zone.max_weight ?? null,
+        weight_unit: zone.weight_unit ?? null,
+        transit_days: zone.transit_days ?? null,
+        transit_time: zone.transit_time ?? null,
+        country_codes: zone.country_codes || [],
+        postal_codes: zone.postal_codes || [],
+        cities: zone.cities || [],
+      }));
 
       setServices(transformedServices as ServiceLevelWithZones[]);
-      setSharedZones(unlinkedZones);
+      setSharedZones(allZones);
       setSurcharges(existingRateSheet.surcharges || []);
 
       // Store original state for change tracking
@@ -415,6 +503,7 @@ export const RateSheetEditor = ({
       setServices([]);
       setSharedZones([]);
       setSurcharges([]);
+      setLocalServiceRates([]);
       originalStateRef.current = null;
     }
   }, [isEditMode, preloadCarrier, carriers]);
@@ -422,15 +511,156 @@ export const RateSheetEditor = ({
   // Track previous carrier to detect changes
   const prevCarrierRef = useRef<string>("");
 
-  // Reset services and prefill name when carrier changes in create mode
+  // Auto-load carrier defaults when carrier changes in create mode
   useEffect(() => {
     if (!isEditMode && carrierName) {
       const carrier = carriers.find((c) => c.id === carrierName);
       if (carrier) {
         setName(`${carrier.name} - sheet`);
       }
-      if (prevCarrierRef.current && prevCarrierRef.current !== carrierName) {
-        setServices([]);
+
+      if (prevCarrierRef.current !== carrierName) {
+        const rateSheetDefaults = references?.ratesheets?.[carrierName];
+
+        if (rateSheetDefaults?.services?.length > 0) {
+          const {
+            zones: defaultZones,
+            services: defaultServicesList,
+            surcharges: defaultSurcharges,
+            service_rates: defaultServiceRates,
+          } = rateSheetDefaults;
+
+          const zoneMap = new Map(
+            (defaultZones || []).map((z: any) => [z.id, z])
+          );
+
+          // Build a lookup from reference service_rates: "refServiceId:zoneId" → rate data
+          const defaultRateLookup = new Map<string, { rate: number; cost: number | null }>();
+          for (const sr of (defaultServiceRates || []) as any[]) {
+            const key = `${sr.service_id}:${sr.zone_id}:${sr.min_weight ?? 0}:${sr.max_weight ?? 0}`;
+            defaultRateLookup.set(key, { rate: sr.rate ?? 0, cost: sr.cost ?? null });
+          }
+
+          const loadedSharedZones: EmbeddedZone[] = (defaultZones || []).map(
+            (zone: any) => ({
+              id: zone.id,
+              label: zone.label || "",
+              rate: 0,
+              cost: null,
+              min_weight: zone.min_weight ?? null,
+              max_weight: zone.max_weight ?? null,
+              weight_unit: zone.weight_unit ?? null,
+              transit_days: zone.transit_days ?? null,
+              transit_time: zone.transit_time ?? null,
+              country_codes: zone.country_codes || [],
+              postal_codes: zone.postal_codes || [],
+              cities: zone.cities || [],
+            })
+          );
+
+          const loadedSurcharges: SharedSurcharge[] = (
+            defaultSurcharges || []
+          ).map((s: any) => ({
+            id: s.id || generateId("surcharge"),
+            name: s.name || "",
+            amount: s.amount ?? 0,
+            surcharge_type: s.surcharge_type || "fixed",
+            cost: s.cost ?? null,
+            active: s.active ?? true,
+          }));
+
+          // Map reference service IDs → generated IDs, and collect service rates
+          const mappedServiceRates: ServiceRate[] = [];
+
+          const defaultServices: ServiceLevelWithZones[] =
+            defaultServicesList.map((service: any) => {
+              const generatedId = generateId("service");
+              const refServiceId = service.id; // reference ID (e.g. "0", "1")
+              const zoneIds = service.zone_ids || [];
+              const zones = zoneIds.map(
+                (zoneId: string, zoneIndex: number) => {
+                  const zone = zoneMap.get(zoneId) || {
+                    label: `Zone ${zoneIndex + 1}`,
+                  };
+                  // Look up default rate for this service+zone
+                  const rateData = defaultRateLookup.get(
+                    `${refServiceId}:${zoneId}:0:0`
+                  );
+                  return {
+                    id: zoneId,
+                    label: zone.label || `Zone ${zoneIndex + 1}`,
+                    rate: rateData?.rate ?? 0,
+                    cost: rateData?.cost ?? null,
+                    min_weight: zone.min_weight ?? null,
+                    max_weight: zone.max_weight ?? null,
+                    weight_unit: zone.weight_unit ?? null,
+                    transit_days: zone.transit_days ?? null,
+                    transit_time: zone.transit_time ?? null,
+                    country_codes: zone.country_codes || [],
+                    postal_codes: zone.postal_codes || [],
+                    cities: zone.cities || [],
+                  } as EmbeddedZone;
+                }
+              );
+
+              // Build mapped service rates for the grid (re-keyed to generated service ID)
+              for (const sr of (defaultServiceRates || []) as any[]) {
+                if (String(sr.service_id) === String(refServiceId)) {
+                  mappedServiceRates.push({
+                    service_id: generatedId,
+                    zone_id: sr.zone_id,
+                    rate: sr.rate ?? 0,
+                    cost: sr.cost ?? null,
+                    min_weight: sr.min_weight ?? null,
+                    max_weight: sr.max_weight ?? null,
+                  });
+                }
+              }
+
+              return {
+                id: generatedId,
+                object_type: "service_level",
+                service_name: service.service_name || "",
+                service_code: service.service_code || "",
+                carrier_service_code: service.carrier_service_code ?? null,
+                description: service.description ?? null,
+                active: service.active ?? true,
+                currency: service.currency ?? "USD",
+                transit_days: service.transit_days ?? null,
+                transit_time: service.transit_time ?? null,
+                max_width: service.max_width ?? null,
+                max_height: service.max_height ?? null,
+                max_length: service.max_length ?? null,
+                dimension_unit: service.dimension_unit ?? null,
+                max_weight: service.max_weight ?? null,
+                weight_unit: service.weight_unit ?? null,
+                domicile: service.domicile ?? null,
+                international: service.international ?? null,
+                zones,
+                zone_ids: zoneIds,
+                surcharge_ids: service.surcharge_ids || [],
+                features: featuresToArray(service.features),
+                ...(service.features
+                  ? {
+                      first_mile: service.features.first_mile || "",
+                      last_mile: service.features.last_mile || "",
+                      form_factor: service.features.form_factor || "",
+                      age_check: service.features.age_check || "",
+                    }
+                  : {}),
+              } as ServiceLevelWithZones;
+            });
+
+          setServices(defaultServices);
+          setSharedZones(loadedSharedZones);
+          setSurcharges(loadedSurcharges);
+          setLocalServiceRates(mappedServiceRates);
+        } else {
+          setServices([]);
+          setSharedZones([]);
+          setSurcharges([]);
+          setLocalServiceRates([]);
+        }
       }
     }
     prevCarrierRef.current = carrierName;
@@ -439,6 +669,170 @@ export const RateSheetEditor = ({
   // Handler functions
   const handleAddService = () => {
     setSelectedService(null);
+    setServiceDialogOpen(true);
+  };
+
+  const handleAddServiceFromPreset = (serviceCode: string) => {
+    if (!carrierName || !references?.ratesheets?.[carrierName]) return;
+
+    const rateSheetDefaults = references.ratesheets[carrierName];
+    const preset = (rateSheetDefaults.services || []).find(
+      (s: any) => s.service_code === serviceCode
+    );
+    if (!preset) return;
+
+    const generatedId = generateId("service");
+    const refServiceId = preset.id;
+    const zoneIds = preset.zone_ids || [];
+
+    // Look up default rates for this service's zones
+    const defaultServiceRates = (rateSheetDefaults.service_rates || []) as any[];
+    const zones = zoneIds
+      .map((zid: string) => {
+        const zone = sharedZones.find((z) => z.id === zid);
+        if (!zone) return null;
+        const rateEntry = defaultServiceRates.find(
+          (sr: any) =>
+            String(sr.service_id) === String(refServiceId) &&
+            sr.zone_id === zid
+        );
+        return {
+          ...zone,
+          rate: rateEntry?.rate ?? 0,
+          cost: rateEntry?.cost ?? null,
+        };
+      })
+      .filter(Boolean) as EmbeddedZone[];
+
+    // Build service rates for the grid
+    const newRates: ServiceRate[] = defaultServiceRates
+      .filter((sr: any) => String(sr.service_id) === String(refServiceId))
+      .map((sr: any) => ({
+        service_id: generatedId,
+        zone_id: sr.zone_id,
+        rate: sr.rate ?? 0,
+        cost: sr.cost ?? null,
+        min_weight: sr.min_weight ?? null,
+        max_weight: sr.max_weight ?? null,
+      }));
+
+    const newService: ServiceLevelWithZones = {
+      id: generatedId,
+      object_type: "service_level",
+      service_name: preset.service_name || "",
+      service_code: preset.service_code || "",
+      carrier_service_code: preset.carrier_service_code ?? null,
+      description: preset.description ?? null,
+      active: preset.active ?? true,
+      currency: preset.currency ?? "USD",
+      transit_days: preset.transit_days ?? null,
+      transit_time: preset.transit_time ?? null,
+      max_width: preset.max_width ?? null,
+      max_height: preset.max_height ?? null,
+      max_length: preset.max_length ?? null,
+      dimension_unit: preset.dimension_unit ?? null,
+      max_weight: preset.max_weight ?? null,
+      weight_unit: preset.weight_unit ?? null,
+      domicile: preset.domicile ?? null,
+      international: preset.international ?? null,
+      zones,
+      zone_ids: zoneIds,
+      surcharge_ids: preset.surcharge_ids || [],
+      features: featuresToArray(preset.features),
+      ...(preset.features
+        ? {
+            first_mile: preset.features.first_mile || "",
+            last_mile: preset.features.last_mile || "",
+            form_factor: preset.features.form_factor || "",
+            age_check: preset.features.age_check || "",
+          }
+        : {}),
+    };
+    setServices((prev) => [...prev, newService]);
+    setLocalServiceRates((prev) => [...prev, ...newRates]);
+    setServiceAddPopoverOpen(false);
+  };
+
+  const handleAddZoneFromPreset = (presetZoneId: string) => {
+    if (!carrierName || !references?.ratesheets?.[carrierName]) return;
+    const rateSheetDefaults = references.ratesheets[carrierName];
+    const preset = (rateSheetDefaults.zones || []).find((z: any) => z.id === presetZoneId);
+    if (!preset) return;
+
+    const newZone: EmbeddedZone = {
+      id: generateId("zone"),
+      rate: 0,
+      label: preset.label || "",
+      min_weight: null,
+      max_weight: null,
+      weight_unit: null,
+      transit_days: preset.transit_days ?? null,
+      transit_time: null,
+      cities: preset.cities || [],
+      postal_codes: preset.postal_codes || [],
+      country_codes: preset.country_codes || [],
+    };
+
+    // Staged: don't add to state yet, just open dialog. handleSaveZone adds on save.
+    setSelectedZone(newZone);
+    setZoneEditorOpen(true);
+  };
+
+  const handleAddSurchargeFromPreset = (presetSurchargeId: string) => {
+    if (!carrierName || !references?.ratesheets?.[carrierName]) return;
+    const rateSheetDefaults = references.ratesheets[carrierName];
+    const preset = (rateSheetDefaults.surcharges || []).find((s: any) => s.id === presetSurchargeId);
+    if (!preset) return;
+
+    const newSurcharge: SharedSurcharge = {
+      id: generateId("surcharge"),
+      name: preset.name || "",
+      amount: preset.amount ?? 0,
+      surcharge_type: preset.surcharge_type || "fixed",
+      active: true,
+      cost: preset.cost ?? null,
+    };
+
+    // Staged: don't add to state yet, just open dialog. handleSaveSurcharge adds on save.
+    setSelectedSurcharge(newSurcharge);
+    setSurchargeEditorOpen(true);
+  };
+
+  const handleCloneZone = (zone: EmbeddedZone) => {
+    const newZone: EmbeddedZone = {
+      ...zone,
+      id: generateId("zone"),
+      label: `${zone.label} (copy)`,
+    };
+    // Staged: don't add to state yet, just open dialog. handleSaveZone adds on save.
+    setSelectedZone(newZone);
+    setZoneEditorOpen(true);
+  };
+
+  const handleCloneSurcharge = (surcharge: SharedSurcharge) => {
+    const newSurcharge: SharedSurcharge = {
+      ...surcharge,
+      id: generateId("surcharge"),
+      name: `${surcharge.name} (copy)`,
+    };
+    // Staged: don't add to state yet, just open dialog. handleSaveSurcharge adds on save.
+    setSelectedSurcharge(newSurcharge);
+    setSurchargeEditorOpen(true);
+  };
+
+  const handleCloneService = (service: ServiceLevelWithZones) => {
+    const newId = generateId("service");
+    const newService: ServiceLevelWithZones = {
+      ...service,
+      id: newId,
+      service_name: `${service.service_name} (copy)`,
+    };
+    setServices((prev) => [...prev, newService]);
+    const clonedRates = localServiceRates
+      .filter(sr => sr.service_id === service.id)
+      .map(sr => ({ ...sr, service_id: newId }));
+    setLocalServiceRates((prev) => [...prev, ...clonedRates]);
+    setSelectedService(newService);
     setServiceDialogOpen(true);
   };
 
@@ -585,7 +979,68 @@ export const RateSheetEditor = ({
       country_codes: [],
     };
 
-    setSharedZones((prev) => [...prev, newZone]);
+    // Staged: don't add to state yet, just open dialog. handleSaveZone adds on save.
+    setSelectedZone(newZone);
+    setZoneEditorOpen(true);
+  };
+
+  // Assign an existing shared zone to a service
+  const handleAssignZoneToService = (serviceId: string, zoneId: string) => {
+    const zone = sharedZones.find((z) => z.id === zoneId);
+    if (!zone) return;
+
+    setServices((prev) =>
+      prev.map((service) => {
+        if (service.id !== serviceId) return service;
+        const currentZoneIds: string[] = service.zone_ids || [];
+        if (currentZoneIds.includes(zoneId)) return service;
+        return {
+          ...service,
+          zones: [...(service.zones || []), zone],
+          zone_ids: [...currentZoneIds, zoneId],
+        };
+      })
+    );
+  };
+
+  // Create a new zone for a service and open the editor (staged pattern)
+  const handleCreateZoneForService = (serviceId: string) => {
+    const allZoneLabels = collectAllZoneLabels();
+    let nextNum = 1;
+    while (allZoneLabels.has(`Zone ${nextNum}`)) nextNum++;
+
+    const newZone: EmbeddedZone = {
+      id: generateId("zone"),
+      rate: 0,
+      label: `Zone ${nextNum}`,
+      min_weight: null,
+      max_weight: null,
+      weight_unit: null,
+      transit_days: null,
+      transit_time: null,
+      cities: [],
+      postal_codes: [],
+      country_codes: [],
+    };
+
+    // Staged: track which service to link on save, don't add to state yet
+    setPendingZoneServiceId(serviceId);
+    setSelectedZone(newZone);
+    setZoneEditorOpen(true);
+  };
+
+  // Remove a zone from a specific service (unlink)
+  const handleRemoveZoneFromService = (serviceId: string, zoneId: string) => {
+    setServices((prev) =>
+      prev.map((service) => {
+        if (service.id !== serviceId) return service;
+        return {
+          ...service,
+          zones: (service.zones || []).filter((z) => z.id !== zoneId),
+          zone_ids: (service.zone_ids || []).filter((id) => id !== zoneId),
+        };
+      })
+    );
   };
 
   // Update zone by label/key
@@ -643,53 +1098,129 @@ export const RateSheetEditor = ({
     }
   };
 
-  // Text buffering helpers
-  const getZoneTextValue = (
-    zoneKey: string,
-    field: "cities" | "postal_codes",
-    currentArray: string[] | undefined | null
-  ): string => {
-    const buffered = zoneTextBuffers[zoneKey]?.[field];
-    if (typeof buffered === "string") return buffered;
-    return Array.isArray(currentArray) ? currentArray.join(", ") : "";
+  // Zone/Surcharge editor helpers
+  const handleEditZone = (zone: EmbeddedZone) => {
+    setSelectedZone(zone);
+    setZoneEditorOpen(true);
   };
 
-  const setZoneTextValue = (
-    zoneKey: string,
-    field: "cities" | "postal_codes",
-    text: string
-  ) => {
-    setZoneTextBuffers((prev) => ({
-      ...prev,
-      [zoneKey]: {
-        ...(prev[zoneKey] || {}),
-        [field]: text,
-      },
-    }));
+  const handleEditSurcharge = (surcharge: SharedSurcharge) => {
+    setSelectedSurcharge(surcharge);
+    setSurchargeEditorOpen(true);
   };
 
-  const persistZoneTextValue = (
-    zoneKey: string,
-    field: "cities" | "postal_codes"
-  ) => {
-    const text = zoneTextBuffers[zoneKey]?.[field];
-    if (text === undefined) return;
-    const values = text
-      .split(",")
-      .map((v) => v.trim())
-      .filter((v) => v.length > 0);
-    handleUpdateZone(zoneKey, { [field]: values });
-    setZoneTextBuffers((prev) => {
-      const next = { ...prev };
-      const zoneEntry = { ...(next[zoneKey] || {}) };
-      delete zoneEntry[field];
-      if (Object.keys(zoneEntry).length === 0) {
-        delete next[zoneKey];
-      } else {
-        next[zoneKey] = zoneEntry;
+  // Save zone from dialog — sets save ref so onOpenChange knows it's a save, not cancel
+  const handleSaveZone = (zoneKey: string, updates: Partial<EmbeddedZone>) => {
+    zoneSaveRef.current = true;
+    const isExistingInList = selectedZone && sharedZones.some((z) => z.id === selectedZone.id);
+
+    if (selectedZone && isExistingInList) {
+      // Edit existing zone
+      handleUpdateZone(zoneKey, updates);
+    } else if (selectedZone) {
+      // New staged zone — add to sharedZones now
+      const newZone = { ...selectedZone, ...updates };
+      setSharedZones((prev) => {
+        if (prev.some((z) => z.id === newZone.id)) return prev;
+        return [...prev, newZone];
+      });
+
+      // If created for a specific service, link it
+      if (pendingZoneServiceId) {
+        setServices((prev) =>
+          prev.map((service) => {
+            if (service.id !== pendingZoneServiceId) return service;
+            const currentZoneIds: string[] = service.zone_ids || [];
+            if (currentZoneIds.includes(newZone.id)) return service;
+            return {
+              ...service,
+              zones: [...(service.zones || []), newZone],
+              zone_ids: [...currentZoneIds, newZone.id],
+            };
+          })
+        );
       }
-      return next;
-    });
+    }
+  };
+
+  // Save surcharge from dialog — sets save ref so onOpenChange knows it's a save, not cancel
+  const handleSaveSurcharge = (surchargeId: string, updates: Partial<SharedSurcharge>) => {
+    surchargeSaveRef.current = true;
+    const isExistingInList = selectedSurcharge && surcharges.some((s) => s.id === selectedSurcharge.id);
+
+    if (selectedSurcharge && isExistingInList) {
+      // Edit existing surcharge
+      handleUpdateSurcharge(surchargeId, updates);
+    } else if (selectedSurcharge) {
+      // New staged surcharge — add to surcharges now
+      const newSurcharge = { ...selectedSurcharge, ...updates };
+      setSurcharges((prev) => {
+        if (prev.some((s) => s.id === newSurcharge.id)) return prev;
+        return [...prev, newSurcharge];
+      });
+    }
+  };
+
+  // Service rate editor
+  const handleEditRate = (serviceRate: ServiceRate) => {
+    setSelectedRate(serviceRate);
+    setRateEditorOpen(true);
+  };
+
+  const handleSaveRate = async (updated: ServiceRate) => {
+    if (!isEditMode) return;
+    try {
+      await mutations.updateServiceRate.mutateAsync({
+        rate_sheet_id: rateSheetId,
+        service_id: updated.service_id,
+        zone_id: updated.zone_id,
+        rate: updated.rate,
+        cost: updated.cost,
+        min_weight: updated.min_weight ?? 0,
+        max_weight: updated.max_weight ?? 0,
+        transit_days: updated.transit_days,
+        transit_time: updated.transit_time,
+      });
+    } catch (err: any) {
+      toast({
+        title: "Failed to update rate",
+        description: err?.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Toggle service-zone linking
+  const handleToggleServiceZone = (
+    serviceId: string,
+    zoneId: string,
+    linked: boolean
+  ) => {
+    setServices((prev) =>
+      prev.map((service) => {
+        if (service.id !== serviceId) return service;
+        const currentZones = service.zones || [];
+        const currentZoneIds = service.zone_ids || [];
+        if (linked) {
+          const zone = sharedZones.find((z) => z.id === zoneId) ||
+            services.flatMap((s) => s.zones || []).find((z) => z.id === zoneId) ||
+            (selectedZone?.id === zoneId ? selectedZone : undefined);
+          if (!zone) return service;
+          if (currentZoneIds.includes(zoneId)) return service;
+          return {
+            ...service,
+            zones: [...currentZones, zone],
+            zone_ids: [...currentZoneIds, zoneId],
+          };
+        } else {
+          return {
+            ...service,
+            zones: currentZones.filter((z) => z.id !== zoneId),
+            zone_ids: currentZoneIds.filter((id) => id !== zoneId),
+          };
+        }
+      })
+    );
   };
 
   // Surcharge handlers
@@ -702,7 +1233,9 @@ export const RateSheetEditor = ({
       active: true,
       cost: null,
     };
-    setSurcharges((prev) => [...prev, newSurcharge]);
+    // Staged: don't add to state yet, just open dialog. handleSaveSurcharge adds on save.
+    setSelectedSurcharge(newSurcharge);
+    setSurchargeEditorOpen(true);
   };
 
   const handleUpdateSurcharge = (
@@ -736,123 +1269,421 @@ export const RateSheetEditor = ({
     );
   };
 
-  const handleLoadDefaults = async () => {
-    if (!carrierName) return;
+  // ─────────────────────────────────────────────────────────────────
+  // Weight Range Handlers
+  // ─────────────────────────────────────────────────────────────────
 
-    setIsLoadingDefaults(true);
-    try {
-      const rateSheetDefaults = references?.ratesheets?.[carrierName];
+  const serviceRatesData: ServiceRate[] = useMemo(
+    () =>
+      isEditMode
+        ? ((editModeRatesOverride ?? ((existingRateSheet as any)?.service_rates ?? [])) as ServiceRate[])
+        : localServiceRates,
+    [isEditMode, editModeRatesOverride, (existingRateSheet as any)?.service_rates, localServiceRates]
+  );
+  const weightRanges: WeightRange[] = useMemo(
+    () => deriveWeightRanges(serviceRatesData),
+    [serviceRatesData]
+  );
 
-      if (
-        !rateSheetDefaults ||
-        !rateSheetDefaults.services ||
-        rateSheetDefaults.services.length === 0
-      ) {
-        toast({
-          title: "No defaults available",
-          description: `No default services found for ${carrierName}`,
-          variant: "destructive",
-        });
-        return;
+  const weightRangePresets = useMemo(() => {
+    if (!carrierName || !references?.ratesheets?.[carrierName]?.service_rates) return [];
+    const rates = references.ratesheets[carrierName].service_rates as any[];
+    const existingSet = new Set(weightRanges.map(r => `${r.min_weight}:${r.max_weight}`));
+    // Also exclude locally-pending ranges for the current service
+    const pendingForService = detailServiceId ? (editModePendingRanges[detailServiceId] || []) : [];
+    for (const pr of pendingForService) {
+      existingSet.add(`${pr.min_weight}:${pr.max_weight}`);
+    }
+    const seen = new Set<string>();
+    const presets: { min_weight: number; max_weight: number }[] = [];
+    for (const sr of rates) {
+      if (sr.min_weight == null || sr.max_weight == null) continue;
+      const key = `${sr.min_weight}:${sr.max_weight}`;
+      if (seen.has(key) || existingSet.has(key)) continue;
+      seen.add(key);
+      presets.push({ min_weight: sr.min_weight, max_weight: sr.max_weight });
+    }
+    return presets.sort((a, b) => a.min_weight - b.min_weight || a.max_weight - b.max_weight);
+  }, [carrierName, references?.ratesheets, weightRanges, detailServiceId, editModePendingRanges]);
+
+  // Per-service weight range functions
+  const getServiceWeightRanges = useCallback((serviceId: string): WeightRange[] => {
+    // Get weight ranges that have rates for this specific service
+    const serviceSpecificRates = serviceRatesData.filter(
+      (sr) => sr.service_id === serviceId
+    );
+    const seen = new Set<string>();
+    const ranges: WeightRange[] = [];
+    for (const sr of serviceSpecificRates) {
+      const min = sr.min_weight ?? 0;
+      const max = sr.max_weight ?? 0;
+      if (min === 0 && max === 0) continue;
+      const key = `${min}:${max}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        ranges.push({ min_weight: min, max_weight: max });
       }
+    }
+    // Include edit-mode pending ranges
+    const pending = editModePendingRanges[serviceId] || [];
+    for (const wr of pending) {
+      const key = `${wr.min_weight}:${wr.max_weight}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        ranges.push(wr);
+      }
+    }
+    return ranges.sort((a, b) => a.min_weight - b.min_weight);
+  }, [serviceRatesData, editModePendingRanges]);
 
-      const {
-        zones: defaultZones,
-        services: defaultServicesList,
-        service_rates: serviceRates,
-      } = rateSheetDefaults;
+  const getMissingWeightRanges = useCallback((serviceId: string): WeightRange[] => {
+    const serviceRanges = getServiceWeightRanges(serviceId);
+    const serviceRangeKeys = new Set(
+      serviceRanges.map((r) => `${r.min_weight}:${r.max_weight}`)
+    );
+    return weightRanges.filter(
+      (r) => !serviceRangeKeys.has(`${r.min_weight}:${r.max_weight}`)
+    );
+  }, [weightRanges, getServiceWeightRanges]);
 
-      const zoneMap = new Map((defaultZones || []).map((z: any) => [z.id, z]));
-      const rateMap = new Map(
-        (serviceRates || []).map((sr: any) => [
-          `${sr.service_id}:${sr.zone_id}`,
-          sr,
-        ])
+  // Edit weight range handler
+  const handleEditWeightRange = (range: WeightRange) => {
+    setWeightRangeToEdit(range);
+    setEditWeightRangeDialogOpen(true);
+  };
+
+  const handleSaveWeightRangeEdit = (oldMin: number, oldMax: number, newMax: number) => {
+    if (isEditMode && rateSheetId && detailServiceId) {
+      // Check if this is a locally-pending range (no backend rates)
+      const hasBackendRates = serviceRatesData.some(
+        (r) => r.min_weight === oldMin && r.max_weight === oldMax
       );
 
-      const defaultServices: ServiceLevelWithZones[] = defaultServicesList.map(
-        (service: any, index: number) => {
-          const serviceId = service.id || String(index);
-          const zoneIds = service.zone_ids || [];
+      if (hasBackendRates) {
+        // Per-service: find rates for current service + old weight range
+        const oldRates = serviceRatesData.filter(
+          (r) =>
+            r.service_id === detailServiceId &&
+            r.min_weight === oldMin &&
+            r.max_weight === oldMax
+        );
+        // Optimistic update: re-key only this service's rates
+        setEditModeRatesOverride((prev) => {
+          const rates = prev ?? (((existingRateSheet as any)?.service_rates ?? []) as ServiceRate[]);
+          return rates.map((r) =>
+            r.service_id === detailServiceId &&
+            r.min_weight === oldMin &&
+            r.max_weight === oldMax
+              ? { ...r, max_weight: newMax } as ServiceRate
+              : r
+          );
+        });
+        // Fire per-service mutations in background: delete old entries, create new ones
+        Promise.all(
+          oldRates.map((r) =>
+            mutations.deleteServiceRate.mutateAsync({
+              rate_sheet_id: rateSheetId,
+              service_id: r.service_id,
+              zone_id: r.zone_id,
+              min_weight: r.min_weight,
+              max_weight: r.max_weight,
+            })
+          )
+        ).then(() =>
+          Promise.all(
+            oldRates.map((r) =>
+              mutations.updateServiceRate.mutateAsync({
+                rate_sheet_id: rateSheetId,
+                service_id: r.service_id,
+                zone_id: r.zone_id,
+                rate: r.rate ?? 0,
+                min_weight: oldMin,
+                max_weight: newMax,
+              })
+            )
+          )
+        ).then(() => {
+          toast({ title: "Weight range updated", variant: "default" });
+        }).catch((err: any) => {
+          toast({ title: "Failed to update weight range", description: err?.message, variant: "destructive" });
+          setEditModeRatesOverride(null); // rollback to server data
+        });
+      } else {
+        // Locally-pending range: update in local state
+        setEditModePendingRanges((prev) => {
+          const updated = { ...prev };
+          for (const [svcId, ranges] of Object.entries(updated)) {
+            updated[svcId] = ranges.map((r) =>
+              r.min_weight === oldMin && r.max_weight === oldMax
+                ? { ...r, max_weight: newMax }
+                : r
+            );
+          }
+          return updated;
+        });
+        toast({ title: "Weight range updated", variant: "default" });
+      }
+    } else {
+      // Create mode: update local state
+      setLocalServiceRates((prev) =>
+        prev.map((r) =>
+          r.min_weight === oldMin && r.max_weight === oldMax
+            ? { ...r, max_weight: newMax }
+            : r
+        )
+      );
+      toast({ title: "Weight range updated", variant: "default" });
+    }
+  };
 
-          const zones = zoneIds.map((zoneId: string, zoneIndex: number) => {
-            const zone = zoneMap.get(zoneId) || { label: `Zone ${zoneIndex + 1}` };
-            const rateEntry = rateMap.get(`${serviceId}:${zoneId}`);
+  const handleAddWeightRange = async (minWeight: number, maxWeight: number) => {
+    if (isEditMode && rateSheetId) {
+      // Edit mode: add locally for the current service only (no global backend mutation)
+      // The weight range will be committed to the backend when the user enters a rate value
+      if (!detailServiceId) return;
+      setEditModePendingRanges((prev) => {
+        const existing = prev[detailServiceId] || [];
+        const alreadyPending = existing.some(
+          (r) => r.min_weight === minWeight && r.max_weight === maxWeight
+        );
+        if (alreadyPending) return prev;
+        return {
+          ...prev,
+          [detailServiceId]: [...existing, { min_weight: minWeight, max_weight: maxWeight }],
+        };
+      });
+      toast({ title: "Weight range added", variant: "default" });
+    } else {
+      // Create mode: add rate=0 entries for the current service's zones
+      const currentService = services.find((s) => s.id === detailServiceId);
+      if (currentService) {
+        const zoneIds: string[] = currentService.zone_ids || [];
+        const newRates: ServiceRate[] = zoneIds.map((zoneId) => ({
+          service_id: currentService.id,
+          zone_id: zoneId,
+          rate: 0,
+          min_weight: minWeight,
+          max_weight: maxWeight,
+        } as ServiceRate));
+        if (newRates.length > 0) {
+          setLocalServiceRates((prev) => [...prev, ...newRates]);
+        }
+      }
+      toast({ title: "Weight range added", variant: "default" });
+    }
+  };
 
-            return {
-              id: generateId("zone"),
-              label: zone.label || `Zone ${zoneIndex + 1}`,
-              rate: rateEntry?.rate ?? 0,
-              cost: rateEntry?.cost ?? null,
-              min_weight: rateEntry?.min_weight ?? zone.min_weight ?? null,
-              max_weight: rateEntry?.max_weight ?? zone.max_weight ?? null,
-              weight_unit: zone.weight_unit ?? null,
-              transit_days: rateEntry?.transit_days ?? zone.transit_days ?? null,
-              transit_time: rateEntry?.transit_time ?? zone.transit_time ?? null,
-              country_codes: zone.country_codes || [],
-              postal_codes: zone.postal_codes || [],
-              cities: zone.cities || [],
-            } as EmbeddedZone;
-          });
+  const handleRemoveWeightRange = (minWeight: number, maxWeight: number) => {
+    setWeightRangeToRemove({ min_weight: minWeight, max_weight: maxWeight });
+    setRemoveWeightRangeConfirmOpen(true);
+  };
 
-          const finalZones =
-            zones.length > 0
-              ? zones
-              : [
-                  {
-                    id: generateId("zone"),
-                    rate: 0,
-                    label: "Zone 1",
-                    min_weight: null,
-                    max_weight: null,
-                    weight_unit: null,
-                    transit_days: null,
-                    transit_time: null,
-                    cities: [],
-                    postal_codes: [],
-                    country_codes: [],
-                  } as EmbeddedZone,
-                ];
+  const handleConfirmRemoveWeightRange = () => {
+    if (!weightRangeToRemove) return;
 
+    if (isEditMode && rateSheetId) {
+      const { min_weight, max_weight } = weightRangeToRemove;
+
+      // Check if this range is locally-pending (no backend rates for this service)
+      const hasBackendRates = serviceRatesData.some(
+        (r) =>
+          r.service_id === detailServiceId &&
+          r.min_weight === min_weight &&
+          r.max_weight === max_weight
+      );
+
+      if (hasBackendRates) {
+        // Optimistic update: remove matching rates for this service from overlay
+        const ratesToDelete = serviceRatesData.filter(
+          (r) =>
+            r.service_id === detailServiceId &&
+            r.min_weight === min_weight &&
+            r.max_weight === max_weight
+        );
+        setEditModeRatesOverride((prev) => {
+          const rates = prev ?? (((existingRateSheet as any)?.service_rates ?? []) as ServiceRate[]);
+          return rates.filter(
+            (r) =>
+              !(
+                r.service_id === detailServiceId &&
+                r.min_weight === min_weight &&
+                r.max_weight === max_weight
+              )
+          );
+        });
+        setRemoveWeightRangeConfirmOpen(false);
+        setWeightRangeToRemove(null);
+        // Fire deletions in background (per-service, not global removeWeightRange)
+        Promise.all(
+          ratesToDelete.map((r) =>
+            mutations.deleteServiceRate.mutateAsync({
+              rate_sheet_id: rateSheetId,
+              service_id: r.service_id,
+              zone_id: r.zone_id,
+              min_weight: r.min_weight,
+              max_weight: r.max_weight,
+            })
+          )
+        ).then(() => {
+          toast({ title: "Weight range removed", variant: "default" });
+        }).catch((err: any) => {
+          toast({ title: "Failed to remove weight range", description: err?.message, variant: "destructive" });
+          setEditModeRatesOverride(null); // rollback to server data
+        });
+      } else {
+        // Locally-pending only — just remove from local state
+        setEditModePendingRanges((prev) => {
+          if (!detailServiceId) return prev;
+          const existing = prev[detailServiceId] || [];
           return {
-            id: generateId("service"),
-            object_type: "service_level",
-            service_name: service.service_name || "",
-            service_code: service.service_code || "",
-            carrier_service_code: service.carrier_service_code ?? null,
-            description: service.description ?? null,
-            active: service.active ?? true,
-            currency: service.currency ?? "USD",
-            transit_days: service.transit_days ?? null,
-            transit_time: service.transit_time ?? null,
-            max_width: service.max_width ?? null,
-            max_height: service.max_height ?? null,
-            max_length: service.max_length ?? null,
-            dimension_unit: service.dimension_unit ?? null,
-            max_weight: service.max_weight ?? null,
-            weight_unit: service.weight_unit ?? null,
-            domicile: service.domicile ?? null,
-            international: service.international ?? null,
-            zones: finalZones,
-            zone_ids: zoneIds,
-            surcharge_ids: service.surcharge_ids || [],
-          } as ServiceLevelWithZones;
+            ...prev,
+            [detailServiceId]: existing.filter(
+              (r) => !(r.min_weight === min_weight && r.max_weight === max_weight)
+            ),
+          };
+        });
+        setRemoveWeightRangeConfirmOpen(false);
+        setWeightRangeToRemove(null);
+        toast({ title: "Weight range removed", variant: "default" });
+      }
+    } else {
+      // Create mode: remove rates only for the current service
+      const { min_weight, max_weight } = weightRangeToRemove;
+      setLocalServiceRates((prev) =>
+        prev.filter(
+          (r) =>
+            !(
+              r.service_id === detailServiceId &&
+              r.min_weight === min_weight &&
+              r.max_weight === max_weight
+            )
+        )
+      );
+      setRemoveWeightRangeConfirmOpen(false);
+      setWeightRangeToRemove(null);
+      toast({ title: "Weight range removed", variant: "default" });
+    }
+  };
+
+  const handleDeleteServiceRate = (
+    serviceId: string,
+    zoneId: string,
+    minWeight: number,
+    maxWeight: number
+  ) => {
+    if (isEditMode && rateSheetId) {
+      // Optimistic update: remove rate from overlay
+      setEditModeRatesOverride((prev) => {
+        const rates = prev ?? (((existingRateSheet as any)?.service_rates ?? []) as ServiceRate[]);
+        return rates.filter(
+          (r) =>
+            !(
+              r.service_id === serviceId &&
+              r.zone_id === zoneId &&
+              r.min_weight === minWeight &&
+              r.max_weight === maxWeight
+            )
+        );
+      });
+      // Fire mutation in background
+      mutations.deleteServiceRate.mutate(
+        {
+          rate_sheet_id: rateSheetId,
+          service_id: serviceId,
+          zone_id: zoneId,
+          min_weight: minWeight,
+          max_weight: maxWeight,
+        },
+        {
+          onError: (err: any) => {
+            toast({ title: "Failed to delete rate", description: err?.message, variant: "destructive" });
+            setEditModeRatesOverride(null); // rollback
+          },
         }
       );
+    } else {
+      // Create mode: remove from local state
+      setLocalServiceRates((prev) =>
+        prev.filter(
+          (r) =>
+            !(
+              r.service_id === serviceId &&
+              r.zone_id === zoneId &&
+              r.min_weight === minWeight &&
+              r.max_weight === maxWeight
+            )
+        )
+      );
+    }
+  };
 
-      setServices(defaultServices);
-      toast({
-        title: "Defaults loaded",
-        description: `Loaded ${defaultServices.length} services from ${carrierName}`,
+  const handleWeightRateCellEdit = (
+    serviceId: string,
+    zoneId: string,
+    minWeight: number,
+    maxWeight: number,
+    newRate: number
+  ) => {
+    if (isEditMode && rateSheetId) {
+      // Optimistic update: apply change to overlay immediately
+      setEditModeRatesOverride((prev) => {
+        const rates = prev ?? (((existingRateSheet as any)?.service_rates ?? []) as ServiceRate[]);
+        const idx = rates.findIndex(
+          (r) =>
+            r.service_id === serviceId &&
+            r.zone_id === zoneId &&
+            r.min_weight === minWeight &&
+            r.max_weight === maxWeight
+        );
+        if (idx >= 0) {
+          const updated = [...rates];
+          updated[idx] = { ...updated[idx], rate: newRate };
+          return updated;
+        }
+        return [...rates, { service_id: serviceId, zone_id: zoneId, rate: newRate, min_weight: minWeight, max_weight: maxWeight } as ServiceRate];
       });
-    } catch (error) {
-      toast({
-        title: "Failed to load defaults",
-        description: "An error occurred while loading carrier defaults",
-        variant: "destructive",
+      // Fire mutation in background
+      mutations.updateServiceRate.mutate(
+        {
+          rate_sheet_id: rateSheetId,
+          service_id: serviceId,
+          zone_id: zoneId,
+          rate: newRate,
+          min_weight: minWeight,
+          max_weight: maxWeight,
+        },
+        {
+          onError: (err: any) => {
+            toast({ title: "Failed to update rate", description: err?.message, variant: "destructive" });
+          },
+        }
+      );
+    } else {
+      // Create mode: update local service rates
+      setLocalServiceRates((prev) => {
+        const idx = prev.findIndex(
+          (r) =>
+            r.service_id === serviceId &&
+            r.zone_id === zoneId &&
+            r.min_weight === minWeight &&
+            r.max_weight === maxWeight
+        );
+        if (idx >= 0) {
+          const updated = [...prev];
+          updated[idx] = { ...updated[idx], rate: newRate };
+          return updated;
+        }
+        return [
+          ...prev,
+          {
+            service_id: serviceId,
+            zone_id: zoneId,
+            rate: newRate,
+            min_weight: minWeight,
+            max_weight: maxWeight,
+          } as ServiceRate,
+        ];
       });
-    } finally {
-      setIsLoadingDefaults(false);
     }
   };
 
@@ -1078,28 +1909,40 @@ export const RateSheetEditor = ({
           description: `"${name}" has been updated successfully`,
         });
       } else {
-        // Create new rate sheet
-        const createServices = services.map((service, serviceIndex) => {
-          const tempServiceId = `temp-${serviceIndex}`;
-          const zoneIds: string[] = [];
+        // Build ID remap maps for create mode
+        const serviceIdRemap = new Map<string, string>();
+        services.forEach((service, i) => serviceIdRemap.set(service.id, `temp-${i}`));
 
-          (service.zones || []).forEach((zone) => {
-            const zoneLabel = zone.label || "";
-            const zoneId = zoneLabelToId.get(zoneLabel);
-            if (zoneId) {
-              zoneIds.push(zoneId);
-              serviceRates.push({
-                service_id: tempServiceId,
-                zone_id: zoneId,
-                rate: zone.rate || 0,
-                cost: zone.cost ?? null,
-                min_weight: zone.min_weight ?? null,
-                max_weight: zone.max_weight ?? null,
-                transit_days: zone.transit_days ?? null,
-                transit_time: zone.transit_time ?? null,
-              });
-            }
-          });
+        const zoneIdRemap = new Map<string, string>();
+        sharedZones.forEach((zone) => {
+          const mutationId = zoneLabelToId.get(zone.label || "");
+          if (mutationId) {
+            zoneIdRemap.set(zone.id, mutationId);
+          }
+        });
+
+        // Build service_rates from localServiceRates with remapped IDs
+        for (const sr of localServiceRates) {
+          const mappedServiceId = serviceIdRemap.get(sr.service_id);
+          const mappedZoneId = zoneIdRemap.get(sr.zone_id);
+          if (mappedServiceId && mappedZoneId) {
+            serviceRates.push({
+              service_id: mappedServiceId,
+              zone_id: mappedZoneId,
+              rate: sr.rate,
+              cost: sr.cost ?? null,
+              min_weight: sr.min_weight ?? null,
+              max_weight: sr.max_weight ?? null,
+            });
+          }
+        }
+
+        // Create new rate sheet
+        const createServices = services.map((service) => {
+          // Remap zone_ids to mutation IDs
+          const zoneIds = (service.zone_ids || [])
+            .map((id) => zoneIdRemap.get(id) || id)
+            .filter((id) => zonesForMutation.some((z) => z.id === id));
 
           const mappedSurchargeIds = (service.surcharge_ids || [])
             .map((id) => surchargeIdMap.get(id) || id)
@@ -1163,7 +2006,7 @@ export const RateSheetEditor = ({
   return (
     <>
       <Sheet open={true} onOpenChange={() => onClose()}>
-        <SheetContent side="right" className="w-full sm:max-w-full p-0">
+        <SheetContent side="right" className="w-full sm:max-w-full p-0" hideCloseButton>
           {/* Header */}
           <SheetHeader className="px-4 sm:px-6 py-4 border-b border-border bg-background">
             <div className="flex items-center justify-between gap-3">
@@ -1187,20 +2030,37 @@ export const RateSheetEditor = ({
                     ? "Edit Rate Sheet"
                     : "Create Rate Sheet"}
               </SheetTitle>
-              <Button
-                onClick={handleSave}
-                disabled={isSaving || isInitialLoading}
-                className="mr-12"
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    <span className="hidden sm:inline">Saving...</span>
-                  </>
-                ) : (
-                  "Save"
-                )}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleSave}
+                  disabled={isSaving || isInitialLoading}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span className="hidden sm:inline">Saving...</span>
+                    </>
+                  ) : (
+                    "Save"
+                  )}
+                </Button>
+                <button
+                  onClick={() => setCsvPreviewOpen(true)}
+                  className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  aria-label="Preview as spreadsheet"
+                  title="Preview as spreadsheet"
+                  disabled={isInitialLoading}
+                >
+                  <TableIcon className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => onClose()}
+                  className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  aria-label="Close"
+                >
+                  <Cross2Icon className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </SheetHeader>
 
@@ -1271,100 +2131,6 @@ export const RateSheetEditor = ({
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g., Standard Rates 2024"
                     />
-                  </div>
-
-                  {/* Services Section */}
-                  <div className="pt-4 border-t border-border">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-foreground">
-                          Services
-                        </h3>
-                        <span className="text-xs text-muted-foreground">
-                          ({services.length})
-                        </span>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleAddService}
-                        className="h-7 px-2"
-                      >
-                        <PlusIcon className="h-3 w-3 mr-1" />
-                        Add
-                      </Button>
-                    </div>
-
-                    {services.length > 0 ? (
-                      <div className="space-y-2 mt-2 max-h-45 overflow-y-auto pr-1">
-                        {services.map((service) => (
-                          <div
-                            key={service.service_code}
-                            className="p-3 bg-background border border-border rounded-md hover:border-primary/50 transition-colors"
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                  {service.service_name}
-                                </p>
-                                <p className="text-xs text-muted-foreground truncate">
-                                  {service.service_code}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {service.zones?.length || 0} zones
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7"
-                                  onClick={() => handleEditService(service)}
-                                >
-                                  <Pencil1Icon className="h-3.5 w-3.5" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                                  onClick={() => handleDeleteClick(service)}
-                                >
-                                  <TrashIcon className="h-3.5 w-3.5" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <p className="text-xs text-muted-foreground text-center py-4">
-                          No services added yet
-                        </p>
-                        {carrierName && (
-                          <Button
-                            variant="outline"
-                            className="w-full"
-                            onClick={handleLoadDefaults}
-                            disabled={isLoadingDefaults}
-                          >
-                            {isLoadingDefaults ? (
-                              <>
-                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                Loading...
-                              </>
-                            ) : (
-                              <>
-                                Load{" "}
-                                {carriers.find((c) => c.id === carrierName)
-                                  ?.name || carrierName}{" "}
-                                Defaults
-                              </>
-                            )}
-                          </Button>
-                        )}
-                      </div>
-                    )}
                   </div>
 
                   {/* Connected Carriers */}
@@ -1522,8 +2288,6 @@ export const RateSheetEditor = ({
                     {(
                       [
                         { id: "rate_sheet", label: "Rate Sheet" },
-                        { id: "zones", label: "Zones" },
-                        { id: "services", label: "Services" },
                         { id: "surcharges", label: "Surcharges" },
                       ] as const
                     ).map((tab) => (
@@ -1531,7 +2295,7 @@ export const RateSheetEditor = ({
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={cn(
-                          "flex-1 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap px-2",
+                          "py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap px-4",
                           activeTab === tab.id
                             ? "border-primary text-primary"
                             : "border-transparent text-muted-foreground hover:text-foreground"
@@ -1546,42 +2310,128 @@ export const RateSheetEditor = ({
                 {/* Tab Content */}
                 <div className="flex-1 p-4 sm:p-6 overflow-hidden">
                   {activeTab === "rate_sheet" && (
-                    <RateSheetTable
-                      services={services}
-                      sharedZonesFromParent={sharedZones}
-                      onUpdateService={handleUpdateService}
-                      onAddZone={handleAddZoneAll}
-                      onRemoveZone={handleRemoveZoneAll}
-                    />
-                  )}
-                  {activeTab === "zones" && (
-                    <ZonesTab
-                      services={services}
-                      sharedZonesFromParent={sharedZones}
-                      onUpdateZone={handleUpdateZone}
-                      onAddZone={handleAddZoneAll}
-                      onRemoveZone={handleRemoveZoneAll}
-                      countryOptions={countryOptions}
-                      getZoneTextValue={getZoneTextValue}
-                      setZoneTextValue={setZoneTextValue}
-                      persistZoneTextValue={persistZoneTextValue}
-                    />
-                  )}
-                  {activeTab === "services" && (
-                    <ServicesTab
-                      services={services}
-                      onEditService={handleEditService}
-                      onDeleteService={handleDeleteClick}
-                    />
+                    <div className="h-full flex flex-col">
+                      {/* Service tabs */}
+                      {services.length > 0 && (
+                        <div className="flex items-center gap-1 mb-3 overflow-x-auto pb-1 border-b border-border" style={{ scrollbarWidth: "none" }}>
+                          {services.map((svc) => (
+                            <button
+                              key={svc.id}
+                              onClick={() => setDetailServiceId(svc.id)}
+                              className={cn(
+                                "px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors flex items-center gap-1.5 group/svc",
+                                detailServiceId === svc.id
+                                  ? "bg-primary text-primary-foreground"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                              )}
+                            >
+                              {svc.service_name || svc.service_code || "Unnamed"}
+                              {detailServiceId === svc.id && (
+                                <span className="flex items-center gap-0">
+                                  <span
+                                    className="p-0.5 rounded-sm hover:bg-primary-foreground/20"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEditService(svc);
+                                    }}
+                                    title="Edit service"
+                                  >
+                                    <Pencil1Icon className="h-3 w-3" />
+                                  </span>
+                                  <span
+                                    className="p-0.5 rounded-sm hover:bg-primary-foreground/20"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteClick(svc);
+                                    }}
+                                    title="Delete service"
+                                  >
+                                    <TrashIcon className="h-3 w-3" />
+                                  </span>
+                                </span>
+                              )}
+                            </button>
+                          ))}
+
+                          {/* Add service popover */}
+                          <AddServicePopover
+                            services={services}
+                            onAddService={handleAddService}
+                            servicePresets={servicePresets}
+                            onAddServiceFromPreset={handleAddServiceFromPreset}
+                            onCloneService={handleCloneService}
+                            iconOnly
+                            align="end"
+                          />
+                        </div>
+                      )}
+
+                      {/* Content: per-service detail grid */}
+                      <div className="flex-1 overflow-hidden relative">
+                        {/* Carrier gate: disabled overlay in create mode when no carrier */}
+                        {!isEditMode && !carrierName && (
+                          <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-[1px] flex items-center justify-center rounded-md">
+                            <p className="text-sm text-muted-foreground">Select a carrier to get started</p>
+                          </div>
+                        )}
+                        {services.length === 0 ? (
+                          <div className="flex-1 flex items-center justify-center text-muted-foreground bg-muted/50 rounded border-2 border-dashed h-full">
+                            <div className="text-center p-8">
+                              <p className="text-sm">No services configured</p>
+                              <div className="mt-2">
+                                <AddServicePopover
+                                  services={services}
+                                  onAddService={handleAddService}
+                                  servicePresets={servicePresets}
+                                  onAddServiceFromPreset={handleAddServiceFromPreset}
+                                  onCloneService={handleCloneService}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          (() => {
+                            const svc = services.find((s) => s.id === detailServiceId);
+                            if (!svc) return null;
+                            return (
+                              <ServiceRateDetailView
+                                service={svc}
+                                sharedZones={sharedZones}
+                                serviceRates={serviceRatesData}
+                                weightRanges={weightRanges}
+                                weightUnit={selectedWeightUnit}
+                                onCellEdit={handleWeightRateCellEdit}
+                                onDeleteRate={handleDeleteServiceRate}
+                                onAddWeightRange={() => setWeightRangeDialogOpen(true)}
+                                onRemoveWeightRange={handleRemoveWeightRange}
+                                onAssignZoneToService={handleAssignZoneToService}
+                                onCreateNewZone={handleCreateZoneForService}
+                                onRemoveZoneFromService={handleRemoveZoneFromService}
+                                serviceFilteredWeightRanges={getServiceWeightRanges(svc.id)}
+                                onEditWeightRange={handleEditWeightRange}
+                                onEditZone={handleEditZone}
+                                onDeleteZone={handleRemoveZoneAll}
+                                missingRanges={getMissingWeightRanges(svc.id)}
+                                onAddMissingRange={handleAddWeightRange}
+                                weightRangePresets={weightRangePresets}
+                                onAddFromPreset={handleAddWeightRange}
+                              />
+                            );
+                          })()
+                        )}
+                      </div>
+                    </div>
                   )}
                   {activeTab === "surcharges" && (
                     <SurchargesTab
                       surcharges={surcharges}
                       services={services}
-                      onUpdateSurcharge={handleUpdateSurcharge}
+                      onEditSurcharge={handleEditSurcharge}
                       onAddSurcharge={handleAddSurcharge}
                       onRemoveSurcharge={handleRemoveSurcharge}
-                      onToggleServiceSurcharge={handleToggleServiceSurcharge}
+                      surchargePresets={surchargePresets}
+                      onAddSurchargeFromPreset={handleAddSurchargeFromPreset}
+                      onCloneSurcharge={handleCloneSurcharge}
                     />
                   )}
                 </div>
@@ -1598,6 +2448,7 @@ export const RateSheetEditor = ({
         service={selectedService}
         onSubmit={handleSaveService}
         availableSurcharges={surcharges}
+        servicePresets={servicePresets}
       />
 
       {/* Delete Service Confirmation Dialog */}
@@ -1656,6 +2507,128 @@ export const RateSheetEditor = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add Weight Range Dialog */}
+      <AddWeightRangeDialog
+        open={weightRangeDialogOpen}
+        onOpenChange={setWeightRangeDialogOpen}
+        existingRanges={weightRanges}
+        weightUnit={selectedWeightUnit}
+        onAdd={handleAddWeightRange}
+      />
+
+      {/* Edit Weight Range Dialog */}
+      <EditWeightRangeDialog
+        open={editWeightRangeDialogOpen}
+        onOpenChange={setEditWeightRangeDialogOpen}
+        weightRange={weightRangeToEdit}
+        existingRanges={weightRanges}
+        weightUnit={selectedWeightUnit}
+        onSave={handleSaveWeightRangeEdit}
+      />
+
+      {/* Remove Weight Range Confirmation */}
+      <AlertDialog open={removeWeightRangeConfirmOpen} onOpenChange={setRemoveWeightRangeConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Weight Range</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove the weight range{" "}
+              {weightRangeToRemove?.min_weight ?? 0} –{" "}
+              {weightRangeToRemove?.max_weight ?? 0}? All rates in this range
+              will be deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmRemoveWeightRange}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Zone Editor Dialog */}
+      <ZoneEditorDialog
+        open={zoneEditorOpen}
+        onOpenChange={(open) => {
+          setZoneEditorOpen(open);
+          if (!open) {
+            // On cancel (not save) for a staged zone, undo any service linkings
+            if (!zoneSaveRef.current && selectedZone && !sharedZones.some(z => z.id === selectedZone.id)) {
+              setServices((prev) =>
+                prev.map((service) => ({
+                  ...service,
+                  zones: (service.zones || []).filter((z) => z.id !== selectedZone.id),
+                  zone_ids: (service.zone_ids || []).filter((id) => id !== selectedZone.id),
+                }))
+              );
+            }
+            zoneSaveRef.current = false;
+            setSelectedZone(null);
+            setPendingZoneServiceId(null);
+          }
+        }}
+        zone={selectedZone}
+        onSave={handleSaveZone}
+        countryOptions={countryOptions}
+        services={services}
+        onToggleServiceZone={handleToggleServiceZone}
+      />
+
+      {/* Surcharge Editor Dialog */}
+      <SurchargeEditorDialog
+        open={surchargeEditorOpen}
+        onOpenChange={(open) => {
+          setSurchargeEditorOpen(open);
+          if (!open) {
+            // On cancel (not save) for a staged surcharge, undo any service linkings
+            if (!surchargeSaveRef.current && selectedSurcharge && !surcharges.some(s => s.id === selectedSurcharge.id)) {
+              setServices((prev) =>
+                prev.map((service) => ({
+                  ...service,
+                  surcharge_ids: (service.surcharge_ids || []).filter((id) => id !== selectedSurcharge.id),
+                }))
+              );
+            }
+            surchargeSaveRef.current = false;
+            setSelectedSurcharge(null);
+          }
+        }}
+        surcharge={selectedSurcharge}
+        onSave={handleSaveSurcharge}
+        services={services}
+        onToggleServiceSurcharge={handleToggleServiceSurcharge}
+      />
+
+      {/* Service Rate Editor Dialog */}
+      <ServiceRateEditorDialog
+        open={rateEditorOpen}
+        onOpenChange={setRateEditorOpen}
+        serviceRate={selectedRate}
+        onSave={handleSaveRate}
+        services={services}
+        sharedZones={sharedZones}
+        weightUnit={selectedWeightUnit}
+      />
+
+      {/* CSV Preview */}
+      <RateSheetCsvPreview
+        open={csvPreviewOpen}
+        onOpenChange={setCsvPreviewOpen}
+        name={name}
+        carrierName={carrierName}
+        originCountries={originCountries}
+        services={services}
+        sharedZones={sharedZones}
+        serviceRates={serviceRatesData}
+        weightRanges={weightRanges}
+        surcharges={surcharges}
+        weightUnit={selectedWeightUnit}
+      />
     </>
   );
 };

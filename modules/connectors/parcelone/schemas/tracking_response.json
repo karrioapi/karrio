@@ -1,0 +1,44 @@
+{
+  "status": 200,
+  "success": 1,
+  "message": "OK",
+  "type": "success",
+  "instance": "/tracking/PA1/123456789012",
+  "UniqId": "649969a6f6e1",
+  "results": {
+    "TrackingID": "123456789012",
+    "CarrierIDLMC": "DHL",
+    "CarrierTrackingID": "DHL123456789",
+    "Status": "Delivered",
+    "StatusCode": "DELIVERED",
+    "DeliveryDate": "2024-01-15",
+    "EstimatedDelivery": "2024-01-15",
+    "SignedBy": "John Doe",
+    "Events": [
+      {
+        "DateTime": "2024-01-15T14:30:00",
+        "Location": "Munich, Germany",
+        "Status": "Package delivered",
+        "StatusCode": "DELIVERED",
+        "Description": "Package has been delivered successfully",
+        "Carrier": "DHL"
+      },
+      {
+        "DateTime": "2024-01-15T08:00:00",
+        "Location": "Munich, Germany",
+        "Status": "Out for delivery",
+        "StatusCode": "OUT_FOR_DELIVERY",
+        "Description": "Package is out for delivery",
+        "Carrier": "DHL"
+      },
+      {
+        "DateTime": "2024-01-14T22:00:00",
+        "Location": "Munich Hub",
+        "Status": "In transit",
+        "StatusCode": "IN_TRANSIT",
+        "Description": "Package arrived at destination facility",
+        "Carrier": "DHL"
+      }
+    ]
+  }
+}

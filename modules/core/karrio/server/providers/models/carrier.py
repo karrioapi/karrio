@@ -265,7 +265,10 @@ class CarrierConnection(core.OwnedEntity):
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", lib.Tracer())
-        _cache = lib.Cache(caching.cache)
+        _cache = lib.Cache(
+            caching.cache,
+            version=str(self.updated_at.timestamp()),
+        )
         _config = lib.SystemConfig(system_config.config)
 
         return karrio.gateway[self.ext].create(

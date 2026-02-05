@@ -50,7 +50,7 @@ export function usePickups({
   function setFilter(options: PickupFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
       if (["modal"].includes(key)) return acc;
-      if (["carrier_name"].includes(key))
+      if (["carrier_name", "status"].includes(key))
         return {
           ...acc,
           [key]: []
@@ -136,10 +136,12 @@ export function usePickupMutation(id?: string) {
   );
 
   const schedulePickup = useMutation(
-    ({ carrierName, data }: { carrierName: string; data: any }) =>
+    (data: any) =>
       handleFailure(
-        karrio.pickups
-          .schedule({ carrierName, pickupData: data })
+        karrio.axios
+          .post("/v1/pickups", data, {
+            headers: { "Content-Type": "application/json" },
+          })
           .then(({ data }) => data),
       ),
     { onSuccess: invalidateCache, onError },

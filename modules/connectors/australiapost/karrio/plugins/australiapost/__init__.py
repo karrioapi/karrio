@@ -16,6 +16,7 @@ METADATA = metadata.PluginMetadata(
     is_hub=False,
     services=units.ShippingService,
     options=units.ShippingOption,
+    service_levels=units.DEFAULT_SERVICES,
     # New fields
     website="https://auspost.com.au/",
     documentation="https://developers.auspost.com.au/apis/shipping-and-tracking/reference",

@@ -2667,6 +2667,8 @@ export const UPDATE_RATE_SHEET = gql`
           cost
           min_weight
           max_weight
+          transit_days
+          transit_time
         }
         services {
           id
@@ -2951,6 +2953,8 @@ export const UPDATE_SERVICE_RATE = gql`
           cost
           min_weight
           max_weight
+          transit_days
+          transit_time
         }
       }
       errors {
@@ -2971,6 +2975,86 @@ export const BATCH_UPDATE_SERVICE_RATES = gql`
           zone_id
           rate
           cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+// -----------------------------------------------------------
+// Weight Range Mutations
+// -----------------------------------------------------------
+
+export const ADD_WEIGHT_RANGE = gql`
+  mutation AddWeightRange($data: AddWeightRangeMutationInput!) {
+    add_weight_range(input: $data) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const REMOVE_WEIGHT_RANGE = gql`
+  mutation RemoveWeightRange($data: RemoveWeightRangeMutationInput!) {
+    remove_weight_range(input: $data) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const DELETE_SERVICE_RATE = gql`
+  mutation DeleteServiceRate($data: DeleteServiceRateMutationInput!) {
+    delete_service_rate(input: $data) {
+      rate_sheet {
+        id
+        service_rates {
+          service_id
+          zone_id
+          rate
+          cost
+          min_weight
+          max_weight
+          transit_days
+          transit_time
         }
       }
       errors {
@@ -3153,6 +3237,8 @@ export const GET_RATE_SHEETS = gql`
             cost
             min_weight
             max_weight
+            transit_days
+            transit_time
           }
           services {
             id
@@ -3474,6 +3560,7 @@ export const GET_PICKUPS = gql`
           carrier_id
           carrier_name
           confirmation_number
+          status
           pickup_date
           ready_time
           closing_time
@@ -3528,6 +3615,7 @@ export const GET_PICKUP = gql`
       carrier_id
       carrier_name
       confirmation_number
+      status
       pickup_date
       ready_time
       closing_time
@@ -3578,6 +3666,29 @@ export const GET_PICKUP = gql`
         id
         tracking_number
         status
+        service
+        carrier_name
+        carrier_id
+        tracker {
+          id
+          tracking_number
+          status
+          delivered
+          estimated_delivery
+          events {
+            description
+            location
+            code
+            date
+            time
+          }
+          messages {
+            carrier_name
+            carrier_id
+            message
+            code
+          }
+        }
       }
       options
       metadata

@@ -246,6 +246,37 @@ def process_error(
     return _error
 
 
+def error_decoder(error: HTTPError) -> Union[dict, list]:
+    """Generic on_error handler for lib.request that ensures error responses
+    are always returned as parsed dicts/lists enriched with HTTP metadata.
+
+    Use as: lib.request(..., on_error=lib.error_decoder)
+
+    - If the error body is valid JSON (dict/list), returns it parsed
+      (dicts are enriched with http_status/http_message).
+    - If the body is not valid JSON, raises an Exception with the HTTP
+      status and raw body so the caller gets a clear error message.
+    """
+    body = decode_bytes(error.read())
+
+    try:
+        from karrio.core.utils.dict import DICTPARSE as DP
+
+        result = DP.to_dict(body)
+        if isinstance(result, dict):
+            result.setdefault("http_status", error.code)
+            result.setdefault("http_message", error.reason)
+            return result
+        if isinstance(result, list):
+            return result
+    except Exception:
+        pass
+
+    # Non-JSON response — raise with contextual HTTP details
+    detail = body.strip()[:500] if body.strip() else error.reason
+    raise Exception(f"HTTP {error.code}: {detail}")
+
+
 # Default HTTP status codes that should trigger a retry
 RETRYABLE_STATUS_CODES = {500, 502, 503, 504, 522, 524}
 

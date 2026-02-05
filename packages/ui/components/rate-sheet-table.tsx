@@ -130,7 +130,7 @@ const EditableCell = React.memo(
         title={disabled ? "Read only" : "Click to edit"}
       >
         <span>
-          {value != null && !isNaN(Number(localValue))
+          {localValue !== "" && !isNaN(Number(localValue))
             ? Number(localValue).toFixed(2)
             : "-"}
         </span>

@@ -100,13 +100,18 @@ def contextual_metadata(request: Request):
     }
 
 
-def _get_system_credentials_status() -> dict:
+def _get_system_credentials_status(test_mode: bool = None) -> dict:
     """Compute which carriers have system credentials configured.
+
+    Args:
+        test_mode: If provided, adds a 'configured' field indicating whether
+            credentials are available for the current mode (sandbox if test_mode
+            is True, production if False).
 
     Returns dict like:
     {
-        "dhl_parcel_de": {"production": True, "sandbox": False},
-        "teleship": {"production": True, "sandbox": True},
+        "dhl_parcel_de": {"production": True, "sandbox": False, "configured": True},
+        "teleship": {"production": True, "sandbox": True, "configured": True},
     }
     """
     result = {}
@@ -137,10 +142,18 @@ def _get_system_credentials_status() -> dict:
             )
 
         if prod_configured or sandbox_configured:
-            result[carrier_id] = {
+            entry = {
                 "production": prod_configured,
                 "sandbox": sandbox_configured,
             }
+
+            # Add mode-aware 'configured' field
+            if test_mode is not None:
+                entry["configured"] = (
+                    sandbox_configured if test_mode else prod_configured
+                )
+
+            result[carrier_id] = entry
 
     return result
 
@@ -156,9 +169,10 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         request.user.is_authenticated if hasattr(request, "user") else False
     )
 
-    # Compute system credentials availability
+    # Compute system credentials availability (mode-aware)
+    _test_mode = getattr(request, "test_mode", None)
     system_credentials_carriers = lib.failsafe(
-        lambda: _get_system_credentials_status(),
+        lambda: _get_system_credentials_status(test_mode=_test_mode),
         {},
     )
 
@@ -207,7 +221,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
                 for s in c.services
                 or [
                     lib.to_object(lib.models.ServiceLevel, _)
-                    for _ in references["service_levels"][c.ext]
+                    for _ in references.get("service_levels", {}).get(c.ext, [])
                 ]
             }
             for c in custom_carriers

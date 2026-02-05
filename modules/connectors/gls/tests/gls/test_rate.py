@@ -208,18 +208,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 0.0,
+                    "amount": 6.99,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "GLS Parcel",
-                "shipping_charges": 0.0,
+                "shipping_charges": 6.99,
                 "shipping_currency": "EUR",
             },
             "service": "gls_parcel",
-            "total_charge": 0.0,
+            "total_charge": 6.99,
             "transit_days": 1,
         },
         {
@@ -228,59 +228,59 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 0.0,
-                    "currency": "EUR",
-                    "name": "Base Charge",
-                }
-            ],
-            "meta": {
-                "service_name": "GLS Express",
-                "shipping_charges": 0.0,
-                "shipping_currency": "EUR",
-            },
-            "service": "gls_express",
-            "total_charge": 0.0,
-            "transit_days": 1,
-        },
-        {
-            "carrier_id": "gls",
-            "carrier_name": "gls",
-            "currency": "EUR",
-            "extra_charges": [
-                {
-                    "amount": 0.0,
-                    "currency": "EUR",
-                    "name": "Base Charge",
-                }
-            ],
-            "meta": {
-                "service_name": "GLS Guaranteed24",
-                "shipping_charges": 0.0,
-                "shipping_currency": "EUR",
-            },
-            "service": "gls_guaranteed24",
-            "total_charge": 0.0,
-            "transit_days": 1,
-        },
-        {
-            "carrier_id": "gls",
-            "carrier_name": "gls",
-            "currency": "EUR",
-            "extra_charges": [
-                {
-                    "amount": 0.0,
+                    "amount": 6.49,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "GLS Business Parcel",
-                "shipping_charges": 0.0,
+                "shipping_charges": 6.49,
                 "shipping_currency": "EUR",
             },
             "service": "gls_business_parcel",
-            "total_charge": 0.0,
+            "total_charge": 6.49,
             "transit_days": 2,
+        },
+        {
+            "carrier_id": "gls",
+            "carrier_name": "gls",
+            "currency": "EUR",
+            "extra_charges": [
+                {
+                    "amount": 17.99,
+                    "currency": "EUR",
+                    "name": "Base Charge",
+                }
+            ],
+            "meta": {
+                "service_name": "GLS Express",
+                "shipping_charges": 17.99,
+                "shipping_currency": "EUR",
+            },
+            "service": "gls_express",
+            "total_charge": 17.99,
+            "transit_days": 1,
+        },
+        {
+            "carrier_id": "gls",
+            "carrier_name": "gls",
+            "currency": "EUR",
+            "extra_charges": [
+                {
+                    "amount": 14.99,
+                    "currency": "EUR",
+                    "name": "Base Charge",
+                }
+            ],
+            "meta": {
+                "service_name": "GLS Guaranteed24",
+                "shipping_charges": 14.99,
+                "shipping_currency": "EUR",
+            },
+            "service": "gls_guaranteed24",
+            "total_charge": 14.99,
+            "transit_days": 1,
         },
     ],
     [],

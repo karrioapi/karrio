@@ -15,12 +15,12 @@ def parse_shipment_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
     """Parse GLS Group shipment response."""
-    response = _response.deserialize()
+    response = lib.failsafe(lambda: _response.deserialize()) or {}
     messages = error.parse_error_response(response, settings)
 
     shipment = (
         _extract_details(response, settings, _response.ctx)
-        if not any(messages)
+        if not any(messages) and response.get("shipmentId")
         else None
     )
 
@@ -35,21 +35,7 @@ def _extract_details(
     """Extract shipment details from GLS Group response."""
     shipment = lib.to_object(gls_response.ShipmentResponseType, data)
 
-    # Validate required fields exist in API response
-    if not getattr(shipment, 'shipmentId', None):
-        raise ValueError(
-            f"GLS API response missing required field 'shipmentId'. "
-            f"Raw response: {lib.to_json(data)}. "
-            f"This may indicate an API error or incomplete sandbox response."
-        )
-
-    tracking_numbers = getattr(shipment, 'trackingNumbers', None) or []
-    if not tracking_numbers or len(tracking_numbers) == 0:
-        raise ValueError(
-            f"GLS API response missing required field 'trackingNumbers'. "
-            f"Raw response: {lib.to_json(data)}. "
-            f"This may indicate an API error or incomplete sandbox response."
-        )
+    tracking_numbers = shipment.trackingNumbers or []
 
     # Get the first label data if available
     label_data = None
@@ -102,79 +88,69 @@ def shipment_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    # Get label format from options or use default
     label_format = payload.label_type or "PDF"
+    contact_id = settings.contact_id
 
-    # Build services array from options (functional style)
-    services = [
-        gls_request.ServiceType(type=key, details=gls_request.DetailsType())
-        for key, value in options.items()
-        if value and key != "insurance"
-    ]
-
-    # Build parcel references (functional style)
-    references = [
-        gls_request.ReferenceType(type="CUSTOMER_REFERENCE", value=payload.reference)
-    ] if payload.reference else []
-
-    # Create the shipment request
+    # Build the shipment request matching vendor spec (PascalCase)
     request = gls_request.ShipmentRequestType(
-        shipment=gls_request.ShipmentType(
-            product=service.value_or_key if service else "PARCEL",
-            sender=gls_request.ReceiverType(
-                name1=shipper.company_name or shipper.person_name or "",
-                name2=shipper.person_name if shipper.company_name else None,
-                name3=None,
-                street=shipper.address_line1 or "",
-                houseNumber=shipper.address_line2 or "",
-                zipCode=shipper.postal_code or "",
-                city=shipper.city or "",
-                country=shipper.country_code or "",
-                contactPerson=shipper.person_name,
-                phone=shipper.phone_number,
-                email=shipper.email,
+        Shipment=gls_request.ShipmentType(
+            Product=service.value_or_key if service else "PARCEL",
+            Shipper=gls_request.ShipperType(
+                ContactID=contact_id,
+                Address=gls_request.AddressType(
+                    Name1=shipper.company_name or shipper.person_name or "",
+                    Name2=shipper.person_name if shipper.company_name else None,
+                    Street=shipper.address_line1 or "",
+                    StreetNumber=shipper.address_line2 or "",
+                    ZIPCode=shipper.postal_code or "",
+                    City=shipper.city or "",
+                    CountryCode=shipper.country_code or "",
+                    ContactPerson=shipper.person_name,
+                    FixedLinePhonenumber=shipper.phone_number,
+                    Email=shipper.email,
+                ),
             ),
-            receiver=gls_request.ReceiverType(
-                name1=recipient.company_name or recipient.person_name or "",
-                name2=recipient.person_name if recipient.company_name else None,
-                name3=None,
-                street=recipient.address_line1 or "",
-                houseNumber=recipient.address_line2 or "",
-                zipCode=recipient.postal_code or "",
-                city=recipient.city or "",
-                country=recipient.country_code or "",
-                contactPerson=recipient.person_name,
-                phone=recipient.phone_number,
-                email=recipient.email,
+            Consignee=gls_request.ConsigneeType(
+                Address=gls_request.AddressType(
+                    Name1=recipient.company_name or recipient.person_name or "",
+                    Name2=recipient.person_name if recipient.company_name else None,
+                    Street=recipient.address_line1 or "",
+                    StreetNumber=recipient.address_line2 or "",
+                    ZIPCode=recipient.postal_code or "",
+                    City=recipient.city or "",
+                    CountryCode=recipient.country_code or "",
+                    ContactPerson=recipient.person_name,
+                    FixedLinePhonenumber=recipient.phone_number,
+                    Email=recipient.email,
+                ),
             ),
-            parcels=[
-                gls_request.ParcelType(
-                    weight=package.weight.KG,
-                    length=int(package.length.CM) if package.length else None,
-                    width=int(package.width.CM) if package.width else None,
-                    height=int(package.height.CM) if package.height else None,
-                    references=(
-                        [
-                            gls_request.ReferenceType(
-                                type="CUSTOMER_REFERENCE",
-                                value=payload.reference,
-                            )
-                        ]
-                        if payload.reference
-                        else []
+            ShipmentUnit=[
+                gls_request.ShipmentUnitType(
+                    Weight=package.weight.KG,
+                    Volume=gls_request.VolumeType(
+                        Width=str(package.width.CM) if package.width.value else None,
+                        Height=str(package.height.CM) if package.height.value else None,
+                        Length=str(package.length.CM) if package.length.value else None,
+                    ) if any([package.width.value, package.height.value, package.length.value]) else None,
+                    ShipmentUnitReference=(
+                        [payload.reference] if payload.reference else None
                     ),
                 )
-                for idx, package in enumerate(packages)
+                for package in packages
             ],
-            services=services or [],
-            shippingDate=lib.fdate(payload.shipment_date) if hasattr(payload, 'shipment_date') and payload.shipment_date else None,
-            references=references or [],
-            labelFormat=label_format,
-            printingOptions=gls_request.PrintingOptionsType(
-                templateName=settings.connection_config.template_name.state or "STANDARD",
-                printerLanguage=settings.connection_config.printer_language.state or label_format,
+            ShipmentReference=(
+                [payload.reference] if payload.reference else None
             ),
-        )
+            ShippingDate=lib.fdate(
+                options.shipment_date.state
+            ) if options.shipment_date.state else None,
+        ),
+        PrintingOptions=gls_request.PrintingOptionsType(
+            ReturnLabels=gls_request.ReturnLabelsType(
+                TemplateSet=settings.connection_config.template_name.state or "NONE",
+                LabelFormat=label_format,
+            ),
+        ),
     )
 
     return lib.Serializable(request, lib.to_dict)
