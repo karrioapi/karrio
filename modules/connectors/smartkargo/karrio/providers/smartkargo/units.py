@@ -46,8 +46,8 @@ class ShippingService(lib.StrEnum):
 
     smartkargo_express = "EXP"      # eCommerce Express
     smartkargo_priority = "EPR"     # eCommerce Priority
-    smartkargo_postal = "EPS"       # eCommerce Postal
     smartkargo_standard = "EST"     # eCommerce Standard
+    smartkargo_economy = "ECL"      # eCommerce Economy (Five Days)
 
 
 class ShippingOption(lib.Enum):

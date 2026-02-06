@@ -57,7 +57,7 @@ class TestSmartKargoShipment(unittest.TestCase):
             mock.return_value = ShipmentCancelResponse
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
             self.assertIn(
-                "void?prefix=AXB&airWaybill=01234567",
+                "shipment/void?prefix=AXB&airWaybill=01234567",
                 mock.call_args[1]["url"]
             )
 
@@ -184,8 +184,10 @@ ShipmentResponse = """{
 }"""
 
 ShipmentCancelResponse = """{
-  "status": "success",
-  "message": "Shipment voided successfully"
+  "result": {
+    "cancelled": true,
+    "messages": null
+  }
 }"""
 
 ErrorResponse = """{
