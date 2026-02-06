@@ -1,5 +1,6 @@
 """Karrio SmartKargo client proxy."""
 
+import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.mappers.smartkargo.settings as provider_settings
@@ -106,12 +107,23 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Cancel a shipment."""
+        """Cancel/void a shipment that hasn't departed yet."""
         payload = request.serialize()
+
+        # Build query parameters with proper URL encoding
+        params = {
+            k: v for k, v in {
+                "prefix": payload["prefix"],
+                "airWaybill": payload["airWaybill"],
+                "userName": payload.get("userName"),
+                "reason": payload.get("reason"),
+            }.items() if v is not None
+        }
+
         response = lib.request(
-            url=f"{self.settings.server_url}/void?prefix={payload['prefix']}&airWaybill={payload['airWaybill']}",
+            url=f"{self.settings.server_url}/shipment/void?{urllib.parse.urlencode(params)}",
             trace=self.trace_as("json"),
-            method="DELETE",
+            method="GET",
             headers={
                 "Content-Type": "application/json",
                 "code": self.settings.api_key,
