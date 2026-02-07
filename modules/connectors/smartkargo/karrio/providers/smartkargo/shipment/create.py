@@ -4,6 +4,8 @@ import karrio.schemas.smartkargo.rate_request as smartkargo_req
 import karrio.schemas.smartkargo.shipment_response as smartkargo_res
 
 import typing
+import uuid
+import datetime
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.smartkargo.error as error
@@ -121,17 +123,17 @@ def shipment_request(
         or "PDF"
     )
 
-    # Get shipment date from options if provided
-    shipment_date = options.shipment_date.state
+    # Get shipment date from options or use current date (issueDate is required by API)
+    shipment_date = options.shipment_date.state or datetime.datetime.now()
 
     # Build the request using generated schema types (same structure as rate request)
     request = smartkargo_req.RateRequestType(
-        reference=payload.reference or f"SHIP-{lib.guid()}",
+        reference=payload.reference or str(uuid.uuid4().hex),
         issueDate=lib.fdatetime(
             shipment_date,
             current_format="%Y-%m-%d",
             output_format="%Y-%m-%d %H:%M",
-        ) if shipment_date else None,
+        ),
         packages=[
             smartkargo_req.PackageType(
                 reference=package.parcel.reference_number or f"PKG-{index}",

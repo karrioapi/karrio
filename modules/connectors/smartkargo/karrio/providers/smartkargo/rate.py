@@ -5,6 +5,7 @@ import karrio.schemas.smartkargo.rate_response as smartkargo_res
 
 import typing
 import datetime
+import uuid
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.smartkargo.error as error
@@ -114,7 +115,7 @@ def rate_request(
 
     # Build the request using generated schema types
     request = smartkargo_req.RateRequestType(
-        reference=payload.reference or f"RATE-{lib.guid()}",
+        reference=payload.reference or str(uuid.uuid4().hex),
         issueDate=lib.fdatetime(
             shipment_date,
             current_format="%Y-%m-%d",
