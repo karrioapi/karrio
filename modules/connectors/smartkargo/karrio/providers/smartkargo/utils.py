@@ -9,9 +9,9 @@ class Settings(core.Settings):
 
     # SmartKargo API key (passed as 'code' header)
     api_key: str
-    # Shipper account credentials
-    account_number: str = None
-    account_id: str = None
+    # Shipper account credentials (required for booking - used as primaryId and account)
+    account_number: str
+    account_id: str
 
     @property
     def carrier_name(self):
