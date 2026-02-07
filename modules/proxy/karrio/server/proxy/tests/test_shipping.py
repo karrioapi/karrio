@@ -328,6 +328,7 @@ SHIPPING_RESPONSE = {
         "rate_provider": "canadapost",
         "service_name": "CANADAPOST PRIORITY",
     },
+    "return_shipment": None,
     "service": "canadapost_priority",
     "selected_rate_id": ANY,
     "test_mode": True,
