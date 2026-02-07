@@ -1,0 +1,36 @@
+[
+  {
+    "prefix": "AXB",
+    "airWaybill": "00006510",
+    "headerReference": "yogi045",
+    "packageReference": "yogi045",
+    "pieceReference": "yogi045-001",
+    "eventType": "BKD",
+    "eventDate": "2021-01-25T13:03:17",
+    "flightNumber": "AC123",
+    "flightDate": "2021-01-26T13:30:00",
+    "eventLocation": "BOS",
+    "flightSegmentOrigin": null,
+    "flightSegmentDestination": "LAX",
+    "pieces": 1.00,
+    "weight": 2.8400,
+    "description": "Electronic information submitted by shipper Boston Logan."
+  },
+  {
+    "prefix": "AXB",
+    "airWaybill": "00006510",
+    "headerReference": "yogi045",
+    "packageReference": "yogi045",
+    "pieceReference": "yogi045-002",
+    "eventType": "DDL",
+    "eventDate": "2021-01-26T14:30:00",
+    "flightNumber": "AC123",
+    "flightDate": "2021-01-26T13:30:00",
+    "eventLocation": "LAX",
+    "flightSegmentOrigin": "BOS",
+    "flightSegmentDestination": "LAX",
+    "pieces": 1.00,
+    "weight": 2.8400,
+    "description": "Package has been successfully delivered to the consignee."
+  }
+]
