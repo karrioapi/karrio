@@ -1,3 +1,22 @@
+# Karrio 2026.1.6
+
+## Changes
+
+### Feat
+
+- feat: add ReturnShipment model for capturing return label data from carriers
+- feat(dhl_parcel_de): extract return shipment tracking number from shipment response
+
+### Chore
+
+- chore: update GraphQL schema and TypeScript types for return_shipment field
+
+### Test
+
+- test: add return_shipment server tests and update shipment fixtures
+
+---
+
 # Karrio 2026.1.5
 
 ## Changes
