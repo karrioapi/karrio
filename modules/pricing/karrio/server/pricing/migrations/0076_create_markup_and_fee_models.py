@@ -1,9 +1,44 @@
 # Generated migration for Markup and Fee models
+#
+# Handles partial migration recovery from interrupted deployments
+# and concurrent migration execution during auto-scaled deployments.
+#
+# Uses Django's introspection API (DB-agnostic) to detect leftover tables
+# from a previous interrupted attempt, drops them, then lets standard
+# CreateModel/AddIndex generate the correct SQL for any backend.
 
 import functools
+import logging
 from django.db import migrations, models
 import django.db.models.deletion
 import karrio.server.core.models
+
+logger = logging.getLogger(__name__)
+
+
+def handle_interrupted_migration(apps, schema_editor):
+    """Handle tables left from a previous interrupted migration attempt.
+
+    If this migration was previously interrupted (e.g., container killed
+    during migration, concurrent instances racing), the markup and/or fee
+    tables may exist without the migration being recorded in django_migrations.
+    Since these are new tables with no application data yet, we can safely
+    drop and recreate them to ensure a clean state.
+    """
+    existing_tables = set(schema_editor.connection.introspection.table_names())
+
+    # Drop in FK dependency order (fee references markup)
+    for table in ("fee", "markup"):
+        if table in existing_tables:
+            logger.warning(
+                "Table '%s' exists from interrupted migration, "
+                "dropping for clean recreation",
+                table,
+            )
+            schema_editor.execute(
+                schema_editor.sql_delete_table
+                % {"table": schema_editor.quote_name(table)}
+            )
 
 
 class Migration(migrations.Migration):
@@ -21,6 +56,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # Pre-check: clean up tables from a previous interrupted migration
+        migrations.RunPython(
+            handle_interrupted_migration,
+            migrations.RunPython.noop,
+        ),
         # Create Markup model
         migrations.CreateModel(
             name="Markup",
@@ -70,7 +110,10 @@ class Migration(migrations.Migration):
                 (
                     "markup_type",
                     models.CharField(
-                        choices=[("AMOUNT", "AMOUNT"), ("PERCENTAGE", "PERCENTAGE")],
+                        choices=[
+                            ("AMOUNT", "AMOUNT"),
+                            ("PERCENTAGE", "PERCENTAGE"),
+                        ],
                         default="AMOUNT",
                         help_text="Determine whether the markup is in percentage or net amount.",
                         max_length=25,
@@ -170,7 +213,10 @@ class Migration(migrations.Migration):
                 (
                     "markup_type",
                     models.CharField(
-                        choices=[("AMOUNT", "AMOUNT"), ("PERCENTAGE", "PERCENTAGE")],
+                        choices=[
+                            ("AMOUNT", "AMOUNT"),
+                            ("PERCENTAGE", "PERCENTAGE"),
+                        ],
                         help_text="Whether this was a fixed amount or percentage markup",
                         max_length=25,
                     ),
@@ -241,18 +287,26 @@ class Migration(migrations.Migration):
         # Add indexes for Fee model
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(fields=["shipment_id"], name="fee_shipmen_d4e9f2_idx"),
+            index=models.Index(
+                fields=["shipment_id"], name="fee_shipmen_d4e9f2_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(fields=["markup_id"], name="fee_markup__29f8a1_idx"),
+            index=models.Index(
+                fields=["markup_id"], name="fee_markup__29f8a1_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(fields=["carrier_code"], name="fee_carrier_3c7b8e_idx"),
+            index=models.Index(
+                fields=["carrier_code"], name="fee_carrier_3c7b8e_idx"
+            ),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(fields=["created_at"], name="fee_created_a1b2c3_idx"),
+            index=models.Index(
+                fields=["created_at"], name="fee_created_a1b2c3_idx"
+            ),
         ),
     ]
