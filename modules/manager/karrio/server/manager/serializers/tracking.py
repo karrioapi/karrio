@@ -196,6 +196,9 @@ def can_mutate_tracker(
 
 def update_shipment_tracker(tracker: models.Tracking):
     try:
+        if tracker.shipment is None:
+            return
+
         if tracker.status == TrackerStatus.delivered.value:
             status = ShipmentStatus.delivered.value
         elif tracker.status == TrackerStatus.pending.value:
