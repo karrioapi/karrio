@@ -1622,6 +1622,24 @@ class PickupType:
 
 
 @strawberry.type
+class ReturnShipmentType:
+    tracking_number: typing.Optional[str] = None
+    shipment_identifier: typing.Optional[str] = None
+    tracking_url: typing.Optional[str] = None
+    service: typing.Optional[str] = None
+    reference: typing.Optional[str] = None
+    meta: typing.Optional[utils.JSON] = None
+
+    @staticmethod
+    def parse(data: dict) -> typing.Optional["ReturnShipmentType"]:
+        if data is None:
+            return None
+        return ReturnShipmentType(
+            **{k: v for k, v in data.items() if k in ReturnShipmentType.__annotations__}
+        )
+
+
+@strawberry.type
 class PaymentType:
     account_number: typing.Optional[str] = None
     paid_by: typing.Optional[utils.PaidByEnum] = None
@@ -1712,6 +1730,12 @@ class ShipmentType:
     @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
         return PaymentType(**self.payment) if self.payment else None
+
+    @strawberry.field
+    def return_shipment(
+        self: manager.Shipment,
+    ) -> typing.Optional[ReturnShipmentType]:
+        return ReturnShipmentType.parse(self.return_shipment) if self.return_shipment else None
 
     @strawberry.field
     def messages(self: manager.Shipment) -> typing.List[MessageType]:

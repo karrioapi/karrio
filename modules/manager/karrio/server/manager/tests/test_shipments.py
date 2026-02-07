@@ -7,6 +7,7 @@ from karrio.core.models import (
     ChargeDetails,
     ShipmentDetails,
     ConfirmationDetails,
+    ReturnShipment,
 )
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
@@ -534,6 +535,7 @@ SHIPMENT_RESPONSE = {
     "test_mode": True,
     "messages": [],
     "shipping_documents": [],
+    "return_shipment": None,
 }
 
 SHIPMENT_OPTIONS = {
@@ -775,6 +777,7 @@ PURCHASED_SHIPMENT = {
             "base64": "==apodifjoefr",
         }
     ],
+    "return_shipment": None,
 }
 
 CANCEL_RESPONSE = {
@@ -917,6 +920,7 @@ CANCEL_RESPONSE = {
     "label_url": None,
     "invoice_url": None,
     "shipping_documents": [],
+    "return_shipment": None,
 }
 
 CANCEL_PURCHASED_RESPONSE = {
@@ -1082,6 +1086,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "label_url": None,
     "invoice_url": None,
     "shipping_documents": [],
+    "return_shipment": None,
 }
 
 SINGLE_CALL_LABEL_DATA = {
@@ -1354,3 +1359,124 @@ LABEL_DOCUMENT_RESPONSE = {
     "base64": "==apodifjoefr",
     "url": ANY,
 }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RETURN SHIPMENT TESTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+CREATED_SHIPMENT_WITH_RETURN_RESPONSE = (
+    ShipmentDetails(
+        carrier_id="canadapost",
+        carrier_name="canadapost",
+        tracking_number="123456789012",
+        shipment_identifier="123456789012",
+        docs=dict(label="==apodifjoefr"),
+        return_shipment=dict(
+            tracking_number="987654321098",
+            shipment_identifier="987654321098",
+            tracking_url="https://tracking.example.com/987654321098",
+            meta={"returnShipmentNo": "987654321098"},
+        ),
+    ),
+    [],
+)
+
+RETURN_SHIPMENT_DATA = {
+    "tracking_number": "987654321098",
+    "shipment_identifier": "987654321098",
+    "tracking_url": "https://tracking.example.com/987654321098",
+    "meta": {"returnShipmentNo": "987654321098"},
+}
+
+
+class TestShipmentReturnShipment(TestShipmentFixture):
+    """Test return_shipment field on purchased shipments."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        carrier = providers.CarrierConnection.objects.get(carrier_id="canadapost")
+        self.shipment.rates = [
+            {
+                "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
+                "carrier_id": "canadapost",
+                "carrier_name": "canadapost",
+                "currency": "CAD",
+                "estimated_delivery": None,
+                "extra_charges": [
+                    {"amount": 101.83, "currency": "CAD", "name": "Base charge"},
+                    {"amount": 2.7, "currency": "CAD", "name": "Fuel surcharge"},
+                ],
+                "service": "canadapost_priority",
+                "total_charge": 106.71,
+                "transit_days": 2,
+                "test_mode": True,
+                "meta": {
+                    "rate_provider": "canadapost",
+                    "service_name": "CANADAPOST PRIORITY",
+                    "carrier_connection_id": carrier.pk,
+                },
+            }
+        ]
+        self.shipment.save()
+
+    def test_purchase_shipment_with_return_shipment(self):
+        """Test that return_shipment data from carrier is stored and returned."""
+        url = reverse(
+            "karrio.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        data = SHIPMENT_PURCHASE_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_WITH_RETURN_RESPONSE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+            print(response_data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response_data["return_shipment"], RETURN_SHIPMENT_DATA)
+
+    def test_return_shipment_null_when_not_provided(self):
+        """Test that return_shipment is null when carrier doesn't return it."""
+        url = reverse(
+            "karrio.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        data = SHIPMENT_PURCHASE_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_RESPONSE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+            print(response_data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response_data["return_shipment"])
+
+    def test_return_shipment_persisted_in_database(self):
+        """Test that return_shipment is persisted in the database."""
+        url = reverse(
+            "karrio.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        data = SHIPMENT_PURCHASE_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_WITH_RETURN_RESPONSE
+            response = self.client.post(url, data)
+            print(json.loads(response.content))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Reload from DB and verify
+        shipment = models.Shipment.objects.get(pk=self.shipment.pk)
+        self.assertIsNotNone(shipment.return_shipment)
+        self.assertEqual(
+            shipment.return_shipment["tracking_number"], "987654321098"
+        )
+        self.assertEqual(
+            shipment.return_shipment["tracking_url"],
+            "https://tracking.example.com/987654321098",
+        )

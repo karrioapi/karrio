@@ -286,6 +286,7 @@ class Shipment:
     status: str = ""
     metadata: typing.Dict = {}
     meta: dict = {}
+    return_shipment: dict = None
     id: str = None
 
     messages: typing.List[Message] = jstruct.JList[Message]

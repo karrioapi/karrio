@@ -429,6 +429,14 @@ export const GET_SHIPMENT = gql`
       options
       metadata
       meta
+      return_shipment {
+        tracking_number
+        shipment_identifier
+        tracking_url
+        service
+        reference
+        meta
+      }
       messages {
         carrier_name
         carrier_id
@@ -719,6 +727,14 @@ export const GET_SHIPMENTS = gql`
           options
           metadata
           meta
+          return_shipment {
+            tracking_number
+            shipment_identifier
+            tracking_url
+            service
+            reference
+            meta
+          }
           messages {
             carrier_name
             carrier_id
@@ -2098,6 +2114,14 @@ export const GET_ORDER = gql`
         options
         metadata
         meta
+        return_shipment {
+          tracking_number
+          shipment_identifier
+          tracking_url
+          service
+          reference
+          meta
+        }
         messages {
           carrier_name
           carrier_id
@@ -2501,6 +2525,14 @@ export const GET_ORDERS = gql`
             options
             metadata
             meta
+            return_shipment {
+              tracking_number
+              shipment_identifier
+              tracking_url
+              service
+              reference
+              meta
+            }
             messages {
               carrier_name
               carrier_id

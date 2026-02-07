@@ -43,6 +43,9 @@ def _extract_details(
     _ctx = ctx or {}
 
     tracking_number = str(shipment.shipmentNo)
+    return_tracking_number = lib.failsafe(
+        lambda: str(shipment.returnShipmentNo) if shipment.returnShipmentNo else None
+    )
     label = lib.failsafe(lambda: shipment.label.b64 or shipment.label.zpl2)
     label_type = lib.failsafe(lambda: "ZPL" if shipment.label.fileFormat == "ZPL2" else "PDF") or "PDF"
     invoice = lib.failsafe(lambda: shipment.customsDoc.b64 or shipment.customsDoc.zpl2)
@@ -71,6 +74,16 @@ def _extract_details(
                 for category, doc in extra_documents
                 if doc is not None
             ],
+        ),
+        return_shipment=(
+            models.ReturnShipment(
+                tracking_number=return_tracking_number,
+                shipment_identifier=return_tracking_number,
+                tracking_url=settings.tracking_url.format(return_tracking_number),
+                meta=dict(returnShipmentNo=return_tracking_number),
+            )
+            if return_tracking_number
+            else None
         ),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),

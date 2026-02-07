@@ -67,6 +67,7 @@ class ShipmentSerializer(ShipmentData):
     test_mode = BooleanField(required=False)
     docs = Documents(required=False)
     meta = PlainDictField(required=False, allow_null=True)
+    return_shipment = PlainDictField(required=False, allow_null=True)
     messages = Message(many=True, required=False, default=[])
     # Override parcels to use Parcel (with id) instead of ParcelData (without id)
     parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
@@ -302,6 +303,10 @@ class ShipmentSerializer(ShipmentData):
                 or instance.extra_documents
                 or []
             )
+
+        if "return_shipment" in validated_data:
+            instance.return_shipment = validated_data.get("return_shipment")
+            changes.append("return_shipment")
 
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
