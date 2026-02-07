@@ -1439,6 +1439,14 @@ export const GET_SYSTEM_SHIPMENTS = gql`
               time
             }
           }
+          return_shipment {
+            tracking_number
+            shipment_identifier
+            tracking_url
+            service
+            reference
+            meta
+          }
         }
       }
       page_info {

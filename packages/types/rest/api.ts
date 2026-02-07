@@ -5834,6 +5834,40 @@ export interface Shipment {
      * The list of shipping documents
      */
     'shipping_documents'?: Array<ShippingDocument>;
+    /**
+     * Return shipment details when a return label is provided with outbound shipment
+     */
+    'return_shipment'?: ReturnShipment | null;
+}
+
+/**
+ * Return shipment details when a return label is provided with outbound shipment.
+ */
+export interface ReturnShipment {
+    /**
+     * The return shipment tracking number
+     */
+    'tracking_number'?: string | null;
+    /**
+     * The return shipment carrier system identifier
+     */
+    'shipment_identifier'?: string | null;
+    /**
+     * The return shipment tracking url
+     */
+    'tracking_url'?: string | null;
+    /**
+     * The return shipment service
+     */
+    'service'?: string | null;
+    /**
+     * The return shipment reference
+     */
+    'reference'?: string | null;
+    /**
+     * Provider specific metadata
+     */
+    'meta'?: { [key: string]: any; } | null;
 }
 
 export const ShipmentLabelTypeEnum = {
