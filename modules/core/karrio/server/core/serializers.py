@@ -1617,6 +1617,11 @@ class ShipmentDetails(serializers.Serializer):
     meta = serializers.PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
     )
+    return_shipment = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="Return shipment details when a return label is provided with outbound shipment",
+    )
 
     service = serializers.CharField(
         required=False,
