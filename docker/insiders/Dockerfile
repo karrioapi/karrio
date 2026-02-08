@@ -3,15 +3,16 @@ FROM python:3.12.10-slim AS compile-image
 
 ARG REQUIREMENTS=./source.requirements.insiders.txt
 
-RUN apt-get update -y && apt-get install -y gcc
+RUN apt-get update -y && apt-get install -y --no-install-recommends gcc \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN python -m venv /karrio/venv
 ENV PATH="/karrio/venv/bin:$PATH"
 COPY . /temp/app/
 RUN cd /temp/app && \
-    pip install --upgrade pip && \
-    pip install dumb-init && \
-    pip install -r ${REQUIREMENTS}
-
+    pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir dumb-init && \
+    pip install --no-cache-dir -r ${REQUIREMENTS}
 
 # The runtime image
 FROM python:3.12.10-slim AS build-image
@@ -46,7 +47,9 @@ ENV STATIC_ROOT_DIR=/karrio/static
 ENV KARRIO_PLUGINS=/karrio/plugins
 ENV ENABLE_ALL_PLUGINS_BY_DEFAULT=True
 
-RUN apt-get update -y && apt-get install -y libpango1.0-0 libpangoft2-1.0-0 gcc zint curl
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    libpango1.0-0 libpangoft2-1.0-0 gcc zint curl \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m karrio -d /karrio
 USER karrio

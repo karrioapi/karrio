@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Node.js / Frontend (not needed for Python server)
+node_modules
+packages/
+apps/dashboard/
+apps/web/
+apps/www/
+apps/shipping-app/
+.next
+.turbo
+.pnp
+.pnp.js
+turbo.json
+package-lock.json
+
+# Python caches
+__pycache__
+*.pyc
+*.pyo
+.mypy_cache
+.venv
+*.egg-info
+
+# IDE / OS
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Misc
+.env*.local
+coverage
+.nyc_output
+*.log
+PRDs/

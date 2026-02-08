@@ -15,6 +15,5 @@ docker build -t ${KARRIO_IMAGE}:$1 \
     --build-arg EDITION="${EDITION}" \
     --build-arg SOURCE="${SOURCE}" \
     --build-arg REQUIREMENTS="${REQUIREMENTS}" \
-    --no-cache \
     "${ROOT}" \
     "${@:2}"

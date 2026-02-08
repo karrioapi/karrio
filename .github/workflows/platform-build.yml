@@ -11,7 +11,7 @@ jobs:
     outputs:
       version: ${{ steps.changes.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: dorny/paths-filter@v2
         id: changes
@@ -29,6 +29,8 @@ jobs:
       packages: write
     outputs:
       version: ${{ steps.get_tag.outputs.tag }}
+    env:
+      DOCKER_BUILDKIT: 1
     steps:
       - uses: actions/checkout@v4
         with:

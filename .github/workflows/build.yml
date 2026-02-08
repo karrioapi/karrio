@@ -11,7 +11,7 @@ jobs:
     outputs:
       version: ${{ steps.changes.outputs.version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: dorny/paths-filter@v2
         id: changes
@@ -78,6 +78,8 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    env:
+      DOCKER_BUILDKIT: 1
 
     steps:
       - uses: actions/checkout@v4
@@ -116,6 +118,8 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    env:
+      DOCKER_BUILDKIT: 1
 
     steps:
       - uses: actions/checkout@v4
@@ -128,7 +132,6 @@ jobs:
       - name: Build karrio dashboard image
         run: |
           echo 'Building karrio dashboard:${{ env.tag }}...'
-          export NEXT_PUBLIC_DASHBOARD_VERSION=${{ env.tag }}
           ./bin/build-dashboard-image ${{ env.tag }}
 
       - name: Push karrio dashboard image
