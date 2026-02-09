@@ -100,12 +100,7 @@
           }
         },
         "parcelContent": "Electronic equipment",
-        "references": [
-          {
-            "referenceNumber": "REF001",
-            "referenceType": "CUSTOMER_REFERENCE"
-          }
-        ],
+        "senderParcelRefs": ["REF001"],
         "hazardous": {
           "classCode": null,
           "identificationClass": null,
