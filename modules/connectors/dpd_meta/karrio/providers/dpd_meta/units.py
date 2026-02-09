@@ -116,13 +116,20 @@ class PackagingType(lib.StrEnum):
 
 
 class ShippingService(lib.StrEnum):
-    """DPD META-API product codes"""
+    """DPD META-API product codes.
 
-    dpd_meta_classic = "101"
-    dpd_meta_express_10 = "E10"
+    Valid codes for DE (BU 001): CL, E830, E12, E18, IE2, PL, MAIL, MAX
+    Codes may vary by business unit (country).
+    """
+
+    dpd_meta_classic = "CL"
+    dpd_meta_express_830 = "E830"
     dpd_meta_express_12 = "E12"
     dpd_meta_express_18 = "E18"
-    dpd_meta_parcel_shop = "PS"
+    dpd_meta_international_express = "IE2"
+    dpd_meta_parcel_letter = "PL"
+    dpd_meta_mail = "MAIL"
+    dpd_meta_max = "MAX"
 
 
 class CustomsTerms(lib.StrEnum):
