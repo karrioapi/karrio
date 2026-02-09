@@ -24,6 +24,7 @@ METADATA = PluginMetadata(
     services=units.ShippingService,
     service_levels=units.DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
+    has_intl_accounts=True,
     # Extra info
     website="https://www.dpdgroup.com",
     documentation="https://api-preprod.dpsin.dpdgroup.com:8443/shipping/v1/meta-api-docs",

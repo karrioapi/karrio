@@ -97,7 +97,6 @@ class ConnectionConfig(lib.Enum):
     simulate = lib.OptionEnum("simulate", bool)
     extra_barcode = lib.OptionEnum("extra_barcode", bool)
     with_document = lib.OptionEnum("with_document", bool)
-    bucode = lib.OptionEnum("bucode", BusinessUnit)
 
 
 class PackagingType(lib.StrEnum):
