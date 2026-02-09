@@ -121,6 +121,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {access_token}",
             },
+            on_error=lib.error_decoder,
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -141,6 +142,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {access_token}",
             },
+            on_error=lib.error_decoder,
         )
 
         return lib.Deserializable(response, lib.to_dict)

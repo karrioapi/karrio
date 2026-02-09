@@ -16,13 +16,17 @@ def parse_shipment_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
-    messages = error.parse_error_response(response, settings)
     ctx = _response.ctx
+    messages = error.parse_error_response(response, settings)
 
-    has_shipment = "shipmentId" in response if isinstance(response, dict) else False
+    shipment_data = response[0] if isinstance(response, list) else response
+
+    has_shipment = (
+        isinstance(shipment_data, dict) and "shipmentId" in shipment_data
+    )
 
     shipment = (
-        _extract_details(response, settings, ctx)
+        _extract_details(shipment_data, settings, ctx)
         if has_shipment and not any(messages)
         else None
     )
@@ -186,7 +190,7 @@ def shipment_request(
                 department=shipper.department,
                 zipCode=shipper.postal_code,
                 city=shipper.city,
-                state=shipper.state_code,
+                state=shipper.state_code if len(shipper.state_code or "") <= 2 else None,
                 country=shipper.country_code,
             ),
             contact=dpd_req.ReceiverContactType(
@@ -220,7 +224,7 @@ def shipment_request(
                 department=recipient.department,
                 zipCode=recipient.postal_code,
                 city=recipient.city,
-                state=recipient.state_code,
+                state=recipient.state_code if len(recipient.state_code or "") <= 2 else None,
                 country=recipient.country_code,
             ),
             contact=dpd_req.ReceiverContactType(
@@ -261,15 +265,10 @@ def shipment_request(
                     ),
                 ),
                 parcelContent=pkg.description,
-                references=lib.identity(
-                    [
-                        dpd_req.ReferenceType(
-                            referenceNumber=pkg.reference_number,
-                            referenceType="CUSTOMER_REFERENCE",
-                        )
-                    ]
+                senderParcelRefs=(
+                    [pkg.reference_number]
                     if pkg.reference_number
-                    else []
+                    else None
                 ),
                 cod=lib.identity(
                     dpd_req.CodType(
