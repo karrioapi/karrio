@@ -33,6 +33,7 @@ def _extract_shipment(
 ) -> models.ShipmentDetails:
     label_type = "ZPL" if ctx["label"]["type"] == "ZPL" else "PDF"
     enforce_zpl = settings.connection_config.enforce_zpl.state
+    return_service = ctx.get("return_service")
     shipment = lib.to_object(ups_response.ShipmentResultsType, details)
     tracking_numbers = [pkg.TrackingNumber for pkg in shipment.PackageResults]
     invoice = lib.failsafe(lambda: shipment.Form.Image.GraphicImage)
@@ -55,19 +56,37 @@ def _extract_shipment(
         label_type = "ZPL" if _label is None else label_type
 
     # Collect extra documents (category, format, base64)
-    extra_docs = [
-        ("cod_document", "PDF", lib.failsafe(lambda: shipment.CODTurnInPage.Image.GraphicImage)),
-        ("high_value_report", "PDF", lib.failsafe(lambda: shipment.HighValueReport.Image.GraphicImage)),
-    ] + [
-        ("control_log_receipt", lib.failsafe(lambda r=r: r.ImageFormat.Code) or "PDF", lib.failsafe(lambda r=r: r.GraphicImage))
-        for r in (shipment.ControlLogReceipt or [])
-    ] + [
-        ("shipping_receipt", lib.failsafe(lambda p=pkg: p.ShippingReceipt.ImageFormat.Code) or "PDF", lib.failsafe(lambda p=pkg: p.ShippingReceipt.GraphicImage))
-        for pkg in (shipment.PackageResults or [])
-    ] + [
-        ("dangerous_goods_paper", "PDF", dg)
-        for dg in (shipment.DGPaperImage or [])
-    ]
+    extra_docs = (
+        [
+            (
+                "cod_document",
+                "PDF",
+                lib.failsafe(lambda: shipment.CODTurnInPage.Image.GraphicImage),
+            ),
+            (
+                "high_value_report",
+                "PDF",
+                lib.failsafe(lambda: shipment.HighValueReport.Image.GraphicImage),
+            ),
+        ]
+        + [
+            (
+                "control_log_receipt",
+                lib.failsafe(lambda r=r: r.ImageFormat.Code) or "PDF",
+                lib.failsafe(lambda r=r: r.GraphicImage),
+            )
+            for r in (shipment.ControlLogReceipt or [])
+        ]
+        + [
+            (
+                "shipping_receipt",
+                lib.failsafe(lambda p=pkg: p.ShippingReceipt.ImageFormat.Code) or "PDF",
+                lib.failsafe(lambda p=pkg: p.ShippingReceipt.GraphicImage),
+            )
+            for pkg in (shipment.PackageResults or [])
+        ]
+        + [("dangerous_goods_paper", "PDF", dg) for dg in (shipment.DGPaperImage or [])]
+    )
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -84,6 +103,30 @@ def _extract_shipment(
                 for category, fmt, data in extra_docs
                 if data is not None
             ],
+        ),
+        return_shipment=lib.identity(
+            models.ReturnShipment(
+                tracking_number=shipment.ShipmentIdentificationNumber,
+                shipment_identifier=shipment.ShipmentIdentificationNumber,
+                tracking_url=settings.tracking_url.format(
+                    shipment.ShipmentIdentificationNumber
+                ),
+                service=return_service,
+                meta=dict(
+                    return_service_code=lib.failsafe(
+                        lambda: provider_units.ReturnServiceCode.map(
+                            return_service
+                        ).value
+                    ),
+                    MIDualReturnShipmentKey=shipment.MIDualReturnShipmentKey,
+                    LabelURL=shipment.LabelURL,
+                    LocalLanguageLabelURL=shipment.LocalLanguageLabelURL,
+                    ReceiptURL=shipment.ReceiptURL,
+                    LocalLanguageReceiptURL=shipment.LocalLanguageReceiptURL,
+                ),
+            )
+            if return_service
+            else None
         ),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(
@@ -202,7 +245,16 @@ def shipment_request(
             ),
             Shipment=ups.ShipmentType(
                 Description=lib.text(packages.description, max=50),
-                ReturnService=None,
+                ReturnService=lib.identity(
+                    ups.LabelImageFormatType(
+                        Code=provider_units.ReturnServiceCode.map(
+                            options.ups_return_service.state
+                        ).value_or_key,
+                        Description="Return Service",
+                    )
+                    if options.ups_return_service.state
+                    else None
+                ),
                 DocumentsOnlyIndicator=("Y" if packages.is_document else None),
                 Shipper=ups.ShipperType(
                     Name=(shipper.company_name or shipper.person_name),
@@ -821,5 +873,6 @@ def shipment_request(
                 width=label_width,
                 type=label_format,
             ),
+            return_service=options.ups_return_service.state,
         ),
     )
