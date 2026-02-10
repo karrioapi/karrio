@@ -10,7 +10,7 @@ PRD TYPE MARKERS:
 | Project | Karrio |
 | Version | 1.0 |
 | Date | 2026-02-06 |
-| Status | Planning |
+| Status | In Progress |
 | Owner | Daniel Kobina |
 | Type | Enhancement |
 | Reference | [AGENTS.md](../AGENTS.md) |
@@ -178,17 +178,18 @@ class ShipmentDetails:
 ### Launch Criteria
 
 **Must-have (P0):**
-- [ ] `ReturnShipment` model added to `karrio.core.models`
-- [ ] `return_shipment` field on `ShipmentDetails`
-- [ ] DHL Parcel DE updated to capture `returnShipmentNo`
-- [ ] Django shipment model updated with `return_shipment` JSONField
-- [ ] Serializers expose `return_shipment` in API response
+- [x] `ReturnShipment` model added to `karrio.core.models`
+- [x] `return_shipment` field on `ShipmentDetails`
+- [x] DHL Parcel DE updated to capture `returnShipmentNo`
+- [x] Django shipment model updated with `return_shipment` JSONField
+- [x] Serializers expose `return_shipment` in API response
 - [ ] TypeScript types updated
 
 **Nice-to-have (P1):**
-- [ ] Update FedEx return label parsing
-- [ ] Update UPS return label parsing
-- [ ] Update USPS return label parsing
+- [x] Update FedEx return label parsing
+- [x] Update UPS return label parsing
+- [x] Update USPS return label parsing
+- [x] Update Canada Post return tracking pin parsing
 - [ ] GraphQL schema updated
 
 ---
@@ -506,10 +507,12 @@ export interface ShipmentType {
 
 | Task | Files | Status | Effort |
 |------|-------|--------|--------|
-| Update DHL Parcel DE response parser | `modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/shipment/create.py` | Pending | M |
-| Update DHL Parcel DE tests | `modules/connectors/dhl_parcel_de/tests/dhl_parcel_de/test_shipment.py` | Pending | M |
-| Audit FedEx for return data | `modules/connectors/fedex/karrio/providers/fedex/shipment/create.py` | Pending | M |
-| Audit UPS for return data | `modules/connectors/ups/karrio/providers/ups/shipment/create.py` | Pending | M |
+| Update DHL Parcel DE response parser | `modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/shipment/create.py` | Done | M |
+| Update DHL Parcel DE tests | `modules/connectors/dhl_parcel_de/tests/dhl_parcel_de/test_shipment.py` | Done | M |
+| Wire FedEx return shipment detail | `modules/connectors/fedex/karrio/providers/fedex/shipment/create.py` | Done | M |
+| Wire UPS return shipment parsing | `modules/connectors/ups/karrio/providers/ups/shipment/create.py` | Done | M |
+| Wire USPS return label metadata | `modules/connectors/usps/karrio/providers/usps/shipment/create.py` | Done | M |
+| Wire Canada Post return tracking pin | `modules/connectors/canadapost/karrio/providers/canadapost/shipment/create.py` | Done | M |
 
 ### Phase 3: Frontend & Types
 
@@ -687,14 +690,14 @@ class Migration(migrations.Migration):
 
 ### Appendix A: Carrier Return Support Matrix
 
-| Carrier | Return Label Support | Return Tracking Number | Field Name |
-|---------|---------------------|------------------------|------------|
-| DHL Parcel DE | Yes | Yes | `returnShipmentNo` |
-| FedEx | Yes | TBD | TBD |
-| UPS | Yes | TBD | TBD |
-| USPS | Yes | TBD | TBD |
-| Asendia | Yes | TBD | TBD |
-| Canada Post | Yes | TBD | `return-tracking-pin` |
+| Carrier | Return Label Support | Return Tracking Number | Field Name | Pattern |
+|---------|---------------------|------------------------|------------|---------|
+| DHL Parcel DE | Yes | Yes | `returnShipmentNo` | Pattern B — separate tracking number |
+| FedEx | Yes | Yes (same as outbound) | `returnShipmentDetail` | Pattern A — same tracking number |
+| UPS | Yes | Yes (same as outbound) | `ReturnService` + response URLs | Pattern A — same tracking number |
+| USPS | Yes | Yes | `returnLabelMetadata.trackingNumber` | Pattern B — separate tracking number |
+| Asendia | Yes | TBD | TBD | TBD |
+| Canada Post | Yes | Yes | `return-tracking-pin` | Pattern B — separate tracking number |
 
 ### Appendix B: DHL Parcel DE Response Sample
 
@@ -731,12 +734,16 @@ class Migration(migrations.Migration):
 
 ### Appendix C: Implementation Checklist
 
-- [ ] ReturnShipment model added
-- [ ] ShipmentDetails.return_shipment field added
-- [ ] Django migration created
-- [ ] Shipment serializer updated
-- [ ] DHL Parcel DE parser updated
-- [ ] DHL Parcel DE tests updated
+- [x] ReturnShipment model added
+- [x] ShipmentDetails.return_shipment field added
+- [x] Django migration created
+- [x] Shipment serializer updated
+- [x] DHL Parcel DE parser updated
+- [x] DHL Parcel DE tests updated
+- [x] FedEx return shipment detail wired
+- [x] UPS return shipment parsing wired
+- [x] USPS return label metadata parsed
+- [x] Canada Post return tracking pin extracted
 - [ ] TypeScript types updated
 - [ ] GraphQL types updated (if applicable)
 - [ ] API documentation updated
