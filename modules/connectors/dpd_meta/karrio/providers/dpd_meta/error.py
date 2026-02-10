@@ -59,7 +59,7 @@ def parse_error_response(
                     carrier_id=settings.carrier_id,
                     carrier_name=settings.carrier_name,
                     code=error_code,
-                    message=display_message[:200],
+                    message=lib.text(display_message, max=200),
                     details=error_details,
                 )
             )
@@ -73,7 +73,7 @@ def parse_error_response(
                     carrier_id=settings.carrier_id,
                     carrier_name=settings.carrier_name,
                     code=str(http_status or "HTTP_ERROR"),
-                    message=str(detail)[:200],
+                    message=lib.text(detail, max=200),
                     details=kwargs,
                 )
             )
@@ -92,7 +92,7 @@ def parse_error_response(
                     carrier_id=settings.carrier_id,
                     carrier_name=settings.carrier_name,
                     code=error_code,
-                    message=display_message[:200],
+                    message=lib.text(display_message, max=200),
                     details=kwargs,
                 )
             )

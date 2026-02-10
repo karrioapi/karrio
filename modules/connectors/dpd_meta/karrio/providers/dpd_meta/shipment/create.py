@@ -190,7 +190,7 @@ def shipment_request(
                 department=shipper.department,
                 zipCode=shipper.postal_code,
                 city=shipper.city,
-                state=shipper.state_code if len(shipper.state_code or "") <= 2 else None,
+                state=lib.text(shipper.state_code, max=2),
                 country=shipper.country_code,
             ),
             contact=dpd_req.ReceiverContactType(
@@ -224,7 +224,7 @@ def shipment_request(
                 department=recipient.department,
                 zipCode=recipient.postal_code,
                 city=recipient.city,
-                state=recipient.state_code if len(recipient.state_code or "") <= 2 else None,
+                state=lib.text(recipient.state_code, max=2),
                 country=recipient.country_code,
             ),
             contact=dpd_req.ReceiverContactType(
