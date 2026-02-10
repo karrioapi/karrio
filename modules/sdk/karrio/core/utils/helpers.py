@@ -166,22 +166,22 @@ def process_request(
     proxy: str = None,
     **kwargs,
 ) -> Request:
-    payload = {}
-if "data" in kwargs:
-    raw = kwargs.get("data")
-    if raw is None:
-        payload = {}
-    elif isinstance(raw, (bytes, bytearray)):
-        payload = dict(data=raw)
-    elif isinstance(raw, str):
-        payload = dict(data=raw.encode("utf-8"))
-    else:
-        # Most carrier proxies pass JSON-serializable dict payloads.
-        # urllib.request.Request requires bytes-like data.
-        try:
-            payload = dict(data=json.dumps(raw).encode("utf-8"))
-        except TypeError:
-            payload = dict(data=str(raw).encode("utf-8"))
+    payload: dict[str, bytes] = {}
+    if "data" in kwargs:
+        raw = kwargs.get("data")
+        if raw is None:
+            payload = {}
+        elif isinstance(raw, (bytes, bytearray)):
+            payload = dict(data=raw)
+        elif isinstance(raw, str):
+            payload = dict(data=raw.encode("utf-8"))
+        else:
+            # Most carrier proxies pass JSON-serializable dict payloads.
+            # urllib.request.Request requires bytes-like data.
+            try:
+                payload = dict(data=json.dumps(raw).encode("utf-8"))
+            except TypeError:
+                payload = dict(data=str(raw).encode("utf-8"))
 
     if trace:
         trace(
