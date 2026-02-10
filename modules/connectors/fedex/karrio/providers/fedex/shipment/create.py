@@ -57,6 +57,7 @@ def _extract_details(
     service = provider_units.ShippingService.map(shipment.serviceType)
     piece_documents = sum([_.packageDocuments or [] for _ in shipment.pieceResponses], start=[])
     tracking_number = shipment.masterTrackingNumber
+    return_service = ctx.get("return_service")
 
     invoices = [d for d in (shipment.shipmentDocuments or []) if d.contentType and "INVOICE" in d.contentType]
     labels = [d for d in piece_documents if d.contentType and "LABEL" in d.contentType]
@@ -101,6 +102,16 @@ def _extract_details(
                 )
                 for doc, content_type in (shipment_docs + package_docs)
             ],
+        ),
+        return_shipment=lib.identity(
+            models.ReturnShipment(
+                tracking_number=tracking_number,
+                shipment_identifier=tracking_number,
+                tracking_url=settings.tracking_url.format(tracking_number),
+                service=return_service,
+            )
+            if return_service
+            else None
         ),
         meta=dict(
             service_name=service.name_or_key,
@@ -406,7 +417,13 @@ def shipment_request(
                         if options.fedex_electronic_trade_documents.state
                         else None
                     ),
-                    returnShipmentDetail=None,
+                    returnShipmentDetail=lib.identity(
+                        fedex.ReturnShipmentDetailType(
+                            returnType="PRINT_RETURN_LABEL",
+                        )
+                        if options.fedex_return_shipment.state
+                        else None
+                    ),
                     deliveryOnInvoiceAcceptanceDetail=None,
                     internationalTrafficInArmsRegulationsDetail=None,
                     pendingShipmentDetail=None,
@@ -778,5 +795,8 @@ def shipment_request(
             shipment_date=shipment_date,
             label_type=label_type,
             label_format=label_format,
+            return_service=lib.identity(
+                "fedex_return_shipment" if options.fedex_return_shipment.state else None
+            ),
         ),
     )

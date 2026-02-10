@@ -63,7 +63,7 @@ class Proxy(proxy.Proxy):
             on_error=lambda b: provider_utils.parse_response(b.read()),
         )
 
-        return lib.Deserializable(responses, lib.to_dict)
+        return lib.Deserializable(responses, lib.to_dict, request.ctx)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         access_token = self.authenticate(request).deserialize()
