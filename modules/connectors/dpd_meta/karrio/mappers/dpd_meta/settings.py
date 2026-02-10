@@ -22,6 +22,9 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     dpd_client_id: str = None  # X-DPD-CLIENTID
     dpd_client_secret: str = None  # X-DPD-CLIENTSECRET
 
+    # Business unit code (e.g., 001=DE, 002=FR, 010=NL, 011=GB)
+    dpd_bucode: str = None  # X-DPD-BUCODE
+
     # Customer information
     customer_id: str = None  # DPD customer ID (customerInfos.customerID)
     customer_account_number: str = None  # DPD account number
@@ -35,13 +38,6 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     account_country_code: str = None
     metadata: dict = {}
     config: dict = {}
-
-    @property
-    def dpd_bucode(self):
-        return lib.identity(
-            self.connection_config.bucode.state
-            or provider_units.BusinessUnit.map(self.account_country_code).value
-        )
 
     @property
     def shipping_services(self) -> typing.List[models.ServiceLevel]:
