@@ -564,6 +564,15 @@ export interface get_shipment_shipment_rates {
   meta: any | null;
 }
 
+export interface get_shipment_shipment_return_shipment {
+  tracking_number: string | null;
+  shipment_identifier: string | null;
+  tracking_url: string | null;
+  service: string | null;
+  reference: string | null;
+  meta: any | null;
+}
+
 export interface get_shipment_shipment_messages {
   carrier_name: string | null;
   carrier_id: string | null;
@@ -669,19 +678,10 @@ export interface get_shipment_shipment {
   options: any;
   metadata: any;
   meta: any | null;
+  return_shipment: get_shipment_shipment_return_shipment | null;
   messages: get_shipment_shipment_messages[];
   selected_rate_carrier: get_shipment_shipment_selected_rate_carrier | null;
   tracker: get_shipment_shipment_tracker | null;
-  return_shipment: get_shipment_shipment_return_shipment | null;
-}
-
-export interface get_shipment_shipment_return_shipment {
-  tracking_number: string | null;
-  shipment_identifier: string | null;
-  tracking_url: string | null;
-  service: string | null;
-  reference: string | null;
-  meta: any | null;
 }
 
 export interface get_shipment {
@@ -921,6 +921,15 @@ export interface get_shipments_shipments_edges_node_rates {
   meta: any | null;
 }
 
+export interface get_shipments_shipments_edges_node_return_shipment {
+  tracking_number: string | null;
+  shipment_identifier: string | null;
+  tracking_url: string | null;
+  service: string | null;
+  reference: string | null;
+  meta: any | null;
+}
+
 export interface get_shipments_shipments_edges_node_messages {
   carrier_name: string | null;
   carrier_id: string | null;
@@ -970,18 +979,9 @@ export interface get_shipments_shipments_edges_node {
   options: any;
   metadata: any;
   meta: any | null;
+  return_shipment: get_shipments_shipments_edges_node_return_shipment | null;
   messages: get_shipments_shipments_edges_node_messages[];
   selected_rate_carrier: get_shipments_shipments_edges_node_selected_rate_carrier | null;
-  return_shipment: get_shipments_shipments_edges_node_return_shipment | null;
-}
-
-export interface get_shipments_shipments_edges_node_return_shipment {
-  tracking_number: string | null;
-  shipment_identifier: string | null;
-  tracking_url: string | null;
-  service: string | null;
-  reference: string | null;
-  meta: any | null;
 }
 
 export interface get_shipments_shipments_edges {
@@ -2987,6 +2987,15 @@ export interface get_order_order_shipments_rates {
   meta: any | null;
 }
 
+export interface get_order_order_shipments_return_shipment {
+  tracking_number: string | null;
+  shipment_identifier: string | null;
+  tracking_url: string | null;
+  service: string | null;
+  reference: string | null;
+  meta: any | null;
+}
+
 export interface get_order_order_shipments_messages {
   carrier_name: string | null;
   carrier_id: string | null;
@@ -3033,19 +3042,10 @@ export interface get_order_order_shipments {
   options: any;
   metadata: any;
   meta: any | null;
+  return_shipment: get_order_order_shipments_return_shipment | null;
   messages: get_order_order_shipments_messages[];
   tracker_id: string | null;
   tracker: get_order_order_shipments_tracker | null;
-  return_shipment: get_order_order_shipments_return_shipment | null;
-}
-
-export interface get_order_order_shipments_return_shipment {
-  tracking_number: string | null;
-  shipment_identifier: string | null;
-  tracking_url: string | null;
-  service: string | null;
-  reference: string | null;
-  meta: any | null;
 }
 
 export interface get_order_order {
@@ -3481,6 +3481,15 @@ export interface get_orders_orders_edges_node_shipments_rates {
   meta: any | null;
 }
 
+export interface get_orders_orders_edges_node_shipments_return_shipment {
+  tracking_number: string | null;
+  shipment_identifier: string | null;
+  tracking_url: string | null;
+  service: string | null;
+  reference: string | null;
+  meta: any | null;
+}
+
 export interface get_orders_orders_edges_node_shipments_messages {
   carrier_name: string | null;
   carrier_id: string | null;
@@ -3527,6 +3536,7 @@ export interface get_orders_orders_edges_node_shipments {
   options: any;
   metadata: any;
   meta: any | null;
+  return_shipment: get_orders_orders_edges_node_shipments_return_shipment | null;
   messages: get_orders_orders_edges_node_shipments_messages[];
   tracker_id: string | null;
   tracker: get_orders_orders_edges_node_shipments_tracker | null;

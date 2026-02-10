@@ -2490,6 +2490,7 @@ export interface DpdMeta {
     'dpd_password'?: string | null;
     'dpd_client_id'?: string | null;
     'dpd_client_secret'?: string | null;
+    'dpd_bucode'?: string | null;
     'customer_id'?: string | null;
     'customer_account_number'?: string | null;
     'customer_sub_account_number'?: string | null;
@@ -5576,6 +5577,14 @@ export interface RateRequest {
      */
     'customs'?: CustomsData | null;
     /**
+     * The return address for this shipment. Defaults to the shipper address.
+     */
+    'return_address'?: AddressData | null;
+    /**
+     * The billing address for this shipment.
+     */
+    'billing_address'?: AddressData | null;
+    /**
      * The list of configured carriers you wish to get rates from.
      */
     'carrier_ids'?: Array<string> | null;
@@ -5811,6 +5820,10 @@ export interface Shipment {
      */
     'meta'?: { [key: string]: any; } | null;
     /**
+     * Return shipment details when a return label is provided with outbound shipment
+     */
+    'return_shipment'?: { [key: string]: any; } | null;
+    /**
      * The selected service
      */
     'service'?: string | null;
@@ -5834,40 +5847,6 @@ export interface Shipment {
      * The list of shipping documents
      */
     'shipping_documents'?: Array<ShippingDocument>;
-    /**
-     * Return shipment details when a return label is provided with outbound shipment
-     */
-    'return_shipment'?: ReturnShipment | null;
-}
-
-/**
- * Return shipment details when a return label is provided with outbound shipment.
- */
-export interface ReturnShipment {
-    /**
-     * The return shipment tracking number
-     */
-    'tracking_number'?: string | null;
-    /**
-     * The return shipment carrier system identifier
-     */
-    'shipment_identifier'?: string | null;
-    /**
-     * The return shipment tracking url
-     */
-    'tracking_url'?: string | null;
-    /**
-     * The return shipment service
-     */
-    'service'?: string | null;
-    /**
-     * The return shipment reference
-     */
-    'reference'?: string | null;
-    /**
-     * Provider specific metadata
-     */
-    'meta'?: { [key: string]: any; } | null;
 }
 
 export const ShipmentLabelTypeEnum = {
@@ -6333,6 +6312,10 @@ export interface ShippingResponse {
      * provider specific metadata
      */
     'meta'?: { [key: string]: any; } | null;
+    /**
+     * Return shipment details when a return label is provided with outbound shipment
+     */
+    'return_shipment'?: { [key: string]: any; } | null;
     /**
      * The selected service
      */

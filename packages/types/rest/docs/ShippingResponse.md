@@ -33,6 +33,7 @@ Name | Type | Description | Notes
 **selected_rate** | [**Rate**](Rate.md) | The shipment selected rate | [optional] [default to undefined]
 **docs** | [**Documents**](Documents.md) | The shipment documents | [optional] [default to undefined]
 **meta** | **{ [key: string]: any; }** | provider specific metadata | [optional] [default to undefined]
+**return_shipment** | **{ [key: string]: any; }** | Return shipment details when a return label is provided with outbound shipment | [optional] [default to undefined]
 **service** | **string** | The selected service | [optional] [default to undefined]
 **selected_rate_id** | **string** | The shipment selected rate. | [optional] [default to undefined]
 **test_mode** | **boolean** | Specified whether it was created with a carrier in test mode | [default to undefined]
@@ -71,6 +72,7 @@ const instance: ShippingResponse = {
     selected_rate,
     docs,
     meta,
+    return_shipment,
     service,
     selected_rate_id,
     test_mode,

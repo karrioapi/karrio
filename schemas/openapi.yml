@@ -10709,6 +10709,17 @@ components:
           nullable: true
           description: "The customs details.<br/>\n        **Note that this is required
             for international shipments.**\n        "
+        return_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The return address for this shipment. Defaults to the shipper
+            address.
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The billing address for this shipment.
         carrier_ids:
           type: array
           items:
@@ -10990,6 +11001,12 @@ components:
           additionalProperties: {}
           nullable: true
           description: provider specific metadata
+        return_shipment:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: Return shipment details when a return label is provided with
+            outbound shipment
         service:
           type: string
           nullable: true
@@ -11714,6 +11731,12 @@ components:
           additionalProperties: {}
           nullable: true
           description: provider specific metadata
+        return_shipment:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: Return shipment details when a return label is provided with
+            outbound shipment
         service:
           type: string
           nullable: true
@@ -12795,6 +12818,9 @@ components:
         dpd_client_secret:
           type: string
           nullable: true
+        dpd_bucode:
+          type: string
+          nullable: true
         customer_id:
           type: string
           nullable: true
@@ -13776,11 +13802,14 @@ tags:
     ### DPD Meta
     | Code         | Service Name |
     | ------------ | ------------ |
-    | dpd_meta_classic | 101 |
-    | dpd_meta_express_10 | E10 |
+    | dpd_meta_classic | CL |
+    | dpd_meta_express_830 | E830 |
     | dpd_meta_express_12 | E12 |
     | dpd_meta_express_18 | E18 |
-    | dpd_meta_parcel_shop | PS |
+    | dpd_meta_international_express | IE2 |
+    | dpd_meta_parcel_letter | PL |
+    | dpd_meta_mail | MAIL |
+    | dpd_meta_max | MAX |
 
     ### DTDC
     | Code         | Service Name |
