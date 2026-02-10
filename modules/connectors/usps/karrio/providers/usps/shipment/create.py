@@ -47,6 +47,10 @@ def _extract_details(
     label = details.labelImage
     invoice = details.receiptImage
     label_type = ctx.get("label_type", "PDF")
+    return_tracking_number = lib.failsafe(
+        lambda: details.returnLabelMetadata.trackingNumber if details.returnLabelMetadata else None
+    )
+    return_label = lib.failsafe(lambda: details.returnLabelImage)
     charges = [
         ("Postage", details.labelMetadata.postage),
         *[(extra.name, lib.to_money(extra.price)) for extra in details.labelMetadata.extraServices or []],
@@ -80,8 +84,32 @@ def _extract_details(
         tracking_number=details.labelMetadata.trackingNumber,
         shipment_identifier=details.labelMetadata.trackingNumber,
         label_type=label_type,
-        docs=models.Documents(label=label, invoice=invoice),
+        docs=models.Documents(
+            label=label,
+            invoice=invoice,
+            extra_documents=[
+                models.ShippingDocument(
+                    category="return_label",
+                    format=label_type,
+                    base64=return_label,
+                )
+            ] if return_label else [],
+        ),
         selected_rate=selected_rate,
+        return_shipment=lib.identity(
+            models.ReturnShipment(
+                tracking_number=return_tracking_number,
+                shipment_identifier=return_tracking_number,
+                tracking_url=settings.tracking_url.format(return_tracking_number),
+                meta=dict(
+                    returnLabelBrokerID=lib.failsafe(
+                        lambda: details.returnLabelMetadata.labelBrokerID
+                    ),
+                ),
+            )
+            if return_tracking_number
+            else None
+        ),
         meta=dict(
             SKU=details.labelMetadata.SKU,
             postage=details.labelMetadata.postage,
@@ -144,7 +172,9 @@ def shipment_request(
                 receiptOption="NONE",
                 suppressPostage=None,
                 suppressMailDate=None,
-                returnLabel=None,
+                returnLabel=lib.identity(
+                    True if options.usps_return_receipt.state else None
+                ),
             ),
             toAddress=usps.AddressType(
                 streetAddress=recipient.address_line1,
