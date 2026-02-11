@@ -120,8 +120,8 @@ def _extract_details(
             dict(
                 last_mile_tracking_number=package.TrackingNumber,
                 last_mile_carrier=lib.identity(
-                    "landmark"
-                    if "routed" in details.EndDeliveryCarrier.lower()
+                    None
+                    if "routed" in (details.EndDeliveryCarrier or "").lower()
                     else details.EndDeliveryCarrier
                 ),
             )

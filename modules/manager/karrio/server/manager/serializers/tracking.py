@@ -329,6 +329,9 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
 
         # Save changes and update associated shipment
         if any(changes):
+            # Include updated_at so Django's auto_now field is persisted
+            # when using save(update_fields=...)
+            changes.append("updated_at")
             tracker.save(update_fields=changes)
             update_shipment_tracker(tracker)
             logger.info(

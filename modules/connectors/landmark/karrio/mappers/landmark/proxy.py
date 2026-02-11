@@ -49,6 +49,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                     method="POST",
                     headers={
                         "Content-Type": "application/xml",
+                        "Cache-Control": "no-cache",
                     },
                 ),
             ),
