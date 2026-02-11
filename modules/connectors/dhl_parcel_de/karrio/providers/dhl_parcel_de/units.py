@@ -537,10 +537,32 @@ def shipping_options_initializer(
     if package_options is not None:
         options.update(package_options.content)
 
+    # Read dhlRetoure from raw options — the OptionEnum code "dhlRetoure"
+    # doesn't match enum member name "dhl_parcel_de_dhl_retoure" so we handle
+    # the key mapping and dict-to-object conversion here.
+    # NOTE: use get() not pop() to avoid mutating the shared payload.options dict
+    # which is reused by to_packages for per-package option initialization.
+    _retoure_data = options.get("dhlRetoure")
+    if _retoure_data is None:
+        _retoure_data = options.get("dhl_parcel_de_dhl_retoure")
+
     def items_filter(key: str) -> bool:
         return key in ShippingOption or key in units.ShippingOption  # type: ignore
 
-    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+    _options = units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+    # Inject properly converted dhlRetoure option
+    if _retoure_data is not None:
+        _retoure_obj = (
+            lib.to_object(ship_req.DhlRetoureType, _retoure_data)
+            if isinstance(_retoure_data, dict)
+            else _retoure_data
+        )
+        _options._options["dhl_parcel_de_dhl_retoure"] = lib.OptionEnum(
+            "dhlRetoure", ship_req.DhlRetoureType, state=_retoure_obj
+        )
+
+    return _options
 
 
 class CustomsOption(lib.Enum):

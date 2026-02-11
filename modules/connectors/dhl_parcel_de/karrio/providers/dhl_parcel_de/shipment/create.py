@@ -121,6 +121,7 @@ def shipment_request(
         weight_unit=units.WeightUnit.KG.name,
         option_type=provider_units.CustomsOption,
     )
+    return_address = lib.to_address(payload.return_address) if payload.return_address else shipper
     is_intl = shipper.country_code != recipient.country_code
     doc_format, print_format = provider_units.LabelType.map(
         settings.connection_config.label_type.state or payload.label_type or "PDF"
@@ -259,7 +260,48 @@ def shipment_request(
                             returnAddress=package.options.dhl_parcel_de_dhl_retoure.state.returnAddress,
                         )
                         if package.options.dhl_parcel_de_dhl_retoure.state is not None
-                        else None
+                        else (
+                            dhl_parcel_de.DhlRetoureType(
+                                billingNumber=(
+                                    package.options.dhl_parcel_de_return_billing_number.state
+                                    or billing_number
+                                ),
+                                refNo=(
+                                    package.options.dhl_parcel_de_return_reference.state
+                                    or payload.reference
+                                ),
+                                returnAddress=dhl_parcel_de.ConsigneeType(
+                                    name1=return_address.company_name or return_address.person_name,
+                                    name2=(
+                                        return_address.person_name
+                                        if return_address.company_name
+                                        else None
+                                    ),
+                                    addressStreet=lib.identity(
+                                        return_address.street_name
+                                        if return_address.street_number
+                                        else return_address.address_line1
+                                    ),
+                                    addressHouse=lib.text(
+                                        (
+                                            return_address.street_number
+                                            if return_address.street_number
+                                            else return_address.address_line2
+                                        ),
+                                        max=10,
+                                    ),
+                                    postalCode=return_address.postal_code,
+                                    city=return_address.city,
+                                    country=units.CountryCode.map(
+                                        return_address.country_code
+                                    ).value_or_key,
+                                    contactName=return_address.person_name,
+                                    email=return_address.email,
+                                ),
+                            )
+                            if package.options.dhl_parcel_de_return_enabled.state
+                            else None
+                        )
                     ),
                     postalDeliveryDutyPaid=package.options.dhl_parcel_de_postal_delivery_duty_paid.state,
                 ),
