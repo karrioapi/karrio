@@ -2113,6 +2113,9 @@ class SystemConnectionType:
     @strawberry.field
     def enabled(self: providers.SystemConnection, info: Info) -> bool:
         """Check if this SystemConnection is enabled for the current user/org."""
+        if hasattr(self, "_org_brokered"):
+            return any(b.is_enabled for b in self._org_brokered)
+
         if settings.MULTI_ORGANIZATIONS:
             org_id = getattr(info.context.request, "org", None)
             org_id = org_id.id if org_id else None
@@ -2133,6 +2136,10 @@ class SystemConnectionType:
     @strawberry.field
     def config(self: providers.SystemConnection, info: Info) -> typing.Optional[utils.JSON]:
         """Get the user's config for this SystemConnection from their BrokeredConnection."""
+        if hasattr(self, "_org_brokered"):
+            brokered = next(iter(self._org_brokered), None)
+            return brokered.config if brokered else None
+
         if settings.MULTI_ORGANIZATIONS:
             org_id = getattr(info.context.request, "org", None)
             org_id = org_id.id if org_id else None
@@ -2163,6 +2170,29 @@ class SystemConnectionType:
         # Apply carrier filter if specified
         if _filter.carrier_name:
             queryset = queryset.filter(carrier_code=_filter.carrier_name)
+
+        # Prefetch BrokeredConnections for the current org/user to avoid N+1
+        if settings.MULTI_ORGANIZATIONS:
+            org = getattr(info.context.request, "org", None)
+            org_id = org.id if org else None
+            brokered_qs = providers.BrokeredConnection.objects.filter(
+                link__org__id=org_id,
+            ).select_related("system_connection")
+        else:
+            user = getattr(info.context.request, "user", None)
+            user_id = user.id if user else None
+            brokered_qs = providers.BrokeredConnection.objects.filter(
+                created_by__id=user_id,
+            ).select_related("system_connection")
+
+        queryset = queryset.prefetch_related(
+            models.Prefetch(
+                "brokered_connections",
+                queryset=brokered_qs,
+                to_attr="_org_brokered",
+            )
+        )
+
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 

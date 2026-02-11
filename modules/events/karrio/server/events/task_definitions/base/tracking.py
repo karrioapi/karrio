@@ -50,11 +50,14 @@ def update_trackers(
     )
 
     if any(active_trackers):
+        sorted_trackers = sorted(active_trackers, key=lambda t: t.carrier_id or "")
         trackers_grouped_by_carrier = [
-            list(g) for _, g in groupby(active_trackers, key=lambda t: t.carrier_id)
+            list(g) for _, g in groupby(sorted_trackers, key=lambda t: t.carrier_id)
         ]
+        # Pre-resolve cache: {connection_id: resolved_carrier}
+        carrier_cache: typing.Dict[str, typing.Any] = {}
         request_batches: typing.List[RequestBatches] = sum(
-            [create_request_batches(group) for group in trackers_grouped_by_carrier], []
+            [create_request_batches(group, carrier_cache) for group in trackers_grouped_by_carrier], []
         )
 
         responses = lib.run_concurently(fetch_tracking_info, request_batches, 2)
@@ -68,7 +71,26 @@ def update_trackers(
 
 def create_request_batches(
     trackers: typing.List[models.Tracking],
+    carrier_cache: typing.Dict[str, typing.Any] = None,
 ) -> typing.List[RequestBatches]:
+    if carrier_cache is None:
+        carrier_cache = {}
+
+    # Resolve carrier ONCE per group, using cache to avoid redundant DB queries
+    snapshot = trackers[0].carrier or {}
+    conn_id = snapshot.get("connection_id") or snapshot.get("carrier_connection_id")
+
+    if conn_id and conn_id in carrier_cache:
+        carrier = carrier_cache[conn_id]
+    else:
+        carrier = resolve_carrier(snapshot, context=None)
+        if conn_id and carrier:
+            carrier_cache[conn_id] = carrier
+
+    if not carrier:
+        logger.warning("Could not resolve carrier for tracking group", connection_id=conn_id)
+        return []
+
     start = 0
     end = 10
     batches = []
@@ -77,9 +99,6 @@ def create_request_batches(
         try:
             # Add a request delay to avoid sending two request batches to a carrier at the same time
             delay = int(((end / 10) * 10) - 10)
-            # Get the common tracking carrier from the JSON snapshot
-            carrier = resolve_carrier(trackers[0].carrier, context=None)
-            # Collect the 5 trackers between the start and end indexes
             batch_trackers = trackers[start:end]
             tracking_numbers = [t.tracking_number for t in batch_trackers]
             options: dict = functools.reduce(
