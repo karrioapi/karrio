@@ -13,7 +13,6 @@ import {
   getURLSearchParams,
   isNone,
   isNoneOrEmpty,
-  preventPropagation,
   snakeCase,
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
@@ -32,7 +31,6 @@ import {
 import { Button } from "@karrio/ui/components/ui/button";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
-import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
@@ -192,13 +190,9 @@ export default function TrackersPage(pageProps: any) {
                             className="text-ellipsis"
                             style={{ maxWidth: "190px", lineHeight: "16px" }}
                           >
-                            <AppLink
-                              className="text-blue-600 font-bold hover:underline"
-                              href={`/trackers/${tracker.id}`}
-                              onClick={preventPropagation}
-                            >
+                            <span className="text-blue-600 font-bold">
                               {tracker.tracking_number}
-                            </AppLink>
+                            </span>
                             <br />
                             <span className="text-ellipsis">
                               {formatRef(

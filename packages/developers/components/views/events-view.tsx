@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X, Filter, Copy, Activity } from "lucide-react";
+import { RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X, Filter, Copy, Check, Activity } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -36,8 +36,17 @@ const EVENT_TYPE_ICONS = {
 };
 
 const EventDetailViewer = ({ event }: { event: any }) => {
+  const [copiedFull, setCopiedFull] = useState(false);
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const copyFullEvent = () => {
+    const fullEvent = JSON.stringify(event, null, 2);
+    navigator.clipboard.writeText(fullEvent);
+    setCopiedFull(true);
+    setTimeout(() => setCopiedFull(false), 2000);
   };
 
   if (!event) {
@@ -73,8 +82,20 @@ const EventDetailViewer = ({ event }: { event: any }) => {
               {event.type}
             </Badge>
           </div>
-          <div className="text-xs text-muted-foreground">
-            {formatDateTimeLong(event.created_at)}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyFullEvent}
+              className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
+              title="Copy full event as JSON"
+            >
+              {copiedFull ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              <span className="ml-1 text-xs">{copiedFull ? "Copied" : "Copy"}</span>
+            </Button>
+            <div className="text-xs text-muted-foreground">
+              {formatDateTimeLong(event.created_at)}
+            </div>
           </div>
         </div>
         <div className="text-sm font-medium truncate text-foreground">
@@ -271,9 +292,9 @@ const EventsFilterDropdown = ({ context }: { context: ReturnType<typeof useEvent
                   <Label htmlFor="search" className="text-sm font-medium text-muted-foreground">Search</Label>
                   <Input
                     id="search"
-                    placeholder="Search events..."
-                    value={tempFilters.query || ""}
-                    onChange={(e) => handleTempFilterChange('query', e.target.value)}
+                    placeholder="Search by tracking number, ID, type..."
+                    value={tempFilters.keyword || ""}
+                    onChange={(e) => handleTempFilterChange('keyword', e.target.value)}
                     className="mt-1 bg-input border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>

@@ -113,6 +113,22 @@ export const TrackersFilter = ({ context }: TrackersFilterComponent): JSX.Elemen
           </div>
         ) : (
           <div className="p-0">
+            {/* Keyword Search */}
+            <div className="px-4 py-2">
+              <Label htmlFor="keyword" className="text-sm font-medium">
+                Search
+              </Label>
+              <Input
+                id="keyword"
+                placeholder="Tracking number, ID..."
+                value={filters?.keyword || ''}
+                onChange={(e) => handleChange('keyword', e.target.value)}
+                className="mt-1 text-sm h-8"
+              />
+            </div>
+
+            <Separator />
+
             {/* Date Filter */}
             <div className="px-4 py-2">
               <div className="flex items-center space-x-2 mb-1">

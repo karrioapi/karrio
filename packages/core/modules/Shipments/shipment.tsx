@@ -408,10 +408,9 @@ export const ShipmentComponent = ({
                 )}
 
               {/* Connection details section */}
-              {((shipment.selected_rate_carrier as any)?.id ||
+              {(shipment.selected_rate_carrier?.connection_id ||
                 shipment.selected_rate_carrier?.carrier_id ||
-                shipment.selected_rate_carrier?.carrier_name ||
-                (shipment.selected_rate_carrier as any)?.display_name) && (
+                shipment.selected_rate_carrier?.carrier_name) && (
                   <>
                     <h2 className="text-xl font-semibold my-4">Connection Details</h2>
                     <hr className="mt-1 mb-2" style={{ height: "1px" }} />
@@ -423,7 +422,7 @@ export const ShipmentComponent = ({
                           <div className="flex flex-col xl:flex-row xl:items-center">
                             <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Connection ID</div>
                             <div className="text-sm font-medium break-all">
-                              {(shipment.selected_rate_carrier as any)?.id || '-'}
+                              {shipment.selected_rate_carrier?.connection_id || '-'}
                             </div>
                           </div>
 
@@ -447,7 +446,7 @@ export const ShipmentComponent = ({
                           <div className="flex flex-col xl:flex-row xl:items-center">
                             <div className="text-xs font-bold xl:w-32 mb-1 xl:mb-0">Provider</div>
                             <div className="text-sm font-medium break-all">
-                              {(shipment.selected_rate_carrier as any)?.display_name || '-'}
+                              {shipment.selected_rate_carrier?.carrier_code || '-'}
                             </div>
                           </div>
                         </div>
@@ -455,6 +454,67 @@ export const ShipmentComponent = ({
                     </div>
                   </>
                 )}
+
+              {/* Return Shipment section */}
+              {!isNone(shipment.return_shipment) && (
+                <>
+                  <h2 className="text-xl font-semibold my-4">Return Shipment</h2>
+                  <hr className="mt-1 mb-2" style={{ height: "1px" }} />
+
+                  <div className="mt-3 mb-6">
+                    <div className={`grid grid-cols-1 ${isSheet ? '' : 'md:grid-cols-2'} gap-6 my-0`}>
+                      <div className="space-y-2">
+                        {shipment.return_shipment?.tracking_number && (
+                          <div className="flex flex-col xl:flex-row xl:items-center">
+                            <div className="text-xs font-bold xl:w-36 mb-1 xl:mb-0">Tracking Number</div>
+                            <div className="text-sm font-medium break-all">
+                              {shipment.return_shipment.tracking_url ? (
+                                <a
+                                  href={shipment.return_shipment.tracking_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {shipment.return_shipment.tracking_number}
+                                </a>
+                              ) : (
+                                shipment.return_shipment.tracking_number
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {shipment.return_shipment?.shipment_identifier && (
+                          <div className="flex flex-col xl:flex-row xl:items-center">
+                            <div className="text-xs font-bold xl:w-36 mb-1 xl:mb-0">Shipment ID</div>
+                            <div className="text-sm font-medium break-all">
+                              {shipment.return_shipment.shipment_identifier}
+                            </div>
+                          </div>
+                        )}
+
+                        {shipment.return_shipment?.service && (
+                          <div className="flex flex-col xl:flex-row xl:items-center">
+                            <div className="text-xs font-bold xl:w-36 mb-1 xl:mb-0">Service</div>
+                            <div className="text-sm font-medium break-all">
+                              {shipment.return_shipment.service}
+                            </div>
+                          </div>
+                        )}
+
+                        {shipment.return_shipment?.reference && (
+                          <div className="flex flex-col xl:flex-row xl:items-center">
+                            <div className="text-xs font-bold xl:w-36 mb-1 xl:mb-0">Reference</div>
+                            <div className="text-sm font-medium break-all">
+                              {shipment.return_shipment.reference}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Summary section */}
               <h2 className="text-xl font-semibold my-4">Summary</h2>

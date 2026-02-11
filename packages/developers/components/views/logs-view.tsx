@@ -11,7 +11,7 @@ import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import { Copy, Server } from "lucide-react";
+import { Copy, Check, Server } from "lucide-react";
 import { useLogs } from "@karrio/hooks/log";
 import { xml } from "@codemirror/lang-xml";
 import { cn } from "@karrio/ui/lib/utils";
@@ -164,6 +164,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
   const [response, setResponse] = useState<string>();
   const [queryParams, setQueryParams] = useState<string>();
   const [activeTab, setActiveTab] = useState<"request" | "response" | "timeline">("response");
+  const [copiedFull, setCopiedFull] = useState(false);
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     request: false,
     response: false,
@@ -205,6 +206,13 @@ const LogDetailViewer = ({ log }: { log: any }) => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const copyFullLog = () => {
+    const fullLog = failsafe(() => jsonify(log), "{}");
+    navigator.clipboard.writeText(fullLog);
+    setCopiedFull(true);
+    setTimeout(() => setCopiedFull(false), 2000);
   };
 
   const toggleSection = (section: string) => {
@@ -271,8 +279,20 @@ const LogDetailViewer = ({ log }: { log: any }) => {
               {getStatusIcon(log.status_code)} {log.status_code}
             </Badge>
           </div>
-          <div className="text-xs text-gray-400">
-            {formatDateTimeLong(log.requested_at)}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyFullLog}
+              className="h-7 px-2 text-white"
+              title="Copy full log as JSON"
+            >
+              {copiedFull ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              <span className="ml-1 text-xs">{copiedFull ? "Copied" : "Copy"}</span>
+            </Button>
+            <div className="text-xs text-gray-400">
+              {formatDateTimeLong(log.requested_at)}
+            </div>
           </div>
         </div>
         <div className="text-sm font-medium truncate text-white">
@@ -631,6 +651,18 @@ const LogsFilterDropdown = ({ context }: { context: ReturnType<typeof useLogs> }
                       <SelectItem value="500" className="text-foreground focus:bg-primary/20 focus:text-foreground">500 - Server Error</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Entity ID */}
+                <div>
+                  <Label htmlFor="entity_id" className="text-sm font-medium text-muted-foreground">Entity ID</Label>
+                  <Input
+                    id="entity_id"
+                    placeholder="e.g: shp_123456, trk_123456"
+                    value={tempFilters.entity_id || ""}
+                    onChange={(e) => handleTempFilterChange('entity_id', e.target.value)}
+                    className="mt-1 bg-input text-foreground border-border placeholder:text-muted-foreground"
+                  />
                 </div>
 
                 {/* Method */}

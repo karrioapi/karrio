@@ -36,6 +36,7 @@ class TrackerFilter(utils.Paginated):
     created_before: typing.Optional[str] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[str]] = strawberry.UNSET
+    keyword: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

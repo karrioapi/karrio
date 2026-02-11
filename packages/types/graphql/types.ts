@@ -6404,6 +6404,7 @@ export interface TrackerFilter {
   created_before?: string | null;
   carrier_name?: string[] | null;
   status?: string[] | null;
+  keyword?: string | null;
 }
 
 // null
@@ -6612,6 +6613,7 @@ export interface EventFilter {
   type?: EventTypes[] | null;
   date_after?: any | null;
   date_before?: any | null;
+  keyword?: string | null;
 }
 
 // null
