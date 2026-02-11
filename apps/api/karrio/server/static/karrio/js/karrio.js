@@ -3072,6 +3072,7 @@ var Karrio = (function () {
             'shipment_identifier': json['shipment_identifier'] == null ? undefined : json['shipment_identifier'],
             'selected_rate': json['selected_rate'] == null ? undefined : RateFromJSON(json['selected_rate']),
             'meta': json['meta'] == null ? undefined : json['meta'],
+            'return_shipment': json['return_shipment'] == null ? undefined : json['return_shipment'],
             'service': json['service'] == null ? undefined : json['service'],
             'selected_rate_id': json['selected_rate_id'] == null ? undefined : json['selected_rate_id'],
             'test_mode': json['test_mode'],
@@ -3718,6 +3719,8 @@ var Karrio = (function () {
             'reference': value['reference'],
             'payment': PaymentToJSON(value['payment']),
             'customs': CustomsDataToJSON(value['customs']),
+            'return_address': AddressDataToJSON(value['return_address']),
+            'billing_address': AddressDataToJSON(value['billing_address']),
             'carrier_ids': value['carrier_ids'],
         };
     }
@@ -3993,6 +3996,7 @@ var Karrio = (function () {
             'selected_rate': json['selected_rate'] == null ? undefined : RateFromJSON(json['selected_rate']),
             'docs': json['docs'] == null ? undefined : DocumentsFromJSON(json['docs']),
             'meta': json['meta'] == null ? undefined : json['meta'],
+            'return_shipment': json['return_shipment'] == null ? undefined : json['return_shipment'],
             'service': json['service'] == null ? undefined : json['service'],
             'selected_rate_id': json['selected_rate_id'] == null ? undefined : json['selected_rate_id'],
             'test_mode': json['test_mode'],
