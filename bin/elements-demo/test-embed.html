@@ -149,7 +149,23 @@
       const now = new Date().toLocaleTimeString();
       const div = document.createElement('div');
       div.className = 'entry';
-      div.innerHTML = `<span class="time">${now}</span><span class="type">${type}</span> ${msg}`;
+
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'time';
+      timeSpan.textContent = now;
+      div.appendChild(timeSpan);
+
+      const typeSpan = document.createElement('span');
+      typeSpan.className = 'type';
+      typeSpan.textContent = type;
+      div.appendChild(typeSpan);
+
+      div.appendChild(document.createTextNode(' '));
+      const msgSpan = document.createElement('span');
+      msgSpan.className = 'message';
+      msgSpan.textContent = msg;
+      div.appendChild(msgSpan);
+
       el.appendChild(div);
       el.scrollTop = el.scrollHeight;
     }
