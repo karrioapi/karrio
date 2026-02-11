@@ -103,6 +103,47 @@ elif [[ "$*" == *gen:all* ]]; then
 
     echo "✓ All schemas generated successfully!"
     cd -
+elif [[ "$*" == *build:elements* ]]; then
+    cd "${ROOT:?}/packages/elements"
+
+    # Build embeddable elements
+    npm install
+    npm run build || exit 1
+
+    # Copy HTML shells into dist so they sit next to JS/CSS
+    cp static/ratesheet.html dist/ratesheet.html
+    cp static/devtools.html dist/devtools.html
+    cp static/template-editor.html dist/template-editor.html
+    cp static/connections.html dist/connections.html
+
+    # Copy elements to Django static
+    ELEMENTS_STATIC="${ROOT:?}/apps/api/karrio/server/static/karrio/elements"
+    mkdir -p "${ELEMENTS_STATIC}"
+    cp dist/elements.js "${ELEMENTS_STATIC}/elements.js"
+    cp dist/globals.css "${ELEMENTS_STATIC}/globals.css"
+    cp dist/ratesheet.js "${ELEMENTS_STATIC}/ratesheet.js"
+    cp dist/ratesheet.html "${ELEMENTS_STATIC}/ratesheet.html"
+    cp dist/devtools.js "${ELEMENTS_STATIC}/devtools.js"
+    cp dist/devtools.css "${ELEMENTS_STATIC}/devtools.css"
+    cp dist/devtools.html "${ELEMENTS_STATIC}/devtools.html"
+    cp dist/template-editor.js "${ELEMENTS_STATIC}/template-editor.js"
+    cp dist/template-editor.html "${ELEMENTS_STATIC}/template-editor.html"
+    cp dist/connections.js "${ELEMENTS_STATIC}/connections.js"
+    cp dist/connections.html "${ELEMENTS_STATIC}/connections.html"
+    # Copy shared chunks
+    if [ -d dist/chunks ]; then
+      mkdir -p "${ELEMENTS_STATIC}/chunks"
+      cp dist/chunks/* "${ELEMENTS_STATIC}/chunks/"
+    fi
+    # Copy carrier icon SVGs
+    if [ -d dist/carriers ]; then
+      mkdir -p "${ELEMENTS_STATIC}/carriers"
+      cp dist/carriers/* "${ELEMENTS_STATIC}/carriers/"
+    fi
+
+    echo "✓ Elements built and copied to ${ELEMENTS_STATIC}"
+    cd -
+    karrio collectstatic --noinput >/dev/null 2>&1
 elif [[ "$*" == *build:js* ]]; then
     cd "${ROOT:?}/packages/karriojs"
 
@@ -131,6 +172,7 @@ else
     echo "  gen:all       - Generate all schemas (graphql, admin, ee, platform, openapi, carrier integrations)"
     echo "  gen:ts:cli    - Generate TypeScript fetch client from OpenAPI schema using docker"
     echo "  build:js      - Build Browser JavaScript client (runs gen:ts:cli, installs dependencies, builds with gulp)"
+    echo "  build:elements - Build embeddable elements (rate sheet editor, devtools + host script) into Django static"
     echo ""
     echo "Examples:"
     echo "  ./bin/server gen:openapi"

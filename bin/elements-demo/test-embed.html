@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karrio Elements – Embed Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+
+    .header { background: #1a1a2e; color: #fff; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 18px; font-weight: 600; }
+    .header span { font-size: 13px; opacity: 0.7; }
+
+    .config-panel {
+      background: #fff; border-bottom: 1px solid #e0e0e0; padding: 16px 24px;
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;
+    }
+    .config-panel label { font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px; }
+    .config-panel input, .config-panel select {
+      padding: 8px 12px; border: 1px solid #d0d0d0; border-radius: 6px;
+      font-size: 13px; width: 240px; outline: none;
+    }
+    .config-panel input:focus, .config-panel select:focus { border-color: #6c5ce7; box-shadow: 0 0 0 2px rgba(108,92,231,0.15); }
+
+    .btn {
+      padding: 8px 20px; border: none; border-radius: 6px; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: background 0.15s;
+    }
+    .btn-primary { background: #6c5ce7; color: #fff; }
+    .btn-primary:hover { background: #5a4bd1; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .editor-container { padding: 24px; }
+    #editor-mount { min-height: 200px; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+
+    .event-log {
+      position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a2e; color: #a0ffa0;
+      font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 12px;
+      padding: 8px 16px; max-height: 120px; overflow-y: auto;
+    }
+    .event-log .entry { padding: 2px 0; }
+    .event-log .time { color: #888; margin-right: 8px; }
+    .event-log .type { color: #ffd700; margin-right: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Karrio Elements</h1>
+    <span>Embed Test Page</span>
+  </div>
+
+  <div class="config-panel">
+    <div>
+      <label>Element</label>
+      <select id="cfg-element" style="width:160px;" onchange="onElementChange()">
+        <option value="ratesheet">Rate Sheet Editor</option>
+        <option value="devtools">Developer Tools</option>
+        <option value="template-editor">Template Editor</option>
+        <option value="connections">Carrier Connections</option>
+      </select>
+    </div>
+    <div>
+      <label>API Host</label>
+      <input id="cfg-host" type="text" value="http://localhost:5002" placeholder="https://api.karrio.io" />
+    </div>
+    <div>
+      <label>API Token</label>
+      <input id="cfg-token" type="text" placeholder="key_..." />
+    </div>
+    <div id="ratesheet-fields">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div>
+          <label>Rate Sheet ID (optional)</label>
+          <input id="cfg-ratesheet" type="text" placeholder="new" />
+        </div>
+        <div>
+          <label>Carrier (optional)</label>
+          <input id="cfg-carrier" type="text" placeholder="e.g. custom" />
+        </div>
+        <div>
+          <label>Connection ID (optional)</label>
+          <input id="cfg-connection" type="text" placeholder="conn_..." />
+        </div>
+      </div>
+    </div>
+    <div id="devtools-fields" style="display:none;">
+      <div>
+        <label>Default View (optional)</label>
+        <select id="cfg-view" style="width:160px;">
+          <option value="">activity</option>
+          <option value="api-keys">api-keys</option>
+          <option value="logs">logs</option>
+          <option value="events">events</option>
+          <option value="apps">apps</option>
+          <option value="webhooks">webhooks</option>
+          <option value="playground">playground</option>
+          <option value="graphiql">graphiql</option>
+        </select>
+      </div>
+    </div>
+    <div id="template-editor-fields" style="display:none;">
+      <div>
+        <label>Template ID (optional)</label>
+        <input id="cfg-template" type="text" placeholder="new" />
+      </div>
+    </div>
+    <div id="connections-fields" style="display:none;">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div>
+          <label>Connection ID (optional)</label>
+          <input id="cfg-conn-id" type="text" placeholder="edit existing" />
+        </div>
+        <div>
+          <label>Carrier (optional)</label>
+          <input id="cfg-conn-carrier" type="text" placeholder="e.g. fedex" />
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding-bottom:4px;">
+      <input id="cfg-admin" type="checkbox" style="width:auto;" />
+      <label style="margin:0;cursor:pointer;" for="cfg-admin">Admin mode</label>
+    </div>
+    <div>
+      <button id="btn-mount" class="btn btn-primary" onclick="mountElement()">Mount</button>
+      <button id="btn-unmount" class="btn btn-danger" onclick="unmountElement()" disabled>Unmount</button>
+    </div>
+  </div>
+
+  <div class="editor-container">
+    <div id="editor-mount"></div>
+  </div>
+
+  <div class="event-log" id="event-log">
+    <div class="entry"><span class="time">--:--:--</span><span class="type">INFO</span> Ready. Fill in your API host &amp; token, then click Mount.</div>
+  </div>
+
+  <!-- Load the host-side elements script from the built dist -->
+  <script src="/packages/elements/dist/elements.js"></script>
+
+  <script>
+    let handle = null;
+
+    function log(type, msg) {
+      const el = document.getElementById('event-log');
+      const now = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = 'entry';
+      div.innerHTML = `<span class="time">${now}</span><span class="type">${type}</span> ${msg}`;
+      el.appendChild(div);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function onElementChange() {
+      const el = document.getElementById('cfg-element').value;
+      document.getElementById('ratesheet-fields').style.display = el === 'ratesheet' ? '' : 'none';
+      document.getElementById('devtools-fields').style.display = el === 'devtools' ? '' : 'none';
+      document.getElementById('template-editor-fields').style.display = el === 'template-editor' ? '' : 'none';
+      document.getElementById('connections-fields').style.display = el === 'connections' ? '' : 'none';
+    }
+
+    function mountElement() {
+      if (handle) { log('WARN', 'Already mounted. Unmount first.'); return; }
+
+      const element = document.getElementById('cfg-element').value;
+      const host = document.getElementById('cfg-host').value.trim();
+      const token = document.getElementById('cfg-token').value.trim();
+      const admin = document.getElementById('cfg-admin').checked;
+
+      if (!host || !token) { log('ERROR', 'Host and Token are required.'); return; }
+
+      if (element === 'ratesheet') {
+        const rateSheetId = document.getElementById('cfg-ratesheet').value.trim() || undefined;
+        const carrier = document.getElementById('cfg-carrier').value.trim() || undefined;
+        const connectionId = document.getElementById('cfg-connection').value.trim() || undefined;
+
+        log('INFO', `Mounting ratesheet editor → ${host} (sheet: ${rateSheetId || 'new'}, admin: ${admin})`);
+
+        handle = KarrioElements.mount('#editor-mount', {
+          host,
+          token,
+          rateSheetId,
+          carrier,
+          connectionId,
+          admin,
+          iframeSrc: '/packages/elements/dist/ratesheet.html',
+        });
+      } else if (element === 'devtools') {
+        const defaultView = document.getElementById('cfg-view').value || undefined;
+
+        log('INFO', `Mounting devtools → ${host} (view: ${defaultView || 'activity'}, admin: ${admin})`);
+
+        handle = KarrioElements.mountDevtools('#editor-mount', {
+          host,
+          token,
+          admin,
+          defaultView,
+          iframeSrc: '/packages/elements/dist/devtools.html',
+        });
+      } else if (element === 'template-editor') {
+        const templateId = document.getElementById('cfg-template').value.trim() || undefined;
+
+        log('INFO', `Mounting template editor → ${host} (template: ${templateId || 'new'}, admin: ${admin})`);
+
+        handle = KarrioElements.mountTemplateEditor('#editor-mount', {
+          host,
+          token,
+          admin,
+          templateId,
+          iframeSrc: '/packages/elements/dist/template-editor.html',
+        });
+      } else if (element === 'connections') {
+        const connectionId = document.getElementById('cfg-conn-id').value.trim() || undefined;
+        const carrier = document.getElementById('cfg-conn-carrier').value.trim() || undefined;
+
+        log('INFO', `Mounting connections → ${host} (conn: ${connectionId || 'list'}, carrier: ${carrier || 'any'}, admin: ${admin})`);
+
+        handle = KarrioElements.mountConnections('#editor-mount', {
+          host,
+          token,
+          admin,
+          connectionId,
+          carrier,
+          iframeSrc: '/packages/elements/dist/connections.html',
+        });
+      }
+
+      handle
+        .on('save', (data) => log('EVENT', `save → ${JSON.stringify(data)}`))
+        .on('close', () => {
+          log('EVENT', 'close');
+          unmountElement();
+        })
+        .on('error', (err) => log('EVENT', `error → ${err}`));
+
+      document.getElementById('btn-mount').disabled = true;
+      document.getElementById('btn-unmount').disabled = false;
+    }
+
+    function unmountElement() {
+      if (!handle) return;
+      handle.unmount();
+      handle = null;
+      document.getElementById('btn-mount').disabled = false;
+      document.getElementById('btn-unmount').disabled = true;
+      log('INFO', 'Element unmounted.');
+    }
+  </script>
+
+</body>
+</html>

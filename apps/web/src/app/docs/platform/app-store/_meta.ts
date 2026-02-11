@@ -19,6 +19,10 @@ export default {
     title: 'UI Components',
     type: 'page'
   },
+  "embeddable-elements": {
+    title: 'Embeddable Elements',
+    type: 'page'
+  },
   "api-integration": {
     title: 'API Integration',
     type: 'page'
