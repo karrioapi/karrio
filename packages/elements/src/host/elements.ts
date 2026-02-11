@@ -99,7 +99,7 @@ function mount(selector: string | HTMLElement, options: MountOptions): EditorHan
   // Build iframe src - default to same origin if not specified
   const iframeSrc =
     options.iframeSrc ||
-    `${window.location.origin}/karrio-elements/ratesheet.html`;
+    `${window.location.origin}/static/karrio/elements/ratesheet.html`;
 
   // Create iframe
   const iframe = document.createElement("iframe");
@@ -202,7 +202,7 @@ function mountDevtools(
 
   const iframeSrc =
     options.iframeSrc ||
-    `${window.location.origin}/karrio-elements/devtools.html`;
+    `${window.location.origin}/static/karrio/elements/devtools.html`;
 
   const iframe = document.createElement("iframe");
   iframe.src = iframeSrc;
@@ -284,7 +284,7 @@ function mountTemplateEditor(
 
   const iframeSrc =
     options.iframeSrc ||
-    `${window.location.origin}/karrio-elements/template-editor.html`;
+    `${window.location.origin}/static/karrio/elements/template-editor.html`;
 
   const iframe = document.createElement("iframe");
   iframe.src = iframeSrc;
@@ -393,7 +393,7 @@ function mountConnections(
 
   const iframeSrc =
     options.iframeSrc ||
-    `${window.location.origin}/karrio-elements/connections.html`;
+    `${window.location.origin}/static/karrio/elements/connections.html`;
 
   const iframe = document.createElement("iframe");
   iframe.src = iframeSrc;

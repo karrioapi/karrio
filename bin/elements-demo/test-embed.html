@@ -138,8 +138,8 @@
     <div class="entry"><span class="time">--:--:--</span><span class="type">INFO</span> Ready. Fill in your API host &amp; token, then click Mount.</div>
   </div>
 
-  <!-- Load the host-side elements script from the built dist -->
-  <script src="/packages/elements/dist/elements.js"></script>
+  <!-- Load the host-side elements script from Django static -->
+  <script src="/static/karrio/elements/elements.js"></script>
 
   <script>
     let handle = null;
@@ -186,7 +186,7 @@
           carrier,
           connectionId,
           admin,
-          iframeSrc: '/packages/elements/dist/ratesheet.html',
+          iframeSrc: '/static/karrio/elements/ratesheet.html',
         });
       } else if (element === 'devtools') {
         const defaultView = document.getElementById('cfg-view').value || undefined;
@@ -198,7 +198,7 @@
           token,
           admin,
           defaultView,
-          iframeSrc: '/packages/elements/dist/devtools.html',
+          iframeSrc: '/static/karrio/elements/devtools.html',
         });
       } else if (element === 'template-editor') {
         const templateId = document.getElementById('cfg-template').value.trim() || undefined;
@@ -210,7 +210,7 @@
           token,
           admin,
           templateId,
-          iframeSrc: '/packages/elements/dist/template-editor.html',
+          iframeSrc: '/static/karrio/elements/template-editor.html',
         });
       } else if (element === 'connections') {
         const connectionId = document.getElementById('cfg-conn-id').value.trim() || undefined;
@@ -224,7 +224,7 @@
           admin,
           connectionId,
           carrier,
-          iframeSrc: '/packages/elements/dist/connections.html',
+          iframeSrc: '/static/karrio/elements/connections.html',
         });
       }
 

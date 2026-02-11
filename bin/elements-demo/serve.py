@@ -41,11 +41,14 @@ class CORSHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def translate_path(self, path):
-        """Route /test-embed.html to bin/elements-demo/test-embed.html, everything else from repo root."""
+        """Route /test-embed.html to bin/elements-demo/, /static/karrio/elements/ to Django static."""
         if path == "/" or path == "/index.html":
             return os.path.join(SCRIPT_DIR, "test-embed.html")
         if path.startswith("/test-embed"):
             return os.path.join(SCRIPT_DIR, path.lstrip("/"))
+        if path.startswith("/static/karrio/elements/"):
+            rel = path[len("/static/karrio/elements/"):]
+            return os.path.join(ROOT, "apps", "api", "karrio", "server", "static", "karrio", "elements", rel)
         return super().translate_path(path)
 
     def log_message(self, format, *args):
