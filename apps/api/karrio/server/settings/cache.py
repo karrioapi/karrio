@@ -3,7 +3,7 @@ import sys
 import socket
 from decouple import config
 from karrio.server.settings.base import *
-from karrio.server.settings.apm import HEALTH_CHECK_APPS
+from karrio.server.settings.apm import HEALTH_CHECK_APPS, HEALTH_CHECK_CHECKS
 from karrio.server.core.logging import logger
 
 
@@ -97,12 +97,15 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
     # Cache constance values to avoid N+1 queries on each config access
     CONSTANCE_DATABASE_CACHE_BACKEND = "default"
 
-    # Django cache health check uses the cache backend directly
-    # Only add Redis health check if REDIS_URL environment variable is set
-    # When using granular params, the cache check is sufficient
+    # Add Redis health check (v4: requires explicit async client instance)
+    # Only add if REDIS_URL is set; when using granular params, the cache check is sufficient
     if config("REDIS_URL", default=None) is not None:
-        HEALTH_CHECK_APPS += ["health_check.contrib.redis"]
-        INSTALLED_APPS += ["health_check.contrib.redis"]
+        import redis.asyncio as aioredis
+
+        _redis_check_client = aioredis.Redis.from_url(REDIS_CONNECTION_URL)
+        HEALTH_CHECK_CHECKS.append(
+            ("health_check.contrib.redis.Redis", {"client": _redis_check_client})
+        )
 
     print(f"Redis cache connection initialized")
 elif SKIP_DEFAULT_CACHE:

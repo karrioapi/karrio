@@ -1,3 +1,14 @@
+# Karrio 2026.1.8
+
+## Changes
+
+### Fix
+
+- fix: migrate to django-health-check v4.0
+- fix: ensure background tasks execute when no async worker is available
+
+---
+
 # Karrio 2026.1.7
 
 ## Changes

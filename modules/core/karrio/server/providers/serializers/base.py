@@ -179,6 +179,7 @@ class CarrierConnection(serializers.Serializer):
 
 
 @serializers.owned_model_serializer
+@utils.pre_processing(methods=["create"])
 class CarrierConnectionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = providers.CarrierConnection
@@ -361,6 +362,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
+@utils.pre_processing(methods=["_create_new"])
 class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
     """
     Serializer for BrokeredConnection (user's enabled instance of SystemConnection).
@@ -448,17 +450,22 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
             # Update existing instead of creating new
             return self.update(existing, validated_data)
 
-        # Create new BrokeredConnection
+        # Prepare and delegate to decorated _create_new
         validated_data["system_connection"] = system_connection
         validated_data.setdefault("is_enabled", True)
         validated_data.setdefault("config_overrides", {})
         validated_data.setdefault("capabilities_overrides", [])
-        # Copy carrier_id from SystemConnection as default
         validated_data.setdefault("carrier_id", system_connection.carrier_id)
 
-        instance = super().create(validated_data, context=context, **kwargs)
+        return self._create_new(validated_data, context, **kwargs)
 
-        return instance
+    def _create_new(
+        self,
+        validated_data: dict,
+        context: serializers.Context,
+        **kwargs,
+    ) -> providers.BrokeredConnection:
+        return super().create(validated_data, context=context, **kwargs)
 
     @transaction.atomic
     @utils.error_wrapper

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_server_events"
-version = "2026.1.7"
+version = "2026.1.8"
 description = "Multi-carrier shipping API Events module"
 readme = "README.md"
 requires-python = ">=3.11"

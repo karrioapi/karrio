@@ -82,6 +82,7 @@ def shipment_updated(
 
 
 @utils.disable_for_loaddata
+@utils.error_wrapper
 def shipment_cancelled(sender, instance, *args, **kwargs):
     """Shipment related events:
     - shipment cancelled/deleted (label voided)
@@ -104,6 +105,7 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
 
 
 @utils.disable_for_loaddata
+@utils.error_wrapper
 def tracker_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):

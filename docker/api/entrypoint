@@ -18,6 +18,12 @@ if not any(get_user_model().objects.all()):
    get_user_model().objects.create_superuser(ADMIN_EMAIL, ADMIN_PASSWORD)
 " | karrio shell) || exit
 
+# Warn if background tasks will run synchronously
+if [[ ! "${DETACHED_WORKER,,}" =~ ^(false|0|no|off)$ ]] && [ -z "$REDIS_HOST" ] && [ -z "$REDIS_URL" ]; then
+    echo "WARNING: DETACHED_WORKER is enabled but no Redis is configured."
+    echo "Background tasks (webhooks, events) will run synchronously in the web process."
+fi
+
 # Start services
 if [[ "${DETACHED_WORKER,,}" =~ ^(false|0|no|off)$ ]]; then
     set -e # turn on bash's job control
