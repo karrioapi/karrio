@@ -6624,9 +6624,9 @@ export interface OrderFilter {
   keyword?: string | null;
   source?: string[] | null;
   order_id?: string[] | null;
-  ontion_key?: string[] | null;
+  option_key?: string[] | null;
   address?: string[] | null;
-  ontion_value?: string[] | null;
+  option_value?: string[] | null;
   metadata_key?: string[] | null;
   metadata_value?: string[] | null;
   status?: OrderStatus[] | null;
