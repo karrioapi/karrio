@@ -24,7 +24,7 @@ django-email-verification==0.3.3
 django-extensions==4.1
 django-filter==25.2
 django-formtools==2.5.1
-django-health-check==3.23.5
+django-health-check==4.0.0
 django-import-export==4.4.0
 django-oauth-toolkit==3.2.0
 django-organizations==2.5.0
@@ -38,6 +38,7 @@ djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 drf-api-tracking==1.8.4
 drf-spectacular==0.29.0
+dnspython==2.8.0
 fonttools==4.61.1
 googleapis-common-protos==1.72.0
 graphql-core==3.2.7

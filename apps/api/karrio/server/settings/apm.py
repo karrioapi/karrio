@@ -15,13 +15,13 @@ except ImportError:
         PostHogIntegration = None
 
 
-# Health check apps settings
-HEALTH_CHECK_APPS = [
-    "health_check",
-    "health_check.db",
-    "health_check.cache",
-    "health_check.contrib.migrations",
-    "health_check.contrib.psutil",
+# Health check settings (django-health-check v4)
+HEALTH_CHECK_APPS = ["health_check"]
+HEALTH_CHECK_CHECKS = [
+    "health_check.Database",
+    "health_check.Cache",
+    "health_check.contrib.psutil.Disk",
+    "health_check.contrib.psutil.Memory",
 ]
 INSTALLED_APPS += HEALTH_CHECK_APPS
 

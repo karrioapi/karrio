@@ -18,7 +18,8 @@ classifiers = [
 dependencies = [
     "karrio",
     "psycopg2-binary",
-    "django-health-check<4",
+    "django-health-check",
+    "dnspython",
     "psutil",
     "pyyaml",
     "Jinja2",
