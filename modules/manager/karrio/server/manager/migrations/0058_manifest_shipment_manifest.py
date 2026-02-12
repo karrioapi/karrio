@@ -11,7 +11,7 @@ import karrio.server.core.utils
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("providers", "0095_rename_carrier_to_carrierconnection"),
+        ("providers", "0071_alter_tgesettings_my_toll_token"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("manager", "0057_alter_customs_invoice_date"),
     ]
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
                     "manifest_carrier",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="providers.carrierconnection",
+                        to="providers.carrier",
                     ),
                 ),
             ],

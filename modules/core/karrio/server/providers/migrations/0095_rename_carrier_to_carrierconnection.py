@@ -8,6 +8,7 @@ def get_dependencies():
     """Build dependencies list, conditionally including orgs migration."""
     deps = [
         ("providers", "0094_remove_carrier_legacy_fields"),
+        ("manager", "0058_manifest_shipment_manifest"),
     ]
     # Only add orgs dependency in multi-org mode (insiders)
     # In OSS mode, orgs module doesn't have this migration

@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('providers', '0095_rename_carrier_to_carrierconnection'),
+        ('providers', '0035_alter_carrier_capabilities'),
         ('manager', '0038_alter_tracking_status'),
     ]
 
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('reference', models.CharField(blank=True, max_length=100, null=True)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('shipment', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='shipment_upload_record', to='manager.shipment')),
-                ('upload_carrier', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='providers.carrierconnection')),
+                ('upload_carrier', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='providers.carrier')),
             ],
             options={
                 'verbose_name': 'Document Upload Record',
