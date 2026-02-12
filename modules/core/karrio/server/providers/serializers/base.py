@@ -11,6 +11,7 @@ import karrio.server.core.dataunits as dataunits
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 from karrio.server.core.serializers import CARRIERS, Message
+from karrio.server.providers.signals import pre_connection_create
 
 
 def generate_carrier_serializers() -> typing.Dict[str, serializers.Serializer]:
@@ -200,6 +201,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     @utils.error_wrapper
+    @utils.pre_create_check(pre_connection_create, connection_type="carrier")
     def create(
         self,
         validated_data: dict,
@@ -448,17 +450,23 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
             # Update existing instead of creating new
             return self.update(existing, validated_data)
 
-        # Create new BrokeredConnection
+        # Prepare and delegate to decorated _create_new
         validated_data["system_connection"] = system_connection
         validated_data.setdefault("is_enabled", True)
         validated_data.setdefault("config_overrides", {})
         validated_data.setdefault("capabilities_overrides", [])
-        # Copy carrier_id from SystemConnection as default
         validated_data.setdefault("carrier_id", system_connection.carrier_id)
 
-        instance = super().create(validated_data, context=context, **kwargs)
+        return self._create_new(validated_data, context, **kwargs)
 
-        return instance
+    @utils.pre_create_check(pre_connection_create, connection_type="brokered")
+    def _create_new(
+        self,
+        validated_data: dict,
+        context: serializers.Context,
+        **kwargs,
+    ) -> providers.BrokeredConnection:
+        return super().create(validated_data, context=context, **kwargs)
 
     @transaction.atomic
     @utils.error_wrapper

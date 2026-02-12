@@ -1,9 +1,12 @@
+import django.dispatch
 from django.db.models import signals
 
 import karrio.references as ref
 import karrio.server.core.utils as utils
 from karrio.server.core.logging import logger
 import karrio.server.providers.models as models
+
+pre_connection_create = django.dispatch.Signal()
 
 
 def register_signals():
