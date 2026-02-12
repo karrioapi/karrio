@@ -73,7 +73,7 @@ PickupRequest = {
         "customerID": "123456789",
     },
     "numberOfParcels": 1,
-    "pickup": {"date": "2025-12-01", "fromTime": "09:00", "toTime": "17:00"},
+    "pickup": {"date": "2025-12-01", "fromTime": "0900", "toTime": "1700"},
     "pickupAddress": {
         "city": "Berlin",
         "companyName": "ABC Logistics",
@@ -88,6 +88,7 @@ PickupRequest = {
         "email": "pickup@abclogistics.com",
         "phone1": "+4930123456",
     },
+    "pickupWeight": "5000",
 }
 
 PickupResponse = """{

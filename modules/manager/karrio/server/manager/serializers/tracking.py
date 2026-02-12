@@ -144,6 +144,7 @@ class TrackingSerializer(TrackingDetails):
                     status=response.tracking.status,
                     estimated_delivery=response.tracking.estimated_delivery,
                     options=response.tracking.options,
+                    meta=response.tracking.meta,
                     info=lib.to_dict(response.tracking.info or {}),
                     images=response.tracking.images,
                 ),

@@ -94,6 +94,7 @@ class ConnectionConfig(lib.Enum):
         "label_printer_position", LabelPrinterPosition
     )
     dropoff_type = lib.OptionEnum("dropoff_type", DropOffType)
+    sending_depot = lib.OptionEnum("sending_depot")
     simulate = lib.OptionEnum("simulate", bool)
     extra_barcode = lib.OptionEnum("extra_barcode", bool)
     with_document = lib.OptionEnum("with_document", bool)

@@ -4,6 +4,7 @@ import datetime
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
+import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.providers.dpd_meta.error as provider_error
 import karrio.mappers.dpd_meta.settings as provider_settings
 import karrio.universal.mappers.rating_proxy as rating_proxy
@@ -133,9 +134,20 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         """
         access_token = self.authenticate().deserialize()
 
+        # Extract depot from JWT payload or ConnectionConfig override
+        depot = (
+            self.settings.connection_config.sending_depot.state
+            or provider_utils.decode_jwt_payload(access_token).get("depot")
+        )
+
+        # Inject sendingDepot into the serialized request
+        payload = request.serialize()
+        if depot and not payload.get("sendingDepot"):
+            payload["sendingDepot"] = depot
+
         response = lib.request(
             url=f"{self.settings.server_url}/pickupscheduling",
-            data=lib.to_json(request.serialize()),
+            data=lib.to_json(payload),
             trace=self.trace_as("json"),
             method="POST",
             headers={
