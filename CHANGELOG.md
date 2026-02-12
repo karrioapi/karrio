@@ -1,3 +1,28 @@
+# Karrio 2026.1.7
+
+## Changes
+
+### Feat
+
+- feat(dashboard): enhanced filtering, copy, and shipment preview improvements
+- feat(dhl_parcel_de): return shipment support for DHL Parcel DE and FedEx rating
+
+### Fix
+
+- fix: pass meta to update_tracker on API-triggered tracker refresh
+- fix: correct OrderFilter typo ontion_key/ontion_value -> option_key/option_value
+- fix: background tracker failures and landmark tracking issues
+- fix: resolve migration circular dependency for providers.carrier rename
+- fix: resolve migration error for providers.carrier rename
+- fix: allow shipment cancellation when pickup is cancelled
+- fix: dashboard docker build - copy entrypoint from prune stage
+- fix: add libc6-dev to Docker compile stage for pyzint C extension
+- fix(dpd_meta): extract sendingDepot from JWT and inject into pickup requests
+- fix(dpd_meta): fix pickup time format, weight handling and response parsing
+- fix(dpd_meta): correct pickup schema types and add missing vendor fields
+
+---
+
 # Karrio 2026.1.6
 
 ## Changes
