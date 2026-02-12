@@ -827,10 +827,11 @@ def can_mutate_shipment(
             status_code=status.HTTP_409_CONFLICT,
         )
 
-    if delete and shipment.shipment_pickup.exists():
+    active_pickup = shipment.shipment_pickup.exclude(status__in=["cancelled", "closed"]).first()
+    if delete and active_pickup is not None:
         raise exceptions.APIException(
             (
-                f"This shipment is scheduled for pickup '{shipment.shipment_pickup.first().pk}' "
+                f"This shipment is scheduled for pickup '{active_pickup.pk}' "
                 "Please cancel this shipment pickup before."
             ),
             code="state_error",
