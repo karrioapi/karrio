@@ -11,7 +11,6 @@ import karrio.server.core.dataunits as dataunits
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
 from karrio.server.core.serializers import CARRIERS, Message
-from karrio.server.providers.signals import pre_connection_create
 
 
 def generate_carrier_serializers() -> typing.Dict[str, serializers.Serializer]:
@@ -201,7 +200,6 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     @utils.error_wrapper
-    @utils.pre_create_check(pre_connection_create, connection_type="carrier")
     def create(
         self,
         validated_data: dict,
@@ -459,7 +457,6 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
 
         return self._create_new(validated_data, context, **kwargs)
 
-    @utils.pre_create_check(pre_connection_create, connection_type="brokered")
     def _create_new(
         self,
         validated_data: dict,
