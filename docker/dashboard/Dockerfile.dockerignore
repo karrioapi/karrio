@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Dependencies (will be installed fresh)
+node_modules
+.pnp
+.pnp.js
+
+# Build caches
+.next
+.turbo
+out
+dist
+
+# Python backend (not needed for dashboard)
+modules/
+__pycache__
+*.pyc
+*.pyo
+.venv
+*.egg-info
+
+# Docker files
+docker/server/
+docker/compose/
+
+# IDE / OS
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Misc
+.env*.local
+coverage
+.nyc_output
+*.log

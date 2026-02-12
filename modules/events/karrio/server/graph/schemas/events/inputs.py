@@ -41,3 +41,4 @@ class EventFilter(utils.Paginated):
     type: typing.Optional[typing.List[EventStatusEnum]] = strawberry.UNSET
     date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    keyword: typing.Optional[str] = strawberry.UNSET

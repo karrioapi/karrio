@@ -241,6 +241,12 @@ ParsedShipmentResponse = [
             "label": ANY,
         },
         "label_type": "PDF",
+        "return_shipment": {
+            "tracking_number": "340434310428091700",
+            "shipment_identifier": "340434310428091700",
+            "tracking_url": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=340434310428091700",
+            "meta": {"returnShipmentNo": "340434310428091700"},
+        },
         "meta": {
             "billing_number": "33333333330102",
             "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=340434310428091700",

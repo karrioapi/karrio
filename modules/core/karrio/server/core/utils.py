@@ -1274,7 +1274,44 @@ def resolve_carrier(
         if context is not None and hasattr(CarrierConnection, "access_by"):
             queryset = CarrierConnection.access_by(context).filter(id=conn_id, active=True)
 
-        return queryset.first()
+        result = queryset.first()
+
+        if result is not None:
+            return result
+
+        # Fallback: CarrierConnection was deleted (migrated to SystemConnection).
+        # Try to resolve via SystemConnection/BrokeredConnection using carrier_code + carrier_id.
+        carrier_code = snapshot.get("carrier_code")
+        carrier_id = snapshot.get("carrier_id")
+        test_mode = snapshot.get("test_mode", False)
+
+        if carrier_code and carrier_id:
+            system_conn = SystemConnection.objects.filter(
+                carrier_code=carrier_code,
+                carrier_id=carrier_id,
+                test_mode=test_mode,
+                active=True,
+            ).first()
+
+            if system_conn:
+                brokered_qs = BrokeredConnection.objects.filter(
+                    system_connection=system_conn,
+                    is_enabled=True,
+                )
+
+                if context is not None:
+                    user = getattr(context, "user", None)
+                    org = getattr(context, "org", None)
+
+                    if settings.MULTI_ORGANIZATIONS and org:
+                        brokered_qs = brokered_qs.filter(link__org=org)
+                    elif user:
+                        brokered_qs = brokered_qs.filter(created_by=user)
+
+                brokered = brokered_qs.first()
+                return brokered if brokered else system_conn
+
+        return None
 
     if conn_type == ConnectionType.SYSTEM:
         # System connection

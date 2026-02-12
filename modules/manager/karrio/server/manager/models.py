@@ -782,6 +782,7 @@ class Shipment(core.OwnedEntity):
         "billing_address",
         "selected_rate",
         "carrier",  # Carrier snapshot
+        "return_shipment",
     ]
     HIDDEN_PROPS = (
         "label",
@@ -905,6 +906,11 @@ class Shipment(core.OwnedEntity):
     )
     extra_documents = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value=[])
+    )
+    return_shipment = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Return shipment details when a return label is provided with outbound shipment",
     )
     applied_fees = models.JSONField(
         blank=True,

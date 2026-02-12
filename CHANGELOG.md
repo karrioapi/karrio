@@ -1,3 +1,34 @@
+# Karrio 2026.1.6
+
+## Changes
+
+### Feat
+
+- feat: add ReturnShipment model for capturing return label data from carriers
+- feat(dhl_parcel_de): extract return shipment tracking number from shipment response
+- feat(dashboard): add keyword search filter to Events and Trackers
+- feat(dashboard): add "Copy Full Event" button to event detail viewer
+- feat(dashboard): add entity_id filter field to logs filter dropdown
+- feat(dashboard): add keyword search input to trackers filter popover
+- feat(dashboard): display return shipment details in shipment preview sheet
+
+### Fix
+
+- fix(dashboard): use correct `connection_id` and `carrier_code` fields in shipment connection details
+- fix(dashboard): use `keyword` instead of `query` for events search filter
+- fix(dashboard): remove navigation link from tracker list tracking numbers
+
+### Chore
+
+- chore: update GraphQL schema and TypeScript types for return_shipment field
+- chore: add `keyword` field to EventFilter and TrackerFilter GraphQL inputs and TypeScript types
+
+### Test
+
+- test: add return_shipment server tests and update shipment fixtures
+
+---
+
 # Karrio 2026.1.5
 
 ## Changes

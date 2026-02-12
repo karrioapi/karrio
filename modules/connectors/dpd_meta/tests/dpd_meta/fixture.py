@@ -24,6 +24,7 @@ gateway = karrio.gateway["dpd_meta"].create(
         carrier_id="dpd_meta",
         dpd_login=dpd_login,
         dpd_password="TEST_PASSWORD",
+        dpd_bucode=dpd_bucode,
         customer_id="123456789",
         customer_account_number="ACC123456",
         account_country_code="DE",

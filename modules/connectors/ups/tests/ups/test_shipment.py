@@ -33,6 +33,13 @@ class TestUPSShipment(unittest.TestCase):
         )
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetJSON)
 
+    def test_create_return_shipment_request(self):
+        request = gateway.mapper.create_shipment_request(
+            ShipmentRequest(**ReturnShipmentData)
+        )
+        print(request.serialize())
+        self.assertEqual(request.serialize(), ReturnShipmentRequestJSON)
+
     def test_create_international_shipment_request(self):
         request = gateway.mapper.create_shipment_request(
             ShipmentRequest(**InternationalShipmentData)
@@ -303,6 +310,145 @@ InternationalShipmentRequestJSON = {
                 "Phone": {"Number": "555-987-6543"},
                 "ShipperNumber": "Your Account Number",
                 "TaxIdentificationNumber": "123456789",
+            },
+            "TaxInformationIndicator": "Y",
+        },
+    }
+}
+
+ReturnShipmentData = {
+    "shipper": {
+        "company_name": "Shipper Name",
+        "person_name": "Shipper Attn Name",
+        "federal_tax_id": "123456",
+        "phone_number": "1234567890",
+        "address_line1": "Address Line",
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode",
+    },
+    "recipient": {
+        "company_name": "Ship To Name",
+        "person_name": "Ship To Attn Name",
+        "phone_number": "1234567890",
+        "address_line1": "Address Line",
+        "city": "City",
+        "state_code": "StateProvinceCode",
+        "postal_code": "PostalCode",
+        "country_code": "CountryCode",
+    },
+    "parcels": [
+        {
+            "dimension_unit": "IN",
+            "weight_unit": "LB",
+            "packaging_type": "ups_customer_supplied_package",
+            "description": "Description",
+            "length": 7,
+            "width": 5,
+            "height": 2,
+            "weight": 10,
+        }
+    ],
+    "service": "ups_express_ca",
+    "options": {
+        "ups_return_service": "ups_print_return_label",
+    },
+    "payment": {"paid_by": "sender"},
+    "reference": "Return Shipment Test",
+}
+
+ReturnShipmentRequestJSON = {
+    "ShipmentRequest": {
+        "LabelSpecification": {
+            "LabelImageFormat": {"Code": "PNG", "Description": "lable format"},
+            "LabelStockSize": {"Height": "6", "Width": "4"},
+        },
+        "Request": {
+            "RequestOption": "validate",
+            "SubVersion": "v2409",
+            "TransactionReference": {"CustomerContext": "Return Shipment Test"},
+        },
+        "Shipment": {
+            "Description": "Description",
+            "InvoiceLineTotal": {"CurrencyCode": "USD", "MonetaryValue": "1.0"},
+            "NumOfPiecesInShipment": "0",
+            "Package": [
+                {
+                    "Description": "Description",
+                    "Dimensions": {
+                        "Height": "2.0",
+                        "Length": "7.0",
+                        "UnitOfMeasurement": {"Code": "IN", "Description": "Dimension"},
+                        "Width": "5.0",
+                    },
+                    "PackageWeight": {
+                        "UnitOfMeasurement": {"Code": "LBS", "Description": "Weight"},
+                        "Weight": "10.0",
+                    },
+                    "Packaging": {"Code": "02", "Description": "Packaging Type"},
+                }
+            ],
+            "PaymentInformation": {
+                "ShipmentCharge": [
+                    {
+                        "BillShipper": {"AccountNumber": "Your Account Number"},
+                        "Type": "01",
+                    },
+                    {
+                        "BillShipper": {"AccountNumber": "Your Account Number"},
+                        "Type": "02",
+                    },
+                ]
+            },
+            "RatingMethodRequestedIndicator": "Y",
+            "ReferenceNumber": {"Value": "Return Shipment Test"},
+            "ReturnService": {"Code": "9", "Description": "Return Service"},
+            "Service": {"Code": "01", "Description": "ups_next_day_air"},
+            "ShipFrom": {
+                "Address": {
+                    "AddressLine": ["Address Line"],
+                    "City": "City",
+                    "CountryCode": "CountryCode",
+                    "PostalCode": "PostalCode",
+                    "StateProvinceCode": "StateProvinceCode",
+                },
+                "AttentionName": "Shipper Attn Name",
+                "CompanyDisplayableName": "Shipper Name",
+                "Name": "Shipper Name",
+                "Phone": {"Number": "1234567890"},
+                "TaxIdentificationNumber": "123456",
+            },
+            "ShipTo": {
+                "Address": {
+                    "AddressLine": ["Address Line"],
+                    "City": "City",
+                    "CountryCode": "CountryCode",
+                    "PostalCode": "PostalCode",
+                    "StateProvinceCode": "StateProvinceCode",
+                },
+                "AttentionName": "Ship To Attn Name",
+                "CompanyDisplayableName": "Ship To Name",
+                "Name": "Ship To Name",
+                "Phone": {"Number": "1234567890"},
+            },
+            "ShipmentDate": ANY,
+            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
+            "ShipmentServiceOptions": {},
+            "Shipper": {
+                "Address": {
+                    "AddressLine": ["Address Line"],
+                    "City": "City",
+                    "CountryCode": "CountryCode",
+                    "PostalCode": "PostalCode",
+                    "StateProvinceCode": "StateProvinceCode",
+                },
+                "AttentionName": "Shipper Attn Name",
+                "CompanyDisplayableName": "Shipper Name",
+                "Name": "Shipper Name",
+                "Phone": {"Number": "1234567890"},
+                "ShipperNumber": "Your Account Number",
+                "TaxIdentificationNumber": "123456",
             },
             "TaxInformationIndicator": "Y",
         },

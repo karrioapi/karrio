@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **dpd_password** | **string** |  | [optional] [default to undefined]
 **dpd_client_id** | **string** |  | [optional] [default to undefined]
 **dpd_client_secret** | **string** |  | [optional] [default to undefined]
+**dpd_bucode** | **string** |  | [optional] [default to undefined]
 **customer_id** | **string** |  | [optional] [default to undefined]
 **customer_account_number** | **string** |  | [optional] [default to undefined]
 **customer_sub_account_number** | **string** |  | [optional] [default to undefined]
@@ -24,6 +25,7 @@ const instance: DpdMeta = {
     dpd_password,
     dpd_client_id,
     dpd_client_secret,
+    dpd_bucode,
     customer_id,
     customer_account_number,
     customer_sub_account_number,

@@ -98,6 +98,17 @@ class TestLandmarkGlobalTracking(unittest.TestCase):
                 lib.to_dict(parsed_response), PARSED_MIDNIGHT_TIME_SORTING_RESPONSE
             )
 
+    def test_parse_to_be_routed_response(self):
+        """Test that 'To Be Routed' EndDeliveryCarrier excludes last_mile_carrier from meta"""
+        with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
+            mock.return_value = TO_BE_ROUTED_TRACKING_RESPONSE_XML
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(
+                lib.to_dict(parsed_response), PARSED_TO_BE_ROUTED_RESPONSE
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -948,6 +959,62 @@ PARSED_MIDNIGHT_TIME_SORTING_RESPONSE = [
             },
             "status": "delivered",
             "tracking_number": "LTN408798880N1",
+        }
+    ],
+    [],
+]
+
+TO_BE_ROUTED_TRACKING_RESPONSE_XML = """<?xml version="1.0"?>
+<TrackResponse>
+  <Result>
+    <Success>true</Success>
+    <ShipmentDetails>
+      <EndDeliveryCarrier>To Be Routed</EndDeliveryCarrier>
+    </ShipmentDetails>
+    <Packages>
+      <Package>
+        <TrackingNumber>H00TCC0028567558</TrackingNumber>
+        <LandmarkTrackingNumber>LTN433006705N1</LandmarkTrackingNumber>
+        <PackageReference>ZS204724186GB</PackageReference>
+        <Events>
+          <Event>
+            <Status>Shipment Data Uploaded</Status>
+            <DateTime>2026-01-28 03:40:52</DateTime>
+            <Location>North Shields</Location>
+            <EventCode>50</EventCode>
+          </Event>
+        </Events>
+      </Package>
+    </Packages>
+  </Result>
+</TrackResponse>
+"""
+
+PARSED_TO_BE_ROUTED_RESPONSE = [
+    [
+        {
+            "carrier_id": "landmark",
+            "carrier_name": "landmark",
+            "delivered": False,
+            "events": [
+                {
+                    "code": "50",
+                    "date": "2026-01-28",
+                    "description": "Shipment Data Uploaded",
+                    "location": "North Shields",
+                    "status": "pending",
+                    "time": "03:40 AM",
+                    "timestamp": "2026-01-28T03:40:52.000Z",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN433006705N1"
+            },
+            "meta": {
+                "last_mile_tracking_number": "H00TCC0028567558",
+            },
+            "status": "pending",
+            "tracking_number": "LTN433006705N1",
         }
     ],
     [],

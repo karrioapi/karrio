@@ -290,7 +290,13 @@ def rate_request(
             totalWeight=packages.weight.LB,
             shipmentSpecialServices=lib.identity(
                 fedex.ShipmentSpecialServicesType(
-                    returnShipmentDetail=None,
+                    returnShipmentDetail=lib.identity(
+                        fedex.ReturnShipmentDetailType(
+                            returnType="PRINT_RETURN_LABEL",
+                        )
+                        if options.fedex_return_shipment.state
+                        else None
+                    ),
                     deliveryOnInvoiceAcceptanceDetail=None,
                     internationalTrafficInArmsRegulationsDetail=None,
                     pendingShipmentDetail=None,

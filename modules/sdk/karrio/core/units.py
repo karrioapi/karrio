@@ -713,7 +713,11 @@ class Package:
         self.parcel: models.Parcel = parcel
         self.preset: PackagePreset = template or PackagePreset()
 
-        _options = {**parcel.options, **getattr(options, "content", {})}
+        _options = {
+            **parcel.options,
+            **getattr(options, "_raw_options", {}),
+            **getattr(options, "content", {}),
+        }
         self._options: "ShippingOptions" = (
             shipping_options_initializer(_options)
             if shipping_options_initializer is not None

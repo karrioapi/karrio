@@ -44,6 +44,7 @@ def _extract_shipment(
 ) -> models.ShipmentDetails:
     response, label = _response
     info = lib.to_object(canadapost.ShipmentInfoType, response)
+    return_tracking_pin = lib.failsafe(lambda: info.return_tracking_pin)
 
     base_amount = lib.failsafe(lambda: info.shipment_price.base_amount)
     service_code = lib.failsafe(lambda: info.shipment_price.service_code)
@@ -83,6 +84,16 @@ def _extract_shipment(
                 ),
             )
             if base_amount is not None else None
+        ),
+        return_shipment=lib.identity(
+            models.ReturnShipment(
+                tracking_number=return_tracking_pin,
+                shipment_identifier=return_tracking_pin,
+                tracking_url=settings.tracking_url.format(return_tracking_pin),
+                meta=dict(return_tracking_pin=return_tracking_pin),
+            )
+            if return_tracking_pin
+            else None
         ),
         meta=lib.to_dict(
             dict(

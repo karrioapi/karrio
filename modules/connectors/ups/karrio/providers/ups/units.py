@@ -126,6 +126,25 @@ class ConnectionConfig(utils.Enum):
     shipping_services = utils.OptionEnum("shipping_services", list)
 
 
+class ReturnServiceCode(utils.StrEnum):
+    ups_print_and_mail = "2"
+    ups_return_1_attempt = "3"
+    ups_return_3_attempt = "5"
+    ups_electronic_return_label = "8"
+    ups_print_return_label = "9"
+    ups_exchange_print_return_label = "10"
+    ups_pack_collect_1_attempt_box_1 = "11"
+    ups_pack_collect_1_attempt_box_2 = "12"
+    ups_pack_collect_1_attempt_box_3 = "13"
+    ups_pack_collect_1_attempt_box_4 = "14"
+    ups_pack_collect_1_attempt_box_5 = "15"
+    ups_pack_collect_3_attempt_box_1 = "16"
+    ups_pack_collect_3_attempt_box_2 = "17"
+    ups_pack_collect_3_attempt_box_3 = "18"
+    ups_pack_collect_3_attempt_box_4 = "19"
+    ups_pack_collect_3_attempt_box_5 = "20"
+
+
 class ServiceCode(utils.StrEnum):
     ups_express = "07"
     ups_standard = "11"
@@ -366,8 +385,18 @@ class ShippingOption(utils.Enum):
     ups_commercial_invoice_removal_indicator = utils.OptionEnum(
         "CommercialInvoiceRemovalIndicator", bool
     )
-    ups_import_control = utils.OptionEnum("ImportControl", bool)
-    ups_return_service = utils.OptionEnum("ReturnService", bool, meta=dict(category="RETURN"))
+    ups_import_control = utils.OptionEnum(
+        "ImportControl",
+        units.create_enum(
+            "ImportControlCode",
+            ["03", "04", "05"],
+        ),
+    )
+    ups_return_service = utils.OptionEnum(
+        "ReturnService",
+        ReturnServiceCode,
+        meta=dict(category="RETURN"),
+    )
     ups_epra_indicator = utils.OptionEnum("EPRAIndicator", bool)
     ups_lift_gate_at_pickup_indicator = utils.OptionEnum(
         "LiftGateAtPickupIndicator", bool

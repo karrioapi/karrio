@@ -129,7 +129,7 @@ ShipmentRequest = {
     },
     "shipmentInfos": {
         "dimensions": {"height": 15, "length": 30, "width": 20},
-        "productCode": "101",
+        "productCode": "CL",
         "shipmentId": "SHIP123456",
         "weight": "3000",
     },

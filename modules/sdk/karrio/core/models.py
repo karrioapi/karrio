@@ -448,6 +448,18 @@ class Documents:
 
 
 @attr.s(auto_attribs=True)
+class ReturnShipment:
+    """Return shipment details when a return label is requested with outbound shipment."""
+
+    tracking_number: str = None
+    shipment_identifier: str = None
+    tracking_url: str = None
+    service: str = None
+    reference: str = None
+    meta: dict = None
+
+
+@attr.s(auto_attribs=True)
 class ShipmentDetails:
     """Karrio unified shipment details data type."""
 
@@ -457,6 +469,7 @@ class ShipmentDetails:
     shipment_identifier: str
     docs: Documents = JStruct[Documents, REQUIRED]
     selected_rate: RateDetails = JStruct[RateDetails]
+    return_shipment: ReturnShipment = JStruct[ReturnShipment]
     label_type: str = None
     meta: dict = None
     id: str = None

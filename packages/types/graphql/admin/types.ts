@@ -2243,6 +2243,15 @@ export interface GetSystemShipments_shipments_edges_node_tracker {
   events: GetSystemShipments_shipments_edges_node_tracker_events[];
 }
 
+export interface GetSystemShipments_shipments_edges_node_return_shipment {
+  tracking_number: string | null;
+  shipment_identifier: string | null;
+  tracking_url: string | null;
+  service: string | null;
+  reference: string | null;
+  meta: any | null;
+}
+
 export interface GetSystemShipments_shipments_edges_node {
   id: string;
   tracking_number: string | null;
@@ -2261,6 +2270,7 @@ export interface GetSystemShipments_shipments_edges_node {
   parcels: GetSystemShipments_shipments_edges_node_parcels[];
   messages: GetSystemShipments_shipments_edges_node_messages[];
   tracker: GetSystemShipments_shipments_edges_node_tracker | null;
+  return_shipment: GetSystemShipments_shipments_edges_node_return_shipment | null;
 }
 
 export interface GetSystemShipments_shipments_edges {

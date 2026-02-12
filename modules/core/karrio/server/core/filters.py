@@ -546,6 +546,10 @@ class TrackerFilters(filters.FilterSet):
         Values: {', '.join([f"`{s.name}`" for s in list(serializers.TrackerStatus)])}
         """,
     )
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="search by tracking number, tracker ID, or reference",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -581,6 +585,11 @@ class TrackerFilters(filters.FilterSet):
                 f"Values: {', '.join([f'`{c.value}`' for c in list(serializers.TrackerStatus)])}"
             ),
         ),
+        openapi.OpenApiParameter(
+            "keyword",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -598,6 +607,12 @@ class TrackerFilters(filters.FilterSet):
             query |= item
 
         return queryset.filter(query)
+
+    def keyword_filter(self, queryset, name, value):
+        return queryset.filter(
+            models.Q(tracking_number__icontains=value)
+            | models.Q(id__icontains=value)
+        )
 
 
 class LogFilter(filters.FilterSet):

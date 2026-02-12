@@ -765,6 +765,16 @@ class RateRequest(validators.OptionDefaultSerializer):
         **Note that this is required for international shipments.**
         """,
     )
+    return_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The return address for this shipment. Defaults to the shipper address.",
+    )
+    billing_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The billing address for this shipment.",
+    )
     carrier_ids = serializers.StringListField(
         required=False,
         allow_null=True,
@@ -1616,6 +1626,11 @@ class ShipmentDetails(serializers.Serializer):
     )
     meta = serializers.PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
+    )
+    return_shipment = serializers.PlainDictField(
+        required=False,
+        allow_null=True,
+        help_text="Return shipment details when a return label is provided with outbound shipment",
     )
 
     service = serializers.CharField(

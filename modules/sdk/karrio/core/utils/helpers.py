@@ -4,6 +4,7 @@ import ssl
 import uuid
 import string
 import base64
+import json
 import PyPDF2
 import asyncio
 import datetime
@@ -165,11 +166,22 @@ def process_request(
     proxy: str = None,
     **kwargs,
 ) -> Request:
-    payload = (
-        dict(data=bytearray(kwargs["data"], encoding="utf-8"))
-        if "data" in kwargs
-        else {}
-    )
+    payload: dict[str, bytes] = {}
+    if "data" in kwargs:
+        raw = kwargs.get("data")
+        if raw is None:
+            payload = {}
+        elif isinstance(raw, (bytes, bytearray)):
+            payload = dict(data=raw)
+        elif isinstance(raw, str):
+            payload = dict(data=raw.encode("utf-8"))
+        else:
+            # Most carrier proxies pass JSON-serializable dict payloads.
+            # urllib.request.Request requires bytes-like data.
+            try:
+                payload = dict(data=json.dumps(raw).encode("utf-8"))
+            except TypeError:
+                payload = dict(data=str(raw).encode("utf-8"))
 
     if trace:
         trace(

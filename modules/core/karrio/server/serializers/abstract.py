@@ -510,8 +510,8 @@ def process_nested_dictionaries_mutations(
         new_value = payload.get(key)
 
         if new_value is None:
-            # Explicit null means clear the entire field
-            data[key] = {}
+            # Explicit null means clear the entire field to None
+            data[key] = None
         else:
             # Deep merge with null removal
             data[key] = deep_merge_remove_nulls(existing_value, new_value)

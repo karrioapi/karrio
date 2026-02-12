@@ -166,16 +166,10 @@ class PersonType:
 
 
 @attr.s(auto_attribs=True)
-class ReferenceType:
-    referenceNumber: typing.Optional[str] = None
-    referenceType: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
 class ParcelType:
     parcelInfos: typing.Optional[ParcelInfosType] = jstruct.JStruct[ParcelInfosType]
     parcelContent: typing.Optional[str] = None
-    references: typing.Optional[typing.List[ReferenceType]] = jstruct.JList[ReferenceType]
+    senderParcelRefs: typing.Optional[typing.List[str]] = None
     hazardous: typing.Optional[HazardousType] = jstruct.JStruct[HazardousType]
     cod: typing.Optional[CodType] = jstruct.JStruct[CodType]
     insurance: typing.Optional[InsuranceType] = jstruct.JStruct[InsuranceType]

@@ -173,8 +173,7 @@ def rate_request(
                     ShipperNumber=settings.account_number,
                     Address=ups.ShipFromAddressType(
                         AddressLine=[
-                            lib.text(line, max=35)
-                            for line in shipper.address_lines
+                            lib.text(line, max=35) for line in shipper.address_lines
                         ],
                         City=shipper.city,
                         StateProvinceCode=shipper.state_code,
@@ -187,8 +186,7 @@ def rate_request(
                     AttentionName=recipient.contact,
                     Address=ups.AlternateDeliveryAddressAddressType(
                         AddressLine=[
-                            lib.text(line, max=35)
-                            for line in recipient.address_lines
+                            lib.text(line, max=35) for line in recipient.address_lines
                         ],
                         City=recipient.city,
                         StateProvinceCode=recipient.state_code,
@@ -440,10 +438,14 @@ def rate_request(
                                     "Y" if options.ups_tobacco_indicator.state else None
                                 ),
                                 ECigarettesIndicator=lib.identity(
-                                    "Y" if options.ups_ecigarettes_indicator.state else None
+                                    "Y"
+                                    if options.ups_ecigarettes_indicator.state
+                                    else None
                                 ),
                                 HempCBDIndicator=lib.identity(
-                                    "Y" if options.ups_hemp_cbd_indicator.state else None
+                                    "Y"
+                                    if options.ups_hemp_cbd_indicator.state
+                                    else None
                                 ),
                             )
                             if options.ups_restricted_articles.state
@@ -459,8 +461,24 @@ def rate_request(
                             if options.ups_commercial_invoice_removal_indicator.state
                             else None
                         ),
-                        ImportControl=None,
-                        ReturnService=None,
+                        ImportControl=lib.identity(
+                            ups.CustomerClassificationType(
+                                Code=str(options.ups_import_control.state),
+                                Description="Import Control",
+                            )
+                            if options.ups_import_control.state
+                            else None
+                        ),
+                        ReturnService=lib.identity(
+                            ups.CustomerClassificationType(
+                                Code=provider_units.ReturnServiceCode.map(
+                                    options.ups_return_service.state
+                                ).value_or_key,
+                                Description="Return Service",
+                            )
+                            if options.ups_return_service.state
+                            else None
+                        ),
                         SDLShipmentIndicator=lib.identity(
                             "Y" if options.ups_sdl_shipment_indicator.state else None
                         ),

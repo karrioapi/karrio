@@ -196,6 +196,9 @@ def can_mutate_tracker(
 
 def update_shipment_tracker(tracker: models.Tracking):
     try:
+        if tracker.shipment is None:
+            return
+
         if tracker.status == TrackerStatus.delivered.value:
             status = ShipmentStatus.delivered.value
         elif tracker.status == TrackerStatus.pending.value:
@@ -326,6 +329,9 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
 
         # Save changes and update associated shipment
         if any(changes):
+            # Include updated_at so Django's auto_now field is persisted
+            # when using save(update_fields=...)
+            changes.append("updated_at")
             tracker.save(update_fields=changes)
             update_shipment_tracker(tracker)
             logger.info(

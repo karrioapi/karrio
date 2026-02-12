@@ -16,6 +16,8 @@ echo "KARRIO_URL: $KARRIO_URL"
 echo "KARRIO_PUBLIC_URL: $NEXT_PUBLIC_KARRIO_PUBLIC_URL"
 echo "DASHBOARD_PORT: $DASHBOARD_PORT"
 
-./node_modules/.bin/next start -p $DASHBOARD_PORT &
+export PORT=$DASHBOARD_PORT
+export HOSTNAME="0.0.0.0"
+node apps/dashboard/server.js &
 
 wait -n

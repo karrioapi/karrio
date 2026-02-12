@@ -20,6 +20,9 @@ class TestFedExShipping(unittest.TestCase):
         self.MultiPieceShipmentRequest = models.ShipmentRequest(
             **MultiPieceShipmentPayload
         )
+        self.ReturnShipmentRequest = models.ShipmentRequest(
+            **ReturnShipmentPayload
+        )
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -96,6 +99,20 @@ class TestFedExShipping(unittest.TestCase):
 
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
+            )
+
+    def test_parse_return_shipment_response(self):
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
+            mock.return_value = ShipmentResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ReturnShipmentRequest)
+                .from_(gateway)
+                .parse()
+            )
+
+            print(parsed_response)
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedReturnShipmentResponse
             )
 
 
@@ -3143,3 +3160,101 @@ ShipmentCancelResponse = """{
   }
 }
 """
+
+ReturnShipmentPayload = {
+    "shipper": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "+971 52 954 4379",
+        "email": "Input Your Information",
+        "address_line1": "Input Your Information",
+        "address_line2": "Input Your Information",
+        "city": "MEMPHIS",
+        "state_code": "TN",
+        "postal_code": "38117",
+        "country_code": "US",
+    },
+    "recipient": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "000-000-0000",
+        "email": "Input Your Information",
+        "address_line1": "Input Your Information",
+        "address_line2": "Input Your Information",
+        "city": "RICHMOND",
+        "state_code": "BC",
+        "postal_code": "V7C4v7",
+        "country_code": "CA",
+    },
+    "billing_address": {
+        "person_name": "Input Your Information",
+        "company_name": "Input Your Information",
+        "phone_number": "000-000-0000",
+        "email": "Input Your Information",
+        "address_line1": "Input Your Information",
+        "address_line2": "Input Your Information",
+        "city": "RICHMOND",
+        "state_code": "BC",
+        "postal_code": "V7C4v7",
+        "country_code": "CA",
+    },
+    "parcels": [
+        {
+            "packaging_type": "your_packaging",
+            "weight_unit": "LB",
+            "dimension_unit": "IN",
+            "weight": 20.0,
+            "length": 12,
+            "width": 12,
+            "height": 12,
+        }
+    ],
+    "service": "fedex_international_priority",
+    "options": {
+        "currency": "USD",
+        "shipment_date": "2024-02-15",
+        "fedex_return_shipment": True,
+    },
+    "payment": {"paid_by": "third_party", "account_number": "2349857"},
+    "customs": {
+        "invoice": "123456789",
+        "duty": {"paid_by": "sender", "declared_value": 100.0},
+        "commodities": [{"weight": "10", "title": "test", "hs_code": "00339BB"}],
+        "commercial_invoice": True,
+    },
+    "reference": "#Order 11111",
+}
+
+ParsedReturnShipmentResponse = [
+    {
+        "carrier_id": "fedex",
+        "carrier_name": "fedex",
+        "docs": {"label": ANY},
+        "label_type": "PDF",
+        "return_shipment": {
+            "tracking_number": "794953535000",
+            "shipment_identifier": "794953535000",
+            "tracking_url": "https://www.fedex.com/fedextrack/?trknbr=794953535000",
+            "service": "fedex_return_shipment",
+        },
+        "meta": {
+            "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=794953535000",
+            "serviceCategory": "EXPRESS",
+            "service_name": "fedex_standard_overnight",
+            "trackingIdType": "FEDEX",
+            "fedex_carrier_code": "FDXE",
+        },
+        "shipment_identifier": "794953535000",
+        "tracking_number": "794953535000",
+    },
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "code": "SHIP.RECIPIENT.POSTALCITY.MISMATCH",
+            "details": {},
+            "level": "info",
+            "message": "Recipient Postal-City Mismatch.",
+        }
+    ],
+]

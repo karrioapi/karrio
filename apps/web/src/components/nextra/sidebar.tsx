@@ -212,6 +212,8 @@ export const Sidebar: FC<SidebarProps> = ({ pageMap, themeConfig }) => {
         return <GitPullRequest className="h-4 w-4" />
       case 'contributors-guide':
         return <Users className="h-4 w-4" />
+      case 'embeddable-elements':
+        return <Code2 className="h-4 w-4" />
       case 'api-development':
         return <Code2 className="h-4 w-4" />
       case 'carrier-integration':

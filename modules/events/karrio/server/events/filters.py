@@ -48,6 +48,10 @@ class EventFilter(filters.FilterSet):
             if c != serializers.EventTypes.all
         ],
     )
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="search in event data fields",
+    )
 
     class Meta:
         model = models.Event
@@ -61,3 +65,14 @@ class EventFilter(filters.FilterSet):
 
     def types_filter(self, queryset, name, values):
         return queryset.filter(Q(type__in=values))
+
+    def keyword_filter(self, queryset, name, value):
+        try:
+            return queryset.filter(
+                Q(data__id__icontains=value)
+                | Q(data__tracking_number__icontains=value)
+                | Q(data__reference__icontains=value)
+                | Q(type__icontains=value)
+            )
+        except:
+            return queryset

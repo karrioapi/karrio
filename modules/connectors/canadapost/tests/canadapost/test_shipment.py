@@ -132,6 +132,17 @@ class TestCanadaPostShipment(unittest.TestCase):
                 lib.to_dict(parsed_response), lib.to_dict(ParsedShipmentCancelResponse)
             )
 
+    def test_parse_return_shipment_response(self):
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
+            mocks.side_effect = [ReturnShipmentResponseXML, LabelResponse]
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+            print(parsed_response)
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedReturnShipmentResponse
+            )
+
     def test_parse_multi_piece_shipment_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [
@@ -309,6 +320,44 @@ ParsedShipmentResponse = [
             "meta": {
                 "service_name": "canadapost_expedited_parcel",
             },
+        },
+        "meta": {
+            "manifest_required": False,
+            "customer_request_ids": ANY,
+            "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012",
+        },
+    },
+    [],
+]
+
+ParsedReturnShipmentResponse = [
+    {
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "tracking_number": "123456789012",
+        "shipment_identifier": "545021584835957806",
+        "label_type": "PDF",
+        "docs": {"label": ANY},
+        "selected_rate": {
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "service": "canadapost_expedited_parcel",
+            "total_charge": 25.07,
+            "currency": "CAD",
+            "extra_charges": [
+                {"name": "Base charge", "amount": 25.07, "currency": "CAD"},
+                {"name": "HST", "amount": 3.63, "currency": "CAD"},
+                {"name": "FUELSC", "amount": 2.88, "currency": "CAD"},
+            ],
+            "meta": {
+                "service_name": "canadapost_expedited_parcel",
+            },
+        },
+        "return_shipment": {
+            "tracking_number": "987654321098",
+            "shipment_identifier": "987654321098",
+            "tracking_url": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=987654321098",
+            "meta": {"return_tracking_pin": "987654321098"},
         },
         "meta": {
             "manifest_required": False,
@@ -629,4 +678,48 @@ ShipmentRefundResponseXML = """<shipment-refund-request-info>
     <service-ticket-date>2015-01-28</service-ticket-date>
     <service-ticket-id>GT12345678RT</service-ticket-id>
 </shipment-refund-request-info>
+"""
+
+ReturnShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
+<shipment-info xmlns="http://www.canadapost.ca/ws/shipment-v8">
+  <shipment-id>545021584835957806</shipment-id>
+  <shipment-status>transmitted</shipment-status>
+  <tracking-pin>123456789012</tracking-pin>
+  <return-tracking-pin>987654321098</return-tracking-pin>
+  <po-number>P123456789</po-number>
+  <shipment-price>
+    <service-code>DOM.EP</service-code>
+    <base-amount>25.07</base-amount>
+    <priced-options>
+      <priced-option>
+        <option-code>DC</option-code>
+        <option-price>0.00</option-price>
+      </priced-option>
+    </priced-options>
+    <adjustments>
+      <adjustment>
+        <adjustment-code>FUELSC</adjustment-code>
+        <adjustment-amount>2.88</adjustment-amount>
+      </adjustment>
+    </adjustments>
+    <pre-tax-amount>27.95</pre-tax-amount>
+    <gst-amount>0.00</gst-amount>
+    <pst-amount>0.00</pst-amount>
+    <hst-amount>3.63</hst-amount>
+    <due-amount>31.58</due-amount>
+    <service-standard>
+      <am-delivery>false</am-delivery>
+      <guaranteed-delivery>true</guaranteed-delivery>
+      <expected-transmit-time>1</expected-transmit-time>
+      <expected-delivery-date>2020-03-24</expected-delivery-date>
+    </service-standard>
+    <rated-weight>20.000</rated-weight>
+  </shipment-price>
+  <links>
+    <link rel="self" href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/shipment/545021584835957806" media-type="application/vnd.cpc.shipment-v8+xml"/>
+    <link rel="details" href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/shipment/545021584835957806/details" media-type="application/vnd.cpc.shipment-v8+xml"/>
+    <link rel="refund" href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/shipment/545021584835957806/refund" media-type="application/vnd.cpc.shipment-v8+xml"/>
+    <link rel="label" href="https://ct.soa-gw.canadapost.ca/rs/artifact/6e93d53968881714/10001782951/0" media-type="application/pdf" index="0"/>
+  </links>
+</shipment-info>
 """

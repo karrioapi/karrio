@@ -1,0 +1,18 @@
+{
+  "extends": "@karrio/tsconfig/react-library.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@karrio/ui/*": ["../ui/*"],
+      "@karrio/hooks/*": ["../hooks/*"],
+      "@karrio/lib/*": ["../lib/*"],
+      "@karrio/lib": ["../lib/index.ts"],
+      "@karrio/types/*": ["../types/*"],
+      "@karrio/types": ["../types/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

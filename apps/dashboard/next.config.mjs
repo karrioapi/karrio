@@ -69,6 +69,8 @@ function discoverAppAssets() {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  outputFileTracingRoot: path.join(__dirname, '../../'),
   basePath: BASE_PATH,
   reactStrictMode: true,
   transpilePackages: [
