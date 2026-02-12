@@ -31,9 +31,9 @@ django-redis==6.0.0
 django-two-factor-auth==1.18.1
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
+dnspython==2.8.0
 drf-api-tracking==1.8.4
 drf-spectacular==0.29.0
-dnspython==2.8.0
 fonttools==4.61.1
 googleapis-common-protos==1.72.0
 graphql-core==3.2.7
