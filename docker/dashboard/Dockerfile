@@ -62,7 +62,7 @@ COPY --from=builder --chown=karrio:nodejs /app/apps/dashboard/.next/static ./app
 # Public assets (including CopyWebpackPlugin app-store assets)
 COPY --from=builder --chown=karrio:nodejs /app/apps/dashboard/public ./apps/dashboard/public
 # Entrypoint script
-COPY --from=builder /app/docker/dashboard/entrypoint ./entrypoint
+COPY --from=prune /app/docker/dashboard/entrypoint ./entrypoint
 
 EXPOSE 3002
 
