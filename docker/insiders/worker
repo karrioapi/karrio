@@ -4,4 +4,4 @@ export SECRET_KEY=${SECRET_KEY:="0/zfUEetNIle3iNekk4npo4T1pLFAWOyBFgbAu0afB4="}
 export ADMIN_EMAIL=${ADMIN_EMAIL:="admin@example.com"}
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:="demo"}
 
-karrio run_huey -w $BACKGROUND_WORKERS
+karrio run_huey -w ${BACKGROUND_WORKERS:-2}

@@ -137,3 +137,9 @@ else:
         fsync=False,  # Disable forced fsync for better performance (default: False)
         **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {}),
     )
+
+    # When DETACHED_WORKER is True, the entrypoint only runs Gunicorn — no worker
+    # process will ever consume from the SQLite queue. Auto-enable immediate mode
+    # so tasks execute synchronously in the web process.
+    if DETACHED_WORKER and not IS_WORKER_PROCESS and not WORKER_IMMEDIATE_MODE:
+        HUEY.immediate = True
