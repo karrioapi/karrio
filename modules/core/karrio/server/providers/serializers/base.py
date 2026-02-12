@@ -179,6 +179,7 @@ class CarrierConnection(serializers.Serializer):
 
 
 @serializers.owned_model_serializer
+@utils.pre_processing(methods=["create"])
 class CarrierConnectionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = providers.CarrierConnection
@@ -361,6 +362,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
+@utils.pre_processing(methods=["_create_new"])
 class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
     """
     Serializer for BrokeredConnection (user's enabled instance of SystemConnection).

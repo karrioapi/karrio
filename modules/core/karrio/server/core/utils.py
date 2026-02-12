@@ -159,33 +159,6 @@ def error_wrapper(func):
     return wrapper
 
 
-def pre_create_check(signal, **signal_kwargs):
-    """Decorator that sends a Django signal before a serializer create method.
-
-    Automatically passes sender, user, and org from the serializer context.
-    Additional keyword arguments are forwarded to the signal.
-
-    Usage:
-        @pre_create_check(pre_connection_create, connection_type="carrier")
-        def create(self, validated_data, context, **kwargs):
-            ...
-    """
-
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self, validated_data, context, **kwargs):
-            signal.send(
-                sender=self.__class__,
-                user=context.user,
-                org=getattr(context, "org", None),
-                **signal_kwargs,
-            )
-            return func(self, validated_data, context, **kwargs)
-
-        return wrapper
-
-    return decorator
-
 
 def async_wrapper(func):
     @functools.wraps(func)
@@ -387,6 +360,32 @@ def post_processing(methods: List[str] = None):
                     processes,
                     result,
                 )
+
+            setattr(klass, name, wrapper)
+
+        return klass
+
+    return class_wrapper
+
+
+def pre_processing(methods: List[str] = None):
+    def class_wrapper(klass):
+        setattr(
+            klass,
+            "pre_process_functions",
+            getattr(klass, "pre_process_functions", None) or [],
+        )
+
+        for name in methods:
+            method = getattr(klass, name)
+
+            def wrapper(*args, _method=method, **kwargs):
+                context = kwargs.get("context")
+
+                for process in klass.pre_process_functions:
+                    process(context, **kwargs)
+
+                return _method(*args, **kwargs)
 
             setattr(klass, name, wrapper)
 
