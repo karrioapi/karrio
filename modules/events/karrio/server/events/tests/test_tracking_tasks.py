@@ -74,21 +74,117 @@ class TestTrackersBackgroundUpdate(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(TRACKERS_LIST, response_data)
 
-    def test_get_updated_trackers(self):
-        url = reverse("karrio.server.manager:trackers-list")
-
+    def test_dispatcher_groups_by_carrier(self):
+        """update_trackers groups trackers by carrier_id and dispatches per-carrier tasks."""
         with patch(
-            "karrio.server.events.task_definitions.base.tracking.utils.identity"
-        ) as mocks:
-            mocks.return_value = RETURNED_UPDATED_VALUE
+            "karrio.server.events.task_definitions.base.process_carrier_tracking_batch"
+        ) as mock_task:
             sleep(0.1)
             tracking.update_trackers(delta=datetime.timedelta(seconds=0.1))
 
-            response = self.client.get(url)
-            response_data = json.loads(response.content)
+            # 2 carriers (ups + dhl) → 2 dispatched tasks
+            self.assertEqual(mock_task.call_count, 2)
 
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(UPDATED_TRACKERS_LIST, response_data)
+            # Each call should have tracker_ids and schema kwargs
+            for call_args in mock_task.call_args_list:
+                self.assertIn("tracker_ids", call_args.kwargs)
+                self.assertIn("schema", call_args.kwargs)
+                self.assertIsInstance(call_args.kwargs["tracker_ids"], list)
+                self.assertTrue(len(call_args.kwargs["tracker_ids"]) > 0)
+
+    def test_dispatcher_passes_schema(self):
+        """update_trackers forwards the schema kwarg to dispatched tasks."""
+        with patch(
+            "karrio.server.events.task_definitions.base.process_carrier_tracking_batch"
+        ) as mock_task:
+            sleep(0.1)
+            tracking.update_trackers(
+                delta=datetime.timedelta(seconds=0.1), schema="test_schema"
+            )
+
+            for call_args in mock_task.call_args_list:
+                self.assertEqual(call_args.kwargs["schema"], "test_schema")
+
+    def test_process_carrier_trackers_incremental_save(self):
+        """process_carrier_trackers fetches and saves each batch immediately."""
+        dhl_tracker = models.Tracking.objects.get(
+            tracking_number="00340434292135100124"
+        )
+
+        with patch(
+            "karrio.server.events.task_definitions.base.tracking.karrio"
+        ) as mock_karrio:
+            mock_karrio.Tracking.fetch.return_value.from_.return_value.parse.return_value = (
+                RETURNED_UPDATED_VALUE
+            )
+
+            tracking.process_carrier_trackers(tracker_ids=[dhl_tracker.id])
+
+        dhl_tracker.refresh_from_db()
+        # RETURNED_UPDATED_VALUE has 2 events for DHL
+        self.assertEqual(len(dhl_tracker.events), 2)
+
+    def test_process_carrier_trackers_flat_delay(self):
+        """process_carrier_trackers uses flat delays between batches (not progressive)."""
+        # Create 15 additional UPS trackers → 16 total UPS → 2 batches
+        for i in range(15):
+            models.Tracking.objects.create(
+                tracking_number=f"1Z12345E00{i:08d}",
+                test_mode=True,
+                delivered=False,
+                events=[],
+                status="in_transit",
+                created_by=self.user,
+                carrier=create_carrier_snapshot(self.ups_carrier),
+            )
+
+        ups_ids = list(
+            models.Tracking.objects.filter(
+                tracking_number__startswith="1Z12345E"
+            ).values_list("id", flat=True)
+        )
+
+        with patch(
+            "karrio.server.events.task_definitions.base.tracking.karrio"
+        ) as mock_karrio, patch(
+            "karrio.server.events.task_definitions.base.tracking.time.sleep"
+        ) as mock_sleep:
+            mock_karrio.Tracking.fetch.return_value.from_.return_value.parse.return_value = (
+                [], []
+            )
+
+            tracking.process_carrier_trackers(tracker_ids=ups_ids)
+
+        # 16 trackers / 10 per batch = 2 batches → 1 sleep between batches
+        self.assertEqual(mock_sleep.call_count, 1)
+        # Flat delay (not progressive)
+        mock_sleep.assert_called_with(tracking.TRACKER_BATCH_DELAY)
+
+    def test_get_updated_trackers(self):
+        """End-to-end: process_carrier_trackers updates trackers visible via API."""
+        url = reverse("karrio.server.manager:trackers-list")
+
+        dhl_ids = list(
+            models.Tracking.objects.filter(
+                tracking_number="00340434292135100124"
+            ).values_list("id", flat=True)
+        )
+
+        with patch(
+            "karrio.server.events.task_definitions.base.tracking.karrio"
+        ) as mock_karrio:
+            mock_karrio.Tracking.fetch.return_value.from_.return_value.parse.return_value = (
+                RETURNED_UPDATED_VALUE
+            )
+            sleep(0.1)
+
+            tracking.process_carrier_trackers(tracker_ids=dhl_ids)
+
+        response = self.client.get(url)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(UPDATED_TRACKERS_LIST, response_data)
 
 
 RETURNED_VALUE = (
