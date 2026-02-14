@@ -9,6 +9,8 @@ import {
 } from "@karrio/ui/components/tracking-preview-sheet";
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
 import {
+  formatDate,
+  formatDateTime,
   formatRef,
   getURLSearchParams,
   isNone,
@@ -155,6 +157,9 @@ export default function TrackersPage(pageProps: any) {
                       SHIPPING SERVICE
                     </TableHead>
                     <TableHead className="status items-center"></TableHead>
+                    <TableHead className="destination text-xs items-center">
+                      DESTINATION
+                    </TableHead>
                     <TableHead className="last-event text-xs items-center">
                       LAST EVENT
                     </TableHead>
@@ -213,32 +218,63 @@ export default function TrackersPage(pageProps: any) {
                           />
                         </div>
                       </TableCell>
+                      <TableCell className="destination items-center text-xs text-gray-600">
+                        {(() => {
+                          const city = (tracker as any).shipment?.recipient?.city;
+                          const countryCode = (tracker as any).shipment?.recipient?.country_code
+                            || tracker.info?.shipment_destination_country;
+                          return city || countryCode ? (
+                            <div style={{ lineHeight: "16px" }}>
+                              {city && <p className="font-bold">{city}</p>}
+                              {countryCode && <p className="text-gray-400 font-medium">{countryCode}</p>}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          );
+                        })()}
+                      </TableCell>
                       <TableCell className="last-event items-center py-1 text-xs font-bold text-gray-600 md:text-ellipsis">
-                        <span
-                          className="md:text-ellipsis break-words"
-                          title={
-                            isNoneOrEmpty(tracker?.events)
+                        <div style={{ lineHeight: "16px" }}>
+                          <span
+                            className="md:text-ellipsis break-words"
+                            title={
+                              isNoneOrEmpty(tracker?.events)
+                                ? ""
+                                : formatEventDescription(
+                                  (tracker?.events as TrackingEvent[])[0],
+                                )
+                            }
+                          >
+                            {isNoneOrEmpty(tracker?.events)
                               ? ""
                               : formatEventDescription(
                                 (tracker?.events as TrackingEvent[])[0],
-                              )
-                          }
-                        >
-                          {isNoneOrEmpty(tracker?.events)
-                            ? ""
-                            : formatEventDescription(
-                              (tracker?.events as TrackingEvent[])[0],
-                            )}
-                        </span>
+                              )}
+                          </span>
+                          {!isNoneOrEmpty(tracker?.events) && (() => {
+                            const event = (tracker?.events as TrackingEvent[])[0];
+                            const details = [
+                              event?.location,
+                              [event?.date, event?.time].filter(Boolean).join(" "),
+                              event?.code,
+                            ].filter(Boolean).join(" · ");
+                            return details ? (
+                              <p className="text-gray-400 font-medium text-ellipsis">
+                                {details}
+                              </p>
+                            ) : null;
+                          })()}
+                        </div>
                       </TableCell>
-                      <TableCell className="date items-center text-right">
-                        <p className="text-xs font-semibold text-gray-600">
-                          {isNoneOrEmpty(tracker?.events)
-                            ? ""
-                            : formatEventDate(
-                              (tracker?.events as TrackingEvent[])[0],
-                            )}
-                        </p>
+                      <TableCell className="date items-center">
+                        <div style={{ lineHeight: "16px" }}>
+                          <p className="text-xs font-semibold text-gray-600">
+                            {formatDateTime(tracker.created_at)}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {formatDateTime(tracker.updated_at)}
+                          </p>
+                        </div>
                       </TableCell>
                       <TableCell className="action items-center p-1 sticky-right">
                         <Button
