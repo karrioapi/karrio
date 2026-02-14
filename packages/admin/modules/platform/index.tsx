@@ -13,7 +13,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Label } from "@karrio/ui/components/ui/label";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useConfigs, useConfigMutation } from "@karrio/hooks/admin-platform";
+import { useConfigs, useConfigMutation, useConfigFieldsets, useConfigSchema } from "@karrio/hooks/admin-platform";
 import { useAdminSystemUsage } from "@karrio/hooks/admin-usage";
 import { useState, useEffect } from "react";
 import {
@@ -55,6 +55,7 @@ type ConfigData = {
   APPS_MANAGEMENT: boolean;
   MULTI_ORGANIZATIONS: boolean;
   SHIPPING_RULES: boolean;
+  [key: string]: any;
 };
 
 const defaultConfig: ConfigData = {
@@ -87,7 +88,7 @@ const defaultConfig: ConfigData = {
   SHIPPING_RULES: false,
 };
 
-type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 'features' | 'platform' | null;
+type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 'features' | 'platform' | string | null;
 
 function SettingRow({ label, description, enabled }: { label: string; description?: string; enabled: boolean }) {
   return (
@@ -129,6 +130,8 @@ export default function PlatformDetails() {
   const { metadata } = useAPIMetadata();
   const { query, configs } = useConfigs();
   const { query: { data: { usage } = {} } } = useAdminSystemUsage();
+  const { fieldsets } = useConfigFieldsets();
+  const { schema } = useConfigSchema();
   const [editSection, setEditSection] = useState<EditSection>(null);
 
   const { updateConfigs } = useConfigMutation();
@@ -385,11 +388,97 @@ export default function PlatformDetails() {
         </CardContent>
       </Card>
 
+      {/* Dynamic Carrier Config Sections */}
+      {fieldsets
+        .filter(fs => ![
+          "Email Config",
+          "Address Validation Service",
+          "Data Retention",
+          "Feature Flags",
+          "Platform Config",
+          "Registry Config",
+          "Registry Plugins",
+        ].includes(fs.name))
+        .map(fs => {
+          const sectionKey = `dynamic_${fs.name.toLowerCase().replace(/\s+/g, '_')}`;
+          return (
+            <Card key={fs.name} className="border shadow-none">
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                <div>
+                  <CardTitle className="text-base">{fs.name}</CardTitle>
+                  <CardDescription>Carrier configuration settings</CardDescription>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection(sectionKey)}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="grid lg:grid-cols-2 gap-4">
+                  {fs.keys.map(key => {
+                    const schemaDef = schema.find(s => s.key === key);
+                    const value = currentConfig[key];
+                    const isBool = schemaDef?.value_type === 'bool';
+                    return (
+                      <div key={key} className="py-2">
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {schemaDef?.description || key}
+                        </p>
+                        {isBool ? (
+                          value ? (
+                            <Check className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <X className="h-4 w-4 text-muted-foreground" />
+                          )
+                        ) : (
+                          <p className="text-sm font-medium">
+                            {value !== null && value !== undefined && value !== '' ? String(value) : 'Not configured'}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+
+      {/* Plugin Registry */}
+      {fieldsets
+        .filter(fs => fs.name === "Registry Plugins")
+        .map(fs => (
+          <Card key={fs.name} className="border shadow-none">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+              <div>
+                <CardTitle className="text-base">Plugin Registry</CardTitle>
+                <CardDescription>Enable or disable registered plugins</CardDescription>
+              </div>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('plugins')}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="divide-y">
+              {fs.keys.map(key => {
+                const schemaDef = schema.find(s => s.key === key);
+                return (
+                  <SettingRow
+                    key={key}
+                    label={schemaDef?.description || key}
+                    enabled={!!currentConfig[key]}
+                  />
+                );
+              })}
+            </CardContent>
+          </Card>
+        ))}
+
       <EditDialog
         section={editSection}
         onClose={() => setEditSection(null)}
         configs={currentConfig}
         onUpdate={handleUpdate}
+        fieldsets={fieldsets}
+        schema={schema}
       />
     </div>
   );
@@ -399,12 +488,16 @@ function EditDialog({
   section,
   onClose,
   configs,
-  onUpdate
+  onUpdate,
+  fieldsets,
+  schema,
 }: {
   section: EditSection;
   onClose: () => void;
   configs: ConfigData;
   onUpdate: (data: Partial<ConfigData>) => void;
+  fieldsets: { name: string; keys: string[] }[];
+  schema: { key: string; description: string; value_type: string; default_value: string | null }[];
 }) {
   const [formData, setFormData] = useState<ConfigData>(configs);
 
@@ -455,6 +548,18 @@ function EditDialog({
         data.ORDERS_MANAGEMENT = formData.ORDERS_MANAGEMENT;
         data.APPS_MANAGEMENT = formData.APPS_MANAGEMENT;
         data.SHIPPING_RULES = formData.SHIPPING_RULES;
+        break;
+      case 'plugins': {
+        const pluginFieldset = fieldsets.find(fs => fs.name === "Registry Plugins");
+        pluginFieldset?.keys.forEach(key => { data[key] = formData[key]; });
+        break;
+      }
+      default:
+        if (section?.startsWith('dynamic_')) {
+          const fsName = section.replace('dynamic_', '').replace(/_/g, ' ');
+          const fs = fieldsets.find(f => f.name.toLowerCase() === fsName);
+          fs?.keys.forEach(key => { data[key] = formData[key]; });
+        }
         break;
     }
 
@@ -771,18 +876,93 @@ function EditDialog({
           </div>
         );
 
+      case 'plugins': {
+        const pluginFieldset = fieldsets.find(fs => fs.name === "Registry Plugins");
+        if (!pluginFieldset) return null;
+        return (
+          <div className="divide-y max-h-[60vh] overflow-y-auto">
+            {pluginFieldset.keys.map(key => {
+              const schemaDef = schema.find(s => s.key === key);
+              return (
+                <div key={key} className="flex items-center justify-between py-3">
+                  <div className="space-y-0.5">
+                    <Label>{schemaDef?.description || key}</Label>
+                  </div>
+                  <Switch
+                    checked={!!formData[key]}
+                    onCheckedChange={(checked) => handleChange(key as keyof ConfigData, checked)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+
       default:
+        if (section?.startsWith('dynamic_')) {
+          const fsName = section.replace('dynamic_', '').replace(/_/g, ' ');
+          const fs = fieldsets.find(f => f.name.toLowerCase() === fsName);
+          if (!fs) return null;
+          return (
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+              {fs.keys.map(key => {
+                const schemaDef = schema.find(s => s.key === key);
+                const valueType = schemaDef?.value_type || 'str';
+                if (valueType === 'bool') {
+                  return (
+                    <div key={key} className="flex items-center justify-between py-3 border-b last:border-0">
+                      <div className="space-y-0.5">
+                        <Label>{schemaDef?.description || key}</Label>
+                      </div>
+                      <Switch
+                        checked={!!formData[key]}
+                        onCheckedChange={(checked) => handleChange(key as keyof ConfigData, checked)}
+                      />
+                    </div>
+                  );
+                }
+                return (
+                  <div key={key} className="grid gap-2">
+                    <Label htmlFor={key}>{schemaDef?.description || key}</Label>
+                    <Input
+                      id={key}
+                      type={valueType === 'int' ? 'number' : 'text'}
+                      placeholder={schemaDef?.default_value || ''}
+                      value={formData[key] ?? ''}
+                      onChange={(e) => handleChange(
+                        key as keyof ConfigData,
+                        valueType === 'int' ? Number(e.target.value) : e.target.value
+                      )}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }
         return null;
     }
   };
 
-  const titles = {
+  const titles: Record<string, string> = {
     administration: 'Edit Administration Settings',
     email: 'Edit Email Settings',
     data_retention: 'Edit Data Retention Settings',
     api_keys: 'Edit API Keys',
     features: 'Edit Features',
     platform: 'Edit Platform Details',
+    plugins: 'Edit Plugin Registry',
+  };
+
+  const getTitle = (s: string) => {
+    if (titles[s]) return titles[s];
+    if (s.startsWith('dynamic_')) {
+      const fsName = s.replace('dynamic_', '').replace(/_/g, ' ');
+      const fs = fieldsets.find(f => f.name.toLowerCase() === fsName);
+      return `Edit ${fs?.name || 'Settings'}`;
+    }
+    return 'Edit Settings';
   };
 
   if (!section) return null;
@@ -792,7 +972,7 @@ function EditDialog({
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit} className="space-y-6">
           <DialogHeader>
-            <DialogTitle>{titles[section]}</DialogTitle>
+            <DialogTitle>{getTitle(section)}</DialogTitle>
             <DialogDescription>Update your platform settings.</DialogDescription>
           </DialogHeader>
           {renderContent()}
