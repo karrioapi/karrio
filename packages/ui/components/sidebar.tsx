@@ -118,6 +118,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: [
         { title: "Console", url: "/admin" },
         { title: "Staff & Permissions", url: "/admin/staff" },
+        { title: "Carrier Network", url: "/admin/carriers" },
       ],
     }] : []),
   ];
