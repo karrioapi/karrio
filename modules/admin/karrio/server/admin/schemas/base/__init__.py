@@ -61,46 +61,18 @@ class Query:
         resolver=types.PermissionGroupType.resolve_list
     )
 
-    carrier_connections: utils.Connection[types.AccountCarrierConnectionType] = strawberry.field(
-        resolver=types.AccountCarrierConnectionType.resolve_list
-    )
-    carrier_connection: typing.Optional[types.AccountCarrierConnectionType] = strawberry.field(
-        resolver=types.AccountCarrierConnectionType.resolve
-    )
-
-    shipments: utils.Connection[types.SystemShipmentType] = strawberry.field(
-        resolver=types.SystemShipmentType.resolve_list
-    )
-    shipment: typing.Optional[types.SystemShipmentType] = strawberry.field(
-        resolver=types.SystemShipmentType.resolve
-    )
-
-    trackers: utils.Connection[types.SystemTrackerType] = strawberry.field(
-        resolver=types.SystemTrackerType.resolve_list
-    )
-    tracker: typing.Optional[types.SystemTrackerType] = strawberry.field(
-        resolver=types.SystemTrackerType.resolve
-    )
-
-    orders: utils.Connection[types.SystemOrderType] = strawberry.field(
-        resolver=types.SystemOrderType.resolve_list
-    )
-    order: typing.Optional[types.SystemOrderType] = strawberry.field(
-        resolver=types.SystemOrderType.resolve
-    )
-
-    account: typing.Optional[types.OrganizationAccountType] = strawberry.field(
-        resolver=types.OrganizationAccountType.resolve
-    )
-    accounts: utils.Connection[types.OrganizationAccountType] = strawberry.field(
-        resolver=types.OrganizationAccountType.resolve_list
-    )
-
     task_executions: utils.Connection[types.TaskExecutionType] = strawberry.field(
         resolver=types.TaskExecutionType.resolve_list
     )
     worker_health: types.WorkerHealthType = strawberry.field(
         resolver=types.WorkerHealthType.resolve
+    )
+
+    config_fieldsets: typing.List[types.ConfigFieldsetType] = strawberry.field(
+        resolver=types.ConfigFieldsetType.resolve_list
+    )
+    config_schema: typing.List[types.ConfigSchemaItemType] = strawberry.field(
+        resolver=types.ConfigSchemaItemType.resolve_list
     )
 
 
@@ -310,41 +282,3 @@ class Mutation:
         self, info: Info, input: inputs.base.UpdateServiceSurchargeIdsMutationInput
     ) -> mutations.UpdateServiceSurchargeIdsMutation:
         return mutations.UpdateServiceSurchargeIdsMutation.mutate(info, **input.to_dict())
-
-    @strawberry.mutation
-    def create_organization_account(
-        self, info: Info, input: inputs.CreateOrganizationAccountMutationInput
-    ) -> mutations.CreateOrganizationAccountMutation:
-        return mutations.CreateOrganizationAccountMutation.mutate(
-            info, **input.to_dict()
-        )
-
-    @strawberry.mutation
-    def update_organization_account(
-        self, info: Info, input: inputs.UpdateOrganizationAccountMutationInput
-    ) -> mutations.UpdateOrganizationAccountMutation:
-        return mutations.UpdateOrganizationAccountMutation.mutate(
-            info, **input.to_dict()
-        )
-
-    @strawberry.mutation
-    def disable_organization_account(
-        self, info: Info, input: inputs.DisableOrganizationAccountMutationInput
-    ) -> mutations.DisableOrganizationAccountMutation:
-        return mutations.DisableOrganizationAccountMutation.mutate(
-            info, **input.to_dict()
-        )
-
-    @strawberry.mutation
-    def delete_organization_account(
-        self, info: Info, input: inputs.DeleteOrganizationAccountMutationInput
-    ) -> mutations.DeleteOrganizationAccountMutation:
-        return mutations.DeleteOrganizationAccountMutation.mutate(
-            info, **input.to_dict()
-        )
-
-    @strawberry.mutation
-    def invite_organization_user(
-        self, info: Info, input: inputs.InviteOrganizationUserMutationInput
-    ) -> mutations.InviteOrganizationUserMutation:
-        return mutations.InviteOrganizationUserMutation.mutate(info, **input.to_dict())

@@ -4,10 +4,7 @@ from django.conf import settings
 
 import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
-import karrio.server.orgs.utils as orgs_utils
 import karrio.server.graph.schemas.base.inputs as base
-import karrio.server.graph.schemas.orgs.inputs as orgs_inputs
-import karrio.server.graph.schemas.orders.inputs as orders_inputs
 
 
 @strawberry.input
@@ -18,48 +15,6 @@ class UserFilter(utils.Paginated):
     is_active: typing.Optional[bool] = strawberry.UNSET
     is_superuser: typing.Optional[bool] = strawberry.UNSET
     order_by: typing.Optional[str] = strawberry.UNSET
-
-
-@strawberry.input
-class AccountFilter(orgs_inputs.OrgFilter):
-    pass
-
-
-@strawberry.input
-class CreateOrganizationAccountMutationInput(utils.BaseInput):
-    name: str
-    slug: typing.Optional[str] = strawberry.UNSET
-    is_active: typing.Optional[bool] = strawberry.UNSET
-
-
-@strawberry.input
-class UpdateOrganizationAccountMutationInput(utils.BaseInput):
-    id: str
-    name: typing.Optional[str] = strawberry.UNSET
-    slug: typing.Optional[str] = strawberry.UNSET
-    is_active: typing.Optional[bool] = strawberry.UNSET
-
-
-@strawberry.input
-class DeleteOrganizationAccountMutationInput(utils.BaseInput):
-    id: str
-
-
-@strawberry.input
-class DisableOrganizationAccountMutationInput(utils.BaseInput):
-    id: str
-
-
-@strawberry.input
-class InviteOrganizationUserMutationInput(utils.BaseInput):
-    email: str
-    roles: typing.List[orgs_utils.OrganizationUserRole] = strawberry.UNSET
-    is_owner: bool = strawberry.UNSET
-
-
-@strawberry.input
-class AccountCarrierConnectionFilter(base.CarrierFilter):
-    account_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -194,22 +149,4 @@ InstanceConfigMutationInput = strawberry.input(
 class ResourceUsageFilter(utils.UsageFilter):
     carrier_connection_id: typing.Optional[str] = strawberry.UNSET
     markup_id: typing.Optional[str] = strawberry.UNSET
-    account_id: typing.Optional[str] = strawberry.UNSET
-
-
-@strawberry.input
-class SystemShipmentFilter(base.ShipmentFilter):
-    """Admin-specific shipment filter with additional account filtering"""
-    account_id: typing.Optional[str] = strawberry.UNSET
-
-
-@strawberry.input
-class SystemTrackerFilter(base.TrackerFilter):
-    """Admin-specific tracker filter with additional account filtering"""
-    account_id: typing.Optional[str] = strawberry.UNSET
-
-
-@strawberry.input
-class SystemOrderFilter(orders_inputs.OrderFilter):
-    """Admin-specific order filter with additional account filtering"""
     account_id: typing.Optional[str] = strawberry.UNSET

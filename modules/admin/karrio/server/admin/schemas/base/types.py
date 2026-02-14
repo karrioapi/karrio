@@ -7,21 +7,14 @@ from strawberry.types import Info
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.iam.models as iam
-import karrio.server.orgs.models as orgs
-import karrio.server.orgs.utils as orgs_utils
 import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
 import karrio.server.core.filters as filters
 import karrio.server.pricing.models as pricing
 import karrio.server.manager.models as manager
-import karrio.server.orgs.filters as org_filters
 import karrio.server.providers.models as providers
-import karrio.server.orders.models as orders_models
 import karrio.server.graph.schemas.base.types as base
 import karrio.server.admin.schemas.base.inputs as inputs
-import karrio.server.graph.schemas.orders.types as orders_types
-import karrio.server.graph.schemas.orgs.types as org_types
-import karrio.server.graph.schemas.orgs.inputs as org_inputs
 
 
 PRIVATE_CONFIGS = [
@@ -106,204 +99,6 @@ class PermissionGroupType:
 
 
 @strawberry.type
-class AccountUsageType(org_types.OrgUsageType):
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def resolve(
-        info,
-        filter: org_inputs.OrgUsageFilter = strawberry.UNSET,
-    ) -> "AccountUsageType":
-        _filter = filter.to_dict() if not utils.is_unset(filter) else {}
-
-        org = orgs.Organization.objects.get(id=_filter.pop("id"))
-        usage = org_types.OrgUsageType.resolve_usage(
-            info, org, filter=org_inputs.OrgUsageFilter(**_filter)
-        )
-
-        return AccountUsageType(**usage)
-
-
-@strawberry.type
-class OrganizationAccountType:
-    id: str
-    name: str
-    slug: str
-    is_active: bool
-    created: datetime.datetime
-    modified: datetime.datetime
-    metadata: typing.Optional[utils.JSON] = None
-
-    @strawberry.field
-    def members(
-        self: orgs.Organization,
-    ) -> typing.List[org_types.OrganizationMemberType]:
-        users = [
-            org_types.OrganizationMemberType(  # type: ignore
-                email=user.email,
-                full_name=user.full_name,
-                last_login=user.last_login,
-                is_owner=self.is_owner(user),
-                roles=self.organization_users.get(user=user).roles,
-                is_admin=self.organization_users.get(user=user).is_admin,
-                user_id=str(user.id),
-                metadata=self.organization_users.get(user=user).metadata or {},
-            )
-            for user in self.users.filter(is_active=True)
-        ]
-        invites = [
-            org_types.OrganizationMemberType(  # type: ignore
-                email=getattr(invite.invitee, "email", invite.invitee_identifier),
-                full_name=getattr(invite.invitee, "full_name", ""),
-                is_admin=False,
-                is_owner=False,
-                invitation=invite,
-                roles=[orgs_utils.OrganizationUserRole.member],
-                user_id=str(invite.invitee.id) if invite.invitee else None,
-            )
-            for invite in self.organization_invites.all()
-        ]
-
-        return users + invites
-
-    @strawberry.field
-    def usage(
-        self: orgs.Organization,
-        info: Info,
-        filter: typing.Optional[org_inputs.OrgUsageFilter] = strawberry.UNSET,
-    ) -> AccountUsageType:
-        _filter = {
-            "id": self.id,
-            **(filter.to_dict() if not utils.is_unset(filter) else {}),
-        }
-        return AccountUsageType.resolve(
-            info, filter=org_inputs.OrgUsageFilter(**_filter)
-        )
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def resolve(
-        info, id: typing.Optional[str] = strawberry.UNSET
-    ) -> typing.Optional["OrganizationAccountType"]:
-        return orgs.Organization.objects.filter(id=id).first()
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.AccountFilter] = strawberry.UNSET,
-    ) -> utils.Connection["OrganizationAccountType"]:
-        _filter = filter if not utils.is_unset(filter) else inputs.AccountFilter()
-        queryset = org_filters.OrgFilters(
-            _filter.to_dict(), orgs.Organization.objects.filter()
-        ).qs
-        return utils.paginated_connection(queryset, **_filter.pagination())
-
-
-@strawberry.type
-class AccountCarrierConnectionType(base.SystemConnectionType):
-
-    @strawberry.field
-    def account_id(self: providers.CarrierConnection) -> typing.Optional[str]:
-        return getattr(self.org.first(), "id", None)
-
-    @strawberry.field
-    def account(self: providers.CarrierConnection) -> typing.Optional[OrganizationAccountType]:
-        return self.org.first()
-
-    @strawberry.field
-    def usage(
-        self: providers.CarrierConnection,
-        info: Info,
-        filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
-    ) -> "ResourceUsageType":
-        # Create a new filter with carrier_connection_id added
-        base_filter = filter.to_dict() if not utils.is_unset(filter) else {}
-        enhanced_filter = utils.UsageFilter(
-            date_after=base_filter.get("date_after", strawberry.UNSET),
-            date_before=base_filter.get("date_before", strawberry.UNSET),
-            omit=base_filter.get("omit", strawberry.UNSET),
-        )
-
-        # Create a custom filter dict that includes carrier_connection_id for internal usage
-        import types as python_types
-
-        # Add carrier_connection_id to the filter for internal processing
-        enhanced_filter_dict = enhanced_filter.to_dict()
-        enhanced_filter_dict["carrier_connection_id"] = self.id
-
-        # Create a mock filter object that includes the carrier_connection_id
-        mock_filter = python_types.SimpleNamespace(**enhanced_filter_dict)
-        mock_filter.to_dict = lambda: enhanced_filter_dict
-
-        return ResourceUsageType.resolve_usage(info, filter=mock_filter)
-
-    @strawberry.field
-    def config(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
-        """Get the connection's config (CarrierConnection owns its config directly)."""
-        return self.config
-
-    @strawberry.field
-    def shipments(
-        self: providers.CarrierConnection,
-        info: Info,
-        filter: typing.Optional[inputs.SystemShipmentFilter] = strawberry.UNSET,
-    ) -> utils.Connection["SystemShipmentType"]:
-        _filter = (
-            filter if not utils.is_unset(filter) else inputs.SystemShipmentFilter()
-        )
-        _filter_data = _filter.to_dict()
-        queryset = filters.ShipmentFilters(
-            _filter_data, self.related_shipments.filter()
-        ).qs
-
-        return utils.paginated_connection(queryset, **_filter.pagination())
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def resolve(info, id: str) -> typing.Optional["AccountCarrierConnectionType"]:
-        _test_mode = getattr(info.context.request, "test_mode", False)
-        # CarrierConnection.objects now only contains user/org-owned connections
-        # (SystemConnection is a separate model)
-        return providers.CarrierConnection.objects.filter(
-            id=id, test_mode=_test_mode
-        ).first()
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[
-            inputs.AccountCarrierConnectionFilter
-        ] = strawberry.UNSET,
-    ) -> typing.List["AccountCarrierConnectionType"]:
-        _filter = (
-            filter
-            if not utils.is_unset(filter)
-            else inputs.AccountCarrierConnectionFilter()
-        )
-        _filter_data = _filter.to_dict()
-        _test_mode = getattr(info.context.request, "test_mode", False)
-        _org_id = lib.identity(
-            dict(link__org__id=_filter_data.get("account_id"))
-            if _filter_data.get("account_id")
-            else {}
-        )
-
-        # CarrierConnection.objects now only contains user/org-owned connections
-        queryset = filters.CarrierFilters(
-            _filter_data,
-            providers.CarrierConnection.objects.filter(test_mode=_test_mode, **_org_id),
-        ).qs
-
-        return utils.paginated_connection(queryset, **_filter.pagination())
-
-
-@strawberry.type
 class SystemCarrierConnectionType(base.CarrierConnectionType):
     """Admin type for system carrier connections.
 
@@ -346,10 +141,10 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
     def shipments(
         self: providers.SystemConnection,
         info: Info,
-        filter: typing.Optional[inputs.SystemShipmentFilter] = strawberry.UNSET,
-    ) -> utils.Connection["SystemShipmentType"]:
+        filter: typing.Optional[inputs.base.ShipmentFilter] = strawberry.UNSET,
+    ) -> utils.Connection[base.ShipmentType]:
         _filter = (
-            filter if not utils.is_unset(filter) else inputs.SystemShipmentFilter()
+            filter if not utils.is_unset(filter) else inputs.base.ShipmentFilter()
         )
         _filter_data = _filter.to_dict()
         # Query shipments that used this system connection via brokered connections
@@ -477,6 +272,45 @@ InstanceConfigType = strawberry.type(
         },
     )
 )
+
+
+@strawberry.type
+class ConfigFieldsetType:
+    name: str
+    keys: typing.List[str]
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.staff_required
+    def resolve_list(info: Info) -> typing.List["ConfigFieldsetType"]:
+        fieldsets = getattr(conf.settings, "CONSTANCE_CONFIG_FIELDSETS", {})
+        return [
+            ConfigFieldsetType(name=name, keys=list(keys))
+            for name, keys in fieldsets.items()
+        ]
+
+
+@strawberry.type
+class ConfigSchemaItemType:
+    key: str
+    description: str
+    value_type: str
+    default_value: typing.Optional[str] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.staff_required
+    def resolve_list(info: Info) -> typing.List["ConfigSchemaItemType"]:
+        config = getattr(conf.settings, "CONSTANCE_CONFIG", {})
+        return [
+            ConfigSchemaItemType(
+                key=key,
+                description=definition[1] if len(definition) > 1 else "",
+                value_type=type(definition[0]).__name__,
+                default_value=str(definition[0]) if definition[0] is not None else None,
+            )
+            for key, definition in config.items()
+        ]
 
 
 @strawberry.type
@@ -675,126 +509,6 @@ class ResourceUsageType:
 
 
 @strawberry.type
-class SystemShipmentType(base.ShipmentType):
-    """System-specific shipment type with account context and non-private data"""
-
-    @strawberry.field
-    def account_id(self: manager.Shipment) -> typing.Optional[str]:
-        return getattr(self.org.first(), "id", None)
-
-    @strawberry.field
-    def account(self: manager.Shipment) -> typing.Optional[OrganizationAccountType]:
-        return self.org.first()
-
-    @staticmethod
-    @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["SystemShipmentType"]:
-        _test_mode = getattr(info.context.request, "test_mode", False)
-        return manager.Shipment.objects.filter(id=id, test_mode=_test_mode).first()
-
-    @staticmethod
-    @utils.authentication_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.SystemShipmentFilter] = strawberry.UNSET,
-    ) -> utils.Connection["SystemShipmentType"]:
-        _filter = (
-            filter if not utils.is_unset(filter) else inputs.SystemShipmentFilter()
-        )
-        _filter_data = _filter.to_dict()
-        _org_id = lib.identity(
-            dict(org__id=_filter_data.get("account_id"))
-            if _filter_data.get("account_id")
-            else {}
-        )
-        _test_mode = dict(test_mode=getattr(info.context.request, "test_mode", False))
-
-        queryset = filters.ShipmentFilters(
-            _filter_data, manager.Shipment.objects.filter(**{**_test_mode, **_org_id})
-        ).qs
-        return utils.paginated_connection(queryset, **_filter.pagination())
-
-
-@strawberry.type
-class SystemTrackerType(base.TrackerType):
-    """Admin-specific tracker type with account context and non-private data"""
-
-    @strawberry.field
-    def account_id(self: manager.Tracking) -> typing.Optional[str]:
-        return getattr(self.org.first(), "id", None)
-
-    @strawberry.field
-    def account(self: manager.Tracking) -> typing.Optional[OrganizationAccountType]:
-        return self.org.first()
-
-    @staticmethod
-    @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["SystemTrackerType"]:
-        _test_mode = getattr(info.context.request, "test_mode", False)
-        return manager.Tracking.objects.filter(id=id, test_mode=_test_mode).first()
-
-    @staticmethod
-    @utils.authentication_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.SystemTrackerFilter] = strawberry.UNSET,
-    ) -> utils.Connection["SystemTrackerType"]:
-        _filter = filter if not utils.is_unset(filter) else inputs.SystemTrackerFilter()
-        _filter_data = _filter.to_dict()
-        _org_id = lib.identity(
-            dict(org__id=_filter_data.get("account_id"))
-            if _filter_data.get("account_id")
-            else {}
-        )
-        _test_mode = dict(test_mode=getattr(info.context.request, "test_mode", False))
-
-        queryset = filters.TrackerFilters(
-            _filter_data, manager.Tracking.objects.filter(**{**_test_mode, **_org_id})
-        ).qs
-        return utils.paginated_connection(queryset, **_filter.pagination())
-
-
-@strawberry.type
-class SystemOrderType(orders_types.OrderType):
-    """Admin-specific order type with account context and non-private data"""
-
-    @strawberry.field
-    def account_id(self: orders_models.Order) -> typing.Optional[str]:
-        return getattr(self.org.first(), "id", None)
-
-    @strawberry.field
-    def account(self: orders_models.Order) -> typing.Optional[OrganizationAccountType]:
-        return self.org.first()
-
-    @staticmethod
-    @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["SystemOrderType"]:
-        _test_mode = getattr(info.context.request, "test_mode", False)
-        return orders_models.Order.objects.filter(id=id, test_mode=_test_mode).first()
-
-    @staticmethod
-    @utils.authentication_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.SystemOrderFilter] = strawberry.UNSET,
-    ) -> utils.Connection["SystemOrderType"]:
-        _filter = filter if not utils.is_unset(filter) else inputs.SystemOrderFilter()
-        _filter_data = _filter.to_dict()
-        _org_id = lib.identity(
-            dict(org__id=_filter_data.get("account_id"))
-            if _filter_data.get("account_id")
-            else {}
-        )
-        _test_mode = dict(test_mode=getattr(info.context.request, "test_mode", False))
-
-        queryset = filters.OrderFilters(
-            _filter_data,
-            orders_models.Order.objects.filter(**{**_test_mode, **_org_id}),
-        ).qs
-        return utils.paginated_connection(queryset, **_filter.pagination())
-
-
-@strawberry.type
 class MarkupType:
     """Admin GraphQL type for Markup model (formerly AddonType/Surcharge)."""
 
@@ -820,17 +534,6 @@ class MarkupType:
         return self.connection_ids or []
 
     @strawberry.field
-    def account_id(self: pricing.Markup) -> typing.Optional[str]:
-        return (self.organization_ids or [None])[0]
-
-    @strawberry.field
-    def account(self: pricing.Markup) -> typing.Optional[OrganizationAccountType]:
-        _org_id = (self.organization_ids or [None])[0]
-        if not _org_id:
-            return None
-        return orgs.Organization.objects.filter(id=_org_id).first()
-
-    @strawberry.field
     def organization_ids(self: pricing.Markup) -> typing.List[str]:
         return self.organization_ids or []
 
@@ -838,18 +541,16 @@ class MarkupType:
     def shipments(
         self: pricing.Markup,
         info: Info,
-        filter: typing.Optional[inputs.SystemShipmentFilter] = strawberry.UNSET,
-    ) -> typing.Optional[utils.Connection["SystemShipmentType"]]:
+        filter: typing.Optional[inputs.base.ShipmentFilter] = strawberry.UNSET,
+    ) -> typing.Optional[utils.Connection[base.ShipmentType]]:
         _filter = (
-            filter if not utils.is_unset(filter) else inputs.SystemShipmentFilter()
+            filter if not utils.is_unset(filter) else inputs.base.ShipmentFilter()
         )
         _filter_data = _filter.to_dict()
         _test_mode = getattr(info.context.request, "test_mode", False)
 
         # Get shipment IDs from Fee table (indexed lookup)
         _fee_filters = dict(markup_id=self.id, test_mode=_test_mode)
-        if _filter_data.get("account_id"):
-            _fee_filters["account_id"] = _filter_data.pop("account_id")
 
         shipment_ids = list(
             pricing.Fee.objects.filter(**_fee_filters)

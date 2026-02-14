@@ -28,15 +28,19 @@ class Query(*QUERIES):  # type: ignore
     pass
 
 
-@strawberry.type
-class Mutation(*MUTATIONS):  # type: ignore
-    pass
-
-
-schema = strawberry.federation.Schema(  # type: ignore
+schema_kwargs = dict(
     query=Query,
-    mutation=Mutation,
     types=[*EXTRA_TYPES],
     config=config.StrawberryConfig(auto_camel_case=False),
     extensions=[],
 )
+
+if MUTATIONS:
+
+    @strawberry.type
+    class Mutation(*MUTATIONS):  # type: ignore
+        pass
+
+    schema_kwargs["mutation"] = Mutation
+
+schema = strawberry.federation.Schema(**schema_kwargs)  # type: ignore

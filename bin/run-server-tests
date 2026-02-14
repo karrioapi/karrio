@@ -13,9 +13,9 @@ karrio test --failfast karrio.server.events.tests || exit 1
 karrio test --failfast karrio.server.graph.tests || exit 1
 karrio test --failfast karrio.server.orders.tests || exit 1
 karrio test --failfast karrio.server.documents.tests || exit 1
+karrio test --failfast karrio.server.admin.tests || exit 1
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
     karrio test --failfast karrio.server.orgs.tests || exit 1
     WORKER_IMMEDIATE_MODE=True karrio test --failfast karrio.server.automation.tests || exit 1
-    karrio test --failfast karrio.server.admin.tests || exit 1
 fi

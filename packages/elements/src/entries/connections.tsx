@@ -4,7 +4,7 @@ import { KarrioEmbedProvider } from "../providers/karrio-embed-provider";
 import { APIMetadataEmbedProvider } from "../providers/api-metadata-embed-provider";
 import { useAPIMetadata } from "../providers/api-metadata-embed-provider";
 import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
-import { useCarrierConnections, useCarrierConnectionForm } from "@karrio/hooks/user-connection";
+import { useEmbedConnections, useEmbedConnectionForm } from "../hooks/embed-connections";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import RateSheetEditor from "@karrio/ui/components/rate-sheet-editor";
 import { useRateSheet, useRateSheetMutation } from "../hooks/embed-rate-sheet";
@@ -24,8 +24,8 @@ interface InitConfig {
 
 function ConnectionsApp({ config }: { config: InitConfig }) {
   const { references } = useAPIMetadata();
-  const { query, user_connections } = useCarrierConnections();
-  const { handleSubmit, mutation } = useCarrierConnectionForm();
+  const { query, connections } = useEmbedConnections();
+  const { handleSubmit, mutation } = useEmbedConnectionForm();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<any>(null);
   const [rateSheetView, setRateSheetView] = useState<{
@@ -36,14 +36,14 @@ function ConnectionsApp({ config }: { config: InitConfig }) {
 
   // If a specific connectionId was provided, open it for editing once data loads
   useEffect(() => {
-    if (config.connectionId && user_connections.length > 0 && !dialogOpen) {
-      const conn = user_connections.find((c: any) => c.id === config.connectionId);
+    if (config.connectionId && connections.length > 0 && !dialogOpen) {
+      const conn = connections.find((c: any) => c.id === config.connectionId);
       if (conn) {
         setSelectedConnection(conn);
         setDialogOpen(true);
       }
     }
-  }, [config.connectionId, user_connections]);
+  }, [config.connectionId, connections]);
 
   // If carrier is specified and no connectionId, open the add dialog with carrier pre-selected
   useEffect(() => {
@@ -145,7 +145,7 @@ function ConnectionsApp({ config }: { config: InitConfig }) {
         </div>
 
         {/* Connections List */}
-        {user_connections.length === 0 ? (
+        {connections.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center">
             <p className="text-sm text-muted-foreground mb-4">
               No carrier connections configured yet.
@@ -157,7 +157,7 @@ function ConnectionsApp({ config }: { config: InitConfig }) {
           </div>
         ) : (
           <div className="rounded-lg border divide-y">
-            {user_connections.map((connection: any) => (
+            {connections.map((connection: any) => (
               <div
                 key={connection.id}
                 className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"

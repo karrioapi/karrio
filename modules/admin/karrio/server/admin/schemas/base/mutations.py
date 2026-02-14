@@ -8,16 +8,13 @@ from rest_framework import exceptions
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.iam.models as iam
-import karrio.server.orgs.models as orgs
 import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
 import karrio.server.admin.forms as forms
-import karrio.server.orgs.utils as orgs_utils
 import karrio.server.pricing.models as pricing
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
 import karrio.server.admin.schemas.base.types as types
-import karrio.server.orgs.serializers as org_serializers
 import karrio.server.admin.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.mutations as base
 import karrio.server.graph.serializers as graph_serializers
@@ -166,105 +163,6 @@ class UpdateUserMutation(utils.BaseMutation):
 @strawberry.type
 class DeleteUserMutation(base.DeleteMutation):
     id: int = strawberry.UNSET
-
-
-@strawberry.type
-class CreateOrganizationAccountMutation(utils.BaseMutation):
-    account: typing.Optional[types.OrganizationAccountType] = None
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.CreateOrganizationAccountMutationInput
-    ) -> "CreateOrganizationAccountMutation":
-        account = orgs.Organization.objects.create(**input)
-
-        return CreateOrganizationAccountMutation(
-            account=account
-        )  # type:ignore
-
-
-@strawberry.type
-class UpdateOrganizationAccountMutation(utils.BaseMutation):
-    account: typing.Optional[types.OrganizationAccountType] = None
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def mutate(
-        info: Info, id: str, **input: inputs.UpdateOrganizationAccountMutationInput
-    ) -> "UpdateOrganizationAccountMutation":
-        instance = orgs.Organization.objects.get(id=id)
-
-        for k, v in input.items():
-            setattr(instance, k, v)
-
-        if any(input.keys()):
-            instance.save()
-
-        return UpdateOrganizationAccountMutation(
-            account=orgs.Organization.objects.get(id=id)
-        )  # type:ignore
-
-
-@strawberry.type
-class DeleteOrganizationAccountMutation(utils.BaseMutation):
-    account_id: str = strawberry.UNSET
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def mutate(info: Info, id: str) -> "DeleteOrganizationAccountMutation":
-        instance = orgs.Organization.objects.get(id=id)
-
-        instance.delete()
-
-        return DeleteOrganizationAccountMutation(account_id=id)  # type:ignore
-
-
-@strawberry.type
-class DisableOrganizationAccountMutation(utils.BaseMutation):
-    account: typing.Optional[types.OrganizationAccountType] = None
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def mutate(info: Info, id: str) -> "DisableOrganizationAccountMutation":
-        instance = orgs.Organization.objects.get(id=id)
-        instance.is_active = False
-        instance.save()
-
-        return DisableOrganizationAccountMutation(account=instance)  # type:ignore
-
-
-@strawberry.type
-class InviteOrganizationUserMutation(utils.BaseMutation):
-    account: typing.Optional[types.OrganizationAccountType] = None
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def mutate(
-        info: Info,
-        id: str,
-        emails: typing.List[str],
-        redirect_url: str,
-        roles: typing.List[orgs_utils.OrganizationUserRole] = [],
-        is_owner: bool = False,
-        **kwargs,
-    ) -> "InviteOrganizationUserMutation":
-        instance = orgs.Organization.objects.get(id=id)
-        orgs.send_invitation_emails(
-            instance,
-            emails,
-            redirect_url,
-            info.context.request.user,
-            roles,
-            is_owner,
-        )
-
-        return InviteOrganizationUserMutation(account=instance)  # type:ignore
 
 
 @strawberry.type

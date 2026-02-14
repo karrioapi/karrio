@@ -3,8 +3,8 @@ import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./ka
 import { GET_CONFIGS, UPDATE_CONFIGS, GET_CONFIG_FIELDSETS, GET_CONFIG_SCHEMA } from "@karrio/types/graphql/admin/queries";
 import {
   GetConfigs,
-  GetConfigFieldsets,
-  GetConfigSchema,
+  get_config_fieldsets as GetConfigFieldsets,
+  get_config_schema as GetConfigSchema,
   UpdateConfigs,
   UpdateConfigsVariables,
 } from "@karrio/types/graphql/admin";

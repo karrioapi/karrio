@@ -897,54 +897,6 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
             active=True,
         )
 
-    def test_query_account_carrier_connections(self):
-        """Test querying user/account carrier connections through admin API."""
-        response = self.query(
-            """
-            query get_carrier_connections {
-              carrier_connections {
-                edges {
-                  node {
-                    id
-                    carrier_id
-                    carrier_name
-                    test_mode
-                  }
-                }
-              }
-            }
-            """,
-            operation_name="get_carrier_connections",
-        )
-
-        self.assertResponseNoErrors(response)
-        edges = response.data["data"]["carrier_connections"]["edges"]
-        # Should return user-owned connections
-        self.assertGreaterEqual(len(edges), 1)
-        connection_ids = [e["node"]["carrier_id"] for e in edges]
-        self.assertIn("fedex_user_account", connection_ids)
-
-    def test_query_single_account_connection(self):
-        """Test querying a specific account connection by ID."""
-        response = self.query(
-            """
-            query get_carrier_connection($id: String!) {
-              carrier_connection(id: $id) {
-                id
-                carrier_id
-                carrier_name
-              }
-            }
-            """,
-            operation_name="get_carrier_connection",
-            variables={"id": self.user_connection.id},
-        )
-
-        self.assertResponseNoErrors(response)
-        connection = response.data["data"]["carrier_connection"]
-        self.assertEqual(connection["carrier_id"], "fedex_user_account")
-        self.assertEqual(connection["carrier_name"], "fedex")
-
     def test_query_system_carrier_connections(self):
         """Test querying system carrier connections through admin API."""
         response = self.query(
@@ -1088,31 +1040,6 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
         self.assertFalse(
             providers.SystemConnection.objects.filter(id=to_delete.id).exists()
         )
-
-    def test_system_connection_not_in_account_connections(self):
-        """Ensure system connections are not returned in account connections query."""
-        response = self.query(
-            """
-            query get_carrier_connections {
-              carrier_connections {
-                edges {
-                  node {
-                    id
-                    carrier_id
-                  }
-                }
-              }
-            }
-            """,
-            operation_name="get_carrier_connections",
-        )
-
-        self.assertResponseNoErrors(response)
-        edges = response.data["data"]["carrier_connections"]["edges"]
-        connection_ids = [e["node"]["carrier_id"] for e in edges]
-        # System connection should NOT appear in carrier connections (user/org owned)
-        self.assertNotIn("ups_system_account", connection_ids)
-
 
 class TestAdminBrokeredConnections(AdminGraphTestCase):
     """Tests for BrokeredConnection edge cases.
