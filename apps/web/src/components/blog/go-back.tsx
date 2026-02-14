@@ -2,7 +2,7 @@
 
 import { useTransitionRouter } from 'next-view-transitions'
 import { usePathname } from 'next/navigation'
-import { Button } from 'nextra/components'
+import { Button } from 'nextra/components/button'
 import type { FC } from 'react'
 
 export const GoBack: FC = () => {
