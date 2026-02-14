@@ -48,11 +48,50 @@ export const ShipmentComponent = ({
     references: { carrier_capabilities = {} },
   } = useAPIMetadata();
   const entity_id = shipmentId;
-  const { query: logs } = useLogs({ entity_id });
-  const { query: events } = useEvents({ entity_id });
+  const { query: shipmentLogs } = useLogs({ entity_id });
+  const { query: shipmentEvents } = useEvents({ entity_id });
   const {
     query: { data: { shipment } = {}, ...query },
   } = useShipment(entity_id);
+  const trackerId = shipment?.tracker_id;
+  const { query: trackerLogs } = useLogs(trackerId ? { entity_id: trackerId } : { entity_id: "__none__" });
+  const { query: trackerEvents } = useEvents(trackerId ? { entity_id: trackerId } : { entity_id: "__none__" });
+
+  // Merge shipment and tracker logs/events for the activity timeline
+  const logs = React.useMemo(() => {
+    const shipmentEdges = shipmentLogs.data?.logs?.edges || [];
+    const trackerEdges = trackerId ? (trackerLogs.data?.logs?.edges || []) : [];
+    // Deduplicate by log id
+    const seen = new Set<number | string>();
+    const merged = [...shipmentEdges, ...trackerEdges].filter(({ node }) => {
+      const key = node.id;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return {
+      isFetching: shipmentLogs.isFetching || (trackerId ? trackerLogs.isFetching : false),
+      isFetched: shipmentLogs.isFetched,
+      data: { logs: { edges: merged } },
+    };
+  }, [shipmentLogs, trackerLogs, trackerId]);
+
+  const events = React.useMemo(() => {
+    const shipmentEdges = shipmentEvents.data?.events?.edges || [];
+    const trackerEdges = trackerId ? (trackerEvents.data?.events?.edges || []) : [];
+    const seen = new Set<string>();
+    const merged = [...shipmentEdges, ...trackerEdges].filter(({ node }) => {
+      const key = node.id as string;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return {
+      isFetching: shipmentEvents.isFetching || (trackerId ? trackerEvents.isFetching : false),
+      isFetched: shipmentEvents.isFetched,
+      data: { events: { edges: merged } },
+    };
+  }, [shipmentEvents, trackerEvents, trackerId]);
   const { uploadDocument } = useUploadRecordMutation();
   const { updateShipment } = useShipmentMutation(entity_id);
   const { updateMetadata } = useMetadataMutation([
@@ -228,6 +267,12 @@ export const ShipmentComponent = ({
                       <div className="text-xs mb-1 font-bold">Shipment ID</div>
                       <CopiableLink text={shipment.id as string} title="Copy ID" variant="outline" />
                     </div>
+                    {trackerId && (
+                      <div>
+                        <div className="text-xs mb-1 font-bold">Tracker ID</div>
+                        <CopiableLink text={trackerId} title="Copy Tracker ID" variant="outline" />
+                      </div>
+                    )}
                     <div>
                       <div className="text-xs mb-1 font-bold">Shipment method</div>
                       <div className="flex items-center">
