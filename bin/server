@@ -135,11 +135,6 @@ elif [[ "$*" == *build:elements* ]]; then
       mkdir -p "${ELEMENTS_STATIC}/chunks"
       cp dist/chunks/* "${ELEMENTS_STATIC}/chunks/"
     fi
-    # Copy carrier icon SVGs
-    if [ -d dist/carriers ]; then
-      mkdir -p "${ELEMENTS_STATIC}/carriers"
-      cp dist/carriers/* "${ELEMENTS_STATIC}/carriers/"
-    fi
 
     echo "✓ Elements built and copied to ${ELEMENTS_STATIC}"
     cd -

@@ -6,10 +6,12 @@ import { useAPIMetadata } from "../providers/api-metadata-embed-provider";
 import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
 import { useCarrierConnections, useCarrierConnectionForm } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
+import RateSheetEditor from "@karrio/ui/components/rate-sheet-editor";
+import { useRateSheet, useRateSheetMutation } from "../hooks/embed-rate-sheet";
 import { Toaster } from "@karrio/ui/components/ui/toaster";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Badge } from "@karrio/ui/components/ui/badge";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, FileSpreadsheet } from "lucide-react";
 import "../styles/globals.css";
 
 interface InitConfig {
@@ -26,6 +28,11 @@ function ConnectionsApp({ config }: { config: InitConfig }) {
   const { handleSubmit, mutation } = useCarrierConnectionForm();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<any>(null);
+  const [rateSheetView, setRateSheetView] = useState<{
+    rateSheetId: string;
+    carrier: string;
+    connectionId: string;
+  } | null>(null);
 
   // If a specific connectionId was provided, open it for editing once data loads
   useEffect(() => {
@@ -99,6 +106,27 @@ function ConnectionsApp({ config }: { config: InitConfig }) {
     );
   }
 
+  // Show rate sheet editor when a rate sheet is selected
+  if (rateSheetView) {
+    return (
+      <div className="bg-background text-foreground min-h-screen">
+        <RateSheetEditor
+          rateSheetId={rateSheetView.rateSheetId || "new"}
+          onClose={() => {
+            setRateSheetView(null);
+            query.refetch();
+          }}
+          preloadCarrier={rateSheetView.carrier}
+          linkConnectionId={rateSheetView.connectionId}
+          isAdmin={config.admin}
+          useRateSheet={useRateSheet}
+          useRateSheetMutation={useRateSheetMutation}
+        />
+        <Toaster />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-background text-foreground min-h-screen">
       <div className="p-6">
@@ -159,6 +187,21 @@ function ConnectionsApp({ config }: { config: InitConfig }) {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
+                  {connection.rate_sheet && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setRateSheetView({
+                        rateSheetId: connection.rate_sheet?.id,
+                        carrier: connection.carrier_name,
+                        connectionId: connection.id,
+                      })}
+                      className="h-8 w-8 p-0"
+                      title="Edit rate sheet"
+                    >
+                      <FileSpreadsheet className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"

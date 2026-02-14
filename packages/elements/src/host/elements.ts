@@ -24,6 +24,24 @@
  *     });
  *     devtools.on('close', () => devtools.unmount());
  *
+ *     // Carrier Connections
+ *     const connections = KarrioElements.mountConnections('#connections', {
+ *       host: 'https://api.karrio.io',
+ *       token: 'key_...',
+ *       iframeSrc: 'https://your-cdn/connections.html',
+ *     });
+ *     connections.on('save', (d) => console.log('connection changed', d));
+ *     connections.on('ratesheet', ({ rateSheetId, connectionId, carrier_name }) => {
+ *       // Open rate sheet editor for this connection
+ *       KarrioElements.mount('#editor', {
+ *         host: 'https://api.karrio.io',
+ *         token: 'key_...',
+ *         rateSheetId,
+ *         connectionId,
+ *         carrier: carrier_name,
+ *       });
+ *     });
+ *
  *     // Template Editor
  *     const tmpl = KarrioElements.mountTemplateEditor('#template', {
  *       host: 'https://api.karrio.io',
