@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@karrio/ui/components/ui/dropdown-menu";
 import { useOrganizationAccounts, useOrganizationAccountMutation } from "@karrio/hooks/admin-accounts";
-import { GetOrganizations_accounts_edges_node as Account } from "@karrio/types/graphql/admin/types";
+import { GetOrganizations_accounts_edges_node as Account } from "@karrio/types/graphql/admin-ee/types";
 import { MoreHorizontal, Building2, Eye } from "lucide-react";
 import { AppLink } from "@karrio/ui/core/components/app-link";
 import { Button } from "@karrio/ui/components/ui/button";

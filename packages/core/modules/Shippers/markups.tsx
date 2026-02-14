@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Search, MoreHorizontal, Edit3, Trash2, DollarSign, Percent, Zap, AlertCircle } from 'lucide-react';
 import { LineChart, Line, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useMarkups, useMarkupMutation, useMarkupForm, MarkupType } from "@karrio/hooks/admin-markups";
-import { MarkupTypeEnum } from "@karrio/types/graphql/admin";
+import { MarkupTypeEnum } from "@karrio/types/graphql/admin-ee";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { Button } from "@karrio/ui/components/ui/button";

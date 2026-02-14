@@ -6,13 +6,17 @@ import { gqlstr } from "@karrio/lib";
 import {
   GET_SYSTEM_SHIPMENTS,
   GET_SYSTEM_TRACKERS,
-  GET_ACCOUNT_CARRIER_CONNECTIONS,
 } from "@karrio/types/graphql/admin/queries";
 import {
   GetSystemTrackers,
   GetSystemShipments,
-  GetAccountCarrierConnections,
 } from "@karrio/types/graphql/admin";
+import {
+  GET_ACCOUNT_CARRIER_CONNECTIONS,
+} from "@karrio/types/graphql/admin-ee/queries";
+import {
+  GetAccountCarrierConnections,
+} from "@karrio/types/graphql/admin-ee";
 import { TrackingEventType } from "@karrio/types/base";
 import React from "react";
 

@@ -8,7 +8,7 @@ echo "================================="
 echo ""
 
 # 1. Generate OpenAPI types
-echo "1/4 Generating OpenAPI types..."
+echo "1/5 Generating OpenAPI types..."
 if [ -f "${ROOT_DIR}/bin/generate-openapi-types" ]; then
     bash "${ROOT_DIR}/bin/generate-openapi-types" && \
         echo "✓ OpenAPI types generated successfully" || \
@@ -19,7 +19,7 @@ fi
 echo ""
 
 # 2. Generate GraphQL types
-echo "2/4 Generating GraphQL types..."
+echo "2/5 Generating GraphQL types..."
 if [ -f "${ROOT_DIR}/bin/generate-graphql-types" ]; then
     bash "${ROOT_DIR}/bin/generate-graphql-types" && \
         echo "✓ GraphQL types generated successfully" || \
@@ -30,7 +30,7 @@ fi
 echo ""
 
 # 3. Generate Admin GraphQL types
-echo "3/4 Generating Admin GraphQL types..."
+echo "3/5 Generating Admin GraphQL types..."
 if [ -f "${ROOT_DIR}/bin/generate-graphql-admin-types" ]; then
     bash "${ROOT_DIR}/bin/generate-graphql-admin-types" && \
         echo "✓ Admin GraphQL types generated successfully" || \
@@ -40,8 +40,19 @@ else
 fi
 echo ""
 
-# 4. Generate EE GraphQL types
-echo "4/4 Generating EE GraphQL types..."
+# 4. Generate Admin EE GraphQL types
+echo "4/5 Generating Admin EE GraphQL types..."
+if [ -f "${ROOT_DIR}/bin/generate-graphql-admin-ee-types" ]; then
+    bash "${ROOT_DIR}/bin/generate-graphql-admin-ee-types" && \
+        echo "✓ Admin EE GraphQL types generated successfully" || \
+        echo "✗ Failed to generate Admin EE GraphQL types"
+else
+    echo "✗ generate-graphql-admin-ee-types script not found"
+fi
+echo ""
+
+# 5. Generate EE GraphQL types
+echo "5/5 Generating EE GraphQL types..."
 if [ -f "${ROOT_DIR}/bin/generate-graphql-ee-types" ]; then
     bash "${ROOT_DIR}/bin/generate-graphql-ee-types" && \
         echo "✓ EE GraphQL types generated successfully" || \
@@ -54,7 +65,8 @@ echo ""
 echo "✓ All TypeScript types generated successfully!"
 echo ""
 echo "Generated types locations:"
-echo "  - OpenAPI types:       packages/types/rest/"
-echo "  - GraphQL types:       packages/types/graphql/types.ts"
-echo "  - Admin GraphQL types: packages/types/graphql/admin/types.ts"
-echo "  - EE GraphQL types:    packages/types/graphql/ee/types.ts"
+echo "  - OpenAPI types:          packages/types/rest/"
+echo "  - GraphQL types:          packages/types/graphql/types.ts"
+echo "  - Admin GraphQL types:    packages/types/graphql/admin/types.ts"
+echo "  - Admin EE GraphQL types: packages/types/graphql/admin-ee/types.ts"
+echo "  - EE GraphQL types:       packages/types/graphql/ee/types.ts"
