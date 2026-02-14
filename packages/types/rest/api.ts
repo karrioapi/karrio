@@ -7059,7 +7059,8 @@ export interface WebhookList {
     'results': Array<Webhook>;
 }
 export interface WebhookTestRequest {
-    'payload': { [key: string]: any; };
+    'payload'?: { [key: string]: any; } | null;
+    'event_id'?: string | null;
 }
 export interface Zoom2u {
     'api_key': string;

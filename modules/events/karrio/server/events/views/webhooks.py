@@ -26,7 +26,8 @@ Webhooks = PaginatedResult("WebhookList", Webhook)
 
 
 class WebhookTestRequest(serializers.Serializer):
-    payload = PlainDictField(required=True)
+    payload = PlainDictField(required=False)
+    event_id = serializers.CharField(required=False)
 
 
 class WebhookList(GenericAPIView):
@@ -157,8 +158,24 @@ class WebhookTest(APIView):
         test a webhook.
         """
         webhook = models.Webhook.access_by(request).get(pk=pk)
+        event_id = request.data.get("event_id")
+        payload = request.data.get("payload")
 
-        notification, *_ = notify_subscribers([webhook], request.data)
+        if event_id:
+            event = models.Event.access_by(request).get(pk=event_id)
+            data = dict(event=event.type, data=event.data)
+        elif payload:
+            data = payload
+        else:
+            return Response(
+                ErrorResponse(dict(errors=[dict(
+                    message="Either 'payload' or 'event_id' is required.",
+                    code="invalid_request",
+                )])).data,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        notification, *_ = notify_subscribers([webhook], data)
         _, response = notification
         serializer = Operation(dict(operation="Test Webhook", success=response.ok))
         return Response(serializer.data)
