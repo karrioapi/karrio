@@ -102,6 +102,38 @@ export interface GetPermissionGroups {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetConfigFieldsets
+// ====================================================
+
+export interface GetConfigFieldsets_config_fieldsets {
+  name: string;
+  keys: string[];
+}
+
+export interface GetConfigFieldsets {
+  config_fieldsets: GetConfigFieldsets_config_fieldsets[];
+}
+
+// ====================================================
+// GraphQL query operation: GetConfigSchema
+// ====================================================
+
+export interface GetConfigSchema_config_schema {
+  key: string;
+  description: string;
+  value_type: string;
+  default_value: string | null;
+}
+
+export interface GetConfigSchema {
+  config_schema: GetConfigSchema_config_schema[];
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GetConfigs
 // ====================================================
 
@@ -3064,6 +3096,7 @@ export interface SystemTrackerFilter {
   created_before?: string | null;
   carrier_name?: string[] | null;
   status?: string[] | null;
+  keyword?: string | null;
   account_id?: string | null;
 }
 
@@ -3558,6 +3591,78 @@ export interface InviteOrganizationUserMutationInput {
   is_owner: boolean;
 }
 
+// null
+export interface TaskExecutionFilter {
+  status?: string | null;
+  task_name?: string | null;
+  first?: number | null;
+  offset?: number | null;
+  before?: string | null;
+  after?: string | null;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
+
+// ====================================================
+// GraphQL query operation: GetTaskExecutions
+// ====================================================
+
+export interface GetTaskExecutions_task_executions_edges_node {
+  id: string;
+  task_id: string;
+  task_name: string;
+  status: string;
+  queued_at: any | null;
+  started_at: any | null;
+  completed_at: any | null;
+  duration_ms: number | null;
+  error: string | null;
+  retries: number;
+  args_summary: string | null;
+}
+
+export interface GetTaskExecutions_task_executions_edges {
+  node: GetTaskExecutions_task_executions_edges_node;
+}
+
+export interface GetTaskExecutions_task_executions_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetTaskExecutions_task_executions {
+  edges: GetTaskExecutions_task_executions_edges[];
+  page_info: GetTaskExecutions_task_executions_page_info;
+}
+
+export interface GetTaskExecutions {
+  task_executions: GetTaskExecutions_task_executions;
+}
+
+export interface GetTaskExecutionsVariables {
+  filter?: TaskExecutionFilter | null;
+}
+
+// ====================================================
+// GraphQL query operation: GetWorkerHealth
+// ====================================================
+
+export interface GetWorkerHealth_worker_health_queue {
+  pending_count: number;
+  scheduled_count: number;
+  result_count: number;
+}
+
+export interface GetWorkerHealth_worker_health {
+  is_available: boolean;
+  queue: GetWorkerHealth_worker_health_queue | null;
+}
+
+export interface GetWorkerHealth {
+  worker_health: GetWorkerHealth_worker_health;
+}

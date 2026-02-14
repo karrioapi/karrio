@@ -2692,6 +2692,75 @@ export interface get_eventsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: get_tracing_record
+// ====================================================
+
+export interface get_tracing_record_tracing_record {
+  id: string;
+  key: string | null;
+  timestamp: number | null;
+  test_mode: boolean | null;
+  created_at: any | null;
+  meta: any | null;
+  record: any | null;
+}
+
+export interface get_tracing_record {
+  tracing_record: get_tracing_record_tracing_record | null;
+}
+
+export interface get_tracing_recordVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_tracing_records
+// ====================================================
+
+export interface get_tracing_records_tracing_records_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_tracing_records_tracing_records_edges_node {
+  id: string;
+  key: string | null;
+  timestamp: number | null;
+  test_mode: boolean | null;
+  created_at: any | null;
+  meta: any | null;
+  record: any | null;
+}
+
+export interface get_tracing_records_tracing_records_edges {
+  node: get_tracing_records_tracing_records_edges_node;
+}
+
+export interface get_tracing_records_tracing_records {
+  page_info: get_tracing_records_tracing_records_page_info;
+  edges: get_tracing_records_tracing_records_edges[];
+}
+
+export interface get_tracing_records {
+  tracing_records: get_tracing_records_tracing_records;
+}
+
+export interface get_tracing_recordsVariables {
+  filter?: TracingRecordFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: get_order
 // ====================================================
 
@@ -6614,6 +6683,16 @@ export interface EventFilter {
   date_after?: any | null;
   date_before?: any | null;
   keyword?: string | null;
+}
+
+// null
+export interface TracingRecordFilter {
+  offset?: number | null;
+  first?: number | null;
+  key?: string | null;
+  request_log_id?: number | null;
+  date_after?: any | null;
+  date_before?: any | null;
 }
 
 // null
