@@ -269,7 +269,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="border-b px-4 py-3 flex-shrink-0">
+      <div className="border-b border-border px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Badge className={`${getMethodColor(log.method)} border-none hover:bg-black`}>
@@ -284,22 +284,20 @@ const LogDetailViewer = ({ log }: { log: any }) => {
               variant="outline"
               size="sm"
               onClick={copyFullLog}
-              className="h-7 px-2 text-white"
+              className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
               title="Copy full log as JSON"
             >
               {copiedFull ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
               <span className="ml-1 text-xs">{copiedFull ? "Copied" : "Copy"}</span>
             </Button>
-            <div className="text-xs text-gray-400">
-              {formatDateTimeLong(log.requested_at)}
-            </div>
           </div>
         </div>
-        <div className="text-sm font-medium truncate text-white">
-          {log.method} {log.path}
-        </div>
-        <div className="text-xs text-gray-400 mt-1">
-          ID: {log.id} • {log.response_ms}ms • {log.remote_addr}
+        <div className="text-xs text-muted-foreground space-y-1">
+          <div className="text-sm font-medium truncate text-foreground">{log.method} {log.path}</div>
+          <div>ID: {log.id}</div>
+          {log.response_ms && <div>Response: {log.response_ms}ms</div>}
+          {log.remote_addr && <div>Remote: {log.remote_addr}</div>}
+          <div>{formatDateTimeLong(log.requested_at)}</div>
         </div>
       </div>
 
@@ -499,6 +497,15 @@ const LogListItem = ({
     return <Activity className="h-4 w-4 text-primary" />;
   };
 
+  // Extract object_id from tracing records meta if available
+  const objectId = failsafe(() => {
+    const records = log.records || [];
+    for (const r of records) {
+      if (r?.meta?.object_id) return r.meta.object_id;
+    }
+    return null;
+  });
+
   return (
     <div
       className={cn(
@@ -528,7 +535,8 @@ const LogListItem = ({
               {log.path}
             </div>
             <div className="text-xs text-neutral-400 truncate">
-              ID: {log.id} • {log.host || "Unknown"}
+              ID: {log.id}
+              {objectId && ` • ${objectId}`}
             </div>
           </div>
           <div className="text-xs text-neutral-400 flex-shrink-0">
