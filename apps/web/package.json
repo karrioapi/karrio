@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:web": "next dev -p 3005",
+    "dev:web": "next dev --webpack -p 3005",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
