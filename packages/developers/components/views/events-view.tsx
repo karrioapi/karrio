@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X, Filter, Copy, Check, Activity, Clock, Server } from "lucide-react";
+import { RefreshCw, Calendar, Package, Truck, Webhook, AlertCircle, X, Filter, Copy, Check, Activity, Clock, Server, Terminal, Play } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Card, CardContent, CardHeader } from "@karrio/ui/components/ui/card";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -9,6 +9,7 @@ import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { formatDateTimeLong, groupBy, failsafe } from "@karrio/lib";
+import { useWebhooks, useWebhookMutation } from "@karrio/hooks/webhook";
 import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import CodeMirror from "@uiw/react-codemirror";
@@ -68,6 +69,36 @@ const parseRecordData = (record: any) => {
   }
 
   return rawData;
+};
+
+// Generate cURL command from a carrier tracing record
+const generateTracingCurlCommand = (request: any): string | null => {
+  if (!request?.record) return null;
+
+  const record = request.record;
+  const url = record.url;
+  if (!url) return null;
+
+  const format = record.format || "json";
+  const contentType = format === "xml"
+    ? "application/xml"
+    : "application/json";
+
+  const parts: string[] = [`curl -X POST`];
+  parts.push(`  '${url}'`);
+  parts.push(`  -H 'Content-Type: ${contentType}'`);
+
+  const rawData = record.data;
+  if (rawData) {
+    const body = typeof rawData === "object"
+      ? JSON.stringify(rawData)
+      : String(rawData);
+    if (body && body !== "{}" && body !== "null") {
+      parts.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
+    }
+  }
+
+  return parts.join(" \\\n");
 };
 
 // Timeline tab showing tracing records from associated API logs
@@ -155,6 +186,23 @@ const EventTimelineTab = ({ entityId }: { entityId: string | undefined }) => {
                     {response?.timestamp && (
                       <div>Response: {moment(response.timestamp * 1000).format("LTS")}</div>
                     )}
+                    {request && (() => {
+                      const curl = generateTracingCurlCommand(request);
+                      return curl ? (
+                        <div className="flex items-center justify-between border border-neutral-800 rounded-md px-3 py-2 mt-2">
+                          <span className="text-sm font-medium text-gray-300">cURL</span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => { e.stopPropagation(); copyToClipboard(curl); }}
+                            className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
+                          >
+                            <Terminal className="h-3 w-3 mr-1" />
+                            <span className="text-xs">Copy</span>
+                          </Button>
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                 </div>
               </CardHeader>
@@ -246,6 +294,11 @@ const EventTimelineTab = ({ entityId }: { entityId: string | undefined }) => {
 const EventDetailViewer = ({ event }: { event: any }) => {
   const [copiedFull, setCopiedFull] = useState(false);
   const [activeTab, setActiveTab] = useState<"timeline" | "data">("data");
+  const [showReplayDropdown, setShowReplayDropdown] = useState(false);
+  const [replayStatus, setReplayStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const { query: webhooksQuery } = useWebhooks();
+  const { replayEvent } = useWebhookMutation();
+  const webhooks = webhooksQuery.data?.webhooks?.edges || [];
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -256,6 +309,19 @@ const EventDetailViewer = ({ event }: { event: any }) => {
     navigator.clipboard.writeText(fullEvent);
     setCopiedFull(true);
     setTimeout(() => setCopiedFull(false), 2000);
+  };
+
+  const handleReplay = async (webhookId: string) => {
+    setReplayStatus("loading");
+    try {
+      await replayEvent.mutateAsync({ webhookId, eventId: event.id });
+      setReplayStatus("success");
+      setTimeout(() => setReplayStatus("idle"), 2000);
+    } catch {
+      setReplayStatus("error");
+      setTimeout(() => setReplayStatus("idle"), 2000);
+    }
+    setShowReplayDropdown(false);
   };
 
   if (!event) {
@@ -295,6 +361,57 @@ const EventDetailViewer = ({ event }: { event: any }) => {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
+            <div className="relative">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowReplayDropdown(!showReplayDropdown)}
+                disabled={replayStatus === "loading"}
+                className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
+                title="Replay event to a webhook"
+              >
+                {replayStatus === "loading" ? (
+                  <RefreshCw className="h-3 w-3 animate-spin" />
+                ) : replayStatus === "success" ? (
+                  <Check className="h-3 w-3 text-green-400" />
+                ) : replayStatus === "error" ? (
+                  <AlertCircle className="h-3 w-3 text-red-400" />
+                ) : (
+                  <Play className="h-3 w-3" />
+                )}
+                <span className="ml-1 text-xs">
+                  {replayStatus === "loading" ? "Sending..." : replayStatus === "success" ? "Sent" : replayStatus === "error" ? "Failed" : "Replay"}
+                </span>
+              </Button>
+              {showReplayDropdown && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setShowReplayDropdown(false)} />
+                  <div className="absolute right-0 top-full mt-1 w-64 bg-popover border border-border rounded-md shadow-lg z-20">
+                    <div className="p-2">
+                      <div className="text-xs font-medium text-muted-foreground px-2 py-1 mb-1">Send to webhook</div>
+                      {webhooksQuery.isFetching && (
+                        <div className="flex items-center justify-center py-4">
+                          <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
+                        </div>
+                      )}
+                      {!webhooksQuery.isFetching && webhooks.length === 0 && (
+                        <div className="text-xs text-muted-foreground px-2 py-4 text-center">No webhooks configured</div>
+                      )}
+                      {!webhooksQuery.isFetching && webhooks.map(({ node: webhook }: any) => (
+                        <button
+                          key={webhook.id}
+                          onClick={() => handleReplay(webhook.id)}
+                          className="w-full text-left px-2 py-1.5 text-xs rounded hover:bg-primary/20 text-foreground truncate"
+                        >
+                          <div className="font-medium truncate">{webhook.url}</div>
+                          <div className="text-muted-foreground truncate">{webhook.id}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
             <Button
               variant="outline"
               size="sm"

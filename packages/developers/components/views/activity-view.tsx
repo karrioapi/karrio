@@ -1,26 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { LineChart, Line, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useDeveloperTools } from "@karrio/developers/context/developer-tools-context";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { Eye, EyeOff, Copy, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Badge } from "@karrio/ui/components/ui/badge";
-import { useAPIToken } from "@karrio/hooks/api-token";
 import { useAPIUsage } from "@karrio/hooks/usage";
 import { formatDateTimeLong } from "@karrio/lib";
 import { useLogs } from "@karrio/hooks/log";
 import moment from "moment";
 
 export function ActivityView() {
-  const [showSecretKey, setShowSecretKey] = useState(false);
   const { setCurrentView } = useDeveloperTools();
 
-  // Fetch API metadata, usage, token, and logs data
-  const { references, metadata } = useAPIMetadata();
+  // Fetch API metadata, usage, and logs data
+  const { references } = useAPIMetadata();
   const {
     query: { data: { usage } = {} },
     setFilter,
@@ -30,12 +28,10 @@ export function ActivityView() {
     currentFilter,
   } = useAPIUsage();
 
-  const { query: { data: { token } = {} } } = useAPIToken();
-
   // Fetch recent error logs
   const { query: { data: { logs } = {} } } = useLogs({
     status: "failed",
-    first: 5 // Get only 5 recent errors
+    first: 5
   });
 
   // Combine requests and errors data for unified chart
@@ -51,19 +47,6 @@ export function ActivityView() {
   const totalRequests = usage?.total_requests || 0;
   const totalErrors = usage?.total_errors || 0;
 
-  // Get real API token data
-  const isTestMode = token?.key?.startsWith('test_') || token?.key?.includes('test');
-  const publicKey = `pk_${isTestMode ? 'test' : 'live'}_...${token?.key?.slice(-4) || 'k4$0'}`;
-  const secretKey = token?.key || "sk_test_...bH2E";
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
-
-  const handleManageAPIKeys = () => {
-    setCurrentView("api-keys");
-  };
-
   const handleViewAllRequests = () => {
     setCurrentView("logs");
   };
@@ -74,10 +57,10 @@ export function ActivityView() {
   return (
     <div className="h-full overflow-auto bg-background">
       <div className="p-2 sm:p-4 space-y-4 sm:space-y-6">
-        {/* Top Row: API Requests Chart + API Keys */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-          {/* API Requests Chart - Full width on mobile, 2/3 on desktop */}
-          <div className="lg:col-span-2">
+        {/* Top Row: Chart (3/5) + Sidebar (2/5) */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
+          {/* API Requests Chart */}
+          <div className="lg:col-span-3">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-foreground">API requests</h3>
               <Select
@@ -108,7 +91,7 @@ export function ActivityView() {
               </div>
             </div>
 
-            <div style={{ width: "100%", height: "160px" }} className="sm:h-[200px]">
+            <div style={{ width: "100%", height: "200px" }} className="sm:h-[220px]">
               {usage?.api_requests && (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
@@ -171,144 +154,79 @@ export function ActivityView() {
             </div>
           </div>
 
-          {/* API Keys Section */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-foreground">API keys</h3>
-              <Button
-                variant="link"
-                size="sm"
-                className="text-xs sm:text-sm text-primary hover:text-primary/80 p-0 h-auto"
-                onClick={handleManageAPIKeys}
-              >
-                Manage API keys
-              </Button>
-            </div>
-            <div className="space-y-2">
-              <div className="text-xs text-muted-foreground mb-1">Standard keys</div>
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground text-xs sm:text-sm">Publishable key</span>
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <code className="text-xs bg-muted border border-border text-foreground px-1 sm:px-2 py-1 rounded truncate max-w-[100px] sm:max-w-none">{publicKey}</code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(publicKey)}
-                      className="h-5 w-5 sm:h-6 sm:w-6 p-0"
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground text-xs sm:text-sm">Secret key</span>
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <code className="text-xs bg-muted border border-border text-foreground px-1 sm:px-2 py-1 rounded truncate max-w-[100px] sm:max-w-none">
-                      {showSecretKey ? secretKey : `${secretKey.slice(0, 7)}...`}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowSecretKey(!showSecretKey)}
-                      className="h-5 w-5 sm:h-6 sm:w-6 p-0"
-                    >
-                      {showSecretKey ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(secretKey)}
-                      className="h-5 w-5 sm:h-6 sm:w-6 p-0"
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Second Row: Recent Errors + API Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-          {/* Recent Errors - Full width on mobile, 2/3 on desktop */}
-          <div className="lg:col-span-2">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Recent errors</h3>
-            {recentErrors.length > 0 ? (
-              <div className="space-y-2">
-                {recentErrors.map(({ node: log }) => (
-                  <div key={log.id} className="flex items-center gap-2 sm:gap-3 p-2 bg-red-900/20 border border-red-900/40 rounded">
-                    <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs sm:text-sm font-medium text-red-200 truncate">
-                        {log.status_code} - {log.method} {log.path}
+          {/* Right Sidebar: Recent Errors + API Details */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Recent Errors */}
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-3">Recent errors</h3>
+              {recentErrors.length > 0 ? (
+                <div className="space-y-2">
+                  {recentErrors.map(({ node: log }) => (
+                    <div key={log.id} className="flex items-center gap-2 p-2 bg-red-900/20 border border-red-900/40 rounded">
+                      <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium text-red-200 truncate">
+                          {log.status_code} - {log.method} {log.path}
+                        </div>
+                        <div className="text-xs text-red-300">
+                          {formatDateTimeLong(log.requested_at)}
+                        </div>
                       </div>
-                      <div className="text-xs text-red-300">
-                        {formatDateTimeLong(log.requested_at)}
-                      </div>
+                      <Badge variant="destructive" className="text-xs flex-shrink-0">
+                        {log.status_code}
+                      </Badge>
                     </div>
-                    <Badge variant="destructive" className="text-xs flex-shrink-0">
-                      {log.status_code}
-                    </Badge>
-                  </div>
-                ))}
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="text-xs sm:text-sm text-[#8B5CF6] hover:text-purple-200 p-0 h-auto"
-                  onClick={handleViewAllRequests}
-                >
-                  View all logs →
-                </Button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-6 sm:py-8 text-center">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-900/20 flex items-center justify-center mb-3">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-green-500 flex items-center justify-center">
-                    <span className="text-neutral-50 text-xs">✓</span>
-                  </div>
+                  ))}
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-xs text-[#8B5CF6] hover:text-purple-200 p-0 h-auto"
+                    onClick={handleViewAllRequests}
+                  >
+                    View all logs →
+                  </Button>
                 </div>
-                <p className="text-xs sm:text-sm font-medium text-foreground">Your integration is running smoothly</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Come back here to see recent errors and recommendations
-                </p>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <div className="w-10 h-10 rounded-full bg-green-900/20 flex items-center justify-center mb-3">
+                    <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                      <span className="text-neutral-50 text-xs">✓</span>
+                    </div>
+                  </div>
+                  <p className="text-xs font-medium text-foreground">Your integration is running smoothly</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Come back here to see recent errors
+                  </p>
+                </div>
+              )}
+            </div>
 
-          {/* API Details */}
-          <div className="lg:col-span-1">
-            <h3 className="text-sm font-semibold text-foreground mb-3">API Details</h3>
-            <div className="space-y-3">
-              {/* API Version */}
+            {/* API Details */}
+            <div className="pt-4 border-t border-border space-y-3">
+              <h3 className="text-sm font-semibold text-foreground">API Details</h3>
               <div>
                 <div className="text-xs text-muted-foreground mb-1">API Version</div>
-                <code className="text-xs sm:text-sm bg-muted border border-border text-foreground px-2 py-1 rounded">{references?.VERSION}</code>
+                <code className="text-xs bg-muted border border-border text-foreground px-2 py-1 rounded">{references?.VERSION}</code>
               </div>
-
-              {/* API Endpoints */}
-              <div className="space-y-2">
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">REST API</div>
-                  <CopiableLink
-                    className="text-xs font-mono bg-muted border border-border text-foreground px-2 py-1 rounded block truncate"
-                    text={references?.HOST}
-                    title="Copy REST API URL"
-                    variant="outline"
-                    size="sm"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">GraphQL API</div>
-                  <CopiableLink
-                    className="text-xs font-mono bg-muted border border-border text-foreground px-2 py-1 rounded block truncate"
-                    text={references?.GRAPHQL}
-                    title="Copy GraphQL API URL"
-                    variant="outline"
-                    size="sm"
-                  />
-                </div>
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">REST API</div>
+                <CopiableLink
+                  className="text-xs font-mono bg-muted border border-border text-foreground px-2 py-1 rounded block truncate"
+                  text={references?.HOST}
+                  title="Copy REST API URL"
+                  variant="outline"
+                  size="sm"
+                />
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">GraphQL API</div>
+                <CopiableLink
+                  className="text-xs font-mono bg-muted border border-border text-foreground px-2 py-1 rounded block truncate"
+                  text={references?.GRAPHQL}
+                  title="Copy GraphQL API URL"
+                  variant="outline"
+                  size="sm"
+                />
               </div>
             </div>
           </div>

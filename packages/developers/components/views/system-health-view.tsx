@@ -4,26 +4,81 @@ import React from "react";
 import {
   Server,
   Database,
+  HardDrive,
+  MemoryStick,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
   Loader2,
   Cpu,
 } from "lucide-react";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { cn } from "@karrio/ui/lib/utils";
 import { useWorkerHealth, useTaskExecutions } from "@karrio/hooks/admin-worker";
+
+type HealthCheckStatus = Record<string, string>;
+
+function useSystemHealth() {
+  const { references } = useAPIMetadata();
+  const [data, setData] = React.useState<HealthCheckStatus | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const fetchHealth = React.useCallback(async () => {
+    if (!references?.HOST) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${references.HOST}/status/?format=json`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setData(json);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch health status");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [references?.HOST]);
+
+  React.useEffect(() => {
+    fetchHealth();
+  }, [fetchHealth]);
+
+  return { data, isLoading, error, refetch: fetchHealth };
+}
+
+// Map service names to icons
+function getServiceIcon(name: string) {
+  const lower = name.toLowerCase();
+  if (lower.includes("database")) return <Database className="h-4 w-4 text-blue-400" />;
+  if (lower.includes("cache")) return <Database className="h-4 w-4 text-purple-400" />;
+  if (lower.includes("disk")) return <HardDrive className="h-4 w-4 text-yellow-400" />;
+  if (lower.includes("memory")) return <MemoryStick className="h-4 w-4 text-green-400" />;
+  return <Server className="h-4 w-4 text-muted-foreground" />;
+}
+
+// Simplify service display name
+function formatServiceName(name: string) {
+  if (name.toLowerCase().includes("database")) return "Database";
+  if (name.toLowerCase().includes("cache")) return "Cache";
+  if (name.toLowerCase().includes("disk")) return "Disk";
+  if (name.toLowerCase().includes("memory")) return "Memory";
+  return name;
+}
 
 export function SystemHealthView() {
   const { health, query: healthQuery } = useWorkerHealth();
   const { executions, query: executionsQuery } = useTaskExecutions({
     first: 100,
   });
+  const systemHealth = useSystemHealth();
 
   const handleRefresh = () => {
     healthQuery.refetch();
     executionsQuery.refetch();
+    systemHealth.refetch();
   };
 
   // Compute task stats from executions
@@ -50,6 +105,11 @@ export function SystemHealthView() {
 
   const isLoading = healthQuery.isLoading || executionsQuery.isLoading;
 
+  // Determine overall system health status
+  const allServicesOk = systemHealth.data
+    ? Object.values(systemHealth.data).every((v) => v === "OK" || v === "working")
+    : false;
+
   return (
     <div className="flex flex-col h-full p-4 space-y-6">
       {/* Header */}
@@ -57,7 +117,7 @@ export function SystemHealthView() {
         <div className="flex items-center gap-2">
           <Server className="h-5 w-5 text-primary" />
           <h2 className="text-lg font-semibold text-foreground">
-            System Health
+            Health
           </h2>
         </div>
         <Button
@@ -69,16 +129,87 @@ export function SystemHealthView() {
           <RefreshCw
             className={cn(
               "h-3.5 w-3.5",
-              (healthQuery.isFetching || executionsQuery.isFetching) &&
+              (healthQuery.isFetching || executionsQuery.isFetching || systemHealth.isLoading) &&
                 "animate-spin",
             )}
           />
         </Button>
       </div>
 
+      {/* System Status (Django Health Check) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-muted-foreground">
+            System Status
+          </h3>
+          {!systemHealth.isLoading && !systemHealth.error && (
+            <Badge
+              className={cn(
+                "text-xs border-none",
+                allServicesOk
+                  ? "bg-green-500/20 text-green-400"
+                  : "bg-red-500/20 text-red-400",
+              )}
+            >
+              {allServicesOk ? "All systems operational" : "Issues detected"}
+            </Badge>
+          )}
+        </div>
+
+        {systemHealth.isLoading && (
+          <div className="flex items-center justify-center h-20 text-muted-foreground text-sm">
+            <Loader2 className="h-4 w-4 animate-spin mr-2" /> Checking services...
+          </div>
+        )}
+
+        {systemHealth.error && (
+          <div className="bg-red-900/20 border border-red-900/40 rounded-lg p-3 text-sm text-red-300">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
+              Unable to reach health endpoint: {systemHealth.error}
+            </div>
+          </div>
+        )}
+
+        {systemHealth.data && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {Object.entries(systemHealth.data).map(([service, status]) => (
+              <div
+                key={service}
+                className="bg-card border border-border rounded-lg p-3"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  {getServiceIcon(service)}
+                  <span className="text-xs text-muted-foreground">
+                    {formatServiceName(service)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {status === "OK" || status === "working" ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 text-red-400" />
+                  )}
+                  <span
+                    className={cn(
+                      "text-sm font-semibold",
+                      status === "OK" || status === "working"
+                        ? "text-green-400"
+                        : "text-red-400",
+                    )}
+                  >
+                    {status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {isLoading ? (
         <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-          <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading system
+          <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading worker
           health...
         </div>
       ) : (

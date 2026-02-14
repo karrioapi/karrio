@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Clock, Activity, Filter, RefreshCw, X, Server, Copy, Check } from "lucide-react";
+import { Clock, Activity, Filter, RefreshCw, X, Server, Copy, Check, Terminal } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@karrio/ui/components/ui/card";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -45,6 +45,36 @@ const parseRecordData = (record: any) => {
   }
 
   return rawData;
+};
+
+// Generate cURL command from a carrier tracing record
+const generateTracingCurlCommand = (request: any): string | null => {
+  if (!request?.record) return null;
+
+  const record = request.record;
+  const url = record.url;
+  if (!url) return null;
+
+  const format = record.format || "json";
+  const contentType = format === "xml"
+    ? "application/xml"
+    : "application/json";
+
+  const parts: string[] = [`curl -X POST`];
+  parts.push(`  '${url}'`);
+  parts.push(`  -H 'Content-Type: ${contentType}'`);
+
+  const rawData = record.data;
+  if (rawData) {
+    const body = typeof rawData === "object"
+      ? JSON.stringify(rawData)
+      : String(rawData);
+    if (body && body !== "{}" && body !== "null") {
+      parts.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
+    }
+  }
+
+  return parts.join(" \\\n");
 };
 
 const TracingRecordDetailViewer = ({ records }: { records: any[] | null }) => {
@@ -93,6 +123,21 @@ const TracingRecordDetailViewer = ({ records }: { records: any[] | null }) => {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
+            {(() => {
+              const curl = generateTracingCurlCommand(request);
+              return curl ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { navigator.clipboard.writeText(curl); setCopiedFull(true); setTimeout(() => setCopiedFull(false), 2000); }}
+                  className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
+                  title="Copy as cURL command"
+                >
+                  <Terminal className="h-3 w-3" />
+                  <span className="ml-1 text-xs">cURL</span>
+                </Button>
+              ) : null;
+            })()}
             <Button
               variant="outline"
               size="sm"

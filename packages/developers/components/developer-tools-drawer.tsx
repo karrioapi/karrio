@@ -110,7 +110,7 @@ const VIEW_CONFIG: Record<string, { label: string; icon: any; component: React.C
     component: GraphiQLView,
   },
   "system-health": {
-    label: "System",
+    label: "Health",
     icon: Server,
     component: SystemHealthView,
     adminOnly: true,
