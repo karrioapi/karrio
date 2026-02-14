@@ -1,8 +1,10 @@
 import { gqlstr } from "@karrio/lib";
 import { useKarrio, useAuthenticatedQuery, useAuthenticatedMutation } from "./karrio";
-import { GET_CONFIGS, UPDATE_CONFIGS } from "@karrio/types/graphql/admin/queries";
+import { GET_CONFIGS, UPDATE_CONFIGS, GET_CONFIG_FIELDSETS, GET_CONFIG_SCHEMA } from "@karrio/types/graphql/admin/queries";
 import {
   GetConfigs,
+  get_config_fieldsets as GetConfigFieldsets,
+  get_config_schema as GetConfigSchema,
   UpdateConfigs,
   UpdateConfigsVariables,
 } from "@karrio/types/graphql/admin";
@@ -27,6 +29,32 @@ export function useConfigs() {
     query,
     configs: query.data?.configs,
   };
+}
+
+// -----------------------------------------------------------
+// Config Fieldsets Hook
+// -----------------------------------------------------------
+export function useConfigFieldsets() {
+  const karrio = useKarrio();
+  const query = useAuthenticatedQuery({
+    queryKey: ['admin_config_fieldsets'],
+    queryFn: () => karrio.admin.request<GetConfigFieldsets>(gqlstr(GET_CONFIG_FIELDSETS)),
+    staleTime: 30000,
+  });
+  return { query, fieldsets: query.data?.config_fieldsets || [] };
+}
+
+// -----------------------------------------------------------
+// Config Schema Hook
+// -----------------------------------------------------------
+export function useConfigSchema() {
+  const karrio = useKarrio();
+  const query = useAuthenticatedQuery({
+    queryKey: ['admin_config_schema'],
+    queryFn: () => karrio.admin.request<GetConfigSchema>(gqlstr(GET_CONFIG_SCHEMA)),
+    staleTime: 30000,
+  });
+  return { query, schema: query.data?.config_schema || [] };
 }
 
 // -----------------------------------------------------------

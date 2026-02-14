@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.8`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.9`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2026.1.8
+ * The version of the OpenAPI document: 2026.1.9
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -7059,7 +7059,8 @@ export interface WebhookList {
     'results': Array<Webhook>;
 }
 export interface WebhookTestRequest {
-    'payload': { [key: string]: any; };
+    'payload'?: { [key: string]: any; };
+    'event_id'?: string;
 }
 export interface Zoom2u {
     'api_key': string;
@@ -15528,12 +15529,13 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {string} [keyword] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/trackers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -15574,6 +15576,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['created_before'] = (createdBefore as any instanceof Date) ?
                     (createdBefore as any).toISOString() :
                     createdBefore;
+            }
+
+            if (keyword !== undefined) {
+                localVarQueryParameter['keyword'] = keyword;
             }
 
             if (status !== undefined) {
@@ -15804,13 +15810,14 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {string} [keyword] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, status, trackingNumber, options);
+        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, keyword, status, trackingNumber, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrackersApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -15903,7 +15910,7 @@ export const TrackersApiFactory = function (configuration?: Configuration, baseP
          * @throws {RequiredError}
          */
         list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<TrackerList> {
-            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
          * Discard a package tracker.
@@ -15987,6 +15994,8 @@ export interface TrackersApiListRequest {
 
     readonly createdBefore?: string
 
+    readonly keyword?: string
+
     /**
      * Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
      */
@@ -16064,7 +16073,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig) {
-        return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16349,15 +16358,13 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
          * test a webhook.
          * @summary Test a webhook
          * @param {string} id 
-         * @param {WebhookTestRequest} webhookTestRequest 
+         * @param {WebhookTestRequest} [webhookTestRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        test: async (id: string, webhookTestRequest: WebhookTestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        test: async (id: string, webhookTestRequest?: WebhookTestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('test', 'id', id)
-            // verify required parameter 'webhookTestRequest' is not null or undefined
-            assertParamExists('test', 'webhookTestRequest', webhookTestRequest)
             const localVarPath = `/v1/webhooks/{id}/test`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -16515,11 +16522,11 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
          * test a webhook.
          * @summary Test a webhook
          * @param {string} id 
-         * @param {WebhookTestRequest} webhookTestRequest 
+         * @param {WebhookTestRequest} [webhookTestRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async test(id: string, webhookTestRequest: WebhookTestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Operation>> {
+        async test(id: string, webhookTestRequest?: WebhookTestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Operation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.test(id, webhookTestRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['WebhooksApi.test']?.[localVarOperationServerIndex]?.url;
@@ -16637,7 +16644,7 @@ export interface WebhooksApiRetrieveRequest {
 export interface WebhooksApiTestRequest {
     readonly id: string
 
-    readonly webhookTestRequest: WebhookTestRequest
+    readonly webhookTestRequest?: WebhookTestRequest
 }
 
 /**

@@ -108,7 +108,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           title: "Markups",
           url: "/shippers/markups",
         },
-        { title: "Carriers Network", url: "/admin/carriers" },
       ],
     }] : []),
     ...(metadata?.ADMIN_DASHBOARD && user?.is_staff ? [{
@@ -118,6 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: [
         { title: "Console", url: "/admin" },
         { title: "Staff & Permissions", url: "/admin/staff" },
+        { title: "Carrier Network", url: "/admin/carriers" },
       ],
     }] : []),
   ];

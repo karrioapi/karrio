@@ -7,7 +7,7 @@ import {
   CREATE_MARKUP,
   UPDATE_MARKUP,
   DELETE_MARKUP
-} from "@karrio/types/graphql/admin/queries";
+} from "@karrio/types/graphql/admin-ee/queries";
 import {
   GetMarkups,
   GetMarkup,
@@ -23,7 +23,7 @@ import {
   CreateMarkupMutationInput,
   MarkupTypeEnum,
   UsageFilter,
-} from "@karrio/types/graphql/admin";
+} from "@karrio/types/graphql/admin-ee";
 import { useQueryClient } from "@tanstack/react-query";
 import { useOrganizationAccounts } from "./admin-accounts";
 import { useSystemConnections } from "./admin-system-connections";

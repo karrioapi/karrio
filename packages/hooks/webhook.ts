@@ -71,11 +71,17 @@ export function useWebhookMutation() {
     ({ id, payload }: { id: string, payload: object }) => handleFailure(karrio.webhooks.test({ id, webhookTestRequest: { payload } })),
     { onSuccess: invalidateCache, onError }
   );
+  const replayEvent = useMutation(
+    ({ webhookId, eventId }: { webhookId: string, eventId: string }) =>
+      handleFailure(karrio.webhooks.test({ id: webhookId, webhookTestRequest: { event_id: eventId } })),
+    { onSuccess: invalidateCache, onError }
+  );
 
   return {
     createWebhook,
     updateWebhook,
     deleteWebhook,
     testWebhook,
+    replayEvent,
   };
 }

@@ -13,6 +13,9 @@ DEFAULT_SCHEDULER_RUN_INTERVAL = 3600  # value is seconds. so 3600 seconds = 1 H
 DEFAULT_TRACKERS_UPDATE_INTERVAL = decouple.config(
     "TRACKING_PULSE", default=7200, cast=int
 )  # value is seconds. so 10800 seconds = 3 Hours
+TRACKER_BATCH_DELAY = decouple.config(
+    "TRACKER_BATCH_DELAY", default=3, cast=int
+)  # flat seconds between tracking batches (per-carrier)
 
 # Check if worker is running in detached mode (separate from API server)
 DETACHED_WORKER = decouple.config("DETACHED_WORKER", default=False, cast=bool)

@@ -91,6 +91,33 @@ function redirectHooksInternals(): Plugin {
 }
 
 /**
+ * Vite plugin that forces the CarrierImage component to always use the
+ * generic inline SVG badge instead of file-based carrier logo assets.
+ *
+ * This keeps the elements bundle light by removing the dependency on
+ * 50+ carrier SVG files.  The IMAGES array is replaced with an empty
+ * array so `has_image` is always false in carrier-image.tsx.
+ */
+function stripCarrierImages(): Plugin {
+  return {
+    name: "strip-carrier-images",
+    enforce: "pre",
+    transform(code, id) {
+      const normId = id.replace(/\\/g, "/");
+      if (!normId.includes("packages/types/base")) return null;
+      if (!code.includes("export const IMAGES")) return null;
+
+      const transformed = code.replace(
+        /export const IMAGES[^;]*;/,
+        "export const IMAGES: string[] = [];",
+      );
+      if (transformed === code) return null;
+      return { code: transformed, map: null };
+    },
+  };
+}
+
+/**
  * Vite plugin that rewrites `Bearer` auth prefix to `Token` in the
  * Playground and GraphiQL modules.
  *
@@ -125,6 +152,7 @@ export default defineConfig({
     rewriteLodashRequires(),
     redirectHooksInternals(),
     rewriteBearerAuth(),
+    stripCarrierImages(),
     react(),
   ],
   resolve: {

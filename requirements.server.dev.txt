@@ -16,3 +16,4 @@ djangorestframework-stubs
 -e ./modules/proxy
 -e ./modules/pricing
 -e ./modules/documents
+-e ./modules/admin

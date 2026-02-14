@@ -91,10 +91,46 @@ jobs:
           submodules: recursive
           token: ${{ secrets.GH_PAT }}
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - id: get_tag
         run: |
           cat ./apps/api/karrio/server/VERSION
           echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build JS client
+        run: |
+          docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+            -i /local/schemas/openapi.yml \
+            -g typescript-fetch \
+            -o /local/packages/karriojs/api/generated \
+            --additional-properties=typescriptThreePlus=true \
+            --additional-properties=modelPropertyNaming=snake_case \
+            --additional-properties=useSingleRequestParameter=true
+
+          cd packages/karriojs
+          npm install
+          npx gulp build --output "${GITHUB_WORKSPACE}/apps/api/karrio/server/static/karrio/js/karrio.js"
+          cd -
+
+      - name: Build embeddable elements
+        run: |
+          cd packages/elements
+          npm install
+          npm run build
+
+          ELEMENTS_STATIC="${GITHUB_WORKSPACE}/apps/api/karrio/server/static/karrio/elements"
+          mkdir -p "${ELEMENTS_STATIC}" "${ELEMENTS_STATIC}/chunks"
+          cp dist/elements.js dist/globals.css "${ELEMENTS_STATIC}/"
+          cp dist/ratesheet.js dist/ratesheet.html "${ELEMENTS_STATIC}/"
+          cp dist/devtools.js dist/devtools.css dist/devtools.html "${ELEMENTS_STATIC}/"
+          cp dist/template-editor.js dist/template-editor.html "${ELEMENTS_STATIC}/"
+          cp dist/connections.js dist/connections.html "${ELEMENTS_STATIC}/"
+          [ -d dist/chunks ] && cp dist/chunks/* "${ELEMENTS_STATIC}/chunks/"
+          cd -
 
       - name: Build insider server image
         run: |

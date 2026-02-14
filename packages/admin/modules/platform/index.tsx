@@ -13,7 +13,7 @@ import { Button } from "@karrio/ui/components/ui/button";
 import { Label } from "@karrio/ui/components/ui/label";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useConfigs, useConfigMutation } from "@karrio/hooks/admin-platform";
+import { useConfigs, useConfigMutation, useConfigFieldsets, useConfigSchema } from "@karrio/hooks/admin-platform";
 import { useAdminSystemUsage } from "@karrio/hooks/admin-usage";
 import { useState, useEffect } from "react";
 import {
@@ -55,6 +55,7 @@ type ConfigData = {
   APPS_MANAGEMENT: boolean;
   MULTI_ORGANIZATIONS: boolean;
   SHIPPING_RULES: boolean;
+  [key: string]: any;
 };
 
 const defaultConfig: ConfigData = {
@@ -87,7 +88,7 @@ const defaultConfig: ConfigData = {
   SHIPPING_RULES: false,
 };
 
-type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 'features' | 'platform' | null;
+type EditSection = 'email' | 'administration' | 'data_retention' | 'api_keys' | 'features' | 'platform' | string | null;
 
 function SettingRow({ label, description, enabled }: { label: string; description?: string; enabled: boolean }) {
   return (
@@ -124,14 +125,27 @@ function EndpointRow({ label, value, onCopy, onOpen }: { label: string; value: s
   );
 }
 
+// Keys that belong in the "Administration" card vs the "Features" card
+const ADMINISTRATION_KEYS = ["ALLOW_SIGNUP", "ALLOW_ADMIN_APPROVED_SIGNUP", "AUDIT_LOGGING"];
+
 export default function PlatformDetails() {
   const { toast } = useToast();
   const { metadata } = useAPIMetadata();
   const { query, configs } = useConfigs();
   const { query: { data: { usage } = {} } } = useAdminSystemUsage();
+  const { fieldsets } = useConfigFieldsets();
+  const { schema } = useConfigSchema();
   const [editSection, setEditSection] = useState<EditSection>(null);
 
   const { updateConfigs } = useConfigMutation();
+
+  // Derive available feature flag keys from the backend fieldsets
+  const featureFlagFieldset = fieldsets.find(fs => fs.name === "Feature Flags");
+  const featureFlagKeys = featureFlagFieldset?.keys || [];
+  const administrationKeys = featureFlagKeys.filter(k => ADMINISTRATION_KEYS.includes(k));
+  const featureKeys = featureFlagKeys.filter(k => !ADMINISTRATION_KEYS.includes(k));
+  const hasMultiOrg = featureFlagKeys.includes("MULTI_ORGANIZATIONS");
+  const hasPlatformConfig = fieldsets.some(fs => fs.name === "Platform Config");
 
   const handleUpdate = (data: Partial<ConfigData>) => {
     updateConfigs.mutate(data, {
@@ -166,19 +180,21 @@ export default function PlatformDetails() {
       <h1 className="text-2xl font-semibold tracking-tight">Platform Overview</h1>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={`grid grid-cols-2 ${hasMultiOrg ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4`}>
         <Card className="border shadow-none">
           <CardContent className="p-4">
             <p className="text-sm text-muted-foreground">Total Users</p>
             <p className="text-2xl font-semibold">{usage?.user_count?.toLocaleString() || 0}</p>
           </CardContent>
         </Card>
-        <Card className="border shadow-none">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Organizations</p>
-            <p className="text-2xl font-semibold">{usage?.organization_count?.toLocaleString() || 0}</p>
-          </CardContent>
-        </Card>
+        {hasMultiOrg && (
+          <Card className="border shadow-none">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Organizations</p>
+              <p className="text-2xl font-semibold">{usage?.organization_count?.toLocaleString() || 0}</p>
+            </CardContent>
+          </Card>
+        )}
         <Card className="border shadow-none">
           <CardContent className="p-4">
             <p className="text-sm text-muted-foreground">Total Shipments</p>
@@ -201,9 +217,11 @@ export default function PlatformDetails() {
               <CardTitle className="text-base">Platform Details</CardTitle>
               <CardDescription>Branding and identity</CardDescription>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('platform')}>
-              <Pencil className="h-4 w-4" />
-            </Button>
+            {hasPlatformConfig && hasMultiOrg && (
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('platform')}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+            )}
           </CardHeader>
           <CardContent className="space-y-1">
             <div className="py-2">
@@ -259,42 +277,57 @@ export default function PlatformDetails() {
 
       {/* Administration & Features */}
       <div className="grid lg:grid-cols-2 gap-4">
-        <Card className="border shadow-none">
-          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-            <div>
-              <CardTitle className="text-base">Administration</CardTitle>
-              <CardDescription>User access and signup settings</CardDescription>
-            </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('administration')}>
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent className="divide-y">
-            <SettingRow label="Allow Signup" description="Allow user signup" enabled={currentConfig.ALLOW_SIGNUP} />
-            <SettingRow label="Admin Approved Signup" description="Require admin approval" enabled={currentConfig.ALLOW_ADMIN_APPROVED_SIGNUP} />
-            <SettingRow label="Audit Logging" description="Track system activities" enabled={currentConfig.AUDIT_LOGGING} />
-          </CardContent>
-        </Card>
+        {administrationKeys.length > 0 && (
+          <Card className="border shadow-none">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+              <div>
+                <CardTitle className="text-base">Administration</CardTitle>
+                <CardDescription>User access and signup settings</CardDescription>
+              </div>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('administration')}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="divide-y">
+              {administrationKeys.map(key => {
+                const schemaDef = schema.find(s => s.key === key);
+                return (
+                  <SettingRow
+                    key={key}
+                    label={schemaDef?.description || key}
+                    enabled={!!currentConfig[key]}
+                  />
+                );
+              })}
+            </CardContent>
+          </Card>
+        )}
 
-        <Card className="border shadow-none">
-          <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-            <div>
-              <CardTitle className="text-base">Features</CardTitle>
-              <CardDescription>Platform capabilities</CardDescription>
-            </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('features')}>
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent className="divide-y">
-            <SettingRow label="Multi Organizations" enabled={currentConfig.MULTI_ORGANIZATIONS} />
-            <SettingRow label="Orders Management" enabled={currentConfig.ORDERS_MANAGEMENT} />
-            <SettingRow label="Workflow Management" enabled={currentConfig.WORKFLOW_MANAGEMENT} />
-            <SettingRow label="Shipping Rules" enabled={currentConfig.SHIPPING_RULES} />
-            <SettingRow label="Documents Management" enabled={currentConfig.DOCUMENTS_MANAGEMENT} />
-            <SettingRow label="Apps Management" enabled={currentConfig.APPS_MANAGEMENT} />
-          </CardContent>
-        </Card>
+        {featureKeys.length > 0 && (
+          <Card className="border shadow-none">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+              <div>
+                <CardTitle className="text-base">Features</CardTitle>
+                <CardDescription>Platform capabilities</CardDescription>
+              </div>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('features')}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="divide-y">
+              {featureKeys.map(key => {
+                const schemaDef = schema.find(s => s.key === key);
+                return (
+                  <SettingRow
+                    key={key}
+                    label={schemaDef?.description || key}
+                    enabled={!!currentConfig[key]}
+                  />
+                );
+              })}
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Email & Data Retention */}
@@ -385,11 +418,99 @@ export default function PlatformDetails() {
         </CardContent>
       </Card>
 
+      {/* Dynamic Carrier Config Sections */}
+      {fieldsets
+        .filter(fs => ![
+          "Email Config",
+          "Address Validation Service",
+          "Data Retention",
+          "Feature Flags",
+          "Platform Config",
+          "Registry Config",
+          "Registry Plugins",
+        ].includes(fs.name))
+        .map(fs => {
+          const sectionKey = `dynamic_${fs.name.toLowerCase().replace(/\s+/g, '_')}`;
+          return (
+            <Card key={fs.name} className="border shadow-none">
+              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                <div>
+                  <CardTitle className="text-base">{fs.name}</CardTitle>
+                  <CardDescription>Carrier configuration settings</CardDescription>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection(sectionKey)}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="grid lg:grid-cols-2 gap-4">
+                  {fs.keys.map(key => {
+                    const schemaDef = schema.find(s => s.key === key);
+                    const value = currentConfig[key];
+                    const isBool = schemaDef?.value_type === 'bool';
+                    return (
+                      <div key={key} className="py-2">
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {schemaDef?.description || key}
+                        </p>
+                        {isBool ? (
+                          value ? (
+                            <Check className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <X className="h-4 w-4 text-muted-foreground" />
+                          )
+                        ) : (
+                          <p className="text-sm font-medium">
+                            {value !== null && value !== undefined && value !== '' ? String(value) : 'Not configured'}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+
+      {/* Plugin Registry */}
+      {fieldsets
+        .filter(fs => fs.name === "Registry Plugins")
+        .map(fs => (
+          <Card key={fs.name} className="border shadow-none">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+              <div>
+                <CardTitle className="text-base">Plugin Registry</CardTitle>
+                <CardDescription>Enable or disable registered plugins</CardDescription>
+              </div>
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditSection('plugins')}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </CardHeader>
+            <CardContent className="divide-y">
+              {fs.keys.map(key => {
+                const schemaDef = schema.find(s => s.key === key);
+                return (
+                  <SettingRow
+                    key={key}
+                    label={schemaDef?.description || key}
+                    enabled={!!currentConfig[key]}
+                  />
+                );
+              })}
+            </CardContent>
+          </Card>
+        ))}
+
       <EditDialog
         section={editSection}
         onClose={() => setEditSection(null)}
         configs={currentConfig}
         onUpdate={handleUpdate}
+        fieldsets={fieldsets}
+        schema={schema}
+        administrationKeys={administrationKeys}
+        featureKeys={featureKeys}
       />
     </div>
   );
@@ -399,12 +520,20 @@ function EditDialog({
   section,
   onClose,
   configs,
-  onUpdate
+  onUpdate,
+  fieldsets,
+  schema,
+  administrationKeys,
+  featureKeys,
 }: {
   section: EditSection;
   onClose: () => void;
   configs: ConfigData;
   onUpdate: (data: Partial<ConfigData>) => void;
+  fieldsets: { name: string; keys: string[] }[];
+  schema: { key: string; description: string; value_type: string; default_value: string | null }[];
+  administrationKeys: string[];
+  featureKeys: string[];
 }) {
   const [formData, setFormData] = useState<ConfigData>(configs);
 
@@ -422,9 +551,7 @@ function EditDialog({
         data.APP_WEBSITE = formData.APP_WEBSITE;
         break;
       case 'administration':
-        data.ALLOW_SIGNUP = formData.ALLOW_SIGNUP;
-        data.ALLOW_ADMIN_APPROVED_SIGNUP = formData.ALLOW_ADMIN_APPROVED_SIGNUP;
-        data.AUDIT_LOGGING = formData.AUDIT_LOGGING;
+        administrationKeys.forEach(key => { data[key] = formData[key]; });
         break;
       case 'email':
         data.EMAIL_USE_TLS = formData.EMAIL_USE_TLS;
@@ -445,16 +572,19 @@ function EditDialog({
         data.CANADAPOST_ADDRESS_COMPLETE_API_KEY = formData.CANADAPOST_ADDRESS_COMPLETE_API_KEY;
         break;
       case 'features':
-        data.ALLOW_MULTI_ACCOUNT = formData.ALLOW_MULTI_ACCOUNT;
-        data.ADMIN_DASHBOARD = formData.ADMIN_DASHBOARD;
-        data.MULTI_ORGANIZATIONS = formData.MULTI_ORGANIZATIONS;
-        data.DOCUMENTS_MANAGEMENT = formData.DOCUMENTS_MANAGEMENT;
-        data.DATA_IMPORT_EXPORT = formData.DATA_IMPORT_EXPORT;
-        data.PERSIST_SDK_TRACING = formData.PERSIST_SDK_TRACING;
-        data.WORKFLOW_MANAGEMENT = formData.WORKFLOW_MANAGEMENT;
-        data.ORDERS_MANAGEMENT = formData.ORDERS_MANAGEMENT;
-        data.APPS_MANAGEMENT = formData.APPS_MANAGEMENT;
-        data.SHIPPING_RULES = formData.SHIPPING_RULES;
+        featureKeys.forEach(key => { data[key] = formData[key]; });
+        break;
+      case 'plugins': {
+        const pluginFieldset = fieldsets.find(fs => fs.name === "Registry Plugins");
+        pluginFieldset?.keys.forEach(key => { data[key] = formData[key]; });
+        break;
+      }
+      default:
+        if (section?.startsWith('dynamic_')) {
+          const fsName = section.replace('dynamic_', '').replace(/_/g, ' ');
+          const fs = fieldsets.find(f => f.name.toLowerCase() === fsName);
+          fs?.keys.forEach(key => { data[key] = formData[key]; });
+        }
         break;
     }
 
@@ -470,36 +600,20 @@ function EditDialog({
       case 'administration':
         return (
           <div className="divide-y">
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Allow Signup</Label>
-                <p className="text-sm text-muted-foreground">Allow user signup</p>
-              </div>
-              <Switch
-                checked={formData.ALLOW_SIGNUP}
-                onCheckedChange={(checked) => handleChange('ALLOW_SIGNUP', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Admin Approved Signup</Label>
-                <p className="text-sm text-muted-foreground">User signup requires admin approval</p>
-              </div>
-              <Switch
-                checked={formData.ALLOW_ADMIN_APPROVED_SIGNUP}
-                onCheckedChange={(checked) => handleChange('ALLOW_ADMIN_APPROVED_SIGNUP', checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Audit Logging</Label>
-                <p className="text-sm text-muted-foreground">Enable audit logging for system activities</p>
-              </div>
-              <Switch
-                checked={formData.AUDIT_LOGGING}
-                onCheckedChange={(checked) => handleChange('AUDIT_LOGGING', checked)}
-              />
-            </div>
+            {administrationKeys.map(key => {
+              const schemaDef = schema.find(s => s.key === key);
+              return (
+                <div key={key} className="flex items-center justify-between py-3">
+                  <div className="space-y-0.5">
+                    <Label>{schemaDef?.description || key}</Label>
+                  </div>
+                  <Switch
+                    checked={!!formData[key]}
+                    onCheckedChange={(checked) => handleChange(key as keyof ConfigData, checked)}
+                  />
+                </div>
+              );
+            })}
           </div>
         );
 
@@ -643,107 +757,21 @@ function EditDialog({
 
       case 'features':
         return (
-          <div className="divide-y max-h-[60vh] overflow-y-auto">
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Multi Account</Label>
-                <p className="text-sm text-muted-foreground">Allow users to have multiple accounts</p>
-              </div>
-              <Switch
-                checked={formData.ALLOW_MULTI_ACCOUNT}
-                onCheckedChange={(checked) => handleChange("ALLOW_MULTI_ACCOUNT", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Admin Dashboard</Label>
-                <p className="text-sm text-muted-foreground">Enable admin dashboard access</p>
-              </div>
-              <Switch
-                checked={formData.ADMIN_DASHBOARD}
-                onCheckedChange={(checked) => handleChange("ADMIN_DASHBOARD", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Multi Organizations</Label>
-                <p className="text-sm text-muted-foreground">Enable multi-organization support</p>
-              </div>
-              <Switch
-                checked={formData.MULTI_ORGANIZATIONS}
-                onCheckedChange={(checked) => handleChange("MULTI_ORGANIZATIONS", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Documents Management</Label>
-                <p className="text-sm text-muted-foreground">Enable documents management</p>
-              </div>
-              <Switch
-                checked={formData.DOCUMENTS_MANAGEMENT}
-                onCheckedChange={(checked) => handleChange("DOCUMENTS_MANAGEMENT", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Data Import/Export</Label>
-                <p className="text-sm text-muted-foreground">Enable data import/export</p>
-              </div>
-              <Switch
-                checked={formData.DATA_IMPORT_EXPORT}
-                onCheckedChange={(checked) => handleChange("DATA_IMPORT_EXPORT", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Persist SDK Tracing</Label>
-                <p className="text-sm text-muted-foreground">Persist SDK tracing</p>
-              </div>
-              <Switch
-                checked={formData.PERSIST_SDK_TRACING}
-                onCheckedChange={(checked) => handleChange("PERSIST_SDK_TRACING", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Workflow Management</Label>
-                <p className="text-sm text-muted-foreground">Enable workflow management</p>
-              </div>
-              <Switch
-                checked={formData.WORKFLOW_MANAGEMENT}
-                onCheckedChange={(checked) => handleChange("WORKFLOW_MANAGEMENT", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Orders Management</Label>
-                <p className="text-sm text-muted-foreground">Enable orders management functionality</p>
-              </div>
-              <Switch
-                checked={formData.ORDERS_MANAGEMENT}
-                onCheckedChange={(checked) => handleChange("ORDERS_MANAGEMENT", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Apps Management</Label>
-                <p className="text-sm text-muted-foreground">Enable apps management functionality</p>
-              </div>
-              <Switch
-                checked={formData.APPS_MANAGEMENT}
-                onCheckedChange={(checked) => handleChange("APPS_MANAGEMENT", checked)}
-              />
-            </div>
-            <div className="flex items-center justify-between py-3">
-              <div className="space-y-0.5">
-                <Label>Shipping Rules</Label>
-                <p className="text-sm text-muted-foreground">Enable shipping rules functionality</p>
-              </div>
-              <Switch
-                checked={formData.SHIPPING_RULES}
-                onCheckedChange={(checked) => handleChange("SHIPPING_RULES", checked)}
-              />
-            </div>
+          <div className="divide-y">
+            {featureKeys.map(key => {
+              const schemaDef = schema.find(s => s.key === key);
+              return (
+                <div key={key} className="flex items-center justify-between py-3">
+                  <div className="space-y-0.5">
+                    <Label>{schemaDef?.description || key}</Label>
+                  </div>
+                  <Switch
+                    checked={!!formData[key]}
+                    onCheckedChange={(checked) => handleChange(key as keyof ConfigData, checked)}
+                  />
+                </div>
+              );
+            })}
           </div>
         );
 
@@ -771,32 +799,109 @@ function EditDialog({
           </div>
         );
 
+      case 'plugins': {
+        const pluginFieldset = fieldsets.find(fs => fs.name === "Registry Plugins");
+        if (!pluginFieldset) return null;
+        return (
+          <div className="divide-y">
+            {pluginFieldset.keys.map(key => {
+              const schemaDef = schema.find(s => s.key === key);
+              return (
+                <div key={key} className="flex items-center justify-between py-3">
+                  <div className="space-y-0.5">
+                    <Label>{schemaDef?.description || key}</Label>
+                  </div>
+                  <Switch
+                    checked={!!formData[key]}
+                    onCheckedChange={(checked) => handleChange(key as keyof ConfigData, checked)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+
       default:
+        if (section?.startsWith('dynamic_')) {
+          const fsName = section.replace('dynamic_', '').replace(/_/g, ' ');
+          const fs = fieldsets.find(f => f.name.toLowerCase() === fsName);
+          if (!fs) return null;
+          return (
+            <div className="space-y-4">
+              {fs.keys.map(key => {
+                const schemaDef = schema.find(s => s.key === key);
+                const valueType = schemaDef?.value_type || 'str';
+                if (valueType === 'bool') {
+                  return (
+                    <div key={key} className="flex items-center justify-between py-3 border-b last:border-0">
+                      <div className="space-y-0.5">
+                        <Label>{schemaDef?.description || key}</Label>
+                      </div>
+                      <Switch
+                        checked={!!formData[key]}
+                        onCheckedChange={(checked) => handleChange(key as keyof ConfigData, checked)}
+                      />
+                    </div>
+                  );
+                }
+                return (
+                  <div key={key} className="grid gap-2">
+                    <Label htmlFor={key}>{schemaDef?.description || key}</Label>
+                    <Input
+                      id={key}
+                      type={valueType === 'int' ? 'number' : 'text'}
+                      placeholder={schemaDef?.default_value || ''}
+                      value={formData[key] ?? ''}
+                      onChange={(e) => handleChange(
+                        key as keyof ConfigData,
+                        valueType === 'int' ? Number(e.target.value) : e.target.value
+                      )}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }
         return null;
     }
   };
 
-  const titles = {
+  const titles: Record<string, string> = {
     administration: 'Edit Administration Settings',
     email: 'Edit Email Settings',
     data_retention: 'Edit Data Retention Settings',
     api_keys: 'Edit API Keys',
     features: 'Edit Features',
     platform: 'Edit Platform Details',
+    plugins: 'Edit Plugin Registry',
+  };
+
+  const getTitle = (s: string) => {
+    if (titles[s]) return titles[s];
+    if (s.startsWith('dynamic_')) {
+      const fsName = s.replace('dynamic_', '').replace(/_/g, ' ');
+      const fs = fieldsets.find(f => f.name.toLowerCase() === fsName);
+      return `Edit ${fs?.name || 'Settings'}`;
+    }
+    return 'Edit Settings';
   };
 
   if (!section) return null;
 
   return (
     <Dialog open={!!section} onOpenChange={() => onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <DialogHeader>
-            <DialogTitle>{titles[section]}</DialogTitle>
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0 flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <DialogHeader className="px-4 py-3 border-b sticky top-0 bg-background z-10">
+            <DialogTitle>{getTitle(section)}</DialogTitle>
             <DialogDescription>Update your platform settings.</DialogDescription>
           </DialogHeader>
-          {renderContent()}
-          <DialogFooter className="gap-2 sm:gap-0">
+          <div className="flex-1 overflow-y-auto px-4 py-4">
+            {renderContent()}
+          </div>
+          <DialogFooter className="px-4 py-3 border-t sticky bottom-0 bg-background gap-2 sm:gap-0">
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
             <Button type="submit">Save Changes</Button>
           </DialogFooter>

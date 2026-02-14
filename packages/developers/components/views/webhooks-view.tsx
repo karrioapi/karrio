@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogPortal } from "@karrio/ui/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal } from "@karrio/ui/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@karrio/ui/components/ui/tooltip";
-import { Trash2, Plus, Copy, Settings, Eye, EyeOff, CheckCircle, XCircle, MoreHorizontal } from "lucide-react";
+import { Trash2, Plus, Copy, Settings, CheckCircle, XCircle, MoreHorizontal, Zap } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@karrio/ui/components/ui/card";
 import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
 import { useWebhooks, useWebhookMutation } from "@karrio/hooks/webhook";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
@@ -18,6 +18,8 @@ import { Badge } from "@karrio/ui/components/ui/badge";
 import { formatDateTimeLong } from "@karrio/lib";
 import { NotificationType } from "@karrio/types";
 import { EventTypes } from "@karrio/types";
+import CodeMirror from "@uiw/react-codemirror";
+import { json } from "@codemirror/lang-json";
 
 interface CreateWebhookFormData {
   url: string;
@@ -27,12 +29,148 @@ interface CreateWebhookFormData {
   secret: string;
 }
 
+const TEST_PAYLOADS: Record<string, string> = {
+  "plain event": JSON.stringify(
+    {
+      event: "all",
+      data: {
+        message: "this is a plain notification",
+      },
+    },
+    null,
+    2,
+  ),
+  "shipment purchased": JSON.stringify(
+    {
+      event: "shipment.purchased",
+      data: {
+        id: "shp_4998174814864a0690a1d0d626c101e1",
+        status: "purchased",
+        carrier_name: "canadapost",
+        carrier_id: "canadapost",
+        label: "JVBERiqrnC --- truncated base64 label ---",
+        tracking_number: "123456789012",
+        shipment_identifier: "123456789012",
+        selected_rate: {
+          id: "rat_fe4608bfc02445b387ada33e0da8d1f1",
+          carrier_name: "canadapost",
+          carrier_id: "canadapost",
+          currency: "CAD",
+          service: "canadapost_regular_parcel",
+          total_charge: 46.45,
+          transit_days: 10,
+          extra_charges: [
+            { name: "Fuel surcharge", amount: 4.17, currency: "CAD" },
+            { name: "SMB Savings", amount: -2.95, currency: "CAD" },
+          ],
+          meta: null,
+          test_mode: true,
+        },
+        service: "canadapost_priority",
+        shipper: {
+          postal_code: "V6M2V9",
+          city: "Vancouver",
+          person_name: "Jane Doe",
+          country_code: "CA",
+          state_code: "BC",
+          address_line1: "5840 Oak St",
+        },
+        recipient: {
+          postal_code: "E1C4Z8",
+          city: "Moncton",
+          person_name: "John Doe",
+          country_code: "CA",
+          state_code: "NB",
+          address_line1: "125 Church St",
+        },
+        parcels: [
+          {
+            weight: 1,
+            width: 46,
+            height: 46,
+            length: 40.6,
+            package_preset: "canadapost_corrugated_large_box",
+            is_document: false,
+            weight_unit: "KG",
+            dimension_unit: "CM",
+          },
+        ],
+        label_type: "PDF",
+        test_mode: true,
+        messages: [],
+      },
+    },
+    null,
+    2,
+  ),
+  "tracker updated": JSON.stringify(
+    {
+      id: "evt_xxxxxxx",
+      type: "tracker_updated",
+      data: {
+        carrier_id: "ups",
+        carrier_name: "ups",
+        delivered: false,
+        events: [
+          { code: "OF", date: "2024-12-17", description: "Out For Delivery", location: "Brandon, MB, CA", time: "13:28 PM" },
+          { code: "OF", date: "2024-12-16", description: "Due to weather, your package is delayed by one business day.", location: "Winnipeg, MB, CA", time: "16:00 PM" },
+          { code: "OF", date: "2024-12-15", description: "Arrived at Facility", location: "Winnipeg, MB, CA", time: "12:00 PM" },
+        ],
+        id: "trk_174406e4601f40e6abe9d68e42d877a0",
+        info: {
+          carrier_tracking_link: "https://www.ups.com/track?tracknum=1ZA82D672023568121",
+          shipment_service: "UPS Standard",
+          source: "api",
+        },
+        status: "in_transit",
+        test_mode: false,
+        tracking_number: "1ZA82D672023568121",
+      },
+      test_mode: false,
+      pending_webhooks: 0,
+    },
+    null,
+    2,
+  ),
+  "tracker created": JSON.stringify(
+    {
+      id: "evt_xxxxxxx",
+      type: "tracker_created",
+      data: {
+        id: "trk_4523340a1b9d48538987a7cedf162f5a",
+        carrier_name: "seko",
+        carrier_id: "seko",
+        tracking_number: "999880931315",
+        info: {
+          customer_name: "Zeeshan Malik",
+          shipment_service: "SEKO ECOMMERCE STANDARD TRACKED",
+          shipment_origin_country: "GB",
+          shipment_destination_country: "NL",
+          source: "api",
+        },
+        events: [
+          { date: "2024-12-17", description: "International transit to destination country", location: "EGHAM, SURREY,GB", code: "OP-4", time: "11:06 AM" },
+          { date: "2024-12-17", description: "Processed through Export Hub", location: "Egham, Surrey,GB", code: "OP-3", time: "09:18 AM" },
+        ],
+        delivered: false,
+        test_mode: false,
+        status: "in_transit",
+      },
+    },
+    null,
+    2,
+  ),
+};
+
 export function WebhooksView() {
   const notifier = useNotifier();
   const { query } = useWebhooks();
-  const { createWebhook, updateWebhook, deleteWebhook } = useWebhookMutation();
+  const { createWebhook, updateWebhook, deleteWebhook, testWebhook } = useWebhookMutation();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingWebhook, setEditingWebhook] = useState<any>(null);
+  const [testingWebhook, setTestingWebhook] = useState<any>(null);
+  const [testPayloadKey, setTestPayloadKey] = useState("plain event");
+  const [isTesting, setIsTesting] = useState(false);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState<CreateWebhookFormData>({
     url: "",
@@ -117,6 +255,33 @@ export function WebhooksView() {
       disabled: webhook.disabled || false,
       secret: webhook.secret || "",
     });
+  };
+
+  const handleTest = (webhook: any) => {
+    setTestingWebhook(webhook);
+    setTestPayloadKey("plain event");
+  };
+
+  const handleTestSubmit = async () => {
+    if (!testingWebhook) return;
+    setIsTesting(true);
+    try {
+      await testWebhook.mutateAsync({
+        id: testingWebhook.id,
+        payload: JSON.parse(TEST_PAYLOADS[testPayloadKey]),
+      });
+      notifier.notify({
+        type: NotificationType.success,
+        message: "Webhook successfully notified",
+      });
+    } catch (error: any) {
+      notifier.notify({
+        type: NotificationType.error,
+        message: error?.message || "Failed to test webhook",
+      });
+    } finally {
+      setIsTesting(false);
+    }
   };
 
   const toggleSecret = (webhookId: string) => {
@@ -391,6 +556,10 @@ export function WebhooksView() {
                                 <Settings className="h-4 w-4 mr-2" />
                                 Configure
                               </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleTest(webhook)} className="text-foreground focus:bg-primary/20 focus:text-foreground">
+                                <Zap className="h-4 w-4 mr-2" />
+                                Test
+                              </DropdownMenuItem>
                               {webhook.secret && (
                                 <DropdownMenuItem onClick={() => copyToClipboard(webhook.secret || "")} className="text-foreground focus:bg-primary/20 focus:text-foreground">
                                   <Copy className="h-4 w-4 mr-2" />
@@ -402,7 +571,7 @@ export function WebhooksView() {
                                 Copy URL
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleDeleteConfirmed()}
+                                onClick={() => askDelete(webhook)}
                                 className="text-destructive"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
@@ -512,6 +681,90 @@ export function WebhooksView() {
           </DialogContent>
         </DialogPortal>
       </Dialog>
+
+      {/* Test Webhook Dialog */}
+      <Dialog open={!!testingWebhook} onOpenChange={() => setTestingWebhook(null)}>
+        <DialogPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
+          <DialogContent className="devtools-theme dark bg-popover border-border text-foreground sm:max-w-lg">
+            <DialogHeader className="bg-popover border-b border-border px-4 py-3">
+              <DialogTitle className="text-foreground">Test Webhook Endpoint</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                Send a test notification to your webhook endpoint
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 p-4 pb-8">
+              <div className="text-sm font-medium text-foreground truncate">
+                {testingWebhook?.url}
+              </div>
+
+              <div>
+                <Label className="text-muted-foreground">Notification Payload</Label>
+                <Select value={testPayloadKey} onValueChange={setTestPayloadKey}>
+                  <SelectTrigger className="w-full mt-1 text-foreground bg-input border-border">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="devtools-theme dark bg-popover text-foreground border-border">
+                    {Object.keys(TEST_PAYLOADS).map((key) => (
+                      <SelectItem key={key} value={key} className="text-foreground focus:bg-primary/20 focus:text-foreground">
+                        {key}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="border border-border rounded-md overflow-hidden" style={{ maxHeight: "30vh" }}>
+                <CodeMirror
+                  value={TEST_PAYLOADS[testPayloadKey] || ""}
+                  extensions={[json()]}
+                  theme="dark"
+                  className="text-xs"
+                  readOnly
+                  basicSetup={{
+                    lineNumbers: false,
+                    foldGutter: true,
+                    dropCursor: false,
+                    allowMultipleSelections: false,
+                    indentOnInput: false,
+                    bracketMatching: true,
+                    closeBrackets: false,
+                    autocompletion: false,
+                    highlightSelectionMatches: false,
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setTestingWebhook(null)}
+                  disabled={isTesting}
+                  className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!border-primary hover:!text-primary"
+                >
+                  Dismiss
+                </Button>
+                <Button
+                  onClick={handleTestSubmit}
+                  disabled={isTesting}
+                >
+                  {isTesting ? "Sending..." : "Test Notification"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Delete Webhook"
+        description={`Are you sure you want to delete the webhook for ${pendingDelete?.url}? This action cannot be undone.`}
+        onConfirm={handleDeleteConfirmed}
+        confirmLabel="Delete"
+      />
     </div>
   );
 }

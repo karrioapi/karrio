@@ -43,7 +43,7 @@ class Cache(AbstractCache):
 
         # sync value in cache if it only exist shallow cache
         if _cache_value is None and _value is not None and self._cache is not None:
-            self._cache.set(key, _cache_value)
+            self._cache.set(key, _value.result())
 
         return _result
 

@@ -18,21 +18,10 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   unoptimized?: boolean;
 }
 
-/**
- * Rewrites absolute /carriers/ paths to relative ./carriers/ so the iframe
- * resolves them against its own origin (where the SVGs are co-located).
- */
-function resolveSrc(src: string): string {
-  if (src.startsWith("/carriers/")) {
-    return "." + src;
-  }
-  return src;
-}
-
 function NextImage({ src, width, height, alt, layout, objectFit, priority, placeholder, blurDataURL, loader, unoptimized, ...rest }: ImageProps) {
   return (
     <img
-      src={resolveSrc(src)}
+      src={src}
       width={width}
       height={height}
       alt={alt || ""}

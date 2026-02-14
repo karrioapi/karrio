@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.8`.
+    The current version is `2026.1.9`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.8
+  version: 2026.1.9
 paths:
   /:
     get:
@@ -4258,6 +4258,10 @@ paths:
           type: string
           format: date-time
       - in: query
+        name: keyword
+        schema:
+          type: string
+      - in: query
         name: status
         schema:
           type: string
@@ -4848,7 +4852,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WebhookTestRequest'
-        required: true
       security:
       - TokenBasic: []
       - Token: []
@@ -12498,8 +12501,8 @@ components:
         payload:
           type: object
           additionalProperties: {}
-      required:
-      - payload
+        event_id:
+          type: string
     aramex:
       type: object
       properties:

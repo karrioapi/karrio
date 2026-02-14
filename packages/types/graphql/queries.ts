@@ -3755,6 +3755,45 @@ export const GET_API_KEYS = gql`
   }
 `;
 
+export const GET_TRACING_RECORDS = gql`
+  query get_tracing_records($filter: TracingRecordFilter) {
+    tracing_records(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          key
+          timestamp
+          test_mode
+          created_at
+          meta
+          record
+        }
+      }
+    }
+  }
+`;
+
+export const GET_TRACING_RECORD = gql`
+  query get_tracing_record($id: String!) {
+    tracing_record(id: $id) {
+      id
+      key
+      timestamp
+      test_mode
+      created_at
+      meta
+      record
+    }
+  }
+`;
+
 export const CREATE_API_KEY = gql`
   mutation CreateAPIKey($data: CreateAPIKeyMutationInput!) {
     create_api_key(input: $data) {

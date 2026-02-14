@@ -5,7 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**payload** | **{ [key: string]: any; }** |  | [default to undefined]
+**payload** | **{ [key: string]: any; }** |  | [optional] [default to undefined]
+**event_id** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -14,6 +15,7 @@ import { WebhookTestRequest } from './api';
 
 const instance: WebhookTestRequest = {
     payload,
+    event_id,
 };
 ```
 

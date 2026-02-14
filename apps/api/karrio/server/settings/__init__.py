@@ -23,5 +23,9 @@ if importlib.util.find_spec("karrio.server.data") is not None:
     from karrio.server.settings.data import *
 
 
+if importlib.util.find_spec("karrio.server.admin") is not None:
+    from karrio.server.settings.admin import *
+
+
 if importlib.util.find_spec("karrio.server.settings.main") is not None:
     from karrio.server.settings.main import *

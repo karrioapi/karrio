@@ -5,8 +5,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build && cp static/ratesheet.html dist/ratesheet.html && cp static/devtools.html dist/devtools.html && cp static/template-editor.html dist/template-editor.html && cp static/connections.html dist/connections.html && mkdir -p dist/carriers && cp ../../apps/dashboard/public/carriers/*.svg dist/carriers/",
-    "build:elements": "vite build --config vite.config.ts && cp static/ratesheet.html dist/ratesheet.html && cp static/devtools.html dist/devtools.html && cp static/template-editor.html dist/template-editor.html && cp static/connections.html dist/connections.html && mkdir -p dist/carriers && cp ../../apps/dashboard/public/carriers/*.svg dist/carriers/"
+    "build": "vite build && cp static/ratesheet.html dist/ratesheet.html && cp static/devtools.html dist/devtools.html && cp static/template-editor.html dist/template-editor.html && cp static/connections.html dist/connections.html",
+    "build:elements": "vite build --config vite.config.ts && cp static/ratesheet.html dist/ratesheet.html && cp static/devtools.html dist/devtools.html && cp static/template-editor.html dist/template-editor.html && cp static/connections.html dist/connections.html"
   },
   "dependencies": {
     "@karrio/developers": "*",

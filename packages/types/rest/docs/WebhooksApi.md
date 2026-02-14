@@ -218,7 +218,7 @@ const { status, data } = await apiInstance.retrieve(
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **test**
-> Operation test(webhookTestRequest)
+> Operation test()
 
 test a webhook.
 
@@ -235,7 +235,7 @@ const configuration = new Configuration();
 const apiInstance = new WebhooksApi(configuration);
 
 let id: string; // (default to undefined)
-let webhookTestRequest: WebhookTestRequest; //
+let webhookTestRequest: WebhookTestRequest; // (optional)
 
 const { status, data } = await apiInstance.test(
     id,

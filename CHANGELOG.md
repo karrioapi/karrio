@@ -1,3 +1,41 @@
+# Karrio 2026.1.9
+
+## Changes
+
+### Feat
+
+- feat: add rate sheet editor to connections element and strip carrier SVG bundling
+- feat: enhance shipments and trackers list views with rate and destination columns
+- feat: add webhook event replay with event_id support
+- feat: add carrier network link to admin sidebar
+- feat: merge tracker logs and events into shipment activity timeline
+- feat: add dynamic carrier config fieldsets to platform admin
+- feat: add event timeline with tracing records and dedicated tracing view
+- feat: add worker monitoring and system health views to developer tools
+
+### Fix
+
+- fix: web app Next.js 16 Turbopack and ESM compatibility
+- fix: update nextra import paths for v4 compatibility
+- fix: resolve auth token caching issues causing repeated OAuth requests
+
+### Refactor
+
+- refactor: improve developer tools drawer and views
+- refactor: split admin GraphQL into admin/ and admin-ee/ for OSS/EE separation
+- refactor: move admin module from ee/insiders to OSS
+- refactor: relocate carrier integration skills from CLI to SKILLS/
+- refactor: clean up tracking pipeline and add task lock for deduplication
+- refactor: replace monolithic tracker update with dispatcher + per-carrier worker tasks
+
+### Chore
+
+- chore: regenerate schemas and frontend types
+- chore: add JS client and elements build steps to CI workflows
+- chore: update built element static assets
+
+---
+
 # Karrio 2026.1.8
 
 ## Changes

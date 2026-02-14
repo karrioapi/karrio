@@ -7,7 +7,7 @@ import {
   UPDATE_ORGANIZATION_ACCOUNT,
   DISABLE_ORGANIZATION_ACCOUNT,
   DELETE_ORGANIZATION_ACCOUNT
-} from "@karrio/types/graphql/admin/queries";
+} from "@karrio/types/graphql/admin-ee/queries";
 import {
   GetOrganizations,
   GetOrganizationDetails,
@@ -20,7 +20,7 @@ import {
   DeleteOrganizationAccount,
   DeleteOrganizationAccountVariables,
   AccountFilter,
-} from "@karrio/types/graphql/admin";
+} from "@karrio/types/graphql/admin-ee";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 

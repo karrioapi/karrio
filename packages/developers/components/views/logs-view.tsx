@@ -11,12 +11,88 @@ import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import { Copy, Check, Server } from "lucide-react";
+import { Copy, Check, Server, Terminal } from "lucide-react";
 import { useLogs } from "@karrio/hooks/log";
 import { xml } from "@codemirror/lang-xml";
 import { cn } from "@karrio/ui/lib/utils";
 import moment from "moment";
 
+
+// Generate cURL command from an API log entry
+const generateLogCurlCommand = (log: any): string | null => {
+  if (!log) return null;
+
+  const method = log.method || "GET";
+  const host = log.host || "";
+  const path = log.path || "";
+  if (!host && !path) return null;
+
+  let url = host ? `${host}${path}` : path;
+
+  // Append query params if present
+  const queryParams = failsafe(() => {
+    if (!log.query_params) return null;
+    const params = typeof log.query_params === "string"
+      ? JSON.parse(log.query_params)
+      : log.query_params;
+    if (!params || typeof params !== "object") return null;
+    const entries = Object.entries(params).filter(([_, v]) => v != null && v !== "");
+    if (entries.length === 0) return null;
+    return entries
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+      .join("&");
+  });
+  if (queryParams) {
+    url += (url.includes("?") ? "&" : "?") + queryParams;
+  }
+
+  const parts: string[] = [`curl -X ${method}`];
+  parts.push(`  '${url}'`);
+  parts.push(`  -H 'Content-Type: application/json'`);
+
+  // Add request body for methods that typically have one
+  if (["POST", "PUT", "PATCH"].includes(method.toUpperCase()) && log.data) {
+    const body = failsafe(() => {
+      const d = typeof log.data === "string" ? JSON.parse(log.data) : log.data;
+      return JSON.stringify(d);
+    });
+    if (body && body !== "{}" && body !== "null") {
+      parts.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
+    }
+  }
+
+  return parts.join(" \\\n");
+};
+
+// Generate cURL command from a carrier tracing record
+const generateTracingCurlCommand = (request: any): string | null => {
+  if (!request?.record) return null;
+
+  const record = request.record;
+  const url = record.url;
+  if (!url) return null;
+
+  const format = record.format || "json";
+  const contentType = format === "xml"
+    ? "application/xml"
+    : "application/json";
+
+  const parts: string[] = [`curl -X POST`];
+  parts.push(`  '${url}'`);
+  parts.push(`  -H 'Content-Type: ${contentType}'`);
+
+  const rawData = record.data;
+  if (rawData) {
+    const body = typeof rawData === "object"
+      ? JSON.stringify(rawData)
+      : String(rawData);
+    if (body && body !== "{}" && body !== "null") {
+      parts.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
+    }
+  }
+
+  return parts.join(" \\\n");
+};
 
 // Timeline Tab Component
 const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
@@ -70,6 +146,23 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
                           Response: {moment(response.timestamp * 1000).format("LTS")}
                         </div>
                       )}
+                      {request && (() => {
+                        const curl = generateTracingCurlCommand(request);
+                        return curl ? (
+                          <div className="flex items-center justify-between border border-neutral-800 rounded-md px-3 py-2 mt-2">
+                            <span className="text-sm font-medium text-gray-300">cURL</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => { e.stopPropagation(); copyToClipboard(curl); }}
+                              className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
+                            >
+                              <Terminal className="h-3 w-3 mr-1" />
+                              <span className="text-xs">Copy</span>
+                            </Button>
+                          </div>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
                 </CardHeader>
@@ -269,7 +362,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="border-b px-4 py-3 flex-shrink-0">
+      <div className="border-b border-border px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Badge className={`${getMethodColor(log.method)} border-none hover:bg-black`}>
@@ -284,22 +377,20 @@ const LogDetailViewer = ({ log }: { log: any }) => {
               variant="outline"
               size="sm"
               onClick={copyFullLog}
-              className="h-7 px-2 text-white"
+              className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
               title="Copy full log as JSON"
             >
               {copiedFull ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
               <span className="ml-1 text-xs">{copiedFull ? "Copied" : "Copy"}</span>
             </Button>
-            <div className="text-xs text-gray-400">
-              {formatDateTimeLong(log.requested_at)}
-            </div>
           </div>
         </div>
-        <div className="text-sm font-medium truncate text-white">
-          {log.method} {log.path}
-        </div>
-        <div className="text-xs text-gray-400 mt-1">
-          ID: {log.id} • {log.response_ms}ms • {log.remote_addr}
+        <div className="text-xs text-muted-foreground space-y-1">
+          <div className="text-sm font-medium truncate text-foreground">{log.method} {log.path}</div>
+          <div>ID: {log.id}</div>
+          {log.response_ms && <div>Response: {log.response_ms}ms</div>}
+          {log.remote_addr && <div>Remote: {log.remote_addr}</div>}
+          <div>{formatDateTimeLong(log.requested_at)}</div>
         </div>
       </div>
 
@@ -383,6 +474,25 @@ const LogDetailViewer = ({ log }: { log: any }) => {
 
         {activeTab === "request" && (
           <div className="p-4 space-y-4">
+            {/* Copy as cURL */}
+            {(() => {
+              const curl = generateLogCurlCommand(log);
+              return curl ? (
+                <div className="flex items-center justify-between border border-neutral-800 rounded-md px-3 py-2">
+                  <span className="text-sm font-medium text-gray-300">cURL</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(curl)}
+                    className="h-7 px-2 border-neutral-800 text-neutral-300 hover:bg-purple-900/20"
+                  >
+                    <Terminal className="h-3 w-3 mr-1" />
+                    <span className="text-xs">Copy</span>
+                  </Button>
+                </div>
+              ) : null;
+            })()}
+
             {notEmptyJSON(queryParams) && queryParams !== data && (
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -499,6 +609,15 @@ const LogListItem = ({
     return <Activity className="h-4 w-4 text-primary" />;
   };
 
+  // Extract object_id from tracing records meta if available
+  const objectId = failsafe(() => {
+    const records = log.records || [];
+    for (const r of records) {
+      if (r?.meta?.object_id) return r.meta.object_id;
+    }
+    return null;
+  });
+
   return (
     <div
       className={cn(
@@ -528,7 +647,8 @@ const LogListItem = ({
               {log.path}
             </div>
             <div className="text-xs text-neutral-400 truncate">
-              ID: {log.id} • {log.host || "Unknown"}
+              ID: {log.id}
+              {objectId && ` • ${objectId}`}
             </div>
           </div>
           <div className="text-xs text-neutral-400 flex-shrink-0">

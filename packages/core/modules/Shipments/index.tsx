@@ -2,6 +2,7 @@
 import {
   formatAddressShort,
   formatAddressLocationShort,
+  formatDate,
   formatDateTime,
   formatRef,
   getURLSearchParams,
@@ -282,7 +283,7 @@ export default function Page(pageProps: any) {
                   </TableHead>
 
                   {selection.length > 0 && (
-                    <TableHead className="p-2" colSpan={6}>
+                    <TableHead className="p-2" colSpan={7}>
                       <div className="flex items-center gap-2 flex-wrap">
                         <Button
                           variant="outline"
@@ -340,6 +341,9 @@ export default function Page(pageProps: any) {
                       <TableHead className="status items-center"></TableHead>
                       <TableHead className="recipient text-xs items-center">
                         RECIPIENT
+                      </TableHead>
+                      <TableHead className="rate text-xs items-center">
+                        RATE
                       </TableHead>
                       <TableHead className="reference text-xs items-center">
                         REFERENCE
@@ -456,7 +460,7 @@ export default function Page(pageProps: any) {
                           }}
                         >
                           <p
-                            className="text-ellipsis"
+                            className="text-ellipsis font-bold"
                             title={formatAddressShort(
                               shipment.recipient as AddressType,
                             )}
@@ -465,12 +469,33 @@ export default function Page(pageProps: any) {
                               shipment.recipient as AddressType,
                             )}
                           </p>
-                          <p className="font-medium">
-                            {formatAddressLocationShort(
-                              shipment.recipient as AddressType,
-                            )}
+                          <p className="font-medium text-gray-500">
+                            {[
+                              (shipment.recipient as AddressType)?.city,
+                              (shipment.recipient as AddressType)?.postal_code,
+                              (shipment.recipient as AddressType)?.country_code,
+                            ].filter(Boolean).join(", ")}
                           </p>
                         </div>
+                    </TableCell>
+                    <TableCell
+                      className="rate items-center text-xs text-gray-600"
+                      onClick={() => previewShipment(shipment.id)}
+                    >
+                      {shipment.selected_rate ? (
+                        <div style={{ lineHeight: "16px" }}>
+                          <p className="font-bold">
+                            {shipment.selected_rate.total_charge} {shipment.selected_rate.currency}
+                          </p>
+                          {shipment.selected_rate.transit_days && (
+                            <p className="text-gray-400 font-medium">
+                              {shipment.selected_rate.transit_days}-{shipment.selected_rate.transit_days + 2} days
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
                     </TableCell>
                     <TableCell
                       className="reference items-center text-xs font-bold text-gray-600 text-ellipsis"
@@ -482,9 +507,14 @@ export default function Page(pageProps: any) {
                       className="date items-center px-1"
                       onClick={() => previewShipment(shipment.id)}
                     >
-                      <p className="text-xs font-semibold text-gray-600">
-                        {formatDateTime(shipment.created_at)}
-                      </p>
+                      <div style={{ lineHeight: "16px" }}>
+                        <p className="text-xs font-semibold text-gray-600">
+                          {formatDateTime(shipment.created_at)}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {formatDateTime(shipment.updated_at)}
+                        </p>
+                      </div>
                     </TableCell>
                     <TableCell className="action items-center px-0 sticky-right">
                       <ShipmentMenu

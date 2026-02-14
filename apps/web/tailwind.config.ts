@@ -1,4 +1,7 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindcssTypography from "@tailwindcss/typography";
+import tailwindcssForms from "@tailwindcss/forms";
 
 const config: Config = {
   darkMode: ["class", '[data-theme="dark"]'],
@@ -113,9 +116,9 @@ const config: Config = {
     'text-white'
   ],
   plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"),
-    require("@tailwindcss/forms"),
+    tailwindcssAnimate,
+    tailwindcssTypography,
+    tailwindcssForms,
   ],
 };
 

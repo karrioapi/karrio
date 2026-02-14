@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useDeveloperTools, DeveloperView } from "@karrio/developers/context/developer-tools-context";
 import { Drawer, DrawerPortal, DrawerHeader, DrawerTitle, DrawerDescription } from "@karrio/ui/components/ui/drawer";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { X, Activity, Key, Webhook, Calendar, FileText, Settings, Terminal, Menu, Code2, Database } from "lucide-react";
+import { X, Activity, Key, Webhook, Calendar, FileText, Settings, Terminal, Menu, Code2, Database, Network, Server, Cpu } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@karrio/ui/components/ui/tabs";
 import { Button } from "@karrio/ui/components/ui/button";
 import { cn } from "@karrio/ui/lib/utils";
@@ -16,8 +16,11 @@ import { ApiKeysView } from "@karrio/developers/components/views/api-keys-view";
 import { EventsView } from "@karrio/developers/components/views/events-view";
 import { LogsView } from "@karrio/developers/components/views/logs-view";
 import { AppsView } from "@karrio/developers/components/views/apps-view";
+import { TracingRecordsView } from "@karrio/developers/components/views/tracing-records-view";
 import { PlaygroundView } from "@karrio/developers/components/views/playground-view";
 import { GraphiQLView } from "@karrio/developers/components/views/graphiql-view";
+import { WorkersView } from "@karrio/developers/components/views/workers-view";
+import { SystemHealthView } from "@karrio/developers/components/views/system-health-view";
 
 // Custom DrawerContent with responsive positioning
 const CustomDrawerContent = React.forwardRef<
@@ -60,7 +63,7 @@ const CustomDrawerContent = React.forwardRef<
   </DrawerPortal>
 ));
 
-const VIEW_CONFIG = {
+const VIEW_CONFIG: Record<string, { label: string; icon: any; component: React.ComponentType; adminOnly?: boolean }> = {
   activity: {
     label: "Activity",
     icon: Activity,
@@ -80,6 +83,11 @@ const VIEW_CONFIG = {
     label: "Events",
     icon: Calendar,
     component: EventsView,
+  },
+  "tracing-records": {
+    label: "Tracing",
+    icon: Network,
+    component: TracingRecordsView,
   },
   apps: {
     label: "Apps",
@@ -101,10 +109,29 @@ const VIEW_CONFIG = {
     icon: Database,
     component: GraphiQLView,
   },
+  "system-health": {
+    label: "Health",
+    icon: Server,
+    component: SystemHealthView,
+    adminOnly: true,
+  },
+  workers: {
+    label: "Workers",
+    icon: Cpu,
+    component: WorkersView,
+    adminOnly: true,
+  },
 };
 
 export function DeveloperToolsDrawer() {
-  const { isOpen, currentView, closeDeveloperTools, setCurrentView } = useDeveloperTools();
+  const { isOpen, currentView, isAdminMode, closeDeveloperTools, setCurrentView } = useDeveloperTools();
+
+  // Filter views based on admin mode
+  const visibleViews = React.useMemo(() => {
+    return Object.entries(VIEW_CONFIG).filter(
+      ([_, config]) => !config.adminOnly || isAdminMode
+    );
+  }, [isAdminMode]);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const dragInfoRef = React.useRef<{ startY: number; startTime: number; dragging: boolean } | null>(null);
 
@@ -286,21 +313,28 @@ export function DeveloperToolsDrawer() {
               isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
             )}>
               <TabsList className="flex flex-col h-full w-full justify-start !bg-transparent !p-2 !rounded-none !h-auto space-y-1">
-                {Object.entries(VIEW_CONFIG).map(([viewKey, config]) => {
+                {visibleViews.map(([viewKey, config], index) => {
                   const Icon = config.icon;
+                  const isFirstAdmin = config.adminOnly && (index === 0 || !visibleViews[index - 1]?.[1]?.adminOnly);
                   return (
-                    <TabsTrigger
-                      key={viewKey}
-                      value={viewKey}
-                      className={cn(
-                        "w-full justify-start gap-3 px-3 py-3 text-sm font-medium transition-all rounded-md",
-                        "text-foreground hover:bg-primary/10",
-                        "data-[state=active]:bg-primary/20 data-[state=active]:text-foreground data-[state=active]:shadow-sm border border-transparent data-[state=active]:border-border"
+                    <React.Fragment key={viewKey}>
+                      {isFirstAdmin && (
+                        <div className="pt-2 pb-1 px-3">
+                          <div className="border-t border-border" />
+                        </div>
                       )}
-                    >
-                      <Icon className="h-5 w-5 flex-shrink-0 text-primary" />
-                      <span className="truncate">{config.label}</span>
-                    </TabsTrigger>
+                      <TabsTrigger
+                        value={viewKey}
+                        className={cn(
+                          "w-full justify-start gap-3 px-3 py-3 text-sm font-medium transition-all rounded-md",
+                          "text-foreground hover:bg-primary/10",
+                          "data-[state=active]:bg-primary/20 data-[state=active]:text-foreground data-[state=active]:shadow-sm border border-transparent data-[state=active]:border-border"
+                        )}
+                      >
+                        <Icon className="h-5 w-5 flex-shrink-0 text-primary" />
+                        <span className="truncate">{config.label}</span>
+                      </TabsTrigger>
+                    </React.Fragment>
                   );
                 })}
               </TabsList>
@@ -308,7 +342,7 @@ export function DeveloperToolsDrawer() {
 
             {/* Main Content Area */}
             <div className="flex-1 lg:ml-0 bg-background min-h-0 pl-0 lg:pl-0 lg:overflow-hidden">
-              {Object.entries(VIEW_CONFIG).map(([viewKey, config]) => {
+              {visibleViews.map(([viewKey, config]) => {
                 const Component = config.component;
                 return (
                   <TabsContent

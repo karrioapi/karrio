@@ -2,10 +2,8 @@
 
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogPortal } from "@karrio/ui/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
-import { Trash2, Plus, Copy, Eye, EyeOff, Calendar, MoreHorizontal } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal } from "@karrio/ui/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@karrio/ui/components/ui/tooltip";
+import { Trash2, Plus, Copy, Eye, EyeOff, MoreHorizontal, Check, Key, ShieldCheck } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal, DropdownMenuSeparator } from "@karrio/ui/components/ui/dropdown-menu";
 import { useAPIKeys, useAPIKeyMutation } from "@karrio/hooks/api-keys";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
 import { Checkbox } from "@karrio/ui/components/ui/checkbox";
@@ -22,7 +20,6 @@ type CreateFormData = {
   permissions: string[];
 };
 
-// Available permissions - these should match what's available in the system
 const AVAILABLE_PERMISSIONS = [
   "manage_apps",
   "manage_carriers",
@@ -37,7 +34,6 @@ const AVAILABLE_PERMISSIONS = [
   "manage_pickups"
 ];
 
-// Helper function to format permission names for display
 const formatPermissionName = (permission: string) => {
   return permission
     .replace(/^manage_/, '')
@@ -50,7 +46,11 @@ export function ApiKeysView() {
   const { query } = useAPIKeys();
   const { createAPIKey, deleteAPIKey } = useAPIKeyMutation();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [deletePassword, setDeletePassword] = useState("");
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [formData, setFormData] = useState<CreateFormData>({
     label: "",
     password: "",
@@ -85,12 +85,10 @@ export function ApiKeysView() {
     }
   };
 
-  const handleDelete = async (key: string) => {
-    const password = prompt("Enter your password to delete this API key:");
-    if (!password) return;
-
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget || !deletePassword) return;
     try {
-      const result = await deleteAPIKey.mutateAsync({ key, password });
+      const result = await deleteAPIKey.mutateAsync({ key: deleteTarget, password: deletePassword });
       if (result.delete_api_key.errors && result.delete_api_key.errors.length > 0) {
         const errorMessages = result.delete_api_key.errors.map(e => e.messages.join(", ")).join("; ");
         notifier.notify({
@@ -102,6 +100,9 @@ export function ApiKeysView() {
           type: NotificationType.success,
           message: "API key deleted successfully!",
         });
+        setIsDeleteOpen(false);
+        setDeleteTarget(null);
+        setDeletePassword("");
       }
     } catch (error: any) {
       notifier.notify({
@@ -111,25 +112,41 @@ export function ApiKeysView() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = (key: string) => {
+    navigator.clipboard.writeText(key);
+    setCopiedKey(key);
     notifier.notify({
       type: NotificationType.success,
-      message: "Copied to clipboard!",
+      message: "API key copied to clipboard",
     });
+    setTimeout(() => setCopiedKey(null), 2000);
   };
 
   const toggleSecret = (key: string) => {
     setShowSecrets(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const openDeleteDialog = (key: string) => {
+    setDeleteTarget(key);
+    setDeletePassword("");
+    setIsDeleteOpen(true);
+  };
+
+  const toggleAllPermissions = (checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: checked ? [...AVAILABLE_PERMISSIONS] : [],
+    }));
+  };
+
   return (
     <div className="h-full flex flex-col bg-background">
-      <div className="px-4 py-3 border-b border-border">
+      {/* Header */}
+      <div className="px-4 py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-foreground">API Keys</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-0.5">
               Manage your API keys for programmatic access
             </p>
           </div>
@@ -148,35 +165,46 @@ export function ApiKeysView() {
                     Create a new API key for programmatic access to your account.
                   </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 pb-8">
+                <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 pb-6">
                   <div className="space-y-2">
-                    <Label htmlFor="label" className="text-muted-foreground">Label</Label>
+                    <Label htmlFor="label" className="text-muted-foreground text-xs font-medium">KEY NAME</Label>
                     <Input
                       id="label"
                       value={formData.label}
                       onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
-                      placeholder="Enter a descriptive label"
+                      placeholder="e.g. Production API Key"
                       required
                       className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-muted-foreground">Password</Label>
+                    <Label htmlFor="password" className="text-muted-foreground text-xs font-medium">ACCOUNT PASSWORD</Label>
                     <Input
                       id="password"
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder="Enter your account password"
+                      placeholder="Enter your password to confirm"
                       required
                       className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-muted-foreground">Permissions</Label>
-                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-muted-foreground text-xs font-medium">PERMISSIONS</Label>
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        className="text-xs text-primary p-0 h-auto"
+                        onClick={() => toggleAllPermissions(formData.permissions.length !== AVAILABLE_PERMISSIONS.length)}
+                      >
+                        {formData.permissions.length === AVAILABLE_PERMISSIONS.length ? "Deselect all" : "Select all"}
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1">
                       {AVAILABLE_PERMISSIONS.map((permission) => (
-                        <div key={permission} className="flex items-center space-x-2">
+                        <div key={permission} className="flex items-center space-x-2 py-1">
                           <Checkbox
                             id={permission}
                             checked={formData.permissions.includes(permission)}
@@ -194,18 +222,18 @@ export function ApiKeysView() {
                               }
                             }}
                           />
-                          <Label htmlFor={permission} className="text-sm text-muted-foreground">
+                          <Label htmlFor={permission} className="text-sm text-muted-foreground cursor-pointer">
                             {formatPermissionName(permission)}
                           </Label>
                         </div>
                       ))}
                     </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-                    <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)} className="w-full sm:w-auto !text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!text-primary">
+                  <div className="flex justify-end space-x-2 pt-2">
+                    <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)} className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!text-primary">
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createAPIKey.isLoading} className="w-full sm:w-auto">
+                    <Button type="submit" disabled={createAPIKey.isLoading}>
                       {createAPIKey.isLoading ? "Creating..." : "Create API Key"}
                     </Button>
                   </div>
@@ -216,152 +244,170 @@ export function ApiKeysView() {
         </div>
       </div>
 
+      {/* Content */}
       <div className="flex-1 overflow-auto p-4">
         {apiKeys.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-muted-foreground mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-3.586l6.879-6.879A6 6 0 0119 9z" />
-              </svg>
+          <div className="text-center py-16">
+            <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Key className="h-7 w-7 text-primary" />
             </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">No API keys</h3>
-            <p className="text-muted-foreground mb-4">Get started by creating your first API key.</p>
+            <h3 className="text-lg font-medium text-foreground mb-2">No API keys yet</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+              Create an API key to authenticate your requests and start integrating with the API.
+            </p>
             <Button onClick={() => setIsCreateOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Create API Key
+              Create your first API Key
             </Button>
           </div>
         ) : (
-          <div className="border-b border-border text-foreground overflow-x-auto sm:overflow-x-visible" style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch', overscrollBehaviorX: 'contain' }}>
-            <div className="inline-block w-full min-w-[900px] sm:min-w-0 align-top">
-              <Table className="w-full table-auto">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-foreground">Label</TableHead>
-                    <TableHead className="text-foreground">Mode</TableHead>
-                    <TableHead className="text-foreground">API Key</TableHead>
-                    <TableHead className="text-foreground">Permissions</TableHead>
-                    <TableHead className="text-foreground">Created</TableHead>
-                    <TableHead className="w-12"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {apiKeys.map((apiKey) => (
-                    <TableRow key={apiKey.key}>
-                      <TableCell className="font-medium">
+          <div className="space-y-3">
+            {apiKeys.map((apiKey) => (
+              <div
+                key={apiKey.key}
+                className="bg-card border border-border rounded-lg p-4 hover:border-primary/30 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  {/* Left: Key info */}
+                  <div className="flex-1 min-w-0 space-y-2">
+                    {/* Name + Mode */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-foreground truncate">
                         {apiKey.label}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={apiKey.test_mode ? "secondary" : "default"}>
-                          {apiKey.test_mode ? "Test" : "Live"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <code className="text-sm bg-muted border border-border text-foreground px-2 py-1 rounded font-mono">
-                            {showSecrets[apiKey.key] ? apiKey.key : `${apiKey.key.slice(0, 8)}...`}
-                          </code>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleSecret(apiKey.key)}
-                          >
-                            {showSecrets[apiKey.key] ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                          </Button>
+                      </span>
+                      <Badge
+                        variant={apiKey.test_mode ? "secondary" : "default"}
+                        className="text-xs flex-shrink-0"
+                      >
+                        {apiKey.test_mode ? "Test" : "Live"}
+                      </Badge>
+                    </div>
+
+                    {/* Token */}
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs bg-muted border border-border text-foreground px-2.5 py-1 rounded font-mono">
+                        {showSecrets[apiKey.key] ? apiKey.key : `${apiKey.key.slice(0, 12)}...${apiKey.key.slice(-4)}`}
+                      </code>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-foreground"
+                        onClick={() => toggleSecret(apiKey.key)}
+                      >
+                        {showSecrets[apiKey.key] ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-foreground"
+                        onClick={() => copyToClipboard(apiKey.key)}
+                      >
+                        {copiedKey === apiKey.key ? (
+                          <Check className="h-[18px] w-[18px] text-green-400" />
+                        ) : (
+                          <Copy className="h-[18px] w-[18px]" />
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Permissions + Created */}
+                    <div className="flex items-center gap-3 flex-wrap">
+                      {apiKey.permissions && apiKey.permissions.length > 0 ? (
+                        <div className="flex items-center gap-1">
+                          <ShieldCheck className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">
+                            {apiKey.permissions.length === AVAILABLE_PERMISSIONS.length
+                              ? "Full access"
+                              : `${apiKey.permissions.length} permission${apiKey.permissions.length !== 1 ? 's' : ''}`}
+                          </span>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-md">
-                          {apiKey.permissions && apiKey.permissions.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
-                              {apiKey.permissions.slice(0, 2).map((permission) => (
-                                <Badge key={permission} variant="secondary" className="text-xs">
-                                  {formatPermissionName(permission)}
-                                </Badge>
-                              ))}
-                              {apiKey.permissions.length > 2 && (
-                                <>
-                                  <div className="hidden sm:block">
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Badge variant="secondary" className="text-xs cursor-default">
-                                            +{apiKey.permissions.length - 2}
-                                          </Badge>
-                                        </TooltipTrigger>
-                                        <TooltipContent side="bottom" sideOffset={6} className="devtools-theme dark bg-popover text-foreground border border-border">
-                                          <div className="max-w-xs text-xs space-y-1">
-                                            {apiKey.permissions.slice(2).map((permission: string) => (
-                                              <div key={permission}>{formatPermissionName(permission)}</div>
-                                            ))}
-                                          </div>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  </div>
-                                  <div className="sm:hidden">
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button variant="secondary" size="sm" className="h-5 px-2 text-xs">
-                                          +{apiKey.permissions.length - 2}
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
-                                        <DropdownMenuContent side="bottom" align="start" className="devtools-theme dark bg-popover text-foreground border border-border">
-                                          <div className="max-w-xs text-xs space-y-1 px-2 py-1">
-                                            {apiKey.permissions.slice(2).map((permission: string) => (
-                                              <div key={permission}>{formatPermissionName(permission)}</div>
-                                            ))}
-                                          </div>
-                                        </DropdownMenuContent>
-                                      </DropdownMenuPortal>
-                                    </DropdownMenu>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">No permissions</span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-muted-foreground">
-                          {formatDateTimeLong(apiKey.created)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="lg" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
-                            <DropdownMenuContent align="end" className="devtools-theme dark bg-popover text-foreground border-border">
-                              <DropdownMenuItem onClick={() => copyToClipboard(apiKey.key)} className="text-foreground focus:bg-primary/20 focus:text-foreground">
-                                <Copy className="h-4 w-4 mr-2" />
-                                Copy API Key
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleDelete(apiKey.key)}
-                                className="text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenuPortal>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No permissions</span>
+                      )}
+                      <span className="text-xs text-muted-foreground/50">|</span>
+                      <span className="text-xs text-muted-foreground">
+                        Created {formatDateTimeLong(apiKey.created)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right: Actions */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="flex-shrink-0 text-muted-foreground hover:text-foreground">
+                        <MoreHorizontal className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
+                      <DropdownMenuContent align="end" className="devtools-theme dark bg-popover text-foreground border-border">
+                        <DropdownMenuItem
+                          onClick={() => copyToClipboard(apiKey.key)}
+                          className="text-foreground focus:bg-primary/20 focus:text-foreground"
+                        >
+                          <Copy className="h-4 w-4 mr-2" />
+                          Copy API Key
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-border" />
+                        <DropdownMenuItem
+                          onClick={() => openDeleteDialog(apiKey.key)}
+                          className="text-red-400 focus:bg-red-500/20 focus:text-red-400"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Key
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenu>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <DialogPortal container={typeof document !== 'undefined' ? document.getElementById('devtools-portal') as any : undefined}>
+          <DialogContent className="devtools-theme dark max-w-sm mx-2 sm:mx-auto bg-popover border-border text-foreground">
+            <DialogHeader className="bg-popover border-b border-border px-4 py-3 text-foreground">
+              <DialogTitle className="text-foreground">Delete API Key</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                This action cannot be undone. Enter your password to confirm.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="p-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="delete-password" className="text-muted-foreground text-xs font-medium">PASSWORD</Label>
+                <Input
+                  id="delete-password"
+                  type="password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  placeholder="Enter your account password"
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                  onKeyDown={(e) => e.key === 'Enter' && handleDeleteConfirm()}
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDeleteOpen(false)}
+                  className="!text-foreground !bg-card !border-border hover:!bg-primary/10 hover:!text-primary"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteConfirm}
+                  disabled={!deletePassword || deleteAPIKey.isLoading}
+                >
+                  {deleteAPIKey.isLoading ? "Deleting..." : "Delete Key"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
     </div>
   );
 }
