@@ -1,0 +1,11 @@
+import{m as h,R as y,aj as p,b7 as f,a2 as k}from"./globals-BwWzdTru.js";/**
+ * @license lucide-react v0.525.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const m=[["path",{d:"M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49",key:"ct8e1f"}],["path",{d:"M14.084 14.158a3 3 0 0 1-4.242-4.242",key:"151rxh"}],["path",{d:"M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143",key:"13bj9a"}],["path",{d:"m2 2 20 20",key:"1ooewy"}]],q=h("eye-off",m);/**
+ * @license lucide-react v0.525.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const b=[["path",{d:"M12 20h9",key:"t2du7b"}],["path",{d:"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z",key:"1ykcvy"}]],w=h("pen-line",b);y.createContext({});function g(){const{host:u,token:i,headers:r,graphqlRequest:c}=p();return y.useMemo(()=>{const s=async(e,a,o)=>{const n=await fetch(`${u}${a}`,{method:e,headers:r,body:o?JSON.stringify(o):void 0}),t=await n.json();if(!n.ok){const d=new Error((t==null?void 0:t.detail)||(t==null?void 0:t.message)||"Request failed");throw d.response={status:n.status,data:t},d}return{data:t,status:n.status}};return{graphql:{request:c},webhooks:{create:({webhookData:e})=>s("POST","/v1/webhooks",e),update:({id:e,patchedWebhookData:a})=>s("PATCH",`/v1/webhooks/${e}`,a),remove:({id:e})=>s("DELETE",`/v1/webhooks/${e}`),test:({id:e,webhookTestRequest:a})=>s("POST",`/v1/webhooks/${e}/test`,a)},documents:{generateDocument:({documentData:e})=>s("POST","/v1/documents/generate",e)},axios:{post:async(e,a)=>s("POST",e,a),get:async e=>s("GET",e)},isAuthenticated:!0,pageData:{}}},[u,i,r,c])}function v(u){const{enabled:i=!0,requireAuth:r,...c}=u;return f({...c,enabled:i,retry:(s,e)=>{var a,o,n,t;return((n=(o=(a=e==null?void 0:e.response)==null?void 0:a.errors)==null?void 0:o[0])==null?void 0:n.code)==="authentication_required"||(t=e==null?void 0:e.message)!=null&&t.includes("authentication")?!1:s<1}})}function E(u){return k(u)}export{q as E,w as P,v as a,E as b,g as u};
