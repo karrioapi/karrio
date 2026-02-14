@@ -55,7 +55,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         token = self.settings.connection_cache.thread_safe(
             refresh_func=get_token,
             cache_key=cache_key,
-            buffer_minutes=30,
+            buffer_minutes=5,
         )
 
         return lib.Deserializable(token.get_state())
