@@ -384,6 +384,7 @@ def shipment_request(
                         country=recipient.country_code,
                     ),
                     contact=dpd_req.ExporterContactType(
+                        contactPerson=recipient.person_name,
                         phone1=recipient.phone_number,
                         email=recipient.email,
                     ),
@@ -405,6 +406,7 @@ def shipment_request(
                         country=exporter.country_code,
                     ),
                     contact=dpd_req.ExporterContactType(
+                        contactPerson=exporter.person_name,
                         phone1=exporter.phone_number,
                         email=exporter.email,
                     ),
@@ -417,8 +419,8 @@ def shipment_request(
                         content=lib.text(item.description, max=35),
                         amountOfPosition=item.value_amount,
                         manufacturedCountry=item.origin_country or shipper.country_code,
-                        netWeight=lib.text(item.weight.G),
-                        grossWeight=lib.text(item.weight.G),
+                        netWeight=str(int(units.Weight(item.weight, item.weight_unit or "KG").G)),
+                        grossWeight=str(int(units.Weight(item.weight, item.weight_unit or "KG").G)),
                         customerProductCode=item.sku,
                         productDescription=lib.text(item.description, max=100),
                         importTarifCode=item.hs_code,

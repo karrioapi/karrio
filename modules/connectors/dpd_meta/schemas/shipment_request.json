@@ -186,6 +186,7 @@
           "country": "FR"
         },
         "contact": {
+          "contactPerson": "Import Manager",
           "phone1": "+33198765432",
           "email": "importer@example.com"
         },
@@ -205,6 +206,7 @@
           "country": "DE"
         },
         "contact": {
+          "contactPerson": "Export Manager",
           "phone1": "+49301234567",
           "email": "exporter@example.com"
         },
