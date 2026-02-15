@@ -16,6 +16,7 @@ import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { cn } from "@karrio/ui/lib/utils";
+import { url$ } from "@karrio/lib";
 import { useWorkerHealth, useTaskExecutions } from "@karrio/hooks/admin-worker";
 
 type HealthCheckStatus = Record<string, string>;
@@ -31,7 +32,7 @@ function useSystemHealth() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${references.HOST}/status/?format=json`);
+      const res = await fetch(url$`${references.HOST}/status/?format=json`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       setData(json);

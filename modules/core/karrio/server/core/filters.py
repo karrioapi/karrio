@@ -695,7 +695,7 @@ class TracingRecordFilter(filters.FilterSet):
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
     keyword = filters.CharFilter(
         method="keyword_filter",
-        help_text="search in key and meta",
+        help_text="search in key, meta and record data",
     )
 
     class Meta:
@@ -707,8 +707,9 @@ class TracingRecordFilter(filters.FilterSet):
 
     def keyword_filter(self, queryset, name, value):
         return queryset.filter(
-            models.Q(key__icontains=value) |
-            models.Q(meta__icontains=value)
+            models.Q(key__icontains=value)
+            | models.Q(meta__icontains=value)
+            | models.Q(record__icontains=value)
         )
 
 

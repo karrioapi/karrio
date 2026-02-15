@@ -2,6 +2,7 @@ import typing
 import datetime
 import strawberry
 from constance import config
+from django.utils import timezone
 from strawberry.types import Info
 
 import karrio.lib as lib
@@ -366,8 +367,8 @@ class ResourceUsageType:
         _test_mode = info.context.request.test_mode
         _test_filter = dict(test_mode=_test_mode)
         _filter = {
-            "date_before": datetime.datetime.now(),
-            "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
+            "date_before": timezone.now(),
+            "date_after": (timezone.now() - datetime.timedelta(days=30)),
             **filter.to_dict(),
         }
         _account_filter = lib.identity(
