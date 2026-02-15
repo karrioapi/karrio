@@ -39,10 +39,8 @@ export function AddWeightRangeDialog({
   const [maxWeight, setMaxWeight] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const derivedMinWeight =
-    existingRanges.length > 0
-      ? Math.max(...existingRanges.map((r) => r.max_weight))
-      : 0;
+  const suggestedMin = 0;
+  const derivedMinWeight = suggestedMin;
 
   const handleSubmit = () => {
     setError(null);

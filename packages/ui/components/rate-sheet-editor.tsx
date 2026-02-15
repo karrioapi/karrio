@@ -180,6 +180,7 @@ interface OriginalState {
   serviceRates: Map<string, { rate: number; cost?: number | null }>;
   serviceZoneIds: Map<string, string[]>;
   serviceSurchargeIds: Map<string, string[]>;
+  serviceFields: Map<string, Record<string, any>>;
 }
 
 export const RateSheetEditor = ({
@@ -266,6 +267,9 @@ export const RateSheetEditor = ({
   const zoneSaveRef = useRef(false);
   const surchargeSaveRef = useRef(false);
   const [pendingZoneServiceId, setPendingZoneServiceId] = useState<string | null>(null);
+
+  // Pending service rates for staged clone/preset services (cleared on save or cancel)
+  const [pendingServiceRates, setPendingServiceRates] = useState<ServiceRate[]>([]);
 
   // Per-service pending weight ranges (edit mode)
   const [editModePendingRanges, setEditModePendingRanges] = useState<Record<string, WeightRange[]>>({});
@@ -470,9 +474,19 @@ export const RateSheetEditor = ({
 
       const originalServiceZoneIds = new Map<string, string[]>();
       const originalServiceSurchargeIds = new Map<string, string[]>();
+      const originalServiceFields = new Map<string, Record<string, any>>();
       rawServices.forEach((s: any) => {
         originalServiceZoneIds.set(s.id, [...(s.zone_ids || [])]);
         originalServiceSurchargeIds.set(s.id, [...(s.surcharge_ids || [])]);
+        originalServiceFields.set(s.id, {
+          service_name: s.service_name,
+          service_code: s.service_code,
+          currency: s.currency,
+          active: s.active,
+          transit_days: s.transit_days,
+          description: s.description,
+          features: s.features,
+        });
       });
 
       originalStateRef.current = {
@@ -482,6 +496,7 @@ export const RateSheetEditor = ({
         serviceRates: originalServiceRates,
         serviceZoneIds: originalServiceZoneIds,
         serviceSurchargeIds: originalServiceSurchargeIds,
+        serviceFields: originalServiceFields,
       };
     }
   }, [existingRateSheet, isEditMode]);
@@ -748,8 +763,10 @@ export const RateSheetEditor = ({
           }
         : {}),
     };
-    setServices((prev) => [...prev, newService]);
-    setLocalServiceRates((prev) => [...prev, ...newRates]);
+    // Stage — don't add to services yet, add on dialog save
+    setPendingServiceRates(newRates);
+    setSelectedService(newService);
+    setServiceDialogOpen(true);
     setServiceAddPopoverOpen(false);
   };
 
@@ -827,11 +844,12 @@ export const RateSheetEditor = ({
       id: newId,
       service_name: `${service.service_name} (copy)`,
     };
-    setServices((prev) => [...prev, newService]);
-    const clonedRates = localServiceRates
+    // Clone rates from serviceRatesData (includes overlay in edit mode)
+    const clonedRates = serviceRatesData
       .filter(sr => sr.service_id === service.id)
       .map(sr => ({ ...sr, service_id: newId }));
-    setLocalServiceRates((prev) => [...prev, ...clonedRates]);
+    // Stage — don't add to services yet, add on dialog save
+    setPendingServiceRates(clonedRates);
     setSelectedService(newService);
     setServiceDialogOpen(true);
   };
@@ -842,15 +860,37 @@ export const RateSheetEditor = ({
   };
 
   const handleSaveService = (serviceData: Partial<ServiceLevelWithZones>) => {
-    if (selectedService) {
+    const isExistingInList = selectedService && services.some(s => s.id === selectedService.id);
+
+    if (selectedService && isExistingInList) {
+      // Path 1: Edit existing service in list — match by id
       setServices((prev) =>
         prev.map((s) =>
-          s.service_code === selectedService.service_code
+          s.id === selectedService.id
             ? { ...s, ...serviceData }
             : s
         )
       );
+    } else if (selectedService) {
+      // Path 2: New from clone/preset — add to list now
+      const merged = { ...selectedService, ...serviceData };
+      setServices((prev) => [...prev, merged]);
+      setDetailServiceId(merged.id); // Select new tab
+
+      // Apply pending rates (from clone or preset)
+      if (pendingServiceRates.length > 0) {
+        if (isEditMode) {
+          setEditModeRatesOverride((prev) => {
+            const base = prev ?? (((existingRateSheet as any)?.service_rates ?? []) as ServiceRate[]);
+            return [...base, ...pendingServiceRates];
+          });
+        } else {
+          setLocalServiceRates((prev) => [...prev, ...pendingServiceRates]);
+        }
+        setPendingServiceRates([]);
+      }
     } else {
+      // Path 3: Brand new service
       const newService: ServiceLevelWithZones = {
         id: generateId("service"),
         object_type: "service_level",
@@ -888,9 +928,11 @@ export const RateSheetEditor = ({
         features: serviceData.features ?? [],
       };
       setServices((prev) => [...prev, newService]);
+      setDetailServiceId(newService.id); // Select new tab
     }
     setServiceDialogOpen(false);
     setSelectedService(null);
+    setPendingServiceRates([]);
   };
 
   const handleUpdateService = (
@@ -911,10 +953,10 @@ export const RateSheetEditor = ({
 
   const handleConfirmDelete = async () => {
     if (serviceToDelete) {
-      const isExistingService =
-        serviceToDelete.id && !serviceToDelete.id.startsWith("temp-");
+      const isBackendService = isEditMode &&
+        originalStateRef.current?.serviceFields?.has(serviceToDelete.id);
 
-      if (isExistingService && rateSheetId && mutations.deleteRateSheetService) {
+      if (isBackendService && rateSheetId && mutations.deleteRateSheetService) {
         setIsDeletingService(true);
         try {
           await mutations.deleteRateSheetService.mutateAsync({
@@ -941,7 +983,7 @@ export const RateSheetEditor = ({
       }
 
       setServices((prev) =>
-        prev.filter((s) => s.service_code !== serviceToDelete.service_code)
+        prev.filter((s) => s.id !== serviceToDelete.id)
       );
       setServiceToDelete(null);
       setDeleteConfirmOpen(false);
@@ -2444,7 +2486,11 @@ export const RateSheetEditor = ({
       {/* Service Editor Modal */}
       <ServiceEditorModal
         isOpen={serviceDialogOpen}
-        onClose={() => setServiceDialogOpen(false)}
+        onClose={() => {
+          setServiceDialogOpen(false);
+          setSelectedService(null);
+          setPendingServiceRates([]);
+        }}
         service={selectedService}
         onSubmit={handleSaveService}
         availableSurcharges={surcharges}
