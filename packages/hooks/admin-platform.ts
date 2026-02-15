@@ -6,12 +6,11 @@ import {
   get_config_fieldsets as GetConfigFieldsets,
   get_config_schema as GetConfigSchema,
   UpdateConfigs,
-  UpdateConfigsVariables,
 } from "@karrio/types/graphql/admin";
 import { useQueryClient } from "@tanstack/react-query";
 
 // Types
-export type ConfigsType = GetConfigs['configs'];
+export type ConfigsType = Record<string, any>;
 
 // -----------------------------------------------------------
 // Platform Configuration Hook
@@ -27,7 +26,7 @@ export function useConfigs() {
 
   return {
     query,
-    configs: query.data?.configs,
+    configs: query.data?.configs?.configs,
   };
 }
 
@@ -77,9 +76,9 @@ export function useConfigMutation() {
   };
 
   const updateConfigs = useAuthenticatedMutation({
-    mutationFn: (input: UpdateConfigsVariables["input"]) => karrio.admin.request<UpdateConfigs>(
+    mutationFn: (input: Record<string, any>) => karrio.admin.request<UpdateConfigs>(
       gqlstr(UPDATE_CONFIGS),
-      { variables: { input } }
+      { variables: { input: { configs: input } } }
     ),
     onSuccess: invalidateCache,
   });

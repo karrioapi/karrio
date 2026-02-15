@@ -34,7 +34,7 @@ ENABLE_ALL_PLUGINS_BY_DEFAULT = config(
     "ENABLE_ALL_PLUGINS_BY_DEFAULT", default=True if base.DEBUG else False, cast=bool
 )
 
-# Create feature flags config only for modules that exist
+# Feature flags config — always present with False default when module is absent
 FEATURE_FLAGS_CONFIG = {
     "AUDIT_LOGGING": (
         base.AUDIT_LOGGING if importlib.util.find_spec("karrio.server.audit") is not None else False,
@@ -147,7 +147,7 @@ PLUGIN_SYSTEM_CONFIG_FIELDSETS = {
 }
 
 
-# Filter out None values and update CONSTANCE_CONFIG
+# Aggregate all config sections into CONSTANCE_CONFIG
 CONSTANCE_CONFIG = {
     "EMAIL_USE_TLS": (
         EMAIL_USE_TLS,
