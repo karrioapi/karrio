@@ -31,6 +31,7 @@ class ExporterAddressType:
 
 @attr.s(auto_attribs=True)
 class ExporterContactType:
+    contactPerson: typing.Optional[str] = None
     phone1: typing.Optional[str] = None
     email: typing.Optional[str] = None
 

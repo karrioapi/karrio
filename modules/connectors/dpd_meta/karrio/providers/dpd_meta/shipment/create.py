@@ -384,6 +384,7 @@ def shipment_request(
                         country=recipient.country_code,
                     ),
                     contact=dpd_req.ExporterContactType(
+                        contactPerson=recipient.person_name,
                         phone1=recipient.phone_number,
                         email=recipient.email,
                     ),
@@ -405,6 +406,7 @@ def shipment_request(
                         country=exporter.country_code,
                     ),
                     contact=dpd_req.ExporterContactType(
+                        contactPerson=exporter.person_name,
                         phone1=exporter.phone_number,
                         email=exporter.email,
                     ),
