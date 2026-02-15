@@ -29,10 +29,8 @@ class InstanceConfigMutation(utils.BaseMutation):
     @staticmethod
     @admin.staff_required
     @utils.authentication_required
-    def mutate(
-        info: Info,
-        **input: inputs.InstanceConfigMutationInput,
-    ) -> "InstanceConfigMutation":
+    def mutate(info: Info, **input) -> "InstanceConfigMutation":
+        data = input.get("configs") or {}
         try:
             if conf.settings.tenant:
                 conf.settings.tenant.feature_flags = (
@@ -41,7 +39,7 @@ class InstanceConfigMutation(utils.BaseMutation):
                         {
                             "feature_flags": {
                                 k: v
-                                for k, v in input.items()
+                                for k, v in data.items()
                                 if k in conf.settings.CONSTANCE_CONFIG
                                 and k not in ["APP_NAME", "APP_WEBSITE"]
                             }
@@ -49,15 +47,15 @@ class InstanceConfigMutation(utils.BaseMutation):
                         conf.settings.tenant,
                     )
                 ).get("feature_flags")
-                if "APP_NAME" in input:
-                    conf.settings.tenant.name = input["APP_NAME"]
-                if "APP_WEBSITE" in input:
-                    conf.settings.tenant.website = input["APP_WEBSITE"]
+                if "APP_NAME" in data:
+                    conf.settings.tenant.name = data["APP_NAME"]
+                if "APP_WEBSITE" in data:
+                    conf.settings.tenant.website = data["APP_WEBSITE"]
 
                 conf.settings.tenant.save()
 
             else:
-                for k, v in input.items():
+                for k, v in data.items():
                     if k in conf.settings.CONSTANCE_CONFIG:
                         setattr(config, k, v)
 

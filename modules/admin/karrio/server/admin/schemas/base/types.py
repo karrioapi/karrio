@@ -2,6 +2,7 @@ import typing
 import datetime
 import strawberry
 from constance import config
+from django.utils import timezone
 from strawberry.types import Info
 
 import karrio.lib as lib
@@ -234,44 +235,23 @@ def _bulk_load_constance_config(keys):
 
 
 @strawberry.type
-class _InstanceConfigType:
+class InstanceConfigType:
+    configs: typing.Optional[utils.JSON] = None
+
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
     def resolve(info: Info) -> "InstanceConfigType":
         if conf.settings.tenant:
-            return InstanceConfigType(  # type: ignore
-                **{
-                    k: getattr(conf.settings, k, None)
-                    for k in conf.settings.CONSTANCE_CONFIG.keys()
-                    if k not in PRIVATE_CONFIGS
-                },
-                **{
-                    k: conf.settings.tenant.feature_flags.get(k, None)
-                    for k in PRIVATE_CONFIGS
-                },
-            )
+            values = {
+                k: getattr(conf.settings, k, None)
+                for k in conf.settings.CONSTANCE_CONFIG.keys()
+            }
+        else:
+            all_keys = list(conf.settings.CONSTANCE_CONFIG.keys())
+            values = _bulk_load_constance_config(all_keys)
 
-        # Use bulk loading to avoid N+1 queries
-        all_keys = list(conf.settings.CONSTANCE_CONFIG.keys())
-        bulk_values = _bulk_load_constance_config(all_keys)
-
-        return InstanceConfigType(**bulk_values)  # type: ignore
-
-
-InstanceConfigType = strawberry.type(
-    type(
-        "InstanceConfigType",
-        (_InstanceConfigType,),
-        {
-            **{k: strawberry.UNSET for k, _ in conf.settings.CONSTANCE_CONFIG.items()},
-            "__annotations__": {
-                k: typing.Optional[_def[2]]
-                for k, _def in conf.settings.CONSTANCE_CONFIG.items()
-            },
-        },
-    )
-)
+        return InstanceConfigType(configs=values)
 
 
 @strawberry.type
@@ -366,8 +346,8 @@ class ResourceUsageType:
         _test_mode = info.context.request.test_mode
         _test_filter = dict(test_mode=_test_mode)
         _filter = {
-            "date_before": datetime.datetime.now(),
-            "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
+            "date_before": timezone.now(),
+            "date_after": (timezone.now() - datetime.timedelta(days=30)),
             **filter.to_dict(),
         }
         _account_filter = lib.identity(

@@ -1,6 +1,7 @@
 import typing
 import datetime
 import strawberry
+from django.utils import timezone
 from itertools import groupby
 from operator import itemgetter
 import django.db.models as models
@@ -402,8 +403,8 @@ class SystemUsageType:
         _test_mode = info.context.request.test_mode
         _test_filter = dict(test_mode=_test_mode)
         _filter = {
-            "date_before": datetime.datetime.now(),
-            "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
+            "date_before": timezone.now(),
+            "date_after": (timezone.now() - datetime.timedelta(days=30)),
             **(filter if not utils.is_unset(filter) else utils.UsageFilter()).to_dict(),
         }
 

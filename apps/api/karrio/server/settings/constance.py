@@ -34,16 +34,12 @@ ENABLE_ALL_PLUGINS_BY_DEFAULT = config(
     "ENABLE_ALL_PLUGINS_BY_DEFAULT", default=True if base.DEBUG else False, cast=bool
 )
 
-# Create feature flags config only for modules that exist
+# Feature flags config — always present with False default when module is absent
 FEATURE_FLAGS_CONFIG = {
     "AUDIT_LOGGING": (
-        (
-            base.AUDIT_LOGGING,
-            "Audit logging",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.audit") is not None
-        else None
+        base.AUDIT_LOGGING if importlib.util.find_spec("karrio.server.audit") is not None else False,
+        "Audit logging",
+        bool,
     ),
     "ALLOW_SIGNUP": (
         base.ALLOW_SIGNUP,
@@ -61,94 +57,54 @@ FEATURE_FLAGS_CONFIG = {
         bool,
     ),
     "ADMIN_DASHBOARD": (
-        (
-            base.ADMIN_DASHBOARD,
-            "Admin dashboard",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.admin") is not None
-        else None
+        base.ADMIN_DASHBOARD if importlib.util.find_spec("karrio.server.admin") is not None else False,
+        "Admin dashboard",
+        bool,
     ),
     "MULTI_ORGANIZATIONS": (
-        (
-            base.MULTI_ORGANIZATIONS,
-            "Multi organizations",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.orgs") is not None
-        else None
+        base.MULTI_ORGANIZATIONS if importlib.util.find_spec("karrio.server.orgs") is not None else False,
+        "Multi organizations",
+        bool,
     ),
     "ORDERS_MANAGEMENT": (
-        (
-            base.ORDERS_MANAGEMENT,
-            "Orders management",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.orders") is not None
-        else None
+        base.ORDERS_MANAGEMENT if importlib.util.find_spec("karrio.server.orders") is not None else False,
+        "Orders management",
+        bool,
     ),
     "APPS_MANAGEMENT": (
-        (
-            base.APPS_MANAGEMENT,
-            "Apps management",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.apps") is not None
-        else None
+        base.APPS_MANAGEMENT if importlib.util.find_spec("karrio.server.apps") is not None else False,
+        "Apps management",
+        bool,
     ),
     "DOCUMENTS_MANAGEMENT": (
-        (
-            base.DOCUMENTS_MANAGEMENT,
-            "Documents management",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.documents") is not None
-        else None
+        base.DOCUMENTS_MANAGEMENT if importlib.util.find_spec("karrio.server.documents") is not None else False,
+        "Documents management",
+        bool,
     ),
     "DATA_IMPORT_EXPORT": (
-        (
-            base.DATA_IMPORT_EXPORT,
-            "Data import export",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.data") is not None
-        else None
+        base.DATA_IMPORT_EXPORT if importlib.util.find_spec("karrio.server.data") is not None else False,
+        "Data import export",
+        bool,
     ),
     "WORKFLOW_MANAGEMENT": (
-        (
-            base.WORKFLOW_MANAGEMENT,
-            "Workflow management",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.automation") is not None
-        else None
+        base.WORKFLOW_MANAGEMENT if importlib.util.find_spec("karrio.server.automation") is not None else False,
+        "Workflow management",
+        bool,
     ),
     "SHIPPING_RULES": (
-        (
-            base.SHIPPING_RULES,
-            "Shipping rules",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.automation") is not None
-        else None
+        base.SHIPPING_RULES if importlib.util.find_spec("karrio.server.automation") is not None else False,
+        "Shipping rules",
+        bool,
     ),
     "SHIPPING_METHODS": (
-        (
-            base.SHIPPING_METHODS,
-            "Shipping methods",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.shipping") is not None
-        else None
+        base.SHIPPING_METHODS if importlib.util.find_spec("karrio.server.shipping") is not None else False,
+        "Shipping methods",
+        bool,
     ),
     "ADVANCED_ANALYTICS": (
-        (
-            base.ADVANCED_ANALYTICS,
-            "Advanced analytics",
-            bool,
-        )
-        if importlib.util.find_spec("karrio.server.analytics") is not None
-        else None
+        base.ADVANCED_ANALYTICS if importlib.util.find_spec("karrio.server.analytics") is not None else False,
+        "Advanced analytics",
+        bool,
     ),
     "PERSIST_SDK_TRACING": (
         base.PERSIST_SDK_TRACING,
@@ -158,7 +114,7 @@ FEATURE_FLAGS_CONFIG = {
 }
 
 # Update fieldsets to only include existing feature flags
-FEATURE_FLAGS_FIELDSET = [k for k, v in FEATURE_FLAGS_CONFIG.items() if v is not None]
+FEATURE_FLAGS_FIELDSET = list(FEATURE_FLAGS_CONFIG.keys())
 
 # Plugin registry
 ref.collect_failed_plugins_data()
@@ -191,7 +147,7 @@ PLUGIN_SYSTEM_CONFIG_FIELDSETS = {
 }
 
 
-# Filter out None values and update CONSTANCE_CONFIG
+# Aggregate all config sections into CONSTANCE_CONFIG
 CONSTANCE_CONFIG = {
     "EMAIL_USE_TLS": (
         EMAIL_USE_TLS,
@@ -241,7 +197,7 @@ CONSTANCE_CONFIG = {
         "API request and SDK tracing logs retention period (in days)",
         int,
     ),
-    **{k: v for k, v in FEATURE_FLAGS_CONFIG.items() if v is not None},
+    **FEATURE_FLAGS_CONFIG,
     **PLUGIN_REGISTRY,
     **PLUGIN_SYSTEM_CONFIG,
 }

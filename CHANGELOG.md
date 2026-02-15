@@ -1,3 +1,17 @@
+# Karrio 2026.1.10
+
+## Changes
+
+### Fix
+
+- fix: periodic data archiving task running every minute instead of daily
+- fix: replace dynamic InstanceConfigType with JSON scalar for OSS compatibility
+- fix: naive datetime warnings when querying Fee records
+- fix: health status API double-slash URL causing 404
+- fix: add keyword search field to tracing records filter
+
+---
+
 # Karrio 2026.1.9
 
 ## Changes

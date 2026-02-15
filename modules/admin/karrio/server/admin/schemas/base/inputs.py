@@ -1,6 +1,5 @@
 import typing
 import strawberry
-from django.conf import settings
 
 import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
@@ -129,19 +128,9 @@ class UpdateMarkupMutationInput(utils.BaseInput):
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
-InstanceConfigMutationInput = strawberry.input(
-    type(
-        "InstanceConfigMutationInput",
-        (utils.BaseInput,),
-        {
-            **{k: strawberry.UNSET for k, _ in settings.CONSTANCE_CONFIG.items()},
-            "__annotations__": {
-                k: typing.Optional[_def[2]]
-                for k, _def in settings.CONSTANCE_CONFIG.items()
-            },
-        },
-    )
-)
+@strawberry.input
+class InstanceConfigMutationInput(utils.BaseInput):
+    configs: typing.Optional[utils.JSON] = strawberry.UNSET
 
 # Admin-specific filter inputs
 

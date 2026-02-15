@@ -7142,6 +7142,7 @@ export interface TracingRecordFilter {
   request_log_id?: number | null;
   date_after?: any | null;
   date_before?: any | null;
+  keyword?: string | null;
 }
 
 // null

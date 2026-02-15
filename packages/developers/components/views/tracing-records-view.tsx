@@ -380,6 +380,19 @@ const TracingRecordsFilterDropdown = ({ context }: { context: ReturnType<typeof 
               </div>
 
               <div className="space-y-4">
+                {/* Keyword Search */}
+                <div>
+                  <Label htmlFor="keyword" className="text-sm font-medium text-muted-foreground">Search</Label>
+                  <Input
+                    id="keyword"
+                    type="text"
+                    placeholder="Search record data..."
+                    value={tempFilters.keyword || ""}
+                    onChange={(e) => handleTempFilterChange('keyword', e.target.value)}
+                    className="mt-1 bg-input border-border text-foreground placeholder:text-muted-foreground"
+                  />
+                </div>
+
                 {/* Key */}
                 <div>
                   <Label htmlFor="key" className="text-sm font-medium text-muted-foreground">Record Type</Label>

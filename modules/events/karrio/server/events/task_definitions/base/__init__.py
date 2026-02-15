@@ -88,7 +88,7 @@ def notify_webhooks(*args, **kwargs):
 # ─────────────────────────────────────────────────────────────────
 
 
-@db_periodic_task(crontab(hour=f"*/{DATA_ARCHIVING_SCHEDULE}"))
+@db_periodic_task(crontab(minute=0, hour=0))
 @with_task_telemetry("periodic_data_archiving")
 def periodic_data_archiving(*args, **kwargs):
     from karrio.server.events.task_definitions.base import archiving
