@@ -1,0 +1,29 @@
+{
+  "headerReference": "30068480254",
+  "packageReference": "PKG-36780746",
+  "status": "Quoted",
+  "details": [
+    {
+      "slaInDays": 3,
+      "deliveryDateBasedOnShipment": "2021-06-07T21:00:00+00:00",
+      "serviceType": "EXP",
+      "total": 12.00,
+      "totalTax": 1.15
+    },
+    {
+      "slaInDays": 5,
+      "deliveryDateBasedOnShipment": "2021-06-09T21:00:00+00:00",
+      "serviceType": "EPR",
+      "total": 10.00,
+      "totalTax": 1.19
+    },
+    {
+      "slaInDays": 6,
+      "deliveryDateBasedOnShipment": "2021-06-10T21:00:00+00:00",
+      "serviceType": "EST",
+      "total": 8.00,
+      "totalTax": 1.15
+    }
+  ],
+  "validations": null
+}

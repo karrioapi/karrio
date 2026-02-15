@@ -1,0 +1,13 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/smartkargo
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+# SmartKargo API uses camelCase fields, so we use --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/rate_request.json" "${LIB_MODULES}/rate_request.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py" --no-nice-property-names
+kcli codegen generate "${SCHEMAS}/label_response.json" "${LIB_MODULES}/label_response.py" --no-nice-property-names

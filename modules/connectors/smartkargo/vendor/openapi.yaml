@@ -1,0 +1,4047 @@
+openapi: 3.0.1
+info:
+  title: IHUB Swagger
+  description: Welcome to SmartKargo! This document provides information about SmartKargo
+    collaborative integration platform. The platform provides an end-to-end and door-to-door
+    solution that allows Airline partners to address all their shipping needs. Given
+    its flexibility, the platform allows Airline to integrate digitally with its partners
+    and any interested third-party systems. The integration is intended to support
+    both Airline and its partners in achieving efficiencies through automation and
+    in managing many aspects of their supply chain. To achieve the above, timely,
+    accurate, and consistent exchange of information is essential. This document also
+    lays out options to securely exchange information between the Airline platform
+    and its partner's systems. It provides the details on how to exchange information
+    on key process points from booking to delivery.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: https://uatihub.smartkargo.com/ihub-devtest-mt-api-function
+  description: Staging Server
+  x-name: Staging
+- url: https://uatihub.smartkargo.com/ihub-uat-mt-api-function
+  description: UAT Server
+  x-name: UAT
+tags:
+- name: quotation
+  description: The proposed API provides for submitting shipment information to get
+    taxes and availables services.
+- name: exchange/single
+  description: The API proposal provides for the sending of information for the generation
+    of the booking.
+- name: exchange/b2bpartner
+  description: The API for the sending of information for the generation of the b2b
+    booking.
+- name: shipment/void
+  description: This API provides the ability for Customers to VOID packages shipments
+    they didn't decide to ship. The system will validate that the order has not left
+    booking status and belongs to the customer while making the request. Order will
+    not be deleted but changed status to Void / Cancelled etc.
+- name: shipment/payment-change
+  description: ''
+- name: shipment/tracking
+  description: The tracking API provides the facility to track shipments. It is an
+    easy way to retrieve the event details of shipments progress.
+- name: shipment
+  description: The shipment API provide facility to get shipment booking details by
+    using either prefix & airwayBill or just packageReference or headerReference number.
+- name: shipment/overpack
+  description: Overpack is an enclosure used by a single shipper to contain one or
+    more packages and to form one handling unit for the convenience of handling and
+    stowage. This Overpack API accepts one or more AirWayBills for a given bag number
+    associated with a single MasterAirWaybill. It returns the status as Processed
+    when successful. All express airWayBill are packed as one Unit.
+- name: shipment/overpackcloseout
+  description: This API is called by Warehouse Partner after all the OverPack of Bags
+    is finished for the Day/Cycle/Shift. This is used to reconcile bookings for the
+    day and generate the pickup manifest. This also identifies any unbagged items
+    from open bookings that it can process the next day /cycle/shift with different
+    MasterAirWaybill.
+- name: tracking
+  description: The tracking API provides the facility to track shipments. It is an
+    easy way to retrieve the event details of shipments progress.
+- name: label
+  description: The label API returns base64content for shipment label for successful
+    booking. Label API provide facility to generate label in 2 formats PDF & ZPL.
+    Label contains Shipper & Consignee details along with flight & routing information.
+    This label is pasted on Shipment.
+- name: zipCodeCoverage
+  description: This API let the user know whether Pickup and Delivery options are
+    available at a given Postal/zip code in the request.
+- name: location
+  description: This API let the user know about the serviceable zip codes and also
+    tell us about Pickup and Delivery options available at a given Postal/zip code
+    in the request.
+- name: serviceCoverage
+  description: This API let the user know whether Pickup and Delivery options are
+    available at a given Postal/zip code or City in the request.
+- name: changeaddress
+  description: This API proposed to update the existing consignee information for
+    the shipment.
+- name: invoice-summary
+  description: This API proposed to get invoices summary level information for requested
+    date range.
+- name: invoice-details
+  description: This API proposed to get invoice level detail information.
+- name: shipment/truck/depart
+  description: This API proposed to depart truck.
+- name: shipment/truck/arrive
+  description: This API proposed to arrive truck.
+- name: shipment/nest/depart
+  description: This API proposed to depart bag.
+- name: shipment/nest/arrive
+  description: This API proposed to arrive bag.
+- name: shipment/nest
+  description: This API proposed to process bagging.
+- name: shipment/closemaster
+  description: This API proposed to execute master AWB.
+- name: shipment/dimensionsupdate
+  description: This API proposed to recieve shipment dimensions updates from partners/clients/devices.
+security:
+- api_key: []
+paths:
+  /quotation:
+    post:
+      tags:
+      - quotation
+      summary: Quote
+      operationId: addQuotation
+      requestBody:
+        description: Shipment object
+        content:
+          application/json:
+            schema:
+              required:
+              - issueDate
+              - reference
+              type: object
+              properties:
+                reference:
+                  type: string
+                  description: This is the reference id number of the package/shipment
+                    for which the quotation is being requested. This is a unique identification
+                    number used in the request body for each package while booking
+                    the shipment. Typically sales order number.
+                  example: ReferencesToBeSet
+                  maximum: 36
+                  format: string
+                issueDate:
+                  type: string
+                  description: This is the issue/transportation date for the request.
+                    This date/time is used to define the approximate pickup date/
+                    time for the shipment. Dates from the past will be set to the
+                    current date.
+                  format: datetime
+                  example: 2021-06-01 20:00
+                packages:
+                  $ref: '#/components/schemas/Packages'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseQuotation'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /exchange/single:
+    post:
+      tags:
+      - exchange/single
+      summary: Book
+      operationId: addBooking
+      requestBody:
+        description: Shipment object
+        content:
+          application/json:
+            schema:
+              required:
+              - issueDate
+              - reference
+              type: object
+              properties:
+                reference:
+                  type: string
+                  description: This is the reference id number of the package/shipment
+                    for which the quotation is being requested. This is a unique identification
+                    number used in the request body for each package while booking
+                    the shipment. Typically sales order number.
+                  example: ReferencesToBeSet
+                  maximum: 36
+                  format: string
+                issueDate:
+                  type: string
+                  description: This is the issue/transportation date for the request.
+                    This date/time is used to define the approximate pickup date/
+                    time for the shipment. Dates from the past will be set to the
+                    current date.
+                  format: datetime
+                  example: 2021-06-01 20:00
+                packages:
+                  items:
+                    required:
+                    - grossVolumeUnitMeasure
+                    - serviceType
+                    - grossWeightUnitMeasure
+                    - packageDescription
+                    - paymentMode
+                    - reference
+                    - totalGrossWeight
+                    - totalPackages
+                    - totalPieces
+                  allOf:
+                  - $ref: '#/components/schemas/Package'
+                  - type: object
+                    required:
+                    - serviceType
+                    - declaredValue
+                    - dimensions
+        required: true
+      responses:
+        '200':
+          description: Success create a booking.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBooking'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /exchange/b2bpartner:
+    post:
+      tags:
+      - exchange/b2bpartner
+      summary: Receive Exchange B2B Partner Data
+      operationId: addB2BBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipper_id:
+                  type: integer
+                  example: 2
+                service_type:
+                  type: string
+                  example: EPR
+                origin_facility_id:
+                  type: string
+                  example: UQD001
+                destination_facility_id:
+                  type: string
+                  example: SFD001
+                external_tracking_code:
+                  type: string
+                  example: DD12345678
+                asset_width_inches:
+                  type: number
+                  format: float
+                  example: 2.5
+                asset_height_inches:
+                  type: number
+                  format: float
+                  example: 6.6
+                asset_length_inches:
+                  type: number
+                  format: float
+                  example: 7.7
+                asset_weight_oz:
+                  type: number
+                  format: float
+                  example: 8.8
+              required:
+              - origin_facility_id
+              - destination_facility_id
+              - external_tracking_code
+              - asset_width_inches
+              - asset_height_inches
+              - asset_length_inches
+              - asset_weight_oz
+      responses:
+        '200':
+          description: Success create a booking.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBooking'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/void:
+    get:
+      tags:
+      - shipment/void
+      summary: VoidShipment
+      operationId: shipmentVoid
+      parameters:
+      - in: query
+        name: prefix
+        schema:
+          type: string
+          example: AXB
+          format: string
+        required: true
+        description: This is three character prefix to uniquely identify and track
+          express airwaybill (AXB).
+      - in: query
+        name: airWaybill
+        schema:
+          type: string
+          example: 103681
+          format: number
+        required: true
+        description: This is a unique identifier number that we get in response after
+          the booking. This airWaybill is unique for the life of the booking. Prefix
+          and airWayBill are used as a parameter in Tracking API and Label API.
+      - in: query
+        name: userName
+        schema:
+          type: string
+          example: lucao
+          format: string
+        description: This is the optional parameter. Mostly used for audit log to
+          identify person who execute VOID shipment API.
+      - in: query
+        name: reason
+        schema:
+          type: string
+          example: customer mistake
+          format: string
+        description: This is the optional parameter. Reason for making VOID shipment.
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseShipmentVoid'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Access denied due to invalid subscription key. Make sure
+                  to provide a valid key for an active subscription.
+      x-codegen-request-body-name: body
+  /shipment/payment-change:
+    post:
+      tags:
+      - shipment/payment-change
+      summary: PaymentChange
+      operationId: shipmentPaymentChange
+      requestBody:
+        description: PaymentChange object
+        content:
+          application/json:
+            schema:
+              required:
+              - prefix
+              - airWaybill
+              - paymentMode
+              - userName
+              type: object
+              properties:
+                prefix:
+                  type: string
+                  description: This is three character prefix to uniquely identify
+                    and track express airwaybill (AXB).
+                  example: AXB
+                  maximum: 3
+                  format: string
+                airWaybill:
+                  type: string
+                  description: This is a unique identifier number that we get in response
+                    after the booking. This airWaybill is unique for the life of the
+                    booking. Prefix and airWayBill are used as a parameter in Tracking
+                    API and Label API.
+                  example: 103681
+                  maximum: 15
+                  format: number
+                paymentMode:
+                  type: string
+                  description: Payment mode available. Below abbreviation used while
+                    sending an API requests. The payment mode will be depending on
+                    what is available in your contract. PP & CC payment modes are
+                    not generally available.
+                  example: PX
+                  maximum: 2
+                  format: string
+                  enum:
+                  - 'PX : Billed (Typically used)'
+                  - 'PP : Prepaid at the time of tender'
+                  - 'CC : Collected from Consignee at the time of delivery'
+                userName:
+                  type: string
+                  description: UserName.
+                  example: user
+                  maximum: 60
+                  format: string
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePaymentMode'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/tracking:
+    get:
+      tags:
+      - shipment/tracking
+      summary: TrackWithShipment
+      operationId: shipmentTracking
+      parameters:
+      - in: query
+        name: prefix
+        schema:
+          type: string
+          example: AXB
+          format: string
+        description: This is three character prefix to uniquely identify and track
+          express airwaybill (AXB).
+      - in: query
+        name: airWaybill
+        schema:
+          type: string
+          example: 103681
+          format: number
+        description: This is a unique identifier number that we get in response after
+          the booking. This airWaybill is unique for the life of the booking. Prefix
+          and airWayBill are used as a parameter in Tracking API and Label API.
+      - in: query
+        name: packageReference
+        schema:
+          type: string
+          example: GLM-987877-fee3a
+          format: string
+        description: This is the package reference id number system return in the
+          response. This is the same reference id we send in the request body.
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseShipmentTracking'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /shipment:
+    get:
+      tags:
+      - shipment
+      summary: shipment
+      operationId: shipment
+      parameters:
+      - in: query
+        name: prefix
+        schema:
+          type: string
+          example: AXB
+          format: string
+        description: This is three character prefix to uniquely identify and track
+          express airwaybill (AXB).
+      - in: query
+        name: airWaybill
+        schema:
+          type: string
+          example: 103681
+          format: number
+        description: This is a unique identifier number that we get in response after
+          the booking. This airWaybill is unique for the life of the booking. Prefix
+          and airWayBill are used as a parameter in Tracking API and Label API.
+      - in: query
+        name: packageReference
+        schema:
+          type: string
+          example: GLM-987877-fee3a
+          format: string
+        description: This is the package reference id number system return in the
+          response. This is the same reference id we send in the request body.
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/ShipmentResponse'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /shipment/overpack:
+    post:
+      tags:
+      - shipment/overpack
+      summary: OverPack
+      operationId: shipmentOverPack
+      requestBody:
+        description: OverPack object
+        content:
+          application/json:
+            schema:
+              required:
+              - bolNumber
+              - sealNumber
+              - airWaybillDetails
+              type: object
+              properties:
+                bolNumber:
+                  type: string
+                  description: bolNumber is the details that is passed by the fulfillment
+                    warehouse. This is the unique identifiers from their internal
+                    systems.
+                  example: 00090052
+                  maximum: 10
+                  format: number
+                sealNumber:
+                  type: string
+                  description: sealNumbe is the details that is passed by the fulfillment
+                    warehouse. This is the unique identifiers from their internal
+                    systems.
+                  example: 103681
+                  maximum: 10
+                  format: number
+                airWaybillDetails:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BAGAirWaybillDetail'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePaymentMode'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/overpackcloseout:
+    post:
+      tags:
+      - shipment/overpackcloseout
+      summary: OverPackCloseout
+      operationId: overpackcloseout
+      requestBody:
+        description: OverPackCloseOut object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                closeOutSummaryLanes:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CloseOutSummaryLanes'
+                openItemDetails:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OpenItemDetails'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePaymentMode'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /tracking:
+    get:
+      tags:
+      - tracking
+      summary: Track
+      operationId: tracking
+      parameters:
+      - in: query
+        name: prefix
+        schema:
+          type: string
+          example: AXB
+        description: This is three character prefix to uniquely identify and track
+          express airwaybill (AXB).
+      - in: query
+        name: airWaybill
+        schema:
+          type: string
+          example: 103681
+        description: This is a unique identifier number that we get in response after
+          the booking. This airWaybill is unique for the life of the booking. Prefix
+          and airWayBill are used as a parameter in Tracking API and Label API.
+      - in: query
+        name: packageReference
+        schema:
+          type: string
+          example: GLM-987877-fee3a
+        description: This is the package reference id number system return in the
+          response. This is the same reference id we send in the request body.
+      - in: query
+        name: barCode
+        schema:
+          type: string
+          example: XDL123456789
+        description: This is the barcode of the package/shipment.
+      - in: query
+        name: language
+        schema:
+          type: string
+          maximum: 2
+          example: en
+          enum:
+          - en
+          - fr
+        description: Language to be returned Default – Blank – en/fr returned.
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/items'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /label:
+    get:
+      tags:
+      - label
+      summary: Label
+      operationId: label
+      parameters:
+      - in: query
+        name: prefix
+        schema:
+          type: string
+          example: AXB
+        required: true
+        description: This is three character prefix to uniquely identify and track
+          express airwaybill (AXB).
+      - in: query
+        name: airWaybill
+        schema:
+          type: string
+          example: 103681
+        required: true
+        description: This is a unique identifier number that we get in response after
+          the booking. This airWaybill is unique for the life of the booking. Prefix
+          and airWayBill are used as a parameter in Tracking API and Label API.
+      - in: query
+        name: format
+        schema:
+          type: string
+          example: zpl
+        description: 'This is a optional parameter to get label in zpl format. If
+          not provided then label gets generated in pdf format. '
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/label'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /shipment/batch-tracking:
+    get:
+      tags:
+      - batch-tracking
+      summary: BatchTrack
+      operationId: batch-tracking
+      parameters:
+      - in: query
+        name: account
+        schema:
+          type: string
+          example: '4000123'
+        description: This is customer account number. This is the optional field.
+      - in: query
+        name: fromEventDate
+        schema:
+          type: string
+          example: '2022-10-05T04:16:00'
+          format: datetime
+        description: This is the created date & time after this fetch all the shipment
+          collection details. It accepts UTC datetime.(yyyy-MM-ddTHH:mm:ss)
+      - in: query
+        name: pageNumber
+        schema:
+          type: string
+          example: '1'
+        description: Page number from which shipment collections need to fetch.
+      - in: query
+        name: pageSize
+        schema:
+          type: string
+          example: '50'
+        description: This is the number of shipment collections to be displayed on
+          page. Maximum limit is 100.
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      oneOf:
+                      - $ref: '#/components/schemas/Items1'
+                      - $ref: '#/components/schemas/Items2'
+                      - $ref: '#/components/schemas/Items3'
+                  currentPage:
+                    type: string
+                    example: '1'
+                  pageCount:
+                    type: string
+                    example: 1
+                  pageSize:
+                    type: string
+                    example: 3
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /zipCodeCoverage:
+    get:
+      tags:
+      - zipCodeCoverage
+      summary: Zip Code
+      operationId: zipCodeCoverage
+      parameters:
+      - in: query
+        name: zipCode
+        schema:
+          type: string
+          example: T0L 0K0
+        required: true
+        description: It is the Postal/zip code to be verified.
+      - in: query
+        name: countryId
+        schema:
+          type: string
+          example: CA
+        required: true
+        description: 2 char IATA Country code of zip code e.g. CA, US, MX, etc.
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/zipCodeCoverageResponse'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /location:
+    post:
+      tags:
+      - location
+      summary: Location API
+      operationId: location
+      requestBody:
+        description: Change Address object
+        content:
+          application/json:
+            schema:
+              required:
+              - zipCode
+              type: object
+              properties:
+                Request:
+                  $ref: '#/components/schemas/locationRequest'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/locationResponse'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /serviceCoverage:
+    get:
+      tags:
+      - serviceCoverage
+      summary: Service Coverage
+      operationId: serviceCoverage
+      parameters:
+      - in: query
+        name: zipCode
+        schema:
+          type: string
+          example: T0L 0K0
+        required: false
+        description: It is the Postal/zip code to be verified.This parameter is required
+          when country code other than AE
+      - in: query
+        name: city
+        schema:
+          type: string
+          example: Montréal
+          maximum: 60
+        required: false
+        description: City code of zip code or country e.g. Montréal, Newark, Detroit,
+          etc.This parameter is required when country code is AE
+      - in: query
+        name: countryId
+        schema:
+          type: string
+          example: CA
+        required: true
+        description: 2 char IATA Country code of zip code e.g. CA, US, MX, etc.
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/zipCodeCoverageResponse'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /changeaddress:
+    post:
+      tags:
+      - changeaddress
+      summary: ChangeAddress
+      operationId: changeaddress
+      requestBody:
+        description: Change Address object
+        content:
+          application/json:
+            schema:
+              required:
+              - prefix
+              - airWaybill
+              type: object
+              properties:
+                prefix:
+                  type: string
+                  description: This is three character prefix to uniquely identify
+                    and track express airwaybill (AXB).
+                  example: AXB
+                  maximum: 3
+                  format: string
+                airWaybill:
+                  type: string
+                  description: This is a unique identifier number that we get in response
+                    after the booking. This airWaybill is unique for the life of the
+                    booking. Prefix and airWayBill are used as a parameter in Tracking
+                    API and Label API.
+                  format: string
+                  example: '12345678'
+                participants:
+                  $ref: '#/components/schemas/ParticipantConsignee'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseChangeAddress'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /invoice-summary:
+    get:
+      tags:
+      - invoice-summary
+      summary: Invoice-Summary
+      operationId: invoice-summary
+      parameters:
+      - in: query
+        name: invoiceStartdate
+        schema:
+          type: string
+          example: 2021-06-01 20:00
+          format: datetime
+        required: true
+        description: This is the invoice start date for the request. This date/time
+          is used to define the approximate start date for the invoice. Dates from
+          the past will be set to the current date.
+      - in: query
+        name: invoiceEnddate
+        schema:
+          type: string
+          format: datetime
+          example: 2021-06-30 20:00
+        required: true
+        description: This is the invoice end date for the request. This date/time
+          is used to define the approximate end date for the invoice. Dates from the
+          past will be set to the current date.
+      - in: query
+        name: customerCode
+        schema:
+          type: string
+          format: string
+          example: '123456789123'
+        required: true
+        description: Customer code against Invoice
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/invoicesummary'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /invoice-details:
+    get:
+      tags:
+      - invoice-details
+      summary: Invoice-Details
+      operationId: invoice-details
+      parameters:
+      - in: query
+        name: invoiceNumber
+        schema:
+          type: string
+          example: INV0001
+          format: string
+        required: true
+        description: This is the invoice number to get the detail information.
+      - in: query
+        name: customerCode
+        schema:
+          type: string
+          format: string
+          example: '123456789123'
+        required: true
+        description: Customer code against Invoice
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/invoiceaxbdetails'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+    x-codegen-request-body-name: body
+  /shipment/truck/depart:
+    post:
+      tags:
+      - shipment/truck/depart
+      summary: TruckDepart
+      operationId: truckdepart
+      requestBody:
+        description: Truck Depart object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: This is requested username.
+                  example: TEST
+                  format: string
+                longitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '40'
+                latitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '80'
+                truckDetails:
+                  $ref: '#/components/schemas/truckDeparts'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseChangeAddress'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/truck/arrive:
+    post:
+      tags:
+      - shipment/truck/arrive
+      summary: TruckArrive
+      operationId: truckarrive
+      requestBody:
+        description: Truck Arrive object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: This is reuested username.
+                  example: TEST
+                  format: string
+                longitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '40'
+                latitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '80'
+                truckDetails:
+                  $ref: '#/components/schemas/truckDeparts'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseChangeAddress'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/nest/depart:
+    post:
+      tags:
+      - shipment/nest/depart
+      summary: NestDepart
+      operationId: nestdepart
+      requestBody:
+        description: Nest Depart object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: This is requested username.
+                  example: TEST
+                  format: string
+                longitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '40'
+                latitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '80'
+                nestDetails:
+                  $ref: '#/components/schemas/nestDeparts'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseChangeAddress'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/nest/arrive:
+    post:
+      tags:
+      - shipment/nest/arrive
+      summary: NestArrive
+      operationId: nestArrive
+      requestBody:
+        description: Nest Arrive object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: This is requested username.
+                  example: TEST
+                  format: string
+                longitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '40'
+                latitude:
+                  type: string
+                  description: This is the position or location of any place on Earth’s
+                    surface can be determined and described.
+                  format: string
+                  example: '80'
+                nestDetails:
+                  $ref: '#/components/schemas/nestDeparts'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseChangeAddress'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/nest:
+    post:
+      tags:
+      - shipment/nest
+      summary: Nest
+      operationId: nest
+      requestBody:
+        description: Nest object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: This is requested username.
+                  example: TEST
+                  format: string
+                nestDetails:
+                  $ref: '#/components/schemas/nestDetails1'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/nestResponse'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/closemaster:
+    post:
+      tags:
+      - shipment/closemaster
+      summary: Closemaster
+      operationId: closemaster
+      requestBody:
+        description: closemaster object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: This is requested username.
+                  example: TEST
+                  format: string
+                origin:
+                  type: string
+                  description: This is master AWB origin.
+                  example: JFK
+                  format: string
+                airWaybillDetails:
+                  $ref: '#/components/schemas/AirWaybillDetails'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseChangeAddress'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/intelcom/status:
+    post:
+      tags:
+      - status
+      summary: status
+      operationId: addstatus
+      parameters:
+      - in: query
+        name: lastMilePartner
+        schema:
+          type: string
+          example: ACI
+        required: true
+        description: This is last mile partner code to uniquely identify.
+      requestBody:
+        description: Shipment status
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/shipmentjsonstatus'
+        required: true
+      responses:
+        '200':
+          description: Success [When request parsing is successful].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseChangeAddress'
+        '400':
+          description: Bad Request [When request parsing fails].
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+  /shipment/dimensionsupdate:
+    post:
+      tags:
+      - shipment/dimensionsupdate
+      summary: dimensionsupdate
+      operationId: dimensionsupdate
+      requestBody:
+        description: Dimesions update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dimensionsupdatejson'
+        required: true
+      responses:
+        '200':
+          description: Success.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error/ validation message explaining reason of failure.
+        '401':
+          description: Unauthorized [When request does not contain valid subscription
+            token].
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    ResponseBooking:
+      type: object
+      properties:
+        exchangeId:
+          type: string
+          description: This is the system-generated unique identifier for the booking.
+          example: 751882f2-4406-441e-388d-08da11b2954a
+        fileIdentifier:
+          type: string
+          description: 'null'
+          example: null
+        siteId:
+          type: string
+          description: This is the unique site Reference that identifies the Partner
+            system that is integrating.
+          example: Becker and Sons
+        inputType:
+          type: string
+          description: ''
+          example: StandardJson
+        masterAirWaybill:
+          type: string
+          description: This is airline booking reference that groups multiple packages
+            together.
+          example: MasterAirWaybill
+        status:
+          type: string
+          description: Indicates status of booking. Processed means booking was processed
+            successfully. Error means error occurred during booking . Details of error
+            can be found in validations collection.
+          example: Processed
+          enum:
+          - Processed
+          - Rejected
+        valid:
+          type: string
+          description: Used to verify the integrity of the data object.
+          example: 'Yes'
+          enum:
+          - 'Yes'
+          - 'No'
+        createdOn:
+          type: string
+          description: ''
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        details:
+          $ref: '#/components/schemas/Shipments'
+        validations:
+          $ref: '#/components/schemas/Validations'
+      description: Collection of Shipment Information that was part of the shipment
+        request.
+      xml:
+        name: ResponseBooking
+    Shipments:
+      type: array
+      description: This is a collection which can contain information of shipments.
+      items:
+        $ref: '#/components/schemas/Shipment'
+    Shipment:
+      required:
+      - grossVolumeUnitMeasure
+      type: object
+      properties:
+        shippingFee:
+          type: number
+          description: ''
+          format: float
+          example: 12.5
+        insurance:
+          type: number
+          description: ''
+          format: float
+          example: 12.5
+        totalCharges:
+          type: number
+          description: ''
+          format: float
+          example: 12.5
+        total:
+          type: number
+          description: This indicates total charges that will be applicable for the
+            shipment assuming there is no change in the shipment characteristics.
+            Does not include Tax.
+          format: float
+          example: 12.5
+        totalTax:
+          type: number
+          description: This indicates total taxes that will be applicable for the
+            shipment assuming there is no change in the shipment characteristics.
+          format: float
+          example: 12.5
+        otherCharges:
+          example: []
+        issueDate:
+          type: string
+          description: This is the issue/transportation date for the request. This
+            date/time is used to define approximate pickup date/ time for the shipment.
+            Dates from the past will be set to current date.
+          example: '2021-12-09T10:00:00'
+          format: datetime
+        siteId:
+          type: string
+          description: This is the unique site Reference that identifies the Partner
+            system that is integrating.
+          example: Becker and Sons
+        headerReference:
+          type: string
+          description: This is the reference id number system return in the response.
+            This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: XDL
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 103681
+        estimatedDeliveryDate:
+          type: string
+          description: ''
+          example: '2022-03-31T23:59:03.787'
+          format: datetime
+        commodityType:
+          type: string
+          description: Commodity type for this package - based on harmonized commodity
+            codes from the service. If this value is not passed during booking request
+            then it is defaulted to ‘9999’ [General Shipment].
+          example: '6501'
+        serviceType:
+          type: string
+          description: Service/ Product Type to be used for a quote. This facilitates
+            the following services to the customer. API request accepts the below
+            abbreviations as a serviceType. Please confirm with our regional sales
+            team applicable to your contract. Some services will be available based
+            on the origin & destination zip.
+          example: EXP, EPR, EST, ECL
+          enum:
+          - 'EXP : (e-commerce Express)'
+          - 'EPR : (e-commerce Priority)'
+          - 'EST : (e-commerce Standard)'
+          - 'ECL : (e-commerce Five Days)'
+        origin:
+          type: string
+          description: 'null'
+          example: PHL01
+        destination:
+          type: string
+          description: 'null'
+          example: null
+        packageDescription:
+          type: string
+          description: This field is used to take package descriptions or pieces packed
+            into the package. It indicates the nature of goods. Avoid special characters/punctuations.
+          example: Test Products
+        totalGrossWeight:
+          type: number
+          description: Gross weight for this shipment.
+          format: float
+        totalPackages:
+          type: integer
+          description: This field contains a count of packages for shipment. This
+            is always set to 1 by default.
+        totalPieces:
+          type: integer
+          description: Total number pieces for this shipment. This should be always
+            set to 1.
+        currency:
+          type: string
+          description: Currency Code identifies a medium of exchange which allows
+            for the translation of different-valued denominations of money across
+            the world.
+          example: USD=US Dollar (ISO 4217 format)
+        insuranceRequired:
+          type: boolean
+          description: If customers agreed insurance with SMARTKARGO is to be used.
+            If true then the accrued charges for this shipment will include insurance
+            charges. If false then insurance will not be applicable.
+        declaredValue:
+          type: number
+          description: Value of goods to be insured. Value should be entered greater
+            than 0 when insuranceRequired is set to true.
+          format: float
+        specialHandlingType:
+          type: string
+          description: Any special handling code related to shipment. For specific
+            shipment handling requirements, appropriate code may be used which need
+            to be reviewed and finalized during interface discussion with SMARTKARGO
+            team.
+          example: null
+        deliveryRequestTime:
+          type: string
+          description: ''
+          example: '2022-03-31T22:00:00'
+          format: datetime
+        pickupRequestTime:
+          type: string
+          description: ''
+          example: '2022-03-31T10:00:00'
+          format: datetime
+        expectedSLAInHours:
+          type: string
+          description: 'null'
+          example: 24
+        paymentMode:
+          type: string
+          description: 'Payment mode available. Below abbreviation used while sending
+            an API requests. The payment mode will be depending on what is available
+            in your contract. PP & CC payment modes are not generally available. '
+          example: PX
+          enum:
+          - 'PX : Billed (Typically used)'
+          - 'PP : Prepaid at the time of tender'
+          - 'CC : Collected from Consignee at the time of delivery'
+        grossVolumeUnitMeasure:
+          type: string
+          description: Volume Unit CMQ – When dimensions are in centimeters. CFT –
+            When dimensions are in inches.
+          enum:
+          - CMQ
+          - CFT
+        grossWeightUnitMeasure:
+          type: string
+          description: Unit of measure – KG – When weight is specified in kilos. LBR
+            – When weight is specified in pounds.
+          enum:
+          - KG
+          - LBR
+        additionalInfo01:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        additionalInfo02:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        additionalInfo03:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        additionalInfo04:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        status:
+          type: string
+          description: Indicates status of Booked processing. Booked means quote was
+            processed successfully. Error means error occurred during booked. Details
+            of error can be found in validations collection.
+          example: Booked
+          enum:
+          - Booked
+          - Rejected
+        createdOn:
+          type: string
+          description: ''
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        barCode:
+          type: string
+          description: Barcode for this shipment
+          example: XDL00103681
+        labelUrl:
+          type: string
+          description: This is the label URL generated after the successful booking.
+            This Label URL returns the base64 encoded format of the Label in response.
+            This label is pasted on the Packages which contain information like flight
+            details, consignee address, expected delivery date, etc.
+          example: https://domain/path/label?prefix=XDL&airWaybill=00103681
+        validations:
+          example: []
+        dimensions:
+          $ref: '#/components/schemas/Dimensions'
+        participants:
+          $ref: '#/components/schemas/Participants'
+        customItems:
+          $ref: '#/components/schemas/CustomItems'
+        commercialInvoice:
+          $ref: '#/components/schemas/commercialInvoice'
+      xml:
+        name: Packages
+    Packages:
+      type: array
+      description: This is a collection which can contain information of single packages.
+        Fields of the packages collection are listed below.
+      items:
+        $ref: '#/components/schemas/Package'
+    Package:
+      required:
+      - grossVolumeUnitMeasure
+      - grossWeightUnitMeasure
+      - packageDescription
+      - paymentMode
+      - reference
+      - totalGrossWeight
+      - totalPackages
+      - totalPieces
+      type: object
+      properties:
+        reference:
+          type: string
+          description: 'This is package reference id. This must be unique for the
+            package within the given sales order number (reference id). It can be
+            the same as the header reference Id.  '
+          example: 2021-06-03-1
+          maximum: 36
+          format: string
+        commodityType:
+          type: string
+          description: Commodity type for this package - based on harmonized commodity
+            codes from the service. If this value is not passed during booking request
+            then it is defaulted to ‘9999’ [General Shipment].
+          example: '9999'
+          maximum: 60
+          format: string
+        serviceType:
+          type: string
+          description: Service/ Product Type to be used for a quote. This facilitates
+            the following services to the customer. API request accepts the below
+            abbreviations as a serviceType. Please confirm with our regional sales
+            team applicable to your contract. Some services will be available based
+            on the origin & destination zip.
+          example: EXP
+          maximum: 60
+          format: string
+          enum:
+          - 'EXP : (e-commerce Express)'
+          - 'EPR : (e-commerce Priority)'
+          - 'EST : (e-commerce Standard)'
+          - 'ECL : (e-commerce Five Days)'
+        paymentMode:
+          type: string
+          description: 'Payment mode available. Below abbreviation used while sending
+            an API requests. The payment mode will be depending on what is available
+            in your contract. PP & CC payment modes are not generally available. '
+          example: PX
+          maximum: 2
+          format: string
+          enum:
+          - 'PX : Billed (Typically used)'
+          - 'PP : Prepaid at the time of tender'
+          - 'CC : Collected from Consignee at the time of delivery'
+        packageDescription:
+          type: string
+          description: This field is used to take package descriptions or pieces packed
+            into the package. It indicates the nature of goods. Avoid special characters/punctuations.
+          example: Test Products
+          maximum: 120
+          format: string
+        totalPackages:
+          type: integer
+          description: This field contains a count of packages for shipment. This
+            is always set to 1 by default.
+          example: '1.0'
+          maximum: 13.2
+          format: float
+        totalPieces:
+          type: integer
+          description: Total number of pieces inside the package for the shipment.
+            This should be always set to 1.
+          example: '1.0'
+          maximum: 13.2
+          format: float
+        grossVolumeUnitMeasure:
+          type: string
+          description: Volume Unit CMQ – When dimensions are in centimeters. CFT –
+            When dimensions are in inches.
+          example: CFT
+          maximum: 3
+          format: string
+          enum:
+          - CMQ
+          - CFT
+        totalGrossWeight:
+          type: number
+          description: Gross weight for this shipment.
+          example: '2.0'
+          maximum: 11.4
+          format: float
+        grossWeightUnitMeasure:
+          type: string
+          description: Unit of measure – KG – When weight is specified in kilos. LBR
+            – When weight is specified in pounds.
+          example: KG
+          maximum: 3
+          format: string
+          enum:
+          - KG
+          - LBR
+        insuranceRequired:
+          type: boolean
+          description: If customers agreed insurance with SMARTKARGO is to be used.
+            If true then the accrued charges for this shipment will include insurance
+            charges. If false then insurance will not be applicable.
+          example: 'true'
+          format: boolean
+        declaredValue:
+          type: number
+          description: Value of goods to be insured. Value should be entered greater
+            than 0 when insuranceRequired is set to true.
+          example: '10.0'
+          maximum: 13.2
+          format: float
+        specialHandlingType:
+          type: string
+          description: Any special handling code related to shipment. For specific
+            shipment handling requirements, appropriate code may be used which need
+            to be reviewed and finalized during interface discussion with SMARTKARGO
+            team.
+          example: Handle with care
+          maximum: 60
+          format: string
+        additionalInfo01:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+          example: Additional info
+          maximum: 50
+          format: string
+        additionalInfo02:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+          example: Additional info
+          maximum: 50
+          format: string
+        additionalInfo03:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+          example: Additional info
+          maximum: 50
+          format: string
+        additionalInfo04:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+          example: Additional info
+          maximum: 50
+          format: string
+        deliveryType:
+          type: string
+          description: Delivery type to be used for. Default will be Door to Door.
+          example: StoreToStore
+          maximum: 12
+          format: string
+          enum:
+          - DoorToDoor
+          - StoreToStore
+          - StoreToDoor
+          - DoorToStore
+        channel:
+          type: string
+          description: Channel of the order - Direct, Indirect, Marketplace name.
+          maximum: 15
+          format: string
+        labelRef2:
+          type: string
+          description: This is reference field in addition to package reference that
+            you may want to be printed on the label.
+          maximum: 20
+          format: string
+        incoterm:
+          type: string
+          description: Defines responsibility for import duties. Defaults to DDP (sender
+            pays all duties and taxes) if not specified.
+          default: DDP
+          enum:
+          - DDU
+          - DDP
+        dimensions:
+          $ref: '#/components/schemas/Dimensions'
+        participants:
+          $ref: '#/components/schemas/Participants'
+        customItems:
+          $ref: '#/components/schemas/CustomItems'
+        commercialInvoice:
+          $ref: '#/components/schemas/commercialInvoice'
+      xml:
+        name: Packages
+    Dimensions:
+      type: array
+      items:
+        $ref: '#/components/schemas/Dimension'
+    Dimension:
+      required:
+      - grossWeight
+      - height
+      - length
+      - pieces
+      - width
+      type: object
+      properties:
+        pieceReference:
+          type: string
+          description: Reference id number for the pieces within the package. The
+            package might contain more than one piece so the reference id needs to
+            be unique for each piece within the package.
+          example: Test
+          maximum: 36
+          format: string
+        pieces:
+          type: number
+          description: Number of pieces for which dimensions are provided. This should
+            be set as 1.
+          example: '2.0'
+          maximum: 13.2
+          format: float
+        height:
+          type: number
+          description: Height of the piece(s) in unit(s) of measure(s) CMQ – When
+            dimensions are in centimeters. CFT – When dimensions are in inches.
+          example: '2.2'
+          maximum: 13.2
+          format: float
+        width:
+          type: number
+          description: Width of the piece(s) in unit(s) of measure(s) CMQ – When dimensions
+            are in centimeters. CFT – When dimensions are in inches.
+          format: float
+          example: '5.5'
+          maximum: 13.2
+        length:
+          type: number
+          description: Length of the piece(s) in unit(s) of measure(s) CMQ – When
+            dimensions are in centimeters. CFT – When dimensions are in inches.
+          format: float
+          example: '4.5'
+          maximum: 13.2
+        grossWeight:
+          type: number
+          description: Height of the piece(s) in unit(s) of measure(s) CMQ – When
+            dimensions are in centimeters. CFT – When dimensions are in inches.
+          format: float
+          example: '10.0'
+          maximum: 11.4
+      xml:
+        name: Dimensions
+    commercialInvoice:
+      type: object
+      properties:
+        generateInvoice:
+          type: boolean
+          description: If customer agrees to generate a Commercial Invoice default
+            is based on the settings at the shipper account level.
+        termsOfSale:
+          type: string
+          maxLength: 5
+          enum:
+          - FCA
+          - EXW
+          - CIP
+          - CPT
+          - DAP
+          - DAT
+          - DDP
+          - Other
+          description: 'Terms of Sale. Example : FCA - Free Carrier, EXW - Ex Works,
+            CIP - Carriage/Insurance/Paid To, CPT - Carriage Paid To, DAP - Delivered
+            at Place, DAT - Delivered at Terminal, DDP - Delivered Duty Paid, Other
+            - Other'
+        insuranceCostValue:
+          type: number
+          format: decimal
+          description: InsuranceCost declared for the shipment.
+        insuranceCostCurrency:
+          type: string
+          maxLength: 3
+          description: Currency for insuranceCost 3 character ISO code.
+        freightCostValue:
+          type: number
+          format: decimal
+          description: FreightCost declared on Commercial Invoice.
+        freightCostCurrency:
+          type: string
+          maxLength: 3
+          description: Currency for insuranceCost 3 character ISO code.
+        declarationStatement:
+          type: string
+          maxLength: 500
+          description: Declaration statement on Commercial Invoice.
+      xml:
+        name: commercialInvoice
+    CustomItem:
+      required:
+      - description
+      - importHsCode
+      - quantity
+      - quantityUnit
+      - weight
+      - commercialValue
+      - commercialValueCurrency
+      - manufactureCountryCode
+      type: object
+      properties:
+        exportHsCode:
+          type: string
+          nullable: true
+          maxLength: 18
+          description: Harmonized System Code for Customs Clearance as defined by
+            World Customs organization. Mandatory for export.
+        description:
+          type: string
+          nullable: false
+          maxLength: 500
+          description: Description of the product for Customs HS classification.
+        importHsCode:
+          type: string
+          nullable: false
+          maxLength: 18
+          description: HS Code for Import Customs Declaration at Destination Country.
+        quantity:
+          type: number
+          format: int
+          description: Quantity.
+        quantityUnit:
+          type: string
+          nullable: false
+          maxLength: 10
+          description: 'Statistical Unit for Quantity. Example: 2u, carat, m, 1000u,
+            kg, pack, m2, m3'
+        weight:
+          type: number
+          format: decimal
+          nullable: false
+          description: Gross Weight of the Product. Unit is same as the shipment Weight
+            Unit.
+        commercialValue:
+          type: number
+          format: decimal
+          nullable: false
+          description: The total item value of the Product in Description for customs
+            and commercial purpose.
+        commercialValueCurrency:
+          type: string
+          nullable: false
+          maxLength: 3
+          description: Currency for the commercial Value of the product. 3 character
+            ISO code.
+        manufactureCountryCode:
+          type: string
+          nullable: false
+          maxLength: 2
+          description: Country of Manufacture of the product. 2 digit Alpha Country
+            Code defined by ISO is required for international address.
+        sku:
+          type: string
+          nullable: true
+          maxLength: 25
+          description: Shippers Stock Keeping Unit / Article Number – may allow better
+            control on returns.
+      description: Custom item for shipment
+      xml:
+        name: CustomItem
+    CustomItems:
+      type: array
+      items:
+        $ref: '#/components/schemas/CustomItem'
+      xml:
+        name: CustomItems
+    Participants:
+      type: array
+      items:
+        oneOf:
+        - $ref: '#/components/schemas/ParticipantShipper'
+        - $ref: '#/components/schemas/ParticipantConsignee'
+        - $ref: '#/components/schemas/ParticipantReturnCompany'
+    ParticipantShipper:
+      required:
+      - city
+      - countryId
+      - name
+      - postCode
+      - street
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Participant has multiple child nodes for Shipper, Consignee,
+            ServiceTaker, Notifier, Consolidator, InsuranceProvider, and ReturnCompany.
+            Participants must contain at least one Shipper & Consignee others are
+            optional. It should be distinct within the package.
+          example: Shipper
+          maximum: 20
+          format: string
+          enum:
+          - Shipper
+          - Consignee
+          - Notifier
+          - ReturnCompany
+          - DeliveryParty
+        primaryId:
+          type: string
+          description: This is the identification value for the shipper of the shipment.
+            It is required only when the participant is a type of Shipper. This represents
+            the account number with us.
+          example: PRIMARYID
+          maximum: 36
+          format: string
+        additionalId:
+          type: string
+          description: It is the participant additional identification.
+          example: Test additional id
+          maximum: 36
+          format: string
+        account:
+          type: string
+          description: It is the participant account number provided by SmartKargo.
+            It is required when Type is Shipper.
+          example: AC123456
+          maximum: 120
+          format: string
+        name:
+          type: string
+          description: Name of the participant.
+          example: TESTER TEST
+          maximum: 120
+          format: string
+        postCode:
+          type: string
+          description: Postal/ zip code of the participant. State is derived automatically  from
+            the zip code.
+          example: 1B3 4A6
+          maximum: 15
+          format: string
+        street:
+          type: string
+          description: Street address of participant.
+          example: 123 Sesame
+          maximum: 250
+          format: string
+        street2:
+          type: string
+          description: Street address line 2 of the participant.
+          example: FC Road
+          maximum: 250
+          format: string
+        city:
+          type: string
+          description: City of the participant.
+          example: Montréal
+          maximum: 60
+          format: string
+        state:
+          type: string
+          description: State/Province of the participant.
+          example: NJ
+          maximum: 60
+          format: string
+        countryId:
+          type: string
+          description: 2 char IATA Country code of participant e.g. CA, US, MX, etc.
+          example: US
+          maximum: 2
+          format: string
+        phoneNumber:
+          type: string
+          description: Phone number of the participant.
+          example: '19999999999'
+          maximum: 25
+          format: string
+        email:
+          type: string
+          description: Email address of participant.
+          example: test@test.com
+          maximum: 120
+          format: string
+        taxId:
+          type: string
+          description: Tax ID of the participant.
+          example: IT12345678901
+          maximum: 50
+          format: string
+      xml:
+        name: Participants
+    ParticipantConsignee:
+      required:
+      - city
+      - countryId
+      - name
+      - postCode
+      - street
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of participants.
+          example: Consignee
+          maximum: 20
+          format: string
+          enum:
+          - Shipper
+          - Consignee
+          - Notifier
+          - ReturnCompany
+          - DeliveryParty
+        primaryId:
+          type: string
+          description: This is the identification value for the shipper of the shipment.
+            It is required only when the participant is a type of Shipper. This represents
+            the account number with us.
+          example: PRIMARYID
+          maximum: 36
+          format: string
+        additionalId:
+          type: string
+          description: It is the participant additional identification.
+          example: Test addtional id
+          maximum: 36
+          format: string
+        account:
+          type: string
+          description: It is the participant account number provided by SmartKargo.
+            It is required when Type is Shipper.
+          example: ACC12345
+          maximum: 120
+          format: string
+        name:
+          type: string
+          description: Name of the participant.
+          example: TESTER TEST
+          maximum: 120
+          format: string
+        postCode:
+          type: string
+          description: Postal/ zip code of the participant. State is derived automatically  from
+            the zip code.
+          example: A1B 2C3
+          maximum: 15
+          format: string
+        street:
+          type: string
+          description: Street address of participant.
+          example: 123 Sesame
+          maximum: 250
+          format: string
+        street2:
+          type: string
+          description: Street address line 2 of the participant.
+          example: SB Road
+          maximum: 250
+          format: string
+        city:
+          type: string
+          description: City of the participant.
+          example: Montréal
+          maximum: 60
+          format: string
+        state:
+          type: string
+          description: State/Province of the participant.
+          example: NY
+          maximum: 60
+          format: string
+        countryId:
+          type: string
+          description: 2 char IATA Country code of participant e.g. CA, US, MX, etc.
+          example: US
+          maximum: 2
+          format: string
+        phoneNumber:
+          type: string
+          description: Phone number of the participant.
+          example: '19999999999'
+          maximum: 25
+          format: string
+        email:
+          type: string
+          description: Email address of participant.
+          example: test@test.com
+          maximum: 120
+          format: string
+        deliveryInstruction:
+          type: string
+          description: delivery instructions of the participant.
+          example: handle with care
+          maximum: 250
+          format: string
+      xml:
+        name: Participants
+    ParticipantReturnCompany:
+      required:
+      - city
+      - countryId
+      - name
+      - postCode
+      - street
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of participants.
+          example: ReturnCompany
+          maximum: 20
+          format: string
+          enum:
+          - Shipper
+          - Consignee
+          - Notifier
+          - ReturnCompany
+          - DeliveryParty
+        primaryId:
+          type: string
+          description: This is the identification value for the shipper of the shipment.
+            It is required only when the participant is a type of Shipper. This represents
+            the account number with us.
+          example: PRIMARYID
+          maximum: 36
+          format: string
+        additionalId:
+          type: string
+          description: It is the participant additional identification.
+          example: Test addtional id
+          maximum: 36
+          format: string
+        account:
+          type: string
+          description: It is the participant account number provided by SmartKargo.
+            It is required when Type is Shipper.
+          example: ACC12345
+          maximum: 120
+          format: string
+        name:
+          type: string
+          description: Name of the participant.
+          example: TESTER TEST
+          maximum: 120
+          format: string
+        postCode:
+          type: string
+          description: Postal/ zip code of the participant. State is derived automatically  from
+            the zip code.
+          example: A1B 2C3
+          maximum: 15
+          format: string
+        street:
+          type: string
+          description: Street address of participant.
+          example: 123 Sesame
+          maximum: 250
+          format: string
+        street2:
+          type: string
+          description: Street address line 2 of the participant.
+          example: SB Road
+          maximum: 250
+          format: string
+        city:
+          type: string
+          description: City of the participant.
+          example: Montréal
+          maximum: 60
+          format: string
+        state:
+          type: string
+          description: State/Province of the participant.
+          example: NY
+          maximum: 60
+          format: string
+        countryId:
+          type: string
+          description: 2 char IATA Country code of participant e.g. CA, US, MX, etc.
+          example: US
+          maximum: 2
+          format: string
+        phoneNumber:
+          type: string
+          description: Phone number of the participant.
+          example: '19999999999'
+          maximum: 25
+          format: string
+        email:
+          type: string
+          description: Email address of participant.
+          example: test@test.com
+          maximum: 120
+          format: string
+      xml:
+        name: Participants
+    TaxIdentificationNumbers:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the tax identification.
+          enum:
+          - CUIT
+          - DNI
+        value:
+          type: string
+          description: Value of the tax identification. When CUIT, maximum length
+            is 11. When DNI, maximum length is 9.
+      description: Array containing tax identification for CUIT and DNI numbers.
+      xml:
+        name: TaxIdentificationNumbers
+    ResponseQuotation:
+      type: object
+      properties:
+        headerReference:
+          type: string
+          description: This is the reference id number system return in the response.
+            This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        status:
+          type: string
+          description: Indicates status of quote processing. Quoted means quote was
+            processed successfully. Error means error occurred during quote. Details
+            of error can be found in validations collection.
+          example: Quoted
+          enum:
+          - Quoted
+          - Error
+        details:
+          $ref: '#/components/schemas/Details'
+        validations:
+          $ref: '#/components/schemas/Validations'
+      description: Collection of Shipment Information that was part of the shipment
+        request.
+      xml:
+        name: ResponseQuotation
+    Details:
+      type: array
+      description: ''
+      items:
+        $ref: '#/components/schemas/Detail'
+    Detail:
+      type: object
+      properties:
+        slaInDays:
+          type: integer
+          description: This indicates SLA defined in the contract for this booking.
+          example: 3
+        deliveryDateBasedOnShipment:
+          type: string
+          description: This indicates when shipment is due for delivery (in local
+            time of destination) as per SLA defined in the contract.
+          format: datetime
+          example: {}
+        serviceType:
+          type: string
+          description: This indicates service type for which respective quote is applicable.
+          example: EPR
+        total:
+          type: number
+          description: This indicates total charges that will be applicable for the
+            shipment assuming there is no change in the shipment characteristics when
+            it is actually tendered. Does not include Tax.
+          format: float
+          example: 7.19
+        totalTax:
+          type: number
+          description: This indicates total taxes that will be applicable for the
+            shipment assuming there is no change in the shipment characteristics when
+            it is actually tendered.
+          format: float
+          example: 0.93
+      description: ''
+      xml:
+        name: Details
+    Validations:
+      type: array
+      description: ''
+      items:
+        $ref: '#/components/schemas/Validation'
+    Validation:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Error or Warning.
+        message:
+          type: string
+          description: This contains message.
+      description: Collection containing error information, rejection reasons when
+        quote request fails. If quote request is processed successfully, this collection
+        is returned as Blank.
+      xml:
+        name: Validations
+    Unauthorized:
+      type: object
+      properties:
+        statusCode:
+          type: string
+          description: The error code
+          example: 401
+        message:
+          type: string
+          description: The error message specifiying the details of the error
+          example: Access denied due to missing subscription key. Make sure to include
+            subscription key when making requests to an API.
+      xml:
+        name: Unauthorized
+    SkValidation:
+      type: object
+      properties:
+        axbPrefix:
+          type: string
+          description: Prefix sent in the request.
+        axbNumber:
+          type: string
+          description: AirWaybill sent in the request.
+        reason:
+          type: string
+          description: Validation description.
+      description: Collection containing error information, rejection reasons when
+        payment change request fails. If payment change request is processed successfully,
+        this collection is returned as Blank.
+      xml:
+        name: SkValidation
+    ResponsePaymentMode:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Indicates status of update payment mode processing. Success
+            means change was processed successfully. Rejected means error occurred
+            during quote. Details of error can be found in validations collection.
+          example: Success
+          enum:
+          - Success
+          - Rejected
+        validations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkValidation'
+      description: Collection of Shipment Information that was part of the shipment
+        request.
+      xml:
+        name: ResponsePaymentMode
+    ResponseShipmentVoid:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            cancelled:
+              type: boolean
+              example: 'true'
+              enum:
+              - true
+              - false
+              description: Return true or false status
+            messages:
+              type: string
+              example: 'null'
+              description: Return validation message if any else null for successfully
+                processed.
+    ResponseShipmentTracking:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: Prefix sent in the request.
+        airWaybill:
+          type: string
+          description: AirWaybill sent in the request.
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+        serviceType:
+          type: string
+          description: Service/ Product Type to be used for booking.
+        rtsStatus:
+          type: boolean
+          description: Indicates if shipment has status Return to Shipper.
+        currentStatusCode:
+          type: string
+          description: Indicates the actual shipment status code.
+        currentStatusDescription:
+          type: string
+          description: Description of actual shipment status code.
+        totalPieces:
+          type: number
+          description: Total number pieces for this shipment.
+          format: float
+        totalWeight:
+          type: number
+          description: Gross weight for this shipment
+          format: float
+        origin:
+          type: string
+          description: This is the airport code or the store code from shipment origin.
+        destination:
+          type: string
+          description: This is the airport code or the store code from shipment destination.
+        shipperAccount:
+          type: string
+          description: It is the participant account number provided by carrier.
+        shipperName:
+          type: string
+          description: Shipper name.
+        consigneeName:
+          type: string
+          description: Consignee name.
+        city:
+          type: string
+          description: City from actual event.
+        state:
+          type: string
+          description: State from actual event.
+        estimatedDeliveryDate:
+          type: string
+          description: This is the estimated delivery date of shipment.
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        receiver:
+          type: string
+          description: Name of person who received the shipment at delivery event.
+        latitude:
+          type: string
+          description: Latitude from actual event.
+        longitude:
+          type: string
+          description: Longitude from actual event.
+        referenceAirWaybill:
+          type: string
+          description: This is Express Airway Bill AXB Number with prefix generated
+            from another shipment.
+        shipmentStatus:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentStatus'
+        podUrl:
+          type: string
+          description: Url to download POD file when delivered.
+    ShipmentStatus:
+      type: object
+      properties:
+        eventDate:
+          type: string
+          description: This is the date when the event occurred.
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        statusDescription:
+          type: string
+          description: This is the description of the event.
+        statusCode:
+          type: string
+          description: This is the event status code.
+          enum:
+          - 'BKD : Electronic information submitted by shipper'
+          - 'RCS : Shipment Picked up by Carrier'
+          - 'DEP : Departed - Package has departed the first mile, origin airport,
+            dest airline airport for the last mile partner store'
+          - 'RCF : Package has been recovered at the partner, airport, last mile store'
+          - 'GDL : Package has left the partner store for the consignee door - Gone
+            for Delivery'
+          - 'DDL : Package has been successfully delivered to the consignee. Door
+            Delivered. Proof of delivery with an image optional'
+          - 'ADL : Attempted Delivery - Partner reached the consignee address for
+            delivery but could not successfully deliver it. Reasons could be consignee
+            not available, no answer at the door, no safe location to leave the package
+            etc. An image describing the situation is required as part of the transmission'
+          - 'RCU : Reminder sent to customer'
+          - 'DLD : Delivered and left at door'
+          - 'RPU : Redirected to PUDO. Available at PUDO location. Pick up location
+            and information to be given'
+          - 'DPU : Picked up at PUDO and marked as delivered'
+          - 'RTP : Return to Sort Facility after ADL - Attempt'
+          - 'RTS : Package Return to Sender'
+          - 'RTL : Return to Origin Locked request is received as consignment cannot
+            be delivered to consignee. Once the request is received, shipment status
+            is changed to RTO Locked.  This means we are blocking further Delivery
+            Attempts.  Shipment will not be considered for next delivery route generation
+            via assign delivery menus'
+          - 'RTO : Return To Origin Initiated. This event is created after RTO Locked
+            event (RTL). When customer creates new AWB for returning the shipment
+            to shipper, old AWB status will be changed RTO. Normally this event push
+            will accompany reference to new AWB created (referenceAirWayBill). The
+            updates on new return AWB will be sent separately until Delivery'
+          - 'APK : Attempted Pickup. Request for doorstep pickup cannot be completed
+            as shipper is not available or address is wrong'
+          - 'DMG : Damaged'
+        eventLocation:
+          type: string
+          description: This is the airport code or the store code where event occurred.
+        city:
+          type: string
+          description: This is the city where event occurred.
+        state:
+          type: string
+          description: This is the state where event occurred.
+        rider:
+          type: string
+          description: ''
+      description: Collection containing all events from a shipment.
+      xml:
+        name: ShipmentStatus
+    BAGAirWaybillDetail:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: AXB
+          maximum: 3
+          format: string
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 103681
+          format: number
+          maximum: 15
+        pieces:
+          type: number
+          description: Total number pieces for this shipment. This should be always
+            set to 1.
+          example: 1
+          format: number
+          maximum: 13.2
+        weight:
+          type: number
+          format: number
+          description: Gross weight for this shipment.
+          example: 1
+          maximum: 11.4
+        bagNumber:
+          type: string
+          description: bagNumber is the details that is passed by the fulfillment
+            warehouse. This is the unique identifiers from their internal systems.
+          example: BAG1234
+          format: string
+          maximum: 10
+    CloseOutSummaryLanes:
+      type: object
+      required:
+      - mawbNumber
+      - bolNumber
+      - noOfCartonBags
+      description: Is called by Warehouse Partner after all the OverPack of Bags is
+        finished for the Day.  This is used to reconcile bookings for the day and
+        identify any unbagged items.
+      properties:
+        mawbNumber:
+          type: string
+          description: This is passed to Warehouse as part of Booking and Overfill
+            API is used to pack multiple bookings in one or more bags,  So one MAWB
+            would have one or more bags with many packages.
+          example: 006-50755472
+          maximum: 36
+          format: number
+        bolNumber:
+          type: string
+          description: Bill of Lading number.  Unique reference from Warehouse for
+            each destination lane.  This is external reference for SmartKargo.
+          example: 00090052
+          maximum: 10
+          format: string
+        noOfCartonBags:
+          type: string
+          description: Number of bags for that MAWB destination.
+          example: '2'
+          maximum: 10
+          format: number
+    OpenItemDetails:
+      type: object
+      required:
+      - prefix
+      - airWaybill
+      properties:
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: AXB
+          maximum: 3
+          format: string
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: '6008008'
+          maximum: 15
+          format: string
+    items:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: AXB
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 103681
+        headerReference:
+          type: string
+          description: This is the reference id number system return in the response.
+            This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        eventType:
+          type: string
+          description: Indicates type of event in the shipment lifecycle.
+          example: BKD
+          enum:
+          - 'BKD : Electronic information submitted by shipper'
+          - 'RCS : Shipment Picked up by Carrier'
+          - 'DEP : Departed - Package has departed the first mile, origin airport,
+            dest airline airport for the last mile partner store'
+          - 'RCF : Package has been recovered at the partner, airport, last mile store'
+          - 'GDL : Package has left the partner store for the consignee door - Gone
+            for Delivery'
+          - 'DDL : Package has been successfully delivered to the consignee. Door
+            Delivered. Proof of delivery with an image optional'
+          - 'ADL : Attempted Delivery - Partner reached the consignee address for
+            delivery but could not successfully deliver it. Reasons could be consignee
+            not available, no answer at the door, no safe location to leave the package
+            etc. An image describing the situation is required as part of the transmission'
+          - 'RCU : Reminder sent to customer'
+          - 'DLD : Delivered and left at door'
+          - 'RPU : Redirected to PUDO. Available at PUDO location. Pick up location
+            and information to be given'
+          - 'DPU : Picked up at PUDO and marked as delivered'
+          - 'RTP : Return to Sort Facility after ADL - Attempt'
+          - 'RTS : Package Return to Sender'
+          - 'RTL : Return to Origin Locked request is received as consignment cannot
+            be delivered to consignee. Once the request is received, shipment status
+            is changed to RTO Locked.  This means we are blocking further Delivery
+            Attempts.  Shipment will not be considered for next delivery route generation
+            via assign delivery menus'
+          - 'RTO : Return To Origin Initiated. This event is created after RTO Locked
+            event (RTL). When customer creates new AWB for returning the shipment
+            to shipper, old AWB status will be changed RTO. Normally this event push
+            will accompany reference to new AWB created (referenceAirWayBill). The
+            updates on new return AWB will be sent separately until Delivery'
+          - 'APK : Attempted Pickup. Request for doorstep pickup cannot be completed
+            as shipper is not available or address is wrong'
+          - 'DMG : Damaged'
+        eventDate:
+          type: string
+          description: This is the date when the event occurred.
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        flightNumber:
+          type: string
+          description: Flight/ Truck Number when application for an event.
+          example: 1234564564
+        flightDate:
+          type: string
+          description: Flight Date in local time zone of eventLocation at which event
+            occurred.
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        eventLocation:
+          type: string
+          description: This is the airport code or the store code where event occurred.
+        flightSegmentOrigin:
+          type: string
+          maximum: 10
+          description: Origin of the flight related to event.
+        flightSegmentDestination:
+          type: string
+          description: Destination of the flight related to event.
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        pieces:
+          type: integer
+          description: Number of pieces for which dimensions are provided.
+          example: 1
+        weight:
+          type: number
+          format: float
+          description: Gross weight for this shipment.
+          example: 1
+        description:
+          type: string
+          description: Shipment event user friendly description.
+          maximum: 256
+        subEventType:
+          type: string
+          description: Another indicator of event in the shipment lifecycle.
+          maximum: 60
+      description: Collection containing all events from a shipment.
+      xml:
+        name: items
+    zipCodeCoverageResponse:
+      type: object
+      properties:
+        zipCode:
+          type: string
+          description: It is the Postal/zip code given in the request.
+          example: T0L 0K0
+        pickup:
+          type: boolean
+          description: Indicates if pickup is available.
+          example: true
+          enum:
+          - true
+          - false
+        delivery:
+          type: boolean
+          description: Indicates if delivery is available.
+          example: true
+          enum:
+          - true
+          - false
+      description: ''
+      xml:
+        name: ZipCodeCoverageResponse
+    locationRequest:
+      required:
+      - zipCode
+      type: object
+      properties:
+        zipCode:
+          type: string
+          description: It is the Postal/zip code to be verified.This parameter is
+            required.
+          example: '5251'
+          maximum: 10
+          format: string
+        product:
+          type: string
+          description: Product Type to be used for a destination store location. This
+            facilitates the following services to the customer. API request accepts
+            the below abbreviations as a serviceType. Please confirm with our regional
+            sales team applicable to your contract. Some services will be available
+            based on the destination zip.
+          format: string
+          example: DTS
+          enum:
+          - BPR
+          - BXP
+          - XPS
+          - DTS
+        date:
+          type: string
+          description: Expected Datetime for service.
+          format: datetime
+          example: 2023-10-04 20:00
+      xml:
+        name: locationRequest
+    locationResponse:
+      type: object
+      properties:
+        Pudos:
+          type: array
+          items:
+            $ref: '#/components/schemas/locationPudoDetails'
+      description: ''
+      xml:
+        name: locationResponse
+    locationPudoDetails:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Store name
+          example: Bergen
+        Address:
+          type: string
+          description: Store address
+          example: Haukeland
+        City:
+          type: string
+          description: Store city
+          example: Bergen
+        Zip:
+          type: string
+          description: Store zip code
+          example: '5251'
+        CountryId:
+          type: string
+          description: Country code
+          example: 'NO'
+        Contact:
+          type: string
+          description: Contact email address
+          example: 'NO'
+        Phone:
+          type: string
+          description: Store contact number
+          example: '+4799999999'
+        ServiceStart:
+          type: string
+          description: Service start time
+          example: 00:00
+        ServiceEnd:
+          type: string
+          description: Service end time
+          example: '21:00'
+        StoreCode:
+          type: string
+          description: Store code
+          example: BGO26
+        ProductType:
+          type: string
+          description: Service/Product type given by the store
+          example: BPR
+      description: ''
+      xml:
+        name: locationResponse
+    ShipmentResponse:
+      type: object
+      properties:
+        issueDate:
+          type: string
+          description: This is the issue/transportation date for the request. This
+            date/time is used to define approximate pickup date/ time for the shipment.
+            Dates from the past will be set to current date.
+          example: '2021-12-09T10:00:00'
+          format: datetime
+        siteId:
+          type: string
+          description: This is the unique site Reference that identifies the Partner
+            system that is integrating.
+          example: Becker and Sons
+        headerReference:
+          type: string
+          description: This is the reference id number system return in the response.
+            This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: XDL
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 103681
+        estimatedDeliveryDate:
+          type: string
+          description: ''
+          example: '2022-03-31T23:59:03.787'
+          format: datetime
+        commodityType:
+          type: string
+          description: Commodity type for this package - based on harmonized commodity
+            codes from the service. If this value is not passed during booking request
+            then it is defaulted to ‘9999’ [General Shipment].
+          example: '6501'
+        serviceType:
+          type: string
+          description: Service/ Product Type to be used for a quote. This facilitates
+            the following services to the customer. API request accepts the below
+            abbreviations as a serviceType. Please confirm with our regional sales
+            team applicable to your contract. Some services will be available based
+            on the origin & destination zip.
+          example: EXP, EPR, EST, ECL
+          enum:
+          - 'EXP : (e-commerce Express)'
+          - 'EPR : (e-commerce Priority)'
+          - 'EST : (e-commerce Standard)'
+          - 'ECL : (e-commerce Five Days)'
+        origin:
+          type: string
+          description: 'null'
+          example: PHL01
+        destination:
+          type: string
+          description: 'null'
+          example: null
+        packageDescription:
+          type: string
+          description: This field is used to take package descriptions or pieces packed
+            into the package. It indicates the nature of goods. Avoid special characters/punctuations.
+          example: Test Products
+        totalGrossWeight:
+          type: number
+          description: Gross weight for this shipment.
+          format: float
+        totalPackages:
+          type: integer
+          description: This field contains a count of packages for shipment. This
+            is always set to 1 by default.
+        totalPieces:
+          type: integer
+          description: Total number pieces for this shipment. This should be always
+            set to 1.
+        currency:
+          type: string
+          description: Currency Code identifies a medium of exchange which allows
+            for the translation of different-valued denominations of money across
+            the world.
+          example: USD=US Dollar (ISO 4217 format)
+        insuranceRequired:
+          type: boolean
+          description: If customers agreed insurance with SMARTKARGO is to be used.
+            If true then the accrued charges for this shipment will include insurance
+            charges. If false then insurance will not be applicable.
+        declaredValue:
+          type: number
+          description: Value of goods to be insured. Value should be entered greater
+            than 0 when insuranceRequired is set to true.
+          format: float
+        specialHandlingType:
+          type: string
+          description: Any special handling code related to shipment. For specific
+            shipment handling requirements, appropriate code may be used which need
+            to be reviewed and finalized during interface discussion with SMARTKARGO
+            team.
+          example: null
+        deliveryRequestTime:
+          type: string
+          description: ''
+          example: '2022-03-31T22:00:00'
+          format: datetime
+        pickupRequestTime:
+          type: string
+          description: ''
+          example: '2022-03-31T10:00:00'
+          format: datetime
+        expectedSLAInHours:
+          type: string
+          description: 'null'
+          example: 24
+        paymentMode:
+          type: string
+          description: 'Payment mode available. Below abbreviation used while sending
+            an API requests. The payment mode will be depending on what is available
+            in your contract. PP & CC payment modes are not generally available. '
+          example: PX
+          enum:
+          - 'PX : Billed (Typically used)'
+          - 'PP : Prepaid at the time of tender'
+          - 'CC : Collected from Consignee at the time of delivery'
+        grossVolumeUnitMeasure:
+          type: string
+          description: Volume Unit CMQ – When dimensions are in centimeters. CFT –
+            When dimensions are in inches.
+          enum:
+          - CMQ
+          - CFT
+        grossWeightUnitMeasure:
+          type: string
+          description: Unit of measure – KG – When weight is specified in kilos. LBR
+            – When weight is specified in pounds.
+          enum:
+          - KG
+          - LBR
+        additionalInfo01:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        additionalInfo02:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        additionalInfo03:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        additionalInfo04:
+          type: string
+          description: Additional information (if any) related to shipment can be
+            provided.
+        status:
+          type: string
+          description: Indicates status of Booked processing. Booked means quote was
+            processed successfully. Error means error occurred during booked. Details
+            of error can be found in validations collection.
+          example: Booked
+          enum:
+          - Booked
+          - Rejected
+        createdOn:
+          type: string
+          description: ''
+          example: '2022-03-30T19:03:03.4600936'
+          format: datetime
+        labelUrl:
+          type: string
+          description: This is the label URL generated after the successful booking.
+            This Label URL returns the base64 encoded format of the Label in response.
+            This label is pasted on the Packages which contain information like flight
+            details, consignee address, expected delivery date, etc.
+          example: https://domain/path/label?prefix=XDL&airWaybill=00103681
+        validations:
+          example: []
+        dimensions:
+          $ref: '#/components/schemas/Dimensions'
+        participants:
+          $ref: '#/components/schemas/Participants'
+        customItems:
+          $ref: '#/components/schemas/CustomItems'
+      description: ''
+      xml:
+        name: ShipmentResponse
+    Items1:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: AXB
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 103681
+        headerReference:
+          type: string
+          description: This is the reference id number system return in the response.
+            This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+          example: GLM-987877-fee3a
+        eventType:
+          type: string
+          description: Indicates type of event in the shipment lifecycle.
+          example: BKD
+        eventDate:
+          type: string
+          description: This is the date when the event occurred.
+          example: '2022-10-12T19:03:03.4600936'
+          format: datetime
+        flightNumber:
+          type: string
+          description: Flight/ Truck Number when application for an event.
+          example: 1234564564
+        flightDate:
+          type: string
+          description: Flight Date in local time zone of eventLocation at which event
+            occurred.
+          example: '2022-10-12T19:03:03.4600936'
+          format: datetime
+        eventLocation:
+          type: string
+          description: This is the airport code or the store code where event occurred.
+        flightSegmentOrigin:
+          type: string
+          maximum: 10
+          description: Origin of the flight related to event.
+        flightSegmentDestination:
+          type: string
+          description: Destination of the flight related to event.
+          example: '2022-10-12T19:03:03.4600936'
+          format: datetime
+        pieces:
+          type: integer
+          description: Number of pieces for which dimensions are provided.
+          example: 1
+        weight:
+          type: number
+          format: float
+          description: Gross weight for this shipment.
+          example: 1
+        description:
+          type: string
+          description: Shipment event user friendly description.
+          maximum: 256
+        subEventType:
+          type: string
+          description: Another indicator of event in the shipment lifecycle.
+          maximum: 60
+      description: Collection containing all events from a shipment.
+      xml:
+        name: Items1
+    Items2:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: AXB
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 103685
+        headerReference:
+          type: string
+          description: This is the reference id number system return in the response.
+            This is the same reference id we send in the request body.
+          example: GLM-78979-f223rt
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+          example: GLM-78979-f223rt
+        eventType:
+          type: string
+          description: Indicates type of event in the shipment lifecycle.
+          example: RCF
+        eventDate:
+          type: string
+          description: This is the date when the event occurred.
+          example: '2022-10-05T18:04:03.4600936'
+          format: datetime
+        flightNumber:
+          type: string
+          description: Flight/ Truck Number when application for an event.
+          example: 98653278
+        flightDate:
+          type: string
+          description: Flight Date in local time zone of eventLocation at which event
+            occurred.
+          example: '2022-10-05T18:04:03.4600936'
+          format: datetime
+        eventLocation:
+          type: string
+          description: This is the airport code or the store code where event occurred.
+        flightSegmentOrigin:
+          type: string
+          maximum: 10
+          description: Origin of the flight related to event.
+        flightSegmentDestination:
+          type: string
+          description: Destination of the flight related to event.
+          example: '2022-10-05T18:04:03.4600936'
+          format: datetime
+        pieces:
+          type: integer
+          description: Number of pieces for which dimensions are provided.
+          example: 1
+        weight:
+          type: number
+          format: float
+          description: Gross weight for this shipment.
+          example: 5
+        description:
+          type: string
+          description: Shipment event user friendly description.
+          maximum: 256
+        subEventType:
+          type: string
+          description: Another indicator of event in the shipment lifecycle.
+          maximum: 60
+      description: Collection containing all events from a shipment.
+      xml:
+        name: Items2
+    Items3:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: AXB
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 1023874
+        headerReference:
+          type: string
+          description: This is the reference id number system return in the response.
+            This is the same reference id we send in the request body.
+          example: GLM-74185-fee3a
+        packageReference:
+          type: string
+          description: This is the package reference id number system return in the
+            response. This is the same reference id we send in the request body.
+          example: GLM-74185-fee3a
+        eventType:
+          type: string
+          description: Indicates type of event in the shipment lifecycle.
+          example: DDL
+        eventDate:
+          type: string
+          description: This is the date when the event occurred.
+          example: '2022-10-11T13:03:03.4600936'
+          format: datetime
+        flightNumber:
+          type: string
+          description: Flight/ Truck Number when application for an event.
+          example: 1234564564
+        flightDate:
+          type: string
+          description: Flight Date in local time zone of eventLocation at which event
+            occurred.
+          example: '2022-10-11T13:03:03.4600936'
+          format: datetime
+        eventLocation:
+          type: string
+          description: This is the airport code or the store code where event occurred.
+        flightSegmentOrigin:
+          type: string
+          maximum: 10
+          description: Origin of the flight related to event.
+        flightSegmentDestination:
+          type: string
+          description: Destination of the flight related to event.
+          example: '2022-10-11T13:03:03.4600936'
+          format: datetime
+        pieces:
+          type: integer
+          description: Number of pieces for which dimensions are provided.
+          example: 1
+        weight:
+          type: number
+          format: float
+          description: Gross weight for this shipment.
+          example: 1
+        description:
+          type: string
+          description: Shipment event user friendly description.
+          maximum: 256
+        subEventType:
+          type: string
+          description: Another indicator of event in the shipment lifecycle.
+          maximum: 60
+      description: Collection containing all events from a shipment.
+      xml:
+        name: Items3
+    label:
+      type: object
+      properties:
+        base64Content:
+          type: string
+          description: This base64Content for label.
+          example: data:application/pdf;base64, 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m60g/hy/3fr5fLvFs3f8huv4DdfxG67jN1wHp/nxW67et1wuOsdvuo7fdB2/6frZe9MVJOS/AUdxOGIKZW5kc3RyZWFtCmVuZG9iagoyOSAwIG9iago0OTkzCmVuZG9iagoyNyAwIG9iago8PCAvVHlwZSAvRm9udAovU3VidHlwZSAvQ0lERm9udFR5cGUyCi9CYXNlRm9udCAvQ2FsaWJyaUJvbGQKL0NJRFN5c3RlbUluZm8gPDwgL1JlZ2lzdHJ5IChBZG9iZSkgL09yZGVyaW5nIChJZGVudGl0eSkgL1N1cHBsZW1lbnQgMCA+PgovRm9udERlc2NyaXB0b3IgMjUgMCBSCi9DSURUb0dJRE1hcCAvSWRlbnRpdHkKL1cgWzAgWzQxMiA0ODEgMzk3IDUxMyA1NTAgMjQ5IDUxMiAzNzMgNzM3IF0KXQo+PgplbmRvYmoKMjggMCBvYmoKPDwgL0xlbmd0aCA0MjAgPj4Kc3RyZWFtCi9DSURJbml0IC9Qcm9jU2V0IGZpbmRyZXNvdXJjZSBiZWdpbgoxMiBkaWN0IGJlZ2luCmJlZ2luY21hcAovQ0lEU3lzdGVtSW5mbyA8PCAvUmVnaXN0cnkgKEFkb2JlKSAvT3JkZXJpbmcgKFVDUykgL1N1cHBsZW1lbnQgMCA+PiBkZWYKL0NNYXBOYW1lIC9BZG9iZS1JZGVudGl0eS1VQ1MgZGVmCi9DTWFwVHlwZSAyIGRlZgoxIGJlZ2luY29kZXNwYWNlcmFuZ2UKPDAwMDA+IDxGRkZGPgplbmRjb2Rlc3BhY2VyYW5nZQoyIGJlZ2luYmZyYW5nZQo8MDAwMD4gPDAwMDA+IDwwMDAwPgo8MDAwMT4gPDAwMDg+IFs8MDA1Nj4gPDAwNDU+IDwwMDQ4PiA8MDA0Rj4gPDAwMkQ+IDwwMDQ0PiA8MDA0Nj4gPDAwNTc+IF0KZW5kYmZyYW5nZQplbmRjbWFwCkNNYXBOYW1lIGN1cnJlbnRkaWN0IC9DTWFwIGRlZmluZXJlc291cmNlIHBvcAplbmQKZW5kCgplbmRzdHJlYW0KZW5kb2JqCjE1IDAgb2JqCjw8IC9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMAovQmFzZUZvbnQgL0NhbGlicmlCb2xkCi9FbmNvZGluZyAvSWRlbnRpdHkt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NTQzIDU0MyA0OTQgNDk0IDI5NSA1NDMgNDk0IDU0MyAzNDUgMjk1IDc5MCA2NDEgNDk0IDU0MyA1NDMgNDk0IDU0MyA2NDEgNDk0IDI0NyA0OTQgNTkyIDU0MyAyNDcgNDk0IDY0MSAyNDcgNzQwIDY5MSA1OTIgNjQxIDY5MSA2NDEgNTkyIDQ5NCA4MzggXQpdCj4+CmVuZG9iagozMyAwIG9iago8PCAvTGVuZ3RoIDc5MSA+PgpzdHJlYW0KL0NJREluaXQgL1Byb2NTZXQgZmluZHJlc291cmNlIGJlZ2luCjEyIGRpY3QgYmVnaW4KYmVnaW5jbWFwCi9DSURTeXN0ZW1JbmZvIDw8IC9SZWdpc3RyeSAoQWRvYmUpIC9PcmRlcmluZyAoVUNTKSAvU3VwcGxlbWVudCAwID4+IGRlZgovQ01hcE5hbWUgL0Fkb2JlLUlkZW50aXR5LVVDUyBkZWYKL0NNYXBUeXBlIDIgZGVmCjEgYmVnaW5jb2Rlc3BhY2VyYW5nZQo8MDAwMD4gPEZGRkY+CmVuZGNvZGVzcGFjZXJhbmdlCjIgYmVnaW5iZnJhbmdlCjwwMDAwPiA8MDAwMD4gPDAwMDA+CjwwMDAxPiA8MDAzRD4gWzwwMDU4PiA8MDA0ND4gPDAwNEM+IDwwMDMwPiA8MDAzMj4gPDAwMzk+IDwwMDM2PiA8MDAzND4gPDAwMjA+IDwwMDMxPiA8MDA1MD4gPDAwNjM+IDwwMDIzPiA8MDAyRT4gPDAwNDM+IDwwMDQxPiA8MDA0RT4gPDAwM0E+IDwwMDU0PiA8MDA2NT4gPDAwNzM+IDwwMDc0PiA8MDA0Nj4gPDAwNjk+IDwwMDZDPiA8MDA2Rj4gPDAwNjc+IDwwMDM3PiA8MDAzNT4gPDAwMkQ+IDwwMDcwPiA8MDA2MT4gPDAwNjI+IDwwMDcyPiA8MDA2Nj4gPDAwNkQ+IDwwMDQyPiA8MDA3Nj4gPDAwNzU+IDwwMDZFPiA8MDA2Qj4gPDAwNjQ+IDwwMDRCPiA8MDA3OT4gPDAwMkM+IDwwMDMzPiA8MDA1Mz4gPDAwNjg+IDwwMDZBPiA8MDA0QT4gPDAwNTI+IDwwMDQ5PiA8MDA0RD4gPDAwNEY+IDwwMDQ1PiA8MDA0OD4gPDAwNDc+IDwwMDU1PiA8MDA1OT4gPDAwMzg+IDwwMDU3PiBdCmVuZGJmcmFuZ2UKZW5kY21hcApDTWFwTmFtZSBjdXJyZW50ZGljdCAvQ01hcCBkZWZpbmVyZXNvdXJjZSBwb3AKZW5kCmVuZAoKZW5kc3RyZWFtCmVuZG9iagoxNCAwIG9iago8PCAvVHlwZSAvRm9udAovU3VidHlwZSAvVHlwZTAKL0Jhc2VGb250IC9BcmlhbEJvbGQKL0VuY29kaW5nIC9JZGVudGl0eS1ICi9EZXNjZW5kYW50Rm9udHMgWzMyIDAgUl0KL1RvVW5pY29kZSAzMyAwIFI+PgplbmRvYmoKMiAwIG9iago8PAovVHlwZSAvUGFnZXMKL0tpZHMgClsKNSAwIFIKXQovQ291bnQgMQovUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUNdCj4+CmVuZG9iagp4cmVmCjAgMzUKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDA5IDAwMDAwIG4gCjAwMDAwMjk5MzcgMDAwMDAgbiAKMDAwMDAwMDE1NyAwMDAwMCBuIAowMDAwMDAwMjUyIDAwMDAwIG4gCjAwMDAwMTE2OTUgMDAwMDAgbiAKMDAwMDAwMDI4OSAwMDAwMCBuIAowMDAwMDA4NzU1IDAwMDAwIG4gCjAwMDAwMDg3NzUgMDAwMDAgbiAKMDAwMDAwOTQ2NCAwMDAwMCBuIAowMDAwMDA5NDgzIDAwMDAwIG4gCjAwMDAwMTAxNjcgMDAwMDAgbiAKMDAwMDAxMDE4NyAwMDAwMCBuIAowMDAwMDExMzE5IDAwMDAwIG4gCjAwMDAwMjk4MDEgMDAwMDAgbiAKMDAwMDAxOTcxNyAwMDAwMCBuIAowMDAwMDExMzM5IDAwMDAwIG4gCjAwMDAwMTEzODQgMDAwMDAgbiAKMDAwMDAxMTUyOCAwMDAwMCBuIAowMDAwMDExNDI3IDAwMDAwIG4gCjAwMDAwMTE1OTEgMDAwMDAgbiAKMDAwMDAxMjA2NCAwMDAwMCBuIAowMDAwMDEzNjE5IDAwMDAwIG4gCjAwMDAwMTE4MTYgMDAwMDAgbiAKMDAwMDAxMjA0NCAwMDAwMCBuIAowMDAwMDEzNjQwIDAwMDAwIG4gCjAwMDAwMTM4OTIgMDAwMDAgbiAKMDAwMDAxODk5OCAwMDAwMCBuIAowMDAwMDE5MjQ1IDAwMDAwIG4gCjAwMDAwMTg5NzcgMDAwMDAgbiAKMDAwMDAxOTg1NSAwMDAwMCBuIAowMDAwMDIwMTA1IDAwMDAwIG4gCjAwMDAwMjg1MDEgMDAwMDAgbiAKMDAwMDAyODk1OCAwMDAwMCBuIAowMDAwMDI4NDgwIDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgMzUKL0luZm8gMSAwIFIKL1Jvb3QgMjAgMCBSCj4+CnN0YXJ0eHJlZgozMDAzNQolJUVPRgo=
+      description: Collection containing label.
+      xml:
+        name: label
+    ResponseChangeAddress:
+      type: object
+      properties:
+        status:
+          type: string
+          description: This is status of Success or Error which system return in the
+            response.
+          example: Success
+        statusCode:
+          type: string
+          description: This is code against Success or Error.
+          example: '100'
+        message:
+          type: string
+          description: The success/error message specifiying the details of the process
+          example: Request has been processed succesfully
+          enum:
+          - Changed
+          - Error
+      description: Response against consignee Information change request.
+      xml:
+        name: ResponseChangeAddress
+    invoicesummary:
+      type: object
+      properties:
+        customercode:
+          type: string
+          description: Customer Code what we recieved in request.
+          example: '123456789123'
+        invoicedetails:
+          $ref: '#/components/schemas/invoicedetails'
+      description: Response against invoice Information for request.
+      xml:
+        name: invoicesummary
+    invoicedetail:
+      type: object
+      properties:
+        number:
+          type: string
+          description: This is the invoice number.
+          example: INV00001
+        amount:
+          type: string
+          description: This is the invoice amount.
+          example: '103681.00'
+        url:
+          type: string
+          description: The invoice url to download
+          example: https://INV00001.pdf
+      description: Response against consignee Information change request.
+      xml:
+        name: ResponseChangeAddress
+    invoicedetails:
+      type: array
+      items:
+        $ref: '#/components/schemas/invoicedetail'
+    invoiceaxbdetails:
+      type: object
+      properties:
+        number:
+          type: string
+          description: This is the invoice number.
+          example: INV00001
+        amount:
+          type: string
+          description: This is the invoice amount.
+          example: '103681.00'
+        url:
+          type: string
+          description: The invoice url to download
+          example: https://INV00001.pdf
+        airWaybillDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/AirWaybillDetail'
+      description: Response against consignee Information change request.
+      xml:
+        name: ResponseChangeAddress
+    AirWaybillDetail:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: This is three character prefix to uniquely identify and track
+            express airwaybill (AXB).
+          example: AXB
+          maximum: 3
+          format: string
+        airWaybill:
+          type: string
+          description: This is a unique identifier number that we get in response
+            after the booking. This airWaybill is unique for the life of the booking.
+            Prefix and airWayBill are used as a parameter in Tracking API and Label
+            API.
+          example: 103681
+          format: number
+          maximum: 15
+        pieces:
+          type: number
+          description: Total number pieces for this shipment. This should be always
+            set to 1.
+          example: 1
+          format: number
+          maximum: 13.2
+        weight:
+          type: number
+          format: number
+          description: Gross weight for this shipment.
+          example: 1
+          maximum: 11.4
+    truckDetail:
+      type: object
+      properties:
+        truckNumber:
+          type: string
+          description: This is truck number.
+          example: DL123T
+          format: string
+        truckDate:
+          type: string
+          description: This is truck date.
+          example: 2021-06-01 20:00
+          format: datetime
+        truckOrigin:
+          type: string
+          description: Truck origin from where it departs.
+          example: JFK01
+          format: string
+        truckDest:
+          type: string
+          format: string
+          description: Truck destination from where it arrive.
+          example: JFK
+        truckType:
+          type: string
+          format: string
+          description: size of the truck small, medium or large
+          example: Small
+    truckDetails:
+      type: array
+      items:
+        $ref: '#/components/schemas/truckDetail'
+    truckDepart:
+      type: object
+      properties:
+        truckNumber:
+          type: string
+          description: This is truck number.
+          example: DL123T
+          format: string
+        truckDate:
+          type: string
+          description: This is truck date.
+          example: 2021-06-01 20:00
+          format: datetime
+        truckOrigin:
+          type: string
+          description: Truck origin from where it departs.
+          example: JFK01
+          format: string
+        truckDest:
+          type: string
+          format: string
+          description: Truck destination from where it arrive.
+          example: JFK
+        truckType:
+          type: string
+          format: string
+          description: size of the truck small, medium or large
+          example: Small
+        nestList:
+          $ref: '#/components/schemas/nestDetails'
+    truckDeparts:
+      type: array
+      items:
+        $ref: '#/components/schemas/truckDepart'
+    nestDetail:
+      type: object
+      properties:
+        bagNumber:
+          type: string
+          description: This is bag number.
+          example: BAG000001
+          format: string
+        bagType:
+          type: string
+          format: string
+          description: bag type like BAG, ULD or LOOSE
+          example: BAG
+    nestDetails:
+      type: array
+      items:
+        $ref: '#/components/schemas/nestDetail'
+    nestDepart:
+      type: object
+      properties:
+        truckNumber:
+          type: string
+          description: This is truck number.
+          example: DL123T
+          format: string
+        truckDate:
+          type: string
+          description: This is truck date.
+          example: 2021-06-01 20:00
+          format: datetime
+        truckOrigin:
+          type: string
+          description: Truck origin from where it departs.
+          example: JFK01
+          format: string
+        truckDest:
+          type: string
+          format: string
+          description: Truck destination from where it arrive.
+          example: ''
+        truckType:
+          type: string
+          format: string
+          description: size of the truck small, medium or large
+          example: Small
+        nestList:
+          $ref: '#/components/schemas/nestDetails'
+    nestDeparts:
+      type: array
+      items:
+        $ref: '#/components/schemas/nestDepart'
+    nestDetail1:
+      type: object
+      properties:
+        bagNumber:
+          type: string
+          description: This is bag number.
+          example: BAG000001
+          format: string
+        bagType:
+          type: string
+          format: string
+          description: bag type like BAG, ULD or LOOSE
+          example: BAG
+        bagOrigin:
+          type: string
+          description: bag origin from where it departs.
+          example: JFK01
+          format: string
+        bagDest:
+          type: string
+          format: string
+          description: bag destination from where it arrive.
+          example: ''
+        airWaybillDetails:
+          $ref: '#/components/schemas/AirWaybillDetails'
+    nestDetails1:
+      type: array
+      items:
+        $ref: '#/components/schemas/nestDetail1'
+    AirWaybillDetails:
+      type: array
+      items:
+        $ref: '#/components/schemas/AirWaybillDetail'
+    nestResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: This is status of Success or Error which system return in the
+            response.
+          example: Success
+        statusCode:
+          type: string
+          description: This is code against Success or Error.
+          example: '100'
+        message:
+          type: string
+          description: The success/error message specifiying the details of the process
+          example: Request has been processed succesfully
+          enum:
+          - Changed
+          - Error
+        nestDetails:
+          $ref: '#/components/schemas/nestMAWBDetails'
+    nestMAWBDetail:
+      type: object
+      properties:
+        bagNumber:
+          type: string
+          description: This is bag number.
+          example: BAG000001
+          format: string
+        mawbnumber:
+          type: string
+          format: string
+          description: MAWB number against the BAG
+          example: 006123456789
+        totalaxbinnest:
+          type: string
+          format: string
+          description: Total AXB count within Nest
+          example: '1'
+        totalaxbinmawb:
+          type: string
+          format: string
+          description: Total AXB count within MAWB number
+          example: '3'
+        totalnestinmawb:
+          type: string
+          format: string
+          description: Total Nest count within MAWB number
+          example: '2'
+    nestMAWBDetails:
+      type: array
+      items:
+        $ref: '#/components/schemas/nestMAWBDetail'
+    shipmentjsonstatus:
+      type: object
+      properties:
+        shipment_number:
+          type: string
+          description: This is shipment number.
+          example: XDL00751192001
+          format: string
+        tracking:
+          $ref: '#/components/schemas/trackingjsonstatus'
+        status:
+          $ref: '#/components/schemas/jsonstatus'
+    podsstatus:
+      type: object
+      properties:
+        mimeType:
+          type: string
+          description: This is mime type.
+          example: url
+          format: string
+        content:
+          type: string
+          format: string
+          description: content
+          example: https://partner.com/imagepod/XDL00751192001.png
+    eventstatus:
+      type: object
+      properties:
+        name:
+          type: string
+          description: This is event type.
+          example: Shipped/PickedUp/Received/OutForDelivery/Delivered
+          format: string
+        date:
+          type: string
+          format: string
+          description: event date
+          example: '2022-10-04T16:36:01.020Z'
+        comment:
+          type: string
+          format: string
+          description: event comment
+          example: Order received/Order Picked Up/Picked Up/Out For Delivery/Delivered
+    jsonstatus:
+      type: object
+      properties:
+        to:
+          type: string
+          description: This is status.
+          example: Delivered
+          format: string
+        latitude:
+          type: string
+          format: string
+          description: Geolocation
+          example: '20.000000'
+        longitude:
+          type: string
+          format: string
+          description: Geolocation
+          example: '10.000000'
+    trackingjsonstatus:
+      type: object
+      properties:
+        pods:
+          type: array
+          items:
+            $ref: '#/components/schemas/podsstatus'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/eventstatus'
+    dimensionsupdatejson:
+      type: object
+      properties:
+        actualWeight:
+          type: string
+          example: '2.9'
+          format: float
+        annotatedImage:
+          type: string
+          example: imageURL
+          format: string
+        height:
+          type: string
+          example: '8.0'
+          format: float
+        length:
+          type: string
+          example: '4.8'
+          format: float
+        sku:
+          type: string
+          example: XDL00123843001
+          format: string
+        systemName:
+          type: string
+          example: AA_TestingDevice
+          format: string
+        width:
+          type: string
+          example: '4.2'
+          format: float
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: code
+      in: header
+      description: The API’s are secured using authentication tokens.While submitting
+        any API requests, subscription token needs to be included in header of the
+        request as code = <subscription token>

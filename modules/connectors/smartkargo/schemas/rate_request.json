@@ -1,0 +1,76 @@
+{
+  "reference": "30068480254",
+  "issueDate": "2021-06-05 20:00",
+  "packages": [
+    {
+      "reference": "PKG-36780746",
+      "commodityType": "GEN-6501",
+      "serviceType": "EXP",
+      "paymentMode": "PX",
+      "packageDescription": "MEDICINES, PHARMACEUTICALS",
+      "totalPackages": 1,
+      "totalPieces": 1,
+      "grossVolumeUnitMeasure": "CFT",
+      "totalGrossWeight": 1.0,
+      "grossWeightUnitMeasure": "LBR",
+      "insuranceRequired": true,
+      "declaredValue": 130.0,
+      "specialHandlingType": null,
+      "additionalInfo01": null,
+      "additionalInfo02": null,
+      "additionalInfo03": null,
+      "additionalInfo04": null,
+      "deliveryType": "DoorToDoor",
+      "channel": "Direct",
+      "labelRef2": null,
+      "dimensions": [
+        {
+          "pieces": 1,
+          "height": 12.0,
+          "width": 10.0,
+          "length": 43.0,
+          "grossWeight": 1.0
+        }
+      ],
+      "participants": [
+        {
+          "type": "Shipper",
+          "primaryId": "TEST",
+          "additionalId": "",
+          "account": "TEST",
+          "name": "Tester Tester Jr.",
+          "postCode": "02142",
+          "street": "1 Broadway",
+          "street2": null,
+          "city": "Boston",
+          "state": "MA",
+          "countryId": "US",
+          "phoneNumber": "19999999999",
+          "email": "test@test.com",
+          "taxIdentificationNumbers": [
+            {
+              "type": "CUIT",
+              "value": "12345678901"
+            }
+          ]
+        },
+        {
+          "type": "Consignee",
+          "primaryId": null,
+          "additionalId": null,
+          "account": null,
+          "name": "Tester Tester",
+          "postCode": "10002",
+          "street": "124 Main Street",
+          "street2": "Unit 4",
+          "city": "Los Angeles",
+          "state": "CA",
+          "countryId": "US",
+          "phoneNumber": "8888347867",
+          "email": "test2@test.com",
+          "taxIdentificationNumbers": null
+        }
+      ]
+    }
+  ]
+}
