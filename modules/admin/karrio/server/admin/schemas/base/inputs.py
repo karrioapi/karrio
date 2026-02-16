@@ -24,8 +24,10 @@ class MarkupFilter(utils.Paginated):
     active: typing.Optional[bool] = strawberry.UNSET
     markup_type: typing.Optional[admin.MarkupTypeEnum] = strawberry.UNSET
     account_id: typing.Optional[str] = strawberry.UNSET
-    meta_type: typing.Optional[str] = strawberry.UNSET
-    meta_plan: typing.Optional[str] = strawberry.UNSET
+    meta_key: typing.Optional[str] = strawberry.UNSET
+    meta_value: typing.Optional[str] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

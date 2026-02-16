@@ -655,8 +655,10 @@ export interface MarkupFilter {
   active?: boolean | null;
   markup_type?: MarkupTypeEnum | null;
   account_id?: string | null;
-  meta_type?: string | null;
-  meta_plan?: string | null;
+  meta_key?: string | null;
+  meta_value?: string | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
 }
 
 // null

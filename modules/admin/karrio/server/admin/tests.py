@@ -1664,9 +1664,8 @@ class TestAdminMarkups(AdminGraphTestCase):
         self.assertIn("Brokerage Fee - Scale", names)
         self.assertIn("Inactive Fee", names)
 
-    def test_filter_markups_by_meta_type(self):
-        """Test filtering markups by meta.type (category)."""
-        # Create markups in different categories
+    def test_filter_markups_by_meta_key_value(self):
+        """Test filtering markups by generic meta key/value."""
         self.pricing.Markup.objects.create(
             name="Insurance Fee",
             amount=5.0,
@@ -1697,7 +1696,7 @@ class TestAdminMarkups(AdminGraphTestCase):
             }
             """,
             operation_name="get_markups",
-            variables={"filter": {"meta_type": "insurance"}},
+            variables={"filter": {"meta_key": "type", "meta_value": "insurance"}},
         )
 
         print(response.data)
@@ -1708,7 +1707,7 @@ class TestAdminMarkups(AdminGraphTestCase):
         self.assertEqual(edges[0]["node"]["meta"]["type"], "insurance")
 
     def test_filter_markups_by_meta_plan(self):
-        """Test filtering markups by meta.plan."""
+        """Test filtering markups by meta plan using generic key/value."""
         self.pricing.Markup.objects.create(
             name="Pro Brokerage",
             amount=2.0,
@@ -1739,7 +1738,7 @@ class TestAdminMarkups(AdminGraphTestCase):
             }
             """,
             operation_name="get_markups",
-            variables={"filter": {"meta_plan": "enterprise"}},
+            variables={"filter": {"meta_key": "plan", "meta_value": "enterprise"}},
         )
 
         print(response.data)
@@ -1748,6 +1747,91 @@ class TestAdminMarkups(AdminGraphTestCase):
         self.assertEqual(len(edges), 1)
         self.assertEqual(edges[0]["node"]["name"], "Enterprise Brokerage")
         self.assertEqual(edges[0]["node"]["meta"]["plan"], "enterprise")
+
+    def test_filter_markups_by_meta_key_only(self):
+        """Test filtering markups by meta key existence (no value)."""
+        self.pricing.Markup.objects.create(
+            name="Has Plan",
+            amount=2.0,
+            markup_type="PERCENTAGE",
+            active=True,
+            meta={"type": "brokerage-fee", "plan": "pro"},
+        )
+        self.pricing.Markup.objects.create(
+            name="No Plan",
+            amount=0.5,
+            markup_type="AMOUNT",
+            active=True,
+            meta={"type": "notification"},
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    meta
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"meta_key": "plan"}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        # setUp markup has plan="scale", plus "Has Plan" with plan="pro"
+        names = {e["node"]["name"] for e in edges}
+        self.assertIn("Has Plan", names)
+        self.assertIn("Brokerage Fee - Scale", names)
+        self.assertNotIn("No Plan", names)
+
+    def test_filter_markups_by_metadata_key_value(self):
+        """Test filtering markups by generic metadata key/value."""
+        self.pricing.Markup.objects.create(
+            name="With Coverage",
+            amount=50.0,
+            markup_type="AMOUNT",
+            active=True,
+            metadata={"coverage": "up to $500"},
+        )
+        self.pricing.Markup.objects.create(
+            name="With Region",
+            amount=3.0,
+            markup_type="AMOUNT",
+            active=True,
+            metadata={"region": "north-america"},
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    metadata
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"metadata_key": "coverage", "metadata_value": "up to $500"}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        self.assertEqual(len(edges), 1)
+        self.assertEqual(edges[0]["node"]["name"], "With Coverage")
 
     def test_filter_markups_by_active(self):
         """Test filtering markups by active status."""
@@ -1780,7 +1864,6 @@ class TestAdminMarkups(AdminGraphTestCase):
         print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
-        # Only the setUp markup (active=True) should be returned
         for edge in edges:
             self.assertTrue(edge["node"]["active"])
 
@@ -1814,12 +1897,11 @@ class TestAdminMarkups(AdminGraphTestCase):
         print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
-        # Only the setUp markup (PERCENTAGE) should be returned
         for edge in edges:
             self.assertEqual(edge["node"]["markup_type"], "PERCENTAGE")
 
     def test_filter_markups_combined(self):
-        """Test combining meta_type and active filters."""
+        """Test combining meta key/value and active filters."""
         self.pricing.Markup.objects.create(
             name="Active Insurance",
             amount=5.0,
@@ -1851,7 +1933,7 @@ class TestAdminMarkups(AdminGraphTestCase):
             }
             """,
             operation_name="get_markups",
-            variables={"filter": {"meta_type": "insurance", "active": True}},
+            variables={"filter": {"meta_key": "type", "meta_value": "insurance", "active": True}},
         )
 
         print(response.data)

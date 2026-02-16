@@ -599,10 +599,18 @@ class MarkupType:
             _queryset_filters["markup_type"] = _filter_data["markup_type"]
         if _filter_data.get("account_id"):
             _queryset_filters["organization_ids__contains"] = [_filter_data["account_id"]]
-        if _filter_data.get("meta_type"):
-            _queryset_filters["meta__type"] = _filter_data["meta_type"]
-        if _filter_data.get("meta_plan"):
-            _queryset_filters["meta__plan"] = _filter_data["meta_plan"]
+        if _filter_data.get("meta_key"):
+            _key = f"meta__{_filter_data['meta_key']}"
+            if _filter_data.get("meta_value"):
+                _queryset_filters[_key] = _filter_data["meta_value"]
+            else:
+                _queryset_filters[f"{_key}__isnull"] = False
+        if _filter_data.get("metadata_key"):
+            _key = f"metadata__{_filter_data['metadata_key']}"
+            if _filter_data.get("metadata_value"):
+                _queryset_filters[_key] = _filter_data["metadata_value"]
+            else:
+                _queryset_filters[f"{_key}__isnull"] = False
 
         queryset = pricing.Markup.objects.filter(**_queryset_filters)
         return utils.paginated_connection(queryset, **_filter.pagination())
