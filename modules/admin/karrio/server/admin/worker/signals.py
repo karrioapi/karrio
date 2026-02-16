@@ -85,6 +85,21 @@ def register_huey_signals():
                 )
 
         except Exception:
+            # Handle duplicate records from race conditions
+            try:
+                from karrio.server.admin.worker.models import TaskExecution
+
+                dupes = TaskExecution.objects.filter(task_id=task_id).order_by("id")
+                if dupes.count() > 1:
+                    # Keep the first record, delete the rest
+                    keep = dupes.first()
+                    dupes.exclude(pk=keep.pk).delete()
+                    # Retry the update on the surviving record
+                    TaskExecution.objects.filter(pk=keep.pk).update(**defaults)
+                    return
+            except Exception:
+                pass
+
             logger.exception("Failed to record task signal")
 
 
