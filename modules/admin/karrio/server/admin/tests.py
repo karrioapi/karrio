@@ -1243,7 +1243,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             operation_name="get_markups",
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         self.assertEqual(len(edges), 1)
@@ -1278,7 +1277,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"id": self.markup.id},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         markup = response.data["data"]["markup"]
         self.assertEqual(markup["name"], "Brokerage Fee - Scale")
@@ -1329,7 +1327,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             },
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         result = response.data["data"]["create_markup"]
         self.assertIsNone(result["errors"])
@@ -1380,7 +1377,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             },
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         markup = response.data["data"]["create_markup"]["markup"]
         self.assertEqual(markup["amount"], 1.5)
@@ -1418,7 +1414,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             },
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         markup = response.data["data"]["create_markup"]["markup"]
         self.assertEqual(markup["name"], "Simple Surcharge")
@@ -1464,7 +1459,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             },
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         markup = response.data["data"]["create_markup"]["markup"]
         self.assertEqual(markup["carrier_codes"], ["dhl_express", "dhl_parcel_de"])
@@ -1506,7 +1500,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             },
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         markup = response.data["data"]["update_markup"]["markup"]
         self.assertEqual(markup["meta"]["plan"], "enterprise")
@@ -1548,7 +1541,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             },
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         markup = response.data["data"]["update_markup"]["markup"]
         self.assertEqual(markup["amount"], 25.0)
@@ -1585,7 +1577,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             },
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         markup = response.data["data"]["update_markup"]["markup"]
         self.assertEqual(markup["carrier_codes"], ["ups", "fedex"])
@@ -1617,7 +1608,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"input": {"id": to_delete.id}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         self.assertEqual(
             response.data["data"]["delete_markup"]["id"], to_delete.id
@@ -1656,7 +1646,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             operation_name="get_markups",
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         self.assertEqual(len(edges), 2)
@@ -1699,7 +1688,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"meta_key": "type", "meta_value": "insurance"}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         self.assertEqual(len(edges), 1)
@@ -1741,7 +1729,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"meta_key": "plan", "meta_value": "enterprise"}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         self.assertEqual(len(edges), 1)
@@ -1783,7 +1770,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"meta_key": "plan"}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         # setUp markup has plan="scale", plus "Has Plan" with plan="pro"
@@ -1827,7 +1813,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"metadata_key": "coverage", "metadata_value": "up to $500"}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         self.assertEqual(len(edges), 1)
@@ -1862,7 +1847,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"meta_key": "plan", "meta_value": "enterprise"}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         names = {e["node"]["name"] for e in edges}
@@ -1896,7 +1880,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"metadata_key": "region", "metadata_value": "north"}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         self.assertEqual(len(edges), 1)
@@ -1930,7 +1913,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"active": True}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         for edge in edges:
@@ -1963,7 +1945,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"markup_type": "PERCENTAGE"}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         for edge in edges:
@@ -2005,7 +1986,6 @@ class TestAdminMarkups(AdminGraphTestCase):
             variables={"filter": {"meta_key": "type", "meta_value": "insurance", "active": True}},
         )
 
-        print(response.data)
         self.assertResponseNoErrors(response)
         edges = response.data["data"]["markups"]["edges"]
         self.assertEqual(len(edges), 1)
@@ -2054,7 +2034,6 @@ class TestAdminMarkups(AdminGraphTestCase):
                 },
             )
 
-            print(response.data)
             self.assertResponseNoErrors(response)
             markup = response.data["data"]["create_markup"]["markup"]
             self.assertEqual(markup["name"], name)
@@ -2074,14 +2053,14 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         self.datatypes = datatypes
         self.karrio_models = karrio_models
 
-        # Create feature-gated markups
+        # Create feature-gated markups (using meta.feature_gate)
         self.insurance_markup = pricing.Markup.objects.create(
             name="Insurance Fee",
             amount=50.0,
             markup_type="AMOUNT",
             active=True,
             is_visible=True,
-            meta={"type": "insurance", "show_in_preview": True},
+            meta={"type": "insurance", "feature_gate": "insurance", "show_in_preview": True},
         )
         self.notification_markup = pricing.Markup.objects.create(
             name="Notification Fee",
@@ -2089,7 +2068,7 @@ class TestMarkupFeatureGating(BaseAPITestCase):
             markup_type="AMOUNT",
             active=True,
             is_visible=True,
-            meta={"type": "notification", "show_in_preview": True},
+            meta={"type": "notification", "feature_gate": "notification", "show_in_preview": True},
         )
         self.address_validation_markup = pricing.Markup.objects.create(
             name="Address Validation Fee",
@@ -2097,10 +2076,20 @@ class TestMarkupFeatureGating(BaseAPITestCase):
             markup_type="AMOUNT",
             active=True,
             is_visible=True,
-            meta={"type": "address-validation", "show_in_preview": True},
+            meta={"type": "address-validation", "feature_gate": "address_validation", "show_in_preview": True},
         )
 
-        # Create unconditional markups
+        # Create feature-gated surcharge (conditional at runtime, unconditional in CSV preview)
+        self.surcharge_markup = pricing.Markup.objects.create(
+            name="Fuel Surcharge",
+            amount=3.0,
+            markup_type="AMOUNT",
+            active=True,
+            is_visible=True,
+            meta={"type": "surcharge", "feature_gate": "fuel_surcharge"},
+        )
+
+        # Create unconditional markups (no feature_gate)
         self.brokerage_markup = pricing.Markup.objects.create(
             name="Brokerage Fee",
             amount=0.85,
@@ -2108,14 +2097,6 @@ class TestMarkupFeatureGating(BaseAPITestCase):
             active=True,
             is_visible=True,
             meta={"type": "brokerage-fee", "show_in_preview": True},
-        )
-        self.surcharge_markup = pricing.Markup.objects.create(
-            name="Fuel Surcharge",
-            amount=3.0,
-            markup_type="AMOUNT",
-            active=True,
-            is_visible=True,
-            meta={"type": "surcharge"},
         )
 
         # Helper: build a rate with given meta
@@ -2148,7 +2129,6 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         rate = self.make_rate(service_features=["tracked", "express"])
         result = self.insurance_markup._is_applicable(rate, options={"insurance": True})
 
-        print(f"is_applicable={result}")
         self.assertFalse(result)
 
     def test_insurance_markup_skips_when_option_not_requested(self):
@@ -2156,7 +2136,6 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         rate = self.make_rate(service_features=["insurance", "tracked"])
         result = self.insurance_markup._is_applicable(rate, options={})
 
-        print(f"is_applicable={result}")
         self.assertFalse(result)
 
     def test_insurance_markup_applies_when_feature_and_option_present(self):
@@ -2164,17 +2143,12 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         rate = self.make_rate(service_features=["insurance", "tracked"])
         result = self.insurance_markup._is_applicable(rate, options={"insurance": True})
 
-        print(f"is_applicable={result}")
         self.assertTrue(result)
 
     def test_notification_markup_feature_gate(self):
         """Notification markup requires 'notification' feature and option."""
         rate_with = self.make_rate(service_features=["notification"])
         rate_without = self.make_rate(service_features=["tracked"])
-
-        print(f"with feature+option: {self.notification_markup._is_applicable(rate_with, options={'notification': True})}")
-        print(f"with feature, no option: {self.notification_markup._is_applicable(rate_with, options={})}")
-        print(f"without feature: {self.notification_markup._is_applicable(rate_without, options={'notification': True})}")
 
         self.assertTrue(self.notification_markup._is_applicable(rate_with, options={"notification": True}))
         self.assertFalse(self.notification_markup._is_applicable(rate_with, options={}))
@@ -2192,7 +2166,6 @@ class TestMarkupFeatureGating(BaseAPITestCase):
             rate_without, options={"address_validation": True}
         )
 
-        print(f"applies={result_applies}, no_feature={result_no_feature}")
         self.assertTrue(result_applies)
         self.assertFalse(result_no_feature)
 
@@ -2201,15 +2174,40 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         rate = self.make_rate(service_features=[])
         result = self.brokerage_markup._is_applicable(rate, options={})
 
-        print(f"is_applicable={result}")
         self.assertTrue(result)
 
-    def test_surcharge_markup_always_applies(self):
-        """Surcharge-type markup should always apply regardless of features/options."""
-        rate = self.make_rate(service_features=[])
-        result = self.surcharge_markup._is_applicable(rate, options={})
+    def test_surcharge_with_feature_gate_is_conditional(self):
+        """Surcharge with meta.feature_gate is conditional during live rates."""
+        rate_with = self.make_rate(service_features=["fuel_surcharge"])
+        rate_without = self.make_rate(service_features=["tracked"])
 
-        print(f"is_applicable={result}")
+        result_applies = self.surcharge_markup._is_applicable(
+            rate_with, options={"fuel_surcharge": True}
+        )
+        result_no_feature = self.surcharge_markup._is_applicable(
+            rate_without, options={"fuel_surcharge": True}
+        )
+        result_no_option = self.surcharge_markup._is_applicable(
+            rate_with, options={}
+        )
+
+        self.assertTrue(result_applies)
+        self.assertFalse(result_no_feature)
+        self.assertFalse(result_no_option)
+
+    def test_surcharge_without_feature_gate_always_applies(self):
+        """Surcharge without meta.feature_gate should always apply."""
+        unconditional_surcharge = self.pricing.Markup.objects.create(
+            name="Unconditional Surcharge",
+            amount=2.0,
+            markup_type="AMOUNT",
+            active=True,
+            is_visible=True,
+            meta={"type": "surcharge"},
+        )
+        rate = self.make_rate(service_features=[])
+        result = unconditional_surcharge._is_applicable(rate, options={})
+
         self.assertTrue(result)
 
     def test_apply_charge_passes_options(self):
@@ -2219,12 +2217,10 @@ class TestMarkupFeatureGating(BaseAPITestCase):
 
         # Without insurance option: markup should not be applied
         result_without = self.insurance_markup.apply_charge(response, options={})
-        print(f"without option: total={result_without.rates[0].total_charge}")
         self.assertEqual(result_without.rates[0].total_charge, 100.0)
 
         # With insurance option: markup should be applied
         result_with = self.insurance_markup.apply_charge(response, options={"insurance": True})
-        print(f"with option: total={result_with.rates[0].total_charge}")
         self.assertEqual(result_with.rates[0].total_charge, 150.0)
 
     def test_brokerage_apply_charge_ignores_options(self):
@@ -2233,22 +2229,20 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         response = self.make_response([rate])
 
         result = self.brokerage_markup.apply_charge(response, options={})
-        print(f"brokerage total={result.rates[0].total_charge}")
         # 100.0 * 0.85% = 0.85, total = 100.85
         self.assertEqual(result.rates[0].total_charge, 100.85)
 
-    def test_markup_without_meta_type_always_applies(self):
-        """A markup with no meta.type should always apply (unconditional)."""
-        no_meta_markup = self.pricing.Markup.objects.create(
+    def test_markup_without_feature_gate_always_applies(self):
+        """A markup with no meta.feature_gate should always apply (unconditional)."""
+        no_gate_markup = self.pricing.Markup.objects.create(
             name="Generic Markup",
             amount=5.0,
             markup_type="AMOUNT",
             active=True,
             is_visible=True,
-            meta={},
+            meta={"type": "insurance"},  # has type but no feature_gate
         )
         rate = self.make_rate(service_features=[])
-        result = no_meta_markup._is_applicable(rate, options={})
+        result = no_gate_markup._is_applicable(rate, options={})
 
-        print(f"is_applicable={result}")
         self.assertTrue(result)
