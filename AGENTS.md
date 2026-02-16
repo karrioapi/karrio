@@ -771,6 +771,41 @@ Shipment.objects.select_related('shipper', 'recipient', 'carrier_connection')
 Shipment.objects.prefetch_related('parcels', 'customs', 'rates')
 ```
 
+### ⚠️ N+1 Query Prevention (Critical!)
+
+N+1 queries are a common Django ORM pitfall that can severely degrade performance,
+especially on serverless databases (Aurora Serverless) where each query incurs connection overhead.
+
+**Always review loops that touch the database:**
+
+```python
+# ❌ BAD - N+1: one UPDATE per tracker in a loop
+for tracker in trackers:
+    tracker.status = compute_status(tracker)
+    tracker.save()  # N individual UPDATE queries
+
+# ❌ BAD - N+1: one SELECT per related object in a loop
+for shipment in shipments:
+    print(shipment.carrier.name)  # N individual SELECT queries (lazy loading)
+
+# ✅ GOOD - Bulk update: single UPDATE for all trackers
+for tracker in trackers:
+    tracker.status = compute_status(tracker)
+Tracking.objects.bulk_update(trackers, ["status", "updated_at"])
+
+# ✅ GOOD - Prefetch/select related: single JOIN query
+shipments = Shipment.objects.select_related("carrier").filter(...)
+for shipment in shipments:
+    print(shipment.carrier.name)  # No extra queries
+```
+
+**Key patterns to watch for:**
+- `model.save()` inside a loop → use `bulk_update()` or `bulk_create()`
+- `model.related_field.attribute` without `select_related` → add `select_related()`
+- `model.related_set.all()` without `prefetch_related` → add `prefetch_related()`
+- `update_or_create()` in high-concurrency paths → use split `create()`/`filter().update()` to avoid `SELECT FOR UPDATE` lock contention
+- Individual `filter().update()` calls in a loop → collect changes and use `bulk_update()`
+
 ---
 
 ## Background Jobs (Huey)
