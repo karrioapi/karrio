@@ -43,6 +43,8 @@ const SERVICE_FEATURES = [
   { value: "multicollo", label: "Multicollo" },
   { value: "neighbor_delivery", label: "Neighbor Delivery" },
   { value: "labelless", label: "Labelless" },
+  { value: "notification", label: "Notification" },
+  { value: "address_validation", label: "Address Validation" },
 ];
 
 // Placeholder value for "not specified" options (SelectItem can't use empty string)

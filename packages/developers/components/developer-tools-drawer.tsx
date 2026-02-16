@@ -84,11 +84,6 @@ const VIEW_CONFIG: Record<string, { label: string; icon: any; component: React.C
     icon: Calendar,
     component: EventsView,
   },
-  "tracing-records": {
-    label: "Tracing",
-    icon: Network,
-    component: TracingRecordsView,
-  },
   apps: {
     label: "Apps",
     icon: Settings,
@@ -119,6 +114,12 @@ const VIEW_CONFIG: Record<string, { label: string; icon: any; component: React.C
     label: "Workers",
     icon: Cpu,
     component: WorkersView,
+    adminOnly: true,
+  },
+  "tracing-records": {
+    label: "Tracing",
+    icon: Network,
+    component: TracingRecordsView,
     adminOnly: true,
   },
 };

@@ -60,7 +60,7 @@ export default async function Layout({
                 <Navbar />
               </div>
               <div className="flex-1 overflow-y-auto overflow-x-hidden scrollable-content">
-                <div className="max-w-7xl mx-auto w-full px-8 2xl:px-0 py-4">
+                <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 2xl:px-0 py-4">
                   <Notifier />
                   {children}
                 </div>

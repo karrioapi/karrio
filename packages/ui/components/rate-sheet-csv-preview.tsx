@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useMemo, useRef, useDeferredValue, useCallback } from "react";
+import React, { useMemo, useRef, useState, useDeferredValue, useCallback } from "react";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@karrio/ui/components/ui/sheet";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { cn } from "@karrio/ui/lib/utils";
@@ -32,6 +33,7 @@ export interface MarkupPreviewItem {
     type?: string;
     plan?: string;
     show_in_preview?: boolean;
+    feature_gate?: string;
   };
 }
 
@@ -42,6 +44,7 @@ interface FlatRow {
   carrierCode: string;
   serviceCode: string;
   serviceName: string;
+  serviceFeatures: string[];
   minWeight: number;
   maxWeight: number;
   maxLength: number | null;
@@ -53,6 +56,8 @@ interface FlatRow {
   surcharges: Record<string, number>;
   /** Progressive totals for each markup column */
   markups: Record<string, number>;
+  /** Which markups are disabled for this row (service doesn't support or toggle off) */
+  markupDisabled: Record<string, boolean>;
 }
 
 interface ColumnDef {
@@ -75,6 +80,30 @@ interface RateSheetCsvPreviewProps {
   weightUnit: string;
   markups?: MarkupPreviewItem[];
   isAdmin?: boolean;
+}
+
+// ─────────────────────────────────────────────────────
+// Feature-gated markup helpers
+// Uses meta.feature_gate to determine which markups
+// are conditional. In the CSV preview, surcharge and
+// brokerage-fee types are always shown unconditionally
+// (no toggle), even if they have a feature_gate.
+// ─────────────────────────────────────────────────────
+
+/** Types that are always unconditional in the CSV preview (no toggle). */
+const UNCONDITIONAL_PREVIEW_TYPES = new Set(["brokerage-fee", "surcharge"]);
+
+/** Whether this markup should show a toggle in the CSV preview. */
+function isFeatureGated(markup: MarkupPreviewItem): boolean {
+  if (!markup.meta?.feature_gate) return false;
+  // Surcharge and brokerage are unconditional in preview
+  if (markup.meta?.type && UNCONDITIONAL_PREVIEW_TYPES.has(markup.meta.type)) return false;
+  return true;
+}
+
+/** Get the service feature key for this markup (from meta.feature_gate). */
+function getFeatureKey(markup: MarkupPreviewItem): string | null {
+  return markup.meta?.feature_gate ?? null;
 }
 
 // ─────────────────────────────────────────────────────
@@ -139,9 +168,10 @@ function formatCell(row: FlatRow, colKey: string): string {
           ? row.surcharges[sid].toFixed(2)
           : "";
       }
-      // Markup column (prefixed with mkp_) — progressive total
+      // Markup column (prefixed with mkp_) — progressive total or disabled
       if (colKey.startsWith("mkp_")) {
         const mid = colKey.slice(4);
+        if (row.markupDisabled[mid]) return "\u2014";
         return row.markups[mid] != null
           ? row.markups[mid].toFixed(2)
           : "";
@@ -188,10 +218,18 @@ const VirtualRow = React.memo(function VirtualRow({
 
       {columns.map((col) => {
         const value = formatCell(row, col.key);
+        const isDisabled =
+          col.key.startsWith("mkp_") &&
+          row.markupDisabled[col.key.slice(4)];
         return (
           <div
             key={col.key}
-            className="px-2 py-1.5 border-r border-border flex-shrink-0 truncate text-foreground"
+            className={cn(
+              "px-2 py-1.5 border-r border-border flex-shrink-0 truncate",
+              isDisabled
+                ? "text-muted-foreground/40 bg-muted/20"
+                : "text-foreground"
+            )}
             style={{ width: `${col.width}px` }}
             title={value}
           >
@@ -223,6 +261,17 @@ export function RateSheetCsvPreview({
   isAdmin,
 }: RateSheetCsvPreviewProps) {
   const parentRef = useRef<HTMLDivElement>(null);
+
+  // State: which feature-gated markups are "toggled on" in the preview
+  const [enabledFeatureMarkups, setEnabledFeatureMarkups] = useState<Set<string>>(new Set());
+
+  const toggleFeatureMarkup = useCallback((markupId: string) => {
+    setEnabledFeatureMarkups((prev) => {
+      const next = new Set(prev);
+      next.has(markupId) ? next.delete(markupId) : next.add(markupId);
+      return next;
+    });
+  }, []);
 
   // ── Lazy guard: skip all computation when panel is closed ──
   // Build a lookup for service rates
@@ -266,7 +315,7 @@ export function RateSheetCsvPreview({
     if (!open) return EMPTY_ROWS;
 
     const result: FlatRow[] = [];
-    const fromCountry = originCountries.join(", ") || "—";
+    const fromCountry = originCountries.join(", ") || "\u2014";
 
     const effectiveRanges: WeightRange[] =
       weightRanges.length > 0
@@ -282,8 +331,12 @@ export function RateSheetCsvPreview({
       // Pre-build linked surcharge IDs for this service
       const linkedIds = new Set(service.surcharge_ids || []);
 
+      const serviceFeatures: string[] = Array.isArray(service.features)
+        ? service.features
+        : [];
+
       const isReturn =
-        (service.features || []).includes("returns") ||
+        serviceFeatures.includes("returns") ||
         /\breturn/i.test(service.service_name || "") ||
         /\breturn/i.test(service.service_code || "");
       const serviceType = isReturn ? "RETURN" : "SHIPPING";
@@ -311,6 +364,19 @@ export function RateSheetCsvPreview({
             }
           });
 
+          // Determine which markups are disabled for this row
+          const mkpDisabled: Record<string, boolean> = {};
+          for (const m of sortedPreviewMarkups) {
+            const featureKey = getFeatureKey(m);
+            if (featureKey) {
+              const serviceSupports = serviceFeatures.includes(featureKey);
+              const toggledOn = enabledFeatureMarkups.has(m.id);
+              mkpDisabled[m.id] = !serviceSupports || !toggledOn;
+            } else {
+              mkpDisabled[m.id] = false; // unconditional
+            }
+          }
+
           // Calculate progressive markup totals
           // Non-brokerage markups accumulate progressively.
           // Brokerage fees each apply independently on top of
@@ -321,7 +387,7 @@ export function RateSheetCsvPreview({
           // First pass: compute total non-brokerage contribution for brokerage base
           let nonBrokerageTotal = 0;
           for (const m of sortedPreviewMarkups) {
-            if (m.meta?.type !== "brokerage-fee") {
+            if (m.meta?.type !== "brokerage-fee" && !mkpDisabled[m.id]) {
               nonBrokerageTotal +=
                 m.markup_type === "PERCENTAGE"
                   ? baseRate * (m.amount / 100)
@@ -332,13 +398,19 @@ export function RateSheetCsvPreview({
 
           // Second pass: compute progressive totals
           for (const m of sortedPreviewMarkups) {
+            if (mkpDisabled[m.id]) {
+              mkpTotals[m.id] = 0;
+              continue;
+            }
+
             const contribution =
               m.markup_type === "PERCENTAGE"
                 ? baseRate * (m.amount / 100)
                 : m.amount;
 
             if (m.meta?.type === "brokerage-fee") {
-              // Brokerage: base + surcharges + all non-brokerage + this brokerage only
+              // Brokerage: show "contribution - total" format
+              // Store the total; the contribution is computed at display time
               mkpTotals[m.id] = brokerageBase + contribution;
             } else {
               // Non-brokerage: progressive accumulation
@@ -350,10 +422,11 @@ export function RateSheetCsvPreview({
           result.push({
             type: serviceType,
             fromCountry,
-            zone: zone.label || "—",
+            zone: zone.label || "\u2014",
             carrierCode: carrierName,
             serviceCode: service.service_code,
             serviceName: service.service_name,
+            serviceFeatures,
             minWeight: wr.min_weight,
             maxWeight: wr.max_weight,
             maxLength: service.max_length ?? null,
@@ -364,6 +437,7 @@ export function RateSheetCsvPreview({
             weightUnit: service.weight_unit || weightUnit,
             surcharges: surchAmounts,
             markups: mkpTotals,
+            markupDisabled: mkpDisabled,
           });
         }
       }
@@ -377,6 +451,7 @@ export function RateSheetCsvPreview({
     weightRanges,
     surchargeDetailMap,
     sortedPreviewMarkups,
+    enabledFeatureMarkups,
     carrierName,
     originCountries,
     weightUnit,
@@ -402,6 +477,15 @@ export function RateSheetCsvPreview({
       .map(({ id: _, ...col }) => col);
   }, [open, surcharges, rows]);
 
+  // Build a lookup from markup id → markup for brokerage display
+  const markupById = useMemo(() => {
+    const map = new Map<string, MarkupPreviewItem>();
+    for (const m of sortedPreviewMarkups) {
+      map.set(m.id, m);
+    }
+    return map;
+  }, [sortedPreviewMarkups]);
+
   // Markup columns — show value in header, omit if contribution is 0 for all rows
   const activeMarkupColumns = useMemo(() => {
     return sortedPreviewMarkups
@@ -416,13 +500,12 @@ export function RateSheetCsvPreview({
           label: `${m.name}${planSuffix} (${valueLabel})`,
           width: 160,
           id: m.id,
+          featureGated: isFeatureGated(m),
+          isBrokerage: m.meta?.type === "brokerage-fee",
           // Check if this markup has any meaningful contribution
-          // A markup applies if its own contribution differs from the base (non-zero contribution)
           hasContribution: rows.some((row) => {
+            if (row.markupDisabled[m.id]) return false;
             const total = row.markups[m.id] ?? 0;
-            // For brokerage: contribution = total - brokerageBase
-            // For non-brokerage: any non-zero total means it contributes
-            // Simplify: if the total differs from base+surcharges, the markup contributes
             const baseRate = row.rate ?? 0;
             let surchTotal = 0;
             for (const v of Object.values(row.surcharges)) surchTotal += v;
@@ -430,8 +513,8 @@ export function RateSheetCsvPreview({
           }),
         };
       })
-      .filter((col) => col.hasContribution)
-      .map(({ id: _, hasContribution: __, ...col }) => col);
+      .filter((col) => col.hasContribution || col.featureGated)
+      .map(({ id: _, hasContribution: __, featureGated: ___, isBrokerage: ____, ...col }) => col);
   }, [sortedPreviewMarkups, rows]);
 
   const allColumns = useMemo(
@@ -453,6 +536,97 @@ export function RateSheetCsvPreview({
   const handleClose = useCallback(
     () => onOpenChange(false),
     [onOpenChange]
+  );
+
+  // Build a set of feature-gated markup IDs for header rendering
+  const featureGatedMarkupIds = useMemo(() => {
+    const set = new Set<string>();
+    for (const m of sortedPreviewMarkups) {
+      if (isFeatureGated(m)) set.add(m.id);
+    }
+    return set;
+  }, [sortedPreviewMarkups]);
+
+  // Build a set of brokerage markup IDs for cell rendering
+  const brokerageMarkupIds = useMemo(() => {
+    const set = new Set<string>();
+    for (const m of sortedPreviewMarkups) {
+      if (m.meta?.type === "brokerage-fee") set.add(m.id);
+    }
+    return set;
+  }, [sortedPreviewMarkups]);
+
+  // Custom cell formatter for brokerage columns: "contribution - total"
+  const formatMarkupCell = useCallback(
+    (row: FlatRow, markupId: string): string => {
+      if (row.markupDisabled[markupId]) return "\u2014";
+      const total = row.markups[markupId];
+      if (total == null) return "";
+
+      if (brokerageMarkupIds.has(markupId)) {
+        // Compute contribution for brokerage
+        const m = markupById.get(markupId);
+        if (!m) return total.toFixed(2);
+        const baseRate = row.rate ?? 0;
+        const contribution =
+          m.markup_type === "PERCENTAGE"
+            ? baseRate * (m.amount / 100)
+            : m.amount;
+        return `${contribution.toFixed(2)} - ${total.toFixed(2)}`;
+      }
+
+      return total.toFixed(2);
+    },
+    [brokerageMarkupIds, markupById]
+  );
+
+  // Override VirtualRow to use brokerage formatting
+  const renderRow = useCallback(
+    (row: FlatRow, rowIndex: number, columns: ColumnDef[], height: number, start: number) => {
+      return (
+        <div
+          key={rowIndex}
+          className={cn(
+            "absolute top-0 left-0 w-full flex border-b border-border text-xs",
+            rowIndex % 2 === 0 ? "bg-background" : "bg-muted/30"
+          )}
+          style={{
+            height: `${height}px`,
+            transform: `translateY(${start}px)`,
+          }}
+        >
+          <div className="w-10 px-2 py-1.5 border-r border-border flex-shrink-0 bg-background text-center text-muted-foreground sticky left-0 z-10">
+            {rowIndex + 1}
+          </div>
+
+          {columns.map((col) => {
+            const isMkp = col.key.startsWith("mkp_");
+            const mid = isMkp ? col.key.slice(4) : "";
+            const isDisabled = isMkp && row.markupDisabled[mid];
+            const value = isMkp
+              ? formatMarkupCell(row, mid)
+              : formatCell(row, col.key);
+
+            return (
+              <div
+                key={col.key}
+                className={cn(
+                  "px-2 py-1.5 border-r border-border flex-shrink-0 truncate",
+                  isDisabled
+                    ? "text-muted-foreground/40 bg-muted/20"
+                    : "text-foreground"
+                )}
+                style={{ width: `${col.width}px` }}
+                title={value}
+              >
+                {value}
+              </div>
+            );
+          })}
+        </div>
+      );
+    },
+    [formatMarkupCell]
   );
 
   return (
@@ -517,16 +691,33 @@ export function RateSheetCsvPreview({
                     <div className="w-10 px-2 py-2 border-r border-border flex-shrink-0 bg-muted text-center text-muted-foreground sticky left-0 z-20">
                       #
                     </div>
-                    {allColumns.map((col) => (
-                      <div
-                        key={col.key}
-                        className="px-2 py-2 border-r border-border flex-shrink-0 bg-muted truncate"
-                        style={{ width: `${col.width}px` }}
-                        title={col.label}
-                      >
-                        {col.label}
-                      </div>
-                    ))}
+                    {allColumns.map((col) => {
+                      const isMkp = col.key.startsWith("mkp_");
+                      const mid = isMkp ? col.key.slice(4) : "";
+                      const isGated = isMkp && featureGatedMarkupIds.has(mid);
+
+                      return (
+                        <div
+                          key={col.key}
+                          className="px-2 py-2 border-r border-border flex-shrink-0 bg-muted truncate"
+                          style={{ width: `${col.width}px` }}
+                          title={col.label}
+                        >
+                          {isGated ? (
+                            <label className="flex items-center gap-1 cursor-pointer">
+                              <Checkbox
+                                checked={enabledFeatureMarkups.has(mid)}
+                                onCheckedChange={() => toggleFeatureMarkup(mid)}
+                                className="h-3 w-3"
+                              />
+                              <span className="truncate">{col.label}</span>
+                            </label>
+                          ) : (
+                            col.label
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Virtualized rows */}
@@ -536,16 +727,15 @@ export function RateSheetCsvPreview({
                       position: "relative",
                     }}
                   >
-                    {rowVirtualizer.getVirtualItems().map((virtualRow) => (
-                      <VirtualRow
-                        key={virtualRow.key}
-                        row={deferredRows[virtualRow.index]}
-                        rowIndex={virtualRow.index}
-                        columns={allColumns}
-                        height={virtualRow.size}
-                        start={virtualRow.start}
-                      />
-                    ))}
+                    {rowVirtualizer.getVirtualItems().map((virtualRow) =>
+                      renderRow(
+                        deferredRows[virtualRow.index],
+                        virtualRow.index,
+                        allColumns,
+                        virtualRow.size,
+                        virtualRow.start,
+                      )
+                    )}
                   </div>
                 </div>
               </div>
