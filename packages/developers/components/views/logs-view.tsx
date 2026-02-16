@@ -455,6 +455,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                   theme="dark"
                   className="text-xs"
                   readOnly
+
                   basicSetup={{
                     lineNumbers: false,
                     foldGutter: true,
@@ -513,6 +514,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                     theme="dark"
                     className="text-xs"
                     readOnly
+  
                     basicSetup={{
                       lineNumbers: false,
                       foldGutter: true,
@@ -549,6 +551,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                     theme="dark"
                     className="text-xs"
                     readOnly
+  
                     basicSetup={{
                       lineNumbers: false,
                       foldGutter: true,
@@ -955,7 +958,7 @@ export function LogsView() {
           <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
             <span className="text-muted-foreground">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + logs.length}
-              {query.data?.logs?.page_info.has_next_page && " of many"}
+              {query.data?.logs?.page_info.count != null && ` of ${query.data.logs.page_info.count}`}
             </span>
             <div className="flex gap-2">
               <Button
@@ -1018,6 +1021,7 @@ export function LogsView() {
                     size="sm"
                     onClick={handleRefresh}
                     disabled={query.isFetching}
+                    className="text-foreground border-border hover:bg-primary/10"
                   >
                     <RefreshCw className={`h-4 w-4 ${query.isFetching ? 'animate-spin' : ''}`} />
                   </Button>
@@ -1048,7 +1052,7 @@ export function LogsView() {
             <div className="flex-1 overflow-auto">
               {query.isFetching && (
                 <div className="flex items-center justify-center py-8">
-                  <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
+                  <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
               )}
 
@@ -1081,7 +1085,7 @@ export function LogsView() {
               <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + logs.length}
-                  {query.data?.logs?.page_info.has_next_page && " of many"}
+                  {query.data?.logs?.page_info.count != null && ` of ${query.data.logs.page_info.count}`}
                 </span>
                 <div className="flex gap-2">
                   <Button
