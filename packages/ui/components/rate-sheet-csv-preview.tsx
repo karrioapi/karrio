@@ -22,6 +22,19 @@ import type { ServiceRate, WeightRange } from "@karrio/ui/components/weight-rate
 // Types
 // ─────────────────────────────────────────────────────
 
+export interface MarkupPreviewItem {
+  id: string;
+  name: string;
+  amount: number;
+  markup_type: string; // "AMOUNT" | "PERCENTAGE"
+  active: boolean;
+  meta?: {
+    type?: string;
+    plan?: string;
+    show_in_preview?: boolean;
+  };
+}
+
 interface FlatRow {
   type: string;
   fromCountry: string;
@@ -38,6 +51,7 @@ interface FlatRow {
   currency: string;
   weightUnit: string;
   surcharges: Record<string, number>;
+  markups: Record<string, number>;
 }
 
 interface ColumnDef {
@@ -58,6 +72,8 @@ interface RateSheetCsvPreviewProps {
   weightRanges: WeightRange[];
   surcharges: SharedSurcharge[];
   weightUnit: string;
+  markups?: MarkupPreviewItem[];
+  isAdmin?: boolean;
 }
 
 // ─────────────────────────────────────────────────────
@@ -114,11 +130,23 @@ function formatCell(row: FlatRow, colKey: string): string {
       return row.rate != null ? row.rate.toFixed(2) : "";
     case "currency":
       return row.currency;
-    default:
-      // Surcharge column
-      return row.surcharges[colKey] != null
-        ? row.surcharges[colKey].toFixed(2)
-        : "";
+    default: {
+      // Surcharge column (prefixed with surch_)
+      if (colKey.startsWith("surch_")) {
+        const sid = colKey.slice(6);
+        return row.surcharges[sid] != null
+          ? row.surcharges[sid].toFixed(2)
+          : "";
+      }
+      // Markup column (prefixed with mkp_)
+      if (colKey.startsWith("mkp_")) {
+        const mid = colKey.slice(4);
+        return row.markups[mid] != null
+          ? row.markups[mid].toFixed(2)
+          : "";
+      }
+      return "";
+    }
   }
 }
 
@@ -190,6 +218,8 @@ export function RateSheetCsvPreview({
   weightRanges,
   surcharges,
   weightUnit,
+  markups,
+  isAdmin,
 }: RateSheetCsvPreviewProps) {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -205,26 +235,47 @@ export function RateSheetCsvPreview({
     return map;
   }, [open, serviceRates]);
 
-  // Derive surcharge column names
+  // Derive surcharge column names — include type indicator in label
   const surchargeColumns = useMemo(
     () =>
       open
         ? surcharges
             .filter((s) => s.name)
-            .map((s) => ({ key: s.id, label: s.name, width: 100 }))
+            .map((s) => ({
+              key: `surch_${s.id}`,
+              label: `${s.name} (${s.surcharge_type === "percentage" ? `${s.amount}%` : "$"})`,
+              width: 110,
+            }))
         : [],
     [open, surcharges]
   );
 
-  // Pre-build surcharge lookup: surchargeId → amount (O(1) per row instead of O(n))
-  const surchargeAmountMap = useMemo(() => {
-    if (!open) return new Map<string, number>();
-    const map = new Map<string, number>();
+  // Pre-build surcharge lookup: surchargeId → { amount, surcharge_type }
+  const surchargeDetailMap = useMemo(() => {
+    if (!open) return new Map<string, { amount: number; surcharge_type: string }>();
+    const map = new Map<string, { amount: number; surcharge_type: string }>();
     for (const s of surcharges) {
-      map.set(s.id, s.amount);
+      map.set(s.id, { amount: s.amount, surcharge_type: s.surcharge_type || "fixed" });
     }
     return map;
   }, [open, surcharges]);
+
+  // Filter markups to those with show_in_preview (admin only)
+  const previewMarkups = useMemo(() => {
+    if (!open || !isAdmin || !markups) return [];
+    return markups.filter((m) => m.active && m.meta?.show_in_preview);
+  }, [open, isAdmin, markups]);
+
+  // Markup columns
+  const markupColumns = useMemo(
+    () =>
+      previewMarkups.map((m) => ({
+        key: `mkp_${m.id}`,
+        label: `${m.name} (${m.markup_type === "PERCENTAGE" ? `${m.amount}%` : "$"})`,
+        width: 120,
+      })),
+    [previewMarkups]
+  );
 
   // Build flat rows: service × zone × weight_range
   const rows = useMemo(() => {
@@ -244,14 +295,8 @@ export function RateSheetCsvPreview({
         .map((zid) => sharedZones.find((z) => z.id === zid))
         .filter(Boolean) as EmbeddedZone[];
 
-      // Pre-build surcharge amounts for this service (Set for O(1) membership check)
+      // Pre-build linked surcharge IDs for this service
       const linkedIds = new Set(service.surcharge_ids || []);
-      const surchAmounts: Record<string, number> = {};
-      surchargeAmountMap.forEach((amount, sid) => {
-        if (linkedIds.has(sid)) {
-          surchAmounts[sid] = amount;
-        }
-      });
 
       const isReturn =
         (service.features || []).includes("returns") ||
@@ -266,6 +311,27 @@ export function RateSheetCsvPreview({
         for (const wr of effectiveRanges) {
           const rateKey = `${service.id}:${zone.id}:${wr.min_weight}:${wr.max_weight}`;
           const rate = rateLookup.get(rateKey) ?? null;
+          const baseRate = rate ?? 0;
+
+          // Calculate surcharge amounts (not raw values)
+          const surchAmounts: Record<string, number> = {};
+          surchargeDetailMap.forEach((detail, sid) => {
+            if (linkedIds.has(sid)) {
+              surchAmounts[sid] =
+                detail.surcharge_type === "percentage"
+                  ? baseRate * (detail.amount / 100)
+                  : detail.amount;
+            }
+          });
+
+          // Calculate markup amounts
+          const mkpAmounts: Record<string, number> = {};
+          for (const m of previewMarkups) {
+            mkpAmounts[m.id] =
+              m.markup_type === "PERCENTAGE"
+                ? baseRate * (m.amount / 100)
+                : m.amount;
+          }
 
           result.push({
             type: serviceType,
@@ -283,6 +349,7 @@ export function RateSheetCsvPreview({
             currency: service.currency || "USD",
             weightUnit: service.weight_unit || weightUnit,
             surcharges: surchAmounts,
+            markups: mkpAmounts,
           });
         }
       }
@@ -294,7 +361,8 @@ export function RateSheetCsvPreview({
     services,
     sharedZones,
     weightRanges,
-    surchargeAmountMap,
+    surchargeDetailMap,
+    previewMarkups,
     carrierName,
     originCountries,
     weightUnit,
@@ -306,8 +374,8 @@ export function RateSheetCsvPreview({
   const isStale = deferredRows !== rows;
 
   const allColumns = useMemo(
-    () => [...FIXED_COLUMNS, ...surchargeColumns],
-    [surchargeColumns]
+    () => [...FIXED_COLUMNS, ...surchargeColumns, ...markupColumns],
+    [surchargeColumns, markupColumns]
   );
   const totalWidth = useMemo(
     () => allColumns.reduce((sum, col) => sum + col.width, 0),

@@ -32,16 +32,19 @@ import { AddWeightRangeDialog } from "@karrio/ui/components/add-weight-range-dia
 import { AddServicePopover } from "@karrio/ui/components/add-service-popover";
 import { EditWeightRangeDialog } from "@karrio/ui/components/edit-weight-range-dialog";
 import { SurchargesTab } from "@karrio/ui/components/surcharges-tab";
+import { MarkupsTab } from "@karrio/ui/components/markups-tab";
 import { ZoneEditorDialog } from "@karrio/ui/components/zone-editor-dialog";
 import { SurchargeEditorDialog } from "@karrio/ui/components/surcharge-editor-dialog";
+import { MarkupEditorDialog } from "@karrio/ui/components/markup-editor-dialog";
 import { ServiceRateEditorDialog } from "@karrio/ui/components/service-rate-editor-dialog";
-import { RateSheetCsvPreview } from "@karrio/ui/components/rate-sheet-csv-preview";
+import { RateSheetCsvPreview, type MarkupPreviewItem } from "@karrio/ui/components/rate-sheet-csv-preview";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@karrio/ui/components/ui/popover";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import type { MarkupType } from "@karrio/hooks/admin-markups";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -171,6 +174,12 @@ interface RateSheetEditorProps {
   isAdmin?: boolean;
   useRateSheet: (args: any) => any;
   useRateSheetMutation: () => any;
+  markups?: MarkupType[];
+  markupMutations?: {
+    createMarkup: { mutateAsync: (input: any) => Promise<any> };
+    updateMarkup: { mutateAsync: (input: any) => Promise<any> };
+    deleteMarkup: { mutateAsync: (input: any) => Promise<any> };
+  };
 }
 
 interface OriginalState {
@@ -191,6 +200,8 @@ export const RateSheetEditor = ({
   isAdmin = false,
   useRateSheet,
   useRateSheetMutation,
+  markups: adminMarkups = [],
+  markupMutations,
 }: RateSheetEditorProps) => {
   const isNew = rateSheetId === "new";
   const isEditMode = !isNew;
@@ -229,7 +240,7 @@ export const RateSheetEditor = ({
 
   // Tab state
   const [activeTab, setActiveTab] = useState<
-    "rate_sheet" | "surcharges"
+    "rate_sheet" | "surcharges" | "markups"
   >("rate_sheet");
 
   // Weight range state
@@ -248,6 +259,11 @@ export const RateSheetEditor = ({
   // Surcharge editor dialog state
   const [surchargeEditorOpen, setSurchargeEditorOpen] = useState(false);
   const [selectedSurcharge, setSelectedSurcharge] = useState<SharedSurcharge | null>(null);
+
+  // Markup editor dialog state
+  const [markupEditorOpen, setMarkupEditorOpen] = useState(false);
+  const [selectedMarkup, setSelectedMarkup] = useState<MarkupType | null>(null);
+  const [isNewMarkup, setIsNewMarkup] = useState(false);
 
   // Service rate editor dialog state
   const [rateEditorOpen, setRateEditorOpen] = useState(false);
@@ -279,6 +295,7 @@ export const RateSheetEditor = ({
   const { toast } = useToast();
   const { query } = useRateSheet({ id: isEditMode ? rateSheetId : undefined });
   const mutations = useRateSheetMutation();
+
 
   const existingRateSheet = query?.data?.rate_sheet;
   const isRateSheetLoading = query?.isLoading;
@@ -1312,6 +1329,43 @@ export const RateSheetEditor = ({
   };
 
   // ─────────────────────────────────────────────────────────────────
+  // Markup Handlers (admin mode only)
+  // ─────────────────────────────────────────────────────────────────
+
+  const handleAddMarkup = () => {
+    setSelectedMarkup(null);
+    setIsNewMarkup(true);
+    setMarkupEditorOpen(true);
+  };
+
+  const handleEditMarkup = (markup: MarkupType) => {
+    setSelectedMarkup(markup);
+    setIsNewMarkup(false);
+    setMarkupEditorOpen(true);
+  };
+
+  const handleRemoveMarkup = async (markupId: string) => {
+    if (!markupMutations) return;
+    try {
+      await markupMutations.deleteMarkup.mutateAsync({ id: markupId });
+      toast({ title: "Markup deleted" });
+    } catch (err: any) {
+      toast({ title: "Failed to delete markup", description: err?.message, variant: "destructive" });
+    }
+  };
+
+  const markupsForPreview: MarkupPreviewItem[] = useMemo(() => {
+    return adminMarkups.map((m: any) => ({
+      id: m.id,
+      name: m.name,
+      amount: m.amount,
+      markup_type: m.markup_type,
+      active: m.active,
+      meta: m.meta,
+    }));
+  }, [adminMarkups]);
+
+  // ─────────────────────────────────────────────────────────────────
   // Weight Range Handlers
   // ─────────────────────────────────────────────────────────────────
 
@@ -2331,6 +2385,7 @@ export const RateSheetEditor = ({
                       [
                         { id: "rate_sheet", label: "Rate Sheet" },
                         { id: "surcharges", label: "Surcharges" },
+                        ...(isAdmin ? [{ id: "markups" as const, label: "Markups" }] : []),
                       ] as const
                     ).map((tab) => (
                       <button
@@ -2474,6 +2529,14 @@ export const RateSheetEditor = ({
                       surchargePresets={surchargePresets}
                       onAddSurchargeFromPreset={handleAddSurchargeFromPreset}
                       onCloneSurcharge={handleCloneSurcharge}
+                    />
+                  )}
+                  {activeTab === "markups" && isAdmin && (
+                    <MarkupsTab
+                      markups={adminMarkups}
+                      onEditMarkup={handleEditMarkup}
+                      onAddMarkup={handleAddMarkup}
+                      onRemoveMarkup={handleRemoveMarkup}
                     />
                   )}
                 </div>
@@ -2661,6 +2724,51 @@ export const RateSheetEditor = ({
         weightUnit={selectedWeightUnit}
       />
 
+      {/* Markup Editor Dialog (admin only) */}
+      {isAdmin && (
+        <MarkupEditorDialog
+          open={markupEditorOpen}
+          onOpenChange={(open) => {
+            setMarkupEditorOpen(open);
+            if (!open) {
+              setSelectedMarkup(null);
+              setIsNewMarkup(false);
+            }
+          }}
+          markup={selectedMarkup}
+          isNew={isNewMarkup}
+          onSave={async (data) => {
+            if (!markupMutations) return;
+            try {
+              if (isNewMarkup) {
+                await markupMutations.createMarkup.mutateAsync({
+                  name: data.name,
+                  amount: data.amount,
+                  markup_type: data.markup_type as any,
+                  active: data.active,
+                  is_visible: data.is_visible,
+                  meta: Object.keys(data.meta).length > 0 ? data.meta : undefined,
+                } as any);
+                toast({ title: "Markup created" });
+              } else if (selectedMarkup) {
+                await markupMutations.updateMarkup.mutateAsync({
+                  id: selectedMarkup.id,
+                  name: data.name,
+                  amount: data.amount,
+                  markup_type: data.markup_type as any,
+                  active: data.active,
+                  is_visible: data.is_visible,
+                  meta: Object.keys(data.meta).length > 0 ? data.meta : undefined,
+                } as any);
+                toast({ title: "Markup updated" });
+              }
+            } catch (err: any) {
+              toast({ title: "Failed to save markup", description: err?.message, variant: "destructive" });
+            }
+          }}
+        />
+      )}
+
       {/* CSV Preview */}
       <RateSheetCsvPreview
         open={csvPreviewOpen}
@@ -2674,6 +2782,8 @@ export const RateSheetEditor = ({
         weightRanges={weightRanges}
         surcharges={surcharges}
         weightUnit={selectedWeightUnit}
+        markups={isAdmin ? markupsForPreview : undefined}
+        isAdmin={isAdmin}
       />
     </>
   );

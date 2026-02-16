@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useRateSheet as useAdminRateSheet, useRateSheetMutation as useAdminRateSheetMutation } from "@karrio/hooks/admin-rate-sheets";
+import { useMarkups, useMarkupMutation } from "@karrio/hooks/admin-markups";
 import { GetSystemConnections_system_carrier_connections_edges_node as Connection } from "@karrio/types/graphql/admin/types";
 import { useSystemConnections, useSystemConnectionMutation } from "@karrio/hooks/admin-system-connections";
 import { GetRateSheets_rate_sheets_edges_node as RateSheet } from "@karrio/types/graphql/admin/types";
@@ -123,6 +124,12 @@ function CarrierConnectionManagement() {
 
   const { createSystemConnection, updateSystemConnection, deleteSystemConnection } = useSystemConnectionMutation();
   const rateSheetMutation = useRateSheetMutation();
+  const { markups: markupsData } = useMarkups();
+  const markupMutationHooks = useMarkupMutation();
+  const adminMarkupsList = useMemo(
+    () => markupsData?.edges?.map((e: any) => e.node) || [],
+    [markupsData]
+  );
 
   // Helper function to get the correct carrier name for rate sheets
   const getRateSheetCarrierName = (connection: Connection): string => {
@@ -646,6 +653,8 @@ function CarrierConnectionManagement() {
           isAdmin={true}
           useRateSheet={useAdminRateSheet}
           useRateSheetMutation={useAdminRateSheetMutation}
+          markups={adminMarkupsList}
+          markupMutations={markupMutationHooks}
           // Freeze and preload defaults based on the launching connection's carrier
           preloadCarrier={selectedRateSheet?.carrier_name}
           linkConnectionId={(selectedRateSheet as any)?.carriers?.[0]?.id}
@@ -669,6 +678,12 @@ function RateSheetManagement() {
   const isLoading = query.isLoading;
 
   const { deleteRateSheet } = useRateSheetMutation();
+  const { markups: markupsData2 } = useMarkups();
+  const markupMutationHooks2 = useMarkupMutation();
+  const adminMarkupsList2 = useMemo(
+    () => markupsData2?.edges?.map((e: any) => e.node) || [],
+    [markupsData2]
+  );
 
   // Filter rate sheets
   const filteredRateSheets = useMemo(() => {
@@ -915,6 +930,8 @@ function RateSheetManagement() {
           isAdmin={true}
           useRateSheet={useAdminRateSheet}
           useRateSheetMutation={useAdminRateSheetMutation}
+          markups={adminMarkupsList2}
+          markupMutations={markupMutationHooks2}
         />
       )}
 

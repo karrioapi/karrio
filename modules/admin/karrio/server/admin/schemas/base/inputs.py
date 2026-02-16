@@ -109,6 +109,7 @@ class CreateMarkupMutationInput(utils.BaseInput):
     service_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
     connection_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     organizations: typing.Optional[typing.List[str]] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
@@ -125,6 +126,7 @@ class UpdateMarkupMutationInput(utils.BaseInput):
     service_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
     connection_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     organizations: typing.Optional[typing.List[str]] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 

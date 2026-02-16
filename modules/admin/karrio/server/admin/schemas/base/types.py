@@ -499,6 +499,7 @@ class MarkupType:
     amount: float
     markup_type: str
     is_visible: bool = True
+    meta: typing.Optional[utils.JSON] = None
     metadata: typing.Optional[utils.JSON] = None
 
     @strawberry.field

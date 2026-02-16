@@ -123,6 +123,20 @@ class Markup(core.Entity):
         """,
     )
 
+    # Structured categorization metadata
+    meta = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="""
+        Structured categorization metadata.
+        {
+            "type": "brokerage-fee",       # brokerage-fee | insurance | surcharge | notification | address-validation
+            "plan": "scale",               # Free-form plan/tier name
+            "show_in_preview": true         # Whether to show computed column in rate sheet preview
+        }
+        """,
+    )
+
     # Metadata
     metadata = models.JSONField(
         default=dict,
