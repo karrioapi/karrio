@@ -2059,3 +2059,196 @@ class TestAdminMarkups(AdminGraphTestCase):
             markup = response.data["data"]["create_markup"]["markup"]
             self.assertEqual(markup["name"], name)
             self.assertEqual(markup["meta"]["type"], meta_type)
+
+
+class TestMarkupFeatureGating(BaseAPITestCase):
+    """Tests for feature-gated markup applicability logic."""
+
+    def setUp(self):
+        super().setUp()
+        import karrio.server.pricing.models as pricing
+        import karrio.server.core.datatypes as datatypes
+        import karrio.core.models as karrio_models
+
+        self.pricing = pricing
+        self.datatypes = datatypes
+        self.karrio_models = karrio_models
+
+        # Create feature-gated markups
+        self.insurance_markup = pricing.Markup.objects.create(
+            name="Insurance Fee",
+            amount=50.0,
+            markup_type="AMOUNT",
+            active=True,
+            is_visible=True,
+            meta={"type": "insurance", "show_in_preview": True},
+        )
+        self.notification_markup = pricing.Markup.objects.create(
+            name="Notification Fee",
+            amount=2.0,
+            markup_type="AMOUNT",
+            active=True,
+            is_visible=True,
+            meta={"type": "notification", "show_in_preview": True},
+        )
+        self.address_validation_markup = pricing.Markup.objects.create(
+            name="Address Validation Fee",
+            amount=1.5,
+            markup_type="AMOUNT",
+            active=True,
+            is_visible=True,
+            meta={"type": "address-validation", "show_in_preview": True},
+        )
+
+        # Create unconditional markups
+        self.brokerage_markup = pricing.Markup.objects.create(
+            name="Brokerage Fee",
+            amount=0.85,
+            markup_type="PERCENTAGE",
+            active=True,
+            is_visible=True,
+            meta={"type": "brokerage-fee", "show_in_preview": True},
+        )
+        self.surcharge_markup = pricing.Markup.objects.create(
+            name="Fuel Surcharge",
+            amount=3.0,
+            markup_type="AMOUNT",
+            active=True,
+            is_visible=True,
+            meta={"type": "surcharge"},
+        )
+
+        # Helper: build a rate with given meta
+        def make_rate(service_features=None, **kwargs):
+            meta = {"service_features": service_features or []}
+            meta.update(kwargs.get("extra_meta", {}))
+            return self.datatypes.Rate(
+                carrier_name="generic",
+                carrier_id="car_test",
+                currency="USD",
+                total_charge=100.0,
+                service="test_service",
+                extra_charges=[],
+                meta=meta,
+            )
+
+        self.make_rate = make_rate
+
+        # Helper: build a rate response
+        def make_response(rates):
+            return self.datatypes.RateResponse(
+                messages=[],
+                rates=rates,
+            )
+
+        self.make_response = make_response
+
+    def test_insurance_markup_skips_when_service_lacks_feature(self):
+        """Insurance markup should NOT apply when service doesn't have insurance feature."""
+        rate = self.make_rate(service_features=["tracked", "express"])
+        result = self.insurance_markup._is_applicable(rate, options={"insurance": True})
+
+        print(f"is_applicable={result}")
+        self.assertFalse(result)
+
+    def test_insurance_markup_skips_when_option_not_requested(self):
+        """Insurance markup should NOT apply when option not in request."""
+        rate = self.make_rate(service_features=["insurance", "tracked"])
+        result = self.insurance_markup._is_applicable(rate, options={})
+
+        print(f"is_applicable={result}")
+        self.assertFalse(result)
+
+    def test_insurance_markup_applies_when_feature_and_option_present(self):
+        """Insurance markup should apply when service has feature AND option is requested."""
+        rate = self.make_rate(service_features=["insurance", "tracked"])
+        result = self.insurance_markup._is_applicable(rate, options={"insurance": True})
+
+        print(f"is_applicable={result}")
+        self.assertTrue(result)
+
+    def test_notification_markup_feature_gate(self):
+        """Notification markup requires 'notification' feature and option."""
+        rate_with = self.make_rate(service_features=["notification"])
+        rate_without = self.make_rate(service_features=["tracked"])
+
+        print(f"with feature+option: {self.notification_markup._is_applicable(rate_with, options={'notification': True})}")
+        print(f"with feature, no option: {self.notification_markup._is_applicable(rate_with, options={})}")
+        print(f"without feature: {self.notification_markup._is_applicable(rate_without, options={'notification': True})}")
+
+        self.assertTrue(self.notification_markup._is_applicable(rate_with, options={"notification": True}))
+        self.assertFalse(self.notification_markup._is_applicable(rate_with, options={}))
+        self.assertFalse(self.notification_markup._is_applicable(rate_without, options={"notification": True}))
+
+    def test_address_validation_markup_feature_gate(self):
+        """Address validation markup requires 'address_validation' feature and option."""
+        rate_with = self.make_rate(service_features=["address_validation"])
+        rate_without = self.make_rate(service_features=["tracked"])
+
+        result_applies = self.address_validation_markup._is_applicable(
+            rate_with, options={"address_validation": True}
+        )
+        result_no_feature = self.address_validation_markup._is_applicable(
+            rate_without, options={"address_validation": True}
+        )
+
+        print(f"applies={result_applies}, no_feature={result_no_feature}")
+        self.assertTrue(result_applies)
+        self.assertFalse(result_no_feature)
+
+    def test_brokerage_markup_always_applies(self):
+        """Brokerage-fee markup should always apply regardless of features/options."""
+        rate = self.make_rate(service_features=[])
+        result = self.brokerage_markup._is_applicable(rate, options={})
+
+        print(f"is_applicable={result}")
+        self.assertTrue(result)
+
+    def test_surcharge_markup_always_applies(self):
+        """Surcharge-type markup should always apply regardless of features/options."""
+        rate = self.make_rate(service_features=[])
+        result = self.surcharge_markup._is_applicable(rate, options={})
+
+        print(f"is_applicable={result}")
+        self.assertTrue(result)
+
+    def test_apply_charge_passes_options(self):
+        """apply_charge should pass options to _is_applicable for feature-gating."""
+        rate = self.make_rate(service_features=["insurance"])
+        response = self.make_response([rate])
+
+        # Without insurance option: markup should not be applied
+        result_without = self.insurance_markup.apply_charge(response, options={})
+        print(f"without option: total={result_without.rates[0].total_charge}")
+        self.assertEqual(result_without.rates[0].total_charge, 100.0)
+
+        # With insurance option: markup should be applied
+        result_with = self.insurance_markup.apply_charge(response, options={"insurance": True})
+        print(f"with option: total={result_with.rates[0].total_charge}")
+        self.assertEqual(result_with.rates[0].total_charge, 150.0)
+
+    def test_brokerage_apply_charge_ignores_options(self):
+        """Brokerage markup should apply regardless of options."""
+        rate = self.make_rate(service_features=[])
+        response = self.make_response([rate])
+
+        result = self.brokerage_markup.apply_charge(response, options={})
+        print(f"brokerage total={result.rates[0].total_charge}")
+        # 100.0 * 0.85% = 0.85, total = 100.85
+        self.assertEqual(result.rates[0].total_charge, 100.85)
+
+    def test_markup_without_meta_type_always_applies(self):
+        """A markup with no meta.type should always apply (unconditional)."""
+        no_meta_markup = self.pricing.Markup.objects.create(
+            name="Generic Markup",
+            amount=5.0,
+            markup_type="AMOUNT",
+            active=True,
+            is_visible=True,
+            meta={},
+        )
+        rate = self.make_rate(service_features=[])
+        result = no_meta_markup._is_applicable(rate, options={})
+
+        print(f"is_applicable={result}")
+        self.assertTrue(result)
