@@ -529,11 +529,12 @@ export function ServiceRateDetailView({
               </div>
             </div>
           </div>
+
         </div>
 
-        {/* Toolbar */}
+        {/* Add Weight Range — below the grid, left-aligned under weight column */}
         {onAddWeightRange && (
-          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border">
+          <div className="border-t border-border px-3 py-2" style={{ maxWidth: `${weightColWidth}px` }}>
             <AddWeightRangePopover
               onAddWeightRange={onAddWeightRange}
               weightUnit={weightUnit}

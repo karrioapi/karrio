@@ -59,7 +59,7 @@ import {
   HamburgerMenuIcon,
   TableIcon,
 } from "@radix-ui/react-icons";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 
 // Generate a unique ID for new entities
 const generateId = (prefix: string = "temp") =>
@@ -2127,19 +2127,19 @@ export const RateSheetEditor = ({
                     : "Create Rate Sheet"}
               </SheetTitle>
               <div className="flex items-center gap-2">
-                <Button
+                <button
                   onClick={handleSave}
                   disabled={isSaving || isInitialLoading}
+                  className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                  aria-label="Save"
+                  title="Save"
                 >
                   {isSaving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      <span className="hidden sm:inline">Saving...</span>
-                    </>
+                    <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    "Save"
+                    <Save className="h-5 w-5" />
                   )}
-                </Button>
+                </button>
                 <button
                   onClick={() => setCsvPreviewOpen(true)}
                   className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
@@ -2385,7 +2385,7 @@ export const RateSheetEditor = ({
                       [
                         { id: "rate_sheet", label: "Rate Sheet" },
                         { id: "surcharges", label: "Surcharges" },
-                        ...(isAdmin ? [{ id: "markups" as const, label: "Markups" }] : []),
+                        ...(isAdmin ? [{ id: "markups" as const, label: "Brokerage" }] : []),
                       ] as const
                     ).map((tab) => (
                       <button
@@ -2405,61 +2405,64 @@ export const RateSheetEditor = ({
                 </div>
 
                 {/* Tab Content */}
-                <div className="flex-1 p-4 sm:p-6 overflow-hidden">
+                <div className="flex-1 pt-4 px-4 sm:pt-4 sm:px-6 pb-4 sm:pb-6 overflow-hidden relative">
                   {activeTab === "rate_sheet" && (
                     <div className="h-full flex flex-col">
                       {/* Service tabs */}
                       {services.length > 0 && (
-                        <div className="flex items-center gap-1 mb-3 overflow-x-auto pb-1 border-b border-border" style={{ scrollbarWidth: "none" }}>
-                          {services.map((svc) => (
-                            <button
-                              key={svc.id}
-                              onClick={() => setDetailServiceId(svc.id)}
-                              className={cn(
-                                "px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors flex items-center gap-1.5 group/svc",
-                                detailServiceId === svc.id
-                                  ? "bg-primary text-primary-foreground"
-                                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                              )}
-                            >
-                              {svc.service_name || svc.service_code || "Unnamed"}
-                              {detailServiceId === svc.id && (
-                                <span className="flex items-center gap-0">
-                                  <span
-                                    className="p-0.5 rounded-sm hover:bg-primary-foreground/20"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEditService(svc);
-                                    }}
-                                    title="Edit service"
-                                  >
-                                    <Pencil1Icon className="h-3 w-3" />
-                                  </span>
-                                  <span
-                                    className="p-0.5 rounded-sm hover:bg-primary-foreground/20"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteClick(svc);
-                                    }}
-                                    title="Delete service"
-                                  >
-                                    <TrashIcon className="h-3 w-3" />
-                                  </span>
-                                </span>
-                              )}
-                            </button>
-                          ))}
+                        <div
+                          className="flex items-center gap-1 mb-3 pb-1 border-b border-border overflow-x-auto [&::-webkit-scrollbar]:hidden"
+                          style={{ scrollbarWidth: 'none' }}
+                        >
+                          {services.map((svc) => {
+                            const isActive = detailServiceId === svc.id;
+                            return (
+                              <div key={svc.id} className="relative flex items-center flex-shrink-0">
+                                <button
+                                  onClick={() => setDetailServiceId(svc.id)}
+                                  className={cn(
+                                    "px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors",
+                                    isActive
+                                      ? "bg-primary text-primary-foreground"
+                                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                  )}
+                                >
+                                  {svc.service_name || svc.service_code || "Unnamed"}
+                                </button>
+                                {isActive && (
+                                  <div className="flex items-center gap-0.5 ml-0.5">
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleEditService(svc); }}
+                                      className="p-0.5 rounded-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                                      title="Edit service"
+                                    >
+                                      <Pencil1Icon className="h-3 w-3" />
+                                    </button>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleDeleteClick(svc); }}
+                                      className="p-0.5 rounded-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                      title="Delete service"
+                                    >
+                                      <TrashIcon className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
 
-                          {/* Add service popover */}
-                          <AddServicePopover
-                            services={services}
-                            onAddService={handleAddService}
-                            servicePresets={servicePresets}
-                            onAddServiceFromPreset={handleAddServiceFromPreset}
-                            onCloneService={handleCloneService}
-                            iconOnly
-                            align="end"
-                          />
+                          {/* Add service popover - sticky at end */}
+                          <div className="flex-shrink-0 sticky right-0 bg-background pl-1">
+                            <AddServicePopover
+                              services={services}
+                              onAddService={handleAddService}
+                              servicePresets={servicePresets}
+                              onAddServiceFromPreset={handleAddServiceFromPreset}
+                              onCloneService={handleCloneService}
+                              iconOnly
+                              align="end"
+                            />
+                          </div>
                         </div>
                       )}
 
@@ -2467,7 +2470,7 @@ export const RateSheetEditor = ({
                       <div className="flex-1 overflow-hidden relative">
                         {/* Carrier gate: disabled overlay in create mode when no carrier */}
                         {!isEditMode && !carrierName && (
-                          <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-[1px] flex items-center justify-center rounded-md">
+                          <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
                             <p className="text-sm text-muted-foreground">Select a carrier to get started</p>
                           </div>
                         )}
