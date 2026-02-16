@@ -1833,6 +1833,75 @@ class TestAdminMarkups(AdminGraphTestCase):
         self.assertEqual(len(edges), 1)
         self.assertEqual(edges[0]["node"]["name"], "With Coverage")
 
+    def test_filter_markups_by_meta_value_icontains(self):
+        """Test that meta_value uses case-insensitive partial matching."""
+        self.pricing.Markup.objects.create(
+            name="Brokerage Pro",
+            amount=2.0,
+            markup_type="PERCENTAGE",
+            active=True,
+            meta={"type": "brokerage-fee", "plan": "Pro-Enterprise"},
+        )
+
+        # Search with partial lowercase value
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    meta
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"meta_key": "plan", "meta_value": "enterprise"}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        names = {e["node"]["name"] for e in edges}
+        self.assertIn("Brokerage Pro", names)
+
+    def test_filter_markups_by_metadata_value_icontains(self):
+        """Test that metadata_value uses case-insensitive partial matching."""
+        self.pricing.Markup.objects.create(
+            name="Regional Fee",
+            amount=3.0,
+            markup_type="AMOUNT",
+            active=True,
+            metadata={"region": "North-America"},
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    metadata
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"metadata_key": "region", "metadata_value": "north"}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        self.assertEqual(len(edges), 1)
+        self.assertEqual(edges[0]["node"]["name"], "Regional Fee")
+
     def test_filter_markups_by_active(self):
         """Test filtering markups by active status."""
         self.pricing.Markup.objects.create(

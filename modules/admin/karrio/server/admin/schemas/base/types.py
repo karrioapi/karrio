@@ -602,13 +602,13 @@ class MarkupType:
         if _filter_data.get("meta_key"):
             _key = f"meta__{_filter_data['meta_key']}"
             if _filter_data.get("meta_value"):
-                _queryset_filters[_key] = _filter_data["meta_value"]
+                _queryset_filters[f"{_key}__icontains"] = _filter_data["meta_value"]
             else:
                 _queryset_filters[f"{_key}__isnull"] = False
         if _filter_data.get("metadata_key"):
             _key = f"metadata__{_filter_data['metadata_key']}"
             if _filter_data.get("metadata_value"):
-                _queryset_filters[_key] = _filter_data["metadata_value"]
+                _queryset_filters[f"{_key}__icontains"] = _filter_data["metadata_value"]
             else:
                 _queryset_filters[f"{_key}__isnull"] = False
 
