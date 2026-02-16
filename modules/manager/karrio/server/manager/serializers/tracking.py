@@ -354,6 +354,172 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
         return tracker
 
 
+def apply_tracker_changes(
+    tracker: models.Tracking,
+    tracking_details: dict,
+) -> typing.List[str]:
+    """Apply tracking detail changes to a tracker instance in memory (no DB save).
+
+    Returns the list of changed field names, or empty list if nothing changed.
+    """
+    changes: typing.List[str] = []
+
+    # Process events - merge with existing events
+    new_events = tracking_details.get("events") or []
+    if new_events:
+        events = utils.process_events(
+            response_events=new_events, current_events=tracker.events
+        )
+        if events != tracker.events:
+            tracker.events = events
+            changes.append("events")
+
+    # Update messages
+    messages = tracking_details.get("messages")
+    if messages is not None and messages != tracker.messages:
+        tracker.messages = lib.to_dict(messages)
+        changes.append("messages")
+
+    # Update delivered status
+    delivered = tracking_details.get("delivered")
+    if delivered is not None and delivered != tracker.delivered:
+        tracker.delivered = delivered
+        changes.append("delivered")
+
+    # Update status
+    status = tracking_details.get("status")
+    if status is not None and status != tracker.status:
+        tracker.status = status
+        changes.append("status")
+
+    # Update estimated delivery
+    estimated_delivery = tracking_details.get("estimated_delivery")
+    if estimated_delivery is not None and estimated_delivery != tracker.estimated_delivery:
+        tracker.estimated_delivery = estimated_delivery
+        changes.append("estimated_delivery")
+
+    # Update options
+    options = tracking_details.get("options")
+    if options is not None and options != tracker.options:
+        tracker.options = options
+        changes.append("options")
+
+    # Update meta
+    meta = tracking_details.get("meta")
+    if meta is not None and meta != tracker.meta:
+        tracker.meta = {**(tracker.meta or {}), **meta}
+        changes.append("meta")
+
+    # Update info - merge with existing info
+    info = tracking_details.get("info") or {}
+    if any(info.keys()) and info != tracker.info:
+        tracker.info = serializers.process_dictionaries_mutations(
+            ["info"], dict(info=info), tracker
+        )["info"]
+        changes.append("info")
+
+    # Sync estimated_delivery to info.expected_delivery if updated
+    if estimated_delivery is not None:
+        current_expected = (tracker.info or {}).get("expected_delivery")
+        if current_expected != estimated_delivery:
+            tracker.info = {**(tracker.info or {}), "expected_delivery": estimated_delivery}
+            if "info" not in changes:
+                changes.append("info")
+
+    # Update images
+    images = tracking_details.get("images") or {}
+    delivery_image = images.get("delivery_image") if isinstance(images, dict) else getattr(images, "delivery_image", None)
+    signature_image = images.get("signature_image") if isinstance(images, dict) else getattr(images, "signature_image", None)
+
+    if delivery_image is not None or signature_image is not None:
+        if delivery_image != tracker.delivery_image or signature_image != tracker.signature_image:
+            if delivery_image is not None:
+                tracker.delivery_image = delivery_image
+                changes.append("delivery_image")
+            if signature_image is not None:
+                tracker.signature_image = signature_image
+                changes.append("signature_image")
+
+    if any(changes):
+        tracker.updated_at = timezone.now()
+        changes.append("updated_at")
+
+    return changes
+
+
+@transaction.atomic
+def bulk_save_trackers(
+    changed_trackers: typing.List[typing.Tuple[models.Tracking, typing.List[str]]],
+):
+    """Save multiple trackers in a single bulk_update and batch shipment status updates.
+
+    Args:
+        changed_trackers: List of (tracker, changed_fields) tuples.
+            Only trackers with non-empty changed_fields are expected.
+    """
+    if not changed_trackers:
+        return
+
+    # Collect the union of all changed fields for bulk_update
+    all_fields: typing.Set[str] = set()
+    trackers_to_update: typing.List[models.Tracking] = []
+
+    for tracker, fields in changed_trackers:
+        all_fields.update(fields)
+        trackers_to_update.append(tracker)
+
+    # Single bulk UPDATE for all trackers
+    models.Tracking.objects.bulk_update(trackers_to_update, list(all_fields))
+
+    logger.info(
+        "Bulk updated trackers",
+        count=len(trackers_to_update),
+        fields=list(all_fields),
+    )
+
+    # Batch shipment status updates: collect shipments that need status changes
+    shipment_updates: typing.List[models.Shipment] = []
+
+    for tracker, fields in changed_trackers:
+        if "status" not in fields:
+            continue
+        if tracker.shipment is None:
+            continue
+
+        new_status = _compute_shipment_status(tracker)
+        if new_status is not None and tracker.shipment.status != new_status:
+            tracker.shipment.status = new_status
+            shipment_updates.append(tracker.shipment)
+
+    if shipment_updates:
+        models.Shipment.objects.bulk_update(shipment_updates, ["status"])
+        logger.info("Bulk updated shipment statuses", count=len(shipment_updates))
+
+
+def _compute_shipment_status(tracker: models.Tracking) -> typing.Optional[str]:
+    """Compute shipment status from tracker status (pure function, no DB access)."""
+    status_map = {
+        TrackerStatus.delivered.value: ShipmentStatus.delivered.value,
+        TrackerStatus.picked_up.value: ShipmentStatus.shipped.value,
+        TrackerStatus.out_for_delivery.value: ShipmentStatus.out_for_delivery.value,
+        TrackerStatus.delivery_failed.value: ShipmentStatus.delivery_failed.value,
+    }
+
+    if tracker.status == TrackerStatus.pending.value:
+        return None  # Keep current shipment status
+
+    if tracker.status in status_map:
+        return status_map[tracker.status]
+
+    if tracker.status in [
+        TrackerStatus.on_hold.value,
+        TrackerStatus.delivery_delayed.value,
+    ]:
+        return ShipmentStatus.needs_attention.value
+
+    return ShipmentStatus.in_transit.value
+
+
 class TrackerEventInjectRequest(serializers.Serializer):
     """Request payload for injecting tracking events."""
 
