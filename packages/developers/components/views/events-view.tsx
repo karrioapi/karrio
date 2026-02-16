@@ -10,6 +10,7 @@ import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import { formatDateTimeLong, groupBy, failsafe } from "@karrio/lib";
 import { useWebhooks, useWebhookMutation } from "@karrio/hooks/webhook";
+import { useWorkerActions } from "@karrio/hooks/admin-worker";
 import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import CodeMirror from "@uiw/react-codemirror";
@@ -298,6 +299,7 @@ const EventDetailViewer = ({ event }: { event: any }) => {
   const [replayStatus, setReplayStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { query: webhooksQuery } = useWebhooks();
   const { replayEvent } = useWebhookMutation();
+  const { retryWebhook } = useWorkerActions();
   const webhooks = webhooksQuery.data?.webhooks?.edges || [];
 
   const copyToClipboard = (text: string) => {
@@ -361,6 +363,23 @@ const EventDetailViewer = ({ event }: { event: any }) => {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => retryWebhook.mutate({ event_id: event.id })}
+              disabled={retryWebhook.isLoading}
+              className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
+              title="Re-enqueue webhook notifications for this event"
+            >
+              {retryWebhook.isLoading ? (
+                <RefreshCw className="h-3 w-3 animate-spin" />
+              ) : (
+                <Webhook className="h-3 w-3" />
+              )}
+              <span className="ml-1 text-xs">
+                {retryWebhook.isLoading ? "Retrying..." : "Retry Webhooks"}
+              </span>
+            </Button>
             <div className="relative">
               <Button
                 variant="outline"
@@ -484,6 +503,7 @@ const EventDetailViewer = ({ event }: { event: any }) => {
                     theme="dark"
                     className="text-xs"
                     readOnly
+
                     basicSetup={{
                       lineNumbers: false,
                       foldGutter: true,
@@ -833,7 +853,7 @@ export function EventsView() {
           <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
             <span className="text-muted-foreground">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
-              {query.data?.events?.page_info.has_next_page && " of many"}
+              {query.data?.events?.page_info.count != null && ` of ${query.data.events.page_info.count}`}
             </span>
             <div className="flex gap-2">
               <Button
@@ -928,7 +948,7 @@ export function EventsView() {
             <div className="flex-1 overflow-auto">
               {query.isFetching && (
                 <div className="flex items-center justify-center py-8">
-                  <RefreshCw className="h-6 w-6 animate-spin text-neutral-500" />
+                  <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
               )}
 
@@ -961,7 +981,7 @@ export function EventsView() {
               <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + events.length}
-                  {query.data?.events?.page_info.has_next_page && " of many"}
+                  {query.data?.events?.page_info.count != null && ` of ${query.data.events.page_info.count}`}
                 </span>
                 <div className="flex gap-2">
                   <Button

@@ -1886,6 +1886,84 @@ export interface GetWorkerHealth {
   worker_health: GetWorkerHealth_worker_health;
 }
 
+// ====================================================
+// GraphQL mutation operation: TriggerTrackerUpdate
+// ====================================================
+
+export interface TriggerTrackerUpdate_trigger_tracker_update {
+  errors: { field: string; messages: string[] }[] | null;
+  task_count: number;
+}
+
+export interface TriggerTrackerUpdate {
+  trigger_tracker_update: TriggerTrackerUpdate_trigger_tracker_update;
+}
+
+// ====================================================
+// GraphQL mutation operation: RetryWebhook
+// ====================================================
+
+export interface RetryWebhook_retry_webhook {
+  errors: { field: string; messages: string[] }[] | null;
+  event_id: string | null;
+}
+
+export interface RetryWebhook {
+  retry_webhook: RetryWebhook_retry_webhook;
+}
+
+// ====================================================
+// GraphQL mutation operation: RevokeTask
+// ====================================================
+
+export interface RevokeTask_revoke_task {
+  errors: { field: string; messages: string[] }[] | null;
+  task_id: string | null;
+}
+
+export interface RevokeTask {
+  revoke_task: RevokeTask_revoke_task;
+}
+
+// ====================================================
+// GraphQL mutation operation: CleanupTaskExecutions
+// ====================================================
+
+export interface CleanupTaskExecutions_cleanup_task_executions {
+  errors: { field: string; messages: string[] }[] | null;
+  deleted_count: number;
+}
+
+export interface CleanupTaskExecutions {
+  cleanup_task_executions: CleanupTaskExecutions_cleanup_task_executions;
+}
+
+// ====================================================
+// GraphQL mutation operation: ResetStuckTasks
+// ====================================================
+
+export interface ResetStuckTasks_reset_stuck_tasks {
+  errors: { field: string; messages: string[] }[] | null;
+  updated_count: number;
+}
+
+export interface ResetStuckTasks {
+  reset_stuck_tasks: ResetStuckTasks_reset_stuck_tasks;
+}
+
+// ====================================================
+// GraphQL mutation operation: TriggerDataArchiving
+// ====================================================
+
+export interface TriggerDataArchiving_trigger_data_archiving {
+  errors: { field: string; messages: string[] }[] | null;
+  success: boolean;
+}
+
+export interface TriggerDataArchiving {
+  trigger_data_archiving: TriggerDataArchiving_trigger_data_archiving;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
