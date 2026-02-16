@@ -51,6 +51,7 @@ interface FlatRow {
   currency: string;
   weightUnit: string;
   surcharges: Record<string, number>;
+  /** Progressive totals for each markup column */
   markups: Record<string, number>;
 }
 
@@ -138,7 +139,7 @@ function formatCell(row: FlatRow, colKey: string): string {
           ? row.surcharges[sid].toFixed(2)
           : "";
       }
-      // Markup column (prefixed with mkp_)
+      // Markup column (prefixed with mkp_) — progressive total
       if (colKey.startsWith("mkp_")) {
         const mid = colKey.slice(4);
         return row.markups[mid] != null
@@ -235,21 +236,6 @@ export function RateSheetCsvPreview({
     return map;
   }, [open, serviceRates]);
 
-  // Derive surcharge column names — include type indicator in label
-  const surchargeColumns = useMemo(
-    () =>
-      open
-        ? surcharges
-            .filter((s) => s.name)
-            .map((s) => ({
-              key: `surch_${s.id}`,
-              label: `${s.name} (${s.surcharge_type === "percentage" ? `${s.amount}%` : "$"})`,
-              width: 110,
-            }))
-        : [],
-    [open, surcharges]
-  );
-
   // Pre-build surcharge lookup: surchargeId → { amount, surcharge_type }
   const surchargeDetailMap = useMemo(() => {
     if (!open) return new Map<string, { amount: number; surcharge_type: string }>();
@@ -266,16 +252,14 @@ export function RateSheetCsvPreview({
     return markups.filter((m) => m.active && m.meta?.show_in_preview);
   }, [open, isAdmin, markups]);
 
-  // Markup columns
-  const markupColumns = useMemo(
-    () =>
-      previewMarkups.map((m) => ({
-        key: `mkp_${m.id}`,
-        label: `${m.name} (${m.markup_type === "PERCENTAGE" ? `${m.amount}%` : "$"})`,
-        width: 120,
-      })),
-    [previewMarkups]
-  );
+  // Sort markups: non-brokerage first, then brokerage fees
+  // Brokerage fees from different plans don't stack — each applies independently
+  // on top of (base + surcharges + non-brokerage markups)
+  const sortedPreviewMarkups = useMemo(() => {
+    const nonBrokerage = previewMarkups.filter((m) => m.meta?.type !== "brokerage-fee");
+    const brokerage = previewMarkups.filter((m) => m.meta?.type === "brokerage-fee");
+    return [...nonBrokerage, ...brokerage];
+  }, [previewMarkups]);
 
   // Build flat rows: service × zone × weight_range
   const rows = useMemo(() => {
@@ -313,24 +297,54 @@ export function RateSheetCsvPreview({
           const rate = rateLookup.get(rateKey) ?? null;
           const baseRate = rate ?? 0;
 
-          // Calculate surcharge amounts (not raw values)
+          // Calculate surcharge amounts
           const surchAmounts: Record<string, number> = {};
+          let surchargeTotal = 0;
           surchargeDetailMap.forEach((detail, sid) => {
             if (linkedIds.has(sid)) {
-              surchAmounts[sid] =
+              const amt =
                 detail.surcharge_type === "percentage"
                   ? baseRate * (detail.amount / 100)
                   : detail.amount;
+              surchAmounts[sid] = amt;
+              surchargeTotal += amt;
             }
           });
 
-          // Calculate markup amounts
-          const mkpAmounts: Record<string, number> = {};
-          for (const m of previewMarkups) {
-            mkpAmounts[m.id] =
+          // Calculate progressive markup totals
+          // Non-brokerage markups accumulate progressively.
+          // Brokerage fees each apply independently on top of
+          // (base + surcharges + all non-brokerage markups) — they don't stack with each other.
+          const mkpTotals: Record<string, number> = {};
+          let nonBrokerageRunning = baseRate + surchargeTotal;
+
+          // First pass: compute total non-brokerage contribution for brokerage base
+          let nonBrokerageTotal = 0;
+          for (const m of sortedPreviewMarkups) {
+            if (m.meta?.type !== "brokerage-fee") {
+              nonBrokerageTotal +=
+                m.markup_type === "PERCENTAGE"
+                  ? baseRate * (m.amount / 100)
+                  : m.amount;
+            }
+          }
+          const brokerageBase = baseRate + surchargeTotal + nonBrokerageTotal;
+
+          // Second pass: compute progressive totals
+          for (const m of sortedPreviewMarkups) {
+            const contribution =
               m.markup_type === "PERCENTAGE"
                 ? baseRate * (m.amount / 100)
                 : m.amount;
+
+            if (m.meta?.type === "brokerage-fee") {
+              // Brokerage: base + surcharges + all non-brokerage + this brokerage only
+              mkpTotals[m.id] = brokerageBase + contribution;
+            } else {
+              // Non-brokerage: progressive accumulation
+              nonBrokerageRunning += contribution;
+              mkpTotals[m.id] = nonBrokerageRunning;
+            }
           }
 
           result.push({
@@ -349,7 +363,7 @@ export function RateSheetCsvPreview({
             currency: service.currency || "USD",
             weightUnit: service.weight_unit || weightUnit,
             surcharges: surchAmounts,
-            markups: mkpAmounts,
+            markups: mkpTotals,
           });
         }
       }
@@ -362,7 +376,7 @@ export function RateSheetCsvPreview({
     sharedZones,
     weightRanges,
     surchargeDetailMap,
-    previewMarkups,
+    sortedPreviewMarkups,
     carrierName,
     originCountries,
     weightUnit,
@@ -373,9 +387,56 @@ export function RateSheetCsvPreview({
   const deferredRows = useDeferredValue(rows);
   const isStale = deferredRows !== rows;
 
+  // Derive surcharge columns — omit columns where no row has a non-zero value
+  const activeSurchargeColumns = useMemo(() => {
+    if (!open) return [];
+    return surcharges
+      .filter((s) => s.name)
+      .map((s) => ({
+        key: `surch_${s.id}`,
+        label: `${s.name} (${s.surcharge_type === "percentage" ? `${s.amount}%` : `$${s.amount.toFixed(2)}`})`,
+        width: 110,
+        id: s.id,
+      }))
+      .filter((col) => rows.some((row) => (row.surcharges[col.id] ?? 0) !== 0))
+      .map(({ id: _, ...col }) => col);
+  }, [open, surcharges, rows]);
+
+  // Markup columns — show value in header, omit if contribution is 0 for all rows
+  const activeMarkupColumns = useMemo(() => {
+    return sortedPreviewMarkups
+      .map((m) => {
+        const valueLabel =
+          m.markup_type === "PERCENTAGE"
+            ? `${m.amount}%`
+            : `$${m.amount.toFixed(2)}`;
+        const planSuffix = m.meta?.plan ? ` - ${m.meta.plan}` : "";
+        return {
+          key: `mkp_${m.id}`,
+          label: `${m.name}${planSuffix} (${valueLabel})`,
+          width: 160,
+          id: m.id,
+          // Check if this markup has any meaningful contribution
+          // A markup applies if its own contribution differs from the base (non-zero contribution)
+          hasContribution: rows.some((row) => {
+            const total = row.markups[m.id] ?? 0;
+            // For brokerage: contribution = total - brokerageBase
+            // For non-brokerage: any non-zero total means it contributes
+            // Simplify: if the total differs from base+surcharges, the markup contributes
+            const baseRate = row.rate ?? 0;
+            let surchTotal = 0;
+            for (const v of Object.values(row.surcharges)) surchTotal += v;
+            return Math.abs(total - baseRate - surchTotal) > 0.001;
+          }),
+        };
+      })
+      .filter((col) => col.hasContribution)
+      .map(({ id: _, hasContribution: __, ...col }) => col);
+  }, [sortedPreviewMarkups, rows]);
+
   const allColumns = useMemo(
-    () => [...FIXED_COLUMNS, ...surchargeColumns, ...markupColumns],
-    [surchargeColumns, markupColumns]
+    () => [...FIXED_COLUMNS, ...activeSurchargeColumns, ...activeMarkupColumns],
+    [activeSurchargeColumns, activeMarkupColumns]
   );
   const totalWidth = useMemo(
     () => allColumns.reduce((sum, col) => sum + col.width, 0),
