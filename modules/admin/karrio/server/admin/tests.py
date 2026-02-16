@@ -1190,3 +1190,523 @@ class TestAdminBrokeredConnections(AdminGraphTestCase):
         # test_mode is inherited from system connection
         self.assertEqual(brokered.test_mode, self.system_connection.test_mode)
         self.assertFalse(brokered.test_mode)
+
+
+class TestAdminMarkups(AdminGraphTestCase):
+    """Tests for Admin Markup CRUD operations including meta field."""
+
+    def setUp(self):
+        super().setUp()
+        import karrio.server.pricing.models as pricing
+
+        self.pricing = pricing
+
+        # Create a test markup with meta field
+        self.markup = pricing.Markup.objects.create(
+            name="Brokerage Fee - Scale",
+            amount=0.85,
+            markup_type="PERCENTAGE",
+            active=True,
+            is_visible=True,
+            meta={
+                "type": "brokerage-fee",
+                "plan": "scale",
+                "show_in_preview": True,
+            },
+            metadata={"notes": "Default brokerage fee"},
+        )
+
+    def test_query_markups(self):
+        """Test querying all markups through admin API."""
+        response = self.query(
+            """
+            query get_markups {
+              markups {
+                edges {
+                  node {
+                    id
+                    name
+                    active
+                    amount
+                    markup_type
+                    is_visible
+                    meta
+                    metadata
+                    carrier_codes
+                    service_codes
+                    connection_ids
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        self.assertEqual(len(edges), 1)
+
+        node = edges[0]["node"]
+        self.assertEqual(node["name"], "Brokerage Fee - Scale")
+        self.assertEqual(node["amount"], 0.85)
+        self.assertEqual(node["markup_type"], "PERCENTAGE")
+        self.assertTrue(node["active"])
+        self.assertTrue(node["is_visible"])
+        self.assertEqual(node["meta"]["type"], "brokerage-fee")
+        self.assertEqual(node["meta"]["plan"], "scale")
+        self.assertTrue(node["meta"]["show_in_preview"])
+        self.assertEqual(node["metadata"]["notes"], "Default brokerage fee")
+
+    def test_query_single_markup(self):
+        """Test querying a single markup by ID."""
+        response = self.query(
+            """
+            query get_markup($id: String!) {
+              markup(id: $id) {
+                id
+                name
+                amount
+                markup_type
+                meta
+                metadata
+              }
+            }
+            """,
+            operation_name="get_markup",
+            variables={"id": self.markup.id},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        markup = response.data["data"]["markup"]
+        self.assertEqual(markup["name"], "Brokerage Fee - Scale")
+        self.assertEqual(markup["meta"]["type"], "brokerage-fee")
+        self.assertEqual(markup["meta"]["plan"], "scale")
+
+    def test_create_markup_with_meta(self):
+        """Test creating a markup with meta field (category, plan, show_in_preview)."""
+        response = self.query(
+            """
+            mutation create_markup($input: CreateMarkupMutationInput!) {
+              create_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                markup {
+                  id
+                  name
+                  active
+                  amount
+                  markup_type
+                  is_visible
+                  meta
+                  metadata
+                  carrier_codes
+                  service_codes
+                  connection_ids
+                }
+              }
+            }
+            """,
+            operation_name="create_markup",
+            variables={
+                "input": {
+                    "name": "Insurance - Basic",
+                    "amount": 50.00,
+                    "markup_type": "AMOUNT",
+                    "active": True,
+                    "is_visible": True,
+                    "meta": {
+                        "type": "insurance",
+                        "plan": "basic",
+                        "show_in_preview": True,
+                    },
+                    "metadata": {"coverage": "up to $500"},
+                }
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        result = response.data["data"]["create_markup"]
+        self.assertIsNone(result["errors"])
+
+        markup = result["markup"]
+        self.assertEqual(markup["name"], "Insurance - Basic")
+        self.assertEqual(markup["amount"], 50.00)
+        self.assertEqual(markup["markup_type"], "AMOUNT")
+        self.assertTrue(markup["active"])
+        self.assertTrue(markup["is_visible"])
+        self.assertEqual(markup["meta"]["type"], "insurance")
+        self.assertEqual(markup["meta"]["plan"], "basic")
+        self.assertTrue(markup["meta"]["show_in_preview"])
+        self.assertEqual(markup["metadata"]["coverage"], "up to $500")
+
+    def test_create_markup_percentage_type(self):
+        """Test creating a percentage-based markup."""
+        response = self.query(
+            """
+            mutation create_markup($input: CreateMarkupMutationInput!) {
+              create_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                markup {
+                  id
+                  name
+                  amount
+                  markup_type
+                  meta
+                }
+              }
+            }
+            """,
+            operation_name="create_markup",
+            variables={
+                "input": {
+                    "name": "Brokerage Fee - Launch",
+                    "amount": 1.5,
+                    "markup_type": "PERCENTAGE",
+                    "meta": {
+                        "type": "brokerage-fee",
+                        "plan": "launch",
+                        "show_in_preview": True,
+                    },
+                }
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        markup = response.data["data"]["create_markup"]["markup"]
+        self.assertEqual(markup["amount"], 1.5)
+        self.assertEqual(markup["markup_type"], "PERCENTAGE")
+        self.assertEqual(markup["meta"]["type"], "brokerage-fee")
+        self.assertEqual(markup["meta"]["plan"], "launch")
+
+    def test_create_markup_without_meta(self):
+        """Test creating a markup without meta field (defaults to empty dict)."""
+        response = self.query(
+            """
+            mutation create_markup($input: CreateMarkupMutationInput!) {
+              create_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                markup {
+                  id
+                  name
+                  amount
+                  markup_type
+                  meta
+                }
+              }
+            }
+            """,
+            operation_name="create_markup",
+            variables={
+                "input": {
+                    "name": "Simple Surcharge",
+                    "amount": 5.0,
+                    "markup_type": "AMOUNT",
+                }
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        markup = response.data["data"]["create_markup"]["markup"]
+        self.assertEqual(markup["name"], "Simple Surcharge")
+        # meta should default to empty dict
+        self.assertEqual(markup["meta"], {})
+
+    def test_create_markup_with_filters(self):
+        """Test creating a markup with carrier/service/connection filters."""
+        response = self.query(
+            """
+            mutation create_markup($input: CreateMarkupMutationInput!) {
+              create_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                markup {
+                  id
+                  name
+                  amount
+                  markup_type
+                  carrier_codes
+                  service_codes
+                  connection_ids
+                  meta
+                }
+              }
+            }
+            """,
+            operation_name="create_markup",
+            variables={
+                "input": {
+                    "name": "DHL Only Surcharge",
+                    "amount": 2.0,
+                    "markup_type": "AMOUNT",
+                    "carrier_codes": ["dhl_express", "dhl_parcel_de"],
+                    "service_codes": ["dhl_express_worldwide"],
+                    "meta": {
+                        "type": "surcharge",
+                        "show_in_preview": False,
+                    },
+                }
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        markup = response.data["data"]["create_markup"]["markup"]
+        self.assertEqual(markup["carrier_codes"], ["dhl_express", "dhl_parcel_de"])
+        self.assertEqual(markup["service_codes"], ["dhl_express_worldwide"])
+        self.assertEqual(markup["meta"]["type"], "surcharge")
+        self.assertFalse(markup["meta"]["show_in_preview"])
+
+    def test_update_markup_meta(self):
+        """Test updating a markup's meta field."""
+        response = self.query(
+            """
+            mutation update_markup($input: UpdateMarkupMutationInput!) {
+              update_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                markup {
+                  id
+                  name
+                  amount
+                  markup_type
+                  meta
+                  metadata
+                }
+              }
+            }
+            """,
+            operation_name="update_markup",
+            variables={
+                "input": {
+                    "id": self.markup.id,
+                    "meta": {
+                        "type": "brokerage-fee",
+                        "plan": "enterprise",
+                        "show_in_preview": False,
+                    },
+                }
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        markup = response.data["data"]["update_markup"]["markup"]
+        self.assertEqual(markup["meta"]["plan"], "enterprise")
+        self.assertFalse(markup["meta"]["show_in_preview"])
+        # Original fields should be preserved
+        self.assertEqual(markup["name"], "Brokerage Fee - Scale")
+        self.assertEqual(markup["amount"], 0.85)
+
+    def test_update_markup_amount_and_type(self):
+        """Test updating markup amount and type."""
+        response = self.query(
+            """
+            mutation update_markup($input: UpdateMarkupMutationInput!) {
+              update_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                markup {
+                  id
+                  name
+                  amount
+                  markup_type
+                  active
+                  is_visible
+                }
+              }
+            }
+            """,
+            operation_name="update_markup",
+            variables={
+                "input": {
+                    "id": self.markup.id,
+                    "amount": 25.0,
+                    "markup_type": "AMOUNT",
+                    "active": False,
+                    "is_visible": False,
+                }
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        markup = response.data["data"]["update_markup"]["markup"]
+        self.assertEqual(markup["amount"], 25.0)
+        self.assertEqual(markup["markup_type"], "AMOUNT")
+        self.assertFalse(markup["active"])
+        self.assertFalse(markup["is_visible"])
+
+    def test_update_markup_filters(self):
+        """Test updating markup carrier/service filters."""
+        response = self.query(
+            """
+            mutation update_markup($input: UpdateMarkupMutationInput!) {
+              update_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                markup {
+                  id
+                  carrier_codes
+                  service_codes
+                  connection_ids
+                }
+              }
+            }
+            """,
+            operation_name="update_markup",
+            variables={
+                "input": {
+                    "id": self.markup.id,
+                    "carrier_codes": ["ups", "fedex"],
+                    "service_codes": ["ups_ground"],
+                }
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        markup = response.data["data"]["update_markup"]["markup"]
+        self.assertEqual(markup["carrier_codes"], ["ups", "fedex"])
+        self.assertEqual(markup["service_codes"], ["ups_ground"])
+
+    def test_delete_markup(self):
+        """Test deleting a markup through admin API."""
+        # Create a markup to delete
+        to_delete = self.pricing.Markup.objects.create(
+            name="To Be Deleted",
+            amount=1.0,
+            markup_type="AMOUNT",
+            meta={"type": "surcharge"},
+        )
+
+        response = self.query(
+            """
+            mutation delete_markup($input: DeleteMutationInput!) {
+              delete_markup(input: $input) {
+                errors {
+                  field
+                  messages
+                }
+                id
+              }
+            }
+            """,
+            operation_name="delete_markup",
+            variables={"input": {"id": to_delete.id}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        self.assertEqual(
+            response.data["data"]["delete_markup"]["id"], to_delete.id
+        )
+        self.assertFalse(
+            self.pricing.Markup.objects.filter(id=to_delete.id).exists()
+        )
+
+    def test_query_markups_returns_all(self):
+        """Test querying markups returns all markups."""
+        # Create a second markup
+        self.pricing.Markup.objects.create(
+            name="Inactive Fee",
+            amount=3.0,
+            markup_type="AMOUNT",
+            active=False,
+            meta={"type": "notification"},
+        )
+
+        response = self.query(
+            """
+            query get_markups {
+              markups {
+                edges {
+                  node {
+                    id
+                    name
+                    active
+                    markup_type
+                    meta
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        self.assertEqual(len(edges), 2)
+        names = {e["node"]["name"] for e in edges}
+        self.assertIn("Brokerage Fee - Scale", names)
+        self.assertIn("Inactive Fee", names)
+
+    def test_create_markup_all_meta_categories(self):
+        """Test creating markups for each meta category type."""
+        categories = [
+            ("brokerage-fee", "Brokerage Fee - Pro", "PERCENTAGE", 1.2),
+            ("insurance", "Coverage - Premium", "AMOUNT", 100.0),
+            ("surcharge", "Handling Surcharge", "AMOUNT", 3.50),
+            ("notification", "SMS Notification", "AMOUNT", 0.50),
+            ("address-validation", "Address Validation", "AMOUNT", 1.00),
+        ]
+
+        for meta_type, name, markup_type, amount in categories:
+            response = self.query(
+                """
+                mutation create_markup($input: CreateMarkupMutationInput!) {
+                  create_markup(input: $input) {
+                    errors {
+                      field
+                      messages
+                    }
+                    markup {
+                      id
+                      name
+                      meta
+                    }
+                  }
+                }
+                """,
+                operation_name="create_markup",
+                variables={
+                    "input": {
+                        "name": name,
+                        "amount": amount,
+                        "markup_type": markup_type,
+                        "meta": {
+                            "type": meta_type,
+                            "show_in_preview": True,
+                        },
+                    }
+                },
+            )
+
+            print(response.data)
+            self.assertResponseNoErrors(response)
+            markup = response.data["data"]["create_markup"]["markup"]
+            self.assertEqual(markup["name"], name)
+            self.assertEqual(markup["meta"]["type"], meta_type)
