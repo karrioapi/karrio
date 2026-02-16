@@ -587,12 +587,24 @@ class MarkupType:
     ) -> utils.Connection["MarkupType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.MarkupFilter()
         _filter_data = _filter.to_dict()
-        _org_filter = lib.identity(
-            dict(organization_ids__contains=[_filter_data.pop("account_id")])
-            if _filter_data.get("account_id")
-            else {}
-        )
-        queryset = pricing.Markup.objects.filter(**_org_filter)
+        _queryset_filters = {}
+
+        if _filter_data.get("id"):
+            _queryset_filters["id"] = _filter_data["id"]
+        if _filter_data.get("name"):
+            _queryset_filters["name__icontains"] = _filter_data["name"]
+        if _filter_data.get("active") is not None:
+            _queryset_filters["active"] = _filter_data["active"]
+        if _filter_data.get("markup_type"):
+            _queryset_filters["markup_type"] = _filter_data["markup_type"]
+        if _filter_data.get("account_id"):
+            _queryset_filters["organization_ids__contains"] = [_filter_data["account_id"]]
+        if _filter_data.get("meta_type"):
+            _queryset_filters["meta__type"] = _filter_data["meta_type"]
+        if _filter_data.get("meta_plan"):
+            _queryset_filters["meta__plan"] = _filter_data["meta_plan"]
+
+        queryset = pricing.Markup.objects.filter(**_queryset_filters)
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 

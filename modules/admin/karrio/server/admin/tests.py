@@ -1664,6 +1664,204 @@ class TestAdminMarkups(AdminGraphTestCase):
         self.assertIn("Brokerage Fee - Scale", names)
         self.assertIn("Inactive Fee", names)
 
+    def test_filter_markups_by_meta_type(self):
+        """Test filtering markups by meta.type (category)."""
+        # Create markups in different categories
+        self.pricing.Markup.objects.create(
+            name="Insurance Fee",
+            amount=5.0,
+            markup_type="AMOUNT",
+            active=True,
+            meta={"type": "insurance", "plan": "pro"},
+        )
+        self.pricing.Markup.objects.create(
+            name="Notification Fee",
+            amount=0.5,
+            markup_type="AMOUNT",
+            active=True,
+            meta={"type": "notification"},
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    meta
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"meta_type": "insurance"}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        self.assertEqual(len(edges), 1)
+        self.assertEqual(edges[0]["node"]["name"], "Insurance Fee")
+        self.assertEqual(edges[0]["node"]["meta"]["type"], "insurance")
+
+    def test_filter_markups_by_meta_plan(self):
+        """Test filtering markups by meta.plan."""
+        self.pricing.Markup.objects.create(
+            name="Pro Brokerage",
+            amount=2.0,
+            markup_type="PERCENTAGE",
+            active=True,
+            meta={"type": "brokerage-fee", "plan": "pro"},
+        )
+        self.pricing.Markup.objects.create(
+            name="Enterprise Brokerage",
+            amount=1.5,
+            markup_type="PERCENTAGE",
+            active=True,
+            meta={"type": "brokerage-fee", "plan": "enterprise"},
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    meta
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"meta_plan": "enterprise"}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        self.assertEqual(len(edges), 1)
+        self.assertEqual(edges[0]["node"]["name"], "Enterprise Brokerage")
+        self.assertEqual(edges[0]["node"]["meta"]["plan"], "enterprise")
+
+    def test_filter_markups_by_active(self):
+        """Test filtering markups by active status."""
+        self.pricing.Markup.objects.create(
+            name="Inactive Surcharge",
+            amount=3.0,
+            markup_type="AMOUNT",
+            active=False,
+            meta={"type": "surcharge"},
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    active
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"active": True}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        # Only the setUp markup (active=True) should be returned
+        for edge in edges:
+            self.assertTrue(edge["node"]["active"])
+
+    def test_filter_markups_by_markup_type(self):
+        """Test filtering markups by markup_type."""
+        self.pricing.Markup.objects.create(
+            name="Flat Fee",
+            amount=10.0,
+            markup_type="AMOUNT",
+            active=True,
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    markup_type
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"markup_type": "PERCENTAGE"}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        # Only the setUp markup (PERCENTAGE) should be returned
+        for edge in edges:
+            self.assertEqual(edge["node"]["markup_type"], "PERCENTAGE")
+
+    def test_filter_markups_combined(self):
+        """Test combining meta_type and active filters."""
+        self.pricing.Markup.objects.create(
+            name="Active Insurance",
+            amount=5.0,
+            markup_type="AMOUNT",
+            active=True,
+            meta={"type": "insurance"},
+        )
+        self.pricing.Markup.objects.create(
+            name="Inactive Insurance",
+            amount=3.0,
+            markup_type="AMOUNT",
+            active=False,
+            meta={"type": "insurance"},
+        )
+
+        response = self.query(
+            """
+            query get_markups($filter: MarkupFilter) {
+              markups(filter: $filter) {
+                edges {
+                  node {
+                    id
+                    name
+                    active
+                    meta
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_markups",
+            variables={"filter": {"meta_type": "insurance", "active": True}},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        edges = response.data["data"]["markups"]["edges"]
+        self.assertEqual(len(edges), 1)
+        self.assertEqual(edges[0]["node"]["name"], "Active Insurance")
+        self.assertTrue(edges[0]["node"]["active"])
+        self.assertEqual(edges[0]["node"]["meta"]["type"], "insurance")
+
     def test_create_markup_all_meta_categories(self):
         """Test creating markups for each meta category type."""
         categories = [
