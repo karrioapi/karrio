@@ -1,8 +1,10 @@
 import typing
+import datetime
 import strawberry
 from constance import config
 from strawberry.types import Info
 import django.db.transaction as transaction
+from django.utils import timezone
 from rest_framework import exceptions
 
 import karrio.lib as lib
@@ -821,3 +823,159 @@ class UpdateServiceSurchargeIdsMutation(utils.BaseMutation):
         service.save(update_fields=["surcharge_ids"])
 
         return UpdateServiceSurchargeIdsMutation(rate_sheet=rate_sheet)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# WORKER MANAGEMENT MUTATIONS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class TriggerTrackerUpdateMutation(utils.BaseMutation):
+    task_count: int = 0
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.superuser_required
+    def mutate(info: Info, **input) -> "TriggerTrackerUpdateMutation":
+        from karrio.server.events.task_definitions.base import tracking
+        import karrio.server.core.utils as core_utils
+
+        tracker_ids = input.get("tracker_ids") or []
+        task_count = 0
+
+        @core_utils.run_on_all_tenants
+        def _run(**kwargs):
+            nonlocal task_count
+            result = tracking.update_trackers(
+                delta=datetime.timedelta(seconds=0),
+                tracker_ids=tracker_ids,
+                schema=kwargs.get("schema"),
+            )
+            if result is not None:
+                task_count += result
+
+        _run()
+
+        return TriggerTrackerUpdateMutation(task_count=task_count)
+
+
+@strawberry.type
+class RetryWebhookMutation(utils.BaseMutation):
+    event_id: typing.Optional[str] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.superuser_required
+    def mutate(info: Info, **input) -> "RetryWebhookMutation":
+        from karrio.server.events.models import Event
+        from karrio.server.events.task_definitions.base import notify_webhooks
+
+        event_id = input["event_id"]
+        event = Event.objects.get(id=event_id)
+
+        notify_webhooks(
+            event.type,
+            event.data,
+            event.created_at,
+            ctx=dict(
+                test_mode=event.test_mode,
+            ),
+        )
+
+        return RetryWebhookMutation(event_id=event_id)
+
+
+@strawberry.type
+class RevokeTaskMutation(utils.BaseMutation):
+    task_id: typing.Optional[str] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.superuser_required
+    def mutate(info: Info, **input) -> "RevokeTaskMutation":
+        from huey.contrib.djhuey import HUEY as huey_instance
+        from karrio.server.admin.worker.models import TaskExecution
+
+        task_id = input["task_id"]
+        huey_instance.revoke_by_id(task_id)
+
+        TaskExecution.objects.filter(task_id=task_id).update(
+            status="revoked",
+            completed_at=timezone.now(),
+            error="Revoked by admin",
+        )
+
+        return RevokeTaskMutation(task_id=task_id)
+
+
+@strawberry.type
+class CleanupTaskExecutionsMutation(utils.BaseMutation):
+    deleted_count: int = 0
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.superuser_required
+    def mutate(info: Info, **input) -> "CleanupTaskExecutionsMutation":
+        from karrio.server.admin.worker.models import TaskExecution
+
+        retention_days = input.get("retention_days") or 7
+        statuses = input.get("statuses") or []
+        cutoff = timezone.now() - datetime.timedelta(days=retention_days)
+
+        qs = TaskExecution.objects.filter(queued_at__lt=cutoff)
+        if statuses:
+            qs = qs.filter(status__in=statuses)
+
+        deleted_count, _ = qs.delete()
+
+        return CleanupTaskExecutionsMutation(deleted_count=deleted_count)
+
+
+@strawberry.type
+class ResetStuckTasksMutation(utils.BaseMutation):
+    updated_count: int = 0
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.superuser_required
+    def mutate(info: Info, **input) -> "ResetStuckTasksMutation":
+        from karrio.server.admin.worker.models import TaskExecution
+
+        threshold_minutes = input.get("threshold_minutes") or 60
+        statuses = input.get("statuses") or ["executing", "queued"]
+        cutoff = timezone.now() - datetime.timedelta(minutes=threshold_minutes)
+
+        updated_count = TaskExecution.objects.filter(
+            status__in=statuses,
+            queued_at__lt=cutoff,
+        ).update(
+            status="error",
+            error="Reset by admin",
+            completed_at=timezone.now(),
+        )
+
+        return ResetStuckTasksMutation(updated_count=updated_count)
+
+
+@strawberry.type
+class TriggerDataArchivingMutation(utils.BaseMutation):
+    success: bool = False
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.superuser_required
+    def mutate(info: Info, **input) -> "TriggerDataArchivingMutation":
+        from karrio.server.events.task_definitions.base import archiving
+        import karrio.server.core.utils as core_utils
+
+        @core_utils.run_on_all_tenants
+        def _run(**kwargs):
+            core_utils.failsafe(
+                lambda: archiving.run_data_archiving(),
+                "An error occured during data archiving: $error",
+            )
+
+        _run()
+
+        return TriggerDataArchivingMutation(success=True)

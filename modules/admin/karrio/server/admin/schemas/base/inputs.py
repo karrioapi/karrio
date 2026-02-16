@@ -145,3 +145,34 @@ class ResourceUsageFilter(utils.UsageFilter):
     carrier_connection_id: typing.Optional[str] = strawberry.UNSET
     markup_id: typing.Optional[str] = strawberry.UNSET
     account_id: typing.Optional[str] = strawberry.UNSET
+
+
+# -----------------------------------------------------------
+# Worker Management Mutation Inputs
+# -----------------------------------------------------------
+
+@strawberry.input
+class TriggerTrackerUpdateInput(utils.BaseInput):
+    tracker_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class RetryWebhookInput(utils.BaseInput):
+    event_id: str
+
+
+@strawberry.input
+class RevokeTaskInput(utils.BaseInput):
+    task_id: str
+
+
+@strawberry.input
+class CleanupTaskExecutionsInput(utils.BaseInput):
+    retention_days: typing.Optional[int] = strawberry.UNSET
+    statuses: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class ResetStuckTasksInput(utils.BaseInput):
+    threshold_minutes: typing.Optional[int] = strawberry.UNSET
+    statuses: typing.Optional[typing.List[str]] = strawberry.UNSET
