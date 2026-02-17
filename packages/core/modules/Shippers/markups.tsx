@@ -189,6 +189,19 @@ function CreateMarkupDialog({ open, onOpenChange, onSubmit }: CreateMarkupDialog
               </div>
             </div>
 
+            <div>
+              <Label htmlFor="feature_gate">Feature Gate</Label>
+              <Input
+                id="feature_gate"
+                value={formData.meta?.feature_gate || ""}
+                onChange={(e) => updateFormData({ meta: { ...formData.meta, feature_gate: e.target.value || undefined } as any })}
+                placeholder="e.g. insurance, notification, address_validation"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Service feature key required for this markup to apply at runtime
+              </p>
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label htmlFor="show_in_preview">Show in Rate Sheet Preview</Label>

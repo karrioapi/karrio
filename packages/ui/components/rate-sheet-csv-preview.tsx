@@ -348,7 +348,11 @@ export function RateSheetCsvPreview({
         for (const wr of effectiveRanges) {
           const rateKey = `${service.id}:${zone.id}:${wr.min_weight}:${wr.max_weight}`;
           const rate = rateLookup.get(rateKey) ?? null;
-          const baseRate = rate ?? 0;
+
+          // Skip rows without a base rate
+          if (rate == null) continue;
+
+          const baseRate = rate;
 
           // Calculate surcharge amounts
           const surchAmounts: Record<string, number> = {};

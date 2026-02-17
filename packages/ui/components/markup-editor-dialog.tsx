@@ -67,6 +67,7 @@ export function MarkupEditorDialog({
   const [metaType, setMetaType] = useState("");
   const [metaPlan, setMetaPlan] = useState("");
   const [showInPreview, setShowInPreview] = useState(false);
+  const [featureGate, setFeatureGate] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -80,6 +81,7 @@ export function MarkupEditorDialog({
         setMetaType(meta?.type || "");
         setMetaPlan(meta?.plan || "");
         setShowInPreview(meta?.show_in_preview ?? false);
+        setFeatureGate(meta?.feature_gate || "");
       } else {
         setName("");
         setMarkupType("AMOUNT");
@@ -89,6 +91,7 @@ export function MarkupEditorDialog({
         setMetaType("");
         setMetaPlan("");
         setShowInPreview(false);
+        setFeatureGate("");
       }
     }
   }, [markup, open, isNew]);
@@ -100,6 +103,7 @@ export function MarkupEditorDialog({
     if (metaType) meta.type = metaType as MarkupMeta["type"];
     if (metaPlan) meta.plan = metaPlan;
     if (showInPreview) meta.show_in_preview = true;
+    if (featureGate) meta.feature_gate = featureGate;
 
     await onSave({
       name,
@@ -217,6 +221,19 @@ export function MarkupEditorDialog({
                   placeholder="e.g. scale, pro, enterprise"
                   className="h-9"
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs">Feature Gate</Label>
+                <Input
+                  value={featureGate}
+                  onChange={(e) => setFeatureGate(e.target.value)}
+                  placeholder="e.g. insurance, notification"
+                  className="h-9"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Service feature key required for this markup to apply
+                </p>
               </div>
 
               <div className="flex items-center space-x-2">

@@ -36,6 +36,7 @@ export interface MarkupMeta {
   type?: "brokerage-fee" | "insurance" | "surcharge" | "notification" | "address-validation";
   plan?: string;
   show_in_preview?: boolean;
+  feature_gate?: string;
 }
 
 export interface MarkupFormData {
