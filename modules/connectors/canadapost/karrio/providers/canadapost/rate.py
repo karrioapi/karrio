@@ -167,6 +167,7 @@ def rate_request(
                 ),
                 international=(
                     canadapost.internationalType(
+                        # format_ca_postal_code only normalizes text (strip spaces + uppercase).
                         country_code=provider_utils.format_ca_postal_code(
                             payload.recipient.country_code
                         )
