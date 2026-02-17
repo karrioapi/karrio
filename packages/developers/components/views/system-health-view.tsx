@@ -338,7 +338,7 @@ export function SystemHealthView() {
                   size="sm"
                   className="h-9 text-xs border-border text-foreground hover:bg-primary/10"
                   disabled={triggerDataArchiving.isLoading}
-                  onClick={() => triggerDataArchiving.mutate({})}
+                  onClick={() => triggerDataArchiving.mutate()}
                 >
                   {triggerDataArchiving.isLoading ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />

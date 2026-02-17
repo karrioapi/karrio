@@ -1,3 +1,54 @@
+# Karrio 2026.1.11
+
+## Changes
+
+### Feat
+
+- feat: add markup feature gating with `meta.feature_gate` for conditional markup application
+- feat: add feature_gate field to markup editors (inline and advanced admin)
+- feat: add tracker bulk webhook resend and per-row action menu
+- feat: add batch webhook resend API endpoint
+- feat: integrate worker action buttons in devtools frontend
+- feat: add worker management GraphQL mutations for admin
+- feat: add markup filtering by meta category, plan, active status and type
+- feat: improve CSV preview with progressive markup totals and column filtering
+- feat: add markups management to rate sheet editor and improve markup dialogs
+
+### Fix
+
+- fix: make Health view scrollable and wrap maintenance actions in card
+- fix: skip empty rate rows in CSV preview
+- fix: align tracker checkbox column width with shipments table
+- fix: show exact page counts instead of "of many" in devtools pagination
+- fix: resolve duplicate TaskExecution records causing stuck executing status
+- fix: use icontains for meta and metadata value filters on markups
+- fix: port rate sheet editor layout improvements and bug fixes 
+
+### Perf
+
+- perf: cache middleware auth result to prevent duplicate token DB lookups
+- perf: reuse pre-loaded carriers in buy_shipment_label to avoid duplicate connection queries
+- perf: batch constance config queries to eliminate N+1 in shipment creation
+- perf: batch tracker saves to eliminate N+1 UPDATE queries in tracking pipeline
+- perf: eliminate SELECT FOR UPDATE lock contention in task signal handler
+
+### Refactor
+
+- refactor: update devtools drawer, navbar, and rate sheet CSV preview
+- refactor: use generic meta_key/meta_value and metadata_key/metadata_value filters for markups
+
+### Test
+
+- test: add batch webhook resend tests
+- test: add admin CRUD tests for markup meta field and filters
+- test: add feature-gated markup applicability tests
+
+### Chore
+
+- chore: generate admin migrations
+
+---
+
 # Karrio 2026.1.10
 
 ## Changes

@@ -1239,7 +1239,7 @@ export default function MarkupsPage() {
                               <span className="text-xs text-gray-400">&mdash;</span>
                             )}
                             {(markup as any).meta?.show_in_preview && (
-                              <Eye className="h-3.5 w-3.5 text-blue-500" title="Shown in rate sheet preview" />
+                              <span title="Shown in rate sheet preview"><Eye className="h-3.5 w-3.5 text-blue-500" /></span>
                             )}
                           </div>
                         </TableCell>
