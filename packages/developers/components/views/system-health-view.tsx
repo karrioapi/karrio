@@ -118,7 +118,7 @@ export function SystemHealthView() {
     : false;
 
   return (
-    <div className="flex flex-col h-full p-4 pb-20 space-y-6">
+    <div className="flex flex-col h-full p-4 pb-8 space-y-6 overflow-y-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -317,65 +317,67 @@ export function SystemHealthView() {
             <h3 className="text-sm font-medium text-muted-foreground">
               Maintenance Actions
             </h3>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 text-xs border-border text-foreground hover:bg-primary/10"
-                disabled={triggerTrackerUpdate.isLoading}
-                onClick={() => triggerTrackerUpdate.mutate({})}
-              >
-                {triggerTrackerUpdate.isLoading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
-                ) : (
-                  <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                )}
-                Run Tracker Update
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 text-xs border-border text-foreground hover:bg-primary/10"
-                disabled={triggerDataArchiving.isLoading}
-                onClick={() => triggerDataArchiving.mutate({})}
-              >
-                {triggerDataArchiving.isLoading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
-                ) : (
-                  <Database className="h-3.5 w-3.5 mr-1.5" />
-                )}
-                Run Data Archiving
-              </Button>
-              {stats.executing > 0 && (
+            <div className="bg-card border border-border rounded-lg p-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-9 text-xs border-border text-yellow-400 hover:bg-yellow-500/10"
-                  disabled={resetStuckTasks.isLoading}
-                  onClick={() => resetStuckTasks.mutate({})}
+                  className="h-9 text-xs border-border text-foreground hover:bg-primary/10"
+                  disabled={triggerTrackerUpdate.isLoading}
+                  onClick={() => triggerTrackerUpdate.mutate({})}
                 >
-                  {resetStuckTasks.isLoading ? (
+                  {triggerTrackerUpdate.isLoading ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
                   ) : (
-                    <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
                   )}
-                  Reset Stuck Tasks
+                  Run Tracker Update
                 </Button>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 text-xs border-border text-foreground hover:bg-primary/10"
-                disabled={cleanupTaskExecutions.isLoading}
-                onClick={() => cleanupTaskExecutions.mutate({})}
-              >
-                {cleanupTaskExecutions.isLoading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
-                ) : (
-                  <HardDrive className="h-3.5 w-3.5 mr-1.5" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 text-xs border-border text-foreground hover:bg-primary/10"
+                  disabled={triggerDataArchiving.isLoading}
+                  onClick={() => triggerDataArchiving.mutate({})}
+                >
+                  {triggerDataArchiving.isLoading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  ) : (
+                    <Database className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  Run Data Archiving
+                </Button>
+                {stats.executing > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 text-xs border-border text-yellow-400 hover:bg-yellow-500/10"
+                    disabled={resetStuckTasks.isLoading}
+                    onClick={() => resetStuckTasks.mutate({})}
+                  >
+                    {resetStuckTasks.isLoading ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                    ) : (
+                      <AlertCircle className="h-3.5 w-3.5 mr-1.5" />
+                    )}
+                    Reset Stuck Tasks
+                  </Button>
                 )}
-                Cleanup Old Records
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 text-xs border-border text-foreground hover:bg-primary/10"
+                  disabled={cleanupTaskExecutions.isLoading}
+                  onClick={() => cleanupTaskExecutions.mutate({})}
+                >
+                  {cleanupTaskExecutions.isLoading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  ) : (
+                    <HardDrive className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  Cleanup Old Records
+                </Button>
+              </div>
             </div>
           </div>
         </>
