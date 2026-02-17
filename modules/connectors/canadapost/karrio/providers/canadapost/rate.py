@@ -168,7 +168,7 @@ def rate_request(
                 international=(
                     canadapost.internationalType(
                         country_code=provider_utils.format_ca_postal_code(
-                            payload.recipient.postal_code
+                            payload.recipient.country_code
                         )
                     )
                     if (
