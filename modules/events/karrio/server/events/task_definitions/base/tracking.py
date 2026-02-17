@@ -51,7 +51,7 @@ def update_trackers(
     delta: datetime.timedelta = datetime.timedelta(
         seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
     ),
-    tracker_ids: typing.List[str] = [],
+    tracker_ids: typing.Optional[typing.List[str]] = None,
     schema: str = None,
 ):
     """Group stale trackers by carrier and enqueue one sub-task per carrier."""
@@ -63,7 +63,7 @@ def update_trackers(
 
     qs = (
         models.Tracking.objects.filter(id__in=tracker_ids)
-        if any(tracker_ids)
+        if tracker_ids
         else models.Tracking.objects.filter(
             delivered=False,
             updated_at__lt=timezone.now() - delta,
@@ -202,42 +202,69 @@ def _process_batch(
 
 
 def _save_results(response, batch: typing.List[models.Tracking]):
-    """Persist tracking details for a single batch."""
+    """Persist tracking details for a single batch using bulk operations.
+
+    Applies change detection in memory for each tracker, then saves all
+    changed trackers in a single bulk_update call to avoid N+1 UPDATE queries.
+    """
     tracking_details, _ = response if response else ([], [])
+    changed_trackers = []
 
     for details in tracking_details or []:
         try:
-            for tracker in batch:
-                if tracker.tracking_number != details.tracking_number:
-                    continue
+            tracker = next(
+                (t for t in batch if t.tracking_number == details.tracking_number),
+                None,
+            )
+            if tracker is None:
+                continue
 
-                serializers.update_tracker(
-                    tracker,
-                    dict(
-                        events=details.events,
-                        delivered=details.delivered,
-                        status=utils.compute_tracking_status(details).value,
-                        estimated_delivery=details.estimated_delivery,
-                        options={
-                            **(tracker.options or {}),
-                            tracker.tracking_number: details.meta,
-                        },
-                        meta=details.meta,
-                        info=lib.to_dict(details.info or {}),
-                        images=details.images,
-                    ),
-                )
+            changes = serializers.apply_tracker_changes(
+                tracker,
+                dict(
+                    events=details.events,
+                    delivered=details.delivered,
+                    status=utils.compute_tracking_status(details).value,
+                    estimated_delivery=details.estimated_delivery,
+                    options={
+                        **(tracker.options or {}),
+                        tracker.tracking_number: details.meta,
+                    },
+                    meta=details.meta,
+                    info=lib.to_dict(details.info or {}),
+                    images=details.images,
+                ),
+            )
+
+            if changes:
+                changed_trackers.append((tracker, changes))
 
         except Exception as e:
             logger.warning(
-                "Failed to update tracker",
+                "Failed to apply tracker changes",
                 tracking_number=details.tracking_number,
                 error=str(e),
             )
             logger.exception(
-                "Tracker update error",
+                "Tracker change error",
                 tracking_number=details.tracking_number,
             )
+
+    # Single bulk save for all changed trackers + batch shipment status updates
+    try:
+        serializers.bulk_save_trackers(changed_trackers)
+    except Exception as e:
+        logger.warning("Bulk save failed, falling back to individual saves", error=str(e))
+        for tracker, changes in changed_trackers:
+            try:
+                tracker.save(update_fields=changes)
+                serializers.update_shipment_tracker(tracker)
+            except Exception as inner_e:
+                logger.exception(
+                    "Fallback save failed",
+                    tracker_id=tracker.id,
+                    error=str(inner_e),
+                )
 
 
 def _save_tracing(gateway: Gateway, batch: typing.List[models.Tracking]):

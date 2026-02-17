@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_server_orders"
-version = "2026.1.10"
+version = "2026.1.11"
 description = "Multi-carrier shipping API orders module"
 readme = "README.md"
 requires-python = ">=3.11"

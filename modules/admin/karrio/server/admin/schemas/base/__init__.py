@@ -282,3 +282,43 @@ class Mutation:
         self, info: Info, input: inputs.base.UpdateServiceSurchargeIdsMutationInput
     ) -> mutations.UpdateServiceSurchargeIdsMutation:
         return mutations.UpdateServiceSurchargeIdsMutation.mutate(info, **input.to_dict())
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # WORKER MANAGEMENT MUTATIONS
+    # ─────────────────────────────────────────────────────────────────────────
+
+    @strawberry.mutation
+    def trigger_tracker_update(
+        self, info: Info, input: inputs.TriggerTrackerUpdateInput
+    ) -> mutations.TriggerTrackerUpdateMutation:
+        return mutations.TriggerTrackerUpdateMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def retry_webhook(
+        self, info: Info, input: inputs.RetryWebhookInput
+    ) -> mutations.RetryWebhookMutation:
+        return mutations.RetryWebhookMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def revoke_task(
+        self, info: Info, input: inputs.RevokeTaskInput
+    ) -> mutations.RevokeTaskMutation:
+        return mutations.RevokeTaskMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def cleanup_task_executions(
+        self, info: Info, input: inputs.CleanupTaskExecutionsInput
+    ) -> mutations.CleanupTaskExecutionsMutation:
+        return mutations.CleanupTaskExecutionsMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def reset_stuck_tasks(
+        self, info: Info, input: inputs.ResetStuckTasksInput
+    ) -> mutations.ResetStuckTasksMutation:
+        return mutations.ResetStuckTasksMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def trigger_data_archiving(
+        self, info: Info
+    ) -> mutations.TriggerDataArchivingMutation:
+        return mutations.TriggerDataArchivingMutation.mutate(info)

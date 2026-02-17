@@ -10,6 +10,7 @@ All URIs are relative to *http://localhost*
 |[**exportFile**](#exportfile) | **GET** /v1/batches/data/export/{resource_type}.{export_format} | Export data files|
 |[**importFile**](#importfile) | **POST** /v1/batches/data/import | Import data files|
 |[**list**](#list) | **GET** /v1/batches/operations | List all batch operations|
+|[**resendWebhooks**](#resendwebhooks) | **POST** /v1/batches/webhooks | Resend webhooks|
 |[**retrieve**](#retrieve) | **GET** /v1/batches/operations/{id} | Retrieve a batch operation|
 
 # **createOrders**
@@ -342,6 +343,60 @@ This endpoint does not have any parameters.
 |-------------|-------------|------------------|
 |**200** |  |  -  |
 |**404** |  |  -  |
+|**500** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **resendWebhooks**
+> BatchWebhookResendResponse resendWebhooks(batchWebhookResendRequest)
+
+Resend webhook notifications for a batch of entities.
+
+### Example
+
+```typescript
+import {
+    BatchesApi,
+    Configuration,
+    BatchWebhookResendRequest
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BatchesApi(configuration);
+
+let batchWebhookResendRequest: BatchWebhookResendRequest; //
+
+const { status, data } = await apiInstance.resendWebhooks(
+    batchWebhookResendRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **batchWebhookResendRequest** | **BatchWebhookResendRequest**|  | |
+
+
+### Return type
+
+**BatchWebhookResendResponse**
+
+### Authorization
+
+[OAuth2](../README.md#OAuth2), [JWT](../README.md#JWT), [TokenBasic](../README.md#TokenBasic), [Token](../README.md#Token)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+|**400** |  |  -  |
 |**500** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

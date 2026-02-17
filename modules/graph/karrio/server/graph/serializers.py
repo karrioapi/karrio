@@ -389,14 +389,37 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
             self.instance.batch_update_service_rates(batch_updates)
 
     def build_temp_to_real_service_map(self, services_data: list) -> dict:
-        """Build mapping from temp-{idx} IDs to real service IDs by service_code."""
-        created_services = {s.service_code: s.id for s in self.instance.services.all()}
+        """Build mapping from temp-{idx} IDs to real service IDs.
 
-        return {
-            f"temp-{idx}": created_services[svc.get("service_code")]
-            for idx, svc in enumerate(services_data)
-            if svc.get("service_code") in created_services
-        }
+        Uses service_name for matching new services (id=None) to handle
+        duplicate service_codes (e.g. cloned services share the same code).
+        Existing services (with id) are mapped directly by their known ID.
+        """
+        db_services = list(self.instance.services.all())
+        name_to_ids = {}
+        for s in db_services:
+            name_to_ids.setdefault(s.service_name, []).append(s.id)
+
+        used_ids = set()
+        result = {}
+
+        for idx, svc in enumerate(services_data):
+            input_id = svc.get("id")
+
+            if input_id:
+                # Existing service — map temp-{idx} to its known ID
+                result[f"temp-{idx}"] = input_id
+                used_ids.add(input_id)
+            else:
+                # New service — find by name, avoiding already-used IDs
+                name = svc.get("service_name")
+                for candidate_id in name_to_ids.get(name, []):
+                    if candidate_id not in used_ids:
+                        result[f"temp-{idx}"] = candidate_id
+                        used_ids.add(candidate_id)
+                        break
+
+        return result
 
     def update(self, instance, validated_data, **kwargs):
         """Handle updates of rate sheet data including services and carriers.

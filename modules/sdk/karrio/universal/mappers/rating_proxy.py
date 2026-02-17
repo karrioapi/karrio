@@ -543,12 +543,25 @@ def get_available_rates(
                             service_name=service.service_name,
                             shipping_charges=base_rate,
                             shipping_currency=service.currency,
+                            service_features=_normalize_features(service.features),
                         )
                     ),
                 )
             )
 
     return rates, errors
+
+
+def _normalize_features(features) -> typing.List[str]:
+    """Normalize service features to a list of strings.
+
+    Handles both dict format ({insurance: true}) and list format (["insurance"]).
+    """
+    if not features:
+        return []
+    if isinstance(features, list):
+        return features
+    return [k for k, v in features.items() if v is True]
 
 
 def apply_surcharges(

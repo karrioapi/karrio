@@ -28,7 +28,7 @@ export function Navbar() {
     <>
       {/* Main Navbar */}
       <header className={`sticky z-40 flex h-14 shrink-0 items-center gap-2 bg-white transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ${testMode ? 'top-[4px]' : 'top-0'}`}>
-        <div className="flex items-center gap-2 w-full max-w-7xl mx-auto px-8 2xl:px-0">
+        <div className="flex items-center gap-2 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 2xl:px-0">
           {/* Mobile Sidebar Trigger */}
           <SidebarTrigger className="-ml-1 md:hidden" />
           <Separator

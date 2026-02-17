@@ -14,7 +14,7 @@ class TaskExecution(models.Model):
         ("expired", "Expired"),
     ]
 
-    task_id = models.CharField(max_length=255, db_index=True)
+    task_id = models.CharField(max_length=255, unique=True)
     task_name = models.CharField(max_length=255, db_index=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, db_index=True)
     queued_at = models.DateTimeField(null=True, blank=True)

@@ -41,10 +41,30 @@ const SERVICE_FEATURES = [
   { value: "saturday_delivery", label: "Saturday Delivery" },
   { value: "sunday_delivery", label: "Sunday Delivery" },
   { value: "multicollo", label: "Multicollo" },
+  { value: "neighbor_delivery", label: "Neighbor Delivery" },
+  { value: "labelless", label: "Labelless" },
+  { value: "notification", label: "Notification" },
+  { value: "address_validation", label: "Address Validation" },
 ];
 
 // Placeholder value for "not specified" options (SelectItem can't use empty string)
 const NONE_VALUE = "__none__";
+
+// Transit label options (customer-facing)
+const TRANSIT_LABEL_OPTIONS = [
+  { value: NONE_VALUE, label: "Not specified" },
+  { value: "best_effort", label: "Best effort" },
+  { value: "next_day", label: "Next day" },
+  { value: "within_24h", label: "Within 24h" },
+  { value: "within_48h", label: "Within 48h" },
+];
+
+// Shipment type options
+const SHIPMENT_TYPE_OPTIONS = [
+  { value: NONE_VALUE, label: "Not specified" },
+  { value: "outbound", label: "Outbound" },
+  { value: "returns", label: "Returns" },
+];
 
 // Age check options (string enum, not boolean)
 const AGE_CHECK_OPTIONS = [
@@ -73,7 +93,7 @@ const LAST_MILE_OPTIONS = [
 const FORM_FACTOR_OPTIONS = [
   { value: NONE_VALUE, label: "Not specified" },
   { value: "parcel", label: "Parcel" },
-  { value: "envelope", label: "Envelope" },
+  { value: "mailbox", label: "Mailbox" },
   { value: "pallet", label: "Pallet" },
 ];
 
@@ -137,6 +157,8 @@ const DEFAULT_SERVICE = {
   last_mile: "",
   form_factor: "",
   age_check: "",
+  transit_label: "",
+  shipment_type: "",
 };
 
 // =============================================================================
@@ -167,6 +189,12 @@ function mergeServiceWithDefaults(service: any) {
   const age_check = (features && typeof features === "object" && !Array.isArray(features))
     ? (features.age_check || "")
     : (service?.age_check || "");
+  const transit_label = (features && typeof features === "object" && !Array.isArray(features))
+    ? (features.transit_label || "")
+    : (service?.transit_label || "");
+  const shipment_type = (features && typeof features === "object" && !Array.isArray(features))
+    ? (features.shipment_type || "")
+    : (service?.shipment_type || "");
 
   return {
     ...DEFAULT_SERVICE,
@@ -177,6 +205,8 @@ function mergeServiceWithDefaults(service: any) {
     last_mile,
     form_factor,
     age_check,
+    transit_label,
+    shipment_type,
   };
 }
 
@@ -271,17 +301,22 @@ export const ServiceEditorModal = ({
         saturday_delivery: formData.features.includes("saturday_delivery"),
         sunday_delivery: formData.features.includes("sunday_delivery"),
         multicollo: formData.features.includes("multicollo"),
+        neighbor_delivery: formData.features.includes("neighbor_delivery"),
+        labelless: formData.features.includes("labelless"),
         age_check: toNullIfEmpty(formData.age_check),
         first_mile: toNullIfEmpty(formData.first_mile),
         last_mile: toNullIfEmpty(formData.last_mile),
         form_factor: toNullIfEmpty(formData.form_factor),
-        shipment_type: null,
+        shipment_type: toNullIfEmpty(formData.shipment_type),
+        transit_label: toNullIfEmpty(formData.transit_label),
       } as any;
 
       delete serviceData.first_mile;
       delete serviceData.last_mile;
       delete serviceData.form_factor;
       delete serviceData.age_check;
+      delete serviceData.transit_label;
+      delete serviceData.shipment_type;
 
       await onSubmit(serviceData);
       onClose();
@@ -486,14 +521,35 @@ export const ServiceEditorModal = ({
                     className="h-9"
                   />
                 </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="transit_label" className="text-xs">Transit Label</Label>
+                  <Select
+                    value={toSelectValue(formData.transit_label)}
+                    onValueChange={(value) => handleChange("transit_label", fromSelectValue(value))}
+                  >
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Not specified" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TRANSIT_LABEL_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Displayed to customers in shipping rates</p>
+                </div>
               </div>
             )}
 
             {/* Features Tab */}
             {activeTab === "features" && (
-              <div className="space-y-3">
+              <div className="space-y-4 py-2">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Service Features</Label>
+                  <p className="text-xs text-muted-foreground">Select the capabilities this service supports</p>
                   <MultiSelect
                     options={SERVICE_FEATURES}
                     value={formData.features || []}
@@ -507,6 +563,25 @@ export const ServiceEditorModal = ({
             {/* Logistics Tab */}
             {activeTab === "logistics" && (
               <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="shipment_type" className="text-xs">Shipment Type</Label>
+                    <Select
+                      value={toSelectValue(formData.shipment_type)}
+                      onValueChange={(value) => handleChange("shipment_type", fromSelectValue(value))}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Not specified" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SHIPMENT_TYPE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div className="space-y-1.5">
                     <Label htmlFor="first_mile" className="text-xs">First Mile</Label>
                     <Select

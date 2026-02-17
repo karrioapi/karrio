@@ -9,7 +9,7 @@ import { formatDateTimeLong, failsafe, jsonify } from "@karrio/lib";
 import { cn } from "@karrio/ui/lib/utils";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import { useWorkerHealth, useTaskExecutions } from "@karrio/hooks/admin-worker";
+import { useWorkerHealth, useTaskExecutions, useWorkerActions } from "@karrio/hooks/admin-worker";
 
 // Convert Python repr strings (single quotes, tuples, None, True/False) to valid JSON
 function pythonToJson(value: string): string {
@@ -103,7 +103,7 @@ const TaskExecutionListItem = ({
   );
 };
 
-const TaskExecutionDetailViewer = ({ execution }: { execution: any | null }) => {
+const TaskExecutionDetailViewer = ({ execution, onRevoke, isRevoking }: { execution: any | null; onRevoke?: (taskId: string) => void; isRevoking?: boolean }) => {
   const [copiedFull, setCopiedFull] = useState(false);
 
   const copyFullExecution = () => {
@@ -138,6 +138,23 @@ const TaskExecutionDetailViewer = ({ execution }: { execution: any | null }) => 
             )}
           </div>
           <div className="flex items-center gap-2">
+            {onRevoke && (execution.status === "queued" || execution.status === "executing") && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onRevoke(execution.task_id)}
+                disabled={isRevoking}
+                className="h-7 px-2 border-border text-red-400 hover:bg-red-500/10"
+                title="Revoke this task"
+              >
+                {isRevoking ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <AlertCircle className="h-3 w-3" />
+                )}
+                <span className="ml-1 text-xs">{isRevoking ? "Revoking..." : "Revoke"}</span>
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={copyFullExecution}
               className="h-7 px-2 border-border text-muted-foreground hover:bg-primary/20"
               title="Copy full execution as JSON">
@@ -190,19 +207,25 @@ const TaskExecutionDetailViewer = ({ execution }: { execution: any | null }) => 
   );
 };
 
+const PAGE_SIZE = 20;
+
 export function WorkersView() {
   const [selectedExecution, setSelectedExecution] = useState<any | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [taskNameFilter, setTaskNameFilter] = useState<string>("all");
+  const [offset, setOffset] = useState(0);
 
+  const { revokeTask } = useWorkerActions();
   const { health, query: healthQuery } = useWorkerHealth();
   const { executions, query: executionsQuery } = useTaskExecutions({
     ...(statusFilter !== "all" ? { status: statusFilter } : {}),
     ...(taskNameFilter !== "all" ? { task_name: taskNameFilter } : {}),
-    first: 50,
+    offset,
+    first: PAGE_SIZE,
   });
 
   const edges = executions?.edges || [];
+  const pageInfo = executions?.page_info;
   const taskNames = React.useMemo(() => {
     const names = new Set<string>();
     edges.forEach(({ node }: any) => names.add(node.task_name));
@@ -213,6 +236,93 @@ export function WorkersView() {
     healthQuery.refetch();
     executionsQuery.refetch();
   };
+
+  const renderToolbar = () => (
+    <div className="border-b border-border px-4 py-2 flex items-center gap-2 flex-shrink-0">
+      <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+      <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setOffset(0); }}>
+        <SelectTrigger className="h-7 w-[120px] text-xs bg-card border-border">
+          <SelectValue placeholder="Status" />
+        </SelectTrigger>
+        <SelectContent className="dark">
+          <SelectItem value="all">All Status</SelectItem>
+          <SelectItem value="complete">Complete</SelectItem>
+          <SelectItem value="error">Error</SelectItem>
+          <SelectItem value="executing">Executing</SelectItem>
+          <SelectItem value="retrying">Retrying</SelectItem>
+        </SelectContent>
+      </Select>
+      <Select value={taskNameFilter} onValueChange={(v) => { setTaskNameFilter(v); setOffset(0); }}>
+        <SelectTrigger className="h-7 w-[160px] text-xs bg-card border-border">
+          <SelectValue placeholder="Task" />
+        </SelectTrigger>
+        <SelectContent className="dark">
+          <SelectItem value="all">All Tasks</SelectItem>
+          {taskNames.map(name => (
+            <SelectItem key={name} value={name}>{name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <div className="flex-1" />
+      <Button variant="ghost" size="sm" onClick={handleRefresh} className="h-7 px-2 text-muted-foreground hover:text-foreground">
+        <RefreshCw className={cn("h-3.5 w-3.5", (healthQuery.isFetching || executionsQuery.isFetching) && "animate-spin")} />
+      </Button>
+    </div>
+  );
+
+  const renderList = (showSelected: boolean) => (
+    <>
+      {executionsQuery.isLoading ? (
+        <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+          <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading...
+        </div>
+      ) : edges.length === 0 ? (
+        <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
+          No task executions found
+        </div>
+      ) : (
+        edges.map(({ node }: any) => (
+          <TaskExecutionListItem
+            key={node.id}
+            execution={node}
+            isSelected={showSelected && selectedExecution?.id === node.id}
+            onClick={() => setSelectedExecution(node)}
+          />
+        ))
+      )}
+    </>
+  );
+
+  const renderPagination = () => (
+    edges.length > 0 ? (
+      <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
+        <span className="text-muted-foreground">
+          Showing {offset + 1}-{offset + edges.length}
+          {pageInfo?.count != null && ` of ${pageInfo.count}`}
+        </span>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
+            disabled={offset === 0}
+            className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setOffset(offset + PAGE_SIZE)}
+            disabled={!pageInfo?.has_next_page}
+            className="h-7 px-2 text-xs text-foreground border-border hover:bg-primary/10"
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    ) : null
+  );
 
   return (
     <div className="flex flex-col h-full">
@@ -227,64 +337,52 @@ export function WorkersView() {
       )}
 
       {/* Toolbar */}
-      <div className="border-b border-border px-4 py-2 flex items-center gap-2 flex-shrink-0">
-        <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="h-7 w-[120px] text-xs bg-card border-border">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent className="dark">
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="complete">Complete</SelectItem>
-            <SelectItem value="error">Error</SelectItem>
-            <SelectItem value="executing">Executing</SelectItem>
-            <SelectItem value="retrying">Retrying</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={taskNameFilter} onValueChange={setTaskNameFilter}>
-          <SelectTrigger className="h-7 w-[160px] text-xs bg-card border-border">
-            <SelectValue placeholder="Task" />
-          </SelectTrigger>
-          <SelectContent className="dark">
-            <SelectItem value="all">All Tasks</SelectItem>
-            {taskNames.map(name => (
-              <SelectItem key={name} value={name}>{name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="flex-1" />
-        <Button variant="ghost" size="sm" onClick={handleRefresh} className="h-7 px-2 text-muted-foreground hover:text-foreground">
-          <RefreshCw className={cn("h-3.5 w-3.5", (healthQuery.isFetching || executionsQuery.isFetching) && "animate-spin")} />
-        </Button>
-      </div>
+      {renderToolbar()}
 
-      {/* Split Panel */}
-      <div className="flex flex-1 min-h-0">
-        {/* Left: List */}
-        <div className="w-[380px] border-r border-border overflow-y-auto flex-shrink-0">
-          {executionsQuery.isLoading ? (
-            <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-              <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading...
-            </div>
-          ) : edges.length === 0 ? (
-            <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-              No task executions found
-            </div>
-          ) : (
-            edges.map(({ node }: any) => (
-              <TaskExecutionListItem
-                key={node.id}
-                execution={node}
-                isSelected={selectedExecution?.id === node.id}
-                onClick={() => setSelectedExecution(node)}
-              />
-            ))
-          )}
+      {/* Desktop Split Panel */}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* Left: List (desktop) */}
+        <div className="w-1/2 border-r border-border flex flex-col lg:flex hidden h-full">
+          <div className="flex-1 overflow-y-auto">
+            {renderList(true)}
+          </div>
+          {renderPagination()}
         </div>
 
-        {/* Right: Detail */}
-        <div className="flex-1 overflow-hidden">
-          <TaskExecutionDetailViewer execution={selectedExecution} />
+        {/* Right: Detail (desktop) */}
+        <div className="flex-1 lg:w-1/2 w-full h-full overflow-hidden lg:flex hidden">
+          <div className="flex-1 min-h-0">
+            <TaskExecutionDetailViewer execution={selectedExecution} onRevoke={(taskId) => revokeTask.mutate({ task_id: taskId })} isRevoking={revokeTask.isLoading} />
+          </div>
+        </div>
+
+        {/* Mobile View */}
+        <div className="lg:hidden w-full h-full flex flex-col">
+          {selectedExecution ? (
+            <>
+              <div className="border-b border-border px-4 py-2 flex items-center gap-2 flex-shrink-0">
+                <Button
+                  variant="ghost"
+                  size="default"
+                  onClick={() => setSelectedExecution(null)}
+                  className="text-primary"
+                >
+                  ← Back
+                </Button>
+                <span className="text-sm font-medium text-foreground">Execution Details</span>
+              </div>
+              <div className="flex-1 min-h-0">
+                <TaskExecutionDetailViewer execution={selectedExecution} onRevoke={(taskId) => revokeTask.mutate({ task_id: taskId })} isRevoking={revokeTask.isLoading} />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex-1 overflow-y-auto">
+                {renderList(false)}
+              </div>
+              {renderPagination()}
+            </>
+          )}
         </div>
       </div>
     </div>

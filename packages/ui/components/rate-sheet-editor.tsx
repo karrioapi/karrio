@@ -32,16 +32,19 @@ import { AddWeightRangeDialog } from "@karrio/ui/components/add-weight-range-dia
 import { AddServicePopover } from "@karrio/ui/components/add-service-popover";
 import { EditWeightRangeDialog } from "@karrio/ui/components/edit-weight-range-dialog";
 import { SurchargesTab } from "@karrio/ui/components/surcharges-tab";
+import { MarkupsTab } from "@karrio/ui/components/markups-tab";
 import { ZoneEditorDialog } from "@karrio/ui/components/zone-editor-dialog";
 import { SurchargeEditorDialog } from "@karrio/ui/components/surcharge-editor-dialog";
+import { MarkupEditorDialog } from "@karrio/ui/components/markup-editor-dialog";
 import { ServiceRateEditorDialog } from "@karrio/ui/components/service-rate-editor-dialog";
-import { RateSheetCsvPreview } from "@karrio/ui/components/rate-sheet-csv-preview";
+import { RateSheetCsvPreview, type MarkupPreviewItem } from "@karrio/ui/components/rate-sheet-csv-preview";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@karrio/ui/components/ui/popover";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import type { MarkupType } from "@karrio/hooks/admin-markups";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -56,7 +59,7 @@ import {
   HamburgerMenuIcon,
   TableIcon,
 } from "@radix-ui/react-icons";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 
 // Generate a unique ID for new entities
 const generateId = (prefix: string = "temp") =>
@@ -171,6 +174,12 @@ interface RateSheetEditorProps {
   isAdmin?: boolean;
   useRateSheet: (args: any) => any;
   useRateSheetMutation: () => any;
+  markups?: MarkupType[];
+  markupMutations?: {
+    createMarkup: { mutateAsync: (input: any) => Promise<any> };
+    updateMarkup: { mutateAsync: (input: any) => Promise<any> };
+    deleteMarkup: { mutateAsync: (input: any) => Promise<any> };
+  };
 }
 
 interface OriginalState {
@@ -180,6 +189,7 @@ interface OriginalState {
   serviceRates: Map<string, { rate: number; cost?: number | null }>;
   serviceZoneIds: Map<string, string[]>;
   serviceSurchargeIds: Map<string, string[]>;
+  serviceFields: Map<string, Record<string, any>>;
 }
 
 export const RateSheetEditor = ({
@@ -190,6 +200,8 @@ export const RateSheetEditor = ({
   isAdmin = false,
   useRateSheet,
   useRateSheetMutation,
+  markups: adminMarkups = [],
+  markupMutations,
 }: RateSheetEditorProps) => {
   const isNew = rateSheetId === "new";
   const isEditMode = !isNew;
@@ -228,7 +240,7 @@ export const RateSheetEditor = ({
 
   // Tab state
   const [activeTab, setActiveTab] = useState<
-    "rate_sheet" | "surcharges"
+    "rate_sheet" | "surcharges" | "markups"
   >("rate_sheet");
 
   // Weight range state
@@ -247,6 +259,11 @@ export const RateSheetEditor = ({
   // Surcharge editor dialog state
   const [surchargeEditorOpen, setSurchargeEditorOpen] = useState(false);
   const [selectedSurcharge, setSelectedSurcharge] = useState<SharedSurcharge | null>(null);
+
+  // Markup editor dialog state
+  const [markupEditorOpen, setMarkupEditorOpen] = useState(false);
+  const [selectedMarkup, setSelectedMarkup] = useState<MarkupType | null>(null);
+  const [isNewMarkup, setIsNewMarkup] = useState(false);
 
   // Service rate editor dialog state
   const [rateEditorOpen, setRateEditorOpen] = useState(false);
@@ -267,6 +284,9 @@ export const RateSheetEditor = ({
   const surchargeSaveRef = useRef(false);
   const [pendingZoneServiceId, setPendingZoneServiceId] = useState<string | null>(null);
 
+  // Pending service rates for staged clone/preset services (cleared on save or cancel)
+  const [pendingServiceRates, setPendingServiceRates] = useState<ServiceRate[]>([]);
+
   // Per-service pending weight ranges (edit mode)
   const [editModePendingRanges, setEditModePendingRanges] = useState<Record<string, WeightRange[]>>({});
 
@@ -275,6 +295,7 @@ export const RateSheetEditor = ({
   const { toast } = useToast();
   const { query } = useRateSheet({ id: isEditMode ? rateSheetId : undefined });
   const mutations = useRateSheetMutation();
+
 
   const existingRateSheet = query?.data?.rate_sheet;
   const isRateSheetLoading = query?.isLoading;
@@ -470,9 +491,19 @@ export const RateSheetEditor = ({
 
       const originalServiceZoneIds = new Map<string, string[]>();
       const originalServiceSurchargeIds = new Map<string, string[]>();
+      const originalServiceFields = new Map<string, Record<string, any>>();
       rawServices.forEach((s: any) => {
         originalServiceZoneIds.set(s.id, [...(s.zone_ids || [])]);
         originalServiceSurchargeIds.set(s.id, [...(s.surcharge_ids || [])]);
+        originalServiceFields.set(s.id, {
+          service_name: s.service_name,
+          service_code: s.service_code,
+          currency: s.currency,
+          active: s.active,
+          transit_days: s.transit_days,
+          description: s.description,
+          features: s.features,
+        });
       });
 
       originalStateRef.current = {
@@ -482,6 +513,7 @@ export const RateSheetEditor = ({
         serviceRates: originalServiceRates,
         serviceZoneIds: originalServiceZoneIds,
         serviceSurchargeIds: originalServiceSurchargeIds,
+        serviceFields: originalServiceFields,
       };
     }
   }, [existingRateSheet, isEditMode]);
@@ -748,8 +780,10 @@ export const RateSheetEditor = ({
           }
         : {}),
     };
-    setServices((prev) => [...prev, newService]);
-    setLocalServiceRates((prev) => [...prev, ...newRates]);
+    // Stage — don't add to services yet, add on dialog save
+    setPendingServiceRates(newRates);
+    setSelectedService(newService);
+    setServiceDialogOpen(true);
     setServiceAddPopoverOpen(false);
   };
 
@@ -827,11 +861,12 @@ export const RateSheetEditor = ({
       id: newId,
       service_name: `${service.service_name} (copy)`,
     };
-    setServices((prev) => [...prev, newService]);
-    const clonedRates = localServiceRates
+    // Clone rates from serviceRatesData (includes overlay in edit mode)
+    const clonedRates = serviceRatesData
       .filter(sr => sr.service_id === service.id)
       .map(sr => ({ ...sr, service_id: newId }));
-    setLocalServiceRates((prev) => [...prev, ...clonedRates]);
+    // Stage — don't add to services yet, add on dialog save
+    setPendingServiceRates(clonedRates);
     setSelectedService(newService);
     setServiceDialogOpen(true);
   };
@@ -842,15 +877,37 @@ export const RateSheetEditor = ({
   };
 
   const handleSaveService = (serviceData: Partial<ServiceLevelWithZones>) => {
-    if (selectedService) {
+    const isExistingInList = selectedService && services.some(s => s.id === selectedService.id);
+
+    if (selectedService && isExistingInList) {
+      // Path 1: Edit existing service in list — match by id
       setServices((prev) =>
         prev.map((s) =>
-          s.service_code === selectedService.service_code
+          s.id === selectedService.id
             ? { ...s, ...serviceData }
             : s
         )
       );
+    } else if (selectedService) {
+      // Path 2: New from clone/preset — add to list now
+      const merged = { ...selectedService, ...serviceData };
+      setServices((prev) => [...prev, merged]);
+      setDetailServiceId(merged.id); // Select new tab
+
+      // Apply pending rates (from clone or preset)
+      if (pendingServiceRates.length > 0) {
+        if (isEditMode) {
+          setEditModeRatesOverride((prev) => {
+            const base = prev ?? (((existingRateSheet as any)?.service_rates ?? []) as ServiceRate[]);
+            return [...base, ...pendingServiceRates];
+          });
+        } else {
+          setLocalServiceRates((prev) => [...prev, ...pendingServiceRates]);
+        }
+        setPendingServiceRates([]);
+      }
     } else {
+      // Path 3: Brand new service
       const newService: ServiceLevelWithZones = {
         id: generateId("service"),
         object_type: "service_level",
@@ -888,9 +945,11 @@ export const RateSheetEditor = ({
         features: serviceData.features ?? [],
       };
       setServices((prev) => [...prev, newService]);
+      setDetailServiceId(newService.id); // Select new tab
     }
     setServiceDialogOpen(false);
     setSelectedService(null);
+    setPendingServiceRates([]);
   };
 
   const handleUpdateService = (
@@ -911,10 +970,10 @@ export const RateSheetEditor = ({
 
   const handleConfirmDelete = async () => {
     if (serviceToDelete) {
-      const isExistingService =
-        serviceToDelete.id && !serviceToDelete.id.startsWith("temp-");
+      const isBackendService = isEditMode &&
+        originalStateRef.current?.serviceFields?.has(serviceToDelete.id);
 
-      if (isExistingService && rateSheetId && mutations.deleteRateSheetService) {
+      if (isBackendService && rateSheetId && mutations.deleteRateSheetService) {
         setIsDeletingService(true);
         try {
           await mutations.deleteRateSheetService.mutateAsync({
@@ -941,7 +1000,7 @@ export const RateSheetEditor = ({
       }
 
       setServices((prev) =>
-        prev.filter((s) => s.service_code !== serviceToDelete.service_code)
+        prev.filter((s) => s.id !== serviceToDelete.id)
       );
       setServiceToDelete(null);
       setDeleteConfirmOpen(false);
@@ -1268,6 +1327,43 @@ export const RateSheetEditor = ({
       })
     );
   };
+
+  // ─────────────────────────────────────────────────────────────────
+  // Markup Handlers (admin mode only)
+  // ─────────────────────────────────────────────────────────────────
+
+  const handleAddMarkup = () => {
+    setSelectedMarkup(null);
+    setIsNewMarkup(true);
+    setMarkupEditorOpen(true);
+  };
+
+  const handleEditMarkup = (markup: MarkupType) => {
+    setSelectedMarkup(markup);
+    setIsNewMarkup(false);
+    setMarkupEditorOpen(true);
+  };
+
+  const handleRemoveMarkup = async (markupId: string) => {
+    if (!markupMutations) return;
+    try {
+      await markupMutations.deleteMarkup.mutateAsync({ id: markupId });
+      toast({ title: "Markup deleted" });
+    } catch (err: any) {
+      toast({ title: "Failed to delete markup", description: err?.message, variant: "destructive" });
+    }
+  };
+
+  const markupsForPreview: MarkupPreviewItem[] = useMemo(() => {
+    return adminMarkups.map((m: any) => ({
+      id: m.id,
+      name: m.name,
+      amount: m.amount,
+      markup_type: m.markup_type,
+      active: m.active,
+      meta: m.meta,
+    }));
+  }, [adminMarkups]);
 
   // ─────────────────────────────────────────────────────────────────
   // Weight Range Handlers
@@ -2031,19 +2127,19 @@ export const RateSheetEditor = ({
                     : "Create Rate Sheet"}
               </SheetTitle>
               <div className="flex items-center gap-2">
-                <Button
+                <button
                   onClick={handleSave}
                   disabled={isSaving || isInitialLoading}
+                  className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                  aria-label="Save"
+                  title="Save"
                 >
                   {isSaving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      <span className="hidden sm:inline">Saving...</span>
-                    </>
+                    <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    "Save"
+                    <Save className="h-5 w-5" />
                   )}
-                </Button>
+                </button>
                 <button
                   onClick={() => setCsvPreviewOpen(true)}
                   className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
@@ -2289,6 +2385,7 @@ export const RateSheetEditor = ({
                       [
                         { id: "rate_sheet", label: "Rate Sheet" },
                         { id: "surcharges", label: "Surcharges" },
+                        ...(isAdmin ? [{ id: "markups" as const, label: "Brokerage" }] : []),
                       ] as const
                     ).map((tab) => (
                       <button
@@ -2308,61 +2405,64 @@ export const RateSheetEditor = ({
                 </div>
 
                 {/* Tab Content */}
-                <div className="flex-1 p-4 sm:p-6 overflow-hidden">
+                <div className="flex-1 pt-4 px-4 sm:pt-4 sm:px-6 pb-4 sm:pb-6 overflow-hidden relative">
                   {activeTab === "rate_sheet" && (
                     <div className="h-full flex flex-col">
                       {/* Service tabs */}
                       {services.length > 0 && (
-                        <div className="flex items-center gap-1 mb-3 overflow-x-auto pb-1 border-b border-border" style={{ scrollbarWidth: "none" }}>
-                          {services.map((svc) => (
-                            <button
-                              key={svc.id}
-                              onClick={() => setDetailServiceId(svc.id)}
-                              className={cn(
-                                "px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors flex items-center gap-1.5 group/svc",
-                                detailServiceId === svc.id
-                                  ? "bg-primary text-primary-foreground"
-                                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                              )}
-                            >
-                              {svc.service_name || svc.service_code || "Unnamed"}
-                              {detailServiceId === svc.id && (
-                                <span className="flex items-center gap-0">
-                                  <span
-                                    className="p-0.5 rounded-sm hover:bg-primary-foreground/20"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEditService(svc);
-                                    }}
-                                    title="Edit service"
-                                  >
-                                    <Pencil1Icon className="h-3 w-3" />
-                                  </span>
-                                  <span
-                                    className="p-0.5 rounded-sm hover:bg-primary-foreground/20"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteClick(svc);
-                                    }}
-                                    title="Delete service"
-                                  >
-                                    <TrashIcon className="h-3 w-3" />
-                                  </span>
-                                </span>
-                              )}
-                            </button>
-                          ))}
+                        <div
+                          className="flex items-center gap-1 mb-3 pb-1 border-b border-border overflow-x-auto [&::-webkit-scrollbar]:hidden"
+                          style={{ scrollbarWidth: 'none' }}
+                        >
+                          {services.map((svc) => {
+                            const isActive = detailServiceId === svc.id;
+                            return (
+                              <div key={svc.id} className="relative flex items-center flex-shrink-0">
+                                <button
+                                  onClick={() => setDetailServiceId(svc.id)}
+                                  className={cn(
+                                    "px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors",
+                                    isActive
+                                      ? "bg-primary text-primary-foreground"
+                                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                  )}
+                                >
+                                  {svc.service_name || svc.service_code || "Unnamed"}
+                                </button>
+                                {isActive && (
+                                  <div className="flex items-center gap-0.5 ml-0.5">
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleEditService(svc); }}
+                                      className="p-0.5 rounded-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                                      title="Edit service"
+                                    >
+                                      <Pencil1Icon className="h-3 w-3" />
+                                    </button>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleDeleteClick(svc); }}
+                                      className="p-0.5 rounded-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                      title="Delete service"
+                                    >
+                                      <TrashIcon className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
 
-                          {/* Add service popover */}
-                          <AddServicePopover
-                            services={services}
-                            onAddService={handleAddService}
-                            servicePresets={servicePresets}
-                            onAddServiceFromPreset={handleAddServiceFromPreset}
-                            onCloneService={handleCloneService}
-                            iconOnly
-                            align="end"
-                          />
+                          {/* Add service popover - sticky at end */}
+                          <div className="flex-shrink-0 sticky right-0 bg-background pl-1">
+                            <AddServicePopover
+                              services={services}
+                              onAddService={handleAddService}
+                              servicePresets={servicePresets}
+                              onAddServiceFromPreset={handleAddServiceFromPreset}
+                              onCloneService={handleCloneService}
+                              iconOnly
+                              align="end"
+                            />
+                          </div>
                         </div>
                       )}
 
@@ -2370,7 +2470,7 @@ export const RateSheetEditor = ({
                       <div className="flex-1 overflow-hidden relative">
                         {/* Carrier gate: disabled overlay in create mode when no carrier */}
                         {!isEditMode && !carrierName && (
-                          <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-[1px] flex items-center justify-center rounded-md">
+                          <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
                             <p className="text-sm text-muted-foreground">Select a carrier to get started</p>
                           </div>
                         )}
@@ -2434,6 +2534,14 @@ export const RateSheetEditor = ({
                       onCloneSurcharge={handleCloneSurcharge}
                     />
                   )}
+                  {activeTab === "markups" && isAdmin && (
+                    <MarkupsTab
+                      markups={adminMarkups}
+                      onEditMarkup={handleEditMarkup}
+                      onAddMarkup={handleAddMarkup}
+                      onRemoveMarkup={handleRemoveMarkup}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -2444,7 +2552,11 @@ export const RateSheetEditor = ({
       {/* Service Editor Modal */}
       <ServiceEditorModal
         isOpen={serviceDialogOpen}
-        onClose={() => setServiceDialogOpen(false)}
+        onClose={() => {
+          setServiceDialogOpen(false);
+          setSelectedService(null);
+          setPendingServiceRates([]);
+        }}
         service={selectedService}
         onSubmit={handleSaveService}
         availableSurcharges={surcharges}
@@ -2615,6 +2727,51 @@ export const RateSheetEditor = ({
         weightUnit={selectedWeightUnit}
       />
 
+      {/* Markup Editor Dialog (admin only) */}
+      {isAdmin && (
+        <MarkupEditorDialog
+          open={markupEditorOpen}
+          onOpenChange={(open) => {
+            setMarkupEditorOpen(open);
+            if (!open) {
+              setSelectedMarkup(null);
+              setIsNewMarkup(false);
+            }
+          }}
+          markup={selectedMarkup}
+          isNew={isNewMarkup}
+          onSave={async (data) => {
+            if (!markupMutations) return;
+            try {
+              if (isNewMarkup) {
+                await markupMutations.createMarkup.mutateAsync({
+                  name: data.name,
+                  amount: data.amount,
+                  markup_type: data.markup_type as any,
+                  active: data.active,
+                  is_visible: data.is_visible,
+                  meta: Object.keys(data.meta).length > 0 ? data.meta : undefined,
+                } as any);
+                toast({ title: "Markup created" });
+              } else if (selectedMarkup) {
+                await markupMutations.updateMarkup.mutateAsync({
+                  id: selectedMarkup.id,
+                  name: data.name,
+                  amount: data.amount,
+                  markup_type: data.markup_type as any,
+                  active: data.active,
+                  is_visible: data.is_visible,
+                  meta: Object.keys(data.meta).length > 0 ? data.meta : undefined,
+                } as any);
+                toast({ title: "Markup updated" });
+              }
+            } catch (err: any) {
+              toast({ title: "Failed to save markup", description: err?.message, variant: "destructive" });
+            }
+          }}
+        />
+      )}
+
       {/* CSV Preview */}
       <RateSheetCsvPreview
         open={csvPreviewOpen}
@@ -2628,6 +2785,8 @@ export const RateSheetEditor = ({
         weightRanges={weightRanges}
         surcharges={surcharges}
         weightUnit={selectedWeightUnit}
+        markups={isAdmin ? markupsForPreview : undefined}
+        isAdmin={isAdmin}
       />
     </>
   );

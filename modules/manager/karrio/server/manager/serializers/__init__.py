@@ -23,6 +23,8 @@ from karrio.server.manager.serializers.tracking import (
     update_shipment_tracker,
     can_mutate_tracker,
     update_tracker,
+    apply_tracker_changes,
+    bulk_save_trackers,
 )
 from karrio.server.manager.serializers.shipment import (
     ShipmentRateData,

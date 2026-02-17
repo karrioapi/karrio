@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.10`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2026.1.11`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2026.1.10
+ * The version of the OpenAPI document: 2026.1.11
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -804,6 +804,39 @@ export interface BatchTrackerData {
      */
     'trackers': Array<TrackingData>;
 }
+export interface BatchWebhookResendRequest {
+    'entity_ids': Array<string>;
+    'object_type'?: BatchWebhookResendRequestObjectTypeEnum;
+    'webhook_id'?: string;
+}
+
+export const BatchWebhookResendRequestObjectTypeEnum = {
+    Tracker: 'tracker',
+    Shipment: 'shipment'
+} as const;
+
+export type BatchWebhookResendRequestObjectTypeEnum = typeof BatchWebhookResendRequestObjectTypeEnum[keyof typeof BatchWebhookResendRequestObjectTypeEnum];
+
+export interface BatchWebhookResendResponse {
+    'object_type': string;
+    'resources': Array<BatchWebhookResource>;
+    'count': number;
+    'test_mode': boolean;
+    'created_at': string;
+}
+export interface BatchWebhookResource {
+    'id': string;
+    'status': BatchWebhookResourceStatusEnum;
+    'error'?: string | null;
+}
+
+export const BatchWebhookResourceStatusEnum = {
+    Queued: 'queued',
+    Failed: 'failed'
+} as const;
+
+export type BatchWebhookResourceStatusEnum = typeof BatchWebhookResourceStatusEnum[keyof typeof BatchWebhookResourceStatusEnum];
+
 export interface Boxknight {
     'username': string;
     'password': string;
@@ -8539,6 +8572,56 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Resend webhook notifications for a batch of entities.
+         * @summary Resend webhooks
+         * @param {BatchWebhookResendRequest} batchWebhookResendRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resendWebhooks: async (batchWebhookResendRequest: BatchWebhookResendRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'batchWebhookResendRequest' is not null or undefined
+            assertParamExists('resendWebhooks', 'batchWebhookResendRequest', batchWebhookResendRequest)
+            const localVarPath = `/v1/batches/webhooks`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(batchWebhookResendRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Retrieve a batch operation. `Beta`
          * @summary Retrieve a batch operation
          * @param {string} id 
@@ -8680,6 +8763,19 @@ export const BatchesApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Resend webhook notifications for a batch of entities.
+         * @summary Resend webhooks
+         * @param {BatchWebhookResendRequest} batchWebhookResendRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async resendWebhooks(batchWebhookResendRequest: BatchWebhookResendRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchWebhookResendResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.resendWebhooks(batchWebhookResendRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BatchesApi.resendWebhooks']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Retrieve a batch operation. `Beta`
          * @summary Retrieve a batch operation
          * @param {string} id 
@@ -8761,6 +8857,16 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.list(options).then((request) => request(axios, basePath));
         },
         /**
+         * Resend webhook notifications for a batch of entities.
+         * @summary Resend webhooks
+         * @param {BatchesApiResendWebhooksRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resendWebhooks(requestParameters: BatchesApiResendWebhooksRequest, options?: AxiosRequestConfig): AxiosPromise<BatchWebhookResendResponse> {
+            return localVarFp.resendWebhooks(requestParameters.batchWebhookResendRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Retrieve a batch operation. `Beta`
          * @summary Retrieve a batch operation
          * @param {BatchesApiRetrieveRequest} requestParameters Request parameters.
@@ -8829,6 +8935,13 @@ export interface BatchesApiImportFileRequest {
     readonly dataTemplate2?: string
 
     readonly dataFile2?: File
+}
+
+/**
+ * Request parameters for resendWebhooks operation in BatchesApi.
+ */
+export interface BatchesApiResendWebhooksRequest {
+    readonly batchWebhookResendRequest: BatchWebhookResendRequest
 }
 
 /**
@@ -8905,6 +9018,17 @@ export class BatchesApi extends BaseAPI {
      */
     public list(options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Resend webhook notifications for a batch of entities.
+     * @summary Resend webhooks
+     * @param {BatchesApiResendWebhooksRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public resendWebhooks(requestParameters: BatchesApiResendWebhooksRequest, options?: AxiosRequestConfig) {
+        return BatchesApiFp(this.configuration).resendWebhooks(requestParameters.batchWebhookResendRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

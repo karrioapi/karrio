@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.10`.
+    The current version is `2026.1.11`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.10
+  version: 2026.1.11
 paths:
   /:
     get:
@@ -795,6 +795,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /v1/batches/webhooks:
+    post:
+      operationId: $$$$$$$$resend_webhooks
+      description: Resend webhook notifications for a batch of entities.
+      summary: Resend webhooks
+      tags:
+      - Batches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchWebhookResendRequest'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchWebhookResendResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: resendWebhooks
   /v1/carriers:
     get:
       operationId: '&&list'
@@ -5720,6 +5758,63 @@ components:
           description: The list of tracking info to process.
       required:
       - trackers
+    BatchWebhookResendRequest:
+      type: object
+      properties:
+        entity_ids:
+          type: array
+          items:
+            type: string
+        object_type:
+          enum:
+          - tracker
+          - shipment
+          type: string
+          x-spec-enum-id: d88710a9180d4ffa
+          default: tracker
+        webhook_id:
+          type: string
+      required:
+      - entity_ids
+    BatchWebhookResendResponse:
+      type: object
+      properties:
+        object_type:
+          type: string
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/BatchWebhookResource'
+        count:
+          type: integer
+        test_mode:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - count
+      - created_at
+      - object_type
+      - resources
+      - test_mode
+    BatchWebhookResource:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          enum:
+          - queued
+          - failed
+          type: string
+          x-spec-enum-id: 430b7857a52e5d9b
+        error:
+          type: string
+          nullable: true
+      required:
+      - id
+      - status
     CarrierConnection:
       type: object
       description: |-

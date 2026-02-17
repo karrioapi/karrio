@@ -91,10 +91,17 @@ def apply_custom_markups(context: Context, result):
         markup_plan = (markup.metadata or {}).get("plan")
         return markup_plan is None or markup_plan == tenant_plan
 
+    # Extract request options for feature-gated markup checks
+    request_options = {}
+    if context_data:
+        request_options = context_data.get("options") or {}
+
     applicable_markups = [m for m in markups if matches_plan(m)]
 
     return functools.reduce(
-        lambda cumulated_result, markup: markup.apply_charge(cumulated_result),
+        lambda cumulated_result, markup: markup.apply_charge(
+            cumulated_result, options=request_options
+        ),
         applicable_markups,
         result,
     )

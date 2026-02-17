@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@karrio/ui/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@karrio/ui/components/ui/table";
-import { Plus, Search, MoreHorizontal, Edit3, Trash2, DollarSign, Percent, Zap, AlertCircle } from 'lucide-react';
+import { Plus, Search, MoreHorizontal, Edit3, Trash2, DollarSign, Percent, Zap, AlertCircle, Eye } from 'lucide-react';
 import { LineChart, Line, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useMarkups, useMarkupMutation, useMarkupForm, MarkupType } from "@karrio/hooks/admin-markups";
 import { MarkupTypeEnum } from "@karrio/types/graphql/admin-ee";
@@ -40,11 +40,13 @@ function CreateMarkupDialog({ open, onOpenChange, onSubmit }: CreateMarkupDialog
     handleCarrierChange,
     handleServiceChange,
     handleConnectionChange,
+    handleOrganizationChange,
     resetForm,
     toMutationInput,
     availableCarriers,
     availableServices,
     systemConnections,
+    organizations,
   } = useMarkupForm();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -155,9 +157,85 @@ function CreateMarkupDialog({ open, onOpenChange, onSubmit }: CreateMarkupDialog
               />
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="meta_type">Category</Label>
+                <Select
+                  value={formData.meta?.type || "none"}
+                  onValueChange={(value) => updateFormData({ meta: { ...formData.meta, type: value === "none" ? undefined : value } as any })}
+                >
+                  <SelectTrigger id="meta_type">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="brokerage-fee">Brokerage Fee</SelectItem>
+                    <SelectItem value="insurance">Insurance</SelectItem>
+                    <SelectItem value="surcharge">Surcharge</SelectItem>
+                    <SelectItem value="notification">Notification</SelectItem>
+                    <SelectItem value="address-validation">Address Validation</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="meta_plan">Plan</Label>
+                <Input
+                  id="meta_plan"
+                  value={formData.meta?.plan || ""}
+                  onChange={(e) => updateFormData({ meta: { ...formData.meta, plan: e.target.value || undefined } as any })}
+                  placeholder="e.g. scale, pro, enterprise"
+                />
+              </div>
+            </div>
+
             <div>
-              <Label>Carriers (leave empty for all carriers)</Label>
-              <div className="grid grid-cols-3 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+              <Label htmlFor="feature_gate">Feature Gate</Label>
+              <Input
+                id="feature_gate"
+                value={formData.meta?.feature_gate || ""}
+                onChange={(e) => updateFormData({ meta: { ...formData.meta, feature_gate: e.target.value || undefined } as any })}
+                placeholder="e.g. insurance, notification, address_validation"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Service feature key required for this markup to apply at runtime
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label htmlFor="show_in_preview">Show in Rate Sheet Preview</Label>
+                <p className="text-xs text-muted-foreground">Display computed column in rate sheet preview</p>
+              </div>
+              <Switch
+                id="show_in_preview"
+                checked={formData.meta?.show_in_preview ?? false}
+                onCheckedChange={(checked) => updateFormData({ meta: { ...formData.meta, show_in_preview: checked || undefined } as any })}
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Carriers (leave empty for all carriers)</Label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:text-primary/80 font-medium"
+                    onClick={() => availableCarriers.forEach(c => { if (!formData.carrier_codes.includes(c)) handleCarrierChange(c, true); })}
+                  >
+                    Select All
+                  </button>
+                  <span className="text-xs text-muted-foreground">|</span>
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:text-primary/80 font-medium"
+                    onClick={() => formData.carrier_codes.forEach(c => handleCarrierChange(c, false))}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3 max-h-40 overflow-y-auto border rounded-md p-3">
                 {availableCarriers.map((carrier) => (
                   <div key={carrier} className="flex items-center space-x-2">
                     <Checkbox
@@ -176,10 +254,31 @@ function CreateMarkupDialog({ open, onOpenChange, onSubmit }: CreateMarkupDialog
               </div>
             </div>
 
-            {formData.carrier_codes.length > 0 && availableServices.length > 0 && (
-              <div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
                 <Label>Services (leave empty for all services)</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                {availableServices.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => availableServices.forEach(s => { if (!formData.service_codes.includes(s)) handleServiceChange(s, true); })}
+                    >
+                      Select All
+                    </button>
+                    <span className="text-xs text-muted-foreground">|</span>
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => formData.service_codes.forEach(s => handleServiceChange(s, false))}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+              </div>
+              {availableServices.length > 0 ? (
+                <div className="grid grid-cols-2 gap-3 max-h-40 overflow-y-auto border rounded-md p-3">
                   {availableServices.map((service) => (
                     <div key={service} className="flex items-center space-x-2">
                       <Checkbox
@@ -196,13 +295,41 @@ function CreateMarkupDialog({ open, onOpenChange, onSubmit }: CreateMarkupDialog
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="text-xs text-muted-foreground border rounded-md p-3">
+                  {formData.carrier_codes.length > 0
+                    ? "No services available for selected carriers"
+                    : "Select carriers to filter by specific services"
+                  }
+                </div>
+              )}
+            </div>
 
-            {systemConnections.length > 0 && (
-              <div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
                 <Label>Connections (leave empty for all connections)</Label>
-                <div className="grid grid-cols-1 gap-2 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                {systemConnections.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => systemConnections.forEach(({ node: c }: any) => { if (!formData.connection_ids.includes(c.id)) handleConnectionChange(c.id, true); })}
+                    >
+                      Select All
+                    </button>
+                    <span className="text-xs text-muted-foreground">|</span>
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => formData.connection_ids.forEach(id => handleConnectionChange(id, false))}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+              </div>
+              {systemConnections.length > 0 ? (
+                <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
                   {systemConnections.map(({ node: connection }: any) => (
                     <div key={connection.id} className="flex items-center space-x-2">
                       <Checkbox
@@ -215,6 +342,52 @@ function CreateMarkupDialog({ open, onOpenChange, onSubmit }: CreateMarkupDialog
                         className="text-sm font-normal cursor-pointer flex-1"
                       >
                         {connection.display_name || connection.carrier_name} ({connection.carrier_id})
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-muted-foreground border rounded-md p-3">
+                  No system connections configured
+                </div>
+              )}
+            </div>
+
+            {organizations.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Organizations (leave empty for all organizations)</Label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => organizations.forEach(({ node: o }: any) => { if (!formData.organization_ids.includes(o.id)) handleOrganizationChange(o.id, true); })}
+                    >
+                      Select All
+                    </button>
+                    <span className="text-xs text-muted-foreground">|</span>
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => formData.organization_ids.forEach(id => handleOrganizationChange(id, false))}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {organizations.map(({ node: org }: any) => (
+                    <div key={org.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`org-${org.id}`}
+                        checked={formData.organization_ids.includes(org.id)}
+                        onCheckedChange={(checked) => handleOrganizationChange(org.id, !!checked)}
+                      />
+                      <Label
+                        htmlFor={`org-${org.id}`}
+                        className="text-sm font-normal cursor-pointer flex-1"
+                      >
+                        {org.name || org.slug}
                       </Label>
                     </div>
                   ))}
@@ -260,10 +433,12 @@ function EditMarkupDialog({ open, onOpenChange, markup, onSubmit }: EditMarkupDi
     handleCarrierChange,
     handleServiceChange,
     handleConnectionChange,
+    handleOrganizationChange,
     toMutationInput,
     availableCarriers,
     availableServices,
     systemConnections,
+    organizations,
   } = useMarkupForm(markup || undefined);
 
   React.useEffect(() => {
@@ -277,6 +452,7 @@ function EditMarkupDialog({ open, onOpenChange, markup, onSubmit }: EditMarkupDi
         carrier_codes: Array.isArray(markup.carrier_codes) ? markup.carrier_codes : [],
         service_codes: Array.isArray(markup.service_codes) ? markup.service_codes : [],
         connection_ids: Array.isArray(markup.connection_ids) ? markup.connection_ids : [],
+        meta: (markup as any)?.meta || {},
       } as any);
     }
   }, [markup?.id]);
@@ -382,9 +558,69 @@ function EditMarkupDialog({ open, onOpenChange, markup, onSubmit }: EditMarkupDi
               />
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-meta_type">Category</Label>
+                <Select
+                  value={formData.meta?.type || "none"}
+                  onValueChange={(value) => updateFormData({ meta: { ...formData.meta, type: value === "none" ? undefined : value } as any })}
+                >
+                  <SelectTrigger id="edit-meta_type">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="brokerage-fee">Brokerage Fee</SelectItem>
+                    <SelectItem value="insurance">Insurance</SelectItem>
+                    <SelectItem value="surcharge">Surcharge</SelectItem>
+                    <SelectItem value="notification">Notification</SelectItem>
+                    <SelectItem value="address-validation">Address Validation</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-meta_plan">Plan</Label>
+                <Input
+                  id="edit-meta_plan"
+                  value={formData.meta?.plan || ""}
+                  onChange={(e) => updateFormData({ meta: { ...formData.meta, plan: e.target.value || undefined } as any })}
+                  placeholder="e.g. scale, pro, enterprise"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="edit-show_in_preview">Show in Rate Sheet Preview</Label>
+              <Switch
+                id="edit-show_in_preview"
+                checked={formData.meta?.show_in_preview ?? false}
+                onCheckedChange={(checked) => updateFormData({ meta: { ...formData.meta, show_in_preview: checked || undefined } as any })}
+              />
+            </div>
+
             <div>
-              <Label>Carriers (leave empty for all carriers)</Label>
-              <div className="grid grid-cols-3 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+              <div className="flex items-center justify-between mb-2">
+                <Label>Carriers (leave empty for all carriers)</Label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:text-primary/80 font-medium"
+                    onClick={() => availableCarriers.forEach(c => { if (!formData.carrier_codes.includes(c)) handleCarrierChange(c, true); })}
+                  >
+                    Select All
+                  </button>
+                  <span className="text-xs text-muted-foreground">|</span>
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:text-primary/80 font-medium"
+                    onClick={() => formData.carrier_codes.forEach(c => handleCarrierChange(c, false))}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3 max-h-40 overflow-y-auto border rounded-md p-3">
                 {availableCarriers.map((carrier) => (
                   <div key={carrier} className="flex items-center space-x-2">
                     <Checkbox
@@ -403,10 +639,31 @@ function EditMarkupDialog({ open, onOpenChange, markup, onSubmit }: EditMarkupDi
               </div>
             </div>
 
-            {formData.carrier_codes.length > 0 && availableServices.length > 0 && (
-              <div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
                 <Label>Services (leave empty for all services)</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                {availableServices.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => availableServices.forEach(s => { if (!formData.service_codes.includes(s)) handleServiceChange(s, true); })}
+                    >
+                      Select All
+                    </button>
+                    <span className="text-xs text-muted-foreground">|</span>
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => formData.service_codes.forEach(s => handleServiceChange(s, false))}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+              </div>
+              {availableServices.length > 0 ? (
+                <div className="grid grid-cols-2 gap-3 max-h-40 overflow-y-auto border rounded-md p-3">
                   {availableServices.map((service) => (
                     <div key={service} className="flex items-center space-x-2">
                       <Checkbox
@@ -423,13 +680,41 @@ function EditMarkupDialog({ open, onOpenChange, markup, onSubmit }: EditMarkupDi
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="text-xs text-muted-foreground border rounded-md p-3">
+                  {formData.carrier_codes.length > 0
+                    ? "No services available for selected carriers"
+                    : "Select carriers to filter by specific services"
+                  }
+                </div>
+              )}
+            </div>
 
-            {systemConnections.length > 0 && (
-              <div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
                 <Label>Connections (leave empty for all connections)</Label>
-                <div className="grid grid-cols-1 gap-2 mt-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                {systemConnections.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => systemConnections.forEach(({ node: c }: any) => { if (!formData.connection_ids.includes(c.id)) handleConnectionChange(c.id, true); })}
+                    >
+                      Select All
+                    </button>
+                    <span className="text-xs text-muted-foreground">|</span>
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => formData.connection_ids.forEach(id => handleConnectionChange(id, false))}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+              </div>
+              {systemConnections.length > 0 ? (
+                <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
                   {systemConnections.map(({ node: connection }: any) => (
                     <div key={connection.id} className="flex items-center space-x-2">
                       <Checkbox
@@ -442,6 +727,52 @@ function EditMarkupDialog({ open, onOpenChange, markup, onSubmit }: EditMarkupDi
                         className="text-sm font-normal cursor-pointer flex-1"
                       >
                         {connection.display_name || connection.carrier_name} ({connection.carrier_id})
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-muted-foreground border rounded-md p-3">
+                  No system connections configured
+                </div>
+              )}
+            </div>
+
+            {organizations.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Organizations (leave empty for all organizations)</Label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => organizations.forEach(({ node: o }: any) => { if (!formData.organization_ids.includes(o.id)) handleOrganizationChange(o.id, true); })}
+                    >
+                      Select All
+                    </button>
+                    <span className="text-xs text-muted-foreground">|</span>
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:text-primary/80 font-medium"
+                      onClick={() => formData.organization_ids.forEach(id => handleOrganizationChange(id, false))}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {organizations.map(({ node: org }: any) => (
+                    <div key={org.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`edit-org-${org.id}`}
+                        checked={formData.organization_ids.includes(org.id)}
+                        onCheckedChange={(checked) => handleOrganizationChange(org.id, !!checked)}
+                      />
+                      <Label
+                        htmlFor={`edit-org-${org.id}`}
+                        className="text-sm font-normal cursor-pointer flex-1"
+                      >
+                        {org.name || org.slug}
                       </Label>
                     </div>
                   ))}
@@ -854,6 +1185,8 @@ export default function MarkupsPage() {
                     <TableRow>
                       <TableHead>Markup</TableHead>
                       <TableHead>Type & Amount</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Plan</TableHead>
                       <TableHead>Coverage</TableHead>
                       <TableHead>Visibility</TableHead>
                       <TableHead>Status</TableHead>
@@ -888,6 +1221,27 @@ export default function MarkupsPage() {
                           <span className="font-medium text-gray-900">
                             {markup.markup_type === 'PERCENTAGE' ? `${markup.amount}%` : `$${markup.amount}`}
                           </span>
+                        </TableCell>
+                        <TableCell>
+                          {(markup as any).meta?.type ? (
+                            <span className="text-xs px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded capitalize">
+                              {(markup as any).meta.type.replace(/-/g, ' ')}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-gray-400">&mdash;</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            {(markup as any).meta?.plan ? (
+                              <span className="text-sm text-gray-700">{(markup as any).meta.plan}</span>
+                            ) : (
+                              <span className="text-xs text-gray-400">&mdash;</span>
+                            )}
+                            {(markup as any).meta?.show_in_preview && (
+                              <span title="Shown in rate sheet preview"><Eye className="h-3.5 w-3.5 text-blue-500" /></span>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">

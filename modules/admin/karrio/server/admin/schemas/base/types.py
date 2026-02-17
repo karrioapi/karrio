@@ -499,6 +499,7 @@ class MarkupType:
     amount: float
     markup_type: str
     is_visible: bool = True
+    meta: typing.Optional[utils.JSON] = None
     metadata: typing.Optional[utils.JSON] = None
 
     @strawberry.field
@@ -586,12 +587,32 @@ class MarkupType:
     ) -> utils.Connection["MarkupType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.MarkupFilter()
         _filter_data = _filter.to_dict()
-        _org_filter = lib.identity(
-            dict(organization_ids__contains=[_filter_data.pop("account_id")])
-            if _filter_data.get("account_id")
-            else {}
-        )
-        queryset = pricing.Markup.objects.filter(**_org_filter)
+        _queryset_filters = {}
+
+        if _filter_data.get("id"):
+            _queryset_filters["id"] = _filter_data["id"]
+        if _filter_data.get("name"):
+            _queryset_filters["name__icontains"] = _filter_data["name"]
+        if _filter_data.get("active") is not None:
+            _queryset_filters["active"] = _filter_data["active"]
+        if _filter_data.get("markup_type"):
+            _queryset_filters["markup_type"] = _filter_data["markup_type"]
+        if _filter_data.get("account_id"):
+            _queryset_filters["organization_ids__contains"] = [_filter_data["account_id"]]
+        if _filter_data.get("meta_key"):
+            _key = f"meta__{_filter_data['meta_key']}"
+            if _filter_data.get("meta_value"):
+                _queryset_filters[f"{_key}__icontains"] = _filter_data["meta_value"]
+            else:
+                _queryset_filters[f"{_key}__isnull"] = False
+        if _filter_data.get("metadata_key"):
+            _key = f"metadata__{_filter_data['metadata_key']}"
+            if _filter_data.get("metadata_value"):
+                _queryset_filters[f"{_key}__icontains"] = _filter_data["metadata_value"]
+            else:
+                _queryset_filters[f"{_key}__isnull"] = False
+
+        queryset = pricing.Markup.objects.filter(**_queryset_filters)
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 

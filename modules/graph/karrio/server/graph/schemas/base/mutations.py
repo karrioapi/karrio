@@ -579,7 +579,16 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         )
         data = input.copy()
         carriers = data.pop("carriers", [])
+        # Pop service_rates BEFORE serializer so they're processed after
+        # services are created (needed for temp-to-real ID mapping)
+        service_rates_data = data.pop("service_rates", None)
         # Note: origin_countries stays in data - saved via serializer
+
+        # Preserve services input for building temp-to-real service ID map
+        services_input = [
+            (svc.copy() if isinstance(svc, dict) else dict(svc))
+            for svc in data.get("services", [])
+        ] if "services" in data else []
 
         serializer = serializers.RateSheetModelSerializer(
             instance,
@@ -590,7 +599,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         serializer.is_valid(raise_exception=True)
         rate_sheet = serializer.save()
 
-        # Handle services updates
+        # Handle services updates (creates new services in DB)
         if "services" in data:
             save_many_to_many_data(
                 "services",
@@ -599,6 +608,17 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 payload=data,
                 context=info.context.request,
             )
+            rate_sheet.refresh_from_db()
+
+        # Process service_rates AFTER services exist so temp IDs can be resolved
+        if service_rates_data is not None:
+            temp_to_real_id = serializer.build_temp_to_real_service_map(
+                services_input
+            )
+            # Full replacement: frontend sends all rates
+            rate_sheet.service_rates = []
+            rate_sheet.save(update_fields=["service_rates"])
+            serializer.process_service_rates(service_rates_data, temp_to_real_id)
 
         # Link/unlink carriers
         if any(carriers):

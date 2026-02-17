@@ -1196,3 +1196,78 @@ export const GET_WORKER_HEALTH = gql`
   }
 `;
 
+// -----------------------------------------------------------
+// Worker Management Mutations
+// -----------------------------------------------------------
+export const TRIGGER_TRACKER_UPDATE = gql`
+  mutation TriggerTrackerUpdate($input: TriggerTrackerUpdateInput!) {
+    trigger_tracker_update(input: $input) {
+      errors {
+        field
+        messages
+      }
+      task_count
+    }
+  }
+`;
+
+export const RETRY_WEBHOOK = gql`
+  mutation RetryWebhook($input: RetryWebhookInput!) {
+    retry_webhook(input: $input) {
+      errors {
+        field
+        messages
+      }
+      event_id
+    }
+  }
+`;
+
+export const REVOKE_TASK = gql`
+  mutation RevokeTask($input: RevokeTaskInput!) {
+    revoke_task(input: $input) {
+      errors {
+        field
+        messages
+      }
+      task_id
+    }
+  }
+`;
+
+export const CLEANUP_TASK_EXECUTIONS = gql`
+  mutation CleanupTaskExecutions($input: CleanupTaskExecutionsInput!) {
+    cleanup_task_executions(input: $input) {
+      errors {
+        field
+        messages
+      }
+      deleted_count
+    }
+  }
+`;
+
+export const RESET_STUCK_TASKS = gql`
+  mutation ResetStuckTasks($input: ResetStuckTasksInput!) {
+    reset_stuck_tasks(input: $input) {
+      errors {
+        field
+        messages
+      }
+      updated_count
+    }
+  }
+`;
+
+export const TRIGGER_DATA_ARCHIVING = gql`
+  mutation TriggerDataArchiving {
+    trigger_data_archiving {
+      errors {
+        field
+        messages
+      }
+      success
+    }
+  }
+`;
+

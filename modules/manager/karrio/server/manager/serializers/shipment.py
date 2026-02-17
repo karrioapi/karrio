@@ -206,6 +206,7 @@ class ShipmentSerializer(ShipmentData):
                 shipment,
                 context=context,
                 service=service,
+                carriers=carriers,
             )
         # fmt: on
         return shipment
@@ -655,6 +656,7 @@ def buy_shipment_label(
     context: typing.Any = None,
     data: dict = dict(),
     selected_rate: typing.Union[dict, datatypes.Rate] = None,
+    carriers: typing.List = None,
     **kwargs,
 ) -> models.Shipment:
     extra: dict = {}
@@ -663,8 +665,14 @@ def buy_shipment_label(
     invoice_template = shipment.options.get("invoice_template")
 
     payload = {**data, "selected_rate_id": selected_rate.get("id")}
-    carrier = gateway.Connections.first(
-        carrier_id=selected_rate.get("carrier_id"),
+
+    # Resolve carrier from pre-loaded carriers list if available, otherwise query
+    _carrier_id = selected_rate.get("carrier_id")
+    carrier = next(
+        (c for c in (carriers or []) if c.carrier_id == _carrier_id),
+        None,
+    ) or gateway.Connections.first(
+        carrier_id=_carrier_id,
         test_mode=selected_rate.get("test_mode"),
         context=context,
     )

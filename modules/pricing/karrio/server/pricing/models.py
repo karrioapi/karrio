@@ -123,6 +123,21 @@ class Markup(core.Entity):
         """,
     )
 
+    # Structured categorization metadata
+    meta = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="""
+        Structured categorization metadata.
+        {
+            "type": "brokerage-fee",       # brokerage-fee | insurance | surcharge | notification | address-validation
+            "plan": "scale",               # Free-form plan/tier name
+            "show_in_preview": true,        # Whether to show computed column in rate sheet preview
+            "feature_gate": "insurance"    # Optional: service feature key that must be supported AND requested in options
+        }
+        """,
+    )
+
     # Metadata
     metadata = models.JSONField(
         default=dict,
@@ -144,9 +159,26 @@ class Markup(core.Entity):
         type_ = "$" if self.markup_type == "AMOUNT" else "%"
         return f"{self.name} ({self.amount}{type_})"
 
-    def _is_applicable(self, rate: datatypes.Rate) -> bool:
+    def _is_applicable(self, rate: datatypes.Rate, options: dict = None) -> bool:
         """Check if this markup should be applied to the given rate."""
         applicable = []
+
+        # Feature gate check via meta.feature_gate
+        # If set, the markup only applies when:
+        #   1. The service supports the feature (via service_features in rate.meta)
+        #   2. The shipper requests it in options (at runtime)
+        feature_key = (self.meta or {}).get("feature_gate")
+
+        if feature_key:
+            # Check 1: service supports this feature
+            service_features = (rate.meta or {}).get("service_features", [])
+            if feature_key not in service_features:
+                return False
+
+            # Check 2: option was requested
+            request_options = options or {}
+            if not request_options.get(feature_key):
+                return False
 
         # Check carrier code filter
         if self.carrier_codes:
@@ -173,11 +205,11 @@ class Markup(core.Entity):
         # If no filters specified (all empty), markup applies to all rates
         return (not applicable) or (any(applicable) and all(applicable))
 
-    def apply_charge(self, response: datatypes.RateResponse) -> datatypes.RateResponse:
+    def apply_charge(self, response: datatypes.RateResponse, options: dict = None) -> datatypes.RateResponse:
         """Apply this markup to all applicable rates in the response."""
 
         def apply(rate: datatypes.Rate) -> datatypes.Rate:
-            if not self._is_applicable(rate):
+            if not self._is_applicable(rate, options=options):
                 return rate
 
             logger.debug(

@@ -24,6 +24,10 @@ class MarkupFilter(utils.Paginated):
     active: typing.Optional[bool] = strawberry.UNSET
     markup_type: typing.Optional[admin.MarkupTypeEnum] = strawberry.UNSET
     account_id: typing.Optional[str] = strawberry.UNSET
+    meta_key: typing.Optional[str] = strawberry.UNSET
+    meta_value: typing.Optional[str] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -109,6 +113,7 @@ class CreateMarkupMutationInput(utils.BaseInput):
     service_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
     connection_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     organizations: typing.Optional[typing.List[str]] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
@@ -125,6 +130,7 @@ class UpdateMarkupMutationInput(utils.BaseInput):
     service_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
     connection_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     organizations: typing.Optional[typing.List[str]] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
@@ -139,3 +145,34 @@ class ResourceUsageFilter(utils.UsageFilter):
     carrier_connection_id: typing.Optional[str] = strawberry.UNSET
     markup_id: typing.Optional[str] = strawberry.UNSET
     account_id: typing.Optional[str] = strawberry.UNSET
+
+
+# -----------------------------------------------------------
+# Worker Management Mutation Inputs
+# -----------------------------------------------------------
+
+@strawberry.input
+class TriggerTrackerUpdateInput(utils.BaseInput):
+    tracker_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class RetryWebhookInput(utils.BaseInput):
+    event_id: str
+
+
+@strawberry.input
+class RevokeTaskInput(utils.BaseInput):
+    task_id: str
+
+
+@strawberry.input
+class CleanupTaskExecutionsInput(utils.BaseInput):
+    retention_days: typing.Optional[int] = strawberry.UNSET
+    statuses: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class ResetStuckTasksInput(utils.BaseInput):
+    threshold_minutes: typing.Optional[int] = strawberry.UNSET
+    statuses: typing.Optional[typing.List[str]] = strawberry.UNSET

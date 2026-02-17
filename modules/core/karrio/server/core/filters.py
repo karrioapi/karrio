@@ -691,8 +691,8 @@ class TracingRecordFilter(filters.FilterSet):
         lookup_expr="icontains",
         help_text="related request API log.",
     )
-    date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
-    date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
+    date_after = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
+    date_before = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
     keyword = filters.CharFilter(
         method="keyword_filter",
         help_text="search in key, meta and record data",

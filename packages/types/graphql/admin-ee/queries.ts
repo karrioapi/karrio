@@ -18,6 +18,7 @@ export const GET_MARKUPS = gql`
           service_codes
           connection_ids
           organization_ids
+          meta
           metadata
           usage(filter: $usageFilter) {
             total_shipments
@@ -49,6 +50,7 @@ export const GET_MARKUP = gql`
       service_codes
       connection_ids
       organization_ids
+      meta
       metadata
       usage {
         total_shipments
@@ -274,6 +276,7 @@ export const CREATE_MARKUP = gql`
         carrier_codes
         service_codes
         connection_ids
+        meta
         metadata
       }
     }
@@ -297,6 +300,7 @@ export const UPDATE_MARKUP = gql`
         carrier_codes
         service_codes
         connection_ids
+        meta
         metadata
       }
     }

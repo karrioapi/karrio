@@ -23,6 +23,7 @@ export interface GetMarkups_markups_edges_node {
   service_codes: string[];
   connection_ids: string[];
   organization_ids: string[];
+  meta: any | null;
   metadata: any | null;
   usage: GetMarkups_markups_edges_node_usage;
 }
@@ -77,6 +78,7 @@ export interface GetMarkup_markup {
   service_codes: string[];
   connection_ids: string[];
   organization_ids: string[];
+  meta: any | null;
   metadata: any | null;
   usage: GetMarkup_markup_usage;
 }
@@ -401,6 +403,7 @@ export interface CreateMarkup_create_markup_markup {
   carrier_codes: string[];
   service_codes: string[];
   connection_ids: string[];
+  meta: any | null;
   metadata: any | null;
 }
 
@@ -440,6 +443,7 @@ export interface UpdateMarkup_update_markup_markup {
   carrier_codes: string[];
   service_codes: string[];
   connection_ids: string[];
+  meta: any | null;
   metadata: any | null;
 }
 
@@ -655,6 +659,10 @@ export interface MarkupFilter {
   active?: boolean | null;
   markup_type?: MarkupTypeEnum | null;
   account_id?: string | null;
+  meta_key?: string | null;
+  meta_value?: string | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
 }
 
 // null
@@ -707,6 +715,7 @@ export interface CreateMarkupMutationInput {
   service_codes?: string[] | null;
   connection_ids?: string[] | null;
   organizations?: string[] | null;
+  meta?: any | null;
   metadata?: any | null;
 }
 
@@ -722,6 +731,7 @@ export interface UpdateMarkupMutationInput {
   service_codes?: string[] | null;
   connection_ids?: string[] | null;
   organizations?: string[] | null;
+  meta?: any | null;
   metadata?: any | null;
 }
 

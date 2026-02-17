@@ -32,6 +32,13 @@ import { useAPIMetadata } from "./api-metadata";
 // Types
 export type MarkupType = GetMarkups['markups']['edges'][0]['node'];
 
+export interface MarkupMeta {
+  type?: "brokerage-fee" | "insurance" | "surcharge" | "notification" | "address-validation";
+  plan?: string;
+  show_in_preview?: boolean;
+  feature_gate?: string;
+}
+
 export interface MarkupFormData {
   name: string;
   amount: string;
@@ -42,6 +49,7 @@ export interface MarkupFormData {
   service_codes: string[];
   connection_ids: string[];
   organization_ids: string[];
+  meta: MarkupMeta;
   metadata: Record<string, any>;
 }
 
@@ -161,6 +169,7 @@ export function useMarkupForm(initialData?: MarkupType) {
     service_codes: initialData?.service_codes || [],
     connection_ids: initialData?.connection_ids || [],
     organization_ids: initialData?.organization_ids || [],
+    meta: (initialData as any)?.meta || {},
     metadata: initialData?.metadata || {},
   });
 
@@ -244,6 +253,7 @@ export function useMarkupForm(initialData?: MarkupType) {
       service_codes: [],
       connection_ids: [],
       organization_ids: [],
+      meta: {},
       metadata: {},
     });
   };
@@ -258,8 +268,9 @@ export function useMarkupForm(initialData?: MarkupType) {
     service_codes: formData.service_codes.length > 0 ? formData.service_codes : undefined,
     connection_ids: formData.connection_ids.length > 0 ? formData.connection_ids : undefined,
     organizations: formData.organization_ids.length > 0 ? formData.organization_ids : undefined,
+    meta: Object.keys(formData.meta).length > 0 ? formData.meta : undefined,
     metadata: Object.keys(formData.metadata).length > 0 ? formData.metadata : undefined,
-  });
+  } as any);
 
   return {
     formData,

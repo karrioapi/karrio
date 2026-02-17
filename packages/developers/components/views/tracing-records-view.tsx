@@ -590,7 +590,7 @@ export function TracingRecordsView() {
           <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm flex-shrink-0">
             <span className="text-muted-foreground">
               Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + records.length}
-              {query.data?.tracing_records?.page_info.has_next_page && " of many"}
+              {query.data?.tracing_records?.page_info.count != null && ` of ${query.data.tracing_records.page_info.count}`}
             </span>
             <div className="flex gap-2">
               <Button
@@ -717,7 +717,7 @@ export function TracingRecordsView() {
               <div className="border-t border-border px-4 py-2 flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
                   Showing {((filter.offset as number) || 0) + 1}-{((filter.offset as number) || 0) + records.length}
-                  {query.data?.tracing_records?.page_info.has_next_page && " of many"}
+                  {query.data?.tracing_records?.page_info.count != null && ` of ${query.data.tracing_records.page_info.count}`}
                 </span>
                 <div className="flex gap-2">
                   <Button

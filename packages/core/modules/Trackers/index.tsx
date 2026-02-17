@@ -9,15 +9,16 @@ import {
 } from "@karrio/ui/components/tracking-preview-sheet";
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
 import {
-  formatDate,
   formatDateTime,
   formatRef,
   getURLSearchParams,
   isNone,
   isNoneOrEmpty,
+  preventPropagation,
   snakeCase,
 } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
+import { useWebhooks } from "@karrio/hooks/webhook";
 import { TrackersFilter } from "@karrio/ui/components/trackers-filter";
 import { FiltersCard } from "@karrio/ui/components/filters-card";
 import { StickyTableWrapper } from "@karrio/ui/components/sticky-table-wrapper";
@@ -31,13 +32,15 @@ import {
   TableCell
 } from "@karrio/ui/components/ui/table";
 import { Button } from "@karrio/ui/components/ui/button";
+import { Checkbox } from "@karrio/ui/components/ui/checkbox";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { ShipmentsStatusBadge } from "@karrio/ui/components/shipments-status-badge";
 import { useLoader } from "@karrio/ui/core/components/loader";
 import { Spinner } from "@karrio/ui/core/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
 import { useSearchParams } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { TrackerMenu } from "@karrio/ui/components/tracker-menu";
+import { Loader2, ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 
@@ -52,6 +55,11 @@ export default function TrackersPage(pageProps: any) {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [trackerToDelete, setTrackerToDelete] = useState<string | null>(null);
     const [initialized, setInitialized] = React.useState(false);
+    const [allChecked, setAllChecked] = React.useState(false);
+    const [selection, setSelection] = React.useState<string[]>([]);
+    const [webhookMenuOpen, setWebhookMenuOpen] = React.useState(false);
+    const { query: webhooksQuery } = useWebhooks();
+    const webhooks = webhooksQuery.data?.webhooks?.edges || [];
     const context = useTrackers({
       setVariablesToURL: true,
       preloadNextPage: true,
@@ -73,6 +81,41 @@ export default function TrackersPage(pageProps: any) {
       };
 
       setFilter(query);
+    };
+    const updatedSelection = (
+      selectedTrackers: string[],
+      current: typeof trackers,
+    ) => {
+      const tracker_ids = (current?.edges || []).map(
+        ({ node: tracker }) => tracker.id,
+      );
+      const _selection = selectedTrackers.filter((id) =>
+        tracker_ids.includes(id),
+      );
+      const selected =
+        _selection.length > 0 &&
+        _selection.length === (tracker_ids || []).length;
+      setAllChecked(selected);
+      if (
+        selectedTrackers.filter((id) => !tracker_ids.includes(id)).length > 0
+      ) {
+        setSelection(_selection);
+      }
+    };
+    const handleCheckboxChange = (checked: boolean, name: string) => {
+      if (name === "all") {
+        setSelection(
+          !checked
+            ? []
+            : (trackers?.edges || []).map(({ node: { id } }) => id),
+        );
+      } else {
+        setSelection(
+          checked
+            ? [...selection, name]
+            : selection.filter((id) => id !== name),
+        );
+      }
     };
 
     // Define filter options for the cards
@@ -110,6 +153,9 @@ export default function TrackersPage(pageProps: any) {
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
+    useEffect(() => {
+      updatedSelection(selection, trackers);
+    }, [selection, trackers]);
     useEffect(() => {
       if (query.isFetching && !initialized && !isNoneOrEmpty(modal)) {
         const tracker = (trackers?.edges || []).find(
@@ -153,18 +199,98 @@ export default function TrackersPage(pageProps: any) {
               <Table className="trackers-table">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="service text-xs items-center">
-                      SHIPPING SERVICE
+                    <TableHead
+                      className="selector text-center p-0 items-center sticky-left"
+                      onClick={preventPropagation}
+                    >
+                      <div className="py-2 pl-2 pr-4">
+                        <Checkbox
+                          checked={allChecked}
+                          onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, "all")}
+                        />
+                      </div>
                     </TableHead>
-                    <TableHead className="status items-center"></TableHead>
-                    <TableHead className="destination text-xs items-center">
-                      DESTINATION
-                    </TableHead>
-                    <TableHead className="last-event text-xs items-center">
-                      LAST EVENT
-                    </TableHead>
-                    <TableHead className="date text-xs items-center">DATE</TableHead>
-                    <TableHead className="action sticky-right"></TableHead>
+
+                    {selection.length > 0 && (
+                      <TableHead className="p-2" colSpan={6}>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={mutation.resendWebhooks.isLoading}
+                            className="px-3"
+                            onClick={() =>
+                              mutation.resendWebhooks.mutateAsync({
+                                entityIds: selection,
+                              })
+                            }
+                          >
+                            {mutation.resendWebhooks.isLoading && (
+                              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                            )}
+                            Resend to All Webhooks
+                          </Button>
+                          <div className="relative">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={mutation.resendWebhooks.isLoading}
+                              className="px-3"
+                              onClick={() => setWebhookMenuOpen(!webhookMenuOpen)}
+                            >
+                              Send to Webhook
+                              <ChevronDown className="h-3 w-3 ml-1" />
+                            </Button>
+                            {webhookMenuOpen && (
+                              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[200px]">
+                                {webhooks.length === 0 && (
+                                  <div className="px-3 py-2 text-xs text-gray-500">
+                                    No webhooks configured
+                                  </div>
+                                )}
+                                {webhooks.map(({ node: webhook }) => (
+                                  <button
+                                    key={webhook.id}
+                                    className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                                    onClick={() => {
+                                      setWebhookMenuOpen(false);
+                                      mutation.resendWebhooks.mutateAsync({
+                                        entityIds: selection,
+                                        webhookId: webhook.id,
+                                      });
+                                    }}
+                                  >
+                                    <p className="font-medium truncate">
+                                      {webhook.url}
+                                    </p>
+                                    <p className="text-gray-400 truncate">
+                                      {(webhook as any).enabled_events?.join(", ") || "all events"}
+                                    </p>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </TableHead>
+                    )}
+
+                    {selection.length === 0 && (
+                      <>
+                        <TableHead className="service text-xs items-center">
+                          SHIPPING SERVICE
+                        </TableHead>
+                        <TableHead className="status items-center"></TableHead>
+                        <TableHead className="destination text-xs items-center">
+                          DESTINATION
+                        </TableHead>
+                        <TableHead className="last-event text-xs items-center">
+                          LAST EVENT
+                        </TableHead>
+                        <TableHead className="date text-xs items-center">DATE</TableHead>
+                        <TableHead className="action sticky-right"></TableHead>
+                      </>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -172,10 +298,24 @@ export default function TrackersPage(pageProps: any) {
                   {(trackers?.edges || []).map(({ node: tracker }) => (
                     <TableRow
                       key={tracker.id}
-                      className="items cursor-pointer transition-colors duration-150 ease-in-out hover:bg-gray-50"
-                      onClick={() => previewTracker(tracker)}
+                      className={`items cursor-pointer transition-colors duration-150 ease-in-out ${
+                        selection.includes(tracker.id)
+                          ? 'bg-blue-50 hover:bg-blue-100'
+                          : 'hover:bg-gray-50'
+                      }`}
                     >
-                      <TableCell className="service items-center py-1 px-0 text-xs font-bold text-gray-600">
+                      <TableCell className="selector text-center items-center p-0 sticky-left">
+                        <div className="py-3 pl-2 pr-4">
+                          <Checkbox
+                            checked={selection.includes(tracker.id)}
+                            onCheckedChange={(checked) => handleCheckboxChange(checked as boolean, tracker.id)}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell
+                        className="service items-center py-1 px-0 text-xs font-bold text-gray-600"
+                        onClick={() => previewTracker(tracker)}
+                      >
                         <div className="flex items-center">
                           <CarrierImage
                             carrier_name={
@@ -210,7 +350,10 @@ export default function TrackersPage(pageProps: any) {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="status items-center">
+                      <TableCell
+                        className="status items-center"
+                        onClick={() => previewTracker(tracker)}
+                      >
                         <div style={{ paddingLeft: '7px', paddingRight: '7px' }}>
                           <ShipmentsStatusBadge
                             status={tracker.status as string}
@@ -218,7 +361,10 @@ export default function TrackersPage(pageProps: any) {
                           />
                         </div>
                       </TableCell>
-                      <TableCell className="destination items-center text-xs text-gray-600">
+                      <TableCell
+                        className="destination items-center text-xs text-gray-600"
+                        onClick={() => previewTracker(tracker)}
+                      >
                         {(() => {
                           const city = (tracker as any).shipment?.recipient?.city;
                           const countryCode = (tracker as any).shipment?.recipient?.country_code
@@ -233,7 +379,10 @@ export default function TrackersPage(pageProps: any) {
                           );
                         })()}
                       </TableCell>
-                      <TableCell className="last-event items-center py-1 text-xs font-bold text-gray-600 md:text-ellipsis">
+                      <TableCell
+                        className="last-event items-center py-1 text-xs font-bold text-gray-600 md:text-ellipsis"
+                        onClick={() => previewTracker(tracker)}
+                      >
                         <div style={{ lineHeight: "16px" }}>
                           <span
                             className="md:text-ellipsis break-words"
@@ -254,9 +403,9 @@ export default function TrackersPage(pageProps: any) {
                           {!isNoneOrEmpty(tracker?.events) && (() => {
                             const event = (tracker?.events as TrackingEvent[])[0];
                             const details = [
-                              event?.location,
                               [event?.date, event?.time].filter(Boolean).join(" "),
                               event?.code,
+                              event?.location,
                             ].filter(Boolean).join(" · ");
                             return details ? (
                               <p className="text-gray-400 font-medium text-ellipsis">
@@ -276,19 +425,14 @@ export default function TrackersPage(pageProps: any) {
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="action items-center p-1 sticky-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="ml-auto"
-                          onClick={(e) => {
-                            e.stopPropagation();
+                      <TableCell className="action items-center px-0 sticky-right">
+                        <TrackerMenu
+                          tracker={tracker as any}
+                          onDelete={() => {
                             setTrackerToDelete(tracker.id);
                             setDeleteDialogOpen(true);
                           }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
