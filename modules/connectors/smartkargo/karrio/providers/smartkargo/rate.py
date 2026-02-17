@@ -82,7 +82,7 @@ def rate_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels, required=["weight"])
-    services = lib.to_services(payload.services, provider_units.ShippingService)
+    service = lib.to_services(payload.services, provider_units.ShippingService).first
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
@@ -104,11 +104,13 @@ def rate_request(
         else provider_units.DimensionUnit.CFT.value
     )
 
-    # Get service type if specified (empty returns all available services)
-    service_type = next(
-        (provider_units.ShippingService.map(s).value for s in services),
-        "",
-    ) if any(services) else ""
+    # Get service type - API requires serviceType (errors if empty)
+    # Default to EST (Standard) when none specified, like UPS defaults to ups_standard
+    service_type = (
+        service.value
+        if service
+        else provider_units.ShippingService.smartkargo_standard.value
+    )
 
     # Get shipment date from options or use current date (issueDate is required by API)
     shipment_date = options.shipment_date.state or datetime.datetime.now()
