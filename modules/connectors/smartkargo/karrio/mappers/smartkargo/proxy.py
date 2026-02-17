@@ -36,7 +36,9 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        shipment_response = lib.to_dict(response)
+        raw_response = lib.to_dict(response)
+        # API returns array-wrapped response like [{...}], unwrap it
+        shipment_response = raw_response[0] if isinstance(raw_response, list) else raw_response
 
         # Step 2: Fetch labels asynchronously for each booked shipment
         shipments = shipment_response.get("shipments") or []

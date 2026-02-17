@@ -222,7 +222,11 @@ def contextual_reference(request: Request = None, reduced: bool = True):
                 for s in c.services
                 or [
                     lib.to_object(lib.models.ServiceLevel, _)
-                    for _ in references.get("service_levels", {}).get(c.ext, [])
+                    for _ in (
+                        references.get("ratesheets", {})
+                        .get(c.ext, {})
+                        .get("services", [])
+                    )
                 ]
             }
             for c in custom_carriers
