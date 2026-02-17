@@ -57,6 +57,10 @@ class TokenAuthentication(BaseTokenAuthentication):
 
     @catch_auth_exception
     def authenticate(self, request):
+        # Return cached auth from middleware to avoid duplicate DB query
+        if getattr(request, "_karrio_auth_result", None) is not None:
+            return request._karrio_auth_result
+
         auth = super().authenticate(request)
 
         if auth is not None:
@@ -79,6 +83,10 @@ class TokenAuthentication(BaseTokenAuthentication):
 class TokenBasicAuthentication(BaseBasicAuthentication):
     @catch_auth_exception
     def authenticate(self, request):
+        # Return cached auth from middleware to avoid duplicate DB query
+        if getattr(request, "_karrio_auth_result", None) is not None:
+            return request._karrio_auth_result
+
         auth = super(TokenBasicAuthentication, self).authenticate(request)
 
         if auth is not None:
@@ -122,6 +130,10 @@ class JWTAuthentication(BaseJWTAuthentication):
 
     @catch_auth_exception
     def authenticate(self, request):
+        # Return cached auth from middleware to avoid duplicate DB query
+        if getattr(request, "_karrio_auth_result", None) is not None:
+            return request._karrio_auth_result
+
         # Try cookie first, then fall back to Authorization header
         cookie_name = getattr(settings, "JWT_AUTH_COOKIE", "karrio_access_token")
         raw_token = request.COOKIES.get(cookie_name)
@@ -169,6 +181,10 @@ class JWTAuthentication(BaseJWTAuthentication):
 class OAuth2Authentication(BaseOAuth2Authentication):
     @catch_auth_exception
     def authenticate(self, request):
+        # Return cached auth from middleware to avoid duplicate DB query
+        if getattr(request, "_karrio_auth_result", None) is not None:
+            return request._karrio_auth_result
+
         auth = super().authenticate(request)
 
         if auth is not None:
@@ -289,6 +305,9 @@ def authenticate_user(request):
                     user, token = auth
                     request.user = user
                     request.token = token
+                    # Cache the auth result so DRF authentication classes
+                    # can skip the duplicate DB query
+                    request._karrio_auth_result = (user, token)
             except AttributeError as e:
                 # Skip SessionAuthentication if it fails with _request attribute error
                 if "'WSGIRequest' object has no attribute '_request'" in str(e):
