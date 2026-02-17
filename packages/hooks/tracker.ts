@@ -131,10 +131,40 @@ export function useTrackerMutation() {
       handleFailure(karrio.trackers.remove(data)),
     { onSuccess: invalidateCache, onError },
   );
+  const resendWebhooks = useMutation(
+    ({
+      entityIds,
+      webhookId,
+    }: {
+      entityIds: string[];
+      webhookId?: string;
+    }) =>
+      handleFailure(
+        karrio.axios
+          .post(`/v1/batches/webhooks`, {
+            entity_ids: entityIds,
+            object_type: "tracker",
+            ...(webhookId ? { webhook_id: webhookId } : {}),
+          })
+          .then(({ data }) => data),
+      ),
+    { onSuccess: invalidateCache, onError },
+  );
+  const refreshTracker = useMutation(
+    (data: { tracking_number: string; carrier_name: string }) =>
+      handleFailure(
+        karrio.trackers.add({
+          trackingData: data as any,
+        }),
+      ),
+    { onSuccess: invalidateCache, onError },
+  );
 
   return {
     createTracker,
     deleteTracker,
+    resendWebhooks,
+    refreshTracker,
   };
 }
 
