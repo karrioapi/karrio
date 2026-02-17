@@ -1,4 +1,3 @@
-from constance import config
 from django.urls import reverse
 from rest_framework.request import Request
 
@@ -53,16 +52,14 @@ def contextual_metadata(request: Request):
         _host = "/"
 
     host = _host[:-1] if _host[-1] == "/" else _host
-    name = lib.identity(
-        getattr(conf.settings.tenant, "name", conf.settings.APP_NAME)
-        if conf.settings.MULTI_TENANTS
-        else getattr(config, "APP_NAME", None) or conf.settings.APP_NAME
-    )
-    website = lib.identity(
-        getattr(conf.settings.tenant, "website", conf.settings.APP_WEBSITE)
-        if conf.settings.MULTI_TENANTS
-        else getattr(config, "APP_WEBSITE", None) or conf.settings.APP_WEBSITE
-    )
+    if conf.settings.MULTI_TENANTS:
+        name = getattr(conf.settings.tenant, "name", conf.settings.APP_NAME)
+        website = getattr(conf.settings.tenant, "website", conf.settings.APP_WEBSITE)
+    else:
+        # Batch fetch APP_NAME and APP_WEBSITE in a single query
+        _app_config = utils.batch_get_constance_values(["APP_NAME", "APP_WEBSITE"])
+        name = _app_config.get("APP_NAME") or conf.settings.APP_NAME
+        website = _app_config.get("APP_WEBSITE") or conf.settings.APP_WEBSITE
 
     # Batch fetch all feature flags
     flag_names = [flag for flag, _ in conf.settings.FEATURE_FLAGS]
@@ -116,30 +113,34 @@ def _get_system_credentials_status(test_mode: bool = None) -> dict:
     """
     result = {}
 
+    # Collect all config keys needed across all carriers to batch-fetch
+    all_config_keys = set()
+    carrier_vars = {}  # carrier_id -> (prod_vars, sandbox_vars)
+
     for carrier_id, metadata_obj in ref.PLUGIN_METADATA.items():
         system_config = metadata_obj.get("system_config")
         if not system_config:
             continue
 
-        # Group env vars by production/sandbox
         prod_vars = [k for k in system_config.keys() if "SANDBOX" not in k]
         sandbox_vars = [k for k in system_config.keys() if "SANDBOX" in k]
+        carrier_vars[carrier_id] = (prod_vars, sandbox_vars)
+        all_config_keys.update(prod_vars)
+        all_config_keys.update(sandbox_vars)
 
-        # Check if production credentials are set (all vars must be non-empty)
-        prod_configured = False
-        if prod_vars:
-            prod_configured = all(
-                bool(getattr(config, var, None))
-                for var in prod_vars
-            )
+    if not all_config_keys:
+        return result
 
-        # Check if sandbox credentials are set (all vars must be non-empty)
-        sandbox_configured = False
-        if sandbox_vars:
-            sandbox_configured = all(
-                bool(getattr(config, var, None))
-                for var in sandbox_vars
-            )
+    # Batch fetch all config values in a single query
+    config_values = utils.batch_get_constance_values(list(all_config_keys))
+
+    for carrier_id, (prod_vars, sandbox_vars) in carrier_vars.items():
+        prod_configured = bool(prod_vars) and all(
+            bool(config_values.get(var)) for var in prod_vars
+        )
+        sandbox_configured = bool(sandbox_vars) and all(
+            bool(config_values.get(var)) for var in sandbox_vars
+        )
 
         if prod_configured or sandbox_configured:
             entry = {
