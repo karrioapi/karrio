@@ -9,7 +9,6 @@ import {
 } from "@karrio/ui/components/tracking-preview-sheet";
 import { DeleteConfirmationDialog } from "@karrio/ui/components/delete-confirmation-dialog";
 import {
-  formatDate,
   formatDateTime,
   formatRef,
   getURLSearchParams,
