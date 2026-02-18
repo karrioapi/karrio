@@ -1,6 +1,7 @@
 import typing
 import datetime
 import strawberry
+from strawberry.types import Info
 
 import karrio.lib as lib
 import karrio.server.graph.utils as utils
@@ -27,13 +28,13 @@ class WebhookType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["WebhookType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["WebhookType"]:
         return models.Webhook.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.WebhookFilter] = strawberry.UNSET,
     ) -> utils.Connection["WebhookType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.WebhookFilter()
@@ -63,13 +64,13 @@ class EventType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["EventType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["EventType"]:
         return models.Event.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.EventFilter] = strawberry.UNSET,
     ) -> utils.Connection["EventType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.EventFilter()

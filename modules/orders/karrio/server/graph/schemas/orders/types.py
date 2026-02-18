@@ -1,6 +1,7 @@
 import typing
 import datetime
 import strawberry
+from strawberry.types import Info
 import uuid
 
 import karrio.server.graph.utils as utils
@@ -86,13 +87,13 @@ class OrderType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["OrderType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["OrderType"]:
         return models.Order.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.OrderFilter] = strawberry.UNSET,
     ) -> utils.Connection["OrderType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.OrderFilter()
