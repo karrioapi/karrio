@@ -61,6 +61,22 @@ class Proxy(abc.ABC):
             self.__class__.get_tracking.__name__, self.settings.carrier_name
         )
 
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        """Send request(s) to create a return shipment label from a carrier webservice
+
+        Args:
+            request (Serializable): a carrier specific serializable request data type
+
+        Returns:
+            Deserializable: a carrier specific deserializable response data type
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_return_shipment.__name__, self.settings.carrier_name
+        )
+
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to create a shipment from a carrier webservice
 

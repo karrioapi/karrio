@@ -138,6 +138,7 @@ class ShipmentRequest:
     options: Dict = {}
     reference: str = ""
     label_type: str = None
+    is_return: bool = False
 
     metadata: Dict = {}
 
