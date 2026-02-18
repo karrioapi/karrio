@@ -82,6 +82,24 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict, meta)
 
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        access_token = self.authenticate().deserialize()
+        ctx = lib.to_dict(request.ctx) or {}
+        query = urllib.parse.urlencode(ctx)
+        response = lib.request(
+            url=f"{self.settings.returns_server_url}/orders?{query}",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "content-type": "application/json",
+                "Accept-Language": self.settings.language,
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         access_token = self.authenticate().deserialize()
         query = urllib.parse.urlencode(request.serialize())

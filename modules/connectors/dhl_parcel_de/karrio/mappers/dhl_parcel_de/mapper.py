@@ -25,6 +25,11 @@ class Mapper(mapper.Mapper):
     ) -> lib.Serializable:
         return provider.shipment_request(payload, self.settings)
 
+    def create_return_shipment_request(
+        self, payload: models.ShipmentRequest
+    ) -> lib.Serializable:
+        return provider.return_shipment_request(payload, self.settings)
+
     def create_cancel_shipment_request(
         self, payload: models.ShipmentCancelRequest
     ) -> lib.Serializable[str]:
@@ -52,6 +57,11 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
         return provider.parse_shipment_response(response, self.settings)
+
+    def parse_return_shipment_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+        return provider.parse_return_shipment_response(response, self.settings)
 
     def parse_tracking_response(
         self, response: lib.Deserializable[str]
