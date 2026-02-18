@@ -7,6 +7,9 @@ from karrio.providers.mydhl.rate import (
 from karrio.providers.mydhl.shipment import (
     parse_shipment_response,
     shipment_request,
+
+    parse_return_shipment_response,
+    return_shipment_request,
 )
 from karrio.providers.mydhl.pickup import (
     parse_pickup_cancel_response,
