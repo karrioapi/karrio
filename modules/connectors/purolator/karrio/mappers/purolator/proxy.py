@@ -128,3 +128,6 @@ class Proxy(BaseProxy):
         )
 
         return Deserializable(response, XP.to_xml)
+
+    def create_return_shipment(self, request: Serializable) -> Deserializable:
+        return self.create_shipment(request)
