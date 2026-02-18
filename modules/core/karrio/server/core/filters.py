@@ -283,6 +283,10 @@ class ShipmentFilters(filters.FilterSet):
         help_text="shipment has manifest",
         method="has_manifest_filter",
     )
+    is_return = filters.BooleanFilter(
+        field_name="is_return",
+        help_text="filter by return shipments",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -380,6 +384,11 @@ class ShipmentFilters(filters.FilterSet):
         ),
         openapi.OpenApiParameter(
             "has_manifest",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "is_return",
             type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),

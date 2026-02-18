@@ -59,6 +59,7 @@ class ShipmentFilter(utils.Paginated):
     meta_value: typing.Optional[utils.JSON] = strawberry.UNSET
     has_tracker: typing.Optional[bool] = strawberry.UNSET
     has_manifest: typing.Optional[bool] = strawberry.UNSET
+    is_return: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input

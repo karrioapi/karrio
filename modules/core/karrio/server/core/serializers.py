@@ -726,7 +726,6 @@ class RateRequest(validators.OptionDefaultSerializer):
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
-            "is_return": true,
             "shipper_instructions": "This is a shipper instruction",
             "recipient_instructions": "This is a recipient instruction",
             "doc_files": [
@@ -1498,7 +1497,6 @@ class ShippingData(validators.OptionDefaultSerializer):
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
-            "is_return": true,
             "shipper_instructions": "This is a shipper instruction",
             "recipient_instructions": "This is a recipient instruction",
             "doc_files": [
@@ -1543,6 +1541,13 @@ class ShippingData(validators.OptionDefaultSerializer):
         choices=LABEL_TYPES,
         default=units.LabelType.PDF.name,
         help_text="The shipment label file type.",
+    )
+    is_return = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="Indicates whether this shipment is a return shipment. "
+        "When true, addresses are auto-swapped and the request is routed "
+        "to the carrier's return shipment API.",
     )
 
 
@@ -1655,6 +1660,11 @@ class ShipmentDetails(serializers.Serializer):
         required=True,
         help_text="Specified whether it was created with a carrier in test mode",
     )
+    is_return = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="Indicates whether this shipment is a return shipment.",
+    )
 
 
 class ShipmentContent(serializers.Serializer):
@@ -1728,7 +1738,6 @@ class ShipmentContent(serializers.Serializer):
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
             "saturday_delivery": true,
-            "is_return": true,
             "shipper_instructions": "This is a shipper instruction",
             "recipient_instructions": "This is a recipient instruction",
             "doc_files": [

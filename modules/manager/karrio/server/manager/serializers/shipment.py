@@ -403,7 +403,6 @@ class ShipmentUpdateData(validators.OptionDefaultSerializer):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "shipping_charges": 10.00,
-            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -476,7 +475,6 @@ class ShipmentRateData(validators.OptionDefaultSerializer):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "shipping_charges": 10.00,
-            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -536,7 +534,6 @@ class ShipmentPurchaseSerializer(Shipment):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "shipping_charges": 10.00,
-            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",

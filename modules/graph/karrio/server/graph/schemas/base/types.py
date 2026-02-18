@@ -1667,6 +1667,7 @@ class ShipmentType:
     label_url: typing.Optional[str]
     invoice_url: typing.Optional[str]
     tracker: typing.Optional[TrackerType]
+    is_return: bool
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
