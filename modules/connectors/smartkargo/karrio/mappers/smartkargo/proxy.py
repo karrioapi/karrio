@@ -24,7 +24,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        # Step 1: Create the shipment/exchange
+        # Step 1: Create the booking
         response = lib.request(
             url=f"{self.settings.server_url}/exchange/single?version=2.0",
             data=lib.to_json(request.serialize()),
@@ -40,50 +40,30 @@ class Proxy(proxy.Proxy):
         # API returns array-wrapped response like [{...}], unwrap it
         shipment_response = raw_response[0] if isinstance(raw_response, list) else raw_response
 
-        # Step 2: Fetch labels asynchronously for each booked shipment
+        # Step 2: Fetch labels for all shipments (conditionally, like Sendle's abort pattern)
         shipments = shipment_response.get("shipments") or []
         label_type = request.ctx.get("label_type", "PDF") if request.ctx else "PDF"
-
-        # Build label fetch requests with index to maintain order
-        # API manual: format=zpl for ZPL, omit parameter for PDF (default)
         format_param = "&format=zpl" if label_type.upper() == "ZPL" else ""
-        label_requests = [
-            dict(
-                index=idx,
-                prefix=shipment.get("prefix"),
-                air_waybill=shipment.get("airWaybill"),
-            )
-            for idx, shipment in enumerate(shipments)
-            if shipment.get("prefix")
-            and shipment.get("airWaybill")
-            and shipment.get("status") == "Booked"
-        ]
 
-        # Initialize labels list with empty dicts for all shipments
-        labels = [{} for _ in shipments]
-
-        # Fetch labels asynchronously for better performance
-        if label_requests:
-            label_responses = lib.run_asynchronously(
-                lambda payload: (
-                    payload["index"],
+        labels = lib.run_asynchronously(
+            lambda shipment: (
+                lib.to_dict(
                     lib.request(
-                        url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['air_waybill']}{format_param}",
+                        url=f"{shipment['labelUrl']}{format_param}",
                         trace=self.trace_as("json"),
                         method="GET",
                         headers={
                             "Content-Type": "application/json",
                             "code": self.settings.api_key,
                         },
-                    ),
-                ),
-                label_requests,
-            )
-            # Place labels at correct indices
-            for idx, resp in label_responses:
-                labels[idx] = lib.to_dict(resp)
+                    )
+                )
+                if shipment.get("labelUrl") and shipment.get("status") == "Booked"
+                else {}
+            ),
+            shipments,
+        )
 
-        # Combine shipment response with labels and pass context
         return lib.Deserializable(
             (shipment_response, labels),
             lambda data: data,
@@ -91,13 +71,14 @@ class Proxy(proxy.Proxy):
         )
 
     def get_label(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Fetch label for a shipment using prefix and airWaybill."""
+        """Fetch label for a shipment using labelUrl from shipment meta."""
         payload = request.serialize()
-        # API manual: format=zpl for ZPL, omit parameter for PDF (default)
-        label_type = payload.get('labelType', 'PDF')
+        label_url = payload["labelUrl"]
+        label_type = payload.get("labelType", "PDF")
         format_param = "&format=zpl" if label_type.upper() == "ZPL" else ""
+
         response = lib.request(
-            url=f"{self.settings.server_url}/label?prefix={payload['prefix']}&airWaybill={payload['airWaybill']}{format_param}",
+            url=f"{label_url}{format_param}",
             trace=self.trace_as("json"),
             method="GET",
             headers={
