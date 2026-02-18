@@ -667,6 +667,7 @@ export interface get_shipment_shipment {
   tracking_url: string | null;
   tracker_id: string | null;
   test_mode: boolean;
+  is_return: boolean;
   service: string | null;
   reference: string | null;
   customs: get_shipment_shipment_customs | null;
@@ -968,6 +969,7 @@ export interface get_shipments_shipments_edges_node {
   tracking_url: string | null;
   tracker_id: string | null;
   test_mode: boolean;
+  is_return: boolean;
   service: string | null;
   reference: string | null;
   customs: get_shipments_shipments_edges_node_customs | null;
@@ -3045,6 +3047,7 @@ export interface get_order_order_shipments {
   return_shipment: get_order_order_shipments_return_shipment | null;
   messages: get_order_order_shipments_messages[];
   tracker_id: string | null;
+  is_return: boolean;
   tracker: get_order_order_shipments_tracker | null;
 }
 
@@ -3539,6 +3542,7 @@ export interface get_orders_orders_edges_node_shipments {
   return_shipment: get_orders_orders_edges_node_shipments_return_shipment | null;
   messages: get_orders_orders_edges_node_shipments_messages[];
   tracker_id: string | null;
+  is_return: boolean;
   tracker: get_orders_orders_edges_node_shipments_tracker | null;
 }
 

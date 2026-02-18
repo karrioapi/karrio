@@ -339,6 +339,7 @@ export const GET_SHIPMENT = gql`
       tracking_url
       tracker_id
       test_mode
+      is_return
       service
       reference
       customs {
@@ -637,6 +638,7 @@ export const GET_SHIPMENTS = gql`
           tracking_url
           tracker_id
           test_mode
+          is_return
           service
           reference
           customs {
@@ -2024,6 +2026,7 @@ export const GET_ORDER = gql`
         invoice_url
         tracking_url
         test_mode
+        is_return
         service
         reference
         customs {
@@ -2435,6 +2438,7 @@ export const GET_ORDERS = gql`
             invoice_url
             tracking_url
             test_mode
+            is_return
             service
             reference
             customs {
