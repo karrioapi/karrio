@@ -7,8 +7,10 @@ from karrio.providers.fedex.rate import rate_request, parse_rate_response
 from karrio.providers.fedex.shipment import (
     parse_shipment_cancel_response,
     parse_shipment_response,
+    parse_return_shipment_response,
     shipment_cancel_request,
     shipment_request,
+    return_shipment_request,
 )
 from karrio.providers.fedex.document import (
     parse_document_upload_response,

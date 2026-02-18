@@ -65,6 +65,9 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(responses, lib.to_dict, request.ctx)
 
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        return self.create_shipment(request)
+
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         access_token = self.authenticate(request).deserialize()
         response = lib.request(
