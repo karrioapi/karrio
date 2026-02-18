@@ -456,16 +456,16 @@ class Shipment:
         def action(gateway: gateway.Gateway):
             if payload.is_return:
                 # Auto-swap addresses: user provides outbound orientation
+                _payload = dict(lib.to_dict(payload))
+                _payload.update(
+                    shipper=lib.to_dict(payload.recipient),
+                    recipient=lib.to_dict(payload.shipper),
+                    return_address=lib.to_dict(
+                        payload.return_address or payload.shipper
+                    ),
+                )
                 swapped_payload = lib.to_object(
-                    models.ShipmentRequest,
-                    {
-                        **lib.to_dict(payload),
-                        "shipper": lib.to_dict(payload.recipient),
-                        "recipient": lib.to_dict(payload.shipper),
-                        "return_address": lib.to_dict(
-                            payload.return_address or payload.shipper
-                        ),
-                    },
+                    models.ShipmentRequest, _payload
                 )
 
                 is_valid, abortion = check_operation(
@@ -476,18 +476,16 @@ class Shipment:
                 if not is_valid:
                     return abortion
 
-                request: lib.Serializable = (
+                _request = (
                     gateway.mapper.create_return_shipment_request(swapped_payload)
                 )
-                response: lib.Deserializable = (
-                    gateway.proxy.create_return_shipment(request)
-                )
+                _response = gateway.proxy.create_return_shipment(_request)
 
                 @fail_safe(gateway)
-                def deserialize():
-                    return gateway.mapper.parse_return_shipment_response(response)
+                def _deserialize():
+                    return gateway.mapper.parse_return_shipment_response(_response)
 
-                return IDeserialize(deserialize)
+                return IDeserialize(_deserialize)
 
             is_valid, abortion = check_operation(
                 gateway,
