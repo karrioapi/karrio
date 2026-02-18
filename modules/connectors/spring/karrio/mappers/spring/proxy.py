@@ -69,3 +69,6 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             responses,
             lambda __: [(tracking_number, lib.to_dict(res)) for tracking_number, res in __],
         )
+
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        return self.create_shipment(request)

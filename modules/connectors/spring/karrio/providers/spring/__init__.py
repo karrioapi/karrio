@@ -5,6 +5,9 @@ from karrio.providers.spring.shipment import (
     parse_shipment_response,
     shipment_cancel_request,
     shipment_request,
+
+    parse_return_shipment_response,
+    return_shipment_request,
 )
 from karrio.providers.spring.tracking import (
     parse_tracking_response,
