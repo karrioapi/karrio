@@ -288,6 +288,7 @@ SHIPPING_RESPONSE = {
     ],
     "reference": "",
     "return_address": None,
+    "is_return": False,
     "label_type": "PDF",
     "carrier_ids": [],
     "tracker_id": None,
