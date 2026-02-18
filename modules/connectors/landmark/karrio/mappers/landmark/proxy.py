@@ -62,3 +62,6 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 (num, lib.to_element(track)) for num, track in res if any(track.strip())
             ],
         )
+
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        return self.create_shipment(request)
