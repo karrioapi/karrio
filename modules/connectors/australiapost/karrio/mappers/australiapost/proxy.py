@@ -149,3 +149,6 @@ class Proxy(proxy.Proxy):
             )
 
         return lib.Deserializable(response, lib.to_dict, ctx=ctx)
+
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        return self.create_shipment(request)
