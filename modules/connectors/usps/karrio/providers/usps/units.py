@@ -271,6 +271,8 @@ CUSTOM_OPTIONS = [
     ShippingOption.usps_price_type.name,
     ShippingOption.usps_destination_entry_facility_type.name,
     ShippingOption.usps_shipping_filter.name,
+    ShippingOption.usps_return_receipt.name,
+    ShippingOption.usps_return_receipt_electronic.name,
 ]
 
 

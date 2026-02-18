@@ -316,7 +316,7 @@ def shipment_request(
                     or [
                         lib.to_int(_.code)
                         for __, _ in package_options(package).items()
-                        if _.name not in provider_units.CUSTOM_OPTIONS
+                        if __ not in provider_units.CUSTOM_OPTIONS
                     ]
                 ),
                 mailingDate=lib.fdate(
