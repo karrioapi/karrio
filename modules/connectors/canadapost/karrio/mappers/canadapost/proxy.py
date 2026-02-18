@@ -103,6 +103,41 @@ class Proxy(proxy.Proxy):
             requests.ctx,
         )
 
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        response = lib.request(
+            url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/authorizedreturn",
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
+            method="POST",
+            headers={
+                "Content-Type": "application/vnd.cpc.authreturn-v2+xml",
+                "Accept": "application/vnd.cpc.authreturn-v2+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": f"{self.settings.language}-CA",
+            },
+        )
+
+        label_refs = provider_utils.parse_label_references(response)
+        label = (
+            lib.request(
+                decoder=lib.encode_base64,
+                url=label_refs["href"],
+                method="GET",
+                headers={
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept": label_refs["media"],
+                },
+            )
+            if label_refs.get("href") is not None
+            else None
+        )
+
+        return lib.Deserializable(
+            dict(response=response, label=label),
+            lambda _: (lib.to_element(_["response"]), _["label"]),
+            request.ctx,
+        )
+
     def cancel_shipment(self, requests: lib.Serializable) -> lib.Deserializable:
         # retrieve shipment infos to check if refund is necessary
         infos: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
