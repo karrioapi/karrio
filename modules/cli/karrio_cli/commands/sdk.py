@@ -459,6 +459,9 @@ def _add_extension(
             templates.PROVIDER_SHIPMENT_CREATE_TEMPLATE.stream(**context).dump(
                 f"{providers_dir}/shipment/create.py"
             )
+            templates.PROVIDER_SHIPMENT_RETURN_TEMPLATE.stream(**context).dump(
+                f"{providers_dir}/shipment/return_shipment.py"
+            )
             templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(
                 f"{providers_dir}/shipment/__init__.py"
             )
@@ -636,6 +639,9 @@ def _add_features(
             )
             templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(
                 os.path.join(providers_dir, "shipment", "cancel.py")
+            )
+            templates.PROVIDER_SHIPMENT_RETURN_TEMPLATE.stream(**context).dump(
+                os.path.join(providers_dir, "shipment", "return_shipment.py")
             )
             templates.PROVIDER_SHIPMENT_INDEX_TEMPLATE.stream(**context).dump(
                 os.path.join(providers_dir, "shipment.py")

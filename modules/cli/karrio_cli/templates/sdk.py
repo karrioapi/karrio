@@ -243,6 +243,11 @@ class Mapper(mapper.Mapper):
         self, payload: models.ShipmentRequest
     ) -> lib.Serializable:
         return provider.shipment_request(payload, self.settings)
+    {% endif %}{% if "shipping" in features %}
+    def create_return_shipment_request(
+        self, payload: models.ShipmentRequest
+    ) -> lib.Serializable:
+        return provider.return_shipment_request(payload, self.settings)
     {% endif %}{% if "pickup" in features %}
     def create_pickup_request(
         self, payload: models.PickupRequest
@@ -309,6 +314,11 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
         return provider.parse_shipment_response(response, self.settings)
+    {% endif %}{% if "shipping" in features %}
+    def parse_return_shipment_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+        return provider.parse_return_shipment_response(response, self.settings)
     {% endif %}{% if "tracking" in features %}
     def parse_tracking_response(
         self, response: lib.Deserializable[str]
@@ -424,6 +434,18 @@ class Proxy(proxy.Proxy):
         #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
         #     },
         # )
+
+        # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
+
+        return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
+    {% endif %}{% if "shipping" in features %}
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
+        # ---------------------------------------------------------
+        # For carriers with a dedicated return API, implement the return-specific endpoint here.
+        # For carriers that reuse the same shipment API for returns, you can delegate:
+        #   return self.create_shipment(request)
 
         # DEVELOPMENT ONLY: Remove this stub response and uncomment the API call above when implementing the real carrier API
         {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
@@ -751,8 +773,10 @@ from karrio.providers.{{id}}.rate import (
 from karrio.providers.{{id}}.shipment import (
     parse_shipment_cancel_response,
     parse_shipment_response,
+    parse_return_shipment_response,
     shipment_cancel_request,
     shipment_request,
+    return_shipment_request,
 ){% endif %}{% if "pickup" in features %}
 from karrio.providers.{{id}}.pickup import (
     parse_pickup_cancel_response,
