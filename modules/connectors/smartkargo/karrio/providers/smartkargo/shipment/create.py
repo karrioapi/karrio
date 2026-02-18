@@ -26,11 +26,11 @@ def parse_shipment_response(
     valid = response.get("valid", "")
     label_type = _response.ctx.get("label_type", "PDF") if _response.ctx else "PDF"
 
-    # Extract details from all shipments for multi-piece handling
+    # Labels are 1:1 with shipments; parser filters for Booked status
     shipment_details = [
         (f"{idx}", _extract_details(shipment_data, label_data, label_type, settings))
         for idx, (shipment_data, label_data) in enumerate(
-            zip(shipments, labels + [{}] * (len(shipments) - len(labels))), start=1
+            zip(shipments, labels), start=1
         )
         if shipment_data.get("status") == "Booked"
     ] if status == "Processed" and valid == "Yes" and any(shipments) else []
