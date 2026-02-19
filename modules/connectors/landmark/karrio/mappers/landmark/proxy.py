@@ -20,6 +20,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/xml",
+                "User-Agent": "Karrio/2024.0 (https://karrio.io)",
             },
         )
 
@@ -33,6 +34,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "application/xml",
+                "User-Agent": "Karrio/2024.0 (https://karrio.io)",
             },
         )
 
@@ -50,6 +52,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                     headers={
                         "Content-Type": "application/xml",
                         "Cache-Control": "no-cache",
+                        "User-Agent": "Karrio/2024.0 (https://karrio.io)",
                     },
                 ),
             ),
