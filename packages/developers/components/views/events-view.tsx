@@ -446,6 +446,7 @@ const EventDetailViewer = ({ event }: { event: any }) => {
         <div className="text-xs text-muted-foreground space-y-1">
           <div>ID: {event.id}</div>
           {entityId && <div>Entity: {entityId}</div>}
+          {(event as any).request_id && <div>Request ID: {(event as any).request_id}</div>}
           <div>{formatDateTimeLong(event.created_at)}</div>
         </div>
       </div>

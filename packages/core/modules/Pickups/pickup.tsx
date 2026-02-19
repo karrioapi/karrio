@@ -213,6 +213,12 @@ export const PickupComponent = ({
                     <div className="text-xs mb-1 font-bold">Status</div>
                     <StatusBadge status={pickup.status || "scheduled"} />
                   </div>
+                  {(pickup as any).request_id && (
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Request ID</div>
+                      <CopiableLink text={(pickup as any).request_id} title="Copy Request ID" variant="outline" />
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-3">
                   <div>
