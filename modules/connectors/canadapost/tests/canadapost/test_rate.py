@@ -62,6 +62,29 @@ class TestCanadaPostRating(unittest.TestCase):
 
             self.assertEqual(lib.to_dict(parsed_response), ParsedRatingParsingError)
 
+    def test_create_international_rate_request_uses_recipient_country_code(self):
+        # Use a non-CA/US destination so the international branch is selected.
+        payload = models.RateRequest(
+            shipper={"postal_code": "H8Z 2Z3", "country_code": "CA"},
+            recipient={"postal_code": "99999", "country_code": "FR"},
+            parcels=[
+                {
+                    "height": 3,
+                    "length": 10,
+                    "width": 3,
+                    "weight": 4.0,
+                    "dimension_unit": "CM",
+                    "weight_unit": "KG",
+                }
+            ],
+            options={"shipment_date": "2020-12-18"},
+        )
+
+        request = gateway.mapper.create_rate_request(payload).serialize()[0]
+
+        self.assertIn("<country-code>FR</country-code>", request)
+        self.assertNotIn("<country-code>99999</country-code>", request)
+
     def test_parse_rate_missing_args_error(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = RatingMissingArgsErrorXML
