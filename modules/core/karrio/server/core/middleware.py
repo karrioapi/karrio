@@ -1,9 +1,62 @@
+import re
 import json
+import uuid
 import threading
 from django.db.models import Q
 from django.http import HttpResponse
 from karrio.core.utils import Tracer
 from karrio.server.conf import settings
+
+
+# --- X-Request-ID utilities ---
+
+_REQUEST_ID_RE = re.compile(r"^[a-zA-Z0-9_\-\.]{1,200}$")
+
+
+def _generate_request_id() -> str:
+    return f"req_{uuid.uuid4().hex}"
+
+
+def _is_valid_request_id(value: str) -> bool:
+    return bool(value) and bool(_REQUEST_ID_RE.match(value))
+
+
+def get_request_id() -> str:
+    """Get the current request's request_id from thread-local storage."""
+    request = SessionContext.get_current_request()
+    return getattr(request, "request_id", None) if request else None
+
+
+class RequestIDMiddleware:
+    """Middleware to extract or generate X-Request-ID for every request.
+
+    Reads the X-Request-ID header from the incoming request. If present and
+    valid (alphanumeric + dashes + underscores + dots, max 200 chars), uses it.
+    Otherwise generates a new `req_<uuid>` identifier.
+
+    The request_id is:
+    - Set on `request.request_id`
+    - Added to the response as `X-Request-ID` header
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            client_id = request.META.get("HTTP_X_REQUEST_ID", "").strip()
+            request.request_id = (
+                client_id if _is_valid_request_id(client_id)
+                else _generate_request_id()
+            )
+        except Exception:
+            request.request_id = _generate_request_id()
+
+        response = self.get_response(request)
+
+        response["X-Request-ID"] = request.request_id
+
+        return response
 
 
 class CreatorAccess:
@@ -52,6 +105,11 @@ class SessionContext:
         self._inject_telemetry(tracer, request)
         request.tracer = tracer
 
+        # Propagate request_id into tracer context
+        request_id = getattr(request, "request_id", None)
+        if request_id:
+            tracer.add_context({"request_id": request_id})
+
         self._threadmap[threading.get_ident()] = request
 
         # Track request timing
@@ -92,6 +150,16 @@ class SessionContext:
                     user_id=str(user.id) if hasattr(user, "id") else None,
                     email=getattr(user, "email", None),
                     username=getattr(user, "username", None),
+                )
+
+            # Set request_id tag for Sentry correlation
+            request_id = getattr(request, "request_id", None)
+            if request_id:
+                tracer.set_tag("request_id", request_id)
+                tracer.add_breadcrumb(
+                    f"Request {request_id}",
+                    "http",
+                    {"request_id": request_id, "method": request.method, "path": request.path},
                 )
 
             # Set request context tags

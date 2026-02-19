@@ -65,12 +65,15 @@ class LoggingMixin(mixins.LoggingMixin):
         if test_mode is None and '"test_mode": false' in (self.log["response"] or ""):
             test_mode = False
 
+        request_id = failsafe(lambda: self.request.request_id)
+
         log = APILogIndex(
             **{
                 **self.log,
                 "data": data,
                 "response": response,
                 "entity_id": entity_id,
+                "request_id": request_id,
                 "test_mode": test_mode,
                 "query_params": query_params,
             }
@@ -81,6 +84,7 @@ class LoggingMixin(mixins.LoggingMixin):
 
         set_tracing_context(
             request_log_id=getattr(log, "id", None),
+            request_id=request_id,
             object_id=failsafe(lambda: (self.log.get("response") or {}).get("id")),
         )
 

@@ -278,11 +278,14 @@ class PickupData(PickupSerializer):
         # Use the address from validated_data directly (JSON field)
         address_data = validated_data.get("address") or {}
 
-        # Build meta with pickup_type and recurrence (stored in meta per PRD)
+        # Build meta with pickup_type, recurrence, and request_id
+        from karrio.server.core.middleware import get_request_id
+        _request_id = get_request_id()
         meta_data = {
             **(payload.get("meta") or {}),
             "pickup_type": pickup_type,
             **({"recurrence": recurrence} if recurrence else {}),
+            **({"request_id": _request_id} if _request_id else {}),
         }
 
         pickup = models.Pickup.objects.create(

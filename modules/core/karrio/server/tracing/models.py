@@ -46,6 +46,11 @@ class TracingRecord(OwnedEntity):
                 condition=models.Q(meta__workflow_id__isnull=False),
                 name="workflow_idx",
             ),
+            models.Index(
+                json.KeyTextTransform("request_id", "meta"),
+                condition=models.Q(meta__request_id__isnull=False),
+                name="request_id_idx",
+            ),
             # Index for archiving queries based on creation date
             models.Index(fields=["created_at"], name="tracing_created_at_idx"),
         ]

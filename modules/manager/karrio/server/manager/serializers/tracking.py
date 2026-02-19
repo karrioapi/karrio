@@ -75,6 +75,13 @@ class TrackingSerializer(TrackingDetails):
         # Apply picked_up transformation for initial events
         events = utils._ensure_picked_up_status(lib.to_dict(response.tracking.events))
 
+        # Merge request_id into meta for request correlation
+        from karrio.server.core.middleware import get_request_id
+        _tracker_meta = response.tracking.meta or {}
+        _request_id = get_request_id()
+        if _request_id:
+            _tracker_meta = {**_tracker_meta, "request_id": _request_id}
+
         return models.Tracking.objects.create(
             created_by=context.user,
             tracking_number=tracking_number,
@@ -87,7 +94,7 @@ class TrackingSerializer(TrackingDetails):
             estimated_delivery=response.tracking.estimated_delivery,
             messages=lib.to_dict(response.messages),
             info=lib.to_dict(response.tracking.info),
-            meta=response.tracking.meta,
+            meta=_tracker_meta,
             options=response.tracking.options,
             reference=reference,
             metadata=metadata,
