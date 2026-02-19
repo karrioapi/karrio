@@ -140,6 +140,7 @@ TRACKING_RESPONSE = {
     "meta": {
         "ext": "ups",
         "carrier": "ups",
+        "request_id": ANY,
     },
     "metadata": {},
     "info": {

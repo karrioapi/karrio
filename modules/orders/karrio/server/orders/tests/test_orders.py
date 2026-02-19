@@ -351,7 +351,7 @@ ORDER_RESPONSE = {
         },
     ],
     "options": {},
-    "meta": {},
+    "meta": {"request_id": ANY},
     "metadata": {},
     "shipments": [],
     "test_mode": True,
@@ -508,7 +508,7 @@ ORDER_SHIPMENTS_RESPONSE = {
         },
     ],
     "options": {},
-    "meta": {},
+    "meta": {"request_id": ANY},
     "metadata": {},
     "shipments": [
         {
@@ -674,7 +674,7 @@ ORDER_SHIPMENTS_RESPONSE = {
             "tracking_number": None,
             "shipment_identifier": None,
             "selected_rate": None,
-            "meta": {"orders": ANY},
+            "meta": {"orders": ANY, "request_id": ANY},
             "return_shipment": None,
             "service": None,
             "selected_rate_id": None,
@@ -765,7 +765,7 @@ FULFILLED_ORDER_RESPONSE = {
         },
     ],
     "options": {},
-    "meta": {},
+    "meta": {"request_id": ANY},
     "metadata": {},
     "shipments": [
         {
@@ -952,7 +952,7 @@ FULFILLED_ORDER_RESPONSE = {
             "tracking_number": None,
             "shipment_identifier": None,
             "selected_rate": None,
-            "meta": {"orders": ANY},
+            "meta": {"orders": ANY, "request_id": ANY},
             "return_shipment": None,
             "service": None,
             "selected_rate_id": None,
@@ -1042,7 +1042,7 @@ PARTIAL_ORDER_RESPONSE = {
             "unfulfilled_quantity": 1,
         },
     ],
-    "meta": {},
+    "meta": {"request_id": ANY},
     "options": {},
     "metadata": {},
     "shipments": [
@@ -1209,7 +1209,7 @@ PARTIAL_ORDER_RESPONSE = {
             "tracking_number": None,
             "shipment_identifier": None,
             "selected_rate": None,
-            "meta": {"orders": ANY},
+            "meta": {"orders": ANY, "request_id": ANY},
             "return_shipment": None,
             "service": None,
             "selected_rate_id": None,

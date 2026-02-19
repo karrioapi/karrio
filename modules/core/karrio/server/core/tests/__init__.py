@@ -20,6 +20,11 @@ from karrio.server.core.tests.test_resource_token import (
     TestResourceTokenAPI,
     TestDocumentDownloadWithAPIToken,
 )
+from karrio.server.core.tests.test_request_id import (
+    TestRequestIDValidation,
+    TestRequestIDMiddleware,
+    TestRequestIDInAPI,
+)
 
 # Import our custom APITestCase (must be last to avoid being overridden)
 from karrio.server.core.tests.base import APITestCase
