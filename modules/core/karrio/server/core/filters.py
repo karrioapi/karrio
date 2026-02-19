@@ -287,6 +287,10 @@ class ShipmentFilters(filters.FilterSet):
         field_name="is_return",
         help_text="filter by return shipments",
     )
+    request_id = filters.CharFilter(
+        method="request_id_filter",
+        help_text="filter by request correlation ID in meta",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -392,6 +396,11 @@ class ShipmentFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
+        openapi.OpenApiParameter(
+            "request_id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -465,6 +474,7 @@ class ShipmentFilters(filters.FilterSet):
             | models.Q(recipient__phone_number__icontains=value)
             | models.Q(tracking_number__icontains=value)
             | models.Q(reference__icontains=value)
+            | models.Q(meta__request_id__icontains=value)
         )
 
     def carrier_filter(self, queryset, name, values):
@@ -522,6 +532,9 @@ class ShipmentFilters(filters.FilterSet):
     def has_manifest_filter(self, queryset, name, value):
         return queryset.filter(manifest__isnull=not value)
 
+    def request_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_id=value)
+
 
 class TrackerFilters(filters.FilterSet):
     tracking_number = filters.CharFilter(
@@ -558,6 +571,10 @@ class TrackerFilters(filters.FilterSet):
     keyword = filters.CharFilter(
         method="keyword_filter",
         help_text="search by tracking number, tracker ID, or reference",
+    )
+    request_id = filters.CharFilter(
+        method="request_id_filter",
+        help_text="filter by request correlation ID in meta",
     )
 
     parameters = [
@@ -599,6 +616,11 @@ class TrackerFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
+        openapi.OpenApiParameter(
+            "request_id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -621,7 +643,11 @@ class TrackerFilters(filters.FilterSet):
         return queryset.filter(
             models.Q(tracking_number__icontains=value)
             | models.Q(id__icontains=value)
+            | models.Q(meta__request_id__icontains=value)
         )
+
+    def request_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_id=value)
 
 
 class LogFilter(filters.FilterSet):
@@ -634,6 +660,10 @@ class LogFilter(filters.FilterSet):
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
     entity_id = filters.CharFilter(field_name="entity_id")
+    request_id = filters.CharFilter(
+        field_name="request_id",
+        help_text="filter by request correlation ID",
+    )
     method = filters.MultipleChoiceFilter(
         field_name="method",
         choices=[
@@ -686,7 +716,8 @@ class LogFilter(filters.FilterSet):
             models.Q(path__icontains=value) |
             models.Q(remote_addr__icontains=value) |
             models.Q(host__icontains=value) |
-            models.Q(method__icontains=value)
+            models.Q(method__icontains=value) |
+            models.Q(request_id__icontains=value)
         )
 
 class TracingRecordFilter(filters.FilterSet):
@@ -699,6 +730,10 @@ class TracingRecordFilter(filters.FilterSet):
         field_name="meta__request_log_id",
         lookup_expr="icontains",
         help_text="related request API log.",
+    )
+    request_id = filters.CharFilter(
+        method="request_id_filter",
+        help_text="filter by request correlation ID",
     )
     date_after = filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
@@ -713,6 +748,9 @@ class TracingRecordFilter(filters.FilterSet):
 
     def request_log_id_filter(self, queryset, name, value):
         return queryset.filter(meta__request_log_id=value)
+
+    def request_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_id=value)
 
     def keyword_filter(self, queryset, name, value):
         return queryset.filter(
@@ -831,6 +869,10 @@ class PickupFilters(filters.FilterSet):
         method="meta_value_filter",
         help_text="pickup meta value.",
     )
+    request_id = filters.CharFilter(
+        method="request_id_filter",
+        help_text="filter by request correlation ID",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -886,6 +928,11 @@ class PickupFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
+        openapi.OpenApiParameter(
+            "request_id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -912,6 +959,7 @@ class PickupFilters(filters.FilterSet):
             | models.Q(confirmation_number__icontains=value)
             | models.Q(instruction__icontains=value)
             | models.Q(package_location__icontains=value)
+            | models.Q(meta__request_id__icontains=value)
         )
 
     def carrier_filter(self, queryset, name, values):
@@ -957,6 +1005,9 @@ class PickupFilters(filters.FilterSet):
                 if value in map(str, (o.get("meta") or {}).values())
             ]
         )
+
+    def request_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_id=value)
 
 
 class RateSheetFilter(filters.FilterSet):
