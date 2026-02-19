@@ -1,7 +1,7 @@
 """SmartKargo carrier rate tests."""
 
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from .fixture import gateway
 import karrio.sdk as karrio
 import karrio.lib as lib
@@ -16,11 +16,13 @@ class TestSmartKargoRating(unittest.TestCase):
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
         serialized = request.serialize()
-        # Check key fields are present
-        self.assertIn("reference", serialized)
-        self.assertIn("packages", serialized)
-        self.assertEqual(len(serialized["packages"]), 1)
-        self.assertEqual(serialized["packages"][0]["grossWeightUnitMeasure"], "KG")
+        # Per-package pattern: serialize returns a list of requests
+        self.assertIsInstance(serialized, list)
+        self.assertEqual(len(serialized), 1)
+        self.assertIn("reference", serialized[0])
+        self.assertIn("packages", serialized[0])
+        self.assertEqual(len(serialized[0]["packages"]), 1)
+        self.assertEqual(serialized[0]["packages"][0]["grossWeightUnitMeasure"], "KG")
 
     def test_get_rates(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
@@ -40,11 +42,10 @@ class TestSmartKargoRating(unittest.TestCase):
                 .parse()
             )
             print(parsed_response)
-            # Should have 3 rates
-            self.assertEqual(len(parsed_response[0]), 3)
-            # Check first rate
-            self.assertEqual(parsed_response[0][0].service, "smartkargo_express")
-            self.assertEqual(parsed_response[0][0].transit_days, 3)
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedRateResponse,
+            )
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
@@ -55,10 +56,10 @@ class TestSmartKargoRating(unittest.TestCase):
                 .parse()
             )
             print(parsed_response)
-            # No rates when error
-            self.assertEqual(len(parsed_response[0]), 0)
-            # Should have error messages
-            self.assertTrue(len(parsed_response[1]) > 0)
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedErrorResponse,
+            )
 
 
 if __name__ == "__main__":
@@ -138,3 +139,73 @@ ErrorResponse = """{
     }
   ]
 }"""
+
+ParsedRateResponse = [
+    [
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "currency": "USD",
+            "extra_charges": [
+                {"amount": 12.0, "currency": "USD", "name": "Base Rate"},
+                {"amount": 1.15, "currency": "USD", "name": "Tax"},
+            ],
+            "meta": {
+                "estimated_delivery": "2021-06-07T21:00:00+00:00",
+                "service_name": "smartkargo_express",
+                "service_type": "EXP",
+            },
+            "service": "smartkargo_express",
+            "total_charge": 13.15,
+            "transit_days": 3,
+        },
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "currency": "USD",
+            "extra_charges": [
+                {"amount": 10.0, "currency": "USD", "name": "Base Rate"},
+                {"amount": 1.19, "currency": "USD", "name": "Tax"},
+            ],
+            "meta": {
+                "estimated_delivery": "2021-06-09T21:00:00+00:00",
+                "service_name": "smartkargo_priority",
+                "service_type": "EPR",
+            },
+            "service": "smartkargo_priority",
+            "total_charge": 11.19,
+            "transit_days": 5,
+        },
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "currency": "USD",
+            "extra_charges": [
+                {"amount": 8.0, "currency": "USD", "name": "Base Rate"},
+                {"amount": 1.15, "currency": "USD", "name": "Tax"},
+            ],
+            "meta": {
+                "estimated_delivery": "2021-06-10T21:00:00+00:00",
+                "service_name": "smartkargo_standard",
+                "service_type": "EST",
+            },
+            "service": "smartkargo_standard",
+            "total_charge": 9.15,
+            "transit_days": 6,
+        },
+    ],
+    [],
+]
+
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "code": "VAL001",
+            "details": {},
+            "message": "Invalid origin address",
+        },
+    ],
+]
