@@ -204,6 +204,7 @@ let createdBefore: string; // (optional) (default to undefined)
 let hasManifest: boolean; // (optional) (default to undefined)
 let hasTracker: boolean; // (optional) (default to undefined)
 let id: string; // (optional) (default to undefined)
+let isReturn: boolean; // (optional) (default to undefined)
 let keyword: string; // (optional) (default to undefined)
 let metaKey: string; // (optional) (default to undefined)
 let metaValue: string; // (optional) (default to undefined)
@@ -212,6 +213,7 @@ let metadataValue: string; // (optional) (default to undefined)
 let optionKey: string; // (optional) (default to undefined)
 let optionValue: string; // (optional) (default to undefined)
 let reference: string; // (optional) (default to undefined)
+let requestId: string; // (optional) (default to undefined)
 let service: string; // (optional) (default to undefined)
 let status: string; //Valid shipment status. <br/>Values: `draft`, `purchased`, `cancelled`, `shipped`, `in_transit`, `delivered`, `needs_attention`, `out_for_delivery`, `delivery_failed` (optional) (default to undefined)
 let trackingNumber: string; // (optional) (default to undefined)
@@ -224,6 +226,7 @@ const { status, data } = await apiInstance.list(
     hasManifest,
     hasTracker,
     id,
+    isReturn,
     keyword,
     metaKey,
     metaValue,
@@ -232,6 +235,7 @@ const { status, data } = await apiInstance.list(
     optionKey,
     optionValue,
     reference,
+    requestId,
     service,
     status,
     trackingNumber
@@ -249,6 +253,7 @@ const { status, data } = await apiInstance.list(
 | **hasManifest** | [**boolean**] |  | (optional) defaults to undefined|
 | **hasTracker** | [**boolean**] |  | (optional) defaults to undefined|
 | **id** | [**string**] |  | (optional) defaults to undefined|
+| **isReturn** | [**boolean**] |  | (optional) defaults to undefined|
 | **keyword** | [**string**] |  | (optional) defaults to undefined|
 | **metaKey** | [**string**] |  | (optional) defaults to undefined|
 | **metaValue** | [**string**] |  | (optional) defaults to undefined|
@@ -257,6 +262,7 @@ const { status, data } = await apiInstance.list(
 | **optionKey** | [**string**] |  | (optional) defaults to undefined|
 | **optionValue** | [**string**] |  | (optional) defaults to undefined|
 | **reference** | [**string**] |  | (optional) defaults to undefined|
+| **requestId** | [**string**] |  | (optional) defaults to undefined|
 | **service** | [**string**] |  | (optional) defaults to undefined|
 | **status** | [**string**] | Valid shipment status. &lt;br/&gt;Values: &#x60;draft&#x60;, &#x60;purchased&#x60;, &#x60;cancelled&#x60;, &#x60;shipped&#x60;, &#x60;in_transit&#x60;, &#x60;delivered&#x60;, &#x60;needs_attention&#x60;, &#x60;out_for_delivery&#x60;, &#x60;delivery_failed&#x60; | (optional) defaults to undefined|
 | **trackingNumber** | [**string**] |  | (optional) defaults to undefined|

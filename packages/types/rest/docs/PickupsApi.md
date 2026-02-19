@@ -149,6 +149,7 @@ let createdBefore: string; // (optional) (default to undefined)
 let keyword: string; // (optional) (default to undefined)
 let pickupDateAfter: string; // (optional) (default to undefined)
 let pickupDateBefore: string; // (optional) (default to undefined)
+let requestId: string; // (optional) (default to undefined)
 let status: string; //The pickup status. <br/>Values: `scheduled`, `picked_up`, `cancelled`, `closed` (optional) (default to undefined)
 
 const { status, data } = await apiInstance.list(
@@ -160,6 +161,7 @@ const { status, data } = await apiInstance.list(
     keyword,
     pickupDateAfter,
     pickupDateBefore,
+    requestId,
     status
 );
 ```
@@ -176,6 +178,7 @@ const { status, data } = await apiInstance.list(
 | **keyword** | [**string**] |  | (optional) defaults to undefined|
 | **pickupDateAfter** | [**string**] |  | (optional) defaults to undefined|
 | **pickupDateBefore** | [**string**] |  | (optional) defaults to undefined|
+| **requestId** | [**string**] |  | (optional) defaults to undefined|
 | **status** | [**string**] | The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60; | (optional) defaults to undefined|
 
 

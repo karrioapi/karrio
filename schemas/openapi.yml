@@ -2538,6 +2538,10 @@ paths:
           type: string
           format: date
       - in: query
+        name: request_id
+        schema:
+          type: string
+      - in: query
         name: status
         schema:
           type: string
@@ -3824,6 +3828,10 @@ paths:
         schema:
           type: string
       - in: query
+        name: is_return
+        schema:
+          type: boolean
+      - in: query
         name: keyword
         schema:
           type: string
@@ -3853,6 +3861,10 @@ paths:
           type: string
       - in: query
         name: reference
+        schema:
+          type: string
+      - in: query
+        name: request_id
         schema:
           type: string
       - in: query
@@ -4297,6 +4309,10 @@ paths:
           format: date-time
       - in: query
         name: keyword
+        schema:
+          type: string
+      - in: query
+        name: request_id
         schema:
           type: string
       - in: query
@@ -10782,12 +10798,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -10985,12 +11000,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11116,6 +11130,10 @@ components:
         test_mode:
           type: boolean
           description: Specified whether it was created with a carrier in test mode
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment.
         label_url:
           type: string
           format: uri
@@ -11203,12 +11221,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11241,6 +11258,12 @@ components:
           x-spec-enum-id: 49b2c844813c9a67
           default: PDF
           description: The shipment label file type.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment. When
+            true, addresses are auto-swapped and the request is routed to the carrier's
+            return shipment API.
         service:
           type: string
           description: '**Specify a service to Buy a label in one call without rating.**'
@@ -11317,12 +11340,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11355,6 +11377,12 @@ components:
           x-spec-enum-id: 49b2c844813c9a67
           default: PDF
           description: The shipment label file type.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment. When
+            true, addresses are auto-swapped and the request is routed to the carrier's
+            return shipment API.
         service:
           type: string
           description: '**Specify a service to Buy a label in one call without rating.**'
@@ -11458,14 +11486,13 @@ components:
             \ # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
             true,\n            \"saturday_delivery\": true,\n            \"shipping_charges\":
-            10.00,\n            \"is_return\": true,\n            \"doc_files\": [\n
-            \               {\n                    \"doc_type\": \"commercial_invoice\",\n
-            \                   \"doc_file\": \"base64 encoded file\",\n                    \"doc_name\":
-            \"commercial_invoice.pdf\",\n                    \"doc_format\": \"pdf\",\n
-            \               }\n            ],\n            \"doc_references\": [\n
-            \               {\n                    \"doc_id\": \"123456789\",\n                    \"doc_type\":
-            \"commercial_invoice\",\n                }\n            ],\n        }\n
-            \       </details>\n        "
+            10.00,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
+            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
+            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
+            \           \"doc_references\": [\n                {\n                    \"doc_id\":
+            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
+            \               }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -11505,14 +11532,13 @@ components:
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
             true,\n            \"saturday_delivery\": true,\n            \"shipping_charges\":
-            10.00,\n            \"is_return\": true,\n            \"doc_files\": [\n
-            \               {\n                    \"doc_type\": \"commercial_invoice\",\n
-            \                   \"doc_file\": \"base64 encoded file\",\n                    \"doc_name\":
-            \"commercial_invoice.pdf\",\n                    \"doc_format\": \"pdf\",\n
-            \               }\n            ],\n            \"doc_references\": [\n
-            \               {\n                    \"doc_id\": \"123456789\",\n                    \"doc_type\":
-            \"commercial_invoice\",\n                }\n            ],\n        }\n
-            \       </details>\n        "
+            10.00,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
+            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
+            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
+            \           \"doc_references\": [\n                {\n                    \"doc_id\":
+            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
+            \               }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -11591,12 +11617,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11629,6 +11654,12 @@ components:
           x-spec-enum-id: 49b2c844813c9a67
           default: PDF
           description: The shipment label file type.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment. When
+            true, addresses are auto-swapped and the request is routed to the carrier's
+            return shipment API.
         selected_rate_id:
           type: string
           description: The shipment selected rate.
@@ -11710,12 +11741,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11846,6 +11876,10 @@ components:
         test_mode:
           type: boolean
           description: Specified whether it was created with a carrier in test mode
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment.
       required:
       - created_at
       - parcels

@@ -214,6 +214,7 @@ let carrierName: string; //The unique carrier slug. <br/>Values: `aramex`, `asen
 let createdAfter: string; // (optional) (default to undefined)
 let createdBefore: string; // (optional) (default to undefined)
 let keyword: string; // (optional) (default to undefined)
+let requestId: string; // (optional) (default to undefined)
 let status: string; //Valid tracker status. <br/>Values: `pending`, `picked_up`, `unknown`, `on_hold`, `cancelled`, `delivered`, `in_transit`, `delivery_delayed`, `out_for_delivery`, `ready_for_pickup`, `delivery_failed`, `return_to_sender` (optional) (default to undefined)
 let trackingNumber: string; // (optional) (default to undefined)
 
@@ -222,6 +223,7 @@ const { status, data } = await apiInstance.list(
     createdAfter,
     createdBefore,
     keyword,
+    requestId,
     status,
     trackingNumber
 );
@@ -235,6 +237,7 @@ const { status, data } = await apiInstance.list(
 | **createdAfter** | [**string**] |  | (optional) defaults to undefined|
 | **createdBefore** | [**string**] |  | (optional) defaults to undefined|
 | **keyword** | [**string**] |  | (optional) defaults to undefined|
+| **requestId** | [**string**] |  | (optional) defaults to undefined|
 | **status** | [**string**] | Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60; | (optional) defaults to undefined|
 | **trackingNumber** | [**string**] |  | (optional) defaults to undefined|
 

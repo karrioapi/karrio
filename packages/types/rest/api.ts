@@ -5594,7 +5594,7 @@ export interface RateRequest {
      */
     'services'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"insured_by\": \"carrier\",             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"insured_by\": \"carrier\",             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -5781,7 +5781,7 @@ export interface Shipment {
      */
     'services'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -5869,6 +5869,10 @@ export interface Shipment {
      */
     'test_mode': boolean;
     /**
+     * Indicates whether this shipment is a return shipment.
+     */
+    'is_return'?: boolean;
+    /**
      * The shipment label URL
      */
     'label_url'?: string | null;
@@ -5944,7 +5948,7 @@ export interface ShipmentData {
      */
     'parcels': Array<ParcelData>;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -5963,6 +5967,10 @@ export interface ShipmentData {
      * The shipment label file type.
      */
     'label_type'?: ShipmentDataLabelTypeEnum;
+    /**
+     * Indicates whether this shipment is a return shipment. When true, addresses are auto-swapped and the request is routed to the carrier\'s return shipment API.
+     */
+    'is_return'?: boolean;
     /**
      * **Specify a service to Buy a label in one call without rating.**
      */
@@ -6011,7 +6019,7 @@ export interface ShipmentDataReference {
      */
     'parcels': Array<ParcelData>;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -6030,6 +6038,10 @@ export interface ShipmentDataReference {
      * The shipment label file type.
      */
     'label_type'?: ShipmentDataReferenceLabelTypeEnum;
+    /**
+     * Indicates whether this shipment is a return shipment. When true, addresses are auto-swapped and the request is routed to the carrier\'s return shipment API.
+     */
+    'is_return'?: boolean;
     /**
      * **Specify a service to Buy a label in one call without rating.**
      */
@@ -6105,7 +6117,7 @@ export interface ShipmentRateData {
      */
     'carrier_ids'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"insured_by\": \"carrier\",             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"locker_id\": \"123456789\",             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipping_charges\": 10.00,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"insured_by\": \"carrier\",             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"locker_id\": \"123456789\",             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipping_charges\": 10.00,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -6127,7 +6139,7 @@ export interface ShipmentUpdateData {
      */
     'payment'?: Payment;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipping_charges\": 10.00,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipping_charges\": 10.00,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -6195,7 +6207,7 @@ export interface ShippingRequest {
      */
     'parcels': Array<ParcelData>;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -6214,6 +6226,10 @@ export interface ShippingRequest {
      * The shipment label file type.
      */
     'label_type'?: ShippingRequestLabelTypeEnum;
+    /**
+     * Indicates whether this shipment is a return shipment. When true, addresses are auto-swapped and the request is routed to the carrier\'s return shipment API.
+     */
+    'is_return'?: boolean;
     /**
      * The shipment selected rate.
      */
@@ -6270,7 +6286,7 @@ export interface ShippingResponse {
      */
     'services'?: Array<string> | null;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",  # TODO: deprecate             \"shipping_date\": \"2020-01-01T00:00\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"shipper_instructions\": \"This is a shipper instruction\",             \"recipient_instructions\": \"This is a recipient instruction\",             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      */
     'options'?: { [key: string]: any; };
     /**
@@ -6361,6 +6377,10 @@ export interface ShippingResponse {
      * Specified whether it was created with a carrier in test mode
      */
     'test_mode': boolean;
+    /**
+     * Indicates whether this shipment is a return shipment.
+     */
+    'is_return'?: boolean;
 }
 
 export const ShippingResponseLabelTypeEnum = {
@@ -12341,11 +12361,12 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {string} [keyword] 
          * @param {string} [pickupDateAfter] 
          * @param {string} [pickupDateBefore] 
+         * @param {string} [requestId] 
          * @param {string} [status] The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, status?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, requestId?: string, status?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/pickups`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12410,6 +12431,10 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['pickup_date_before'] = (pickupDateBefore as any instanceof Date) ?
                     (pickupDateBefore as any).toISOString().substring(0,10) :
                     pickupDateBefore;
+            }
+
+            if (requestId !== undefined) {
+                localVarQueryParameter['request_id'] = requestId;
             }
 
             if (status !== undefined) {
@@ -12631,12 +12656,13 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {string} [keyword] 
          * @param {string} [pickupDateAfter] 
          * @param {string} [pickupDateBefore] 
+         * @param {string} [requestId] 
          * @param {string} [status] The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, status?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, confirmationNumber, createdAfter, createdBefore, keyword, pickupDateAfter, pickupDateBefore, status, options);
+        async list(address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, requestId?: string, status?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, confirmationNumber, createdAfter, createdBefore, keyword, pickupDateAfter, pickupDateBefore, requestId, status, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['PickupsApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12720,7 +12746,7 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<PickupList> {
-            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.status, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.requestId, requestParameters.status, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve a scheduled pickup.
@@ -12795,6 +12821,8 @@ export interface PickupsApiListRequest {
 
     readonly pickupDateBefore?: string
 
+    readonly requestId?: string
+
     /**
      * The pickup status. &lt;br/&gt;Values: &#x60;scheduled&#x60;, &#x60;picked_up&#x60;, &#x60;cancelled&#x60;, &#x60;closed&#x60;
      */
@@ -12860,7 +12888,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig) {
-        return PickupsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.status, options).then((request) => request(this.axios, this.basePath));
+        return PickupsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.requestId, requestParameters.status, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -14706,6 +14734,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {boolean} [hasManifest] 
          * @param {boolean} [hasTracker] 
          * @param {string} [id] 
+         * @param {boolean} [isReturn] 
          * @param {string} [keyword] 
          * @param {string} [metaKey] 
          * @param {string} [metaValue] 
@@ -14714,13 +14743,14 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {string} [optionKey] 
          * @param {string} [optionValue] 
          * @param {string} [reference] 
+         * @param {string} [requestId] 
          * @param {string} [service] 
          * @param {string} [status] Valid shipment status. &lt;br/&gt;Values: &#x60;draft&#x60;, &#x60;purchased&#x60;, &#x60;cancelled&#x60;, &#x60;shipped&#x60;, &#x60;in_transit&#x60;, &#x60;delivered&#x60;, &#x60;needs_attention&#x60;, &#x60;out_for_delivery&#x60;, &#x60;delivery_failed&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, isReturn?: boolean, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, requestId?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/shipments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -14779,6 +14809,10 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 localVarQueryParameter['id'] = id;
             }
 
+            if (isReturn !== undefined) {
+                localVarQueryParameter['is_return'] = isReturn;
+            }
+
             if (keyword !== undefined) {
                 localVarQueryParameter['keyword'] = keyword;
             }
@@ -14809,6 +14843,10 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
 
             if (reference !== undefined) {
                 localVarQueryParameter['reference'] = reference;
+            }
+
+            if (requestId !== undefined) {
+                localVarQueryParameter['request_id'] = requestId;
             }
 
             if (service !== undefined) {
@@ -15097,6 +15135,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {boolean} [hasManifest] 
          * @param {boolean} [hasTracker] 
          * @param {string} [id] 
+         * @param {boolean} [isReturn] 
          * @param {string} [keyword] 
          * @param {string} [metaKey] 
          * @param {string} [metaValue] 
@@ -15105,14 +15144,15 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {string} [optionKey] 
          * @param {string} [optionValue] 
          * @param {string} [reference] 
+         * @param {string} [requestId] 
          * @param {string} [service] 
          * @param {string} [status] Valid shipment status. &lt;br/&gt;Values: &#x60;draft&#x60;, &#x60;purchased&#x60;, &#x60;cancelled&#x60;, &#x60;shipped&#x60;, &#x60;in_transit&#x60;, &#x60;delivered&#x60;, &#x60;needs_attention&#x60;, &#x60;out_for_delivery&#x60;, &#x60;delivery_failed&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, hasManifest, hasTracker, id, keyword, metaKey, metaValue, metadataKey, metadataValue, optionKey, optionValue, reference, service, status, trackingNumber, options);
+        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, isReturn?: boolean, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, requestId?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, hasManifest, hasTracker, id, isReturn, keyword, metaKey, metaValue, metadataKey, metadataValue, optionKey, optionValue, reference, requestId, service, status, trackingNumber, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ShipmentsApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -15219,7 +15259,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, base
          * @throws {RequiredError}
          */
         list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<Shipment> {
-            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.isReturn, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.requestId, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
          * Select your preferred rates to buy a shipment label.
@@ -15308,6 +15348,8 @@ export interface ShipmentsApiListRequest {
 
     readonly id?: string
 
+    readonly isReturn?: boolean
+
     readonly keyword?: string
 
     readonly metaKey?: string
@@ -15323,6 +15365,8 @@ export interface ShipmentsApiListRequest {
     readonly optionValue?: string
 
     readonly reference?: string
+
+    readonly requestId?: string
 
     readonly service?: string
 
@@ -15413,7 +15457,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig) {
-        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.isReturn, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.requestId, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -15654,12 +15698,13 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {string} [keyword] 
+         * @param {string} [requestId] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, requestId?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/trackers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -15704,6 +15749,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
 
             if (keyword !== undefined) {
                 localVarQueryParameter['keyword'] = keyword;
+            }
+
+            if (requestId !== undefined) {
+                localVarQueryParameter['request_id'] = requestId;
             }
 
             if (status !== undefined) {
@@ -15935,13 +15984,14 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {string} [keyword] 
+         * @param {string} [requestId] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, keyword, status, trackingNumber, options);
+        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, requestId?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, keyword, requestId, status, trackingNumber, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrackersApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -16034,7 +16084,7 @@ export const TrackersApiFactory = function (configuration?: Configuration, baseP
          * @throws {RequiredError}
          */
         list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<TrackerList> {
-            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.requestId, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
          * Discard a package tracker.
@@ -16120,6 +16170,8 @@ export interface TrackersApiListRequest {
 
     readonly keyword?: string
 
+    readonly requestId?: string
+
     /**
      * Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
      */
@@ -16197,7 +16249,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig) {
-        return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.requestId, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
