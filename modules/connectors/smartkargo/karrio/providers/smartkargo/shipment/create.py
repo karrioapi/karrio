@@ -14,40 +14,50 @@ import karrio.providers.smartkargo.units as provider_units
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[typing.Tuple[dict, typing.List[dict]]],
+    _response: lib.Deserializable[typing.List[typing.Tuple[dict, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
-    response, labels = _response.deserialize()
-    messages = error.parse_error_response(response, settings)
-
-    # Check if we have valid shipment data
-    shipments = response.get("shipments") or []
-    status = response.get("status", "")
-    valid = response.get("valid", "")
+    responses = _response.deserialize()
     label_type = _response.ctx.get("label_type", "PDF") if _response.ctx else "PDF"
 
-    # Labels are 1:1 with shipments; parser filters for Booked status
-    shipment_details = [
-        (f"{idx}", _extract_details(shipment_data, label_data, label_type, settings))
-        for idx, (shipment_data, label_data) in enumerate(
-            zip(shipments, labels), start=1
-        )
-        if shipment_data.get("status") == "Booked"
-    ] if status == "Processed" and valid == "Yes" and any(shipments) else []
+    messages: typing.List[models.Message] = sum(
+        [error.parse_error_response(response, settings) for response, _ in responses],
+        start=[],
+    )
 
-    # Use lib.to_multi_piece_shipment for proper multi-package handling
-    shipment = lib.to_multi_piece_shipment(shipment_details) if shipment_details else None
+    shipment = lib.to_multi_piece_shipment(
+        [
+            (
+                f"{idx}",
+                _extract_details(response, label, label_type, settings),
+            )
+            for idx, (response, label) in enumerate(responses, start=1)
+            if _is_valid_booking(response)
+        ]
+    )
 
     return shipment, messages
 
 
+def _is_valid_booking(response: dict) -> bool:
+    """Check if a booking response contains a valid shipment."""
+    shipments = response.get("shipments") or []
+    return (
+        response.get("status") == "Processed"
+        and response.get("valid") == "Yes"
+        and any(s.get("status") == "Booked" for s in shipments)
+    )
+
+
 def _extract_details(
-    data: dict,
+    response: dict,
     label_data: dict,
     label_type: str,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    """Extract shipment details from SmartKargo booking response."""
+    """Extract shipment details from SmartKargo booking response envelope."""
+    # Each response is a full booking envelope; extract the first (only) shipment
+    data = (response.get("shipments") or [{}])[0]
     shipment = lib.to_object(smartkargo_res.ShipmentType, data)
 
     # Build tracking number from prefix + airWaybill
@@ -126,78 +136,78 @@ def shipment_request(
     # Get shipment date from options or use current date (issueDate is required by API)
     shipment_date = options.shipment_date.state or datetime.datetime.now()
 
-    # Build the request using generated schema types (same structure as rate request)
-    request = smartkargo_req.RateRequestType(
-        reference=payload.reference or str(uuid.uuid4().hex),
-        issueDate=lib.fdatetime(
-            shipment_date,
-            current_format="%Y-%m-%d",
-            output_format="%Y-%m-%d %H:%M",
-        ),
-        packages=[
-            smartkargo_req.PackageType(
-                reference=package.parcel.reference_number or f"PKG-{index}",
-                commodityType=options.smartkargo_commodity_type.state or "9999",
-                serviceType=service,
-                paymentMode=provider_units.PaymentMode.PX.value,
-                packageDescription=package.parcel.description or "General Shipment",
-                totalPackages=1,
-                totalPieces=1,
-                grossVolumeUnitMeasure=dimension_unit,
-                totalGrossWeight=package.weight.value,
-                grossWeightUnitMeasure=weight_unit,
-                insuranceRequired=options.insurance.state is not None,
-                declaredValue=lib.to_money(options.declared_value.state or options.insurance.state or 0),
-                specialHandlingType=options.smartkargo_special_handling.state,
-                deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
-                channel=options.smartkargo_channel.state or "Direct",
-                labelRef2=options.smartkargo_label_ref2.state,
-                dimensions=[
-                    smartkargo_req.DimensionType(
-                        pieces=1,
-                        height=package.height.value,
-                        width=package.width.value,
-                        length=package.length.value,
-                        grossWeight=package.weight.value,
-                    )
-                ],
-                participants=[
-                    # Shipper participant (required)
-                    smartkargo_req.ParticipantType(
-                        type="Shipper",
-                        primaryId=settings.account_id,
-                        additionalId=None,
-                        account=settings.account_number,
-                        name=shipper.company_name or shipper.person_name,
-                        postCode=shipper.postal_code,
-                        street=shipper.street,
-                        street2=shipper.address_line2,
-                        city=shipper.city,
-                        state=shipper.state_code,
-                        countryId=shipper.country_code,
-                        phoneNumber=shipper.phone_number,
-                        email=shipper.email,
-                    ),
-                    # Consignee participant (required)
-                    smartkargo_req.ParticipantType(
-                        type="Consignee",
-                        primaryId=None,
-                        additionalId=None,
-                        account=None,
-                        name=recipient.company_name or recipient.person_name,
-                        postCode=recipient.postal_code,
-                        street=recipient.street,
-                        street2=recipient.address_line2,
-                        city=recipient.city,
-                        state=recipient.state_code,
-                        countryId=recipient.country_code,
-                        phoneNumber=recipient.phone_number,
-                        email=recipient.email,
-                    ),
-                ],
-            )
-            for index, package in enumerate(packages, start=1)
-        ],
-    )
+    # Build one request per package (SmartKargo API only accepts one package per booking)
+    request = [
+        smartkargo_req.RateRequestType(
+            reference=payload.reference or str(uuid.uuid4().hex),
+            issueDate=lib.fdatetime(
+                shipment_date,
+                current_format="%Y-%m-%d",
+                output_format="%Y-%m-%d %H:%M",
+            ),
+            packages=[
+                smartkargo_req.PackageType(
+                    reference=package.parcel.reference_number or f"PKG-{index}",
+                    commodityType=options.smartkargo_commodity_type.state or "9999",
+                    serviceType=service,
+                    paymentMode=provider_units.PaymentMode.PX.value,
+                    packageDescription=package.parcel.description or "General Shipment",
+                    totalPackages=1,
+                    totalPieces=1,
+                    grossVolumeUnitMeasure=dimension_unit,
+                    totalGrossWeight=package.weight.value,
+                    grossWeightUnitMeasure=weight_unit,
+                    insuranceRequired=options.insurance.state is not None,
+                    declaredValue=lib.to_money(options.declared_value.state or options.insurance.state or 0),
+                    specialHandlingType=options.smartkargo_special_handling.state,
+                    deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
+                    channel=options.smartkargo_channel.state or "Direct",
+                    labelRef2=options.smartkargo_label_ref2.state,
+                    dimensions=[
+                        smartkargo_req.DimensionType(
+                            pieces=1,
+                            height=package.height.value,
+                            width=package.width.value,
+                            length=package.length.value,
+                            grossWeight=package.weight.value,
+                        )
+                    ],
+                    participants=[
+                        smartkargo_req.ParticipantType(
+                            type="Shipper",
+                            primaryId=settings.account_id,
+                            additionalId=None,
+                            account=settings.account_number,
+                            name=shipper.company_name or shipper.person_name,
+                            postCode=shipper.postal_code,
+                            street=shipper.street,
+                            street2=shipper.address_line2,
+                            city=shipper.city,
+                            state=shipper.state_code,
+                            countryId=shipper.country_code,
+                            phoneNumber=shipper.phone_number,
+                            email=shipper.email,
+                        ),
+                        smartkargo_req.ParticipantType(
+                            type="Consignee",
+                            primaryId=None,
+                            additionalId=None,
+                            account=None,
+                            name=recipient.company_name or recipient.person_name,
+                            postCode=recipient.postal_code,
+                            street=recipient.street,
+                            street2=recipient.address_line2,
+                            city=recipient.city,
+                            state=recipient.state_code,
+                            countryId=recipient.country_code,
+                            phoneNumber=recipient.phone_number,
+                            email=recipient.email,
+                        ),
+                    ],
+                )
+            ],
+        )
+        for index, package in enumerate(packages, start=1)
+    ]
 
     return lib.Serializable(request, lib.to_dict, ctx=dict(label_type=label_type))
