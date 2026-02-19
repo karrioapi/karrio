@@ -35,7 +35,7 @@ class SystemUserType(base.UserType):
     id: int
 
     @strawberry.field
-    def permissions(self: iam.User, info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: iam.User, info: Info) -> typing.Optional[typing.List[str]]:
         return self.permissions
 
     @strawberry.field
@@ -47,14 +47,14 @@ class SystemUserType(base.UserType):
 
     @staticmethod
     @utils.authentication_required
-    def me(info) -> "SystemUserType":
+    def me(info: Info) -> "SystemUserType":
         return iam.User.objects.get(id=info.context.request.user.id)
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
     def resolve(
-        info,
+        info: Info,
         email: str = strawberry.UNSET,
     ) -> typing.Optional["SystemUserType"]:
         queryset = iam.User.objects.filter(email=email, is_staff=True)
@@ -64,7 +64,7 @@ class SystemUserType(base.UserType):
     @utils.authentication_required
     @admin.staff_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.UserFilter] = strawberry.UNSET,
     ) -> utils.Connection["SystemUserType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.UserFilter()
@@ -88,7 +88,7 @@ class PermissionGroupType:
     @utils.authentication_required
     @admin.staff_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.PermissionGroupFilter] = strawberry.UNSET,
     ) -> utils.Connection["PermissionGroupType"]:
         _filter = (
@@ -167,7 +167,7 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve(info, id: str) -> typing.Optional["SystemCarrierConnectionType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["SystemCarrierConnectionType"]:
         # Now queries SystemConnection model directly
         return providers.SystemConnection.objects.filter(
             id=id,
@@ -178,7 +178,7 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
     @utils.authentication_required
     @admin.staff_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.base.CarrierFilter] = strawberry.UNSET,
     ) -> utils.Connection["SystemCarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.base.CarrierFilter()
@@ -301,7 +301,7 @@ class SystemRateSheetType(base.RateSheetType):
     @utils.authentication_required
     @admin.staff_required
     def resolve(
-        info,
+        info: Info,
         id: str,
     ) -> typing.Optional["SystemRateSheetType"]:
         _test_mode = getattr(info.context.request, "test_mode", False)
@@ -311,7 +311,7 @@ class SystemRateSheetType(base.RateSheetType):
     @utils.authentication_required
     @admin.staff_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.base.RateSheetFilter] = strawberry.UNSET,
     ) -> utils.Connection["SystemRateSheetType"]:
         _filter = (
@@ -336,7 +336,7 @@ class ResourceUsageType:
 
     @staticmethod
     def resolve_usage(
-        info,
+        info: Info,
         filter: utils.UsageFilter = strawberry.UNSET,
     ) -> "ResourceUsageType":
         import django.db.models as models
@@ -575,14 +575,14 @@ class MarkupType:
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve(info, id: str) -> typing.Optional["MarkupType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["MarkupType"]:
         return pricing.Markup.objects.filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.MarkupFilter] = strawberry.UNSET,
     ) -> utils.Connection["MarkupType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.MarkupFilter()
@@ -639,14 +639,14 @@ class FeeType:
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve(info, id: str) -> typing.Optional["FeeType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["FeeType"]:
         return pricing.Fee.objects.filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.FeeFilter] = strawberry.UNSET,
     ) -> utils.Connection["FeeType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.FeeFilter()
@@ -690,7 +690,7 @@ class TaskExecutionType:
     @utils.authentication_required
     @admin.staff_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.TaskExecutionFilter] = strawberry.UNSET,
     ) -> utils.Connection["TaskExecutionType"]:
         from karrio.server.admin.worker.models import TaskExecution
@@ -729,7 +729,7 @@ class WorkerHealthType:
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve(info) -> "WorkerHealthType":
+    def resolve(info: Info) -> "WorkerHealthType":
         try:
             from huey.contrib.djhuey import HUEY as huey_instance
 

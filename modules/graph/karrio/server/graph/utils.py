@@ -4,6 +4,7 @@ import base64
 import functools
 import strawberry
 import dataclasses
+from strawberry.types import Info
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 
@@ -165,7 +166,7 @@ MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 
 def authentication_required(func):
     @functools.wraps(func)
-    def wrapper(info, **kwargs):
+    def wrapper(info: Info, **kwargs):
         user = getattr(info.context.request, 'user', None)
 
         if user is None or user.is_anonymous:
@@ -185,7 +186,7 @@ def authentication_required(func):
 
 def password_required(func):
     @functools.wraps(func)
-    def wrapper(info, **kwargs):
+    def wrapper(info: Info, **kwargs):
         password = kwargs.get("password")
 
         if not info.context.request.user.check_password(password):
@@ -199,7 +200,7 @@ def password_required(func):
 def authorization_required(keys: typing.List[str] = None):
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(info, **kwargs):
+        def wrapper(info: Info, **kwargs):
             permissions.check_permissions(
                 context=info.context.request,
                 keys=keys or [],

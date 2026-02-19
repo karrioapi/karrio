@@ -3,6 +3,7 @@ import typing
 import functools
 import strawberry
 import rest_framework.exceptions as exceptions
+from strawberry.types import Info
 import karrio.server.pricing.serializers as serializers
 from karrio.server.core.logging import logger
 
@@ -14,7 +15,7 @@ MarkupTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 
 def staff_required(func):
     @functools.wraps(func)
-    def wrapper(info, **kwargs):
+    def wrapper(info: Info, **kwargs):
         if info.context.request.user.is_staff is False:
             raise exceptions.PermissionDenied()
 
@@ -25,7 +26,7 @@ def staff_required(func):
 
 def superuser_required(func):
     @functools.wraps(func)
-    def wrapper(info, **kwargs):
+    def wrapper(info: Info, **kwargs):
         if info.context.request.user.is_superuser is False:
             raise exceptions.PermissionDenied()
 
