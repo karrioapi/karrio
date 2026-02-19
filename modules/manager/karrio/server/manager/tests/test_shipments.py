@@ -1439,7 +1439,7 @@ class TestShipmentReturnShipment(TestShipmentFixture):
             mock.return_value = CREATED_SHIPMENT_WITH_RETURN_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data["return_shipment"], RETURN_SHIPMENT_DATA)
@@ -1456,7 +1456,7 @@ class TestShipmentReturnShipment(TestShipmentFixture):
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNone(response_data["return_shipment"])
@@ -1472,7 +1472,6 @@ class TestShipmentReturnShipment(TestShipmentFixture):
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = CREATED_SHIPMENT_WITH_RETURN_RESPONSE
             response = self.client.post(url, data)
-            print(json.loads(response.content))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -1541,7 +1540,7 @@ class TestReturnShipmentCreate(APITestCase):
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(response_data["is_return"])
@@ -1555,7 +1554,7 @@ class TestReturnShipmentCreate(APITestCase):
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertFalse(response_data["is_return"])
@@ -1569,7 +1568,7 @@ class TestReturnShipmentCreate(APITestCase):
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -1599,7 +1598,7 @@ class TestReturnShipmentFilter(TestShipmentFixture):
         url = reverse("karrio.server.manager:shipment-list")
         response = self.client.get(f"{url}?is_return=true")
         response_data = json.loads(response.content)
-        print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))
@@ -1611,7 +1610,7 @@ class TestReturnShipmentFilter(TestShipmentFixture):
         url = reverse("karrio.server.manager:shipment-list")
         response = self.client.get(f"{url}?is_return=false")
         response_data = json.loads(response.content)
-        print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))
@@ -1623,7 +1622,7 @@ class TestReturnShipmentFilter(TestShipmentFixture):
         url = reverse("karrio.server.manager:shipment-list")
         response = self.client.get(url)
         response_data = json.loads(response.content)
-        print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))

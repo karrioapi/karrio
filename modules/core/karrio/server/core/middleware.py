@@ -49,7 +49,7 @@ class RequestIDMiddleware:
                 client_id if _is_valid_request_id(client_id)
                 else _generate_request_id()
             )
-        except Exception:
+        except (AttributeError, TypeError):
             request.request_id = _generate_request_id()
 
         response = self.get_response(request)
@@ -179,8 +179,8 @@ class SessionContext:
         except ImportError:
             # Telemetry module not available, continue with NoOpTelemetry
             pass
-        except Exception:
-            # Any other error, continue with NoOpTelemetry
+        except (AttributeError, TypeError, ValueError):
+            # Telemetry setup error, continue with NoOpTelemetry
             pass
 
     def _record_request_metrics(self, request, response, start_time):
@@ -216,7 +216,7 @@ class SessionContext:
                 error_tags = {**tags, "error_class": "client" if response.status_code < 500 else "server"}
                 telemetry.record_metric("karrio.http.error", 1, tags=error_tags, metric_type="counter")
 
-        except Exception:
+        except (ImportError, AttributeError, TypeError, ValueError):
             pass  # Don't let metrics recording break the request
 
     def _save_tracing_records(self, request, schema: str = None):

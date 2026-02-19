@@ -59,7 +59,7 @@ class EventType:
     def request_id(self: models.Event) -> typing.Optional[str]:
         try:
             return (lib.to_dict(self.data) or {}).get("meta", {}).get("request_id")
-        except:
+        except (AttributeError, TypeError, ValueError):
             return (self.data or {}).get("meta", {}).get("request_id")
 
     @strawberry.field

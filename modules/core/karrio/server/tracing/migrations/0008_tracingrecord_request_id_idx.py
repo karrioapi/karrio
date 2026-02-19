@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import migrations, models
 from django.db.models.fields import json
 
@@ -7,7 +6,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("tracing", "0007_tracingrecord_tracing_created_at_idx"),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [

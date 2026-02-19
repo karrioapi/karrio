@@ -1,15 +1,12 @@
-import json
-from unittest.mock import patch, ANY
-from django.test import TestCase, RequestFactory, override_settings
+from unittest.mock import ANY
+from django.test import TestCase, RequestFactory
 from django.http import HttpResponse
 from django.urls import reverse
-from rest_framework import status
 
 from karrio.server.core.middleware import (
     RequestIDMiddleware,
     _generate_request_id,
     _is_valid_request_id,
-    get_request_id,
 )
 from karrio.server.core.tests.base import APITestCase
 
@@ -19,17 +16,14 @@ class TestRequestIDValidation(TestCase):
 
     def test_generated_request_id_has_prefix(self):
         request_id = _generate_request_id()
-        print(f"Generated request_id: {request_id}")
         self.assertTrue(request_id.startswith("req_"))
 
     def test_generated_request_id_is_valid(self):
         request_id = _generate_request_id()
-        print(f"Validating request_id: {request_id}")
         self.assertTrue(_is_valid_request_id(request_id))
 
     def test_generated_request_ids_are_unique(self):
         ids = {_generate_request_id() for _ in range(100)}
-        print(f"Generated {len(ids)} unique IDs out of 100")
         self.assertEqual(len(ids), 100)
 
     def test_valid_request_id_alphanumeric(self):
@@ -79,7 +73,6 @@ class TestRequestIDMiddleware(TestCase):
         request = self.factory.get("/")
         response = self.middleware(request)
 
-        print(f"request.request_id: {request.request_id}")
         self.assertTrue(request.request_id.startswith("req_"))
         self.assertEqual(response["X-Request-ID"], request.request_id)
 
@@ -87,7 +80,6 @@ class TestRequestIDMiddleware(TestCase):
         request = self.factory.get("/", HTTP_X_REQUEST_ID="my-custom-id-123")
         response = self.middleware(request)
 
-        print(f"request.request_id: {request.request_id}")
         self.assertEqual(request.request_id, "my-custom-id-123")
         self.assertEqual(response["X-Request-ID"], "my-custom-id-123")
 
@@ -95,7 +87,6 @@ class TestRequestIDMiddleware(TestCase):
         request = self.factory.get("/", HTTP_X_REQUEST_ID="invalid id with spaces")
         response = self.middleware(request)
 
-        print(f"request.request_id: {request.request_id}")
         self.assertTrue(request.request_id.startswith("req_"))
         self.assertNotEqual(request.request_id, "invalid id with spaces")
 
@@ -103,21 +94,18 @@ class TestRequestIDMiddleware(TestCase):
         request = self.factory.get("/", HTTP_X_REQUEST_ID="")
         response = self.middleware(request)
 
-        print(f"request.request_id: {request.request_id}")
         self.assertTrue(request.request_id.startswith("req_"))
 
     def test_strips_whitespace_from_client_id(self):
         request = self.factory.get("/", HTTP_X_REQUEST_ID="  valid-id  ")
         response = self.middleware(request)
 
-        print(f"request.request_id: {request.request_id}")
         self.assertEqual(request.request_id, "valid-id")
 
     def test_response_always_has_x_request_id_header(self):
         request = self.factory.get("/")
         response = self.middleware(request)
 
-        print(f"X-Request-ID header: {response['X-Request-ID']}")
         self.assertIn("X-Request-ID", response)
         self.assertTrue(len(response["X-Request-ID"]) > 0)
 
@@ -129,8 +117,6 @@ class TestRequestIDInAPI(APITestCase):
         url = reverse("karrio.server.manager:shipment-list")
         response = self.client.get(url)
 
-        print(f"Response status: {response.status_code}")
-        print(f"X-Request-ID: {response.get('X-Request-ID')}")
         self.assertIn("X-Request-ID", response)
         self.assertTrue(response["X-Request-ID"].startswith("req_"))
 
@@ -138,13 +124,11 @@ class TestRequestIDInAPI(APITestCase):
         url = reverse("karrio.server.manager:shipment-list")
         response = self.client.get(url, HTTP_X_REQUEST_ID="test-req-001")
 
-        print(f"X-Request-ID: {response.get('X-Request-ID')}")
         self.assertEqual(response["X-Request-ID"], "test-req-001")
 
     def test_invalid_client_request_id_replaced(self):
         url = reverse("karrio.server.manager:shipment-list")
         response = self.client.get(url, HTTP_X_REQUEST_ID="invalid id!")
 
-        print(f"X-Request-ID: {response.get('X-Request-ID')}")
         self.assertNotEqual(response["X-Request-ID"], "invalid id!")
         self.assertTrue(response["X-Request-ID"].startswith("req_"))
