@@ -62,6 +62,10 @@ class OrderType:
     created_by: base.types.UserType
 
     @strawberry.field
+    def request_id(self: models.Order) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
+
+    @strawberry.field
     def shipping_to(self: models.Order) -> base.types.AddressType:
         # shipping_to is a JSON field, parse it to AddressType
         return base.types.AddressType.parse(self.shipping_to)

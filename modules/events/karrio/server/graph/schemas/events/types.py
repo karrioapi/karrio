@@ -56,6 +56,13 @@ class EventType:
     created_by: typing.Optional[base.UserType]
 
     @strawberry.field
+    def request_id(self: models.Event) -> typing.Optional[str]:
+        try:
+            return (lib.to_dict(self.data) or {}).get("meta", {}).get("request_id")
+        except:
+            return (self.data or {}).get("meta", {}).get("request_id")
+
+    @strawberry.field
     def data(self: models.Event) -> typing.Optional[utils.JSON]:
         try:
             return lib.to_dict(self.data)

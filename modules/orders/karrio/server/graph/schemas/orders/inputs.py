@@ -52,3 +52,4 @@ class OrderFilter(utils.Paginated):
     metadata_key: typing.Optional[typing.List[str]] = strawberry.UNSET
     metadata_value: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[OrderStatusEnum]] = strawberry.UNSET
+    request_id: typing.Optional[str] = strawberry.UNSET

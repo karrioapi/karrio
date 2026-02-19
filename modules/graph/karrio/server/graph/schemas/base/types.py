@@ -632,6 +632,7 @@ class LogType:
     method: typing.Optional[str]
     status_code: typing.Optional[int]
     test_mode: typing.Optional[bool]
+    request_id: typing.Optional[str]
 
     @strawberry.field
     def data(self: core.APILog) -> typing.Optional[utils.JSON]:
@@ -699,6 +700,10 @@ class TracingRecordType:
     created_by: typing.Optional[UserType]
     created_at: typing.Optional[datetime.datetime]
     updated_at: typing.Optional[datetime.datetime]
+
+    @strawberry.field
+    def request_id(self: tracing.TracingRecord) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
 
     @strawberry.field
     def record(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
@@ -1433,6 +1438,10 @@ class TrackerType:
     created_by: UserType
 
     @strawberry.field
+    def request_id(self: manager.Tracking) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
+
+    @strawberry.field
     def carrier_id(self: manager.Tracking) -> typing.Optional[str]:
         return (self.carrier or {}).get("carrier_id")
 
@@ -1547,6 +1556,10 @@ class PickupType:
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
+
+    @strawberry.field
+    def request_id(self: manager.Pickup) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
 
     @strawberry.field
     def pickup_type(self: manager.Pickup) -> str:
@@ -1671,6 +1684,10 @@ class ShipmentType:
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
+
+    @strawberry.field
+    def request_id(self: manager.Shipment) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
 
     @strawberry.field
     def shipper(self: manager.Shipment) -> AddressType:
