@@ -1,7 +1,7 @@
 """SmartKargo carrier shipment tests."""
 
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from .fixture import gateway
 import karrio.sdk as karrio
 import karrio.lib as lib
@@ -17,17 +17,20 @@ class TestSmartKargoShipment(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
         serialized = request.serialize()
-        # Check key fields are present
-        self.assertIn("reference", serialized)
-        self.assertIn("packages", serialized)
-        self.assertEqual(len(serialized["packages"]), 1)
-        self.assertEqual(serialized["packages"][0]["serviceType"], "EST")
+        # Per-package pattern: serialize returns a list of requests
+        self.assertIsInstance(serialized, list)
+        self.assertEqual(len(serialized), 1)
+        self.assertIn("reference", serialized[0])
+        self.assertIn("packages", serialized[0])
+        self.assertEqual(len(serialized[0]["packages"]), 1)
+        self.assertEqual(serialized[0]["packages"][0]["serviceType"], "EST")
 
     def test_create_shipment(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
-            mock.return_value = ShipmentResponse
+            # First call returns booking response, second call returns label
+            mock.side_effect = [ShipmentResponse, LabelResponse]
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            # The first call should be to exchange/single, subsequent calls are for label fetching
+            # First call: booking, second call: label fetch
             first_call_url = mock.call_args_list[0][1]["url"]
             self.assertEqual(
                 first_call_url,
@@ -36,30 +39,48 @@ class TestSmartKargoShipment(unittest.TestCase):
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
-            mock.return_value = ShipmentResponse
+            mock.side_effect = [ShipmentResponse, LabelResponse]
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest)
                 .from_(gateway)
                 .parse()
             )
             print(parsed_response)
-            self.assertIsNotNone(parsed_response[0])
-            self.assertEqual(parsed_response[0].tracking_number, "AXB01234567")
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedShipmentResponse,
+            )
 
     def test_create_shipment_cancel_request(self):
         request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
         serialized = request.serialize()
-        self.assertEqual(serialized["prefix"], "AXB")
-        self.assertEqual(serialized["airWaybill"], "01234567")
+        # Per-package pattern: serialize returns a list of cancel requests
+        self.assertIsInstance(serialized, list)
+        self.assertEqual(len(serialized), 1)
+        self.assertEqual(serialized[0]["prefix"], "AXB")
+        self.assertEqual(serialized[0]["airWaybill"], "01234567")
+
+    def test_create_shipment_cancel_request_single_piece_fallback(self):
+        """Test cancel request for single-piece shipment (no tracking_numbers in meta)."""
+        cancel_request = models.ShipmentCancelRequest(
+            shipment_identifier="PKG-REF-001",
+            options={"prefix": "AXB", "air_waybill": "01234567"},
+        )
+        request = gateway.mapper.create_cancel_shipment_request(cancel_request)
+        serialized = request.serialize()
+        self.assertIsInstance(serialized, list)
+        self.assertEqual(len(serialized), 1)
+        self.assertEqual(serialized[0]["prefix"], "AXB")
+        self.assertEqual(serialized[0]["airWaybill"], "01234567")
 
     def test_cancel_shipment(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            self.assertIn(
-                "shipment/void?prefix=AXB&airWaybill=01234567",
-                mock.call_args[1]["url"]
-            )
+            call_url = mock.call_args[1]["url"]
+            self.assertIn("shipment/void?", call_url)
+            self.assertIn("prefix=AXB", call_url)
+            self.assertIn("airWaybill=01234567", call_url)
 
     def test_parse_shipment_cancel_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
@@ -70,11 +91,14 @@ class TestSmartKargoShipment(unittest.TestCase):
                 .parse()
             )
             print(parsed_response)
-            self.assertIsNotNone(parsed_response[0])
-            self.assertTrue(parsed_response[0].success)
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedCancelShipmentResponse,
+            )
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
+            # Error response has no labelUrl/Booked status, so only 1 call (booking)
             mock.return_value = ErrorResponse
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest)
@@ -82,8 +106,10 @@ class TestSmartKargoShipment(unittest.TestCase):
                 .parse()
             )
             print(parsed_response)
-            self.assertIsNone(parsed_response[0])
-            self.assertTrue(len(parsed_response[1]) > 0)
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedErrorResponse,
+            )
 
 
 if __name__ == "__main__":
@@ -132,10 +158,15 @@ ShipmentPayload = {
 }
 
 ShipmentCancelPayload = {
-    "shipment_identifier": "AXB01234567"
+    "shipment_identifier": "PKG-REF-001",
+    "options": {
+        "tracking_numbers": ["AXB01234567"],
+        "prefix": "AXB",
+        "air_waybill": "01234567",
+    }
 }
 
-ShipmentResponse = """{
+ShipmentResponse = """[{
   "exchangeId": "test-17f7-test-2382-test",
   "fileIdentifier": null,
   "siteId": "TEST",
@@ -181,7 +212,7 @@ ShipmentResponse = """{
     }
   ],
   "validations": []
-}"""
+}]"""
 
 ShipmentCancelResponse = """{
   "result": {
@@ -208,3 +239,54 @@ ErrorResponse = """{
 LabelResponse = """{
   "base64Content": "data:application/pdf;base64,JVBERi0xLjQKJeLjz9M="
 }"""
+
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "smartkargo",
+        "carrier_name": "smartkargo",
+        "docs": {
+            "label": "JVBERi0xLjQKJeLjz9M=",
+        },
+        "label_type": "PDF",
+        "meta": {
+            "air_waybill": "01234567",
+            "carrier_tracking_link": "https://www.deliverdirect.com/tracking?ref=AXB01234567",
+            "currency": "USD",
+            "estimated_delivery": "2021-07-05T21:00:00",
+            "header_reference": "ReferencesToBeSet",
+            "label_url": "https://api.smartkargo.com/label?prefix=AXB&airWaybill=01234567",
+            "origin": "YUL99",
+            "package_reference": "2021-06-03-1",
+            "prefix": "AXB",
+            "service_name": "smartkargo_standard",
+            "service_type": "EST",
+            "total_charge": 10.5,
+        },
+        "shipment_identifier": "2021-06-03-1",
+        "tracking_number": "AXB01234567",
+    },
+    [],
+]
+
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "smartkargo",
+        "carrier_name": "smartkargo",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
+
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "code": "INVALID_REQUEST",
+            "details": {},
+            "message": "Invalid shipment request",
+        },
+    ],
+]

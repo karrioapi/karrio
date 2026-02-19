@@ -1,7 +1,7 @@
 """SmartKargo carrier tracking tests."""
 
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 from .fixture import gateway
 
 import karrio.sdk as karrio
@@ -36,10 +36,10 @@ class TestSmartKargoTracking(unittest.TestCase):
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             print(parsed_response)
-            self.assertEqual(len(parsed_response[0]), 1)
-            self.assertEqual(parsed_response[0][0].tracking_number, "yogi045")
-            self.assertEqual(parsed_response[0][0].status, "delivered")
-            self.assertEqual(len(parsed_response[0][0].events), 2)
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedTrackingResponse,
+            )
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
@@ -48,8 +48,10 @@ class TestSmartKargoTracking(unittest.TestCase):
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             print(parsed_response)
-            # No tracking details when error
-            self.assertEqual(len(parsed_response[0]), 0)
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedTrackingErrorResponse,
+            )
 
 
 if __name__ == "__main__":
@@ -104,3 +106,59 @@ ErrorResponse = """{
     "message": "Tracking information not found"
   }
 }"""
+
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "delivered": True,
+            "events": [
+                {
+                    "code": "DDL",
+                    "date": "2021-01-26",
+                    "description": "Package has been successfully delivered to the consignee.",
+                    "location": "LAX",
+                    "status": "delivered",
+                    "time": "14:30",
+                    "timestamp": "2021-01-26T14:30:00.000Z",
+                },
+                {
+                    "code": "BKD",
+                    "date": "2021-01-25",
+                    "description": "Electronic information submitted by shipper Boston Logan.",
+                    "location": "BOS",
+                    "status": "pending",
+                    "time": "13:03",
+                    "timestamp": "2021-01-25T13:03:17.000Z",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://www.deliverdirect.com/tracking?ref=yogi045",
+            },
+            "meta": {
+                "air_waybill": "00006510",
+                "package_reference": "yogi045",
+                "prefix": "AXB",
+            },
+            "status": "delivered",
+            "tracking_number": "yogi045",
+        },
+    ],
+    [],
+]
+
+ParsedTrackingErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "code": "NOT_FOUND",
+            "details": {
+                "tracking_number": "yogi045",
+            },
+            "message": "Tracking information not found",
+        },
+    ],
+]
