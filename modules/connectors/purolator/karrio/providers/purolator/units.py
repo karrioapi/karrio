@@ -1,6 +1,8 @@
 import csv
 import pathlib
+import re
 import typing
+import unicodedata
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -74,12 +76,24 @@ class CreditCardType(lib.StrEnum):
 
 
 class ShippingOption(lib.Enum):
-    purolator_dangerous_goods = lib.OptionEnum("Dangerous Goods", meta=dict(category="DANGEROUS_GOOD"))
-    purolator_chain_of_signature = lib.OptionEnum("Chain of Signature", meta=dict(category="SIGNATURE"))
-    purolator_express_cheque = lib.OptionEnum("ExpressCheque", meta=dict(category="COD"))
-    purolator_hold_for_pickup = lib.OptionEnum("Hold For Pickup", meta=dict(category="PUDO"))
-    purolator_return_services = lib.OptionEnum("Return Services", meta=dict(category="RETURN"))
-    purolator_saturday_service = lib.OptionEnum("Saturday Service", meta=dict(category="DELIVERY_OPTIONS"))
+    purolator_dangerous_goods = lib.OptionEnum(
+        "Dangerous Goods", meta=dict(category="DANGEROUS_GOOD")
+    )
+    purolator_chain_of_signature = lib.OptionEnum(
+        "Chain of Signature", meta=dict(category="SIGNATURE")
+    )
+    purolator_express_cheque = lib.OptionEnum(
+        "ExpressCheque", meta=dict(category="COD")
+    )
+    purolator_hold_for_pickup = lib.OptionEnum(
+        "Hold For Pickup", meta=dict(category="PUDO")
+    )
+    purolator_return_services = lib.OptionEnum(
+        "Return Services", meta=dict(category="RETURN")
+    )
+    purolator_saturday_service = lib.OptionEnum(
+        "Saturday Service", meta=dict(category="DELIVERY_OPTIONS")
+    )
     purolator_origin_signature_not_required = lib.OptionEnum(
         "Origin Signature Not Required (OSNR)", meta=dict(category="SIGNATURE")
     )
@@ -227,10 +241,212 @@ def shipping_services_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    in_transit = [""]
-    delivered = ["Delivery"]
-    delivery_failed = ["Undeliverable"]
+    # Keep explicit status names we emit from `map_tracking_status`.
+    pending = ["__pending__"]
+    picked_up = ["ProofOfPickUp"]
+    in_transit = ["Other"]
     out_for_delivery = ["OnDelivery"]
+    delivered = ["Delivery"]
+    on_hold = ["Undeliverable"]
+    ready_for_pickup = ["__ready_for_pickup__"]
+    return_to_sender = ["__return_to_sender__"]
+    delivery_delayed = ["__delivery_delayed__"]
+    delivery_failed = ["__delivery_failed__"]
+    unknown = [""]
+
+
+# Why this mapping exists:
+# - Purolator ScanType values are too coarse, especially `Undeliverable`.
+# - Real tracking payloads encode meaningful status in description text
+#   (e.g. pickup-ready vs return-to-sender vs delay).
+# - We keep exact mappings for known descriptions and keyword fallback for
+#   wording drift.
+PUROLATOR_TRACKING_STATUS_MAPPING: dict[str, dict[str, str]] = {
+    "Other": {
+        "__default__": TrackingStatus.in_transit.name,
+        "Shipper created a label": TrackingStatus.pending.name,
+        "Shipment created - interim manifest received": TrackingStatus.pending.name,
+        "Shipment created - final manifest received": TrackingStatus.pending.name,
+        "New tracking number assigned": TrackingStatus.pending.name,
+        "Label information electronically submitted": TrackingStatus.pending.name,
+    },
+    "OnDelivery": {
+        "__default__": TrackingStatus.out_for_delivery.name,
+        "On vehicle for delivery": TrackingStatus.out_for_delivery.name,
+    },
+    "Delivery": {
+        "__default__": TrackingStatus.delivered.name,
+        "Shipment delivered": TrackingStatus.delivered.name,
+        "Delivered to Customer by Locker": TrackingStatus.delivered.name,
+        "Package removed from Locker": TrackingStatus.delivered.name,
+        # Seen in production under ScanType=Delivery and not a final delivery.
+        "Transferring to Shipping Centre - please wait for further instructions": TrackingStatus.in_transit.name,
+    },
+    "ProofOfPickUp": {
+        "__default__": TrackingStatus.picked_up.name,
+        "Picked up by Purolator at": TrackingStatus.picked_up.name,
+        "Received by Purolator for processing at": TrackingStatus.picked_up.name,
+    },
+    "Undeliverable": {
+        "__default__": TrackingStatus.on_hold.name,
+        "Shipment created - interim manifest received": TrackingStatus.pending.name,
+        "Shipment created - final manifest received": TrackingStatus.pending.name,
+        "Shipment created": TrackingStatus.pending.name,
+        "Shipper created a label": TrackingStatus.pending.name,
+        "Arrived at sort facility": TrackingStatus.in_transit.name,
+        "Departed sort facility": TrackingStatus.in_transit.name,
+        "Shipment in transit": TrackingStatus.in_transit.name,
+        "Shipment redirected": TrackingStatus.in_transit.name,
+        "Resolution complete - shipment redirected": TrackingStatus.in_transit.name,
+        "Available for pickup for 5 business days from arrival date at the counter": TrackingStatus.ready_for_pickup.name,
+        "Item Held for Pickup at Locker": TrackingStatus.ready_for_pickup.name,
+        "Item available for receiver to pick up at post office": TrackingStatus.ready_for_pickup.name,
+        "Receiver advised they will pick up shipment": TrackingStatus.ready_for_pickup.name,
+        "Shipment available for pickup. Unable to contact customer": TrackingStatus.ready_for_pickup.name,
+        "Shipment available for pickup. Unable to contact customer.": TrackingStatus.ready_for_pickup.name,
+        "Receiver contacted.  Shipment available for pickup": TrackingStatus.ready_for_pickup.name,
+        "Receiver contacted, no answer.  Shipment available for pickup": TrackingStatus.ready_for_pickup.name,
+        "Shipper contacted.  Shipment available for pickup": TrackingStatus.ready_for_pickup.name,
+        "Shipment unclaimed - to be returned to sender": TrackingStatus.return_to_sender.name,
+        "Shipment undeliverable - Returned to sender": TrackingStatus.return_to_sender.name,
+        "Unable to deliver - item returned to sender": TrackingStatus.return_to_sender.name,
+        "Unable to deliver - item returned to shipper": TrackingStatus.return_to_sender.name,
+        "Returned to sender.  Shipment no longer available for pickup": TrackingStatus.return_to_sender.name,
+    },
+}
+
+
+# Keep both layers:
+# - exact matches for audited known descriptions.
+# - keyword fallback for unseen wording variants in Undeliverable events.
+UNDELIVERABLE_KEYWORD_RULES: list[tuple[tuple[str, ...], str]] = [
+    (
+        (
+            "returned to sender",
+            "returned to shipper",
+            "to be returned to sender",
+            "returned to the shipper",
+            "retourne a l'expediteur",
+            "retour a l'expediteur",
+            "renvoye a l'expediteur",
+            "retourne a l expediteur",
+            "retour a l expediteur",
+            "renvoye a l expediteur",
+        ),
+        TrackingStatus.return_to_sender.name,
+    ),
+    (
+        (
+            "available for pickup",
+            "held for pickup",
+            "pickup location",
+            "disponible pour le ramassage",
+            "disponible pour ramassage",
+            "point de ramassage",
+            "point de cueillette",
+            "ramassage",
+            "ramasser",
+        ),
+        TrackingStatus.ready_for_pickup.name,
+    ),
+    (
+        (
+            "delayed",
+            "delay",
+            "rescheduled",
+            "redelivery",
+            "new delivery date",
+            "missed connection",
+            "mechanical",
+            "weather",
+            "road closure",
+            "natural disaster",
+            "sorting error",
+            "late tender",
+            "special handling",
+            "hold period extended",
+            "re-attempt",
+            "rail delay",
+            "ferry delay",
+            "service disruption",
+            "retard",
+            "retarde",
+            "retardee",
+            "retardes",
+            "retardees",
+            "reporte",
+            "reportee",
+            "reportes",
+            "reportees",
+            "replanifie",
+            "replanifiee",
+            "replanifies",
+            "replanifiees",
+            "meteo",
+            "intemperies",
+            "fermeture de route",
+            "catastrophe naturelle",
+            "perturbation de service",
+        ),
+        TrackingStatus.delivery_delayed.name,
+    ),
+]
+
+
+def normalize_tracking_description(description: typing.Optional[str]) -> str:
+    normalized = re.sub(r"\s+", " ", str(description or "").strip().lower())
+    normalized = normalized.replace("’", "'")
+    normalized = "".join(
+        c
+        for c in unicodedata.normalize("NFKD", normalized)
+        if not unicodedata.combining(c)
+    )
+    return normalized.rstrip(".")
+
+
+def _normalize_tracking_status_mapping(
+    raw_mapping: dict[str, dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    normalized_mapping: dict[str, dict[str, str]] = {}
+    for event_code, description_mapping in raw_mapping.items():
+        normalized_mapping[event_code] = {}
+        for description, mapped_status in description_mapping.items():
+            if description == "__default__":
+                normalized_mapping[event_code]["__default__"] = mapped_status
+                continue
+
+            normalized_mapping[event_code][
+                normalize_tracking_description(description)
+            ] = mapped_status
+
+    return normalized_mapping
+
+
+NORMALIZED_PUROLATOR_TRACKING_STATUS_MAPPING = _normalize_tracking_status_mapping(
+    PUROLATOR_TRACKING_STATUS_MAPPING
+)
+
+
+def map_tracking_status(
+    event_code: typing.Optional[str],
+    event_description: typing.Optional[str],
+) -> str:
+    code = str(event_code or "").strip()
+    normalized_description = normalize_tracking_description(event_description)
+    mapped_descriptions = NORMALIZED_PUROLATOR_TRACKING_STATUS_MAPPING.get(code)
+
+    if mapped_descriptions is None:
+        return TrackingStatus.unknown.name
+
+    if normalized_description in mapped_descriptions:
+        return mapped_descriptions[normalized_description]
+
+    if code == "Undeliverable":
+        for needles, status_id in UNDELIVERABLE_KEYWORD_RULES:
+            if any(needle in normalized_description for needle in needles):
+                return status_id
+
+    return mapped_descriptions.get("__default__", TrackingStatus.unknown.name)
 
 
 class TrackingIncidentReason(lib.Enum):
@@ -250,11 +466,18 @@ class TrackingIncidentReason(lib.Enum):
     consignee_not_available = ["Not Available", "Recipient Not Available"]
     consignee_not_home = ["Not Home", "No One Home", "Recipient Not Home"]
     consignee_incorrect_address = ["Incorrect Address", "Wrong Address", "Bad Address"]
-    consignee_access_restricted = ["Access Restricted", "Cannot Access", "Restricted Access"]
+    consignee_access_restricted = [
+        "Access Restricted",
+        "Cannot Access",
+        "Restricted Access",
+    ]
 
     # Customs-related issues
     customs_delay = ["Customs Delay", "Customs Hold", "Customs Processing"]
-    customs_documentation = ["Customs Documentation Required", "Missing Customs Documents"]
+    customs_documentation = [
+        "Customs Documentation Required",
+        "Missing Customs Documents",
+    ]
     customs_duties_unpaid = ["Duties Unpaid", "Customs Fees Due"]
 
     # Weather/Force majeure
@@ -284,28 +507,51 @@ def load_services_from_csv() -> list:
                     "service_name": row["service_name"],
                     "service_code": karrio_service_code,
                     "currency": row.get("currency", "CAD"),
-                    "min_weight": float(row["min_weight"]) if row.get("min_weight") else None,
-                    "max_weight": float(row["max_weight"]) if row.get("max_weight") else None,
-                    "max_length": float(row["max_length"]) if row.get("max_length") else None,
-                    "max_width": float(row["max_width"]) if row.get("max_width") else None,
-                    "max_height": float(row["max_height"]) if row.get("max_height") else None,
+                    "min_weight": (
+                        float(row["min_weight"]) if row.get("min_weight") else None
+                    ),
+                    "max_weight": (
+                        float(row["max_weight"]) if row.get("max_weight") else None
+                    ),
+                    "max_length": (
+                        float(row["max_length"]) if row.get("max_length") else None
+                    ),
+                    "max_width": (
+                        float(row["max_width"]) if row.get("max_width") else None
+                    ),
+                    "max_height": (
+                        float(row["max_height"]) if row.get("max_height") else None
+                    ),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": (row.get("domicile") or "").lower() == "true",
-                    "international": True if (row.get("international") or "").lower() == "true" else None,
+                    "international": (
+                        True
+                        if (row.get("international") or "").lower() == "true"
+                        else None
+                    ),
                     "zones": [],
                 }
-            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
+            country_codes = [
+                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
+            ]
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                transit_days=(
+                    int(row["transit_days"].split("-")[0])
+                    if row.get("transit_days")
+                    and row["transit_days"].split("-")[0].isdigit()
+                    else None
+                ),
                 country_codes=country_codes if country_codes else None,
             )
             services_dict[karrio_service_code]["zones"].append(zone)
-    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
+    return [
+        models.ServiceLevel(**service_data) for service_data in services_dict.values()
+    ]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

@@ -3,6 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
 from karrio.sdk import Tracking
+import karrio.providers.purolator.units as provider_units
 from .fixture import gateway
 
 
@@ -35,6 +36,86 @@ class TestPurolatorTracking(unittest.TestCase):
             )
             self.assertListEqual(DP.to_dict(parsed_response), PARSED_TRACKING_RESPONSE)
 
+    def test_map_tracking_status_with_description_overrides(self):
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Delivery",
+                "Transferring to Shipping Centre - please wait for further instructions",
+            ),
+            provider_units.TrackingStatus.in_transit.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Other",
+                "Shipper created a label",
+            ),
+            provider_units.TrackingStatus.pending.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "ProofOfPickUp",
+                "Picked up by Purolator at",
+            ),
+            provider_units.TrackingStatus.picked_up.name,
+        )
+
+    def test_map_tracking_status_with_undeliverable_keyword_fallback(self):
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Shipment undeliverable - Returned to sender",
+            ),
+            provider_units.TrackingStatus.return_to_sender.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Delivery delayed due to weather event",
+            ),
+            provider_units.TrackingStatus.delivery_delayed.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Unexpected wording for this event",
+            ),
+            provider_units.TrackingStatus.on_hold.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Shipment available for pickup.  Unable to contact customer.",
+            ),
+            provider_units.TrackingStatus.ready_for_pickup.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(None, None),
+            provider_units.TrackingStatus.unknown.name,
+        )
+
+    def test_map_tracking_status_with_french_descriptions(self):
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Envoi disponible pour le ramassage au point de service",
+            ),
+            provider_units.TrackingStatus.ready_for_pickup.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Envoi retourné à l’expéditeur",
+            ),
+            provider_units.TrackingStatus.return_to_sender.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Livraison retardée en raison des conditions météo",
+            ),
+            provider_units.TrackingStatus.delivery_delayed.name,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -53,6 +134,7 @@ PARSED_TRACKING_RESPONSE = [
                     "date": "2004-01-13",
                     "description": "New Tracking Number Assigned -",
                     "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
+                    "status": "in_transit",
                     "time": "17:23 PM",
                     "timestamp": "2004-01-13T17:23:00.000Z",
                 },
@@ -61,6 +143,7 @@ PARSED_TRACKING_RESPONSE = [
                     "date": "2004-01-13",
                     "description": "New Tracking Number Assigned -",
                     "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
+                    "status": "in_transit",
                     "time": "17:23 PM",
                     "timestamp": "2004-01-13T17:23:00.000Z",
                 },
