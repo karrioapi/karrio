@@ -93,6 +93,29 @@ class TestPurolatorTracking(unittest.TestCase):
             provider_units.TrackingStatus.unknown.name,
         )
 
+    def test_map_tracking_status_with_french_descriptions(self):
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Envoi disponible pour le ramassage au point de service",
+            ),
+            provider_units.TrackingStatus.ready_for_pickup.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Envoi retourné à l’expéditeur",
+            ),
+            provider_units.TrackingStatus.return_to_sender.name,
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status(
+                "Undeliverable",
+                "Livraison retardée en raison des conditions météo",
+            ),
+            provider_units.TrackingStatus.delivery_delayed.name,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

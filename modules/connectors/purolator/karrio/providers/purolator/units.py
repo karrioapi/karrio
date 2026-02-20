@@ -2,6 +2,7 @@ import csv
 import pathlib
 import re
 import typing
+import unicodedata
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -325,6 +326,12 @@ UNDELIVERABLE_KEYWORD_RULES: list[tuple[tuple[str, ...], str]] = [
             "returned to shipper",
             "to be returned to sender",
             "returned to the shipper",
+            "retourne a l'expediteur",
+            "retour a l'expediteur",
+            "renvoye a l'expediteur",
+            "retourne a l expediteur",
+            "retour a l expediteur",
+            "renvoye a l expediteur",
         ),
         TrackingStatus.return_to_sender.name,
     ),
@@ -333,6 +340,12 @@ UNDELIVERABLE_KEYWORD_RULES: list[tuple[tuple[str, ...], str]] = [
             "available for pickup",
             "held for pickup",
             "pickup location",
+            "disponible pour le ramassage",
+            "disponible pour ramassage",
+            "point de ramassage",
+            "point de cueillette",
+            "ramassage",
+            "ramasser",
         ),
         TrackingStatus.ready_for_pickup.name,
     ),
@@ -356,6 +369,24 @@ UNDELIVERABLE_KEYWORD_RULES: list[tuple[tuple[str, ...], str]] = [
             "rail delay",
             "ferry delay",
             "service disruption",
+            "retard",
+            "retarde",
+            "retardee",
+            "retardes",
+            "retardees",
+            "reporte",
+            "reportee",
+            "reportes",
+            "reportees",
+            "replanifie",
+            "replanifiee",
+            "replanifies",
+            "replanifiees",
+            "meteo",
+            "intemperies",
+            "fermeture de route",
+            "catastrophe naturelle",
+            "perturbation de service",
         ),
         TrackingStatus.delivery_delayed.name,
     ),
@@ -364,6 +395,12 @@ UNDELIVERABLE_KEYWORD_RULES: list[tuple[tuple[str, ...], str]] = [
 
 def normalize_tracking_description(description: typing.Optional[str]) -> str:
     normalized = re.sub(r"\s+", " ", str(description or "").strip().lower())
+    normalized = normalized.replace("’", "'")
+    normalized = "".join(
+        c
+        for c in unicodedata.normalize("NFKD", normalized)
+        if not unicodedata.combining(c)
+    )
     return normalized.rstrip(".")
 
 
