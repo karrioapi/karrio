@@ -1,3 +1,36 @@
+# Karrio 2026.1.12
+
+## Changes
+
+### Feat
+
+- feat: add SmartKargo carrier integration (rating, shipment, tracking, labels)
+- feat: add return shipment support to SDK core and server layer
+- feat: add return shipment support for UPS, FedEx, Canada Post, DHL Express, DHL Parcel DE, USPS, and more
+- feat: add return shipment fields to TypeScript GraphQL types
+- feat: add X-Request-ID middleware and propagation to all operations
+- feat: expose request_id as first-class GraphQL field and filter
+- feat: display request_id in entity detail views and devtools
+
+### Fix
+
+- fix(canadapost): use recipient country code for international rating
+- fix(landmark): add User-Agent header to all Landmark API requests
+- fix: add missing Info type annotations for strawberry GraphQL resolvers
+
+### Chore
+
+- chore: update generated files and add pricing migration
+- chore: clean up tests and code to match AGENTS.md conventions
+
+### Docs
+
+- docs: add X-Request-ID implementation PRD
+- docs: add Return Shipment API PRD
+- docs: add Karrio MCP Server PRD
+
+---
+
 # Karrio 2026.1.11
 
 ## Changes
