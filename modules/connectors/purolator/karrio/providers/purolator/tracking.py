@@ -23,16 +23,13 @@ def _extract_details(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.TrackingDetails:
     track = lib.to_object(purolator.TrackingInformation, node)
-    delivered = any(scan.ScanType == "Delivery" for scan in track.Scans.Scan)
-    last_event = track.Scans.Scan[0]
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if getattr(last_event, "ScanType", None) in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
+    scans = list(getattr(getattr(track, "Scans", None), "Scan", []) or [])
+    last_event = scans[0] if scans else None
+    status = provider_units.map_tracking_status(
+        getattr(last_event, "ScanType", None),
+        getattr(last_event, "Description", None),
     )
+    delivered = status == provider_units.TrackingStatus.delivered.name
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -45,19 +42,15 @@ def _extract_details(
                 date=lib.fdate(scan.ScanDate),
                 time=lib.flocaltime(scan.ScanTime, "%H%M%S"),
                 description=scan.Description,
-                location=scan.Depot.Name,
+                location=getattr(getattr(scan, "Depot", None), "Name", None),
                 code=scan.ScanType,
                 timestamp=lib.fiso_timestamp(
                     lib.fdate(scan.ScanDate),
                     lib.ftime(scan.ScanTime, "%H%M%S"),
                 ),
-                status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if getattr(scan, "ScanType", None) in s.value
-                    ),
-                    None,
+                status=provider_units.map_tracking_status(
+                    getattr(scan, "ScanType", None),
+                    getattr(scan, "Description", None),
                 ),
                 reason=next(
                     (
@@ -68,7 +61,7 @@ def _extract_details(
                     None,
                 ),
             )
-            for scan in track.Scans.Scan
+            for scan in scans
         ],
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(track.PIN.Value)
