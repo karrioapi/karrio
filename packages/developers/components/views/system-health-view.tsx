@@ -11,6 +11,11 @@ import {
   AlertCircle,
   Loader2,
   Cpu,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Timer,
+  RotateCcw,
 } from "lucide-react";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -72,7 +77,7 @@ function formatServiceName(name: string) {
 export function SystemHealthView() {
   const { health, query: healthQuery } = useWorkerHealth();
   const { executions, query: executionsQuery } = useTaskExecutions({
-    first: 100,
+    first: 1000,
   });
   const systemHealth = useSystemHealth();
   const {
@@ -445,63 +450,309 @@ function StatCard({
   );
 }
 
+const STATUS_CONFIG: Record<string, { color: string; bg: string }> = {
+  complete: { color: "text-green-400", bg: "bg-green-500/20" },
+  error: { color: "text-red-400", bg: "bg-red-500/20" },
+  executing: { color: "text-blue-400", bg: "bg-blue-500/20" },
+  queued: { color: "text-yellow-400", bg: "bg-yellow-500/20" },
+  retrying: { color: "text-orange-400", bg: "bg-orange-500/20" },
+  revoked: { color: "text-muted-foreground", bg: "bg-muted/50" },
+  expired: { color: "text-muted-foreground", bg: "bg-muted/50" },
+};
+
+function formatDuration(ms: number | null) {
+  if (ms == null) return "-";
+  if (ms < 1000) return `${ms}ms`;
+  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+  return `${(ms / 60000).toFixed(1)}m`;
+}
+
+function formatTimestamp(ts: string | null) {
+  if (!ts) return "-";
+  const date = new Date(ts);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  let relative: string;
+  if (diffMins < 1) relative = "just now";
+  else if (diffMins < 60) relative = `${diffMins}m ago`;
+  else if (diffHours < 24) relative = `${diffHours}h ago`;
+  else relative = `${diffDays}d ago`;
+
+  return relative;
+}
+
+function formatTimestampFull(ts: string | null) {
+  if (!ts) return "";
+  return new Date(ts).toLocaleString();
+}
+
 function TaskNameBreakdown({ executions }: { executions: any }) {
-  const breakdown = React.useMemo(() => {
+  const [expandedTask, setExpandedTask] = React.useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
+
+  const { breakdown, taskExecutions } = React.useMemo(() => {
     const edges = executions?.edges || [];
     const map = new Map<
       string,
-      { total: number; complete: number; error: number }
+      {
+        total: number;
+        complete: number;
+        error: number;
+        executing: number;
+        queued: number;
+        avgDuration: number;
+        lastRun: string | null;
+      }
     >();
+    const byTask = new Map<string, any[]>();
+
     edges.forEach(({ node }: any) => {
       const entry = map.get(node.task_name) || {
         total: 0,
         complete: 0,
         error: 0,
+        executing: 0,
+        queued: 0,
+        avgDuration: 0,
+        lastRun: null,
       };
       entry.total++;
       if (node.status === "complete") entry.complete++;
       if (node.status === "error") entry.error++;
+      if (node.status === "executing") entry.executing++;
+      if (node.status === "queued") entry.queued++;
+
+      const runTime = node.completed_at || node.started_at || node.queued_at;
+      if (runTime && (!entry.lastRun || runTime > entry.lastRun)) {
+        entry.lastRun = runTime;
+      }
+
       map.set(node.task_name, entry);
+
+      const list = byTask.get(node.task_name) || [];
+      list.push(node);
+      byTask.set(node.task_name, list);
     });
-    return Array.from(map.entries())
-      .sort((a, b) => b[1].total - a[1].total)
-      .slice(0, 10);
+
+    // Compute avg durations
+    map.forEach((entry, name) => {
+      const tasks = byTask.get(name) || [];
+      const withDuration = tasks.filter((t) => t.duration_ms != null);
+      entry.avgDuration = withDuration.length
+        ? Math.round(
+            withDuration.reduce((s, t) => s + t.duration_ms, 0) /
+              withDuration.length,
+          )
+        : 0;
+    });
+
+    return {
+      breakdown: Array.from(map.entries())
+        .sort((a, b) => b[1].total - a[1].total)
+        .slice(0, 15),
+      taskExecutions: byTask,
+    };
   }, [executions]);
 
   if (breakdown.length === 0) return null;
 
+  const filteredBreakdown = statusFilter
+    ? breakdown.filter(([, stats]) => {
+        if (statusFilter === "error") return stats.error > 0;
+        if (statusFilter === "executing") return stats.executing > 0;
+        if (statusFilter === "complete") return stats.complete > 0;
+        return true;
+      })
+    : breakdown;
+
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-medium text-muted-foreground">
-        Task Breakdown
-      </h3>
-      <div className="bg-card border border-border rounded-lg divide-y divide-border">
-        {breakdown.map(([name, stats]) => (
-          <div
-            key={name}
-            className="flex items-center justify-between px-4 py-2.5"
-          >
-            <span className="text-sm text-foreground truncate max-w-[200px]">
-              {name}
-            </span>
-            <div className="flex items-center gap-3">
-              <Badge className="bg-muted/50 text-muted-foreground border-none text-xs">
-                {stats.total} total
-              </Badge>
-              {stats.complete > 0 && (
-                <Badge className="bg-green-500/20 text-green-400 border-none text-xs">
-                  {stats.complete} ok
-                </Badge>
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-medium text-muted-foreground">
+          Task Breakdown
+        </h3>
+        <div className="flex items-center gap-1.5">
+          {["all", "complete", "error", "executing"].map((filter) => (
+            <button
+              key={filter}
+              onClick={() =>
+                setStatusFilter(filter === "all" ? null : filter)
+              }
+              className={cn(
+                "px-2 py-0.5 text-xs rounded-md transition-colors",
+                (filter === "all" && !statusFilter) ||
+                  statusFilter === filter
+                  ? "bg-primary/20 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
               )}
-              {stats.error > 0 && (
-                <Badge className="bg-red-500/20 text-red-400 border-none text-xs">
-                  {stats.error} err
-                </Badge>
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="bg-card border border-border rounded-lg divide-y divide-border">
+        {filteredBreakdown.map(([name, stats]) => {
+          const isExpanded = expandedTask === name;
+          const tasks = taskExecutions.get(name) || [];
+          const filteredTasks = statusFilter
+            ? tasks.filter((t) => t.status === statusFilter)
+            : tasks;
+
+          return (
+            <div key={name}>
+              <button
+                onClick={() =>
+                  setExpandedTask(isExpanded ? null : name)
+                }
+                className="flex items-center justify-between w-full px-4 py-2.5 text-left hover:bg-muted/30 transition-colors"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  {isExpanded ? (
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                  )}
+                  <span className="text-sm text-foreground truncate">
+                    {name}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                  {stats.lastRun && (
+                    <span
+                      className="text-xs text-muted-foreground"
+                      title={formatTimestampFull(stats.lastRun)}
+                    >
+                      {formatTimestamp(stats.lastRun)}
+                    </span>
+                  )}
+                  {stats.avgDuration > 0 && (
+                    <Badge className="bg-muted/50 text-muted-foreground border-none text-xs">
+                      ~{formatDuration(stats.avgDuration)}
+                    </Badge>
+                  )}
+                  <Badge className="bg-muted/50 text-muted-foreground border-none text-xs">
+                    {stats.total}
+                  </Badge>
+                  {stats.complete > 0 && (
+                    <Badge className="bg-green-500/20 text-green-400 border-none text-xs">
+                      {stats.complete}
+                    </Badge>
+                  )}
+                  {stats.error > 0 && (
+                    <Badge className="bg-red-500/20 text-red-400 border-none text-xs">
+                      {stats.error}
+                    </Badge>
+                  )}
+                  {stats.executing > 0 && (
+                    <Badge className="bg-blue-500/20 text-blue-400 border-none text-xs">
+                      {stats.executing}
+                    </Badge>
+                  )}
+                </div>
+              </button>
+              {isExpanded && (
+                <div className="border-t border-border/50">
+                  <div className="grid grid-cols-[1fr_80px_90px_90px_70px_60px] gap-2 px-4 py-1.5 text-xs text-muted-foreground border-b border-border/30 bg-muted/20">
+                    <span>Task ID</span>
+                    <span>Status</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Queued
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Timer className="h-3 w-3" /> Duration
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <RotateCcw className="h-3 w-3" /> Retries
+                    </span>
+                    <span></span>
+                  </div>
+                  <div className="max-h-[300px] overflow-y-auto">
+                    {filteredTasks
+                      .sort(
+                        (a: any, b: any) =>
+                          new Date(b.queued_at || 0).getTime() -
+                          new Date(a.queued_at || 0).getTime(),
+                      )
+                      .slice(0, 50)
+                      .map((task: any) => (
+                        <TaskExecutionRow key={task.id} task={task} />
+                      ))}
+                    {filteredTasks.length > 50 && (
+                      <div className="px-4 py-2 text-xs text-muted-foreground text-center">
+                        Showing 50 of {filteredTasks.length} executions
+                      </div>
+                    )}
+                    {filteredTasks.length === 0 && (
+                      <div className="px-4 py-3 text-xs text-muted-foreground text-center">
+                        No executions match the current filter
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
+  );
+}
+
+function TaskExecutionRow({ task }: { task: any }) {
+  const [showError, setShowError] = React.useState(false);
+  const statusCfg = STATUS_CONFIG[task.status] || STATUS_CONFIG.queued;
+
+  return (
+    <>
+      <div className="grid grid-cols-[1fr_80px_90px_90px_70px_60px] gap-2 px-4 py-1.5 text-xs hover:bg-muted/20 transition-colors items-center">
+        <span
+          className="text-muted-foreground truncate font-mono"
+          title={task.task_id}
+        >
+          {task.task_id?.slice(0, 12)}...
+        </span>
+        <Badge
+          className={cn(
+            statusCfg.bg,
+            statusCfg.color,
+            "border-none text-xs px-1.5 py-0 h-5 justify-center",
+          )}
+        >
+          {task.status}
+        </Badge>
+        <span
+          className="text-muted-foreground"
+          title={formatTimestampFull(task.queued_at)}
+        >
+          {formatTimestamp(task.queued_at)}
+        </span>
+        <span className="text-foreground">
+          {formatDuration(task.duration_ms)}
+        </span>
+        <span className="text-muted-foreground">
+          {task.retries > 0 ? task.retries : "-"}
+        </span>
+        <div>
+          {task.error && (
+            <button
+              onClick={() => setShowError(!showError)}
+              className="text-red-400 hover:text-red-300 text-xs underline"
+            >
+              {showError ? "hide" : "error"}
+            </button>
+          )}
+        </div>
+      </div>
+      {showError && task.error && (
+        <div className="mx-4 mb-2 p-2 bg-red-900/20 border border-red-900/40 rounded text-xs text-red-300 font-mono whitespace-pre-wrap break-all max-h-[120px] overflow-y-auto">
+          {task.error}
+        </div>
+      )}
+    </>
   );
 }
