@@ -8,6 +8,7 @@
 | **Carrier Display Name**   | DHL Parcel Germany                   |
 | **Environment**            | Production                           |
 | **Connection Credentials** | Production account configured in Dashboard |
+| **Last Tested**            | 2026-02-20                           |
 
 ---
 
