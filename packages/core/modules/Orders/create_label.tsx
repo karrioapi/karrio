@@ -196,7 +196,7 @@ export default function Page() {
 
       onChange(
         createShipmentFromOrders(
-          orderList as OrderType[],
+          orderList as unknown as OrderType[],
           templates,
           workspace_config,
         ),
@@ -1415,7 +1415,7 @@ export default function Page() {
                     orders={
                       orders.data?.orders?.edges.map(
                         ({ node }) => node,
-                      ) as OrderType[]
+                      ) as unknown as OrderType[]
                     }
                     className="card px-0 mb-5"
                   />

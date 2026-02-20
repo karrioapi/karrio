@@ -2539,6 +2539,7 @@ export const GET_ORDERS = gql`
             options
             metadata
             meta
+            request_id
             return_shipment {
               tracking_number
               shipment_identifier
@@ -2546,6 +2547,14 @@ export const GET_ORDERS = gql`
               service
               reference
               meta
+            }
+            selected_rate_carrier {
+              connection_id
+              connection_type
+              carrier_code
+              carrier_id
+              carrier_name
+              test_mode
             }
             messages {
               carrier_name

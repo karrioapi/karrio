@@ -3502,6 +3502,15 @@ export interface get_orders_orders_edges_node_shipments_return_shipment {
   meta: any | null;
 }
 
+export interface get_orders_orders_edges_node_shipments_selected_rate_carrier {
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
+}
+
 export interface get_orders_orders_edges_node_shipments_messages {
   carrier_name: string | null;
   carrier_id: string | null;
@@ -3549,7 +3558,9 @@ export interface get_orders_orders_edges_node_shipments {
   options: any;
   metadata: any;
   meta: any | null;
+  request_id: string | null;
   return_shipment: get_orders_orders_edges_node_shipments_return_shipment | null;
+  selected_rate_carrier: get_orders_orders_edges_node_shipments_selected_rate_carrier | null;
   messages: get_orders_orders_edges_node_shipments_messages[];
   tracker_id: string | null;
   tracker: get_orders_orders_edges_node_shipments_tracker | null;
@@ -5976,6 +5987,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  smartkargo = "smartkargo",
   spring = "spring",
   teleship = "teleship",
   tge = "tge",

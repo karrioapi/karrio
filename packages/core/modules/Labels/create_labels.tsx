@@ -130,7 +130,7 @@ export default function Page() {
         const shipment =
           order.shipments.find(({ status }) => status === "draft") ||
           createShipmentFromOrders(
-            [order] as OrderType[],
+            [order] as unknown as OrderType[],
             defaults,
             workspace_config,
           );
@@ -693,7 +693,7 @@ export default function Page() {
                           .filter(({ node }) =>
                             shipmentOrderIds.includes(node.order_id),
                           )
-                          .map(({ node }) => node) as OrderType[];
+                          .map(({ node }) => node) as unknown as OrderType[];
 
                         return (
                           <React.Fragment key={keys[shipment_index]}>
