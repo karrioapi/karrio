@@ -8,7 +8,7 @@ import {
 } from "@karrio/types";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useDocumentPrinter, FormatType } from "@karrio/hooks/resource-token";
-import { formatRef, isNone, isNoneOrEmpty, p } from "@karrio/lib";
+import { errorToMessages, formatRef, isNone, isNoneOrEmpty, p } from "@karrio/lib";
 import { useShipmentMutation } from "@karrio/hooks/shipment";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import React, { useState } from "react";
@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { MoreHorizontal, Loader2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 interface ShipmentMenuComponent
   extends React.InputHTMLAttributes<HTMLDivElement> {
@@ -85,12 +85,13 @@ export const ShipmentMenu = ({
         description: `Shipment ${shipment.tracking_number || shipment.id} has been cancelled.`,
       });
     } catch (error: any) {
-      const errorMessage = error?.message || "Failed to cancel shipment";
-
+      const messages = errorToMessages(error);
       toast({
         variant: "destructive",
         title: "Failed to cancel shipment",
-        description: errorMessage,
+        description: messages
+          .map((m: any) => (typeof m === "string" ? m : m.message || JSON.stringify(m)))
+          .join("; "),
       });
 
       // Re-throw to prevent dialog from closing
@@ -109,12 +110,13 @@ export const ShipmentMenu = ({
             description: `Shipment has been marked as ${formatRef(status.toString())}.`,
           });
         } catch (error: any) {
-          const errorMessage = error?.message || "Failed to update status";
-
+          const messages = errorToMessages(error);
           toast({
             variant: "destructive",
             title: "Failed to update status",
-            description: errorMessage,
+            description: messages
+              .map((m: any) => (typeof m === "string" ? m : m.message || JSON.stringify(m)))
+              .join("; "),
           });
 
           // Re-throw to prevent dialog from closing
