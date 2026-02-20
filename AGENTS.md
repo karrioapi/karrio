@@ -609,6 +609,8 @@ try {
 
 ## Commit & Pull Request Guidelines
 
+- **Never commit without explicit user permission** — always ask before creating a commit
+- **Never add AI co-author lines** (e.g., `Co-Authored-By: Claude ...`) to commit messages
 - Format: `type: summary` (e.g., `fix:`, `feat:`, `chore:`)
 - Reference issues: `refs #123` or `fixes #123`
 - Keep commits focused and atomic
