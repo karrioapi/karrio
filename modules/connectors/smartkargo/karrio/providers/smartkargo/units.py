@@ -100,7 +100,6 @@ class TrackingIncidentReason(lib.Enum):
 
     # Consignee-caused issues
     consignee_not_available = ["ADL"]  # Partner reached address but couldn't deliver
-    consignee_not_home = ["ADL"]
 
     # Delivery notifications
     delivery_exception_hold = ["RCU"]  # Reminder sent to customer

@@ -10,7 +10,7 @@ def parse_void_response(raw: str) -> dict:
         return {"error": {"code": "EMPTY_RESPONSE", "message": "Void API returned empty response"}}
     try:
         return lib.to_dict(raw)
-    except Exception:
+    except (ValueError, TypeError):
         # API may return plain text errors like 'Entity "Shipment (...) not found'
         return {"error": {"code": "API_ERROR", "message": str(raw).strip()}}
 

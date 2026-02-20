@@ -22,7 +22,7 @@
 - fix: show exact page counts instead of "of many" in devtools pagination
 - fix: resolve duplicate TaskExecution records causing stuck executing status
 - fix: use icontains for meta and metadata value filters on markups
-- fix: port rate sheet editor layout improvements and bug fixes 
+- fix: port rate sheet editor layout improvements and bug fixes
 
 ### Perf
 
