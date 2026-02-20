@@ -27,6 +27,7 @@ This is the universal blueprint for testing of carrier integrations. Use this te
 | **Carrier Display Name**   | `<Display Name>`                     |
 | **Environment**            | Sandbox / Production                 |
 | **Connection Credentials** | Test account configured in Dashboard |
+| **Last Tested**            | YYYY-MM-DD                           |
 
 ---
 

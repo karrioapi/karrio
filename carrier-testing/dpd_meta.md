@@ -8,6 +8,7 @@
 | **Carrier Display Name**   | DPD Group (META-API)                 |
 | **Environment**            | Sandbox                              |
 | **Connection Credentials** | Test account configured in Dashboard |
+| **Last Tested**            | 2026-02-15                           |
 
 ---
 
