@@ -15,13 +15,15 @@
 ### Fix
 
 - fix(canadapost): use recipient country code for international rating
-- fix(landmark): add User-Agent header to all Landmark API requests
+- fix(landmark): remove hardcoded User-Agent headers from proxy requests
 - fix: add missing Info type annotations for strawberry GraphQL resolvers
+- fix: dispatch webhook notifications for bulk-updated trackers
 
 ### Chore
 
 - chore: update generated files and add pricing migration
 - chore: clean up tests and code to match AGENTS.md conventions
+- chore: add smartkargo carrier image mapping
 
 ### Docs
 

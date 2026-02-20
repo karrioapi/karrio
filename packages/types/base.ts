@@ -513,6 +513,7 @@ export const CARRIER_IMAGES: Collection = {
   seko: "seko",
   sendle: "sendle",
   sfexpress: "sfexpress",
+  smartkargo: "smartkargo",
   spring: "spring",
   speedee: "generic",
   startrack: "generic",
