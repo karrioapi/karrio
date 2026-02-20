@@ -14,7 +14,7 @@ cssselect2==0.9.0
 deprecation==2.1.0
 diff-match-patch==20241021
 distro==1.9.0
-dj-database-url==3.1.1
+dj-database-url==3.1.2
 Django==6.0.2
 django-auditlog==3.4.1
 django-constance==4.3.4
@@ -24,7 +24,7 @@ django-email-verification==0.3.3
 django-extensions==4.1
 django-filter==25.2
 django-formtools==2.5.1
-django-health-check==4.0.0
+django-health-check==4.0.4
 django-import-export==4.4.0
 django-oauth-toolkit==3.2.0
 django-organizations==2.5.0
@@ -42,7 +42,7 @@ drf-spectacular==0.29.0
 fonttools==4.61.1
 googleapis-common-protos==1.72.0
 graphql-core==3.2.7
-grpcio==1.78.0
+grpcio==1.78.1
 gunicorn==25.1.0
 h11==0.16.0
 hiredis==3.3.0
@@ -98,6 +98,7 @@ karrio_server_orgs @ file://${PWD}/ee/insiders/modules/orgs
 karrio_server_pricing @ file://${PWD}/modules/pricing
 karrio_server_proxy @ file://${PWD}/modules/proxy
 karrio_server_tenants @ file://${PWD}/ee/platform/modules/tenants
+karrio_smartkargo @ file://${PWD}/modules/connectors/smartkargo
 karrio_spring @ file://${PWD}/modules/connectors/spring
 karrio_teleship @ file://${PWD}/modules/connectors/teleship
 karrio_ups @ file://${PWD}/modules/connectors/ups
@@ -129,7 +130,7 @@ opentelemetry-util-http==0.60b1
 packaging==26.0
 phonenumbers==9.0.24
 pillow==12.1.1
-posthog==7.8.6
+posthog==7.9.3
 protobuf==6.33.5
 psutil==7.2.2
 psycopg2-binary==2.9.11
@@ -153,7 +154,7 @@ rpds-py==0.30.0
 sentry-sdk==2.53.0
 six==1.17.0
 sqlparse==0.5.5
-strawberry-graphql==0.294.0
+strawberry-graphql==0.298.0
 tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.0.0

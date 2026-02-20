@@ -1,7 +1,7 @@
 import pkgutil
 import strawberry
-import strawberry
 import strawberry.schema.config as config
+from strawberry.types import Info
 
 from karrio.server.core.logging import logger
 import karrio.server.graph.schemas as schemas
@@ -23,6 +23,28 @@ for _, name, _ in pkgutil.iter_modules(schemas.__path__):  # type: ignore
     except Exception as e:
         logger.warning("Failed to register GraphQL schema", schema_name=name, error=str(e))
         logger.exception("GraphQL schema registration error", schema_name=name)
+
+
+# Fallback placeholder to prevent empty schema errors when no modules are installed
+if not QUERIES:
+
+    @strawberry.type
+    class _FallbackQuery:
+        @strawberry.field
+        def _placeholder(self, info: Info) -> str:
+            return "No GraphQL schemas registered"
+
+    QUERIES.append(_FallbackQuery)
+
+if not MUTATIONS:
+
+    @strawberry.type
+    class _FallbackMutation:
+        @strawberry.mutation
+        def _placeholder(self, info: Info) -> str:
+            return "No GraphQL schemas registered"
+
+    MUTATIONS.append(_FallbackMutation)
 
 
 @strawberry.type

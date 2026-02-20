@@ -1,0 +1,973 @@
+openapi: '3.0.0'
+info:
+  version: 1.0.9
+  title: Parcel DE Returns API
+  description: >
+    # Introduction
+
+    ## Overview               
+      Note:
+      This is the specification of the DP-DHL Group Parcel DE Returns API. This web service allows business customers to create return labels on demand.
+    
+    # Scenarios
+
+    ## Main Scenario: Creating a returnlabel
+
+    This is achieved by posting a return order to the URI '/rest/orders'. The service will respond with a return label.
+
+    ## Querying to get receiver locations
+
+    The single scenario supported by this service is the determination of the receiver's location. This is achieved by getting a location to the URI '/rest/locations'. The service will respond with a Receiver.
+    
+    # Technical Note on Authorization
+    
+    This API supports __two alternative ways__ to authorize yourself:
+    
+    1. Combination of Apikey and Basic Authentication which you can provide with every call.
+    
+    2. OAuth2 Password Flow: After having obtained your access token once, you provide this token as bearer token. 
+    
+    
+    You can try it out here. More details can be found when clicking on "Authorize".
+    
+    
+
+servers:
+  - description: Sandbox Environment (Customer Testing)
+    url: https://api-sandbox.dhl.com/parcel/de/shipping/returns/v1
+  - description: Production Environment
+    url: https://api-eu.dhl.com/parcel/de/shipping/returns/v1
+
+tags:
+  - name: General
+    description: Get API version info
+  - name: Orders
+    description: Order and retrieve return labels
+  - name: Locations
+    description: Get return locations
+paths:
+  /:
+    summary: general functionality
+    
+    get:
+      description: Returns the current version of the API as major.minor.patch. Supports content negotiation (json and html) and does __not__ require authentication. This can be used as healthcheck or to identify which version of the API is being used. 
+      summary: Return API version
+      operationId: rootGet
+      tags:
+        - General
+      security: []   # No auth
+    
+      responses:
+        '200':
+          description: Major, minor, and build number being returned as x.y.z
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amp:
+                    type: object
+                    properties: 
+                      name: 
+                        type: string 
+                        example: pp-parcel-returns
+                      version:
+                        type: string
+                        description: "Sandbox version is >= Prod version"
+                        pattern: '^v\d{1,2}.\d{1,2}[.\d{1,5}]$'
+                        example: 'v1.0.0'
+                      rev: 
+                        type: string
+                        example: '13'
+                      env: 
+                        type: string
+                        example: dev
+
+ 
+  /orders:
+    post:
+      operationId: createReturnOrder
+      tags:
+        - Orders
+      summary: Create a return label.
+      description: Creates a return label by given information.
+      parameters:
+        - in: query
+          name: labelType
+          required: false
+          description: Controls which documents are returned.
+          schema:
+            $ref: '#/components/schemas/LabelType'
+      requestBody:
+        description: >-
+          The request body contains the details of the return label that should be created. E.g. sender, references
+          and shipment details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReturnOrder'
+            examples:
+              returnlabel_deu:
+                $ref: '#/components/examples/returnlabel_deu'
+              returnlabel_deu_ggp:
+                $ref: '#/components/examples/returnlabel_deu_ggp'
+              returnlabel_che:
+                $ref: '#/components/examples/returnlabel_che'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnOrderConfirmation'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422'          
+        '429':
+          $ref: '#/components/responses/429' 
+  /locations:
+    get:
+      operationId: getLocations
+      tags:
+        - Locations
+      summary: Get available return locations
+      description: The response should be a list of Receiver, each containing the following information
+      parameters:
+        - in: query
+          name: countryCode
+          required: false
+          description: The ISO3 code of the location
+          schema:
+            $ref: '#/components/schemas/Country'
+        - in: query
+          name: postalCode
+          required: false
+          description: The postal code code of the location
+          schema:
+            $ref: '#/components/schemas/PostalCode'
+        - in: query
+          name: receiverId
+          required: false
+          description: The receiver id of the location
+          schema:
+            $ref: '#/components/schemas/ReceiverId'
+        - in: query
+          name: billingNumber
+          required: false
+          schema:
+            $ref: '#/components/schemas/BillingNumber'
+        - in: query
+          name: maxResult
+          required: false
+          description: The result should be containable.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Receiver'
+                minItems: 0
+                maxItems: 5000
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422'          
+        '429':
+          $ref: '#/components/responses/429'          
+components:
+  schemas:
+    ReturnOrder:
+      type: object
+      properties:
+        receiverId:
+          $ref: '#/components/schemas/ReceiverId'
+        customerReference:
+          type: string
+          minLength: 0
+          maxLength: 50
+          description: The customer reference may be used to identify the original customer order. The first 30 characters are visibly printed on the returns label.         
+        shipmentReference:
+          type: string
+          minLength: 0
+          maxLength: 50
+          description: The shipment reference may be used to identify the returns shipment. It is not visibly printed on the returns label but only displayed in the returns overview of the Post & DHL Business Customer Portal.                                                            
+        creationSoftware:
+         type: string
+         maxLength: 35
+         minLength: 0
+         description: Is only to be indicated by DHL partners.
+        shipper:
+          $ref: '#/components/schemas/ContactAddress'                                         
+        itemWeight:
+          $ref: '#/components/schemas/Weight'
+        itemValue:
+          $ref: '#/components/schemas/Value'
+        customsDetails:
+          $ref: '#/components/schemas/CustomsDetails'
+        services:
+          $ref: '#/components/schemas/VAS'
+      required:
+        - shipper
+        - receiverId
+    Receiver:
+      type: object
+      properties:
+        receiverId:
+          $ref: '#/components/schemas/ReceiverId'
+        shipperCountry:
+          $ref: '#/components/schemas/Country'
+        ekp:
+          type: string
+          pattern: '\d{10}'
+        billingNumber:
+          $ref: '#/components/schemas/BillingNumber'
+        companyName:
+          type: string
+          maxLength: 50
+          example: DHL Paket GmbH
+        numberRange:
+          type: string
+          maxLength: 35
+          description: Number range associated with the billing number. The return shipment number is part of the number range.
+          example: 99999XXXXXXC
+        receiverAddress:
+          $ref: '#/components/schemas/ContactAddress'
+        companyAddress:
+          $ref: '#/components/schemas/ContactAddress'
+        contactEmail:
+          $ref: '#/components/schemas/Email'
+        additionalEmailNote:
+          type: string
+          maxLength: 250
+          description: Text for additional comments by the business customer that are printed in the footer of the email that is sent to the shipper after order of a return label.
+        salesTaxIdentificationNumber:
+          type: string
+          maxLength: 30
+          description: Identification of the business customer for sales tax purposes
+        court:
+          type: string
+          maxLength: 30
+          description: Jurisdiction of the business customer
+        companyManagement:
+          type: string
+          maxLength: 50
+      required:
+        - receiverId
+        - shipperCountry
+        - ekp
+        - billingNumber
+        - companyName
+        - numberRange
+        - receiverAddress
+        - companyAddress
+    ContactAddress:
+      type: object
+      properties:
+        name1:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: "Name1. Line 1 of name information"
+        name2:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: "An optional, additional line of name information"
+        name3:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: "An optional, additional line of name information"
+        addressStreet:
+          type: string
+          description: "This is just the street name."
+          maxLength: 50
+          minLength: 1
+        addressHouse:
+          type: string
+          description: "This is just the house number."
+          maxLength: 10
+          minLength: 1
+        city:
+          type: string
+          maxLength: 40
+          minLength: 1
+          example: Berlin
+        email:
+          $ref: '#/components/schemas/Email'
+        phone:
+          description: contact phone number
+          maxLength: 20
+          minLength: 1
+          type: string
+          example: "+49 123456789"
+        postalCode:
+          $ref: '#/components/schemas/PostalCode'
+        state:
+          type: string
+          maxLength: 20
+          example: NRW
+      required:
+        - name1
+        - addressStreet
+        - addressHouse
+        - postalCode
+        - city
+
+    CustomsDetails:
+      type: object                   
+      description: |- 
+        A customs form (CN23) and the respective data transmission is mandatory for returns with the DHL Retoure International from outside the European Union to facilitate customs processes.
+        Please refer to the DHL Retoure International product information for an overview of the origin country specifics.       
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Commodity'
+          minItems: 1
+          maxItems: 20
+          description: The customs items to be declared.
+      required:
+        - items
+    Commodity:
+      type: object
+      description: Represents a declared item in customs declaration.
+      properties:
+        itemDescription:
+          type: string
+          maxLength: 50
+          description: Description of the declared item.
+        packagedQuantity:
+          type: integer
+          description: Amount of the declared item(s).
+        countryOfOrigin:               
+          $ref: '#/components/schemas/CountryOfOrigin'
+        hsCode:
+          maxLength: 11
+          minLength: 6
+          type: string
+          description: Harmonized System Code aka Customs tariff number.
+          example: '61099090'                
+        itemWeight:
+          $ref: '#/components/schemas/Weight'
+        itemValue:
+          $ref: '#/components/schemas/Value'                                          
+      required:
+        - itemDescription
+        - packagedQuantity
+        - itemWeight
+        - itemValue
+
+    ReturnOrderConfirmation:
+      type: object
+      description: Confirmation number.
+      properties:
+        sstatus:
+          allOf:
+            - $ref: '#/components/schemas/JSONStatus'
+            - example: 
+                title: "Created"
+                status: 201
+                detail: "Created"
+        shipmentNo:
+          $ref: '#/components/schemas/shipmentNo'
+        internationalShipmentNo:
+          $ref: '#/components/schemas/shipmentNo'
+        label:
+          $ref: '#/components/schemas/Document'
+        qrLabel:
+          $ref: '#/components/schemas/Document'
+        qrLink:
+          type: string
+          minLength: 0
+          description: Deep link to import the QR Code to the Post & DHL App
+        routingCode:
+          type: string
+          description: Routing code of the returnlabel.
+          example: 40327653113+99000933090010
+      required:
+        - shipmentNo
+        - label
+        - routingCode
+        - sstatus
+
+    Document:
+      description: "Encoded document. All types of labels and documents. "
+      type: object
+      additionalProperties: false
+      properties:
+        b64:
+          description: The encoded byte stream
+          type: string
+          format: byte
+          example: "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmgvaeTAAAA="
+
+    JSONStatus:
+      description: "Standard elements for JSON status from (https://tools.ietf.org/html/rfc7807) "
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - status
+      properties:
+        title:
+          type: string
+          example: "Unauthorized"
+        status:
+          type: integer
+          format: int32             
+          minimum: 200
+          maximum: 999
+          example: 401
+        type:
+          description: "A URI reference [RFC3986] that identifies the problem type and is human-readable."
+          type: string
+          format: uri
+          example: "https://api.dhl.com/parcel/de/shipping/e0001.html"
+        detail:
+          description: "A human-readable explanation specific to this occurrence of the problem"
+          type: string
+          maxLength: 80
+          example: "The credentials you provided are invalid."
+        instance:
+          description: "A URI reference that identifies the specific occurrence of the problem."
+          type: string
+          format: uri
+          example: "https://api.dhl.com/parcel/de/shipping/e0001.html"
+    ReceiverId:
+      type: string
+      maxLength: 50
+      example: 'deu'
+      description: the receiver id of the return shipment
+    BillingNumber:
+      type: string
+      pattern: '\d{10}\d{2}\w{2}'
+      example: 22222222220701
+    PostalCode:
+      description: postal code, relaxed UPU version
+      maxLength: 10
+      minLength: 3
+      pattern: "^[0-9A-Za-z]+([ -]?[0-9A-Za-z]+)*$"
+      type: string
+      example: 12345
+    Country:
+      type: string
+      enum:
+      - bel
+      - bgr
+      - dnk
+      - deu
+      - est
+      - fin
+      - fra
+      - grc
+      - gbr
+      - irl
+      - ita
+      - hrv
+      - lva
+      - ltu
+      - lux
+      - mlt
+      - nld
+      - nor
+      - aut
+      - pol
+      - prt
+      - rou
+      - swe
+      - che
+      - svk
+      - svn
+      - esp
+      - cze
+      - hun
+      - cyp
+    CountryOfOrigin:
+      type: string
+      enum:
+      - ABW
+      - AFG
+      - AGO
+      - AIA
+      - ALA
+      - ALB
+      - AND
+      - ARE
+      - ARG
+      - ARM
+      - ASM
+      - ATG
+      - AUS
+      - AUT
+      - AZE
+      - BDI
+      - BEL
+      - BEN
+      - BES
+      - BFA
+      - BGD
+      - BGR
+      - BHR
+      - BHS
+      - BIH
+      - BLM
+      - BLR
+      - BLZ
+      - BMU
+      - BOL
+      - BRA
+      - BRB
+      - BRN
+      - BTN
+      - BVT
+      - BWA
+      - CAF
+      - CAN
+      - CCK
+      - CHE
+      - CHL
+      - CHN
+      - CIV
+      - CMR
+      - COD
+      - COG
+      - COK
+      - COL
+      - COM
+      - CPV
+      - CRI
+      - CUB
+      - CUW
+      - CXR
+      - CYM
+      - CYP
+      - CZE
+      - DEU
+      - DJI
+      - DMA
+      - DNK
+      - DOM
+      - DZA
+      - ECU
+      - EGY
+      - ERI
+      - ESP
+      - EST
+      - ETH
+      - FIN
+      - FJI
+      - FLK
+      - FRA
+      - FRO
+      - FSM
+      - GAB
+      - GBR
+      - GEO
+      - GGY
+      - GHA
+      - GIB
+      - GIN
+      - GLP
+      - GMB
+      - GNB
+      - GNQ
+      - GRC
+      - GRD
+      - GRL
+      - GTM
+      - GUF
+      - GUM
+      - GUY
+      - HKG
+      - HMD
+      - HND
+      - HRV
+      - HTI
+      - HUN
+      - IDN
+      - IMN
+      - IND
+      - IRL
+      - IRN
+      - IRQ
+      - ISL
+      - ISR
+      - ITA
+      - JAM
+      - JEY
+      - JOR
+      - JPN
+      - KAZ
+      - KEN
+      - KGZ
+      - KHM
+      - KIR
+      - KNA
+      - KOR
+      - KWT
+      - LAO
+      - LBN
+      - LBR
+      - LBY
+      - LCA
+      - LIE
+      - LKA
+      - LSO
+      - LTU
+      - LUX
+      - LVA
+      - MAC
+      - MAF
+      - MAR
+      - MCO
+      - MDA
+      - MDG
+      - MDV
+      - MEX
+      - MHL
+      - MKD
+      - MLI
+      - MLT
+      - MMR
+      - MNE
+      - MNG
+      - MNP
+      - MOZ
+      - MRT
+      - MSR
+      - MTQ
+      - MUS
+      - MWI
+      - MYS
+      - MYT
+      - NAM
+      - NCL
+      - NER
+      - NFK
+      - NGA
+      - NIC
+      - NIU
+      - NLD
+      - NOR
+      - NPL
+      - NRU
+      - NZL
+      - OMN
+      - PAK
+      - PAN
+      - PCN
+      - PER
+      - PHL
+      - PLW
+      - PNG
+      - POL
+      - PRI
+      - PRK
+      - PRT
+      - PRY
+      - PSE
+      - PYF
+      - QAT
+      - REU
+      - ROU
+      - RUS
+      - RWA
+      - SAU
+      - SDN
+      - SEN
+      - SGP
+      - SHN
+      - SJM
+      - SLB
+      - SLE
+      - SLV
+      - SMR
+      - SOM
+      - SPM
+      - SRB
+      - SSD
+      - STP
+      - SUR
+      - SVK
+      - SVN
+      - SWE
+      - SWZ
+      - SXM
+      - SYC
+      - SYR
+      - TCA
+      - TCD
+      - TGO
+      - THA
+      - TJK
+      - TKL
+      - TKM
+      - TLS
+      - TON
+      - TTO
+      - TUN
+      - TUR
+      - TUV
+      - TWN
+      - TZA
+      - UGA
+      - UKR
+      - URY
+      - USA
+      - UZB
+      - VAT
+      - VCT
+      - VEN
+      - VGB
+      - VIR
+      - VNM
+      - VUT
+      - WLF
+      - WSM
+      - YEM
+      - ZAF
+      - ZMB
+      - ZWE                    
+    Weight:
+      required:
+        - uom
+        - value
+      type: object
+      properties:
+        uom:
+          type: string
+          description: Unit of measurement. Metric unit for weight.
+          example: g
+          enum:
+            - g
+            - kg
+        value:
+          description: Weight of item or shipment. Both uom and value are required.
+          type: number
+          minimum: 0.001
+          maximum: 31500
+          example: 500.0
+          multipleOf: 0.001
+    Email:
+      description: contact email address
+      format: email
+      maxLength: 70
+      minLength: 3
+      type: string
+      example: "max@mustermann.de"
+    Value:
+      description: Currency and numeric value.
+      type: object
+      additionalProperties: false
+      properties:
+        currency:
+          description: "Currency the returned goods were payed in."
+          type: string
+          enum: [ EUR, GBP, CHF ]
+          default: "EUR"
+        value:
+          description: "Numeric value"
+          type: number
+          minimum: 0
+          maximum: 100000
+          multipleOf: 0.01
+    VAS:
+      description: Value added services. Please note that services are specific to products and geographies and/or may require individual setup and billing numbers. Please test and contact your account representative in case of questions.
+      type: object
+      properties:
+        goGreenPlus:
+          type: boolean
+          description: 'GoGreen Plus enables sustainable shipping by investing in measures to reduce greenhouse gas emissions at DHL.'
+          example: true
+    shipmentNo:
+      type: string
+      maxLength: 50
+      example: 999991587211
+    LabelType:
+      type: string
+      enum:
+        - SHIPMENT_LABEL
+        - QR_LABEL
+        - BOTH
+      default: BOTH
+      description: Controls which documents are returned.
+  responses:
+    '400':
+      description: "JSON error per RFC 7807 (https://tools.ietf.org/html/rfc7807)."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/JSONStatus'
+          example: 
+              title: "Bad Request"
+              status: 400
+              detail: "Bad Request - The request could not be understood by the server due to malformed syntax."
+    '401':
+      description: "JSON error per RFC 7807 (https://tools.ietf.org/html/rfc7807)."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/JSONStatus'
+          example: 
+              title: "Unauthorized"
+              status: 401
+              detail: "Unauthorized - The client could not be authenticated since the request lacks the required HTTP headers or the credentials are just wrong."
+    '403':
+      description: "JSON error per RFC 7807 (https://tools.ietf.org/html/rfc7807)."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/JSONStatus'
+          example:  
+              title: "Forbidden"
+              status: 403
+              detail: "Forbidden - The client has successfully been authenticated but could not be authorized for the particular request."
+    '422':
+      description: "JSON error per RFC 7807 (https://tools.ietf.org/html/rfc7807)."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/JSONStatus'
+          example: 
+              title: "Unprocessable"
+              status: 422
+              detail: "Unprocessable Entity - unable to process the content type of the request entity."
+    '429':
+      description: "JSON error per RFC 7807 (https://tools.ietf.org/html/rfc7807)."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/JSONStatus'
+          example: 
+              title: "Too Many Requests"
+              status: 429
+              detail: "Too Many Requests - You have exceeded the maximum number of requests per time unit."
+  examples:
+    returnlabel_deu:
+      summary: German domestic return label
+      value:
+        receiverId: deu
+        customerReference: Kundenreferenz
+        shipmentReference: Sendungsreferenz
+        shipper: 
+            name1: Absender Retoure Zeile 1
+            name2: Absender Retoure Zeile 2
+            name3: Absender Retoure Zeile 3
+            addressStreet: Charles-de-Gaulle Str.
+            addressHouse: 20
+            postalCode: 53113
+            city: Bonn
+            email: Max.Mustermann@dhl.local
+            phone: +49 123456789
+        itemWeight: 
+            uom: kg
+            value: 1
+        itemValue: 
+            currency: EUR
+            value: 10
+    returnlabel_deu_ggp:
+      summary: German domestic label with GoGreen Plus
+      value:
+        receiverId: deu
+        customerReference: Kundenreferenz
+        shipmentReference: Sendungsreferenz
+        shipper: 
+            name1: Absender Retoure Zeile 1
+            name2: Absender Retoure Zeile 2
+            name3: Absender Retoure Zeile 3
+            addressStreet: Charles-de-Gaulle Str.
+            addressHouse: 20
+            postalCode: 53113
+            city: Bonn
+            email: Max.Mustermann@dhl.local
+            phone: +49 123456789
+        itemWeight: 
+            uom: kg
+            value: 1
+        itemValue: 
+            currency: EUR
+            value: 10
+        services:
+            goGreenPlus: true
+    returnlabel_che:
+      summary: Return label with customs
+      value:
+        receiverId: che
+        customerReference: Kundenreferenz
+        shipmentReference: Sendungsreferenz
+        shipper: 
+            name1: Absender Retoure Zeile 1
+            name2: Absender Retoure Zeile 2
+            name3: Absender Retoure Zeile 3
+            addressStreet: Musterstr.
+            addressHouse: 1
+            postalCode: 3344
+            city: Bern
+            email: Max.Mustermann@dhl.local
+            phone: +49 123456789
+        itemWeight: 
+            uom: g
+            value: 1200.2
+        itemValue: 
+            currency: EUR
+            value: 1012.99
+        customsDetails: 
+            items:
+              - itemDescription: Artikel-Beschreibung 1
+                packagedQuantity: 1
+                itemWeight: 
+                  uom: g
+                  value: 500
+                itemValue: 
+                  currency: EUR
+                  value: 1000
+                countryOfOrigin: FRA
+                hsCode: "88011900"
+              - itemDescription: Artikel-Beschreibung 2
+                packagedQuantity: 1
+                itemWeight: 
+                  uom: g
+                  value: 700
+                itemValue: 
+                  currency: EUR
+                  value: 12.99
+                countryOfOrigin: DEU
+                hsCode: "12345678"
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: Active business customer credentials (username and password).
+    ApiKey:
+      type: apiKey
+      description: API key to authorize requests. API key can be obtained at [DHL's development
+        portal](https://developer.dhl.com).
+      name: dhl-api-key
+      in: header
+    
+    OAuth2:
+      type: oauth2
+      description: See https://developer.dhl.com/api-reference/authentication-api-post-parcel-germany. For the POST call to get a token, provide all parameters in the request body. Refer to the above link for details, or to the RFC describing OAuth2 Password Grant. After having obtained the access token, use this as Bearer token in the HTTP authorization header. 
+      flows: 
+        password: 
+          tokenUrl: /parcel/de/account/auth/ropc/v1/token
+          scopes: {}
+security:
+    - ApiKey: []
+    - BasicAuth: []
+    - OAuth2: []

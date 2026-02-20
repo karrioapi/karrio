@@ -1,6 +1,7 @@
 import typing
 import datetime
 import strawberry
+from strawberry.types import Info
 
 import karrio.server.graph.utils as utils
 import karrio.server.graph.schemas.base.types as base
@@ -24,13 +25,13 @@ class DataTemplateType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["DataTemplateType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["DataTemplateType"]:
         return models.DataTemplate.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.DataTemplateFilter] = strawberry.UNSET,
     ) -> utils.Connection["DataTemplateType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.DataTemplateFilter()
@@ -60,13 +61,13 @@ class BatchOperationType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["BatchOperationType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["BatchOperationType"]:
         return models.BatchOperation.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.BatchOperationFilter] = strawberry.UNSET,
     ) -> utils.Connection["BatchOperationType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.BatchOperationFilter()

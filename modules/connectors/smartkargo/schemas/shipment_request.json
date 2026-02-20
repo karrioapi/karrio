@@ -1,0 +1,71 @@
+{
+  "reference": "ReferencesToBeSet",
+  "issueDate": "2021-06-29 20:00",
+  "packages": [
+    {
+      "reference": "2021-06-03-1",
+      "commodityType": "GEN-6501",
+      "serviceType": "EST",
+      "paymentMode": "PX",
+      "packageDescription": "Test Products",
+      "totalPackages": 1,
+      "totalPieces": 1,
+      "grossVolumeUnitMeasure": "CFT",
+      "totalGrossWeight": 10.0,
+      "grossWeightUnitMeasure": "LBR",
+      "insuranceRequired": true,
+      "declaredValue": 150.0,
+      "specialHandlingType": null,
+      "additionalInfo01": null,
+      "additionalInfo02": null,
+      "additionalInfo03": null,
+      "additionalInfo04": null,
+      "deliveryType": "DoorToDoor",
+      "channel": "Direct",
+      "labelRef2": null,
+      "dimensions": [
+        {
+          "pieces": 1,
+          "height": 20.0,
+          "width": 20.0,
+          "length": 20.0,
+          "grossWeight": 10.0
+        }
+      ],
+      "participants": [
+        {
+          "type": "Shipper",
+          "primaryId": "PRIMARYID",
+          "additionalId": "",
+          "account": "ACCOUNT",
+          "name": "TESTER TEST",
+          "postCode": "02142",
+          "street": "1 Broadway",
+          "street2": null,
+          "city": "Boston",
+          "state": "MA",
+          "countryId": "US",
+          "phoneNumber": "19999999999",
+          "email": "test@test.com",
+          "taxIdentificationNumbers": null
+        },
+        {
+          "type": "Consignee",
+          "primaryId": null,
+          "additionalId": null,
+          "account": null,
+          "name": "Tester Tester",
+          "postCode": "98148",
+          "street": "124 Main St",
+          "street2": "Unit 4",
+          "city": "Los Angeles",
+          "state": "CA",
+          "countryId": "US",
+          "phoneNumber": "8888347867",
+          "email": "test2@test.com",
+          "taxIdentificationNumbers": null
+        }
+      ]
+    }
+  ]
+}

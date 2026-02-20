@@ -79,6 +79,14 @@ class Settings(core.Settings):
         )
 
     @property
+    def returns_server_url(self):
+        return (
+            "https://api-sandbox.dhl.com/parcel/de/shipping/returns/v1"
+            if self.test_mode
+            else "https://api-eu.dhl.com/parcel/de/shipping/returns/v1"
+        )
+
+    @property
     def tracking_server_url(self):
         """Dedicated DHL Parcel DE Tracking API endpoint.
 

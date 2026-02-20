@@ -68,6 +68,27 @@ class Mapper(abc.ABC):
             self.__class__.create_tracking_request.__name__, self.settings.carrier_name
         )
 
+    def create_return_shipment_request(
+        self, payload: models.ShipmentRequest
+    ) -> lib.Serializable:
+        """Create a carrier specific return shipment request data from the payload
+
+        Args:
+            payload (ShipmentRequest): the return shipment request payload
+                (addresses already swapped by gateway)
+
+        Returns:
+            Serializable: a carrier specific serializable request data type
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration
+                does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_return_shipment_request.__name__,
+            self.settings.carrier_name,
+        )
+
     def create_shipment_request(
         self, payload: models.ShipmentRequest
     ) -> lib.Serializable:
@@ -294,6 +315,26 @@ class Mapper(abc.ABC):
         """
         raise errors.MethodNotSupportedError(
             self.__class__.parse_shipment_response.__name__, self.settings.carrier_name
+        )
+
+    def parse_return_shipment_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+        """Create a unified API return shipment result from carrier response
+
+        Args:
+            response (Deserializable): a deserializable return shipment response (xml, json, text...)
+
+        Returns:
+            Tuple[ShipmentDetails, List[Message]]: the return shipment details
+                as well as errors and messages returned
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.parse_return_shipment_response.__name__,
+            self.settings.carrier_name,
         )
 
     def parse_cancel_shipment_response(

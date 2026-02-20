@@ -52,3 +52,6 @@ class Proxy(BaseProxy):
 
     def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
         return super().upload_document(request)
+
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        return self.create_shipment(request)

@@ -67,4 +67,13 @@ class Mapper(mapper.Mapper):
     # Note: Hermes API does not support:
     # - cancel_shipment (no DELETE endpoint for shipments)
     # - pickup_update (no PUT endpoint for pickups)
-    
+
+    def create_return_shipment_request(
+        self, payload: models.ShipmentRequest
+    ) -> lib.Serializable:
+        return provider.return_shipment_request(payload, self.settings)
+
+    def parse_return_shipment_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+        return provider.parse_return_shipment_response(response, self.settings)

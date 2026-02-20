@@ -20,3 +20,8 @@ from karrio.providers.dhl_express.tracking import (
     parse_tracking_response,
     tracking_request,
 )
+
+from karrio.providers.dhl_express.return_shipment import (
+    parse_return_shipment_response,
+    return_shipment_request,
+)

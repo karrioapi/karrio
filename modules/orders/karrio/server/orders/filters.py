@@ -66,6 +66,10 @@ class OrderFilters(filters.FilterSet):
         method="keyword_filter",
         help_text="order' keyword and indexes search",
     )
+    request_id = filters.CharFilter(
+        method="request_id_filter",
+        help_text="filter by request correlation ID",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -129,6 +133,11 @@ class OrderFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
+        openapi.OpenApiParameter(
+            "request_id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -167,6 +176,7 @@ class OrderFilters(filters.FilterSet):
             | Q(order_id__icontains=value)
             | Q(source__icontains=value)
             | Q(id__icontains=value)
+            | Q(meta__request_id__icontains=value)
         )
 
     def address_filter(self, queryset, name, value):
@@ -226,3 +236,6 @@ class OrderFilters(filters.FilterSet):
                 if value in (o.get("metadata") or {}).values()
             ]
         )
+
+    def request_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_id=value)

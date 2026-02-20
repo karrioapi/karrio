@@ -4,8 +4,10 @@ from karrio.providers.canadapost.rate import parse_rate_response, rate_request
 from karrio.providers.canadapost.shipment import (
     parse_shipment_cancel_response,
     parse_shipment_response,
+    parse_return_shipment_response,
     shipment_cancel_request,
     shipment_request,
+    return_shipment_request,
 )
 from karrio.providers.canadapost.pickup import (
     parse_pickup_cancel_response,

@@ -180,6 +180,13 @@ class ShipmentSerializer(ShipmentData):
                 address_model=models.Address, product_model=models.Commodity,
             ))
 
+        # Merge request_id into meta for request correlation
+        from karrio.server.core.middleware import get_request_id
+        _meta = validated_data.get("meta") or {}
+        _request_id = get_request_id()
+        if _request_id:
+            _meta = {**_meta, "request_id": _request_id}
+
         shipment = models.Shipment.objects.create(
             **{
                 **{
@@ -188,6 +195,7 @@ class ShipmentSerializer(ShipmentData):
                     if key in models.Shipment.DIRECT_PROPS and value is not None
                 },
                 **json_fields,
+                "meta": _meta,
                 "rates": rates,
                 "payment": payment,
                 "services": services,
@@ -403,7 +411,6 @@ class ShipmentUpdateData(validators.OptionDefaultSerializer):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "shipping_charges": 10.00,
-            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -476,7 +483,6 @@ class ShipmentRateData(validators.OptionDefaultSerializer):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "shipping_charges": 10.00,
-            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -536,7 +542,6 @@ class ShipmentPurchaseSerializer(Shipment):
             "signature_confirmation": true,
             "saturday_delivery": true,
             "shipping_charges": 10.00,
-            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -734,7 +739,9 @@ def buy_shipment_label(
     )
 
     # Update shipment state - preserve original meta and merge with response meta
+    from karrio.server.core.middleware import get_request_id
     response_details = ShipmentDetails(response).data
+    _request_id = get_request_id()
     merged_meta = {
         **(shipment.meta or {}),
         **(response_details.get("meta") or {}),
@@ -743,6 +750,7 @@ def buy_shipment_label(
             if kwargs.get("rule_activity")
             else {}
         ),
+        **({"request_id": _request_id} if _request_id else {}),
     }
 
     # Set selected_rate with carrier snapshot directly on shipment before update
@@ -938,6 +946,14 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 shipment.selected_rate, shipment.options
             )
 
+            # Include request_id from shipment meta in tracker meta
+            _tracker_meta = dict(
+                carrier=rate_provider,
+                **({
+                    "request_id": (shipment.meta or {}).get("request_id")
+                } if (shipment.meta or {}).get("request_id") else {}),
+            )
+
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
                 delivered=False,
@@ -949,7 +965,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 estimated_delivery=estimated_delivery,
                 events=utils.default_tracking_event(event_at=shipment.updated_at),
                 options={shipment.tracking_number: dict(carrier=rate_provider)},
-                meta=dict(carrier=rate_provider),
+                meta=_tracker_meta,
                 info=dict(
                     source="api",
                     shipment_weight=str(pkg_weight),

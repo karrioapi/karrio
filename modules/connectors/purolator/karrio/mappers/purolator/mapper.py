@@ -19,6 +19,8 @@ from karrio.core.models import (
     Message,
 )
 from karrio.providers.purolator import (
+    parse_return_shipment_response as _parse_return_shipment_response,
+    return_shipment_request as _return_shipment_request,
     parse_address_validation_response,
     parse_pickup_update_response,
     parse_pickup_cancel_response,
@@ -113,3 +115,13 @@ class Mapper(BaseMapper):
         self, response: Deserializable
     ) -> Tuple[List[TrackingDetails], List[Message]]:
         return parse_tracking_response(response, self.settings)
+
+    def create_return_shipment_request(
+        self, payload: ShipmentRequest
+    ) -> Serializable:
+        return _return_shipment_request(payload, self.settings)
+
+    def parse_return_shipment_response(
+        self, response: Deserializable
+    ) -> Tuple[ShipmentDetails, List[Message]]:
+        return _parse_return_shipment_response(response, self.settings)

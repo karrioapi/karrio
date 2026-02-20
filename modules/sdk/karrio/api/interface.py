@@ -440,18 +440,53 @@ class Shipment:
     @staticmethod
     def create(args: typing.Union[models.ShipmentRequest, dict]) -> IRequestFrom:
         """Submit a shipment creation to a carrier.
-        This operation is often referred to as Buying a shipping label
+        This operation is often referred to as Buying a shipping label.
+        When is_return is True, addresses are auto-swapped and the request
+        is routed to create_return_shipment.
 
         Args:
-            args (Union[TrackingRequest, dict]): the shipment creation request payload
+            args (Union[ShipmentRequest, dict]): the shipment creation request payload
 
         Returns:
-            IRequestWith: a lazy request dataclass instance
+            IRequestFrom: a lazy request dataclass instance
         """
         logger.debug("Creating shipment", payload=lib.to_dict(args))
         payload = lib.to_object(models.ShipmentRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway):
+            if payload.is_return:
+                # Auto-swap addresses: user provides outbound orientation
+                _payload = dict(lib.to_dict(payload))
+                _payload.update(
+                    shipper=lib.to_dict(payload.recipient),
+                    recipient=lib.to_dict(payload.shipper),
+                    return_address=lib.to_dict(
+                        payload.return_address or payload.shipper
+                    ),
+                )
+                swapped_payload = lib.to_object(
+                    models.ShipmentRequest, _payload
+                )
+
+                is_valid, abortion = check_operation(
+                    gateway,
+                    "create_return_shipment",
+                    origin_country_code=swapped_payload.shipper.country_code,
+                )
+                if not is_valid:
+                    return abortion
+
+                _request = (
+                    gateway.mapper.create_return_shipment_request(swapped_payload)
+                )
+                _response = gateway.proxy.create_return_shipment(_request)
+
+                @fail_safe(gateway)
+                def _deserialize():
+                    return gateway.mapper.parse_return_shipment_response(_response)
+
+                return IDeserialize(_deserialize)
+
             is_valid, abortion = check_operation(
                 gateway,
                 "create_shipment",

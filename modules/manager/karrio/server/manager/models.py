@@ -783,6 +783,7 @@ class Shipment(core.OwnedEntity):
         "selected_rate",
         "carrier",  # Carrier snapshot
         "return_shipment",
+        "is_return",
     ]
     HIDDEN_PROPS = (
         "label",
@@ -833,6 +834,11 @@ class Shipment(core.OwnedEntity):
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
     reference = models.CharField(max_length=100, null=True, blank=True)
+    is_return = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Whether this shipment is a return shipment",
+    )
 
     # Document storage
     label = models.TextField(max_length=None, null=True, blank=True)

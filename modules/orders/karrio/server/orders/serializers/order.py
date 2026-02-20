@@ -165,6 +165,10 @@ class OrderSerializer(serializers.OrderData):
 
         json_fields.update(line_items=process_order_line_items(validated_data))
 
+        # Merge request_id into meta for request correlation
+        from karrio.server.core.middleware import get_request_id
+        _request_id = get_request_id()
+
         order_data = {
             **{
                 key: value
@@ -173,6 +177,7 @@ class OrderSerializer(serializers.OrderData):
             },
             **json_fields,
             "test_mode": test_mode,
+            **({"meta": {**(validated_data.get("meta") or {}), "request_id": _request_id}} if _request_id else {}),
         }
 
         # Acquire deduplication lock and create order

@@ -165,6 +165,7 @@ export const GET_LOG = gql`
       data
       response
       status_code
+      request_id
       records {
         id
         key
@@ -199,6 +200,7 @@ export const GET_LOGS = gql`
           remote_addr
           requested_at
           status_code
+          request_id
           query_params
           response
           records {
@@ -339,6 +341,7 @@ export const GET_SHIPMENT = gql`
       tracking_url
       tracker_id
       test_mode
+      is_return
       service
       reference
       customs {
@@ -429,6 +432,7 @@ export const GET_SHIPMENT = gql`
       options
       metadata
       meta
+      request_id
       return_shipment {
         tracking_number
         shipment_identifier
@@ -637,6 +641,7 @@ export const GET_SHIPMENTS = gql`
           tracking_url
           tracker_id
           test_mode
+          is_return
           service
           reference
           customs {
@@ -727,6 +732,7 @@ export const GET_SHIPMENTS = gql`
           options
           metadata
           meta
+          request_id
           return_shipment {
             tracking_number
             shipment_identifier
@@ -1179,6 +1185,7 @@ export const GET_TRACKER = gql`
       estimated_delivery
       meta
       metadata
+      request_id
       info {
         carrier_tracking_link
         customer_name
@@ -1305,6 +1312,7 @@ export const GET_TRACKERS = gql`
           carrier_name
           meta
           metadata
+          request_id
           tracking_carrier {
             connection_id
             connection_type
@@ -1789,6 +1797,7 @@ export const GET_EVENT = gql`
       data
       test_mode
       pending_webhooks
+      request_id
       created_at
     }
   }
@@ -1811,6 +1820,7 @@ export const GET_EVENTS = gql`
           data
           test_mode
           pending_webhooks
+          request_id
           created_at
         }
       }
@@ -2024,6 +2034,7 @@ export const GET_ORDER = gql`
         invoice_url
         tracking_url
         test_mode
+        is_return
         service
         reference
         customs {
@@ -2216,6 +2227,7 @@ export const GET_ORDER_DATA = gql`
       }
       options
       metadata
+      request_id
     }
   }
 `;
@@ -2315,6 +2327,7 @@ export const GET_ORDERS = gql`
           test_mode
           options
           metadata
+          request_id
           shipments {
             id
             carrier_id
@@ -2435,6 +2448,7 @@ export const GET_ORDERS = gql`
             invoice_url
             tracking_url
             test_mode
+            is_return
             service
             reference
             customs {
@@ -2525,6 +2539,7 @@ export const GET_ORDERS = gql`
             options
             metadata
             meta
+            request_id
             return_shipment {
               tracking_number
               shipment_identifier
@@ -2532,6 +2547,14 @@ export const GET_ORDERS = gql`
               service
               reference
               meta
+            }
+            selected_rate_carrier {
+              connection_id
+              connection_type
+              carrier_code
+              carrier_id
+              carrier_name
+              test_mode
             }
             messages {
               carrier_name
@@ -3631,6 +3654,7 @@ export const GET_PICKUPS = gql`
           options
           metadata
           meta
+          request_id
           created_at
           updated_at
         }
@@ -3725,6 +3749,7 @@ export const GET_PICKUP = gql`
       options
       metadata
       meta
+      request_id
       created_at
       updated_at
       created_by {
@@ -3773,6 +3798,7 @@ export const GET_TRACING_RECORDS = gql`
           test_mode
           created_at
           meta
+          request_id
           record
         }
       }
@@ -3789,6 +3815,7 @@ export const GET_TRACING_RECORD = gql`
       test_mode
       created_at
       meta
+      request_id
       record
     }
   }

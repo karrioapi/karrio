@@ -179,6 +179,9 @@ class Proxy(proxy.Proxy):
             request.ctx,
         )
 
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        return self.create_shipment(request)
+
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         access_token = self.authenticate().deserialize()
         payment_token = self.get_payment_token().deserialize()

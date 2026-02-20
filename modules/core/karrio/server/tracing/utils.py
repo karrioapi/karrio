@@ -48,6 +48,7 @@ def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None)
                         meta=lib.to_dict(
                             {
                                 "tracer_id": tracer.id,
+                                "request_id": tracer.context.get("request_id"),
                                 "object_id": tracer.context.get("object_id"),
                                 "carrier_account_id": connection.get("id"),
                                 "carrier_id": connection.get("carrier_id"),

@@ -103,6 +103,12 @@ export const LogComponent = ({
               <div className="column is-3 py-1">IP Address</div>
               <div className="column is-8 py-1">{log?.host}</div>
             </div>
+            {(log as any)?.request_id && (
+              <div className="columns my-0">
+                <div className="column is-3 py-1">Request ID</div>
+                <div className="column is-8 py-1">{(log as any).request_id}</div>
+              </div>
+            )}
           </div>
 
           <TabStateProvider tabs={["API Response", "API Request", "Timeline"]}>

@@ -274,6 +274,7 @@ export interface get_log_log {
   data: any | null;
   response: any | null;
   status_code: number | null;
+  request_id: string | null;
   records: get_log_log_records[];
 }
 
@@ -321,6 +322,7 @@ export interface get_logs_logs_edges_node {
   remote_addr: string | null;
   requested_at: any | null;
   status_code: number | null;
+  request_id: string | null;
   query_params: any | null;
   response: any | null;
   records: get_logs_logs_edges_node_records[];
@@ -667,6 +669,7 @@ export interface get_shipment_shipment {
   tracking_url: string | null;
   tracker_id: string | null;
   test_mode: boolean;
+  is_return: boolean;
   service: string | null;
   reference: string | null;
   customs: get_shipment_shipment_customs | null;
@@ -678,6 +681,7 @@ export interface get_shipment_shipment {
   options: any;
   metadata: any;
   meta: any | null;
+  request_id: string | null;
   return_shipment: get_shipment_shipment_return_shipment | null;
   messages: get_shipment_shipment_messages[];
   selected_rate_carrier: get_shipment_shipment_selected_rate_carrier | null;
@@ -968,6 +972,7 @@ export interface get_shipments_shipments_edges_node {
   tracking_url: string | null;
   tracker_id: string | null;
   test_mode: boolean;
+  is_return: boolean;
   service: string | null;
   reference: string | null;
   customs: get_shipments_shipments_edges_node_customs | null;
@@ -979,6 +984,7 @@ export interface get_shipments_shipments_edges_node {
   options: any;
   metadata: any;
   meta: any | null;
+  request_id: string | null;
   return_shipment: get_shipments_shipments_edges_node_return_shipment | null;
   messages: get_shipments_shipments_edges_node_messages[];
   selected_rate_carrier: get_shipments_shipments_edges_node_selected_rate_carrier | null;
@@ -1599,6 +1605,7 @@ export interface get_tracker_tracker {
   estimated_delivery: any | null;
   meta: any | null;
   metadata: any;
+  request_id: string | null;
   info: get_tracker_tracker_info | null;
   messages: get_tracker_tracker_messages[];
   created_at: any;
@@ -1723,6 +1730,7 @@ export interface get_trackers_trackers_edges_node {
   carrier_name: string | null;
   meta: any | null;
   metadata: any;
+  request_id: string | null;
   tracking_carrier: get_trackers_trackers_edges_node_tracking_carrier | null;
   shipment: get_trackers_trackers_edges_node_shipment | null;
 }
@@ -2634,6 +2642,7 @@ export interface get_event_event {
   data: any | null;
   test_mode: boolean | null;
   pending_webhooks: number | null;
+  request_id: string | null;
   created_at: any | null;
 }
 
@@ -2667,6 +2676,7 @@ export interface get_events_events_edges_node {
   data: any | null;
   test_mode: boolean | null;
   pending_webhooks: number | null;
+  request_id: string | null;
   created_at: any | null;
 }
 
@@ -3031,6 +3041,7 @@ export interface get_order_order_shipments {
   invoice_url: string | null;
   tracking_url: string | null;
   test_mode: boolean;
+  is_return: boolean;
   service: string | null;
   reference: string | null;
   customs: get_order_order_shipments_customs | null;
@@ -3163,6 +3174,7 @@ export interface get_order_data_order {
   line_items: get_order_data_order_line_items[];
   options: any;
   metadata: any;
+  request_id: string | null;
 }
 
 export interface get_order_data {
@@ -3490,6 +3502,15 @@ export interface get_orders_orders_edges_node_shipments_return_shipment {
   meta: any | null;
 }
 
+export interface get_orders_orders_edges_node_shipments_selected_rate_carrier {
+  connection_id: string | null;
+  connection_type: string | null;
+  carrier_code: string | null;
+  carrier_id: string | null;
+  carrier_name: string | null;
+  test_mode: boolean | null;
+}
+
 export interface get_orders_orders_edges_node_shipments_messages {
   carrier_name: string | null;
   carrier_id: string | null;
@@ -3525,6 +3546,7 @@ export interface get_orders_orders_edges_node_shipments {
   invoice_url: string | null;
   tracking_url: string | null;
   test_mode: boolean;
+  is_return: boolean;
   service: string | null;
   reference: string | null;
   customs: get_orders_orders_edges_node_shipments_customs | null;
@@ -3536,7 +3558,9 @@ export interface get_orders_orders_edges_node_shipments {
   options: any;
   metadata: any;
   meta: any | null;
+  request_id: string | null;
   return_shipment: get_orders_orders_edges_node_shipments_return_shipment | null;
+  selected_rate_carrier: get_orders_orders_edges_node_shipments_selected_rate_carrier | null;
   messages: get_orders_orders_edges_node_shipments_messages[];
   tracker_id: string | null;
   tracker: get_orders_orders_edges_node_shipments_tracker | null;
@@ -3557,6 +3581,7 @@ export interface get_orders_orders_edges_node {
   test_mode: boolean;
   options: any;
   metadata: any;
+  request_id: string | null;
   shipments: get_orders_orders_edges_node_shipments[];
 }
 
@@ -5262,6 +5287,7 @@ export interface get_pickups_pickups_edges_node {
   options: any;
   metadata: any;
   meta: any | null;
+  request_id: string | null;
   created_at: any;
   updated_at: any;
 }
@@ -5396,6 +5422,7 @@ export interface get_pickup_pickup {
   options: any;
   metadata: any;
   meta: any | null;
+  request_id: string | null;
   created_at: any;
   updated_at: any;
   created_by: get_pickup_pickup_created_by;
@@ -5453,6 +5480,7 @@ export interface get_tracing_records_tracing_records_edges_node {
   test_mode: boolean | null;
   created_at: any | null;
   meta: any | null;
+  request_id: string | null;
   record: any | null;
 }
 
@@ -5488,6 +5516,7 @@ export interface get_tracing_record_tracing_record {
   test_mode: boolean | null;
   created_at: any | null;
   meta: any | null;
+  request_id: string | null;
   record: any | null;
 }
 
@@ -5958,6 +5987,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  smartkargo = "smartkargo",
   spring = "spring",
   teleship = "teleship",
   tge = "tge",
@@ -6352,6 +6382,7 @@ export interface LogFilter {
   method?: string[] | null;
   status?: string | null;
   status_code?: number[] | null;
+  request_id?: string | null;
 }
 
 // null
@@ -6375,6 +6406,8 @@ export interface ShipmentFilter {
   meta_value?: any | null;
   has_tracker?: boolean | null;
   has_manifest?: boolean | null;
+  is_return?: boolean | null;
+  request_id?: string | null;
 }
 
 // null
@@ -6474,6 +6507,7 @@ export interface TrackerFilter {
   carrier_name?: string[] | null;
   status?: string[] | null;
   keyword?: string | null;
+  request_id?: string | null;
 }
 
 // null
@@ -6699,6 +6733,7 @@ export interface OrderFilter {
   metadata_key?: string[] | null;
   metadata_value?: string[] | null;
   status?: OrderStatus[] | null;
+  request_id?: string | null;
 }
 
 // null
@@ -7132,6 +7167,7 @@ export interface PickupFilter {
   metadata_value?: string | null;
   meta_key?: string | null;
   meta_value?: string | null;
+  request_id?: string | null;
 }
 
 // null
@@ -7143,6 +7179,7 @@ export interface TracingRecordFilter {
   date_after?: any | null;
   date_before?: any | null;
   keyword?: string | null;
+  request_id?: string | null;
 }
 
 // null

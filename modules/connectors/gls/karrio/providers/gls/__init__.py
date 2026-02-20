@@ -8,3 +8,7 @@ from karrio.providers.gls.tracking import (
     parse_tracking_response,
     tracking_request,
 )
+from karrio.providers.gls.shipment import (
+    parse_return_shipment_response,
+    return_shipment_request,
+)

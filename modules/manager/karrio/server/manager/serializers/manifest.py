@@ -72,6 +72,14 @@ class ManifestSerializer(core.ManifestData):
             context=context,
         )
 
+        # Merge request_id into meta for request correlation
+        from karrio.server.core.middleware import get_request_id
+        _request_id = get_request_id()
+        _manifest_meta = {
+            **(payload.get("meta") or {}),
+            **({"request_id": _request_id} if _request_id else {}),
+        }
+
         manifest = models.Manifest.objects.create(
             **{
                 **payload,
@@ -79,6 +87,7 @@ class ManifestSerializer(core.ManifestData):
                 "created_by": context.user,
                 "carrier": create_carrier_snapshot(carrier),
                 "options": data.get("options", {}),
+                "meta": _manifest_meta,
                 "test_mode": response.manifest.test_mode,
                 "manifest": response.manifest.doc.manifest,
             }

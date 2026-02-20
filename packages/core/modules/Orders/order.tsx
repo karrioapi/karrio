@@ -158,6 +158,12 @@ export const OrderComponent = ({
                       <div className="text-sm font-medium text-blue-600">{order?.source}</div>
                     </div>
                   )}
+                  {(order as any)?.request_id && (
+                    <div>
+                      <div className="text-xs mb-1 font-bold">Request ID</div>
+                      <CopiableLink text={(order as any).request_id} title="Copy Request ID" variant="outline" />
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-3">
                   <div>

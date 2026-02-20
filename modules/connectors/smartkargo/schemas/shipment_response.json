@@ -1,0 +1,100 @@
+{
+  "exchangeId": "test-17f7-test-2382-test",
+  "fileIdentifier": null,
+  "siteId": "TEST",
+  "inputType": "StandardJson",
+  "status": "Processed",
+  "valid": "Yes",
+  "createdOn": "2021-06-28T03:08:30.1127523",
+  "shipments": [
+    {
+      "issueDate": "2021-06-29T20:00:00",
+      "siteId": "TEST",
+      "headerReference": "ReferencesToBeSet",
+      "packageReference": "2021-06-03-1",
+      "prefix": "AXB",
+      "airWaybill": "01234567",
+      "estimatedDeliveryDate": "2021-07-05T21:00:00",
+      "commodityType": "GEN-6501",
+      "serviceType": "EST",
+      "origin": "YUL99",
+      "destination": null,
+      "packageDescription": "Test Products",
+      "totalGrossWeight": 10.00,
+      "totalPackages": 1.00,
+      "totalPieces": 1.00,
+      "currency": "USD",
+      "insuranceRequired": true,
+      "declaredValue": 150.00,
+      "specialHandlingType": "INS",
+      "deliveryRequestTime": "2021-06-28T03:08:30.1011107",
+      "pickupRequestTime": "2021-06-28T03:08:30.1011081",
+      "expectedSLAInHours": null,
+      "paymentMode": "PX",
+      "grossVolumeUnitMeasure": "CFT",
+      "grossWeightUnitMeasure": "KG",
+      "additionalInfo01": null,
+      "additionalInfo02": null,
+      "additionalInfo03": null,
+      "additionalInfo04": null,
+      "status": "Booked",
+      "createdOn": "2021-06-28T03:08:30.1127526",
+      "labelUrl": "https://api.smartkargo.com/label?prefix=AXB&airWaybill=01234567",
+      "shippingFee": 8.50,
+      "insurance": 2.00,
+      "totalCharges": 0.00,
+      "total": 10.50,
+      "totalTax": 1.05,
+      "otherCharges": [
+        {
+          "charge": 0.00,
+          "name": null
+        }
+      ],
+      "validations": [],
+      "dimensions": [
+        {
+          "pieceReference": "2021-06-03-1-00001",
+          "pieces": 1.00,
+          "grossWeight": 10.00,
+          "height": 20.00,
+          "width": 20.00,
+          "length": 20.00
+        }
+      ],
+      "participants": [
+        {
+          "type": "Shipper",
+          "primaryId": "TESTER",
+          "additionalId": "",
+          "account": "TESTER",
+          "name": "TESTER",
+          "postCode": "02142",
+          "street": "1 Broadway",
+          "street2": null,
+          "city": "Boston",
+          "countryId": "US",
+          "phoneNumber": "19999999999",
+          "email": "test@test.com",
+          "state": "MA"
+        },
+        {
+          "type": "Consignee",
+          "primaryId": null,
+          "additionalId": null,
+          "account": null,
+          "name": "Tester Tester",
+          "postCode": "98148",
+          "street": "124 Main St",
+          "street2": "Unit 4",
+          "city": "Los Angeles",
+          "countryId": "US",
+          "phoneNumber": "8888347867",
+          "email": "test2@test.com",
+          "state": "CA"
+        }
+      ]
+    }
+  ],
+  "validations": []
+}

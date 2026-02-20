@@ -58,3 +58,13 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
         return provider.parse_manifest_response(response, self.settings)
+
+    def create_return_shipment_request(
+        self, payload: models.ShipmentRequest
+    ) -> lib.Serializable:
+        return provider.return_shipment_request(payload, self.settings)
+
+    def parse_return_shipment_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+        return provider.parse_return_shipment_response(response, self.settings)

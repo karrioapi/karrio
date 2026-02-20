@@ -19,6 +19,7 @@ class LogFilter(utils.Paginated):
     method: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[str] = strawberry.UNSET
     status_code: typing.Optional[typing.List[int]] = strawberry.UNSET
+    request_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -28,6 +29,7 @@ class TracingRecordFilter(utils.Paginated):
     date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     keyword: typing.Optional[str] = strawberry.UNSET
+    request_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -38,6 +40,7 @@ class TrackerFilter(utils.Paginated):
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[str]] = strawberry.UNSET
     keyword: typing.Optional[str] = strawberry.UNSET
+    request_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -59,6 +62,8 @@ class ShipmentFilter(utils.Paginated):
     meta_value: typing.Optional[utils.JSON] = strawberry.UNSET
     has_tracker: typing.Optional[bool] = strawberry.UNSET
     has_manifest: typing.Optional[bool] = strawberry.UNSET
+    is_return: typing.Optional[bool] = strawberry.UNSET
+    request_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -85,6 +90,7 @@ class PickupFilter(utils.Paginated):
     metadata_value: typing.Optional[str] = strawberry.UNSET
     meta_key: typing.Optional[str] = strawberry.UNSET
     meta_value: typing.Optional[str] = strawberry.UNSET
+    request_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

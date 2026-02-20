@@ -292,7 +292,7 @@ const TracingRecordListItem = ({
           </div>
           <div className="text-xs text-neutral-400 flex-shrink-0">
             {representative?.timestamp
-              ? moment(representative.timestamp * 1000).format("LTS")
+              ? formatDateTimeLong(new Date(representative.timestamp * 1000).toISOString())
               : ""}
           </div>
         </div>

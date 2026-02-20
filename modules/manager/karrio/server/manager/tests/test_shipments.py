@@ -449,13 +449,14 @@ SHIPMENT_RESPONSE = {
     "label_type": "PDF",
     "label_url": None,
     "invoice_url": None,
-    "meta": {},
+    "meta": {"request_id": ANY},
     "metadata": {},
     "tracking_number": None,
     "shipment_identifier": None,
     "selected_rate": None,
     "selected_rate_id": None,
     **SHIPMENT_RATES,
+    "is_return": False,
     "tracking_url": None,
     "tracker_id": None,
     "shipper": {
@@ -535,6 +536,7 @@ SHIPMENT_RESPONSE = {
     "test_mode": True,
     "messages": [],
     "shipping_documents": [],
+    "is_return": False,
     "return_shipment": None,
 }
 
@@ -763,6 +765,7 @@ PURCHASED_SHIPMENT = {
         "carrier": "canadapost",
         "rate_provider": "canadapost",
         "service_name": "CANADAPOST PRIORITY",
+        "request_id": ANY,
     },
     "service": "canadapost_priority",
     "selected_rate_id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
@@ -777,6 +780,7 @@ PURCHASED_SHIPMENT = {
             "base64": "==apodifjoefr",
         }
     ],
+    "is_return": False,
     "return_shipment": None,
 }
 
@@ -920,6 +924,7 @@ CANCEL_RESPONSE = {
     "label_url": None,
     "invoice_url": None,
     "shipping_documents": [],
+    "is_return": False,
     "return_shipment": None,
 }
 
@@ -1086,6 +1091,7 @@ CANCEL_PURCHASED_RESPONSE = {
     "label_url": None,
     "invoice_url": None,
     "shipping_documents": [],
+    "is_return": False,
     "return_shipment": None,
 }
 
@@ -1433,7 +1439,7 @@ class TestShipmentReturnShipment(TestShipmentFixture):
             mock.return_value = CREATED_SHIPMENT_WITH_RETURN_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data["return_shipment"], RETURN_SHIPMENT_DATA)
@@ -1450,7 +1456,7 @@ class TestShipmentReturnShipment(TestShipmentFixture):
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-            print(response_data)
+
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNone(response_data["return_shipment"])
@@ -1466,7 +1472,6 @@ class TestShipmentReturnShipment(TestShipmentFixture):
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = CREATED_SHIPMENT_WITH_RETURN_RESPONSE
             response = self.client.post(url, data)
-            print(json.loads(response.content))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -1480,3 +1485,145 @@ class TestShipmentReturnShipment(TestShipmentFixture):
             shipment.return_shipment["tracking_url"],
             "https://tracking.example.com/987654321098",
         )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# IS_RETURN FIELD TESTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+RETURN_SHIPMENT_CREATE_DATA = {
+    "recipient": {
+        "address_line1": "125 Church St",
+        "person_name": "John Poop",
+        "company_name": "A corp.",
+        "phone_number": "514 000 0000",
+        "city": "Moncton",
+        "country_code": "CA",
+        "postal_code": "E1C4Z8",
+        "residential": False,
+        "state_code": "NB",
+    },
+    "shipper": {
+        "address_line1": "5840 Oak St",
+        "person_name": "Jane Doe",
+        "company_name": "B corp.",
+        "phone_number": "514 000 9999",
+        "city": "Vancouver",
+        "country_code": "CA",
+        "postal_code": "V6M2V9",
+        "residential": False,
+        "state_code": "BC",
+    },
+    "parcels": [
+        {
+            "weight": 1,
+            "weight_unit": "KG",
+            "package_preset": "canadapost_corrugated_small_box",
+        }
+    ],
+    "payment": {"currency": "CAD", "paid_by": "sender"},
+    "carrier_ids": ["canadapost"],
+    "is_return": True,
+}
+
+
+class TestReturnShipmentCreate(APITestCase):
+    """Test creating a shipment with is_return=True."""
+
+    def test_create_return_shipment_draft(self):
+        """Test that a return shipment can be created in draft status with is_return=True."""
+        url = reverse("karrio.server.manager:shipment-list")
+        data = RETURN_SHIPMENT_CREATE_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(response_data["is_return"])
+
+    def test_create_non_return_shipment_default(self):
+        """Test that is_return defaults to False when not provided."""
+        url = reverse("karrio.server.manager:shipment-list")
+        data = SHIPMENT_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(response_data["is_return"])
+
+    def test_is_return_persisted_in_database(self):
+        """Test that is_return is persisted to the database."""
+        url = reverse("karrio.server.manager:shipment-list")
+        data = RETURN_SHIPMENT_CREATE_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Verify persisted in DB
+        shipment = models.Shipment.objects.get(pk=response_data["id"])
+        self.assertTrue(shipment.is_return)
+
+
+class TestReturnShipmentFilter(TestShipmentFixture):
+    """Test filtering shipments by is_return."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        # Create a return shipment
+        self.return_shipment = models.Shipment.objects.create(
+            shipper=self.shipper_data,
+            recipient=self.recipient_data,
+            parcels=[self.parcel_data],
+            created_by=self.user,
+            test_mode=True,
+            is_return=True,
+            payment={"currency": "CAD", "paid_by": "sender"},
+        )
+
+    def test_filter_return_shipments(self):
+        """Test filtering for return shipments only."""
+        url = reverse("karrio.server.manager:shipment-list")
+        response = self.client.get(f"{url}?is_return=true")
+        response_data = json.loads(response.content)
+
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response_data.get("results", response_data.get("shipments", []))
+        self.assertTrue(all(s["is_return"] for s in results))
+        self.assertEqual(len(results), 1)
+
+    def test_filter_non_return_shipments(self):
+        """Test filtering for non-return shipments only."""
+        url = reverse("karrio.server.manager:shipment-list")
+        response = self.client.get(f"{url}?is_return=false")
+        response_data = json.loads(response.content)
+
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response_data.get("results", response_data.get("shipments", []))
+        self.assertTrue(all(not s["is_return"] for s in results))
+        self.assertEqual(len(results), 1)
+
+    def test_no_filter_returns_all(self):
+        """Test that no filter returns both return and non-return shipments."""
+        url = reverse("karrio.server.manager:shipment-list")
+        response = self.client.get(url)
+        response_data = json.loads(response.content)
+
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response_data.get("results", response_data.get("shipments", []))
+        self.assertEqual(len(results), 2)

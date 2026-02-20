@@ -77,6 +77,9 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        return self.create_shipment(request)
+
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         shipment_id = request.serialize().get("shipmentidentificationnumber")
         response = lib.request(

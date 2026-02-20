@@ -198,12 +198,13 @@ const configuration = new Configuration();
 const apiInstance = new ShipmentsApi(configuration);
 
 let address: string; // (optional) (default to undefined)
-let carrierName: string; //The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`, `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`, `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u` (optional) (default to undefined)
+let carrierName: string; //The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`, `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`, `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`, `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`, `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `veho`, `zoom2u` (optional) (default to undefined)
 let createdAfter: string; // (optional) (default to undefined)
 let createdBefore: string; // (optional) (default to undefined)
 let hasManifest: boolean; // (optional) (default to undefined)
 let hasTracker: boolean; // (optional) (default to undefined)
 let id: string; // (optional) (default to undefined)
+let isReturn: boolean; // (optional) (default to undefined)
 let keyword: string; // (optional) (default to undefined)
 let metaKey: string; // (optional) (default to undefined)
 let metaValue: string; // (optional) (default to undefined)
@@ -212,6 +213,7 @@ let metadataValue: string; // (optional) (default to undefined)
 let optionKey: string; // (optional) (default to undefined)
 let optionValue: string; // (optional) (default to undefined)
 let reference: string; // (optional) (default to undefined)
+let requestId: string; // (optional) (default to undefined)
 let service: string; // (optional) (default to undefined)
 let status: string; //Valid shipment status. <br/>Values: `draft`, `purchased`, `cancelled`, `shipped`, `in_transit`, `delivered`, `needs_attention`, `out_for_delivery`, `delivery_failed` (optional) (default to undefined)
 let trackingNumber: string; // (optional) (default to undefined)
@@ -224,6 +226,7 @@ const { status, data } = await apiInstance.list(
     hasManifest,
     hasTracker,
     id,
+    isReturn,
     keyword,
     metaKey,
     metaValue,
@@ -232,6 +235,7 @@ const { status, data } = await apiInstance.list(
     optionKey,
     optionValue,
     reference,
+    requestId,
     service,
     status,
     trackingNumber
@@ -243,12 +247,13 @@ const { status, data } = await apiInstance.list(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **address** | [**string**] |  | (optional) defaults to undefined|
-| **carrierName** | [**string**] | The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60; | (optional) defaults to undefined|
+| **carrierName** | [**string**] | The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60; | (optional) defaults to undefined|
 | **createdAfter** | [**string**] |  | (optional) defaults to undefined|
 | **createdBefore** | [**string**] |  | (optional) defaults to undefined|
 | **hasManifest** | [**boolean**] |  | (optional) defaults to undefined|
 | **hasTracker** | [**boolean**] |  | (optional) defaults to undefined|
 | **id** | [**string**] |  | (optional) defaults to undefined|
+| **isReturn** | [**boolean**] |  | (optional) defaults to undefined|
 | **keyword** | [**string**] |  | (optional) defaults to undefined|
 | **metaKey** | [**string**] |  | (optional) defaults to undefined|
 | **metaValue** | [**string**] |  | (optional) defaults to undefined|
@@ -257,6 +262,7 @@ const { status, data } = await apiInstance.list(
 | **optionKey** | [**string**] |  | (optional) defaults to undefined|
 | **optionValue** | [**string**] |  | (optional) defaults to undefined|
 | **reference** | [**string**] |  | (optional) defaults to undefined|
+| **requestId** | [**string**] |  | (optional) defaults to undefined|
 | **service** | [**string**] |  | (optional) defaults to undefined|
 | **status** | [**string**] | Valid shipment status. &lt;br/&gt;Values: &#x60;draft&#x60;, &#x60;purchased&#x60;, &#x60;cancelled&#x60;, &#x60;shipped&#x60;, &#x60;in_transit&#x60;, &#x60;delivered&#x60;, &#x60;needs_attention&#x60;, &#x60;out_for_delivery&#x60;, &#x60;delivery_failed&#x60; | (optional) defaults to undefined|
 | **trackingNumber** | [**string**] |  | (optional) defaults to undefined|

@@ -75,6 +75,13 @@ class TrackingSerializer(TrackingDetails):
         # Apply picked_up transformation for initial events
         events = utils._ensure_picked_up_status(lib.to_dict(response.tracking.events))
 
+        # Merge request_id into meta for request correlation
+        from karrio.server.core.middleware import get_request_id
+        _tracker_meta = response.tracking.meta or {}
+        _request_id = get_request_id()
+        if _request_id:
+            _tracker_meta = {**_tracker_meta, "request_id": _request_id}
+
         return models.Tracking.objects.create(
             created_by=context.user,
             tracking_number=tracking_number,
@@ -87,7 +94,7 @@ class TrackingSerializer(TrackingDetails):
             estimated_delivery=response.tracking.estimated_delivery,
             messages=lib.to_dict(response.messages),
             info=lib.to_dict(response.tracking.info),
-            meta=response.tracking.meta,
+            meta=_tracker_meta,
             options=response.tracking.options,
             reference=reference,
             metadata=metadata,
@@ -477,6 +484,10 @@ def bulk_save_trackers(
         fields=list(all_fields),
     )
 
+    # bulk_update bypasses Django post_save signals, so we must manually
+    # dispatch webhook notifications for trackers with status/events changes.
+    _notify_changed_trackers(changed_trackers)
+
     # Batch shipment status updates: collect shipments that need status changes
     shipment_updates: typing.List[models.Shipment] = []
 
@@ -518,6 +529,56 @@ def _compute_shipment_status(tracker: models.Tracking) -> typing.Optional[str]:
         return ShipmentStatus.needs_attention.value
 
     return ShipmentStatus.in_transit.value
+
+
+def _notify_changed_trackers(
+    changed_trackers: typing.List[typing.Tuple[models.Tracking, typing.List[str]]],
+):
+    """Dispatch webhook notifications for trackers changed by bulk_update.
+
+    Since bulk_update bypasses Django post_save signals, this replicates
+    the logic from events.signals.tracker_updated to ensure webhooks fire.
+    """
+    try:
+        from karrio.server.conf import settings
+        from karrio.server.events.serializers import EventTypes
+        import karrio.server.events.tasks as tasks
+        import karrio.server.core.serializers as core_serializers
+    except ImportError:
+        logger.warning("Events module not available, skipping webhook notifications")
+        return
+
+    notified = 0
+    for tracker, fields in changed_trackers:
+        if not any(f in fields for f in ["status", "events"]):
+            continue
+
+        try:
+            event = EventTypes.tracker_updated.value
+            data = core_serializers.TrackingStatus(tracker).data
+            event_at = tracker.updated_at
+            context = dict(
+                user_id=utils.failsafe(lambda: tracker.created_by.id),
+                test_mode=tracker.test_mode,
+                org_id=utils.failsafe(
+                    lambda: tracker.org.first().id if hasattr(tracker, "org") else None
+                ),
+            )
+
+            if settings.MULTI_ORGANIZATIONS and context.get("org_id") is None:
+                continue
+
+            tasks.notify_webhooks(event, data, event_at, context, schema=settings.schema)
+            notified += 1
+        except Exception as e:
+            logger.warning(
+                "Failed to notify webhook for tracker",
+                tracker_id=str(tracker.id),
+                error=str(e),
+            )
+
+    if notified:
+        logger.info("Dispatched webhook notifications for bulk-updated trackers", count=notified)
 
 
 class TrackerEventInjectRequest(serializers.Serializer):

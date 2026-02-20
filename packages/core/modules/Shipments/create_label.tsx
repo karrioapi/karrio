@@ -167,7 +167,7 @@ export default function CreateLabelPage(pageProps: any) {
           .filter(
             ({ line_items = [] }) =>
               line_items.filter(({ id }) => parents.includes(id)).length > 0,
-          ) as OrderType[];
+          ) as unknown as OrderType[];
       }
 
       return [];

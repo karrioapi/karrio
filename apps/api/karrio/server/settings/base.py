@@ -297,6 +297,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "karrio.server.core.middleware.RequestIDMiddleware",
     "karrio.server.core.authentication.AuthenticationMiddleware",
     "karrio.server.core.authentication.TwoFactorAuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",

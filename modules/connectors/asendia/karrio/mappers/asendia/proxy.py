@@ -154,3 +154,6 @@ class Proxy(proxy.Proxy):
             },
             decoder=lambda r: r,
         )
+
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        return self.create_shipment(request)

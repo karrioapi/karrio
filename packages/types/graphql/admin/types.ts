@@ -2088,6 +2088,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  smartkargo = "smartkargo",
   spring = "spring",
   teleship = "teleship",
   tge = "tge",
@@ -2594,6 +2595,8 @@ export interface SystemShipmentFilter {
   meta_value?: any | null;
   has_tracker?: boolean | null;
   has_manifest?: boolean | null;
+  is_return?: boolean | null;
+  request_id?: string | null;
   account_id?: string | null;
 }
 
@@ -2607,6 +2610,7 @@ export interface SystemTrackerFilter {
   carrier_name?: string[] | null;
   status?: string[] | null;
   keyword?: string | null;
+  request_id?: string | null;
   account_id?: string | null;
 }
 
@@ -2624,6 +2628,7 @@ export interface SystemOrderFilter {
   metadata_key?: string[] | null;
   metadata_value?: string[] | null;
   status?: OrderStatus[] | null;
+  request_id?: string | null;
   account_id?: string | null;
 }
 

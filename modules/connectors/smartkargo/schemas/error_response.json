@@ -1,0 +1,13 @@
+{
+  "headerReference": null,
+  "packageReference": null,
+  "status": "Error",
+  "details": null,
+  "validations": [
+    {
+      "packageReference": "2021-06-03-1",
+      "property": "Reference",
+      "message": "The reference '2021-06-03-1' already exists."
+    }
+  ]
+}

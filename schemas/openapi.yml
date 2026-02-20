@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.11`.
+    The current version is `2026.1.12`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.11
+  version: 2026.1.12
 paths:
   /:
     get:
@@ -1108,7 +1108,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1150,7 +1150,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1203,7 +1203,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1277,7 +1277,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: metadata_key
@@ -1869,7 +1869,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -2507,7 +2507,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: confirmation_number
@@ -2537,6 +2537,10 @@ paths:
         schema:
           type: string
           format: date
+      - in: query
+        name: request_id
+        schema:
+          type: string
       - in: query
         name: status
         schema:
@@ -3129,6 +3133,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3231,6 +3236,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3333,6 +3339,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3528,6 +3535,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3668,6 +3676,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3799,7 +3808,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -3823,6 +3832,10 @@ paths:
         name: id
         schema:
           type: string
+      - in: query
+        name: is_return
+        schema:
+          type: boolean
       - in: query
         name: keyword
         schema:
@@ -3853,6 +3866,10 @@ paths:
           type: string
       - in: query
         name: reference
+        schema:
+          type: string
+      - in: query
+        name: request_id
         schema:
           type: string
       - in: query
@@ -4283,7 +4300,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -4297,6 +4314,10 @@ paths:
           format: date-time
       - in: query
         name: keyword
+        schema:
+          type: string
+      - in: query
+        name: request_id
         schema:
           type: string
       - in: query
@@ -4447,6 +4468,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -5874,6 +5896,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -5884,7 +5907,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: A carrier connection type.
         display_name:
           type: string
@@ -5975,6 +5998,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -5985,7 +6009,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -6086,6 +6110,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -6096,7 +6121,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -7170,6 +7195,7 @@ components:
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
       - $ref: '#/components/schemas/shipengine'
+      - $ref: '#/components/schemas/smartkargo'
       - $ref: '#/components/schemas/spring'
       - $ref: '#/components/schemas/teleship'
       - $ref: '#/components/schemas/tge'
@@ -9310,6 +9336,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -9320,7 +9347,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -10782,12 +10809,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -10985,12 +11011,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11116,6 +11141,10 @@ components:
         test_mode:
           type: boolean
           description: Specified whether it was created with a carrier in test mode
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment.
         label_url:
           type: string
           format: uri
@@ -11203,12 +11232,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11241,6 +11269,12 @@ components:
           x-spec-enum-id: 49b2c844813c9a67
           default: PDF
           description: The shipment label file type.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment. When
+            true, addresses are auto-swapped and the request is routed to the carrier's
+            return shipment API.
         service:
           type: string
           description: '**Specify a service to Buy a label in one call without rating.**'
@@ -11317,12 +11351,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11355,6 +11388,12 @@ components:
           x-spec-enum-id: 49b2c844813c9a67
           default: PDF
           description: The shipment label file type.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment. When
+            true, addresses are auto-swapped and the request is routed to the carrier's
+            return shipment API.
         service:
           type: string
           description: '**Specify a service to Buy a label in one call without rating.**'
@@ -11458,14 +11497,13 @@ components:
             \ # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
             true,\n            \"saturday_delivery\": true,\n            \"shipping_charges\":
-            10.00,\n            \"is_return\": true,\n            \"doc_files\": [\n
-            \               {\n                    \"doc_type\": \"commercial_invoice\",\n
-            \                   \"doc_file\": \"base64 encoded file\",\n                    \"doc_name\":
-            \"commercial_invoice.pdf\",\n                    \"doc_format\": \"pdf\",\n
-            \               }\n            ],\n            \"doc_references\": [\n
-            \               {\n                    \"doc_id\": \"123456789\",\n                    \"doc_type\":
-            \"commercial_invoice\",\n                }\n            ],\n        }\n
-            \       </details>\n        "
+            10.00,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
+            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
+            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
+            \           \"doc_references\": [\n                {\n                    \"doc_id\":
+            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
+            \               }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -11505,14 +11543,13 @@ components:
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
             true,\n            \"saturday_delivery\": true,\n            \"shipping_charges\":
-            10.00,\n            \"is_return\": true,\n            \"doc_files\": [\n
-            \               {\n                    \"doc_type\": \"commercial_invoice\",\n
-            \                   \"doc_file\": \"base64 encoded file\",\n                    \"doc_name\":
-            \"commercial_invoice.pdf\",\n                    \"doc_format\": \"pdf\",\n
-            \               }\n            ],\n            \"doc_references\": [\n
-            \               {\n                    \"doc_id\": \"123456789\",\n                    \"doc_type\":
-            \"commercial_invoice\",\n                }\n            ],\n        }\n
-            \       </details>\n        "
+            10.00,\n            \"doc_files\": [\n                {\n                    \"doc_type\":
+            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
+            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
+            \           \"doc_references\": [\n                {\n                    \"doc_id\":
+            \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
+            \               }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -11591,12 +11628,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11629,6 +11665,12 @@ components:
           x-spec-enum-id: 49b2c844813c9a67
           default: PDF
           description: The shipment label file type.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment. When
+            true, addresses are auto-swapped and the request is routed to the carrier's
+            return shipment API.
         selected_rate_id:
           type: string
           description: The shipment selected rate.
@@ -11710,12 +11752,11 @@ components:
             true,\n            \"preferred_service\": \"fedex_express_saver\",\n            \"shipment_date\":
             \"2020-01-01\",  # TODO: deprecate\n            \"shipping_date\": \"2020-01-01T00:00\",\n
             \           \"shipment_note\": \"This is a shipment note\",\n            \"signature_confirmation\":
-            true,\n            \"saturday_delivery\": true,\n            \"is_return\":
-            true,\n            \"shipper_instructions\": \"This is a shipper instruction\",\n
-            \           \"recipient_instructions\": \"This is a recipient instruction\",\n
-            \           \"doc_files\": [\n                {\n                    \"doc_type\":
-            \"commercial_invoice\",\n                    \"doc_file\": \"base64 encoded
-            file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
+            true,\n            \"saturday_delivery\": true,\n            \"shipper_instructions\":
+            \"This is a shipper instruction\",\n            \"recipient_instructions\":
+            \"This is a recipient instruction\",\n            \"doc_files\": [\n                {\n
+            \                   \"doc_type\": \"commercial_invoice\",\n                    \"doc_file\":
+            \"base64 encoded file\",\n                    \"doc_name\": \"commercial_invoice.pdf\",\n
             \                   \"doc_format\": \"pdf\",\n                }\n            ],\n
             \           \"doc_references\": [\n                {\n                    \"doc_id\":
             \"123456789\",\n                    \"doc_type\": \"commercial_invoice\",\n
@@ -11846,6 +11887,10 @@ components:
         test_mode:
           type: boolean
           description: Specified whether it was created with a carrier in test mode
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is a return shipment.
       required:
       - created_at
       - parcels
@@ -12111,6 +12156,7 @@ components:
           - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -12121,7 +12167,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: aab0f690054e0465
+          x-spec-enum-id: b6c8e3114206d815
           description: The tracking carrier
         account_number:
           type: string
@@ -13363,6 +13409,22 @@ components:
           nullable: true
       required:
       - api_key
+    smartkargo:
+      type: object
+      properties:
+        api_key:
+          type: string
+        account_number:
+          type: string
+        account_id:
+          type: string
+        account_country_code:
+          type: string
+          nullable: true
+      required:
+      - account_id
+      - account_number
+      - api_key
     spring:
       type: object
       properties:
@@ -13693,6 +13755,7 @@ tags:
     | seko | SEKO Logistics |
     | sendle | Sendle |
     | shipengine | ShipEngine |
+    | smartkargo | SmartKargo |
     | spring | Spring |
     | teleship | Teleship |
     | tge | TGE |
@@ -15428,6 +15491,14 @@ tags:
     | ups_2nd_day_air | UPS 2nd Day Air |
     | ups_next_day_air | UPS Next Day Air |
     | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
+
+    ### SmartKargo
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | smartkargo_express | EXP |
+    | smartkargo_priority | EPR |
+    | smartkargo_standard | EST |
+    | smartkargo_economy | ECL |
 
     ### Spring
     | Code         | Service Name |

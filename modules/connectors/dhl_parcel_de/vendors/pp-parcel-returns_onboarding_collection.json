@@ -1,0 +1,2382 @@
+{
+	"info": {
+		"_postman_id": "14d72a63-8535-4a60-8c31-bb5ee904e752",
+		"name": "Testsuite Retouren API V1 APIgee Sandbox OAuth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21845851"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"GKP GetToken: Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"let j = pm.response.json();\r",
+									"x = j.access_token;\r",
+									"pm.collectionVariables.set(\"access_token\", x);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{gkpuser}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{gkppass}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://{{host}}/{{authpath}}/token",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{authpath}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Order_ReturnLabel",
+			"item": [
+				{
+					"name": "Retoure_Belgien_bel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"bel\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Brüssel\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"1040\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API\n\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Deutschland_deu",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"deu\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Charles-de-Gaulle Str.\",\r\n    \"addressHouse\": \"20\",\r\n    \"city\": \"Bonn\",\r\n    \"email\": \"beispiel@beispiel.de\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"53113\",\r\n    \"state\": \"NRW\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=BOTH",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "BOTH"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Deutschland_deu_GoGreenPlus",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"deu_ggp\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Charles-de-Gaulle Str.\",\r\n    \"addressHouse\": \"20\",\r\n    \"city\": \"Bonn\",\r\n    \"email\": \"beispiel@beispiel.de\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"53113\",\r\n    \"state\": \"NRW\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  },\r\n  \"services\": {\r\n    \"goGreenPlus\": true\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=BOTH",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "BOTH"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Deutschland_deu_GoGreenPlus_default",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"deu_ggp_default\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Charles-de-Gaulle Str.\",\r\n    \"addressHouse\": \"20\",\r\n    \"city\": \"Bonn\",\r\n    \"email\": \"beispiel@beispiel.de\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"53113\",\r\n    \"state\": \"NRW\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=BOTH",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "BOTH"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Bulgarien_bgr",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"bgr\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Sofia\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"1113\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Dänemark_dnk",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"dnk\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Kopenhagen\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"2150\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Estland_est",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"est\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Tallin\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"10122\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Finnland_fin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"fin\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Helsinki\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"00340\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Frankreich_fra",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"fra\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Paris\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"75116\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Griechenland_grc",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"grc\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Athen\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"106 75\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Großbritanien_gbr",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"gbr\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Bishopsgate\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"E1 6AN\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  },\r\n  \"customsDetails\": {\r\n    \"items\": [\r\n      {\r\n        \"itemDescription\": \"Beschreibung\",\r\n        \"packagedQuantity\": 1,\r\n        \"itemWeight\": {\r\n          \"uom\": \"g\",\r\n          \"value\": 500\r\n        },\r\n        \"itemValue\": {\r\n          \"currency\": \"EUR\",\r\n          \"value\": 100000\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Irland_irl",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"irl\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"city\": \"Dublin\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\",\r\n    \"postalCode\": \"\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Italien_ita",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"ita\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"00185\",\r\n    \"city\": \"Rom\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Kroatien_hrv",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"hrv\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"10000\",\r\n    \"city\": \"Zagreb\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Lettland_lva",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"lva\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"LV-1050\",\r\n    \"city\": \"Riga\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Litauen_ltu",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"ltu\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"03105\",\r\n    \"city\": \"Vilnius\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Luxemburg_lux",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"lux\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"1040\",\r\n    \"city\": \"Brüssel\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Malta_mlt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"mlt\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"XBX 1026\",\r\n    \"city\": \"Malta\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Niederland_nld",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"nld\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"1071 DG\",\r\n    \"city\": \"Amsterdam\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Norwegen_nor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"nor\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"creationSoftware\": \"foobar\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"9999\",\r\n    \"city\": \"Bergen\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"NOK\",\r\n    \"value\": 100\r\n  },\r\n  \"customsDetails\": {\r\n    \"items\": [\r\n      {\r\n        \"itemDescription\": \"Beschreibung 1\",\r\n        \"packagedQuantity\": 1,\r\n        \"countryOfOrigin\": \"CAN\",\r\n        \"hsCode\": \"12345678\",\r\n        \"itemWeight\": {\r\n          \"uom\": \"g\",\r\n          \"value\": 500\r\n        },\r\n        \"itemValue\": {\r\n          \"currency\": \"NOK\",\r\n          \"value\": 100\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Österreich_aut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"aut\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"1010\",\r\n    \"city\": \"Wien\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Polen_pol",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"pol\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"00-467\",\r\n    \"city\": \"Warschau\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Portugal_prt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"prt\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"1150-317\",\r\n    \"city\": \"Lissabon\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Rumänien_rou",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"rou\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"011849\",\r\n    \"city\": \"Bukarest\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Schweden_swe",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"swe\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"115 27\",\r\n    \"city\": \"Stockholm\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Schweiz_che_mit Zoll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"che\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"3006\",\r\n    \"city\": \"Musterstadt\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 123456789\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 500\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100000\r\n  },\r\n  \"customsDetails\": {\r\n    \"items\": [\r\n      {\r\n        \"itemDescription\": \"Beschreibung\",\r\n        \"packagedQuantity\": 1,\r\n        \"itemWeight\": {\r\n          \"uom\": \"g\",\r\n          \"value\": 500\r\n        },\r\n        \"itemValue\": {\r\n          \"currency\": \"EUR\",\r\n          \"value\": 100000\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Slowakei_svk",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"svk\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"813 03\",\r\n    \"city\": \"Bratislava\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Slowenien_svn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"svn\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"1000\",\r\n    \"city\": \"Ljubljana\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Spanien_esp",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"esp\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"28010\",\r\n    \"city\": \"Madrid\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Tschechien_cze",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"cze\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"118 00\",\r\n    \"city\": \"Prag\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Ungarn_hun",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"hun\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"1014\",\r\n    \"city\": \"Budapest\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure_Zypern_cyp",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"receiverId\": \"cyp\",\r\n  \"customerReference\": \"Kundenreferenz\",\r\n  \"shipmentReference\": \"Sendungsreferenz\",\r\n  \"shipper\": {\r\n    \"name1\": \"Absender Retoure Zeile 1\",\r\n    \"name2\": \"Absender Retoure Zeile 2\",\r\n    \"name3\": \"Absender Retoure Zeile 3\",\r\n    \"addressStreet\": \"Musterstr.\",\r\n    \"addressHouse\": \"1\",\r\n    \"postalCode\": \"1080\",\r\n    \"city\": \"Nicosia\",\r\n    \"email\": \"Max.Mustermann@dhl.local\",\r\n    \"phone\": \"+49 421 987654321\"\r\n  },\r\n  \"itemWeight\": {\r\n    \"uom\": \"g\",\r\n    \"value\": 1000\r\n  },\r\n  \"itemValue\": {\r\n    \"currency\": \"EUR\",\r\n    \"value\": 100\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/orders?labelType=SHIPMENT_LABEL",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "labelType",
+									"value": "SHIPMENT_LABEL"
+								}
+							]
+						},
+						"description": "Test der Retoure API"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Contains label data\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"label\");",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Get_Locations",
+			"item": [
+				{
+					"name": "Retoure - Receiver API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/locations",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure - Receiver API - maxResult",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/locations?maxResult=4&postalCode=53113",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "maxResult",
+									"value": "4"
+								},
+								{
+									"key": "postalCode",
+									"value": "53113"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure - Receiver API - receiverId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/locations?receiverId=deu",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "receiverId",
+									"value": "deu"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure - Receiver API - billingNumber",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/locations?billingNumber=22222222220701",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "billingNumber",
+									"value": "22222222220701"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure - Receiver API - countryCode",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/locations?countryCode=deu",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "countryCode",
+									"value": "deu"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retoure - Receiver API - postalCode",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host}}/{{basepath}}/locations?postalCode=53113",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"{{basepath}}",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "postalCode",
+									"value": "53113"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Contains location data\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"receiverId\");",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Get Version",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{host}}/{{basepath}}",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"{{basepath}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "api-sandbox.dhl.com",
+			"type": "string"
+		},
+		{
+			"key": "basepath",
+			"value": "parcel/de/shipping/returns/v1",
+			"type": "string"
+		},
+		{
+			"key": "authpath",
+			"value": "parcel/de/account/auth/ropc/v1",
+			"type": "string"
+		},
+		{
+			"key": "gkpuser",
+			"value": "user-valid",
+			"type": "string"
+		},
+		{
+			"key": "gkppass",
+			"value": "SandboxPasswort2023!",
+			"type": "string"
+		},
+		{
+			"key": "client_id",
+			"value": "Please add your client ID",
+			"type": "string"
+		},
+		{
+			"key": "client_secret",
+			"value": "Please add your client secret",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}

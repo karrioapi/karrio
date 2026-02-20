@@ -41,7 +41,7 @@ class UserType:
     last_login: typing.Optional[datetime.datetime] = strawberry.UNSET
 
     @strawberry.field
-    def permissions(self: User, info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: User, info: Info) -> typing.Optional[typing.List[str]]:
         # Return permissions from token if exists
         if hasattr(getattr(info.context.request, "token", None), "permissions"):
             return info.context.request.token.permissions
@@ -51,7 +51,7 @@ class UserType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info) -> typing.Optional["UserType"]:
+    def resolve(info: Info) -> typing.Optional["UserType"]:
         return User.objects.get(id=info.context.request.user.id)
 
 
@@ -365,7 +365,7 @@ class WorkspaceConfigType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
+    def resolve(info: Info) -> typing.Optional["WorkspaceConfigType"]:
         workspace_config = auth.WorkspaceConfig.access_by(info.context.request).first()
 
         # Create a default workspace config if none exists
@@ -397,7 +397,7 @@ class SystemUsageType:
     @staticmethod
     @utils.authentication_required
     def resolve(
-        info,
+        info: Info,
         filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
     ) -> "SystemUsageType":
         _test_mode = info.context.request.test_mode
@@ -586,13 +586,13 @@ class MetafieldType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["MetafieldType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["MetafieldType"]:
         return core.Metafield.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.MetafieldFilter] = strawberry.UNSET,
     ) -> utils.Connection["MetafieldType"]:
         from django.contrib.contenttypes.models import ContentType
@@ -632,6 +632,7 @@ class LogType:
     method: typing.Optional[str]
     status_code: typing.Optional[int]
     test_mode: typing.Optional[bool]
+    request_id: typing.Optional[str]
 
     @strawberry.field
     def data(self: core.APILog) -> typing.Optional[utils.JSON]:
@@ -673,13 +674,13 @@ class LogType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: int) -> typing.Optional["LogType"]:
+    def resolve(info: Info, id: int) -> typing.Optional["LogType"]:
         return core.APILogIndex.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.LogFilter] = strawberry.UNSET,
     ) -> utils.Connection["LogType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.LogFilter()
@@ -701,6 +702,10 @@ class TracingRecordType:
     updated_at: typing.Optional[datetime.datetime]
 
     @strawberry.field
+    def request_id(self: tracing.TracingRecord) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
+
+    @strawberry.field
     def record(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
         try:
             return lib.to_dict(self.record)
@@ -716,7 +721,7 @@ class TracingRecordType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["TracingRecordType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["TracingRecordType"]:
         return (
             tracing.TracingRecord.access_by(info.context.request).filter(id=id).first()
         )
@@ -724,7 +729,7 @@ class TracingRecordType:
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.TracingRecordFilter] = strawberry.UNSET,
     ) -> utils.Connection["TracingRecordType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TracingRecordFilter()
@@ -743,13 +748,13 @@ class TokenType:
     created: datetime.datetime
 
     @strawberry.field
-    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: auth.Token, info: Info) -> typing.Optional[typing.List[str]]:
         # self is a Token model instance, permissions is a @property on the model
         return self.permissions
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, org_id: typing.Optional[str] = strawberry.UNSET) -> "TokenType":
+    def resolve(info: Info, org_id: typing.Optional[str] = strawberry.UNSET) -> "TokenType":
         return user_serializers.TokenSerializer.retrieve_token(
             info.context.request,
             **({"org_id": org_id} if org_id is not strawberry.UNSET else {}),
@@ -765,14 +770,14 @@ class APIKeyType:
     created: datetime.datetime
 
     @strawberry.field
-    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: auth.Token, info: Info) -> typing.Optional[typing.List[str]]:
         # self is a Token model instance, permissions is a @property on the model
         return self.permissions
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
     ) -> typing.List["APIKeyType"]:
         _filters = {
             "user__id": info.context.request.user.id,
@@ -1070,7 +1075,7 @@ class AddressTemplateType:
 # Standalone resolver functions for saved addresses (AddressTemplateType)
 @utils.authentication_required
 def resolve_addresses(
-    info,
+    info: Info,
     filter: typing.Optional[inputs.AddressFilter] = strawberry.UNSET,
 ) -> utils.Connection[AddressTemplateType]:
     """Resolver for listing saved addresses."""
@@ -1121,7 +1126,7 @@ def resolve_addresses(
 
 
 @utils.authentication_required
-def resolve_address(info, id: str) -> typing.Optional[AddressTemplateType]:
+def resolve_address(info: Info, id: str) -> typing.Optional[AddressTemplateType]:
     """Resolver for getting a single saved address by ID."""
     return manager.Address.access_by(info.context.request).filter(
         id=id,
@@ -1172,7 +1177,7 @@ class ParcelTemplateType:
 # Standalone resolver functions for saved parcels (ParcelTemplateType)
 @utils.authentication_required
 def resolve_parcels(
-    info,
+    info: Info,
     filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
 ) -> utils.Connection[ParcelTemplateType]:
     """Resolver for listing saved parcels."""
@@ -1198,7 +1203,7 @@ def resolve_parcels(
 
 
 @utils.authentication_required
-def resolve_parcel(info, id: str) -> typing.Optional[ParcelTemplateType]:
+def resolve_parcel(info: Info, id: str) -> typing.Optional[ParcelTemplateType]:
     """Resolver for getting a single saved parcel by ID."""
     return manager.Parcel.access_by(info.context.request).filter(
         id=id,
@@ -1237,7 +1242,7 @@ class ProductTemplateType:
 # Standalone resolver functions for saved products (ProductTemplateType)
 @utils.authentication_required
 def resolve_products(
-    info,
+    info: Info,
     filter: typing.Optional[inputs.ProductFilter] = strawberry.UNSET,
 ) -> utils.Connection[ProductTemplateType]:
     """Resolver for listing saved products."""
@@ -1276,7 +1281,7 @@ def resolve_products(
 
 
 @utils.authentication_required
-def resolve_product(info, id: str) -> typing.Optional[ProductTemplateType]:
+def resolve_product(info: Info, id: str) -> typing.Optional[ProductTemplateType]:
     """Resolver for getting a single saved product by ID."""
     return manager.Commodity.access_by(info.context.request).filter(
         id=id,
@@ -1314,7 +1319,7 @@ class DefaultTemplatesType:
 
 # Standalone resolver function for DefaultTemplatesType
 @utils.authentication_required
-def resolve_default_templates(info) -> DefaultTemplatesType:
+def resolve_default_templates(info: Info) -> DefaultTemplatesType:
     """Resolver for getting default templates."""
     default_address = manager.Address.access_by(info.context.request).filter(
         meta__is_default=True,
@@ -1433,6 +1438,10 @@ class TrackerType:
     created_by: UserType
 
     @strawberry.field
+    def request_id(self: manager.Tracking) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
+
+    @strawberry.field
     def carrier_id(self: manager.Tracking) -> typing.Optional[str]:
         return (self.carrier or {}).get("carrier_id")
 
@@ -1460,13 +1469,13 @@ class TrackerType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["TrackerType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["TrackerType"]:
         return manager.Tracking.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.TrackerFilter] = strawberry.UNSET,
     ) -> utils.Connection["TrackerType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TrackerFilter()
@@ -1511,13 +1520,13 @@ class ManifestType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["ManifestType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["ManifestType"]:
         return manager.Manifest.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.ManifestFilter] = strawberry.UNSET,
     ) -> utils.Connection["ManifestType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ManifestFilter()
@@ -1547,6 +1556,10 @@ class PickupType:
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
+
+    @strawberry.field
+    def request_id(self: manager.Pickup) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
 
     @strawberry.field
     def pickup_type(self: manager.Pickup) -> str:
@@ -1606,13 +1619,13 @@ class PickupType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["PickupType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["PickupType"]:
         return manager.Pickup.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.PickupFilter] = strawberry.UNSET,
     ) -> utils.Connection["PickupType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.PickupFilter()
@@ -1667,9 +1680,14 @@ class ShipmentType:
     label_url: typing.Optional[str]
     invoice_url: typing.Optional[str]
     tracker: typing.Optional[TrackerType]
+    is_return: bool
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
+
+    @strawberry.field
+    def request_id(self: manager.Shipment) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
 
     @strawberry.field
     def shipper(self: manager.Shipment) -> AddressType:
@@ -1744,13 +1762,13 @@ class ShipmentType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["ShipmentType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["ShipmentType"]:
         return manager.Shipment.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.ShipmentFilter] = strawberry.UNSET,
     ) -> utils.Connection["ShipmentType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ShipmentFilter()
@@ -2076,13 +2094,13 @@ class RateSheetType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["RateSheetType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["RateSheetType"]:
         return providers.RateSheet.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.RateSheetFilter] = strawberry.UNSET,
     ) -> utils.Connection["RateSheetType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.RateSheetFilter()
@@ -2160,7 +2178,7 @@ class SystemConnectionType:
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> utils.Connection["SystemConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
@@ -2233,7 +2251,7 @@ class CarrierConnectionType:
     @utils.utils.error_wrapper
     @utils.authentication_required
     def resolve_list_legacy(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> typing.List["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
@@ -2248,7 +2266,7 @@ class CarrierConnectionType:
     @utils.utils.error_wrapper
     @utils.authentication_required
     def resolve(
-        info,
+        info: Info,
         id: str,
     ) -> typing.Optional["CarrierConnectionType"]:
         connection = (
@@ -2260,7 +2278,7 @@ class CarrierConnectionType:
     @utils.utils.error_wrapper
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> utils.Connection["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()

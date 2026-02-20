@@ -2,11 +2,20 @@ from django.db.models import signals
 
 from karrio.server.core import utils
 from karrio.server.core.logging import logger
+from karrio.server.core.middleware import get_request_id
 from karrio.server.conf import settings
 from karrio.server.events.serializers import EventTypes
 import karrio.server.core.serializers as serializers
 import karrio.server.manager.models as models
 import karrio.server.events.tasks as tasks
+
+
+def _get_parent_request_id(instance=None):
+    """Get request_id from the current request or from the instance's meta."""
+    request_id = get_request_id()
+    if not request_id and instance and hasattr(instance, "meta"):
+        request_id = (instance.meta or {}).get("request_id")
+    return request_id
 
 
 def register_signals():
@@ -67,12 +76,14 @@ def shipment_updated(
 
     data = serializers.Shipment(instance).data
     event_at = instance.updated_at
+    _parent_request_id = _get_parent_request_id(instance)
     context = dict(
         test_mode=instance.test_mode,
         user_id=utils.failsafe(lambda: instance.created_by.id),
         org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
+        **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 
     if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
@@ -90,12 +101,14 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
     event = EventTypes.shipment_cancelled.value
     data = serializers.Shipment(instance).data
     event_at = instance.updated_at
+    _parent_request_id = _get_parent_request_id(instance)
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
         org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
+        **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 
     if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
@@ -125,12 +138,14 @@ def tracker_updated(
 
     data = serializers.TrackingStatus(instance).data
     event_at = instance.updated_at
+    _parent_request_id = _get_parent_request_id(instance)
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
         org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
+        **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 
     if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
@@ -169,12 +184,14 @@ def pickup_updated(
 
     data = serializers.Pickup(instance).data
     event_at = instance.updated_at
+    _parent_request_id = _get_parent_request_id(instance)
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
         org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
+        **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 
     if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:

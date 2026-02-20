@@ -1,6 +1,7 @@
 import typing
 import datetime
 import strawberry
+from strawberry.types import Info
 
 import karrio.lib as lib
 import karrio.server.graph.utils as utils
@@ -29,13 +30,13 @@ class DocumentTemplateType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info, id: str) -> typing.Optional["DocumentTemplateType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["DocumentTemplateType"]:
         return models.DocumentTemplate.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
-        info,
+        info: Info,
         filter: typing.Optional[inputs.DocumentTemplateFilter] = strawberry.UNSET,
     ) -> utils.Connection["DocumentTemplateType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.DocumentTemplateFilter()
