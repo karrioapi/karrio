@@ -3,6 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.sdk import Tracking
 from karrio.core.models import TrackingRequest
+import karrio.providers.canadapost.units as provider_units
 from .fixture import gateway
 
 
@@ -46,6 +47,18 @@ class TestCanadaPostTracking(unittest.TestCase):
                 ParsedTrackingResponse,
             )
 
+    def test_parse_tracking_response_with_root_tracking_detail(self):
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
+            mock.return_value = TrackingResponseXml.replace("<wrapper>", "", 1).replace("</wrapper>", "", 1).strip()
+            parsed_response = (
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(
+                DP.to_dict(parsed_response),
+                ParsedTrackingResponse,
+            )
+
     def test_tracking_unknown_response_parsing(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = UnknownTrackingNumberResponse
@@ -56,6 +69,28 @@ class TestCanadaPostTracking(unittest.TestCase):
                 DP.to_dict(parsed_response),
                 ParsedUnknownTrackingNumberResponse,
             )
+
+    def test_tracking_status_normalizes_padded_event_ids(self):
+        self.assertEqual(provider_units.map_tracking_status("0100"), "picked_up")
+        self.assertEqual(provider_units.map_tracking_status("0174"), "out_for_delivery")
+        self.assertEqual(provider_units.map_tracking_status("20"), "delivered")
+
+    def test_tracking_status_uses_description_override(self):
+        description = (
+            "Tentative de renvoyer article à expéditeur. "
+            "Carte laissée indiquant où ramasser."
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status("1479", description),
+            "return_to_sender",
+        )
+        self.assertEqual(
+            provider_units.map_tracking_status("1479", "Some other description"),
+            "ready_for_pickup",
+        )
+
+    def test_tracking_status_unknown_fallback(self):
+        self.assertEqual(provider_units.map_tracking_status("999999"), "unknown")
 
 
 if __name__ == "__main__":
@@ -81,7 +116,7 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
-            "delivered": False,
+            "delivered": True,
             "estimated_delivery": "2011-04-05",
             "events": [
                 {
@@ -89,6 +124,7 @@ ParsedTrackingResponse = [
                     "date": "2011-02-03",
                     "description": "Signature image recorded for Online viewing",
                     "location": "SAINTE-FOY, QC",
+                    "status": "delivered",
                     "time": "11:59 AM",
                     "timestamp": "2011-02-03T11:59:00.000Z",
                 },
@@ -97,6 +133,7 @@ ParsedTrackingResponse = [
                     "date": "2011-02-03",
                     "description": "Item out for delivery",
                     "location": "SAINTE-FOY, QC",
+                    "status": "out_for_delivery",
                     "time": "08:27 AM",
                     "timestamp": "2011-02-03T08:27:00.000Z",
                 },
@@ -105,6 +142,7 @@ ParsedTrackingResponse = [
                     "date": "2011-02-02",
                     "description": "Item processed at postal facility",
                     "location": "QUEBEC, QC",
+                    "status": "picked_up",
                     "time": "14:45 PM",
                     "timestamp": "2011-02-02T14:45:00.000Z",
                 },
@@ -113,6 +151,8 @@ ParsedTrackingResponse = [
                     "date": "2011-02-02",
                     "description": "Customer addressing error found; attempting to correct. Possible delay",
                     "location": "QUEBEC, QC",
+                    "reason": "consignee_incorrect_address",
+                    "status": "on_hold",
                     "time": "06:19 AM",
                     "timestamp": "2011-02-02T06:19:00.000Z",
                 },
@@ -130,6 +170,7 @@ ParsedTrackingResponse = [
                     "date": "2011-02-01",
                     "description": "Signature image recorded for Online viewing",
                     "location": "QUEBEC, QC",
+                    "status": "delivered",
                     "time": "07:59 AM",
                     "timestamp": "2011-02-01T07:59:00.000Z",
                 },
@@ -141,7 +182,7 @@ ParsedTrackingResponse = [
                 "shipment_service": "Expedited Parcels",
                 "signed_by": "HETU",
             },
-            "status": "in_transit",
+            "status": "delivered",
             "tracking_number": "7023210039414604",
         }
     ],
