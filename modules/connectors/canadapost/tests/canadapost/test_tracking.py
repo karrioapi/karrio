@@ -47,6 +47,18 @@ class TestCanadaPostTracking(unittest.TestCase):
                 ParsedTrackingResponse,
             )
 
+    def test_parse_tracking_response_with_root_tracking_detail(self):
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
+            mock.return_value = TrackingResponseXml.replace("<wrapper>", "", 1).replace("</wrapper>", "", 1).strip()
+            parsed_response = (
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(
+                DP.to_dict(parsed_response),
+                ParsedTrackingResponse,
+            )
+
     def test_tracking_unknown_response_parsing(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = UnknownTrackingNumberResponse

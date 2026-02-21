@@ -12,7 +12,16 @@ def parse_tracking_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-    details = lib.find_element("tracking-detail", response)
+    responses = lib.to_list(response)
+    details: typing.List[lib.Element] = []
+    for node in responses:
+        tag = getattr(node, "tag", "")
+        local_name = tag.split("}")[-1] if isinstance(tag, str) else ""
+        # Canada Post may return <tracking-detail> as the response root.
+        if local_name == "tracking-detail":
+            details.append(node)
+            continue
+        details.extend(lib.find_element("tracking-detail", node))
     tracking_details: typing.List[models.TrackingDetails] = [
         _extract_tracking(node, settings)
         for node in details
