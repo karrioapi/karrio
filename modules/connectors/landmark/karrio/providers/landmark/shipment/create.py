@@ -208,7 +208,7 @@ def shipment_request(
                 PostalCode=shipper.postal_code or "",
                 Country=shipper.country_code or "",
             ),
-            ReturnAddress=lib.identity(
+            SendReturnToAddress=lib.identity(
                 import_req.SendReturnToAddressType(
                     Code=options.landmark_return_address_code.state,
                     Name=return_address.company_name

@@ -83,6 +83,52 @@ class TestLandmarkGlobalShipment(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), PARSED_IMPORT_RESPONSE)
 
+    def test_create_import_shipment_with_return_address_request(self):
+        """Validate that ImportRequest uses SendReturnToAddress (not ReturnAddress)."""
+        request_payload = {
+            **IMPORT_SHIPMENT_REQUEST_PAYLOAD,
+            "return_address": {
+                "address_line1": "456 Return Ave",
+                "city": "Chicago",
+                "postal_code": "60601",
+                "country_code": "US",
+                "state_code": "IL",
+                "person_name": "Returns Dept",
+                "company_name": "Acme Returns",
+            },
+        }
+        import_request = models.ShipmentRequest(**request_payload)
+        request = gateway.mapper.create_shipment_request(import_request)
+        xml_str = request.serialize()
+
+        print(xml_str)
+        self.assertIn("<SendReturnToAddress>", xml_str)
+        self.assertNotIn("<ReturnAddress>", xml_str)
+        self.assertIn("<Address1>456 Return Ave</Address1>", xml_str)
+
+    def test_create_ship_request_with_return_address_request(self):
+        """Validate that ShipRequest uses SendReturnToAddress (not ReturnAddress)."""
+        request_payload = {
+            **SHIPMENT_REQUEST_PAYLOAD,
+            "return_address": {
+                "address_line1": "456 Return Ave",
+                "city": "Chicago",
+                "postal_code": "60601",
+                "country_code": "US",
+                "state_code": "IL",
+                "person_name": "Returns Dept",
+                "company_name": "Acme Returns",
+            },
+        }
+        ship_request = models.ShipmentRequest(**request_payload)
+        request = gateway.mapper.create_shipment_request(ship_request)
+        xml_str = request.serialize()
+
+        print(xml_str)
+        self.assertIn("<SendReturnToAddress>", xml_str)
+        self.assertNotIn("<ReturnAddress>", xml_str)
+        self.assertIn("<Address1>456 Return Ave</Address1>", xml_str)
+
     def test_parse_error_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = ERROR_RESPONSE_XML
