@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_bpost"
-version = "2026.1.12"
+version = "2026.1.13"
 description = "Karrio - Belgian Post Shipping Extension"
 readme = "README.md"
 requires-python = ">=3.7"
