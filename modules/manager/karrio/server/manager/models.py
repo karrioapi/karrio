@@ -835,6 +835,7 @@ class Shipment(core.OwnedEntity):
     test_mode = models.BooleanField(null=False)
     reference = models.CharField(max_length=100, null=True, blank=True)
     is_return = models.BooleanField(
+        null=True,
         default=False,
         db_index=True,
         help_text="Whether this shipment is a return shipment",
