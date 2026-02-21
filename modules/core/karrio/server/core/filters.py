@@ -1067,6 +1067,10 @@ class ManifestFilters(filters.FilterSet):
         lookup_expr="lte",
         help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
     )
+    request_id = filters.CharFilter(
+        method="request_id_filter",
+        help_text="filter by request correlation ID in meta",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -1095,6 +1099,9 @@ class ManifestFilters(filters.FilterSet):
 
         model = manager.Manifest
         fields: typing.List[str] = []
+
+    def request_id_filter(self, queryset, name, value):
+        return queryset.filter(meta__request_id=value)
 
     def carrier_filter(self, queryset, name, values):
         # Filter by carrier_code in carrier JSON snapshot

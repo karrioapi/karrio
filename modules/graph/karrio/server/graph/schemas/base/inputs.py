@@ -72,6 +72,7 @@ class ManifestFilter(utils.Paginated):
     created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
+    request_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

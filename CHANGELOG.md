@@ -1,3 +1,15 @@
+# Karrio 2026.1.14
+
+## Changes
+
+### Fix
+
+- fix: make ShipmentType.is_return nullable to match Django model
+- fix: ensure is_return and request_id fields are available on ShipmentType GraphQL schema
+- fix: add missing request_id field and filter to ManifestType GraphQL schema
+
+---
+
 # Karrio 2026.1.13
 
 ## Changes
