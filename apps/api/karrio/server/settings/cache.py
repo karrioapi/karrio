@@ -108,7 +108,19 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
         )
 
     print(f"Redis cache connection initialized")
+
 elif SKIP_DEFAULT_CACHE:
     print(
         "Skipping default Redis cache configuration (worker mode - only HUEY Redis needed)"
     )
+else:
+    # No Redis available — use a local memory cache for constance
+    # to avoid N+1 database queries on each config access
+    CACHES = {
+        "constance": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "constance-cache",
+            "TIMEOUT": CACHE_TTL,
+        }
+    }
+    CONSTANCE_DATABASE_CACHE_BACKEND = "constance"
