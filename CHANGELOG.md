@@ -1,3 +1,17 @@
+# Karrio 2026.1.14
+
+## Changes
+
+### Fix
+
+- fix: make ShipmentType.is_return nullable to match Django model
+- fix: ensure is_return and request_id fields are available on ShipmentType GraphQL schema
+- fix: add missing request_id field and filter to ManifestType GraphQL schema
+- fix: resolve N+1 queries in GetSystemConnections admin query with batch usage resolution
+- fix: add constance cache fallback (LocMemCache) when Redis is not configured to prevent N+1 config queries
+
+---
+
 # Karrio 2026.1.13
 
 ## Changes

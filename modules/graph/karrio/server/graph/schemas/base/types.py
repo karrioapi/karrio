@@ -1501,6 +1501,10 @@ class ManifestType:
     updated_at: datetime.datetime
 
     @strawberry.field
+    def request_id(self: manager.Manifest) -> typing.Optional[str]:
+        return (self.meta or {}).get("request_id")
+
+    @strawberry.field
     def carrier_id(self: manager.Manifest) -> typing.Optional[str]:
         return (self.carrier or {}).get("carrier_id")
 
@@ -1680,7 +1684,7 @@ class ShipmentType:
     label_url: typing.Optional[str]
     invoice_url: typing.Optional[str]
     tracker: typing.Optional[TrackerType]
-    is_return: bool
+    is_return: typing.Optional[bool]
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType

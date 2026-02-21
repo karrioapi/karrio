@@ -108,7 +108,12 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
         )
 
     print(f"Redis cache connection initialized")
+
 elif SKIP_DEFAULT_CACHE:
     print(
         "Skipping default Redis cache configuration (worker mode - only HUEY Redis needed)"
     )
+else:
+    # No Redis available — cache constance values using Django's default
+    # LocMemCache to avoid N+1 database queries on each config access
+    CONSTANCE_DATABASE_CACHE_BACKEND = "default"

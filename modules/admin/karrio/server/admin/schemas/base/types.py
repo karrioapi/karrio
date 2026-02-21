@@ -117,7 +117,12 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
         info: Info,
         filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
     ) -> "ResourceUsageType":
-        # Create a new filter with carrier_connection_id added
+        # Check for batch-precomputed usage on request context (avoids N+1)
+        _cache = getattr(info.context.request, "_usage_cache", None)
+        if _cache and self.id in _cache:
+            return _cache[self.id]
+
+        # Fallback for single-item resolve (e.g. resolve() not resolve_list())
         base_filter = filter.to_dict() if not utils.is_unset(filter) else {}
         enhanced_filter = utils.UsageFilter(
             date_after=base_filter.get("date_after", strawberry.UNSET),
@@ -125,14 +130,11 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
             omit=base_filter.get("omit", strawberry.UNSET),
         )
 
-        # Create a custom filter dict that includes carrier_connection_id for internal usage
         import types as python_types
 
-        # Add carrier_connection_id to the filter for internal processing
         enhanced_filter_dict = enhanced_filter.to_dict()
         enhanced_filter_dict["carrier_connection_id"] = self.id
 
-        # Create a mock filter object that includes the carrier_connection_id
         mock_filter = python_types.SimpleNamespace(**enhanced_filter_dict)
         mock_filter.to_dict = lambda: enhanced_filter_dict
 
@@ -193,6 +195,15 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
             queryset = queryset.filter(active=_filter_data["active"])
         if _filter_data.get("carrier_name"):
             queryset = queryset.filter(carrier_code=_filter_data["carrier_name"])
+
+        # Batch-prefetch usage for all connections to avoid N+1 queries
+        connection_ids = list(queryset.values_list("id", flat=True))
+        if connection_ids:
+            info.context.request._usage_cache = (
+                ResourceUsageType.batch_resolve_usage(
+                    info, connection_ids=connection_ids
+                )
+            )
 
         return utils.paginated_connection(queryset)
 
@@ -333,6 +344,152 @@ class ResourceUsageType:
     addons_charges: typing.Optional[typing.List[utils.UsageStatType]] = None
     shipping_spend: typing.Optional[typing.List[utils.UsageStatType]] = None
     tracker_count: typing.Optional[typing.List[utils.UsageStatType]] = None
+
+    @staticmethod
+    def batch_resolve_usage(
+        info: Info,
+        connection_ids: typing.List[str],
+        filter: utils.UsageFilter = strawberry.UNSET,
+    ) -> typing.Dict[str, "ResourceUsageType"]:
+        """Batch-compute usage for multiple connections in 4 queries total."""
+        import django.db.models as models
+        import django.db.models.functions as functions
+        import karrio.server.manager.models as manager
+
+        _test_mode = info.context.request.test_mode
+        _filter = {
+            "date_before": timezone.now(),
+            "date_after": (timezone.now() - datetime.timedelta(days=30)),
+            **(filter.to_dict() if not utils.is_unset(filter) else {}),
+        }
+
+        # Query 1: Shipment stats grouped by connection_id
+        shipment_qs = (
+            filters.ShipmentFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                    status__not_in=["draft", "cancelled"],
+                ),
+                manager.Shipment.objects.filter(
+                    test_mode=_test_mode,
+                    selected_rate__meta__carrier_connection_id__in=connection_ids,
+                ),
+            )
+            .qs.annotate(
+                connection_id=models.F(
+                    "selected_rate__meta__carrier_connection_id"
+                ),
+                date=functions.TruncDay("created_at"),
+            )
+            .values("connection_id", "date")
+            .annotate(
+                count=models.Count("id"),
+                amount=functions.Coalesce(
+                    models.Sum(
+                        functions.Cast(
+                            "selected_rate__total_charge", models.FloatField()
+                        )
+                    ),
+                    models.Value(0.0),
+                ),
+            )
+            .order_by("connection_id", "-date")
+        )
+
+        # Query 2: Fee stats grouped by connection_id
+        fee_qs = (
+            pricing.Fee.objects.filter(
+                created_at__gte=_filter["date_after"],
+                created_at__lte=_filter["date_before"],
+                test_mode=_test_mode,
+                connection_id__in=connection_ids,
+            )
+            .annotate(date=functions.TruncDay("created_at"))
+            .values("connection_id", "date")
+            .annotate(count=models.Count("id"), amount=models.Sum("amount"))
+            .order_by("connection_id", "-date")
+        )
+
+        # Query 3: Tracker stats grouped by connection_id
+        tracker_qs = (
+            filters.TrackerFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Tracking.objects.filter(
+                    test_mode=_test_mode,
+                    carrier__id__in=connection_ids,
+                ),
+            )
+            .qs.annotate(
+                connection_id=models.F("carrier__id"),
+                date=functions.TruncDay("created_at"),
+            )
+            .values("connection_id", "date")
+            .annotate(count=models.Count("id"))
+            .order_by("connection_id", "-date")
+        )
+
+        # Build per-connection data from batch results
+        shipment_data: typing.Dict[str, list] = {cid: [] for cid in connection_ids}
+        shipment_counts: typing.Dict[str, int] = {cid: 0 for cid in connection_ids}
+        for row in shipment_qs:
+            cid = row["connection_id"]
+            if cid in shipment_data:
+                shipment_data[cid].append(row)
+                shipment_counts[cid] += row["count"]
+
+        fee_data: typing.Dict[str, list] = {cid: [] for cid in connection_ids}
+        for row in fee_qs:
+            cid = row["connection_id"]
+            if cid in fee_data:
+                fee_data[cid].append(row)
+
+        tracker_data: typing.Dict[str, list] = {cid: [] for cid in connection_ids}
+        for row in tracker_qs:
+            cid = row["connection_id"]
+            if cid in tracker_data:
+                tracker_data[cid].append(row)
+
+        # Assemble ResourceUsageType per connection
+        result = {}
+        for cid in connection_ids:
+            _shipping = shipment_data[cid]
+            _fees = fee_data[cid]
+            _trackers = tracker_data[cid]
+
+            total_shipping_spend = lib.to_decimal(
+                sum((r["amount"] for r in _shipping if r["amount"] is not None), 0.0)
+            )
+            total_addons_charges = lib.to_decimal(
+                sum((r["amount"] for r in _fees if r["amount"] is not None), 0.0)
+            )
+            total_trackers = sum(
+                (r["count"] for r in _trackers if r["count"] is not None), 0
+            )
+
+            result[cid] = ResourceUsageType(
+                total_trackers=total_trackers,
+                total_shipments=shipment_counts[cid],
+                total_addons_charges=lib.to_decimal(total_addons_charges),
+                total_shipping_spend=lib.to_decimal(total_shipping_spend),
+                shipping_spend=[
+                    utils.UsageStatType.parse(r, label="shipping_spend")
+                    for r in _shipping
+                ],
+                tracker_count=[
+                    utils.UsageStatType.parse(r, label="tracker_count")
+                    for r in _trackers
+                ],
+                addons_charges=[
+                    utils.UsageStatType.parse(r, label="addons_charges")
+                    for r in _fees
+                ],
+            )
+
+        return result
 
     @staticmethod
     def resolve_usage(
