@@ -1,3 +1,12 @@
+# Karrio 2026.1.13
+
+## Changes
+
+### Fix
+
+- hotfix: Landmark return address + is_return nullable (#973)
+- fix: show detailed error messages for shipment cancellation and status
+
 # Karrio 2026.1.12
 
 ## Changes
