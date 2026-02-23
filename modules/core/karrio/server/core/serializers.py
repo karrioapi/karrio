@@ -847,6 +847,23 @@ class TrackingData(serializers.Serializer):
         required=True,
         help_text="The tracking carrier",
     )
+    carrier_id = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        allow_null=True,
+        help_text=(
+            "Optional carrier connection identifier (connection id or carrier_id). "
+            "Useful when multiple connections exist for the same carrier."
+        ),
+    )
+    test_mode = serializers.BooleanField(
+        required=False,
+        allow_null=True,
+        help_text=(
+            "Optional connection mode selector. When provided, tracking resolves "
+            "against carriers in the specified test/prod mode."
+        ),
+    )
     account_number = serializers.CharField(
         required=False,
         allow_blank=True,

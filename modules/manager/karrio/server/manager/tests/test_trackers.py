@@ -44,6 +44,34 @@ class TestTrackers(APITestCase):
         self.assertDictEqual(response_data, TRACKING_RESPONSE)
         self.assertEqual(len(self.user.tracking_set.all()), 1)
 
+    def test_trackers_post_with_connection_selectors(self):
+        url = reverse("karrio.server.manager:trackers-list")
+        data = dict(
+            tracking_number="1Z12345E6205277936",
+            carrier_name="ups",
+            carrier_id="ups_package",
+            test_mode=True,
+        )
+
+        with (
+            patch(
+                "karrio.server.manager.serializers.tracking.Connections.first",
+                wraps=serializers.tracking.Connections.first,
+            ) as first_mock,
+            patch("karrio.server.core.gateway.utils.identity") as mock,
+        ):
+            mock.return_value = RETURNED_VALUE
+            response = self.client.post(url, data)
+
+            self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+            self.assertTrue(
+                any(
+                    call.kwargs.get("carrier_id") == "ups_package"
+                    and call.kwargs.get("test_mode") is True
+                    for call in first_mock.call_args_list
+                )
+            )
+
 
 class TestTrackersUpdate(APITestCase):
     def setUp(self) -> None:
