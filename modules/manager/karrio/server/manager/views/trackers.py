@@ -126,6 +126,12 @@ class TrackerList(GenericAPIView):
             # If a hub is specified, use the hub as carrier to track the package
             "carrier_name": carrier_name,
         }
+        # Respect explicit connection selectors from payload when present.
+        if data.get("carrier_id"):
+            carrier_filter["carrier_id"] = data["carrier_id"]
+        if data.get("test_mode") is not None:
+            # Preserve explicit False (prod) and True (test).
+            carrier_filter["test_mode"] = data["test_mode"]
         data = {
             **data,
             "tracking_number": data["tracking_number"],

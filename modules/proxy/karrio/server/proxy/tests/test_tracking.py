@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
+from karrio.server.core.gateway import Shipments
 
 
 class TestTracking(APITestCase):
@@ -18,6 +19,29 @@ class TestTracking(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, TRACKING_RESPONSE)
+
+    def test_tracking_shipment_with_connection_selectors(self):
+        url = reverse("karrio.server.proxy:get-tracking")
+        data = dict(
+            tracking_number="1Z12345E6205277936",
+            carrier_name="ups",
+            carrier_id="ups_package",
+            test_mode=True,
+        )
+
+        with (
+            patch(
+                "karrio.server.proxy.views.tracking.Shipments.track",
+                wraps=Shipments.track,
+            ) as track_mock,
+            patch("karrio.server.core.gateway.utils.identity") as mock,
+        ):
+            mock.return_value = RETURNED_VALUE
+            response = self.client.post(f"{url}", data)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(track_mock.call_args.kwargs.get("carrier_id"), "ups_package")
+            self.assertIs(track_mock.call_args.kwargs.get("test_mode"), True)
 
 
 RETURNED_VALUE = [
