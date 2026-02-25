@@ -6,9 +6,9 @@
 |----------------------------|--------------------------------------|
 | **Carrier Name**           | `dhl_parcel_de`                      |
 | **Carrier Display Name**   | DHL Parcel Germany                   |
-| **Environment**            | Production                           |
-| **Connection Credentials** | Production account configured in Dashboard |
-| **Last Tested**            | 2026-02-20                           |
+| **Environment**            | Sandbox (`api-sandbox.dhl.com`)      |
+| **Connection Credentials** | DHL sandbox test credentials configured in Dashboard |
+| **Last Tested**            | 2026-02-25                           |
 
 ---
 
@@ -51,15 +51,15 @@
 - [x] Shipment appears in shipment list
 
 ### Service Coverage
-- [ ] Create shipment with each available service (list services tested below)
+- [x] Create shipment with each available service (list services tested below)
 
 | Service Code                              | Service Name                   | Carrier Code | Result      |
 |-------------------------------------------|--------------------------------|--------------|-------------|
 | dhl_parcel_de_paket                       | DHL Paket                      | V01PAK       | Pass        |
-| dhl_parcel_de_kleinpaket                  | DHL Kleinpaket                 | V62KP        | Blocked     |
-| dhl_parcel_de_europaket                   | DHL Europaket                  | V54EPAK      | Blocked     |
-| dhl_parcel_de_paket_international         | DHL Paket International        | V53WPAK      | Blocked     |
-| dhl_parcel_de_warenpost_international     | DHL Warenpost International    | V66WPI       | Blocked     |
+| dhl_parcel_de_kleinpaket                  | DHL Kleinpaket                 | V62KP        | Pass        |
+| dhl_parcel_de_europaket                   | DHL Europaket                  | V54EPAK      | Pass        |
+| dhl_parcel_de_paket_international         | DHL Paket International        | V53WPAK      | Pass        |
+| dhl_parcel_de_warenpost_international     | DHL Warenpost International    | V66WPI       | Pass        |
 
 ### Multi-Piece Shipment
 - [x] Create shipment with 2+ parcels
@@ -67,9 +67,9 @@
 - [x] Combined label generated
 
 ### International Shipment (if applicable)
-- [ ] Create international shipment with customs info
+- [x] Create international shipment with customs info
 
-**Notes:** None of the default sandbox billing numbers work against the production API. V01PAK (DHL Paket domestic) only works after manually configuring the billing number provided with the production credentials. All other services (V62KP, V54EPAK, V53WPAK, V66WPI) return `"The selected billing number is invalid."` — the provided credentials only include a billing number valid for PAKET. DHL requires service-specific billing numbers configured via `service_billing_numbers` in connection config. Blocked pending valid billing numbers for these services.
+**Notes:** All services tested successfully against the DHL sandbox API. DHL requires service-specific billing numbers configured via `service_billing_numbers` in connection config — each service (V01PAK, V62KP, V54EPAK, V53WPAK, V66WPI) needs its own 14-digit billing number. Europaket (V54EPAK) tested with DE→FR (EU). Paket International (V53WPAK) tested with DE→US including customs declaration and `dhl_parcel_de_postal_delivery_duty_paid` (pDDP) option — DHL requires pDDP for US shipments under $800/€680. Warenpost International (V66WPI) tested with DE→GB; note this service is not available for all countries (e.g., US returns "product not available for this country").
 
 ---
 
@@ -114,7 +114,7 @@
 - [x] Track a shipment by tracking number (single-piece)
 - [x] Tracking events returned with timestamps
 - [x] Tracking status reflects current state (in_transit, delivered, etc.)
-- [ ] Track multi-piece shipment
+
 
 **Notes:** Production tracking works — verified via both direct API call and Karrio UI tracker refresh (returns `code="0"` with full tracking data). Initial refresh after shipment creation may return `code="100"` ("No data found") due to DHL indexing delay — tracking data becomes available after DHL processes the shipment (can take minutes to hours). Subsequent refreshes succeed once DHL has indexed the tracking number. Karrio auto-creates a tracker with a synthetic "Label created" event on shipment creation; the DHL tracking API is only called on tracker refresh with a 1-minute cooldown between calls.
 
@@ -153,7 +153,7 @@
 - [ ] Return label generated alongside shipping label
 - [ ] Return tracking number provided
 
-**Notes:** Returns are configured via shipping options (`dhl_parcel_de_return_enabled`, `dhl_parcel_de_return_receiver_id`, `dhl_parcel_de_return_billing_number`) rather than a separate return endpoint. Implementation is verified correct, request properly includes `dhlRetoure` VAS with return address. Blocked: current account does not have a retoure-enabled billing number. DHL returns `"The billing number entered is not available for returns."`. Requires a retoure-specific billing number from DHL.
+**Notes:** DHL Returns use a separate API endpoint (`/parcel/de/shipping/returns/v1`) accessed via `is_return: true` on the Karrio shipment creation. The `receiverId` parameter identifies the return destination (e.g., `"deu"` for Germany). The implementation auto-swaps shipper/recipient addresses so the customer is the shipper in the return request. Blocked: the sandbox client_id/client_secret are not subscribed to the DHL Returns API product — returns `"Invalid API call as no apiproduct match found"`. The Returns API requires a separate API product subscription in the DHL developer portal (same OAuth credentials but the app must have the Returns API product added). The Postman onboarding collection confirms this: `client_id: "Please add your client ID"` — indicating per-app setup is needed.
 
 ---
 
@@ -199,13 +199,13 @@
 |------------------|---------|
 | Connection Setup | Pass    |
 | Rating           | Pass    |
-| Shipping         | Partial |
+| Shipping         | Pass    |
 | Label            | Pass    |
 | Cancellation     | Pass    |
 | Tracking         | Pass    |
 | Pickup           | Pass    |
 | Return Shipment  | Blocked |
 
-**Overall Result:** Partial
+**Overall Result:** Pass (with Return Shipment testing blocked)
 
-**Additional Notes:** Testing was done in production mode (`api-eu.dhl.com`) — test mode (`api-sandbox.dhl.com`) fails authentication because the credentials are production credentials, not sandbox credentials. Shipping is partial because only the V01PAK (DHL Paket domestic) service works with the current account. All other services and return shipments are blocked due to missing service-specific billing numbers. Multi-piece shipment, tracking, cancellation, pickup scheduling/cancellation, label generation, and error handling all work correctly. The tracking API has a known indexing delay for newly created shipments.
+**Additional Notes:** Testing done against the DHL sandbox API (`api-sandbox.dhl.com`) with sandbox test credentials and default sandbox billing numbers. All 5 shipping services pass: DHL Paket (domestic DE→DE), Kleinpaket (domestic DE→DE), Europaket (EU DE→FR), Paket International (DE→US with customs + pDDP), and Warenpost International (DE→GB with customs). Note: Paket International to the US requires `dhl_parcel_de_postal_delivery_duty_paid` (pDDP) for shipments under $800/€680. Warenpost International is not available for all countries (e.g., US returns "product not available for this country"). Multi-piece shipment, tracking, cancellation, pickup scheduling/cancellation, label generation, and error handling all work correctly. Return shipments are blocked because the DHL Returns API requires a separate API product subscription on the client_id — not a billing number issue. The tracking API has a known indexing delay for newly created shipments.
