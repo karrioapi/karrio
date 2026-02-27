@@ -52,6 +52,7 @@ class ShipmentFilter(utils.Paginated):
     created_before: typing.Optional[str] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET
+    order_id: typing.Optional[str] = strawberry.UNSET
     service: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[utils.ShipmentStatusEnum]] = strawberry.UNSET
     option_key: typing.Optional[str] = strawberry.UNSET
@@ -499,6 +500,7 @@ class PartialShipmentMutationInput(utils.BaseInput):
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET
+    order_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

@@ -1677,6 +1677,7 @@ class ShipmentType:
     shipment_identifier: typing.Optional[str]
     tracking_url: typing.Optional[str]
     reference: typing.Optional[str]
+    order_id: typing.Optional[str]
     services: typing.Optional[typing.List[str]]
     service: typing.Optional[str]
     selected_rate_id: typing.Optional[str]
