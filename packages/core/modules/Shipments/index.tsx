@@ -206,7 +206,7 @@ export default function Page(pageProps: any) {
       }
     ];
 
-    const isFailedView = (filter?.status || []).includes(FAILED_SENTINEL);
+    const isFailedView = (filter?.status as string[] || []).includes(FAILED_SENTINEL);
 
     const searchParamsString = searchParams?.toString() ?? "";
     useEffect(() => {
