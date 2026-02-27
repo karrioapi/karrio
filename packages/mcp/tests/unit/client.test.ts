@@ -25,7 +25,7 @@ describe("KarrioClient", () => {
     });
     // Access private apiUrl via any cast for testing
     const result = (c as any).apiUrl;
-    console.log(result);
+
     expect(result).toBe("https://api.karrio.io");
   });
 
@@ -35,7 +35,7 @@ describe("KarrioClient", () => {
       apiKey: "key",
     });
     const result = (c as any).apiUrl;
-    console.log(result);
+
     expect(result).toBe("https://api.karrio.io");
   });
 
@@ -45,13 +45,13 @@ describe("KarrioClient", () => {
       apiKey: "key",
     });
     const result = (c as any).apiUrl;
-    console.log(result);
+
     expect(result).toBe("https://api.karrio.io");
   });
 
   it("stores API key correctly", () => {
     const result = (client as any).apiKey;
-    console.log(result);
+
     expect(result).toBe("test_key_123");
   });
 
@@ -63,7 +63,7 @@ describe("KarrioClient", () => {
     });
 
     const result = await client.listCarriers();
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/carriers",
@@ -87,7 +87,7 @@ describe("KarrioClient", () => {
 
     const payload = { shipper: {}, recipient: {}, parcels: [] };
     const result = await client.fetchRates(payload);
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/proxy/rates",
@@ -142,7 +142,7 @@ describe("KarrioClient", () => {
     await client.listShipments({ status: "purchased", limit: "10" });
 
     const calledUrl = (fetch as any).mock.calls[0][0];
-    console.log(calledUrl);
+
     expect(calledUrl).toContain("status=purchased");
     expect(calledUrl).toContain("limit=10");
   });
@@ -156,7 +156,7 @@ describe("KarrioClient", () => {
     await client.listShipments();
 
     const calledUrl = (fetch as any).mock.calls[0][0];
-    console.log(calledUrl);
+
     expect(calledUrl).toBe("https://api.karrio.io/v1/shipments");
     expect(calledUrl).not.toContain("?");
   });
@@ -169,7 +169,7 @@ describe("KarrioClient", () => {
 
     const payload = { shipper: {}, recipient: {}, parcels: [] };
     const result = await client.createShipment(payload);
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/shipments",
@@ -188,7 +188,7 @@ describe("KarrioClient", () => {
 
     const payload = { selected_rate_id: "rate_456" };
     const result = await client.purchaseShipment("shp_123", payload);
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/shipments/shp_123/purchase",
@@ -206,7 +206,7 @@ describe("KarrioClient", () => {
     });
 
     const result = await client.getShipment("shp_123");
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/shipments/shp_123",
@@ -221,7 +221,7 @@ describe("KarrioClient", () => {
     });
 
     const result = await client.cancelShipment("shp_123");
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/shipments/shp_123/cancel",
@@ -237,7 +237,7 @@ describe("KarrioClient", () => {
 
     const payload = { tracking_number: "1Z999AA10123456784", carrier_name: "ups" };
     const result = await client.createTracker(payload);
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/trackers",
@@ -255,7 +255,7 @@ describe("KarrioClient", () => {
     });
 
     const result = await client.getTracker("1Z999AA10123456784");
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/trackers/1Z999AA10123456784",
@@ -271,7 +271,7 @@ describe("KarrioClient", () => {
 
     const payload = { address: { postal_code: "10001", country_code: "US" } };
     const result = await client.validateAddress(payload);
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/addresses/validate",
@@ -289,7 +289,7 @@ describe("KarrioClient", () => {
     });
 
     const result = await client.getReferences();
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/references",
@@ -304,7 +304,7 @@ describe("KarrioClient", () => {
     });
 
     const result = await client.listOrders({ limit: "5" });
-    console.log(result);
+
 
     const calledUrl = (fetch as any).mock.calls[0][0];
     expect(calledUrl).toContain("/v1/orders");
@@ -318,7 +318,7 @@ describe("KarrioClient", () => {
     });
 
     const result = await client.getOrder("ord_123");
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/orders/ord_123",
@@ -334,7 +334,7 @@ describe("KarrioClient", () => {
 
     const payload = { pickup_date: "2026-03-01" };
     const result = await client.schedulePickup(payload);
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/pickups",
@@ -353,7 +353,7 @@ describe("KarrioClient", () => {
 
     const payload = { carrier_name: "fedex", shipment_ids: ["shp_1"] };
     const result = await client.createManifest(payload);
-    console.log(result);
+
 
     expect(fetch).toHaveBeenCalledWith(
       "https://api.karrio.io/v1/manifests",
