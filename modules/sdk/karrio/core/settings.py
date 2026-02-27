@@ -82,7 +82,7 @@ class Settings(abc.ABC):
             self.tracer = lib.Tracer()
 
         _partial = functools.partial(self.trace, format=format)
-        _partial._tracer = self.tracer  # Preserve tracer reference for request_id propagation
+        _partial._tracer = self.tracer  # type: ignore[attr-defined]  # Preserve tracer reference for request_id propagation
         return _partial
 
     @classmethod

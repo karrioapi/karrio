@@ -420,7 +420,7 @@ class Tracer:
     def with_metadata(self, metadata: dict):
         """Create a partial trace function with preset metadata."""
         _partial = functools.partial(self.trace, metadata=metadata)
-        _partial._tracer = self  # Attach tracer reference for request_id propagation
+        _partial._tracer = self  # type: ignore[attr-defined]  # Attach tracer reference for request_id propagation
         return _partial
 
     @property
