@@ -293,6 +293,25 @@ def error_decoder(error: HTTPError) -> Union[dict, list]:
 RETRYABLE_STATUS_CODES = {500, 502, 503, 504, 522, 524}
 
 
+def _resolve_request_id(trace) -> str:
+    """Extract request_id from tracer context, or generate a new one.
+
+    The trace parameter is typically a functools.partial created by
+    Tracer.with_metadata() or Settings.trace_as(), which carries a
+    _tracer attribute pointing back to the Tracer instance. If the
+    tracer context contains a request_id (set by the API middleware),
+    we reuse it for end-to-end correlation. Otherwise, we fall back
+    to generating a new UUID.
+    """
+    if trace is not None:
+        _tracer = getattr(trace, "_tracer", None)
+        if _tracer is not None:
+            _context_id = getattr(_tracer, "context", {}).get("request_id")
+            if _context_id:
+                return _context_id
+    return str(uuid.uuid4())
+
+
 class HttpResponse:
     """HTTP response wrapper that provides access to both content and headers."""
 
@@ -354,7 +373,7 @@ def request_with_response(
     import time
 
     _retry_statuses = set(retry_on_status or RETRYABLE_STATUS_CODES)
-    _request_id = str(uuid.uuid4())
+    _request_id = _resolve_request_id(trace)
     _last_error: Optional[Union[HTTPError, TimeoutError, ConnectionError, OSError]] = None
     _last_response = None
 
@@ -471,7 +490,7 @@ def request(
     import time
 
     _retry_statuses = set(retry_on_status or RETRYABLE_STATUS_CODES)
-    _request_id = str(uuid.uuid4())
+    _request_id = _resolve_request_id(trace)
     _last_error: Optional[Union[HTTPError, TimeoutError, ConnectionError, OSError]] = None
     _last_response = None
 
