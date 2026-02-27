@@ -1,3 +1,4 @@
+import re
 from unittest.mock import ANY
 from django.test import TestCase, RequestFactory
 from django.http import HttpResponse
@@ -9,6 +10,8 @@ from karrio.server.core.middleware import (
     _is_valid_request_id,
 )
 from karrio.server.core.tests.base import APITestCase
+from karrio.core.utils.helpers import _resolve_request_id
+from karrio.core.utils.tracing import Tracer
 
 
 class TestRequestIDValidation(TestCase):
@@ -132,3 +135,100 @@ class TestRequestIDInAPI(APITestCase):
 
         self.assertNotEqual(response["X-Request-ID"], "invalid id!")
         self.assertTrue(response["X-Request-ID"].startswith("req_"))
+
+
+class TestRequestIDPropagation(TestCase):
+    """Test request_id propagation from tracer context to SDK HTTP calls."""
+
+    def setUp(self):
+        self.maxDiff = None
+
+    def test_resolve_request_id_from_tracer_context(self):
+        """Verify request_id is extracted from tracer context via with_metadata."""
+        tracer = Tracer()
+        tracer.add_context({"request_id": "req_test-123"})
+        trace_fn = tracer.with_metadata({})
+
+        result = _resolve_request_id(trace_fn)
+
+        self.assertEqual(result, "req_test-123")
+
+    def test_resolve_request_id_generates_uuid_without_tracer(self):
+        """Verify fallback to UUID when trace is None."""
+        result = _resolve_request_id(None)
+
+        self.assertRegex(result, r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+    def test_resolve_request_id_generates_uuid_without_context(self):
+        """Verify fallback to UUID when tracer has no request_id in context."""
+        tracer = Tracer()
+        trace_fn = tracer.with_metadata({})
+
+        result = _resolve_request_id(trace_fn)
+
+        self.assertRegex(result, r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+    def test_resolve_request_id_with_empty_context(self):
+        """Verify fallback when tracer context exists but request_id is empty."""
+        tracer = Tracer()
+        tracer.add_context({"request_id": ""})
+        trace_fn = tracer.with_metadata({})
+
+        result = _resolve_request_id(trace_fn)
+
+        self.assertRegex(result, r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+    def test_tracer_reference_attached_to_with_metadata(self):
+        """Verify _tracer attribute is set on with_metadata return value."""
+        tracer = Tracer()
+        trace_fn = tracer.with_metadata({"connection": {"carrier_name": "test"}})
+
+        self.assertTrue(hasattr(trace_fn, "_tracer"))
+        self.assertIs(trace_fn._tracer, tracer)
+
+    def test_request_id_propagated_through_trace_as(self):
+        """Verify request_id survives Settings.trace_as() wrapping chain."""
+        from karrio.core.settings import Settings
+
+        # Create a minimal concrete Settings subclass for testing
+        import attr
+
+        @attr.s(auto_attribs=True)
+        class TestSettings(Settings):
+            carrier_id: str = "test"
+
+            @property
+            def carrier_name(self):
+                return "test_carrier"
+
+        settings = TestSettings(carrier_id="test-carrier")
+        tracer = Tracer()
+        tracer.add_context({"request_id": "req_through-trace-as"})
+        settings.tracer = tracer
+
+        trace_fn = settings.trace_as("json")
+
+        result = _resolve_request_id(trace_fn)
+
+        self.assertEqual(result, "req_through-trace-as")
+
+    def test_trace_as_creates_tracer_if_missing(self):
+        """Verify trace_as() creates a tracer when none exists."""
+        from karrio.core.settings import Settings
+        import attr
+
+        @attr.s(auto_attribs=True)
+        class TestSettings(Settings):
+            carrier_id: str = "test"
+
+            @property
+            def carrier_name(self):
+                return "test_carrier"
+
+        settings = TestSettings(carrier_id="test-carrier")
+        settings.tracer = None
+
+        trace_fn = settings.trace_as("json")
+
+        self.assertIsNotNone(settings.tracer)
+        self.assertTrue(hasattr(trace_fn, "_tracer"))
