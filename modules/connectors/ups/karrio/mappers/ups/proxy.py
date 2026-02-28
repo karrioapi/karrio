@@ -1,5 +1,6 @@
 import typing
 import datetime
+import uuid
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
@@ -108,6 +109,8 @@ class Proxy(proxy.Proxy):
                     headers={
                         "authorization": f"Bearer {token}",
                         "content-Type": "application/json",
+                        "transId": str(uuid.uuid4()),
+                        "transactionSrc": "karrio",
                     },
                 ),
             ),
