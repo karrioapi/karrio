@@ -1,4 +1,4 @@
-"""Karrio DPD Group client settings."""
+"""Karrio DPD Global client settings."""
 
 import attr
 import typing
@@ -12,15 +12,18 @@ import karrio.universal.mappers.rating_proxy as rating_proxy
 
 @attr.s(auto_attribs=True)
 class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
-    """DPD Group connection settings."""
+    """DPD Global connection settings."""
 
     # Authentication method 1: Login credentials
     dpd_login: str = None  # X-DPD-LOGIN
     dpd_password: str = None  # X-DPD-PASSWORD
+    # dpd_password: str = attr.ib(default=None, metadata={"sensitive": True})  # X-DPD-PASSWORD
 
     # Authentication method 2: Client credentials (for SEUR)
     dpd_client_id: str = None  # X-DPD-CLIENTID
+    # dpd_client_id: str = attr.ib(default=None, metadata={"sensitive": True})  # X-DPD-CLIENTID
     dpd_client_secret: str = None  # X-DPD-CLIENTSECRET
+    # dpd_client_secret: str = attr.ib(default=None, metadata={"sensitive": True})  # X-DPD-CLIENTSECRET
 
     # Business unit code (e.g., 001=DE, 002=FR, 010=NL, 011=GB)
     dpd_bucode: str = None  # X-DPD-BUCODE

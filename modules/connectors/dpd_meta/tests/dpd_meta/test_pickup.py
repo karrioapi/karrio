@@ -1,4 +1,4 @@
-"""DPD Group carrier pickup tests."""
+"""DPD Global carrier pickup tests."""
 
 import unittest
 import karrio.sdk as karrio

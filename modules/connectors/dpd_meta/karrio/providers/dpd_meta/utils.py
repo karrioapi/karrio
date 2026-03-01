@@ -15,7 +15,7 @@ def decode_jwt_payload(token: str) -> dict:
 
 
 class Settings(core.Settings):
-    """DPD Group base connection settings."""
+    """DPD Global base connection settings."""
 
     @property
     def carrier_name(self):

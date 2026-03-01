@@ -1,4 +1,4 @@
-"""Karrio DPD Group client proxy."""
+"""Karrio DPD Global client proxy."""
 
 import datetime
 import karrio.lib as lib
