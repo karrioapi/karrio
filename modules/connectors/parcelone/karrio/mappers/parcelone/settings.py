@@ -16,6 +16,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # Required credentials
     username: str
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
     mandator_id: str
     consigner_id: str
 

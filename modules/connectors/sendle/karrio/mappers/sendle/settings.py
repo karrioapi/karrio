@@ -11,6 +11,7 @@ class Settings(provider_utils.Settings):
     # required carrier specific properties
     sendle_id: str
     api_key: str
+    # api_key: str = attr.ib(metadata={"sensitive": True})
 
     # generic properties
     id: str = None

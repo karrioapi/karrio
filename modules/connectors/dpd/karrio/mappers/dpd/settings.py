@@ -17,6 +17,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # required carrier specific properties
     delis_id: str
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
     depot: str = None
     message_language: str = "en_EN"
 

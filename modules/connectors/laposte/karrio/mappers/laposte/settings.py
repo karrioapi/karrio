@@ -10,6 +10,7 @@ class Settings(utils.Settings):
 
     # required carrier specific properties
     api_key: str
+    # api_key: str = attr.ib(metadata={"sensitive": True})
     lang: utils.LangEnum = "fr_FR"  # type: ignore
 
     # generic properties

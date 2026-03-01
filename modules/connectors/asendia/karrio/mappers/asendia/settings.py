@@ -11,6 +11,7 @@ class Settings(provider_utils.Settings):
     # Asendia API credentials (required)
     username: str
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
 
     # Customer ID for API operations
     customer_id: str = None

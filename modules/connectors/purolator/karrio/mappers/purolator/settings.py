@@ -10,8 +10,10 @@ class Settings(utils.Settings):
 
     username: str
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
     account_number: str
     user_token: str = None
+    # user_token: str = attr.ib(default=None, metadata={"sensitive": True})
     language: utils.LanguageEnum = "en"  # type: ignore
 
     id: str = None

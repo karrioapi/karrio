@@ -15,6 +15,7 @@ class Settings(provider_utils.Settings, RatingMixinSettings):
 
     username: str  # type: ignore
     password: str  # type: ignore
+    # password: str = attr.ib(metadata={"sensitive": True})  # type: ignore
     account_number: str = None
 
     id: str = None
