@@ -140,7 +140,8 @@ def _extract_shipment(
 def _process_label(shipment: ups_response.ShipmentResultsType):
     label_type = lib.identity(
         "ZPL"
-        if "ZPL" in shipment.PackageResults[0].ShippingLabel.ImageFormat.Code
+        if lib.failsafe(lambda: shipment.PackageResults[0].ShippingLabel.ImageFormat.Code)
+        and "ZPL" in shipment.PackageResults[0].ShippingLabel.ImageFormat.Code
         else "PDF"
     )
     labels = [
@@ -154,7 +155,11 @@ def _process_label(shipment: ups_response.ShipmentResultsType):
             else pkg.ShippingLabel.GraphicImage
         )
         for pkg in shipment.PackageResults
+        if pkg.ShippingLabel is not None
     ]
+
+    if not labels:
+        return None
 
     return labels[0] if len(labels) == 1 else lib.bundle_base64(labels, label_type)
 
