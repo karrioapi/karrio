@@ -98,22 +98,31 @@ class Proxy(proxy.Proxy):
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
         locale = self.settings.connection_config.locale.state or "en_US"
         token = self.get_token()
+        transaction_source = "karrio-test" if self.settings.test_mode else "karrio-prod"
 
-        responses = lib.run_concurently(
-            lambda tracking_number: (
+        def fetch_tracking(tracking_number: str) -> typing.Tuple[str, typing.Any]:
+            trans_id = str(uuid.uuid4())
+
+            return (
                 tracking_number,
                 lib.request(
-                    url=f"{self.settings.server_url}/api/track/v1/details/{tracking_number}?locale={locale}&returnSignature=true",
+                    url=(
+                        f"{self.settings.server_url}/api/track/v1/details/{tracking_number}"
+                        f"?locale={locale}&returnSignature=true"
+                    ),
                     trace=self.trace_as("json"),
                     method="GET",
                     headers={
                         "authorization": f"Bearer {token}",
                         "content-Type": "application/json",
-                        "transId": str(uuid.uuid4()),
-                        "transactionSrc": "karrio",
+                        "transId": trans_id,
+                        "transactionSrc": transaction_source,
                     },
                 ),
-            ),
+            )
+
+        responses = lib.run_concurently(
+            fetch_tracking,
             request.serialize(),
         )
 
