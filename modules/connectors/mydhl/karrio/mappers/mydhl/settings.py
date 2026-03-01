@@ -11,6 +11,7 @@ class Settings(provider_utils.Settings):
     # MyDHL API uses Basic Authentication
     username: str
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
     account_number: str = None
 
     # generic properties

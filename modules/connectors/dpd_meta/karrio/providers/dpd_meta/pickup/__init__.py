@@ -1,4 +1,4 @@
-"""Karrio DPD Group pickup API imports."""
+"""Karrio DPD Global pickup API imports."""
 
 from karrio.providers.dpd_meta.pickup.create import (
     parse_pickup_response,

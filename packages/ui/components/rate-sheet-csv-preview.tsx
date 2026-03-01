@@ -66,6 +66,11 @@ interface ColumnDef {
   width: number;
 }
 
+interface PricingConfig {
+  excluded_markup_ids?: string[];
+  sort_order?: number;
+}
+
 interface RateSheetCsvPreviewProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -80,6 +85,8 @@ interface RateSheetCsvPreviewProps {
   weightUnit: string;
   markups?: MarkupPreviewItem[];
   isAdmin?: boolean;
+  /** Rate-sheet-level pricing config with excluded_markup_ids */
+  rateSheetPricingConfig?: PricingConfig;
 }
 
 // ─────────────────────────────────────────────────────
@@ -259,6 +266,7 @@ export function RateSheetCsvPreview({
   weightUnit,
   markups,
   isAdmin,
+  rateSheetPricingConfig: _rateSheetPricingConfig,
 }: RateSheetCsvPreviewProps) {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -294,6 +302,21 @@ export function RateSheetCsvPreview({
     }
     return map;
   }, [open, surcharges]);
+
+  // Rate-sheet-level exclusions removed — only per-service exclusions are used
+
+  // Pre-build rate meta lookup for per-rate exclusions
+  const rateMetaLookup = useMemo(() => {
+    if (!open) return new Map<string, Record<string, any>>();
+    const map = new Map<string, Record<string, any>>();
+    for (const sr of serviceRates) {
+      if (sr.meta) {
+        const key = `${sr.service_id}:${sr.zone_id}:${sr.min_weight ?? 0}:${sr.max_weight ?? 0}`;
+        map.set(key, sr.meta);
+      }
+    }
+    return map;
+  }, [open, serviceRates]);
 
   // Filter markups to those with show_in_preview (admin only)
   const previewMarkups = useMemo(() => {
@@ -331,15 +354,22 @@ export function RateSheetCsvPreview({
       // Pre-build linked surcharge IDs for this service
       const linkedIds = new Set(service.surcharge_ids || []);
 
+      // Extract features: supports both structured object and legacy string array
+      const featuresObj = (service.features && typeof service.features === "object" && !Array.isArray(service.features))
+        ? service.features
+        : null;
       const serviceFeatures: string[] = Array.isArray(service.features)
         ? service.features
-        : [];
+        : featuresObj
+          ? Object.entries(featuresObj).filter(([_, v]) => v === true).map(([k]) => k)
+          : [];
 
       const isReturn =
+        featuresObj?.shipment_type === "returns" ||
         serviceFeatures.includes("returns") ||
         /\breturn/i.test(service.service_name || "") ||
         /\breturn/i.test(service.service_code || "");
-      const serviceType = isReturn ? "RETURN" : "SHIPPING";
+      const serviceType = isReturn ? "RETURNS" : "SHIPPING";
 
       // Skip services with no zones assigned (no rates to show)
       if (assignedZones.length === 0) continue;
@@ -354,11 +384,26 @@ export function RateSheetCsvPreview({
 
           const baseRate = rate;
 
-          // Calculate surcharge amounts
+          // Per-rate meta for exclusion checks (reuses rateKey from above)
+          const rateMeta = rateMetaLookup.get(rateKey);
+          const rateExcludedMarkupIds = new Set<string>(
+            (rateMeta?.excluded_markup_ids as string[]) || []
+          );
+          const rateExcludedSurchargeIds = new Set<string>(
+            (rateMeta?.excluded_surcharge_ids as string[]) || []
+          );
+
+          // Service-level excluded markup IDs
+          const svcPricingConfig = service.pricing_config || {};
+          const svcExcludedMarkupIds = new Set<string>(
+            (svcPricingConfig as Record<string, any>)?.excluded_markup_ids || []
+          );
+
+          // Calculate surcharge amounts (respecting per-rate exclusions)
           const surchAmounts: Record<string, number> = {};
           let surchargeTotal = 0;
           surchargeDetailMap.forEach((detail, sid) => {
-            if (linkedIds.has(sid)) {
+            if (linkedIds.has(sid) && !rateExcludedSurchargeIds.has(sid)) {
               const amt =
                 detail.surcharge_type === "percentage"
                   ? baseRate * (detail.amount / 100)
@@ -369,8 +414,19 @@ export function RateSheetCsvPreview({
           });
 
           // Determine which markups are disabled for this row
+          // A markup is disabled if:
+          //   1. It's feature-gated and the service doesn't support it / user toggled off
+          //   2. It's excluded at the rate-sheet level
+          //   3. It's excluded at the service level
+          //   4. It's excluded at the per-rate level (via rate meta)
           const mkpDisabled: Record<string, boolean> = {};
           for (const m of sortedPreviewMarkups) {
+            // Check exclusions first (highest priority)
+            if (svcExcludedMarkupIds.has(m.id) || rateExcludedMarkupIds.has(m.id)) {
+              mkpDisabled[m.id] = true;
+              continue;
+            }
+
             const featureKey = getFeatureKey(m);
             if (featureKey) {
               const serviceSupports = serviceFeatures.includes(featureKey);
@@ -460,6 +516,7 @@ export function RateSheetCsvPreview({
     originCountries,
     weightUnit,
     rateLookup,
+    rateMetaLookup,
   ]);
 
   // ── Deferred value: lets React prioritise the Sheet animation over row rendering ──
@@ -498,10 +555,10 @@ export function RateSheetCsvPreview({
           m.markup_type === "PERCENTAGE"
             ? `${m.amount}%`
             : `$${m.amount.toFixed(2)}`;
-        const planSuffix = m.meta?.plan ? ` - ${m.meta.plan}` : "";
+        const displayName = m.meta?.plan || m.name;
         return {
           key: `mkp_${m.id}`,
-          label: `${m.name}${planSuffix} (${valueLabel})`,
+          label: `${displayName} - ${valueLabel}`,
           width: 160,
           id: m.id,
           featureGated: isFeatureGated(m),
@@ -521,10 +578,23 @@ export function RateSheetCsvPreview({
       .map(({ id: _, hasContribution: __, featureGated: ___, isBrokerage: ____, ...col }) => col);
   }, [sortedPreviewMarkups, rows]);
 
-  const allColumns = useMemo(
-    () => [...FIXED_COLUMNS, ...activeSurchargeColumns, ...activeMarkupColumns],
-    [activeSurchargeColumns, activeMarkupColumns]
-  );
+  // Compute dynamic Service Name width based on longest name in data
+  const serviceNameWidth = useMemo(() => {
+    if (!open || deferredRows.length === 0) return 200;
+    let maxLen = 0;
+    for (const row of deferredRows) {
+      if (row.serviceName.length > maxLen) maxLen = row.serviceName.length;
+    }
+    // ~7px per char + 16px padding, clamped between 200 and 400
+    return Math.min(400, Math.max(200, maxLen * 7 + 16));
+  }, [open, deferredRows]);
+
+  const allColumns = useMemo(() => {
+    const cols = FIXED_COLUMNS.map((col) =>
+      col.key === "serviceName" ? { ...col, width: serviceNameWidth } : col,
+    );
+    return [...cols, ...activeSurchargeColumns, ...activeMarkupColumns];
+  }, [activeSurchargeColumns, activeMarkupColumns, serviceNameWidth]);
   const totalWidth = useMemo(
     () => allColumns.reduce((sum, col) => sum + col.width, 0),
     [allColumns]
@@ -560,28 +630,41 @@ export function RateSheetCsvPreview({
     return set;
   }, [sortedPreviewMarkups]);
 
-  // Custom cell formatter for brokerage columns: "contribution - total"
+  // Brokerage cell data: returns { contribution, total } or null
+  const getBrokerageData = useCallback(
+    (row: FlatRow, markupId: string): { contribution: string; total: string } | null => {
+      if (!brokerageMarkupIds.has(markupId)) return null;
+      const m = markupById.get(markupId);
+      if (!m) return null;
+      const baseRate = row.rate ?? 0;
+      const contribution =
+        m.markup_type === "PERCENTAGE"
+          ? baseRate * (m.amount / 100)
+          : m.amount;
+      const total = row.markups[markupId];
+      return {
+        contribution: contribution.toFixed(2),
+        total: total != null ? total.toFixed(2) : "",
+      };
+    },
+    [brokerageMarkupIds, markupById],
+  );
+
+  // Plain text formatter for markup cells (used for title tooltip)
   const formatMarkupCell = useCallback(
     (row: FlatRow, markupId: string): string => {
       if (row.markupDisabled[markupId]) return "\u2014";
       const total = row.markups[markupId];
       if (total == null) return "";
 
-      if (brokerageMarkupIds.has(markupId)) {
-        // Compute contribution for brokerage
-        const m = markupById.get(markupId);
-        if (!m) return total.toFixed(2);
-        const baseRate = row.rate ?? 0;
-        const contribution =
-          m.markup_type === "PERCENTAGE"
-            ? baseRate * (m.amount / 100)
-            : m.amount;
-        return `${contribution.toFixed(2)} - ${total.toFixed(2)}`;
+      const brokData = getBrokerageData(row, markupId);
+      if (brokData) {
+        return `${brokData.contribution} (total: ${brokData.total})`;
       }
 
       return total.toFixed(2);
     },
-    [brokerageMarkupIds, markupById]
+    [getBrokerageData],
   );
 
   // Override VirtualRow to use brokerage formatting
@@ -610,6 +693,9 @@ export function RateSheetCsvPreview({
             const value = isMkp
               ? formatMarkupCell(row, mid)
               : formatCell(row, col.key);
+            const brokData = isMkp && !isDisabled
+              ? getBrokerageData(row, mid)
+              : null;
 
             return (
               <div
@@ -623,14 +709,21 @@ export function RateSheetCsvPreview({
                 style={{ width: `${col.width}px` }}
                 title={value}
               >
-                {value}
+                {brokData ? (
+                  <span className="flex items-baseline gap-1">
+                    <span>{brokData.contribution}</span>
+                    <span className="text-[10px] text-muted-foreground">{brokData.total}</span>
+                  </span>
+                ) : (
+                  value
+                )}
               </div>
             );
           })}
         </div>
       );
     },
-    [formatMarkupCell]
+    [formatMarkupCell, getBrokerageData]
   );
 
   return (

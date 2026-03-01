@@ -734,6 +734,9 @@ class ServiceRate:
     transit_days: int = None
     transit_time: float = None
 
+    # Per-rate metadata (exclusions, etc.)
+    meta: Dict = {}
+
 
 # SERVICE LEVEL FEATURES (Structured feature definitions)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -880,6 +883,9 @@ class ServiceLevel:
     features: ServiceLevelFeatures = JStruct[ServiceLevelFeatures]
 
     metadata: Dict = {}
+
+    # Pricing config (excluded_markup_ids, sort_order, etc.)
+    pricing_config: Dict = {}
 
 
 # ─────────────────────────────────────────────────────────────────────────────

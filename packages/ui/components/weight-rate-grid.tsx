@@ -28,6 +28,7 @@ export interface ServiceRate {
   max_weight?: number | null;
   transit_days?: number | null;
   transit_time?: number | null;
+  meta?: Record<string, any> | null;
 }
 
 export type RateCellKey = `${string}:${string}:${number}:${number}`;

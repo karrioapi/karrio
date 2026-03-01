@@ -10,7 +10,9 @@ class Settings(utils.Settings):
 
     # Carrier specific properties
     consumer_key: str
+    # consumer_key: str = attr.ib(metadata={"sensitive": True})
     consumer_secret: str
+    # consumer_secret: str = attr.ib(metadata={"sensitive": True})
     language: utils.LanguageEnum = "en"  # type: ignore
 
     # Base properties

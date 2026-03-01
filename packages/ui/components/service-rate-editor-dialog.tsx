@@ -17,7 +17,9 @@ import type { ServiceRate } from "@karrio/ui/components/weight-rate-grid";
 import type {
   ServiceLevelWithZones,
   EmbeddedZone,
+  SharedSurcharge,
 } from "@karrio/ui/components/rate-sheet-editor";
+import type { MarkupType } from "@karrio/hooks/admin-markups";
 
 interface ServiceRateEditorDialogProps {
   open: boolean;
@@ -27,6 +29,8 @@ interface ServiceRateEditorDialogProps {
   services: ServiceLevelWithZones[];
   sharedZones: EmbeddedZone[];
   weightUnit: string;
+  markups?: MarkupType[];
+  surcharges?: SharedSurcharge[];
 }
 
 export function ServiceRateEditorDialog({
@@ -37,11 +41,15 @@ export function ServiceRateEditorDialog({
   services,
   sharedZones,
   weightUnit,
+  markups,
+  surcharges,
 }: ServiceRateEditorDialogProps) {
   const [rate, setRate] = useState("");
   const [cost, setCost] = useState("");
   const [transitDays, setTransitDays] = useState("");
   const [transitTime, setTransitTime] = useState("");
+  const [excludedMarkupIds, setExcludedMarkupIds] = useState<string[]>([]);
+  const [excludedSurchargeIds, setExcludedSurchargeIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (serviceRate && open) {
@@ -49,6 +57,9 @@ export function ServiceRateEditorDialog({
       setCost(serviceRate.cost?.toString() || "");
       setTransitDays(serviceRate.transit_days?.toString() || "");
       setTransitTime(serviceRate.transit_time?.toString() || "");
+      const meta = serviceRate.meta || {};
+      setExcludedMarkupIds(meta.excluded_markup_ids || []);
+      setExcludedSurchargeIds(meta.excluded_surcharge_ids || []);
     }
   }, [serviceRate, open]);
 
@@ -70,12 +81,45 @@ export function ServiceRateEditorDialog({
         : `${serviceRate.min_weight} \u2013 ${serviceRate.max_weight} ${weightUnit}`
     : "";
 
+  const activeMarkups = (markups || []).filter((m) => m.active);
+  const activeSurcharges = (surcharges || []).filter((s) => s.active);
+
+  const toggleMarkupExclusion = (markupId: string) => {
+    setExcludedMarkupIds((prev) =>
+      prev.includes(markupId)
+        ? prev.filter((id) => id !== markupId)
+        : [...prev, markupId]
+    );
+  };
+
+  const toggleSurchargeExclusion = (surchargeId: string) => {
+    setExcludedSurchargeIds((prev) =>
+      prev.includes(surchargeId)
+        ? prev.filter((id) => id !== surchargeId)
+        : [...prev, surchargeId]
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!serviceRate) return;
 
     const parsedTransitDays = transitDays ? parseInt(transitDays, 10) : null;
     const parsedTransitTime = transitTime ? parseFloat(transitTime) : null;
+
+    // Build meta with exclusions merged into existing meta
+    const existingMeta = serviceRate.meta || {};
+    const newMeta: Record<string, any> = { ...existingMeta };
+    if (excludedMarkupIds.length > 0) {
+      newMeta.excluded_markup_ids = excludedMarkupIds;
+    } else {
+      delete newMeta.excluded_markup_ids;
+    }
+    if (excludedSurchargeIds.length > 0) {
+      newMeta.excluded_surcharge_ids = excludedSurchargeIds;
+    } else {
+      delete newMeta.excluded_surcharge_ids;
+    }
 
     onSave({
       ...serviceRate,
@@ -89,6 +133,7 @@ export function ServiceRateEditorDialog({
         parsedTransitTime !== null && !isNaN(parsedTransitTime)
           ? parsedTransitTime
           : null,
+      meta: Object.keys(newMeta).length > 0 ? newMeta : null,
     });
     onOpenChange(false);
   };
@@ -174,6 +219,66 @@ export function ServiceRateEditorDialog({
                 />
               </div>
             </div>
+
+            {/* Excluded Markups */}
+            {activeMarkups.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-xs font-medium">Excluded Markups</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Checked markups will NOT apply to this specific rate
+                </p>
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {activeMarkups.map((markup) => (
+                    <label
+                      key={markup.id}
+                      className="flex items-center gap-2 px-2 py-1 rounded hover:bg-muted/50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={excludedMarkupIds.includes(markup.id)}
+                        onChange={() => toggleMarkupExclusion(markup.id)}
+                        className="h-3.5 w-3.5 rounded border-border"
+                      />
+                      <span className="text-sm text-foreground">{markup.name}</span>
+                      <span className="text-xs text-muted-foreground ml-auto">
+                        {markup.markup_type === "PERCENTAGE"
+                          ? `${markup.amount}%`
+                          : markup.amount}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Excluded Surcharges */}
+            {activeSurcharges.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-xs font-medium">Excluded Surcharges</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Checked surcharges will NOT apply to this specific rate
+                </p>
+                <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {activeSurcharges.map((surcharge) => (
+                    <label
+                      key={surcharge.id}
+                      className="flex items-center gap-2 px-2 py-1 rounded hover:bg-muted/50 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={excludedSurchargeIds.includes(surcharge.id)}
+                        onChange={() => toggleSurchargeExclusion(surcharge.id)}
+                        className="h-3.5 w-3.5 rounded border-border"
+                      />
+                      <span className="text-sm text-foreground">{surcharge.name}</span>
+                      <span className="text-xs text-muted-foreground ml-auto">
+                        {surcharge.amount}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
           </form>
         </DialogBody>
 

@@ -15,7 +15,9 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
 
     # OAuth2 credentials
     client_id: str
+    # client_id: str = attr.ib(metadata={"sensitive": True})
     client_secret: str
+    # client_secret: str = attr.ib(metadata={"sensitive": True})
 
     # Account identifier (required for shipment creation)
     contact_id: str = None

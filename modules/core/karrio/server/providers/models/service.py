@@ -27,11 +27,11 @@ class ServiceLevel(core.OwnedEntity):
         default=functools.partial(core.uuid, prefix="svc_"),
         editable=False,
     )
-    service_name = models.CharField(max_length=50)
+    service_name = models.CharField(max_length=100)
     service_code = models.CharField(
-        max_length=50, validators=[validators.RegexValidator(r"^[a-z0-9_]+$")]
+        max_length=100, validators=[validators.RegexValidator(r"^[a-z0-9_]+$")]
     )
-    carrier_service_code = models.CharField(max_length=50, null=True, blank=True)
+    carrier_service_code = models.CharField(max_length=100, null=True, blank=True)
     description = models.CharField(max_length=250, null=True, blank=True)
     active = models.BooleanField(null=True, default=True)
 
@@ -105,6 +105,17 @@ class ServiceLevel(core.OwnedEntity):
     metadata = models.JSONField(blank=True, null=True, default=core.field_default({}))
 
     # ─────────────────────────────────────────────────────────────────
+    # PRICING CONFIG
+    # Stores excluded_markup_ids, sort_order for tab ordering, etc.
+    # ─────────────────────────────────────────────────────────────────
+    pricing_config = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default({}),
+        help_text="Pricing config: {excluded_markup_ids: [...], sort_order: 0}",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
     # SERVICE FEATURES
     # ─────────────────────────────────────────────────────────────────
     features = models.JSONField(
@@ -122,6 +133,15 @@ class ServiceLevel(core.OwnedEntity):
         return "service_level"
 
     @property
+    def effective_pricing_config(self):
+        """Return the service-level pricing_config.
+
+        Rate-sheet-level exclusions have been removed; only per-service
+        exclusions are supported now.
+        """
+        return self.pricing_config or {}
+
+    @property
     def rate_sheet(self):
         """Get the rate sheet this service belongs to."""
         return self.service_sheet.first()
@@ -135,17 +155,27 @@ class ServiceLevel(core.OwnedEntity):
         expected by the RatingMixinProxy. Each service_rate entry becomes
         a separate ServiceZone (supporting multiple weight brackets per zone).
         """
-        _rate_sheet = self.rate_sheet
+        return self.get_zones()
+
+    def get_zones(self, _rate_sheet=None):
+        """
+        Get zones, optionally using a pre-fetched rate sheet to avoid N+1 queries.
+
+        Args:
+            _rate_sheet: Pre-fetched RateSheet instance. If None, fetches from DB.
+        """
+        _rate_sheet = _rate_sheet or self.rate_sheet
         if not _rate_sheet:
             return []
 
         zones_by_id = {z.get("id"): z for z in (_rate_sheet.zones or [])}
+        _zone_ids = set(self.zone_ids or [])
 
         # Get all service_rates for this service (may have multiple per zone_id for weight brackets)
         service_rates = [
             sr for sr in (_rate_sheet.service_rates or [])
             if sr.get("service_id") == self.id
-            and sr.get("zone_id") in (self.zone_ids or [])
+            and sr.get("zone_id") in _zone_ids
         ]
 
         result = []
@@ -184,7 +214,16 @@ class ServiceLevel(core.OwnedEntity):
         Transforms surcharge_ids + rate_sheet data into the Surcharge format
         expected by the RatingMixinProxy.
         """
-        _rate_sheet = self.rate_sheet
+        return self.get_surcharges()
+
+    def get_surcharges(self, _rate_sheet=None):
+        """
+        Get surcharges, optionally using a pre-fetched rate sheet to avoid N+1 queries.
+
+        Args:
+            _rate_sheet: Pre-fetched RateSheet instance. If None, fetches from DB.
+        """
+        _rate_sheet = _rate_sheet or self.rate_sheet
         if not _rate_sheet:
             return []
 

@@ -1,4 +1,4 @@
-"""Karrio DPD Group error parser."""
+"""Karrio DPD Global error parser."""
 
 import typing
 import karrio.lib as lib

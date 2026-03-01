@@ -1,6 +1,6 @@
 # karrio.dpd_meta
 
-This package is a DPD Group extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
+This package is a DPD Global extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 

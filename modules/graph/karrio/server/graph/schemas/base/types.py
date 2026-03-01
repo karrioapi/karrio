@@ -1880,6 +1880,7 @@ class ServiceRateType:
     max_weight: typing.Optional[float] = None
     transit_days: typing.Optional[int] = None
     transit_time: typing.Optional[float] = None
+    meta: typing.Optional[utils.JSON] = None
 
     @staticmethod
     def parse(rate: dict):
@@ -1893,6 +1894,7 @@ class ServiceRateType:
             max_weight=rate.get("max_weight"),
             transit_days=rate.get("transit_days"),
             transit_time=rate.get("transit_time"),
+            meta=rate.get("meta"),
         )
 
 
@@ -2017,6 +2019,14 @@ class ServiceLevelType:
             return self.metadata
 
     @strawberry.field
+    def pricing_config(self: providers.ServiceLevel) -> typing.Optional[utils.JSON]:
+        """Pricing config: excluded_markup_ids, sort_order, etc."""
+        try:
+            return lib.to_dict(self.pricing_config)
+        except:
+            return self.pricing_config
+
+    @strawberry.field
     def zone_ids(self: providers.ServiceLevel) -> typing.List[str]:
         """List of zone IDs this service applies to (references RateSheet.zones)."""
         return self.zone_ids or []
@@ -2057,6 +2067,14 @@ class RateSheetType:
             return lib.to_dict(self.metadata)
         except:
             return self.metadata
+
+    @strawberry.field
+    def pricing_config(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+        """Pricing config: excluded_markup_ids, etc."""
+        try:
+            return lib.to_dict(self.pricing_config)
+        except:
+            return self.pricing_config
 
     @strawberry.field
     def carriers(self: providers.RateSheet) -> typing.List["CarrierConnectionType"]:

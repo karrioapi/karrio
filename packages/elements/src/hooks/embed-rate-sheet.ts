@@ -53,7 +53,7 @@ function useGQL() {
   // Admin mutations use `$input` variable name; base uses `$data`.
   // The wrapping key sent in the variables object must match.
   const wrapVars = (data: any) =>
-    admin ? { variables: { input: data } } : { data };
+    admin ? { input: data } : { data };
 
   const queries = admin
     ? {
@@ -115,7 +115,7 @@ export function useRateSheet({ id }: Args = {}) {
     queryKey: [cachePrefix, rateSheetId],
     queryFn: () =>
       graphqlRequest<GetRateSheet>(gqlstr(queries.GET_RATE_SHEET), {
-        variables: { id: rateSheetId },
+        id: rateSheetId,
       }),
     enabled: rateSheetId !== "new",
     onError,

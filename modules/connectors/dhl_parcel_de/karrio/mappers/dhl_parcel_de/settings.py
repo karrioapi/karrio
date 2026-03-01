@@ -16,8 +16,11 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # carrier specific properties
     username: str = None
     password: str = None
+    # password: str = attr.ib(default=None, metadata={"sensitive": True})
     client_id: str = None
+    # client_id: str = attr.ib(default=None, metadata={"sensitive": True})
     client_secret: str = None
+    # client_secret: str = attr.ib(default=None, metadata={"sensitive": True})
 
     # generic properties
     id: str = None

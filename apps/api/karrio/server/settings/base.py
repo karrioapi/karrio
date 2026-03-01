@@ -14,6 +14,8 @@ import os
 import decouple
 import importlib
 import dj_database_url
+import base64
+
 from pathlib import Path
 from datetime import timedelta
 from django.urls import reverse_lazy
@@ -686,6 +688,55 @@ else:
             },
         },
     }
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECRET ENCRYPTION (KEK Configuration)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+active_versions_str = config("ACTIVE_KEK_VERSIONS", default=None)
+
+SECRET_ENCRYPTION_ENABLED = bool(active_versions_str)
+SECRET_KEK_REGISTRY = {}
+
+if SECRET_ENCRYPTION_ENABLED:
+    try:
+        active_versions = [
+            int(v.strip()) for v in active_versions_str.split(',') if v.strip()
+        ]
+    except ValueError as e:
+        raise ValueError(
+            f"Invalid ACTIVE_KEK_VERSIONS format: {active_versions_str}. "
+            "Expected comma-separated integers (e.g., '1,2,3')"
+        ) from e
+
+    if not active_versions:
+        raise ValueError(
+            "ACTIVE_KEK_VERSIONS must contain at least one version number"
+        )
+
+    for version in active_versions:
+        env_key = f'SECRET_KEK_V{version}'
+        kek_b64 = config(env_key, default=None)
+
+        if not kek_b64:
+            raise ValueError(
+                f"KEK version {version} is listed in ACTIVE_KEK_VERSIONS "
+                f"but {env_key} environment variable is not set"
+            )
+
+        try:
+            kek_bytes = base64.b64decode(kek_b64)
+
+            if len(kek_bytes) != 32:
+                raise ValueError(
+                    f"{env_key} must decode to exactly 32 bytes (256 bits), "
+                    f"got {len(kek_bytes)}"
+                )
+
+            SECRET_KEK_REGISTRY[version] = kek_bytes
+        except Exception as e:
+            raise ValueError(f"Invalid {env_key}: {e}") from e
 
 # Initialize Loguru if enabled
 if USE_LOGURU:

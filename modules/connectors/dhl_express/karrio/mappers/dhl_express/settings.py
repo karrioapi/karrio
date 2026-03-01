@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     site_id: str
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}

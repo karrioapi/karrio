@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import { KarrioEmbedProvider } from "../providers/karrio-embed-provider";
 import { APIMetadataEmbedProvider } from "../providers/api-metadata-embed-provider";
 import { useRateSheet, useRateSheetMutation } from "../hooks/embed-rate-sheet";
+import { useEmbedMarkups, useEmbedMarkupMutation } from "../hooks/embed-markups";
 import RateSheetEditor from "@karrio/ui/components/rate-sheet-editor";
 import { Toaster } from "@karrio/ui/components/ui/toaster";
 import "../styles/globals.css";
@@ -27,18 +28,36 @@ function RateSheetApp({ config }: { config: InitConfig }) {
   return (
     <KarrioEmbedProvider host={config.host} token={config.token} admin={config.admin}>
       <APIMetadataEmbedProvider>
-        <RateSheetEditor
-          rateSheetId={config.rateSheetId || "new"}
-          onClose={handleClose}
-          preloadCarrier={config.carrier}
-          linkConnectionId={config.connectionId}
-          isAdmin={config.admin}
-          useRateSheet={useRateSheet}
-          useRateSheetMutation={useRateSheetMutation}
-        />
+        <RateSheetEditorWithMarkups config={config} onClose={handleClose} />
         <Toaster />
       </APIMetadataEmbedProvider>
     </KarrioEmbedProvider>
+  );
+}
+
+function RateSheetEditorWithMarkups({
+  config,
+  onClose,
+}: {
+  config: InitConfig;
+  onClose: () => void;
+}) {
+  const isAdmin = !!config.admin;
+  const { markups: markupsData } = useEmbedMarkups(isAdmin);
+  const markupMutations = useEmbedMarkupMutation();
+
+  return (
+    <RateSheetEditor
+      rateSheetId={config.rateSheetId || "new"}
+      onClose={onClose}
+      preloadCarrier={config.carrier}
+      linkConnectionId={config.connectionId}
+      isAdmin={isAdmin}
+      useRateSheet={useRateSheet}
+      useRateSheetMutation={useRateSheetMutation}
+      markups={isAdmin ? markupsData : undefined}
+      markupMutations={isAdmin ? markupMutations : undefined}
+    />
   );
 }
 

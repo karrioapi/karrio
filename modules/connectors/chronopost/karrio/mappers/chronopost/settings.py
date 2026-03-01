@@ -10,6 +10,7 @@ class Settings(utils.Settings):
 
     account_number: str  # type: ignore
     password: str  # type: ignore
+    # password: str = attr.ib(metadata={"sensitive": True})  # type: ignore
     id_emit: str = "CHRFR"  # type: ignore
     language: utils.LanguageEnum = "en_GB"  # type: ignore
 

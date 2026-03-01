@@ -17,3 +17,7 @@ from karrio.server.providers.models.connection import (
     SystemConnection,
     BrokeredConnection,
 )
+from karrio.server.providers.models.secret import (
+    Secret,
+    CarrierSecretRef,
+)
