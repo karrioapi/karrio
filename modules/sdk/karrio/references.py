@@ -701,6 +701,11 @@ def collect_references(
                             if "enum" not in str(_.type).lower()
                             else [c.name for c in _.type]
                         ),
+                        sensitive=lib.identity(
+                            _.metadata.get("sensitive", False)
+                            if hasattr(_, "metadata") and _.metadata
+                            else False
+                        ),
                     )
                 )
                 for _ in getattr(mapper.get("Settings"), "__attrs_attrs__", [])

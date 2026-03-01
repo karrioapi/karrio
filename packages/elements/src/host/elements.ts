@@ -123,6 +123,7 @@ function mount(selector: string | HTMLElement, options: MountOptions): EditorHan
   const iframe = document.createElement("iframe");
   iframe.src = iframeSrc;
   iframe.style.width = "100%";
+  iframe.style.height = "100%";
   iframe.style.border = "none";
   iframe.style.minHeight = "600px";
   iframe.setAttribute("allowtransparency", "true");
@@ -151,7 +152,10 @@ function mount(selector: string | HTMLElement, options: MountOptions): EditorHan
         break;
 
       case "RESIZE":
-        if (typeof data.height === "number") {
+        // Only resize when content reports a positive height.
+        // Fixed-position content (e.g. Radix Sheet) doesn't contribute to
+        // body height, so the observer reports 0 — skip those.
+        if (typeof data.height === "number" && data.height > 0) {
           iframe.style.height = `${data.height}px`;
         }
         break;
@@ -331,7 +335,10 @@ function mountTemplateEditor(
         break;
 
       case "RESIZE":
-        if (typeof data.height === "number") {
+        // Only resize when content reports a positive height.
+        // Fixed-position content (e.g. Radix Sheet) doesn't contribute to
+        // body height, so the observer reports 0 — skip those.
+        if (typeof data.height === "number" && data.height > 0) {
           iframe.style.height = `${data.height}px`;
         }
         break;
@@ -441,7 +448,10 @@ function mountConnections(
         break;
 
       case "RESIZE":
-        if (typeof data.height === "number") {
+        // Only resize when content reports a positive height.
+        // Fixed-position content (e.g. Radix Sheet) doesn't contribute to
+        // body height, so the observer reports 0 — skip those.
+        if (typeof data.height === "number" && data.height > 0) {
           iframe.style.height = `${data.height}px`;
         }
         break;

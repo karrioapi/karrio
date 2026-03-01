@@ -1,6 +1,6 @@
 import yaml  # type: ignore
 from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes, permission_classes
+from rest_framework.decorators import api_view, renderer_classes, permission_classes, authentication_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -62,6 +62,7 @@ References = openapi.OpenApiResponse(
     responses={200: References},
 )
 @api_view(["GET"])
+@authentication_classes([])
 @permission_classes([AllowAny])
 @renderer_classes([JSONRenderer])
 def references(request: Request):
