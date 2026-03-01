@@ -137,6 +137,7 @@ class ShipmentRequest:
 
     options: Dict = {}
     reference: str = ""
+    order_id: str = ""
     label_type: str = None
     is_return: bool = False
 

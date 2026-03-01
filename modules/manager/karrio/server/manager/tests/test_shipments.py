@@ -530,6 +530,7 @@ SHIPMENT_RESPONSE = {
     "options": {"shipping_date": ANY, "shipment_date": ANY},
     "customs": None,
     "reference": None,
+    "order_id": None,
     "carrier_ids": ["canadapost"],
     "service": None,
     "created_at": ANY,
@@ -723,6 +724,7 @@ PURCHASED_SHIPMENT = {
         }
     ],
     "reference": None,
+    "order_id": None,
     "label_type": "PDF",
     "carrier_ids": [],
     "tracker_id": ANY,
@@ -905,6 +907,7 @@ CANCEL_RESPONSE = {
         }
     ],
     "reference": None,
+    "order_id": None,
     "label_type": None,
     "carrier_ids": [],
     "tracker_id": None,
@@ -1049,6 +1052,7 @@ CANCEL_PURCHASED_RESPONSE = {
         }
     ],
     "reference": None,
+    "order_id": None,
     "label_type": None,
     "carrier_ids": [],
     "tracker_id": None,
@@ -1627,3 +1631,98 @@ class TestReturnShipmentFilter(TestShipmentFixture):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))
         self.assertEqual(len(results), 2)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ORDER_ID FIELD TESTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestShipmentOrderId(APITestCase):
+    """Test order_id field on shipments."""
+
+    def test_create_shipment_with_order_id(self):
+        """Verify shipment creation with order_id."""
+        url = reverse("karrio.server.manager:shipment-list")
+        data = {**SHIPMENT_DATA, "order_id": "ORD-12345"}
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_data["order_id"], "ORD-12345")
+
+    def test_create_shipment_without_order_id(self):
+        """Verify shipment creation without order_id returns null."""
+        url = reverse("karrio.server.manager:shipment-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, SHIPMENT_DATA)
+            response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNone(response_data["order_id"])
+
+    def test_order_id_persisted_in_database(self):
+        """Verify order_id is persisted in the database."""
+        url = reverse("karrio.server.manager:shipment-list")
+        data = {**SHIPMENT_DATA, "order_id": "ORD-DB-TEST"}
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        shipment = models.Shipment.objects.get(pk=response_data["id"])
+        self.assertEqual(shipment.order_id, "ORD-DB-TEST")
+
+
+class TestShipmentOrderIdUpdate(TestShipmentFixture):
+    """Test updating order_id on shipments."""
+
+    def test_update_shipment_order_id(self):
+        """Verify shipment order_id can be updated."""
+        url = reverse(
+            "karrio.server.manager:shipment-details",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        response = self.client.put(url, {"order_id": "ORD-99999"})
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_data["order_id"], "ORD-99999")
+
+
+class TestShipmentOrderIdFilter(TestShipmentFixture):
+    """Test filtering shipments by order_id."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.shipment.order_id = "ORD-FILTER-TEST"
+        self.shipment.save(update_fields=["order_id"])
+
+    def test_filter_shipments_by_order_id(self):
+        """Verify shipments can be filtered by order_id."""
+        url = reverse("karrio.server.manager:shipment-list")
+        response = self.client.get(f"{url}?order_id=ORD-FILTER")
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response_data.get("results", response_data.get("shipments", []))
+        self.assertGreaterEqual(len(results), 1)
+        self.assertEqual(results[0]["order_id"], "ORD-FILTER-TEST")
+
+    def test_filter_no_match_returns_empty(self):
+        """Verify filter with no match returns empty results."""
+        url = reverse("karrio.server.manager:shipment-list")
+        response = self.client.get(f"{url}?order_id=NONEXISTENT")
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response_data.get("results", response_data.get("shipments", []))
+        self.assertEqual(len(results), 0)

@@ -1536,6 +1536,13 @@ class ShippingData(validators.OptionDefaultSerializer):
         max_length=100,
         help_text="The shipment reference",
     )
+    order_id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        max_length=50,
+        help_text="The order identifier associated with this shipment",
+    )
     label_type = serializers.ChoiceField(
         required=False,
         choices=LABEL_TYPES,
@@ -1781,6 +1788,12 @@ class ShipmentContent(serializers.Serializer):
         allow_blank=True,
         allow_null=True,
         help_text="The shipment reference",
+    )
+    order_id = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The order identifier associated with this shipment",
     )
     label_type = serializers.ChoiceField(
         required=False,
