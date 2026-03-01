@@ -108,8 +108,11 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
     """
 
     object_type: typing.Optional[str]
-    # Admin can view credentials for system connections management
-    credentials: utils.JSON
+
+    @strawberry.field
+    def credentials(self: providers.SystemConnection, info: Info) -> utils.JSON:
+        """Get decrypted credentials for admin management."""
+        return self.get_credentials()
 
     @strawberry.field
     def usage(
@@ -307,6 +310,12 @@ class ConfigSchemaItemType:
 @strawberry.type
 class SystemRateSheetType(base.RateSheetType):
     id: str
+
+    @strawberry.field
+    def carriers(
+        self: providers.RateSheet,
+    ) -> typing.List[SystemCarrierConnectionType]:
+        return self.carriers
 
     @staticmethod
     @utils.authentication_required
