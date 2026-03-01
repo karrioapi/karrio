@@ -610,13 +610,21 @@ def collect_references(
 
     registry = Registry(plugin_registry)
 
+    # Determine the default plugin enable flag.
+    # Fall back to the module-level constant (which reads ENABLE_ALL_PLUGINS_BY_DEFAULT
+    # env var and defaults to True) so that carriers are available during Django app
+    # initialisation before constance can reach the database.
+    _default_enabled = registry.get(
+        "ENABLE_ALL_PLUGINS_BY_DEFAULT", ENABLE_ALL_PLUGINS_BY_DEFAULT
+    )
+
     # Determine enabled carriers
     enabled_carrier_ids = set(
         carrier_id
         for carrier_id in PROVIDERS.keys()
         if registry.get(
             f"{carrier_id.upper()}_ENABLED",
-            registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"),
+            _default_enabled,
         )
     )
 
@@ -626,7 +634,7 @@ def collect_references(
         for plugin_id in LSP_PLUGINS.keys()
         if registry.get(
             f"{plugin_id.upper()}_ENABLED",
-            registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"),
+            _default_enabled,
         )
     )
 
@@ -939,7 +947,7 @@ def get_carrier_details(
         documentation=getattr(metadata_obj, "documentation", ""),
         is_enabled=registry.get(
             f"{plugin_code.upper()}_ENABLED",
-            registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT"),
+            registry.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", ENABLE_ALL_PLUGINS_BY_DEFAULT),
         ),
         capabilities=references["carrier_capabilities"].get(plugin_code, {}),
         connection_fields=references["connection_fields"].get(plugin_code, {}),

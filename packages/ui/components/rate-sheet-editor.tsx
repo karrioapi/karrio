@@ -800,7 +800,7 @@ export const RateSheetEditor = ({
       zones,
       zone_ids: zoneIds,
       surcharge_ids: preset.surcharge_ids || [],
-      features: preset.features,
+      features: preset.features ?? undefined,
       ...(preset.features
         ? {
             first_mile: preset.features.first_mile || "",
@@ -808,7 +808,7 @@ export const RateSheetEditor = ({
             form_factor: preset.features.form_factor || "",
             age_check: preset.features.age_check || "",
             shipment_type: preset.features.shipment_type || "",
-            transit_label: preset.features.transit_label || "",
+            transit_label: (preset.features as any).transit_label || "",
           }
         : {}),
     };

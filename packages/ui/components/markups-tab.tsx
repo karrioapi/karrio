@@ -32,6 +32,8 @@ interface MarkupsTabProps {
   onAddMarkup: () => void;
   onRemoveMarkup: (markupId: string) => void;
   services?: ServiceLevelWithZones[];
+  rateSheetPricingConfig?: Record<string, any>;
+  onToggleSheetExclusion?: (markupId: string, excluded: boolean) => void;
   onToggleServiceExclusion?: (serviceId: string, markupId: string, excluded: boolean) => void;
 }
 
@@ -41,6 +43,8 @@ export function MarkupsTab({
   onAddMarkup,
   onRemoveMarkup,
   services = [],
+  rateSheetPricingConfig,
+  onToggleSheetExclusion,
   onToggleServiceExclusion,
 }: MarkupsTabProps) {
   const [expandedMarkupId, setExpandedMarkupId] = useState<string | null>(null);

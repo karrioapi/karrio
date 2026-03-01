@@ -92,7 +92,7 @@ const config = {
             from: '/self-hosting/oss',
           },
           {
-            to: '/product/self-hosting/pla',
+            to: '/product/self-hosting/insiders',
             from: '/self-hosting/enterprise',
           },
           {
