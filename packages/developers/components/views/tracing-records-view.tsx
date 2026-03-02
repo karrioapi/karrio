@@ -47,6 +47,17 @@ const parseRecordData = (record: any) => {
   return rawData;
 };
 
+/** Escape single quotes for safe embedding inside curl's single-quoted strings. */
+const escapeSingleQuotes = (s: string) => s.replace(/'/g, "'\\''");
+
+/** Convert a headers dict to an array of `-H 'Name: Value'` curl flags. */
+const headersToCurlFlags = (headers: Record<string, string> | null | undefined): string[] => {
+  if (!headers || typeof headers !== "object") return [];
+  return Object.entries(headers)
+    .filter(([, v]) => v != null && v !== "")
+    .map(([k, v]) => `  -H '${k}: ${escapeSingleQuotes(String(v))}'`);
+};
+
 // Generate cURL command from a carrier tracing record
 const generateTracingCurlCommand = (request: any): string | null => {
   if (!request?.record) return null;
@@ -56,21 +67,24 @@ const generateTracingCurlCommand = (request: any): string | null => {
   if (!url) return null;
 
   const format = record.format || "json";
-  const contentType = format === "xml"
-    ? "application/xml"
-    : "application/json";
+  const contentType = format === "xml" ? "application/xml" : "application/json";
 
   const parts: string[] = [`curl -X POST`];
   parts.push(`  '${url}'`);
-  parts.push(`  -H 'Content-Type: ${contentType}'`);
+
+  // Use captured request headers if available; otherwise fall back to Content-Type
+  const headerFlags = headersToCurlFlags(record.request_headers);
+  if (headerFlags.length > 0) {
+    parts.push(...headerFlags);
+  } else {
+    parts.push(`  -H 'Content-Type: ${contentType}'`);
+  }
 
   const rawData = record.data;
   if (rawData) {
-    const body = typeof rawData === "object"
-      ? JSON.stringify(rawData)
-      : String(rawData);
+    const body = typeof rawData === "object" ? JSON.stringify(rawData) : String(rawData);
     if (body && body !== "{}" && body !== "null") {
-      parts.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
+      parts.push(`  -d '${escapeSingleQuotes(body)}'`);
     }
   }
 

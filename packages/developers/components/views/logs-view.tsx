@@ -18,6 +18,17 @@ import { cn } from "@karrio/ui/lib/utils";
 import moment from "moment";
 
 
+/** Escape single quotes for safe embedding inside curl's single-quoted strings. */
+const escapeSingleQuotes = (s: string) => s.replace(/'/g, "'\\''");
+
+/** Convert a headers dict to an array of `-H 'Name: Value'` curl flags. */
+const headersToCurlFlags = (headers: Record<string, string> | null | undefined): string[] => {
+  if (!headers || typeof headers !== "object") return [];
+  return Object.entries(headers)
+    .filter(([, v]) => v != null && v !== "")
+    .map(([k, v]) => `  -H '${k}: ${escapeSingleQuotes(String(v))}'`);
+};
+
 // Generate cURL command from an API log entry
 const generateLogCurlCommand = (log: any): string | null => {
   if (!log) return null;
@@ -48,7 +59,14 @@ const generateLogCurlCommand = (log: any): string | null => {
 
   const parts: string[] = [`curl -X ${method}`];
   parts.push(`  '${url}'`);
-  parts.push(`  -H 'Content-Type: application/json'`);
+
+  // Attach real request headers if available; fall back to Content-Type only
+  const headerFlags = headersToCurlFlags(log.headers || log.request_headers);
+  if (headerFlags.length > 0) {
+    parts.push(...headerFlags);
+  } else {
+    parts.push(`  -H 'Content-Type: application/json'`);
+  }
 
   // Add request body for methods that typically have one
   if (["POST", "PUT", "PATCH"].includes(method.toUpperCase()) && log.data) {
@@ -57,7 +75,7 @@ const generateLogCurlCommand = (log: any): string | null => {
       return JSON.stringify(d);
     });
     if (body && body !== "{}" && body !== "null") {
-      parts.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
+      parts.push(`  -d '${escapeSingleQuotes(body)}'`);
     }
   }
 
@@ -73,21 +91,24 @@ const generateTracingCurlCommand = (request: any): string | null => {
   if (!url) return null;
 
   const format = record.format || "json";
-  const contentType = format === "xml"
-    ? "application/xml"
-    : "application/json";
+  const contentType = format === "xml" ? "application/xml" : "application/json";
 
   const parts: string[] = [`curl -X POST`];
   parts.push(`  '${url}'`);
-  parts.push(`  -H 'Content-Type: ${contentType}'`);
+
+  // Use captured request headers if available; otherwise fall back to Content-Type
+  const headerFlags = headersToCurlFlags(record.request_headers);
+  if (headerFlags.length > 0) {
+    parts.push(...headerFlags);
+  } else {
+    parts.push(`  -H 'Content-Type: ${contentType}'`);
+  }
 
   const rawData = record.data;
   if (rawData) {
-    const body = typeof rawData === "object"
-      ? JSON.stringify(rawData)
-      : String(rawData);
+    const body = typeof rawData === "object" ? JSON.stringify(rawData) : String(rawData);
     if (body && body !== "{}" && body !== "null") {
-      parts.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
+      parts.push(`  -d '${escapeSingleQuotes(body)}'`);
     }
   }
 
