@@ -115,3 +115,64 @@ class TestRedactQueryParams(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTracerRedactsAtCapture(unittest.TestCase):
+    """Verify that Tracer.trace() redacts sensitive headers before creating the Record,
+    so data is clean at DB write time without any downstream intervention."""
+
+    def test_request_headers_redacted_in_tracer(self):
+        from karrio.core.utils.tracing import Tracer
+
+        tracer = Tracer()
+        tracer.trace(
+            {
+                "request_id": "req_123",
+                "url": "https://apis.fedex.com/rate/v1/rates/quotes",
+                "request_headers": {
+                    "Authorization": "Bearer eyJhbGciOiJSUzI1NiJ9.secret",
+                    "Content-Type": "application/json",
+                    "X-Api-Key": "sk-live-abc123",
+                },
+            },
+            "request",
+        )
+
+        records = tracer.records
+        self.assertEqual(len(records), 1)
+        headers = records[0].data.get("request_headers", {})
+        self.assertEqual(headers["Authorization"], f"Bearer val_xxx")
+        self.assertEqual(headers["X-Api-Key"], "val_xxx")
+        self.assertEqual(headers["Content-Type"], "application/json")
+
+    def test_response_headers_redacted_in_tracer(self):
+        from karrio.core.utils.tracing import Tracer
+
+        tracer = Tracer()
+        tracer.trace(
+            {
+                "request_id": "req_123",
+                "response": "...",
+                "response_headers": {
+                    "X-RateLimit-Remaining": "95",
+                    "Set-Cookie": "session=abc123",
+                },
+            },
+            "response",
+        )
+
+        records = tracer.records
+        self.assertEqual(len(records), 1)
+        headers = records[0].data.get("response_headers", {})
+        self.assertEqual(headers["X-RateLimit-Remaining"], "95")
+        self.assertEqual(headers["Set-Cookie"], "val_xxx")
+
+    def test_trace_without_headers_unaffected(self):
+        from karrio.core.utils.tracing import Tracer
+
+        tracer = Tracer()
+        tracer.trace({"request_id": "req_456", "url": "https://example.com"}, "request")
+
+        records = tracer.records
+        self.assertEqual(len(records), 1)
+        self.assertNotIn("request_headers", records[0].data)
