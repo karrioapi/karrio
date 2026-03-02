@@ -157,6 +157,7 @@ class ShippingService(lib.Enum):
     dhl_parcel_de_europaket = "V54EPAK"
     dhl_parcel_de_paket_international = "V53WPAK"
     dhl_parcel_de_warenpost_international = "V66WPI"
+    dhl_parcel_de_retoure = "V07PAK"
 
     # Alias for backwards compatibility (Warenpost replaced by Kleinpaket as of 2025)
     dhl_parcel_de_warenpost = dhl_parcel_de_kleinpaket
@@ -195,6 +196,10 @@ DEFAULT_TEST_BILLING_NUMBERS: typing.List[ServiceBillingNumberType] = [
     ServiceBillingNumberType(
         service="dhl_parcel_de_warenpost_international", billing_number="33333333336601"
     ),
+    # V07PAK - DHL Retoure
+    ServiceBillingNumberType(
+        service="dhl_parcel_de_retoure", billing_number="33333333330701"
+    ),
 ]
 
 # Default test billing number (V01PAK with services)
@@ -220,6 +225,12 @@ class ConnectionConfig(lib.Enum):
     )
     pickup_billing_number = lib.OptionEnum(
         "pickup_billing_number", str, default="22222222220801"
+    )
+    return_billing_number = lib.OptionEnum(
+        "return_billing_number", str, default="33333333330701"
+    )
+    return_service_code = lib.OptionEnum(
+        "return_service_code", ShippingService, default="dhl_parcel_de_retoure"
     )
     profile = lib.OptionEnum("profile")
     cost_center = lib.OptionEnum("cost_center")
@@ -294,7 +305,7 @@ class ShippingOption(lib.Enum):
             category="INSURANCE",
             configurable=False,
             help="Additional insurance value in EUR (0-2500, 0-25000, or 0-50000)",
-            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_kleinpaket"],
+            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_kleinpaket", "dhl_parcel_de_warenpost_international"],
         )
     )
     dhl_parcel_de_bulky_goods = lib.OptionEnum(
@@ -303,7 +314,7 @@ class ShippingOption(lib.Enum):
             category="DELIVERY_OPTIONS",
             configurable=True,
             help="Mark shipment as bulky goods (Sperrgut)",
-            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
+            compatible_services=["dhl_parcel_de_paket"],
         )
     )
     dhl_parcel_de_cash_on_delivery = lib.OptionEnum(
@@ -312,7 +323,7 @@ class ShippingOption(lib.Enum):
             category="COD",
             configurable=False,
             help="Cash on delivery amount in EUR",
-            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
+            compatible_services=["dhl_parcel_de_paket"],
         )
     )
     dhl_parcel_de_individual_sender_requirement = lib.OptionEnum(
@@ -339,7 +350,7 @@ class ShippingOption(lib.Enum):
             category="PUDO",
             configurable=True,
             help="Deliver to closest drop point (CDP)",
-            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_paket_international", "dhl_parcel_de_kleinpaket"],
+            compatible_services=["dhl_parcel_de_paket"],
         )
     )
     dhl_parcel_de_parcel_outlet_routing = lib.OptionEnum(
@@ -348,7 +359,7 @@ class ShippingOption(lib.Enum):
             category="PUDO",
             configurable=True,
             help="Filial routing - deliver to retail outlet",
-            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_paket_international", "dhl_parcel_de_kleinpaket"],
+            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
     )
     # International Options
@@ -358,7 +369,7 @@ class ShippingOption(lib.Enum):
             category="PAPERLESS",
             configurable=True,
             help="Postal Delivered Duty Paid (pDDP) - sender pays customs duties",
-            compatible_services=["dhl_parcel_de_paket_international"],
+            compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket"],
         )
     )
     # Address/Delivery Location Options (not typically configurable at method level)
@@ -512,7 +523,25 @@ class ShippingOption(lib.Enum):
             category="DELIVERY_OPTIONS",
             configurable=True,
             help="Action if delivery fails (RETURN or ABANDON)",
-            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_paket_international", "dhl_parcel_de_kleinpaket", "dhl_parcel_de_warenpost_international"],
+            compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_warenpost_international"],
+        )
+    )
+    dhl_parcel_de_economy = lib.OptionEnum(
+        "economy", bool,
+        meta=dict(
+            category="DELIVERY_OPTIONS",
+            configurable=True,
+            help="Economy shipping service",
+            compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_warenpost_international"],
+        )
+    )
+    dhl_parcel_de_gogreen_plus = lib.OptionEnum(
+        "goGreenPlus", bool,
+        meta=dict(
+            category="DELIVERY_OPTIONS",
+            configurable=True,
+            help="GoGreen Plus climate-neutral shipping",
+            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket", "dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
     )
 
@@ -701,10 +730,16 @@ def load_services_from_csv() -> list:
                 # Update service-level weight bounds to cover all zones
                 current = services_dict[karrio_service_code]
                 if row_min_weight is not None:
-                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
+                    if (
+                        current["min_weight"] is None
+                        or row_min_weight < current["min_weight"]
+                    ):
                         current["min_weight"] = row_min_weight
                 if row_max_weight is not None:
-                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
+                    if (
+                        current["max_weight"] is None
+                        or row_max_weight > current["max_weight"]
+                    ):
                         current["max_weight"] = row_max_weight
 
             # Parse country codes
@@ -719,7 +754,9 @@ def load_services_from_csv() -> list:
                 min_weight=row_min_weight,
                 max_weight=row_max_weight,
                 transit_days=(
-                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None
+                    int(row["transit_days"].split("-")[0])
+                    if row.get("transit_days")
+                    else None
                 ),
                 country_codes=country_codes if country_codes else None,
             )
