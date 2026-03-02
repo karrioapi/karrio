@@ -136,17 +136,26 @@ x-test-mode: true  (if connection is in test mode)
 
 **Important:** Always pass the token directly in single-quoted curl headers (`-H 'Authorization: Bearer <token>'`). Do NOT store the token in a bash variable with double quotes — JWT tokens can contain characters that get misinterpreted by the shell, causing silent auth failures.
 
+### Verify Server is Running
+
+Before testing, confirm the Karrio server is reachable by calling `GET <api_url>/v1/connections` with the provided token (API URL from Step 0). If it fails, ask the user to start the server — do not attempt to start it yourself.
+
 ### Key Endpoints
 
-| Action | Method | Endpoint |
-|---|---|---|
-| List connections | GET | `/v1/connections` |
-| Fetch rates | POST | `/v1/rates` |
-| Create shipment | POST | `/v1/shipments` |
-| Cancel shipment | POST | `/v1/shipments/<id>/cancel` |
-| Track shipment | GET | `/v1/trackers/<carrier>/<tracking_number>` |
-| Schedule pickup | POST | `/v1/pickups` |
-| Cancel pickup | POST | `/v1/pickups/<id>/cancel` |
+Karrio has two types of endpoints:
+
+- **Resource endpoints** (`/v1/shipments`, `/v1/pickups`, `/v1/trackers`) — Create and manage Karrio resources. These call the carrier API internally and store results. **Use these for testing.**
+- **Proxy endpoints** (`/v1/proxy/rates`, `/v1/proxy/tracking`) — Direct carrier API passthrough without storing results. Only use `/v1/proxy/rates` for rate fetching (there is no `/v1/rates` resource endpoint for fetching rates).
+
+| Action | Method | Endpoint | Notes |
+|---|---|---|---|
+| List connections | GET | `/v1/connections` | |
+| Fetch rates | POST | `/v1/proxy/rates` | Proxy-only — no resource endpoint |
+| Create shipment | POST | `/v1/shipments` | Rate + ship in one call |
+| Cancel shipment | POST | `/v1/shipments/<id>/cancel` | |
+| Track shipment | GET | `/v1/trackers/<carrier_name>/<tracking_number>` | `carrier_name` is the system name (e.g., `ups`), not the carrier_id |
+| Schedule pickup | POST | `/v1/pickups` | |
+| Cancel pickup | POST | `/v1/pickups/<id>/cancel` | |
 
 ---
 
