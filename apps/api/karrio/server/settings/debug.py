@@ -1,6 +1,5 @@
 # type: ignore
 import sys
-import importlib.util
 from karrio.server.settings.base import *
 
 TESTING = sys.argv[1:2] == ["test"]

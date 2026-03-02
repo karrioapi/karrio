@@ -141,7 +141,6 @@ RateRequestData = [
                 ],
                 "paymentMode": "PX",
                 "reference": "PKG-TEST-001",
-                "serviceType": "EST",
                 "totalGrossWeight": 10.0,
                 "totalPackages": 1,
                 "totalPieces": 1,

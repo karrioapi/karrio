@@ -18,7 +18,7 @@ class STRINGFORMAT:
         :return: a string, list of string or None.
         """
         strings = [
-            "".join(s.split(" ")) if trim else s for s in values if s not in ["", None]
+            "".join(s.split()) if trim else s for s in values if s not in ["", None]
         ]
 
         if len(strings) == 0:
