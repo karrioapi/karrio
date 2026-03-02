@@ -111,6 +111,9 @@ class TrackingIncidentReason(lib.Enum):
 class ConnectionConfig(lib.Enum):
     """SmartKargo connection configuration options."""
 
+    primary_id = lib.OptionEnum("primary_id", str)
+    site_id = lib.OptionEnum("site_id", str)
+    additional_id = lib.OptionEnum("additional_id", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
     label_type = lib.OptionEnum("label_type", str)  # PDF or ZPL

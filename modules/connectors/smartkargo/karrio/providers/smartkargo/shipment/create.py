@@ -4,7 +4,6 @@ import karrio.schemas.smartkargo.rate_request as smartkargo_req
 import karrio.schemas.smartkargo.shipment_response as smartkargo_res
 
 import typing
-import uuid
 import datetime
 import karrio.lib as lib
 import karrio.core.models as models
@@ -92,6 +91,7 @@ def _extract_details(
             total_charge=shipment.total,
             currency=shipment.currency,
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
+            **({"last_mile_tracking_number": shipment.barCode} if shipment.barCode else {}),
         ),
     )
 
@@ -133,13 +133,21 @@ def shipment_request(
         or "PDF"
     )
 
-    # Get shipment date from options or use current date (issueDate is required by API)
-    shipment_date = options.shipment_date.state or datetime.datetime.now()
+    # Resolve common request fields
+    reference = payload.reference or settings.tracer.get_context("request_id")
+    shipment_date = (
+        options.shipment_date.state
+        or lib.to_next_business_datetime(datetime.datetime.now())
+    )
+    primary_id = (
+        settings.connection_config.primary_id.state or settings.account_number
+    )
+    additional_id = settings.connection_config.additional_id.state
 
     # Build one request per package (SmartKargo API only accepts one package per booking)
     request = [
         smartkargo_req.RateRequestType(
-            reference=payload.reference or str(uuid.uuid4().hex),
+            reference=reference,
             issueDate=lib.fdatetime(
                 shipment_date,
                 current_format="%Y-%m-%d",
@@ -175,8 +183,8 @@ def shipment_request(
                     participants=[
                         smartkargo_req.ParticipantType(
                             type="Shipper",
-                            primaryId=settings.account_id,
-                            additionalId=None,
+                            primaryId=primary_id,
+                            additionalId=additional_id,
                             account=settings.account_number,
                             name=shipper.company_name or shipper.person_name,
                             postCode=shipper.postal_code,

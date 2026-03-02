@@ -5,7 +5,6 @@ import karrio.schemas.smartkargo.rate_response as smartkargo_res
 
 import typing
 import datetime
-import uuid
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.smartkargo.error as error
@@ -62,7 +61,8 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=service.name_or_key,
-        total_charge=lib.to_money(detail.total or 0) + lib.to_money(detail.totalTax or 0),
+        total_charge=lib.to_money(detail.total or 0)
+        + lib.to_money(detail.totalTax or 0),
         currency="USD",
         transit_days=transit_days,
         extra_charges=[
@@ -120,13 +120,24 @@ def rate_request(
         else provider_units.ShippingService.smartkargo_standard.value
     )
 
-    # Get shipment date from options or use current date (issueDate is required by API)
-    shipment_date = options.shipment_date.state or datetime.datetime.now()
+    # Resolve common request fields
+    reference = lib.text(
+        payload.reference or settings.tracer.get_context("request_id"),
+        max=35,
+    )
+    shipment_date = (
+        options.shipment_date.state
+        or lib.to_next_business_datetime(datetime.datetime.now())
+    )
+    primary_id = (
+        settings.connection_config.primary_id.state or settings.account_number
+    )
+    additional_id = settings.connection_config.additional_id.state
 
     # Build one request per package (SmartKargo API only accepts one package per request)
     request = [
         smartkargo_req.RateRequestType(
-            reference=payload.reference or str(uuid.uuid4().hex),
+            reference=reference,
             issueDate=lib.fdatetime(
                 shipment_date,
                 current_format="%Y-%m-%d",
@@ -145,7 +156,9 @@ def rate_request(
                     totalGrossWeight=package.weight.value,
                     grossWeightUnitMeasure=weight_unit,
                     insuranceRequired=options.insurance.state is not None,
-                    declaredValue=lib.to_money(options.declared_value.state or options.insurance.state or 0),
+                    declaredValue=lib.to_money(
+                        options.declared_value.state or options.insurance.state or 0
+                    ),
                     specialHandlingType=options.smartkargo_special_handling.state,
                     deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
                     channel=options.smartkargo_channel.state or "Direct",
@@ -162,8 +175,8 @@ def rate_request(
                     participants=[
                         smartkargo_req.ParticipantType(
                             type="Shipper",
-                            primaryId=settings.account_id,
-                            additionalId=None,
+                            primaryId=primary_id,
+                            additionalId=additional_id,
                             account=settings.account_number,
                             name=shipper.company_name or shipper.person_name,
                             postCode=shipper.postal_code,
