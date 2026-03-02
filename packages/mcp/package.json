@@ -1,0 +1,56 @@
+{
+  "name": "@karrio/mcp",
+  "version": "1.0.0",
+  "description": "Karrio MCP Server — Multi-carrier shipping intelligence for AI agents",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "karrio-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "keywords": [
+    "karrio",
+    "mcp",
+    "shipping",
+    "ai",
+    "model-context-protocol",
+    "multi-carrier"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karrioapi/karrio.git",
+    "directory": "packages/mcp"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "@karrio/eslint-config-custom": "*",
+    "@karrio/tsconfig": "*",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  }
+}

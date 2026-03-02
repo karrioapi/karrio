@@ -15,6 +15,8 @@ import {
   ShipmentPreviewSheet,
   ShipmentPreviewSheetContext,
 } from "@karrio/ui/components/shipment-preview-sheet";
+import { FailedShipmentSheet } from "@karrio/ui/components/failed-shipment-sheet";
+import { FailedShipmentsList } from "@karrio/core/modules/Shipments/failed-shipments-list";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
@@ -45,6 +47,8 @@ import { AppLink } from "@karrio/ui/core/components/app-link";
 import { useShipments } from "@karrio/hooks/shipment";
 import React, { useContext, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+
+const FAILED_SENTINEL = "_failed_creation";
 
 
 export default function Page(pageProps: any) {
@@ -195,16 +199,22 @@ export default function Page(pageProps: any) {
       {
         label: "Draft",
         value: ["draft"]
+      },
+      {
+        label: "Failed",
+        value: [FAILED_SENTINEL]
       }
     ];
+
+    const isFailedView = (filter?.status as string[] || []).includes(FAILED_SENTINEL);
 
     const searchParamsString = searchParams?.toString() ?? "";
     useEffect(() => {
       updateFilter();
     }, [searchParamsString]);
     useEffect(() => {
-      setLoading(query.isFetching);
-    }, [query.isFetching]);
+      if (!isFailedView) setLoading(query.isFetching);
+    }, [query.isFetching, isFailedView]);
     useEffect(() => {
       updatedSelection(selection, shipments);
     }, [selection, shipments]);
@@ -236,7 +246,7 @@ export default function Page(pageProps: any) {
                 Manage manifests
               </AppLink>
             </Button>
-            <ShipmentsFilter context={context} />
+            {!isFailedView && <ShipmentsFilter context={context} />}
           </div>
         </header>
 
@@ -246,7 +256,9 @@ export default function Page(pageProps: any) {
           onFilterChange={(status) => updateFilter({ status, offset: 0 })}
         />
 
-        {!query.isFetched && (
+        {isFailedView && <FailedShipmentsList />}
+
+        {!isFailedView && !query.isFetched && (
           <div className="bg-white rounded-lg shadow-sm border my-6 p-6">
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
@@ -264,7 +276,7 @@ export default function Page(pageProps: any) {
           </div>
         )}
 
-        {query.isFetched && (shipments?.edges || []).length > 0 && (
+        {!isFailedView && query.isFetched && (shipments?.edges || []).length > 0 && (
           <>
             <StickyTableWrapper>
               <Table className="shipments-table">
@@ -542,7 +554,7 @@ export default function Page(pageProps: any) {
           </>
         )}
 
-        {query.isFetched && (shipments?.edges || []).length == 0 && (
+        {!isFailedView && query.isFetched && (shipments?.edges || []).length == 0 && (
           <div className="bg-white rounded-lg shadow-sm border my-6">
             <div className="p-6 text-center">
               <p>No shipment found.</p>
@@ -554,8 +566,10 @@ export default function Page(pageProps: any) {
   };
 
   return (
-    <ShipmentPreviewSheet>
-      <Component />
-    </ShipmentPreviewSheet>
+    <FailedShipmentSheet>
+      <ShipmentPreviewSheet>
+        <Component />
+      </ShipmentPreviewSheet>
+    </FailedShipmentSheet>
   );
 }

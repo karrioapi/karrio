@@ -528,6 +528,20 @@ def get_available_rates(
             ]
             extra_charges.extend(surcharge_charges)
 
+            # Merge markup exclusions from service pricing_config
+            _svc_config = getattr(service, 'pricing_config', None) or {}
+            _excluded_markup_ids = list(_svc_config.get("excluded_markup_ids", []))
+
+            _rate_meta = dict(
+                carrier_service_code=service.carrier_service_code,
+                service_name=service.service_name,
+                shipping_charges=base_rate,
+                shipping_currency=service.currency,
+                service_features=_normalize_features(service.features),
+            )
+            if _excluded_markup_ids:
+                _rate_meta["excluded_markup_ids"] = _excluded_markup_ids
+
             rates.append(
                 models.RateDetails(
                     carrier_name=carrier_name,
@@ -537,15 +551,7 @@ def get_available_rates(
                     transit_days=transit_days,
                     total_charge=total_charge,
                     extra_charges=extra_charges,
-                    meta=lib.to_dict(  # type: ignore
-                        dict(
-                            carrier_service_code=service.carrier_service_code,
-                            service_name=service.service_name,
-                            shipping_charges=base_rate,
-                            shipping_currency=service.currency,
-                            service_features=_normalize_features(service.features),
-                        )
-                    ),
+                    meta=lib.to_dict(_rate_meta),  # type: ignore
                 )
             )
 
@@ -555,13 +561,18 @@ def get_available_rates(
 def _normalize_features(features) -> typing.List[str]:
     """Normalize service features to a list of strings.
 
-    Handles both dict format ({insurance: true}) and list format (["insurance"]).
+    Handles dict format ({insurance: true}), list format (["insurance"]),
+    and attrs objects (ServiceLevelFeatures).
     """
     if not features:
         return []
     if isinstance(features, list):
         return features
-    return [k for k, v in features.items() if v is True]
+    if isinstance(features, dict):
+        return [k for k, v in features.items() if v is True]
+    if attr.has(type(features)):
+        return [k for k, v in attr.asdict(features).items() if v is True]
+    return []
 
 
 def apply_surcharges(

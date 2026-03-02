@@ -112,7 +112,9 @@
             "email": "mustermann@example.com"
           }
         },
-        "postalDeliveryDutyPaid": true
+        "postalDeliveryDutyPaid": true,
+        "economy": true,
+        "goGreenPlus": true
       },
       "customs": {
         "invoiceNo": "123456",

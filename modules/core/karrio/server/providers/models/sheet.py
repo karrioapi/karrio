@@ -85,6 +85,17 @@ class RateSheet(core.OwnedEntity):
         default=core.field_default({}),
     )
 
+    # ─────────────────────────────────────────────────────────────────
+    # PRICING CONFIG
+    # Stores rate-sheet-level excluded_markup_ids, etc.
+    # ─────────────────────────────────────────────────────────────────
+    pricing_config = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default({}),
+        help_text="Pricing config: {excluded_markup_ids: [...]}",
+    )
+
     created_by = models.ForeignKey(
         conf.settings.AUTH_USER_MODEL,
         blank=True,
@@ -104,6 +115,11 @@ class RateSheet(core.OwnedEntity):
     @property
     def carriers(self):
         import karrio.server.providers.models as providers
+
+        if self.is_system:
+            return providers.SystemConnection.objects.filter(
+                carrier_code=self.carrier_name, rate_sheet__id=self.id
+            )
 
         return providers.CarrierConnection.objects.filter(
             carrier_code=self.carrier_name, rate_sheet__id=self.id

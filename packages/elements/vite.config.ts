@@ -1,6 +1,7 @@
 import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import fs from "fs";
 
 /**
  * Vite plugin that rewrites bare `require("lodash.xxx")` calls in
@@ -147,6 +148,57 @@ function rewriteBearerAuth(): Plugin {
   };
 }
 
+/**
+ * Vite plugin that syncs the build output to the Django static directory
+ * after each build (including watch rebuilds).
+ *
+ * This ensures the API server always serves the latest elements build
+ * without requiring a manual copy step.
+ */
+function syncToStaticDir(): Plugin {
+  const staticDir = path.resolve(
+    __dirname,
+    "../../apps/api/karrio/server/static/karrio/elements",
+  );
+  const distDir = path.resolve(__dirname, "dist");
+  const htmlDir = path.resolve(__dirname, "static");
+
+  function copyRecursive(src: string, dest: string) {
+    if (!fs.existsSync(src)) return;
+    fs.mkdirSync(dest, { recursive: true });
+    for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+      if (entry.isDirectory()) {
+        copyRecursive(srcPath, destPath);
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+  }
+
+  return {
+    name: "sync-to-static-dir",
+    closeBundle() {
+      if (!fs.existsSync(staticDir)) {
+        fs.mkdirSync(staticDir, { recursive: true });
+      }
+      // Copy built assets from dist/ to static dir
+      copyRecursive(distDir, staticDir);
+      // Copy HTML entry points from static/ to static dir
+      for (const file of fs.readdirSync(htmlDir)) {
+        if (file.endsWith(".html")) {
+          fs.copyFileSync(
+            path.join(htmlDir, file),
+            path.join(staticDir, file),
+          );
+        }
+      }
+      console.log(`\x1b[32m✓ Synced elements to ${path.relative(process.cwd(), staticDir)}\x1b[0m`);
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
     rewriteLodashRequires(),
@@ -154,6 +206,7 @@ export default defineConfig({
     rewriteBearerAuth(),
     stripCarrierImages(),
     react(),
+    syncToStaticDir(),
   ],
   resolve: {
     alias: {

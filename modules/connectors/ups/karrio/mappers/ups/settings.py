@@ -11,7 +11,9 @@ class Settings(provider_utils.Settings):
     """UPS connection settings."""
 
     client_id: str  # type:ignore
+    # client_id: str = attr.ib(metadata={"sensitive": True})  # type:ignore
     client_secret: str  # type:ignore
+    # client_secret: str = attr.ib(metadata={"sensitive": True})  # type:ignore
     account_number: str = None
 
     carrier_id: str = "ups"

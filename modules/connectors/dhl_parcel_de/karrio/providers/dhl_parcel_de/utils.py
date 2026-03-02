@@ -202,6 +202,27 @@ class Settings(core.Settings):
 
         return None
 
+    def get_return_billing_number(self) -> typing.Optional[str]:
+        """Resolve return billing number with fallback chain:
+        1. return_service_code -> lookup in service_billing_numbers map
+        2. return_billing_number config (single default)
+        3. test default for retoure
+        """
+        return_service = self.connection_config.return_service_code.state
+        if return_service:
+            billing = self.get_billing_number(return_service)
+            if billing:
+                return billing
+
+        return_billing = self.connection_config.return_billing_number.state
+        if return_billing:
+            return return_billing
+
+        if self.test_mode:
+            return "33333333330701"
+
+        return None
+
     @property
     def profile(self):
         return self.connection_config.profile.state or "STANDARD_GRUPPENPROFIL"

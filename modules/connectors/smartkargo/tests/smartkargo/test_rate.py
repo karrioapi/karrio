@@ -1,11 +1,14 @@
 """SmartKargo carrier rate tests."""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 from .fixture import gateway
+import logging
 import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
+
+logger = logging.getLogger(__name__)
 
 
 class TestSmartKargoRating(unittest.TestCase):
@@ -15,33 +18,23 @@ class TestSmartKargoRating(unittest.TestCase):
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
-        serialized = request.serialize()
-        # Per-package pattern: serialize returns a list of requests
-        self.assertIsInstance(serialized, list)
-        self.assertEqual(len(serialized), 1)
-        self.assertIn("reference", serialized[0])
-        self.assertIn("packages", serialized[0])
-        self.assertEqual(len(serialized[0]["packages"]), 1)
-        self.assertEqual(serialized[0]["packages"][0]["grossWeightUnitMeasure"], "KG")
+        self.assertEqual(lib.to_dict(request.serialize()), RateRequestData)
 
     def test_get_rates(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
-            mock.return_value = RateResponse
+            mock.return_value = "{}"
             karrio.Rating.fetch(self.RateRequest).from_(gateway)
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/quotation"
+                f"{gateway.settings.server_url}/quotation",
             )
 
     def test_parse_rate_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = RateResponse
             parsed_response = (
-                karrio.Rating.fetch(self.RateRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             )
-            print(parsed_response)
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedRateResponse,
@@ -51,11 +44,8 @@ class TestSmartKargoRating(unittest.TestCase):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
             parsed_response = (
-                karrio.Rating.fetch(self.RateRequest)
-                .from_(gateway)
-                .parse()
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             )
-            print(parsed_response)
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedErrorResponse,
@@ -76,7 +66,7 @@ RatePayload = {
         "person_name": "TESTER TEST",
         "company_name": "Test Company",
         "phone_number": "19999999999",
-        "email": "test@test.com"
+        "email": "test@test.com",
     },
     "recipient": {
         "address_line1": "124 Main St",
@@ -86,19 +76,79 @@ RatePayload = {
         "state_code": "CA",
         "person_name": "Tester Tester",
         "phone_number": "8888347867",
-        "email": "test2@test.com"
+        "email": "test2@test.com",
     },
-    "parcels": [{
-        "weight": 10.0,
-        "width": 20.0,
-        "height": 20.0,
-        "length": 20.0,
-        "weight_unit": "KG",
-        "dimension_unit": "CM",
-        "reference_number": "PKG-TEST-001",
-    }],
+    "parcels": [
+        {
+            "weight": 10.0,
+            "width": 20.0,
+            "height": 20.0,
+            "length": 20.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+            "reference_number": "PKG-TEST-001",
+        }
+    ],
     "reference": "RATE-REQ-001",
 }
+
+RateRequestData = [
+    {
+        "issueDate": ANY,
+        "packages": [
+            {
+                "commodityType": "9999",
+                "insuranceAmmount": 0.0,
+                "dimensions": [
+                    {
+                        "grossWeight": 10.0,
+                        "height": 20.0,
+                        "length": 20.0,
+                        "pieces": 1,
+                        "width": 20.0,
+                    }
+                ],
+                "grossVolumeUnityMeasure": "CMQ",
+                "grossWeightUnityMeasure": "KG",
+                "hasInsurance": False,
+                "packageDescription": "General Shipment",
+                "participants": [
+                    {
+                        "account": "TEST_ACCOUNT",
+                        "additionalId": "TEST_ID",
+                        "city": "Boston",
+                        "countryId": "US",
+                        "email": "test@test.com",
+                        "name": "Test Company",
+                        "phoneNumber": "19999999999",
+                        "postCode": "02142",
+                        "primaryId": "TEST_ID",
+                        "state": "MA",
+                        "street": "1 Broadway",
+                        "type": "Shipper",
+                    },
+                    {
+                        "city": "Los Angeles",
+                        "countryId": "US",
+                        "email": "test2@test.com",
+                        "name": "Tester Tester",
+                        "phoneNumber": "8888347867",
+                        "postCode": "98148",
+                        "state": "CA",
+                        "street": "124 Main St",
+                        "type": "Consignee",
+                    },
+                ],
+                "paymentMode": "PX",
+                "reference": "PKG-TEST-001",
+                "totalGrossWeight": 10.0,
+                "totalPackages": 1,
+                "totalPieces": 1,
+            }
+        ],
+        "reference": "RATE-REQ-001",
+    }
+]
 
 RateResponse = """{
   "headerReference": "30068480254",

@@ -435,6 +435,13 @@ class ShipmentUpdateData(validators.OptionDefaultSerializer):
         allow_null=True,
         help_text="The shipment reference",
     )
+    order_id = CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        max_length=50,
+        help_text="The order identifier associated with this shipment",
+    )
     metadata = PlainDictField(
         required=False, help_text="User metadata for the shipment"
     )

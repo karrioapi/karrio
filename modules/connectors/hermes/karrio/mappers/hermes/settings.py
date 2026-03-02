@@ -16,8 +16,11 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # OAuth2 credentials (password flow)
     username: str  # type:ignore
     password: str  # type:ignore
+    # password: str = attr.ib(metadata={"sensitive": True})  # type:ignore
     client_id: str  # type:ignore
+    # client_id: str = attr.ib(metadata={"sensitive": True})  # type:ignore
     client_secret: str  # type:ignore
+    # client_secret: str = attr.ib(metadata={"sensitive": True})  # type:ignore
 
     # generic properties
     id: str = None

@@ -98,6 +98,18 @@ class TestLandmarkGlobalTracking(unittest.TestCase):
                 lib.to_dict(parsed_response), PARSED_MIDNIGHT_TIME_SORTING_RESPONSE
             )
 
+    def test_parse_multi_leg_delivered_response(self):
+        """Test that multi-leg shipments with origin-side events after delivery are correctly marked as delivered"""
+        with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
+            mock.return_value = MULTI_LEG_DELIVERED_TRACKING_RESPONSE_XML
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            print(parsed_response)
+            self.assertListEqual(
+                lib.to_dict(parsed_response), PARSED_MULTI_LEG_DELIVERED_RESPONSE
+            )
+
     def test_parse_to_be_routed_response(self):
         """Test that 'To Be Routed' EndDeliveryCarrier excludes last_mile_carrier from meta"""
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
@@ -959,6 +971,153 @@ PARSED_MIDNIGHT_TIME_SORTING_RESPONSE = [
             },
             "status": "delivered",
             "tracking_number": "LTN408798880N1",
+        }
+    ],
+    [],
+]
+
+MULTI_LEG_DELIVERED_TRACKING_RESPONSE_XML = """<?xml version="1.0"?>
+<TrackResponse>
+    <Result>
+        <Success>true</Success>
+        <ShipmentDetails>
+            <EndDeliveryCarrier>An Post</EndDeliveryCarrier>
+        </ShipmentDetails>
+        <Packages>
+            <Package>
+                <TrackingNumber>RR123456789IE</TrackingNumber>
+                <LandmarkTrackingNumber>LTN450000001N1</LandmarkTrackingNumber>
+                <PackageReference>ZS123456789GB</PackageReference>
+                <Events>
+                    <Event>
+                        <Status>Shipment Data Uploaded</Status>
+                        <DateTime>2025-02-18 04:30:00</DateTime>
+                        <Location>North Shields</Location>
+                        <EventCode>50</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Package scanned at carrier facility</Status>
+                        <DateTime>2025-02-19 08:41:59</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>225</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Customs transmission sent to carrier</Status>
+                        <DateTime>2025-02-21 07:54:00</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>125</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Crossing border and in transit to carrier hub</Status>
+                        <DateTime>2025-02-21 07:55:00</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>150</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Crossing Received</Status>
+                        <DateTime>2025-02-21 07:56:00</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>155</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Package scanned at carrier facility</Status>
+                        <DateTime>2025-02-21 07:56:00</DateTime>
+                        <Location>Feltham, SRY</Location>
+                        <EventCode>225</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Item delivered</Status>
+                        <DateTime>2025-02-21 04:23:00</DateTime>
+                        <Location>Roundwood, WW</Location>
+                        <EventCode>500</EventCode>
+                    </Event>
+                </Events>
+            </Package>
+        </Packages>
+    </Result>
+</TrackResponse>
+"""
+
+PARSED_MULTI_LEG_DELIVERED_RESPONSE = [
+    [
+        {
+            "carrier_id": "landmark",
+            "carrier_name": "landmark",
+            "delivered": True,
+            "events": [
+                {
+                    "code": "500",
+                    "date": "2025-02-21",
+                    "description": "Item delivered",
+                    "location": "Roundwood, WW",
+                    "status": "delivered",
+                    "time": "04:23 AM",
+                    "timestamp": "2025-02-21T04:23:00.000Z",
+                },
+                {
+                    "code": "225",
+                    "date": "2025-02-21",
+                    "description": "Package scanned at carrier facility",
+                    "location": "Feltham, SRY",
+                    "status": "in_transit",
+                    "time": "07:56 AM",
+                    "timestamp": "2025-02-21T07:56:00.000Z",
+                },
+                {
+                    "code": "155",
+                    "date": "2025-02-21",
+                    "description": "Crossing Received",
+                    "location": "Feltham, SRY",
+                    "status": "in_transit",
+                    "time": "07:56 AM",
+                    "timestamp": "2025-02-21T07:56:00.000Z",
+                },
+                {
+                    "code": "150",
+                    "date": "2025-02-21",
+                    "description": "Crossing border and in transit to carrier hub",
+                    "location": "Feltham, SRY",
+                    "status": "in_transit",
+                    "time": "07:55 AM",
+                    "timestamp": "2025-02-21T07:55:00.000Z",
+                },
+                {
+                    "code": "125",
+                    "date": "2025-02-21",
+                    "description": "Customs transmission sent to carrier",
+                    "location": "Feltham, SRY",
+                    "status": "in_transit",
+                    "time": "07:54 AM",
+                    "timestamp": "2025-02-21T07:54:00.000Z",
+                },
+                {
+                    "code": "225",
+                    "date": "2025-02-19",
+                    "description": "Package scanned at carrier facility",
+                    "location": "Feltham, SRY",
+                    "status": "in_transit",
+                    "time": "08:41 AM",
+                    "timestamp": "2025-02-19T08:41:59.000Z",
+                },
+                {
+                    "code": "50",
+                    "date": "2025-02-18",
+                    "description": "Shipment Data Uploaded",
+                    "location": "North Shields",
+                    "status": "pending",
+                    "time": "04:30 AM",
+                    "timestamp": "2025-02-18T04:30:00.000Z",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN450000001N1"
+            },
+            "meta": {
+                "last_mile_carrier": "An Post",
+                "last_mile_tracking_number": "RR123456789IE",
+            },
+            "status": "delivered",
+            "tracking_number": "LTN450000001N1",
         }
     ],
     [],

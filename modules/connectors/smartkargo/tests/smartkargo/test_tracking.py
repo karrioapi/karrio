@@ -1,12 +1,14 @@
 """SmartKargo carrier tracking tests."""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 from .fixture import gateway
-
+import logging
 import karrio.sdk as karrio
 import karrio.lib as lib
 import karrio.core.models as models
+
+logger = logging.getLogger(__name__)
 
 
 class TestSmartKargoTracking(unittest.TestCase):
@@ -16,17 +18,15 @@ class TestSmartKargoTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
-        serialized = request.serialize()
-        self.assertEqual(len(serialized), 1)
-        self.assertEqual(serialized[0]["tracking_number"], "yogi045")
+        self.assertEqual(lib.to_dict(request.serialize()), TrackingRequestData)
 
     def test_get_tracking(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
-            mock.return_value = TrackingResponse
+            mock.return_value = "[]"
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
             self.assertIn(
                 "tracking?packageReference=yogi045",
-                mock.call_args[1]["url"]
+                mock.call_args[1]["url"],
             )
 
     def test_parse_tracking_response(self):
@@ -35,7 +35,6 @@ class TestSmartKargoTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(parsed_response)
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedTrackingResponse,
@@ -47,7 +46,6 @@ class TestSmartKargoTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            print(parsed_response)
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedTrackingErrorResponse,
@@ -62,7 +60,12 @@ TrackingPayload = {
     "tracking_numbers": ["yogi045"],
 }
 
-# SmartKargo returns an array of tracking events
+TrackingRequestData = [
+    {
+        "tracking_number": "yogi045",
+    }
+]
+
 TrackingResponse = """[
   {
     "prefix": "AXB",

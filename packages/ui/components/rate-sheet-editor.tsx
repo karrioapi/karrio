@@ -129,6 +129,27 @@ export interface SharedSurcharge {
   active?: boolean;
 }
 
+export interface ServiceLevelFeatures {
+  shipment_type?: string | null;
+  first_mile?: string | null;
+  last_mile?: string | null;
+  form_factor?: string | null;
+  age_check?: string | null;
+  transit_label?: string | null;
+  tracked?: boolean | null;
+  b2c?: boolean | null;
+  b2b?: boolean | null;
+  signature?: boolean | null;
+  insurance?: boolean | null;
+  express?: boolean | null;
+  dangerous_goods?: boolean | null;
+  saturday_delivery?: boolean | null;
+  sunday_delivery?: boolean | null;
+  multicollo?: boolean | null;
+  neighbor_delivery?: boolean | null;
+  labelless?: boolean | null;
+}
+
 export interface ServiceLevelWithZones {
   id: string;
   object_type?: string;
@@ -153,7 +174,8 @@ export interface ServiceLevelWithZones {
   zones?: EmbeddedZone[];
   zone_ids?: string[];
   surcharge_ids?: string[];
-  features?: string[];
+  features?: ServiceLevelFeatures | string[];
+  pricing_config?: Record<string, any> | null;
 }
 
 export interface RateSheetCarrier {
@@ -289,6 +311,9 @@ export const RateSheetEditor = ({
 
   // Per-service pending weight ranges (edit mode)
   const [editModePendingRanges, setEditModePendingRanges] = useState<Record<string, WeightRange[]>>({});
+
+  // Rate sheet-level pricing config (exclusions)
+  const [rateSheetPricingConfig, setRateSheetPricingConfig] = useState<Record<string, any>>({});
 
   // Hooks
   const { references, metadata } = useAPIMetadata();
@@ -429,12 +454,14 @@ export const RateSheetEditor = ({
         return {
           ...service,
           zones: embeddedZones,
-          features: featuresToArray(service.features),
+          features: service.features,
           // Extract logistics options from features for the service editor modal
           first_mile: featuresObj?.first_mile || "",
           last_mile: featuresObj?.last_mile || "",
           form_factor: featuresObj?.form_factor || "",
           age_check: featuresObj?.age_check || "",
+          shipment_type: featuresObj?.shipment_type || "",
+          transit_label: featuresObj?.transit_label || "",
         };
       });
 
@@ -457,6 +484,7 @@ export const RateSheetEditor = ({
       setServices(transformedServices as ServiceLevelWithZones[]);
       setSharedZones(allZones);
       setSurcharges(existingRateSheet.surcharges || []);
+      setRateSheetPricingConfig(existingRateSheet.pricing_config || {});
 
       // Store original state for change tracking
       const originalZones = new Map<string, EmbeddedZone>();
@@ -671,13 +699,15 @@ export const RateSheetEditor = ({
                 zones,
                 zone_ids: zoneIds,
                 surcharge_ids: service.surcharge_ids || [],
-                features: featuresToArray(service.features),
+                features: service.features,
                 ...(service.features
                   ? {
                       first_mile: service.features.first_mile || "",
                       last_mile: service.features.last_mile || "",
                       form_factor: service.features.form_factor || "",
                       age_check: service.features.age_check || "",
+                      shipment_type: service.features.shipment_type || "",
+                      transit_label: service.features.transit_label || "",
                     }
                   : {}),
               } as ServiceLevelWithZones;
@@ -770,13 +800,15 @@ export const RateSheetEditor = ({
       zones,
       zone_ids: zoneIds,
       surcharge_ids: preset.surcharge_ids || [],
-      features: featuresToArray(preset.features),
+      features: preset.features ?? undefined,
       ...(preset.features
         ? {
             first_mile: preset.features.first_mile || "",
             last_mile: preset.features.last_mile || "",
             form_factor: preset.features.form_factor || "",
             age_check: preset.features.age_check || "",
+            shipment_type: preset.features.shipment_type || "",
+            transit_label: (preset.features as any).transit_label || "",
           }
         : {}),
     };
@@ -1239,6 +1271,7 @@ export const RateSheetEditor = ({
         max_weight: updated.max_weight ?? 0,
         transit_days: updated.transit_days,
         transit_time: updated.transit_time,
+        meta: updated.meta || undefined,
       });
     } catch (err: any) {
       toast({
@@ -1247,6 +1280,37 @@ export const RateSheetEditor = ({
         variant: "destructive",
       });
     }
+  };
+
+  // Exclusion handlers for pricing_config
+  const handleToggleSheetExclusion = (markupId: string, excluded: boolean) => {
+    setRateSheetPricingConfig((prev) => {
+      const currentExcluded: string[] = prev.excluded_markup_ids || [];
+      const updated = excluded
+        ? [...currentExcluded, markupId]
+        : currentExcluded.filter((id: string) => id !== markupId);
+      return { ...prev, excluded_markup_ids: updated.length > 0 ? updated : undefined };
+    });
+  };
+
+  const handleToggleServiceExclusion = (serviceId: string, markupId: string, excluded: boolean) => {
+    setServices((prev) =>
+      prev.map((service) => {
+        if (service.id !== serviceId) return service;
+        const config = service.pricing_config || {};
+        const currentExcluded: string[] = config.excluded_markup_ids || [];
+        const updated = excluded
+          ? [...currentExcluded, markupId]
+          : currentExcluded.filter((id: string) => id !== markupId);
+        return {
+          ...service,
+          pricing_config: {
+            ...config,
+            excluded_markup_ids: updated.length > 0 ? updated : undefined,
+          },
+        };
+      })
+    );
   };
 
   // Toggle service-zone linking
@@ -1987,6 +2051,7 @@ export const RateSheetEditor = ({
             zone_ids: zoneIds,
             surcharge_ids: mappedSurchargeIds,
             features: featuresToObject(service.features),
+            pricing_config: service.pricing_config || undefined,
           };
         });
 
@@ -1998,6 +2063,7 @@ export const RateSheetEditor = ({
           zones: zonesForMutation,
           surcharges: surchargesForMutation,
           service_rates: serviceRates,
+          pricing_config: Object.keys(rateSheetPricingConfig).length > 0 ? rateSheetPricingConfig : undefined,
         } as any);
 
         toast({
@@ -2066,6 +2132,7 @@ export const RateSheetEditor = ({
             zone_ids: zoneIds,
             surcharge_ids: mappedSurchargeIds,
             features: featuresToObject(service.features),
+            pricing_config: service.pricing_config || undefined,
           };
         });
 
@@ -2077,6 +2144,7 @@ export const RateSheetEditor = ({
           zones: zonesForMutation,
           surcharges: surchargesForMutation,
           service_rates: serviceRates,
+          pricing_config: Object.keys(rateSheetPricingConfig).length > 0 ? rateSheetPricingConfig : undefined,
         } as any);
 
         toast({
@@ -2515,6 +2583,7 @@ export const RateSheetEditor = ({
                                 onAddMissingRange={handleAddWeightRange}
                                 weightRangePresets={weightRangePresets}
                                 onAddFromPreset={handleAddWeightRange}
+                                onEditRate={isEditMode ? handleEditRate : undefined}
                               />
                             );
                           })()
@@ -2540,6 +2609,10 @@ export const RateSheetEditor = ({
                       onEditMarkup={handleEditMarkup}
                       onAddMarkup={handleAddMarkup}
                       onRemoveMarkup={handleRemoveMarkup}
+                      services={services}
+                      rateSheetPricingConfig={rateSheetPricingConfig}
+                      onToggleSheetExclusion={handleToggleSheetExclusion}
+                      onToggleServiceExclusion={handleToggleServiceExclusion}
                     />
                   )}
                 </div>
@@ -2725,6 +2798,8 @@ export const RateSheetEditor = ({
         services={services}
         sharedZones={sharedZones}
         weightUnit={selectedWeightUnit}
+        markups={isAdmin ? adminMarkups : undefined}
+        surcharges={surcharges}
       />
 
       {/* Markup Editor Dialog (admin only) */}

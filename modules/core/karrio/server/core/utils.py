@@ -383,7 +383,7 @@ def pre_processing(methods: List[str] = None):
                 context = kwargs.get("context")
 
                 for process in klass.pre_process_functions:
-                    process(context, **kwargs)
+                    process(context)
 
                 return _method(*args, **kwargs)
 

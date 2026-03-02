@@ -1,4 +1,4 @@
-"""DPD Group carrier shipment tests."""
+"""DPD Global carrier shipment tests."""
 
 import unittest
 from unittest.mock import patch, ANY

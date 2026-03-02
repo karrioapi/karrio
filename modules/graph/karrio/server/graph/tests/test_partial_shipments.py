@@ -601,3 +601,109 @@ FULL_UPDATE_SIMULATION_RESPONSE = {
         }
     }
 }
+
+
+class TestPartialShipmentOrderId(GraphTestCase):
+    """Test order_id field via GraphQL partial shipment mutations."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.shipment = self._create_draft_shipment()
+
+    def _create_draft_shipment(self):
+        url = reverse("karrio.server.manager:shipment-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_VALUE
+            response = self.client.post(url, DRAFT_SHIPMENT_DATA)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            return json.loads(response.content)
+
+    def test_partial_update_order_id(self):
+        """Verify order_id can be set via GraphQL mutation."""
+        shipment_id = self.shipment["id"]
+
+        response = self.query(
+            """
+            mutation partial_shipment_update($data: PartialShipmentMutationInput!) {
+              partial_shipment_update(input: $data) {
+                shipment {
+                  id
+                  order_id
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            """,
+            operation_name="partial_shipment_update",
+            variables={
+                "data": {
+                    "id": shipment_id,
+                    "order_id": "ORD-GQL-TEST",
+                }
+            },
+        )
+        response_data = response.data
+
+        self.assertResponseNoErrors(response)
+        self.assertDictEqual(
+            response_data,
+            ORDER_ID_UPDATE_RESPONSE,
+        )
+
+    def test_partial_update_order_id_with_other_fields(self):
+        """Verify order_id can be set alongside other fields."""
+        shipment_id = self.shipment["id"]
+
+        response = self.query(
+            """
+            mutation partial_shipment_update($data: PartialShipmentMutationInput!) {
+              partial_shipment_update(input: $data) {
+                shipment {
+                  id
+                  order_id
+                  reference
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            """,
+            operation_name="partial_shipment_update",
+            variables={
+                "data": {
+                    "id": shipment_id,
+                    "order_id": "ORD-COMBO",
+                    "reference": "REF-COMBO",
+                }
+            },
+        )
+        response_data = response.data
+
+        self.assertResponseNoErrors(response)
+        self.assertEqual(
+            response_data["data"]["partial_shipment_update"]["shipment"]["order_id"],
+            "ORD-COMBO",
+        )
+        self.assertEqual(
+            response_data["data"]["partial_shipment_update"]["shipment"]["reference"],
+            "REF-COMBO",
+        )
+
+
+ORDER_ID_UPDATE_RESPONSE = {
+    "data": {
+        "partial_shipment_update": {
+            "shipment": {
+                "id": ANY,
+                "order_id": "ORD-GQL-TEST",
+            },
+            "errors": None,
+        }
+    }
+}

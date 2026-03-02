@@ -75,13 +75,16 @@ class SpanContext:
         """Record an exception on this span."""
         pass
 
-    def add_event(self, name: str, attributes: typing.Dict[str, typing.Any] = None) -> None:
+    def add_event(
+        self, name: str, attributes: typing.Dict[str, typing.Any] = None
+    ) -> None:
         """Add an event to this span."""
         pass
 
 
 class NoOpSpanContext(SpanContext):
     """No-operation span context - zero overhead when telemetry is disabled."""
+
     pass
 
 
@@ -180,6 +183,7 @@ class Telemetry(abc.ABC):
         attributes: typing.Dict[str, typing.Any] = None,
     ):
         """Decorator to instrument a function with a span."""
+
         def decorator(func):
             span_name = name or f"{func.__module__}.{func.__name__}"
 
@@ -196,6 +200,7 @@ class Telemetry(abc.ABC):
                         raise
 
             return wrapper
+
         return decorator
 
 
@@ -302,12 +307,16 @@ class TimingSpanContext(SpanContext):
     def record_exception(self, exception: Exception) -> None:
         self.exception = exception
 
-    def add_event(self, name: str, attributes: typing.Dict[str, typing.Any] = None) -> None:
-        self.events.append({
-            "name": name,
-            "timestamp": time.time(),
-            "attributes": attributes or {},
-        })
+    def add_event(
+        self, name: str, attributes: typing.Dict[str, typing.Any] = None
+    ) -> None:
+        self.events.append(
+            {
+                "name": name,
+                "timestamp": time.time(),
+                "attributes": attributes or {},
+            }
+        )
 
     @property
     def duration_ms(self) -> float:
@@ -333,6 +342,7 @@ def get_default_telemetry() -> Telemetry:
 @attr.s(auto_attribs=True)
 class Record:
     """A trace record capturing SDK operation data."""
+
     key: str
     data: typing.Any
     timestamp: float
@@ -390,6 +400,7 @@ class Tracer:
         This method records request/response data that can be persisted
         to the TracingRecord model for debugging and auditing.
         """
+
         def _save():
             return Record(
                 key=key,
@@ -410,7 +421,11 @@ class Tracer:
                 "key": key,
                 "format": format,
                 "has_data": data is not None,
-                **({"carrier": metadata.get("connection", {}).get("carrier_name")} if metadata else {}),
+                **(
+                    {"carrier": metadata.get("connection", {}).get("carrier_name")}
+                    if metadata
+                    else {}
+                ),
             },
             level="debug",
         )
@@ -419,7 +434,9 @@ class Tracer:
 
     def with_metadata(self, metadata: dict):
         """Create a partial trace function with preset metadata."""
-        return functools.partial(self.trace, metadata=metadata)
+        _partial = functools.partial(self.trace, metadata=metadata)
+        _partial._tracer = self  # type: ignore[attr-defined]  # Attach tracer reference for request_id propagation
+        return _partial
 
     @property
     def records(self) -> typing.List[Record]:
@@ -437,10 +454,20 @@ class Tracer:
 
         # Also set telemetry context for APM correlation
         if data:
-            self._telemetry.set_context("karrio_trace", {
-                "tracer_id": self.id,
-                **data,
-            })
+            self._telemetry.set_context(
+                "karrio_trace",
+                {
+                    "tracer_id": self.id,
+                    **data,
+                },
+            )
+
+    def get_context(self, key: str) -> typing.Any:
+        """Get a value from the tracer context by key."""
+        value = self.inner_context.get(key)
+        if value is None and key == "request_id":
+            return self.id
+        return value
 
     # -------------------------------------------------------------------------
     # Telemetry convenience methods

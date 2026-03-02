@@ -175,9 +175,11 @@ class Mutation:
     def delete_rate_sheet(
         self, info: Info, input: inputs.base.DeleteMutationInput
     ) -> mutations.base.DeleteMutation:
-        return mutations.base.DeleteMutation.mutate(
-            info, model=providers.RateSheet, **input.to_dict()
-        )
+        # Use system queryset directly (not access_by which scopes by created_by user)
+        id = input.to_dict().get("id")
+        instance = providers.RateSheet.objects.get(id=id)
+        instance.delete(keep_parents=True)
+        return mutations.base.DeleteMutation(id=id)
 
     # ─────────────────────────────────────────────────────────────────────────
     # SHARED ZONE MUTATIONS

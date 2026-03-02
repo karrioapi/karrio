@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **payment** | [**Payment**](Payment.md) | The payment details | [optional] [default to undefined]
 **customs** | [**CustomsData**](CustomsData.md) | The customs details.&lt;br/&gt;         **Note that this is required for the shipment of an international Dutiable parcel.**          | [optional] [default to undefined]
 **reference** | **string** | The shipment reference | [optional] [default to undefined]
+**order_id** | **string** | The order identifier associated with this shipment | [optional] [default to undefined]
 **label_type** | **string** | The shipment label file type. | [optional] [default to LabelTypeEnum_Pdf]
 **is_return** | **boolean** | Indicates whether this shipment is a return shipment. When true, addresses are auto-swapped and the request is routed to the carrier\&#39;s return shipment API. | [optional] [default to false]
 **service** | **string** | **Specify a service to Buy a label in one call without rating.** | [optional] [default to undefined]
@@ -36,6 +37,7 @@ const instance: ShipmentData = {
     payment,
     customs,
     reference,
+    order_id,
     label_type,
     is_return,
     service,

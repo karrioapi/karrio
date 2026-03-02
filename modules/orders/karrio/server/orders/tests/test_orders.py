@@ -660,6 +660,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                 }
             ],
             "reference": None,
+            "order_id": "1073459962",
             "return_address": None,
             "is_return": False,
             "label_type": "PDF",
@@ -938,6 +939,7 @@ FULFILLED_ORDER_RESPONSE = {
                 }
             ],
             "reference": None,
+            "order_id": "1073459962",
             "return_address": None,
             "is_return": False,
             "label_type": "PDF",
@@ -1195,6 +1197,7 @@ PARTIAL_ORDER_RESPONSE = {
                 }
             ],
             "reference": None,
+            "order_id": "1073459962",
             "return_address": None,
             "is_return": False,
             "label_type": "PDF",

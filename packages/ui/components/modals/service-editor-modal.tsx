@@ -332,7 +332,7 @@ export const ServiceEditorModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl max-h-[90vh] p-0 flex flex-col">
+      <DialogContent className="max-w-xl h-[85vh] p-0 flex flex-col">
         {/* Header */}
         <DialogHeader className="px-4 py-3 border-b bg-background shrink-0">
           <DialogTitle className="text-base">

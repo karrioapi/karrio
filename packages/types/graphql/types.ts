@@ -669,7 +669,7 @@ export interface get_shipment_shipment {
   tracking_url: string | null;
   tracker_id: string | null;
   test_mode: boolean;
-  is_return: boolean;
+  is_return: boolean | null;
   service: string | null;
   reference: string | null;
   customs: get_shipment_shipment_customs | null;
@@ -972,7 +972,7 @@ export interface get_shipments_shipments_edges_node {
   tracking_url: string | null;
   tracker_id: string | null;
   test_mode: boolean;
-  is_return: boolean;
+  is_return: boolean | null;
   service: string | null;
   reference: string | null;
   customs: get_shipments_shipments_edges_node_customs | null;
@@ -3041,7 +3041,7 @@ export interface get_order_order_shipments {
   invoice_url: string | null;
   tracking_url: string | null;
   test_mode: boolean;
-  is_return: boolean;
+  is_return: boolean | null;
   service: string | null;
   reference: string | null;
   customs: get_order_order_shipments_customs | null;
@@ -3546,7 +3546,7 @@ export interface get_orders_orders_edges_node_shipments {
   invoice_url: string | null;
   tracking_url: string | null;
   test_mode: boolean;
-  is_return: boolean;
+  is_return: boolean | null;
   service: string | null;
   reference: string | null;
   customs: get_orders_orders_edges_node_shipments_customs | null;
@@ -6396,6 +6396,7 @@ export interface ShipmentFilter {
   created_before?: string | null;
   carrier_name?: string[] | null;
   reference?: string | null;
+  order_id?: string | null;
   service?: string[] | null;
   status?: ShipmentStatusEnum[] | null;
   option_key?: string | null;
@@ -6424,6 +6425,7 @@ export interface PartialShipmentMutationInput {
   metadata?: any | null;
   options?: any | null;
   reference?: string | null;
+  order_id?: string | null;
 }
 
 // null
@@ -6789,6 +6791,7 @@ export interface CreateRateSheetMutationInput {
   carriers?: string[] | null;
   origin_countries?: string[] | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -6818,6 +6821,7 @@ export interface CreateServiceLevelInput {
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -6877,6 +6881,7 @@ export interface ServiceRateInput {
   max_weight?: number | null;
   transit_days?: number | null;
   transit_time?: number | null;
+  meta?: any | null;
 }
 
 // null
@@ -6891,6 +6896,7 @@ export interface UpdateRateSheetMutationInput {
   origin_countries?: string[] | null;
   remove_missing_services?: boolean | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -6921,6 +6927,7 @@ export interface UpdateServiceLevelInput {
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -6984,6 +6991,7 @@ export interface UpdateServiceRateMutationInput {
   max_weight?: number | null;
   transit_days?: number | null;
   transit_time?: number | null;
+  meta?: any | null;
 }
 
 // null
@@ -7147,6 +7155,7 @@ export interface ManifestFilter {
   created_after?: any | null;
   created_before?: any | null;
   carrier_name?: string[] | null;
+  request_id?: string | null;
 }
 
 // null

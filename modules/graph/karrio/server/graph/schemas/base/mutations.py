@@ -854,7 +854,7 @@ class UpdateServiceRateMutation(utils.BaseMutation):
 
         # Build the rate update dict from input fields
         rate_data = {}
-        rate_fields = ["rate", "cost", "min_weight", "max_weight", "transit_days", "transit_time"]
+        rate_fields = ["rate", "cost", "min_weight", "max_weight", "transit_days", "transit_time", "meta"]
         for field in rate_fields:
             if field in input and not utils.is_unset(input[field]):
                 rate_data[field] = input[field]

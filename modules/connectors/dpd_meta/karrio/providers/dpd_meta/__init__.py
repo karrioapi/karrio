@@ -1,4 +1,4 @@
-"""Karrio DPD Group provider imports."""
+"""Karrio DPD Global provider imports."""
 from karrio.providers.dpd_meta.utils import Settings
 from karrio.providers.dpd_meta.shipment import (
     parse_shipment_response,

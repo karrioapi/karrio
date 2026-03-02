@@ -1,4 +1,5 @@
 import unittest
+import uuid
 from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
@@ -21,10 +22,14 @@ class TestUPSTracking(unittest.TestCase):
         karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
+        headers = http_mock.call_args[1]["headers"]
         self.assertEqual(
             url,
             f"{gateway.settings.server_url}/api/track/v1/details/{self.TrackingRequest.tracking_numbers[0]}?locale=en_US&returnSignature=true",
         )
+        self.assertEqual(headers["transactionSrc"], "karrio-prod")
+        self.assertTrue(headers["transId"])
+        uuid.UUID(headers["transId"])
 
     def test_tracking_auth_error_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:

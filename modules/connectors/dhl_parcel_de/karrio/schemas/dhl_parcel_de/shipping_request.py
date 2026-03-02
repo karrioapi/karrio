@@ -128,6 +128,8 @@ class ServicesType:
     parcelOutletRouting: typing.Optional[str] = None
     dhlRetoure: typing.Optional[DhlRetoureType] = jstruct.JStruct[DhlRetoureType]
     postalDeliveryDutyPaid: typing.Optional[bool] = None
+    economy: typing.Optional[bool] = None
+    goGreenPlus: typing.Optional[bool] = None
 
 
 @attr.s(auto_attribs=True)

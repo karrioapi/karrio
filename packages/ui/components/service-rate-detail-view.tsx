@@ -146,6 +146,7 @@ interface ServiceRateDetailViewProps {
   onAddMissingRange?: (minWeight: number, maxWeight: number) => void;
   weightRangePresets?: { min_weight: number; max_weight: number }[];
   onAddFromPreset?: (minWeight: number, maxWeight: number) => void;
+  onEditRate?: (serviceRate: ServiceRate) => void;
 }
 
 export function ServiceRateDetailView({
@@ -169,6 +170,7 @@ export function ServiceRateDetailView({
   onAddMissingRange,
   weightRangePresets,
   onAddFromPreset,
+  onEditRate,
 }: ServiceRateDetailViewProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [zonePopoverOpen, setZonePopoverOpen] = useState(false);
@@ -495,22 +497,45 @@ export function ServiceRateDetailView({
                                 }
                               }}
                             />
-                            {onDeleteRate && hasValue && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onDeleteRate(
-                                    service.id,
-                                    zone.id,
-                                    wr.min_weight,
-                                    wr.max_weight
-                                  );
-                                }}
-                                className="absolute inset-y-0 right-px my-auto h-4 w-4 flex items-center justify-center opacity-0 group-hover/cell:opacity-100 text-muted-foreground hover:text-destructive transition-opacity z-10"
-                                title="Delete rate"
-                              >
-                                <Cross2Icon className="h-2.5 w-2.5" />
-                              </button>
+                            {hasValue && (
+                              <div className="absolute inset-y-0 right-px my-auto h-4 flex items-center gap-0 opacity-0 group-hover/cell:opacity-100 transition-opacity z-10">
+                                {onEditRate && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const sr = serviceRates.find(
+                                        (r) =>
+                                          r.service_id === service.id &&
+                                          r.zone_id === zone.id &&
+                                          r.min_weight === wr.min_weight &&
+                                          r.max_weight === wr.max_weight
+                                      );
+                                      if (sr) onEditRate(sr);
+                                    }}
+                                    className="h-4 w-4 flex items-center justify-center text-muted-foreground hover:text-primary"
+                                    title="Edit rate details"
+                                  >
+                                    <Pencil1Icon className="h-2.5 w-2.5" />
+                                  </button>
+                                )}
+                                {onDeleteRate && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onDeleteRate(
+                                        service.id,
+                                        zone.id,
+                                        wr.min_weight,
+                                        wr.max_weight
+                                      );
+                                    }}
+                                    className="h-4 w-4 flex items-center justify-center text-muted-foreground hover:text-destructive"
+                                    title="Delete rate"
+                                  >
+                                    <Cross2Icon className="h-2.5 w-2.5" />
+                                  </button>
+                                )}
+                              </div>
                             )}
                           </div>
                         );

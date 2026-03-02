@@ -772,6 +772,7 @@ class Shipment(core.OwnedEntity):
         "metadata",
         "created_by",
         "reference",
+        "order_id",
         "applied_fees",  # Accounting: addons + surcharge COGS values
         # Embedded JSON fields
         "shipper",
@@ -834,6 +835,13 @@ class Shipment(core.OwnedEntity):
     tracking_url = models.TextField(max_length=None, null=True, blank=True)
     test_mode = models.BooleanField(null=False)
     reference = models.CharField(max_length=100, null=True, blank=True)
+    order_id = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text="The order identifier associated with this shipment",
+    )
     is_return = models.BooleanField(
         null=True,
         default=False,

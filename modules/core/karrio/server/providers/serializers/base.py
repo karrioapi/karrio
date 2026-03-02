@@ -291,6 +291,10 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
         allow_null=True,
         help_text="Carrier connection custom config.",
     )
+    credentials = serializers.PlainDictField(
+        source='get_credentials',
+        help_text="Carrier API credentials"
+    )
 
     @transaction.atomic
     @utils.error_wrapper
@@ -312,14 +316,17 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
         validated_data.update(
             capabilities=[_ for _ in capabilities if _ in default_capabilities]
         )
-        validated_data.update(
-            credentials=CONNECTION_SERIALIZERS[carrier_name]
-            .map(data=validated_data["credentials"])
-            .data
-        )
+        # Handle credentials - source='get_credentials' puts it in validated_data as 'get_credentials'
+        credentials_data = validated_data.pop("get_credentials", validated_data.pop("credentials", {}))
         validated_data.setdefault("config", {})
 
         instance = super().create(validated_data)
+
+        if credentials_data:
+            mapped_credentials = CONNECTION_SERIALIZERS[carrier_name].map(
+                data=credentials_data
+            ).data
+            instance.set_credentials(mapped_credentials)
 
         return instance
 
@@ -338,17 +345,43 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
                 _ for _ in capabilities if _ in default_capabilities
             ]
 
+        # Handle credentials - source='get_credentials' puts it in validated_data as 'get_credentials'
+        if "get_credentials" in validated_data:
+            validated_data["credentials"] = validated_data.pop("get_credentials")
+
         if "credentials" in validated_data:
-            data = serializers.process_dictionaries_mutations(
-                ["credentials"],
-                validated_data,
-                instance,
-            )
-            validated_data.update(
-                credentials=CONNECTION_SERIALIZERS[instance.carrier_code]
-                .map(data=data["credentials"])
-                .data
-            )
+            # Get decrypted credentials for merging (not the JSONField which lacks encrypted fields)
+            existing_decrypted_creds = instance.get_credentials()
+            new_creds = validated_data.get("credentials", {}) or {}
+            
+            # Get sensitive fields to handle empty strings properly
+            sensitive_fields = instance.get_sensitive_fields()
+
+            # Merge new credentials with existing, but preserve existing values for sensitive fields
+            # if new value is empty string or None (allows partial updates)
+            merged_credentials = existing_decrypted_creds.copy()
+            for key, value in new_creds.items():
+                if key in sensitive_fields:
+                    # For sensitive fields, only update if new value is non-empty
+                    if value and str(value).strip():
+                        merged_credentials[key] = value
+                    # If empty/None, preserve existing value (don't update)
+                else:
+                    # For non-sensitive fields, update normally (empty is valid)
+                    merged_credentials[key] = value
+
+            # Remove credentials from validated_data - we'll set it separately
+            validated_data.pop("credentials")
+            
+            # Map credentials using carrier serializer
+            mapped_credentials = CONNECTION_SERIALIZERS[instance.carrier_code].map(
+                data=merged_credentials
+            ).data
+            
+            # Use encryption-aware method to set credentials
+            instance.set_credentials(mapped_credentials)
+            # Refresh instance to get updated credentials JSONField
+            instance.refresh_from_db()
 
         if "config" in validated_data:
             data = serializers.process_dictionaries_mutations(
@@ -358,7 +391,10 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
             )
             validated_data["config"] = data["config"]
 
-        return super().update(instance, validated_data, **kwargs)
+        # Update other fields via super().update()
+        instance = super().update(instance, validated_data, **kwargs)
+        
+        return instance
 
 
 @serializers.owned_model_serializer

@@ -1,4 +1,4 @@
-"""DPD Group carrier tests fixtures."""
+"""DPD Global carrier tests fixtures."""
 
 import datetime
 import karrio.sdk as karrio

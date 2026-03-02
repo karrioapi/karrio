@@ -2642,3 +2642,515 @@ UPDATE_SERVICE_SURCHARGE_IDS_RESPONSE = {
         }
     }
 }
+
+
+class TestDeleteServiceRateGraphQL(GraphTestCase):
+    """Tests for delete_service_rate GraphQL mutation."""
+
+    def setUp(self):
+        super().setUp()
+
+        self.rate_sheet = providers.RateSheet.objects.create(
+            name="Delete Rate Test Sheet",
+            carrier_name="ups",
+            slug="delete_rate_test_sheet",
+            zones=[
+                {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
+                {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
+            ],
+            created_by=self.user,
+        )
+
+        self.service = providers.ServiceLevel.objects.create(
+            service_name="Test Service",
+            service_code="test_service",
+            carrier_service_code="TEST",
+            currency="USD",
+            zone_ids=["zone_1", "zone_2"],
+            created_by=self.user,
+        )
+        self.rate_sheet.services.add(self.service)
+
+        self.rate_sheet.service_rates = [
+            {"service_id": self.service.id, "zone_id": "zone_1", "rate": 10.00, "cost": 8.00},
+            {"service_id": self.service.id, "zone_id": "zone_2", "rate": 15.00, "cost": 12.00},
+            {"service_id": self.service.id, "zone_id": "zone_1", "rate": 20.00, "cost": 16.00, "min_weight": 0.0, "max_weight": 5.0},
+            {"service_id": self.service.id, "zone_id": "zone_1", "rate": 30.00, "cost": 24.00, "min_weight": 5.0, "max_weight": 10.0},
+        ]
+        self.rate_sheet.save()
+
+    def test_delete_service_rate_basic(self):
+        """Test deleting a service rate via GraphQL mutation."""
+        response = self.query(
+            """
+            mutation delete_rate($data: DeleteServiceRateMutationInput!) {
+              delete_service_rate(input: $data) {
+                rate_sheet {
+                  service_rates {
+                    service_id
+                    zone_id
+                    rate
+                  }
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            """,
+            operation_name="delete_rate",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "service_id": self.service.id,
+                    "zone_id": "zone_2",
+                },
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        service_rates = response.data["data"]["delete_service_rate"]["rate_sheet"]["service_rates"]
+        # zone_2 rate (without weight) should be removed, others remain
+        zone_2_rates = [r for r in service_rates if r["zone_id"] == "zone_2"]
+        self.assertEqual(len(zone_2_rates), 0)
+
+    def test_delete_service_rate_with_weight_range(self):
+        """Test deleting a service rate by weight range via GraphQL mutation."""
+        response = self.query(
+            """
+            mutation delete_rate($data: DeleteServiceRateMutationInput!) {
+              delete_service_rate(input: $data) {
+                rate_sheet {
+                  service_rates {
+                    service_id
+                    zone_id
+                    rate
+                    min_weight
+                    max_weight
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="delete_rate",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "service_id": self.service.id,
+                    "zone_id": "zone_1",
+                    "min_weight": 0,
+                    "max_weight": 5,
+                },
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        service_rates = response.data["data"]["delete_service_rate"]["rate_sheet"]["service_rates"]
+        # The 0-5 rate for zone_1 should be removed
+        zone_1_0_5 = [
+            r for r in service_rates
+            if r["zone_id"] == "zone_1" and r.get("min_weight") == 0 and r.get("max_weight") == 5
+        ]
+        self.assertEqual(len(zone_1_0_5), 0)
+        # Other zone_1 rates should remain
+        zone_1_remaining = [r for r in service_rates if r["zone_id"] == "zone_1"]
+        self.assertGreaterEqual(len(zone_1_remaining), 1)
+
+    def test_delete_service_rate_verify_query_after(self):
+        """Test that querying after delete_service_rate reflects the change."""
+        # Delete a rate
+        self.query(
+            """
+            mutation delete_rate($data: DeleteServiceRateMutationInput!) {
+              delete_service_rate(input: $data) {
+                rate_sheet { id }
+              }
+            }
+            """,
+            operation_name="delete_rate",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "service_id": self.service.id,
+                    "zone_id": "zone_2",
+                },
+            },
+        )
+
+        # Query and verify
+        response = self.query(
+            """
+            query get_rate_sheet($id: String!) {
+              rate_sheet(id: $id) {
+                service_rates {
+                  zone_id
+                  rate
+                }
+              }
+            }
+            """,
+            operation_name="get_rate_sheet",
+            variables={"id": self.rate_sheet.id},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        service_rates = response.data["data"]["rate_sheet"]["service_rates"]
+        zone_ids = [r["zone_id"] for r in service_rates]
+        self.assertNotIn("zone_2", [z for z, r in zip(zone_ids, service_rates) if r.get("rate") == 15.0])
+
+
+class TestBatchUpdateSurchargesGraphQL(GraphTestCase):
+    """Tests for batch_update_surcharges GraphQL mutation."""
+
+    def setUp(self):
+        super().setUp()
+
+        self.rate_sheet = providers.RateSheet.objects.create(
+            name="Batch Surcharge Test Sheet",
+            carrier_name="ups",
+            slug="batch_surcharge_test_sheet",
+            surcharges=[
+                {"id": "surch_fuel", "name": "Fuel", "amount": 10.0, "surcharge_type": "percentage", "active": True},
+                {"id": "surch_handling", "name": "Handling", "amount": 5.0, "surcharge_type": "fixed", "active": True},
+            ],
+            created_by=self.user,
+        )
+
+    def test_batch_update_surcharges(self):
+        """Test batch updating multiple surcharges at once."""
+        response = self.query(
+            """
+            mutation batch_surcharges($data: BatchUpdateSurchargesMutationInput!) {
+              batch_update_surcharges(input: $data) {
+                rate_sheet {
+                  surcharges {
+                    id
+                    name
+                    amount
+                    surcharge_type
+                  }
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            """,
+            operation_name="batch_surcharges",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "surcharges": [
+                        {
+                            "id": "surch_fuel",
+                            "name": "Updated Fuel",
+                            "amount": 12.0,
+                            "surcharge_type": "percentage",
+                        },
+                        {
+                            "id": "surch_handling",
+                            "name": "Updated Handling",
+                            "amount": 7.0,
+                            "surcharge_type": "fixed",
+                        },
+                        {
+                            "id": "surch_new",
+                            "name": "New Surcharge",
+                            "amount": 3.0,
+                            "surcharge_type": "fixed",
+                        },
+                    ],
+                },
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        surcharges = response.data["data"]["batch_update_surcharges"]["rate_sheet"]["surcharges"]
+        self.assertEqual(len(surcharges), 3)
+        names = [s["name"] for s in surcharges]
+        self.assertIn("Updated Fuel", names)
+        self.assertIn("Updated Handling", names)
+        self.assertIn("New Surcharge", names)
+
+    def test_batch_update_surcharges_verify_query(self):
+        """Test querying after batch update to verify state persisted."""
+        self.query(
+            """
+            mutation batch_surcharges($data: BatchUpdateSurchargesMutationInput!) {
+              batch_update_surcharges(input: $data) {
+                rate_sheet { id }
+              }
+            }
+            """,
+            operation_name="batch_surcharges",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "surcharges": [
+                        {"id": "surch_fuel", "name": "Fuel V2", "amount": 20.0, "surcharge_type": "percentage"},
+                    ],
+                },
+            },
+        )
+
+        response = self.query(
+            """
+            query get_rate_sheet($id: String!) {
+              rate_sheet(id: $id) {
+                surcharges {
+                  id
+                  name
+                  amount
+                }
+              }
+            }
+            """,
+            operation_name="get_rate_sheet",
+            variables={"id": self.rate_sheet.id},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        surcharges = response.data["data"]["rate_sheet"]["surcharges"]
+        self.assertEqual(len(surcharges), 2)
+
+
+class TestWeightRangeGraphQLMutations(GraphTestCase):
+    """Tests for add_weight_range and remove_weight_range GraphQL mutations."""
+
+    def setUp(self):
+        super().setUp()
+
+        self.rate_sheet = providers.RateSheet.objects.create(
+            name="Weight Range GQL Test",
+            carrier_name="ups",
+            slug="wr_gql_test",
+            zones=[
+                {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
+                {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
+            ],
+            service_rates=[],
+            created_by=self.user,
+        )
+
+        self.service = providers.ServiceLevel.objects.create(
+            service_name="Test Service",
+            service_code="test_service",
+            carrier_service_code="TEST",
+            currency="USD",
+            zone_ids=["zone_1", "zone_2"],
+            created_by=self.user,
+        )
+        self.rate_sheet.services.add(self.service)
+
+    def test_add_weight_range(self):
+        """Test adding a weight range via GraphQL creates entries for all service+zone combos."""
+        response = self.query(
+            """
+            mutation add_wr($data: AddWeightRangeMutationInput!) {
+              add_weight_range(input: $data) {
+                rate_sheet {
+                  service_rates {
+                    service_id
+                    zone_id
+                    rate
+                    min_weight
+                    max_weight
+                  }
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            """,
+            operation_name="add_wr",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "min_weight": 0,
+                    "max_weight": 5,
+                },
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        service_rates = response.data["data"]["add_weight_range"]["rate_sheet"]["service_rates"]
+        # Should create entries for each service+zone combo
+        self.assertEqual(len(service_rates), 2)  # 1 service x 2 zones
+        for rate in service_rates:
+            self.assertEqual(rate["min_weight"], 0)
+            self.assertEqual(rate["max_weight"], 5)
+            self.assertEqual(rate["rate"], 0)  # New entries default to rate=0
+
+    def test_add_multiple_weight_ranges(self):
+        """Test adding multiple weight ranges sequentially."""
+        for min_w, max_w in [(0, 5), (5, 10), (10, 20)]:
+            response = self.query(
+                """
+                mutation add_wr($data: AddWeightRangeMutationInput!) {
+                  add_weight_range(input: $data) {
+                    rate_sheet {
+                      service_rates {
+                        min_weight
+                        max_weight
+                      }
+                    }
+                  }
+                }
+                """,
+                operation_name="add_wr",
+                variables={
+                    "data": {
+                        "rate_sheet_id": self.rate_sheet.id,
+                        "min_weight": min_w,
+                        "max_weight": max_w,
+                    },
+                },
+            )
+            print(response.data)
+            self.assertResponseNoErrors(response)
+
+        # Verify total: 3 ranges x 2 zones x 1 service = 6
+        self.rate_sheet.refresh_from_db()
+        self.assertEqual(len(self.rate_sheet.service_rates), 6)
+
+    def test_remove_weight_range(self):
+        """Test removing a weight range via GraphQL removes from all services."""
+        # First add a weight range
+        self.rate_sheet.add_weight_range(min_weight=0, max_weight=5)
+        self.rate_sheet.add_weight_range(min_weight=5, max_weight=10)
+        self.rate_sheet.refresh_from_db()
+        total_before = len(self.rate_sheet.service_rates)
+
+        response = self.query(
+            """
+            mutation remove_wr($data: RemoveWeightRangeMutationInput!) {
+              remove_weight_range(input: $data) {
+                rate_sheet {
+                  service_rates {
+                    service_id
+                    zone_id
+                    min_weight
+                    max_weight
+                  }
+                }
+                errors {
+                  field
+                  messages
+                }
+              }
+            }
+            """,
+            operation_name="remove_wr",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "min_weight": 0,
+                    "max_weight": 5,
+                },
+            },
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        service_rates = response.data["data"]["remove_weight_range"]["rate_sheet"]["service_rates"]
+        # Only the 5-10 range should remain (2 entries for 1 service x 2 zones)
+        self.assertEqual(len(service_rates), 2)
+        for rate in service_rates:
+            self.assertEqual(rate["min_weight"], 5)
+            self.assertEqual(rate["max_weight"], 10)
+
+    def test_add_weight_range_then_query(self):
+        """Test that query reflects weight range additions."""
+        self.query(
+            """
+            mutation add_wr($data: AddWeightRangeMutationInput!) {
+              add_weight_range(input: $data) {
+                rate_sheet { id }
+              }
+            }
+            """,
+            operation_name="add_wr",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "min_weight": 0,
+                    "max_weight": 10,
+                },
+            },
+        )
+
+        response = self.query(
+            """
+            query get_rate_sheet($id: String!) {
+              rate_sheet(id: $id) {
+                service_rates {
+                  service_id
+                  zone_id
+                  rate
+                  min_weight
+                  max_weight
+                }
+              }
+            }
+            """,
+            operation_name="get_rate_sheet",
+            variables={"id": self.rate_sheet.id},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        service_rates = response.data["data"]["rate_sheet"]["service_rates"]
+        self.assertEqual(len(service_rates), 2)
+
+    def test_remove_weight_range_then_query(self):
+        """Test that query reflects weight range removal."""
+        self.rate_sheet.add_weight_range(min_weight=0, max_weight=5)
+        self.rate_sheet.refresh_from_db()
+
+        self.query(
+            """
+            mutation remove_wr($data: RemoveWeightRangeMutationInput!) {
+              remove_weight_range(input: $data) {
+                rate_sheet { id }
+              }
+            }
+            """,
+            operation_name="remove_wr",
+            variables={
+                "data": {
+                    "rate_sheet_id": self.rate_sheet.id,
+                    "min_weight": 0,
+                    "max_weight": 5,
+                },
+            },
+        )
+
+        response = self.query(
+            """
+            query get_rate_sheet($id: String!) {
+              rate_sheet(id: $id) {
+                service_rates {
+                  service_id
+                  zone_id
+                }
+              }
+            }
+            """,
+            operation_name="get_rate_sheet",
+            variables={"id": self.rate_sheet.id},
+        )
+
+        print(response.data)
+        self.assertResponseNoErrors(response)
+        service_rates = response.data["data"]["rate_sheet"]["service_rates"]
+        self.assertEqual(len(service_rates), 0)

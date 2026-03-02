@@ -18,7 +18,7 @@ Please read `AGENTS.md` thoroughly before making any changes. It contains:
 
 ## Claude-Specific Reminders
 
-- When writing Django tests, always add `print(response)` before assertions for debugging
+- When debugging failing Django tests, add `print(response)` before assertions to see the actual response—remove print statements once tests pass
 - Favor functional, declarative style over imperative loops
 - Write code as if the same person authored the entire codebase
 - Read referenced files first, create a plan, then implement step by step

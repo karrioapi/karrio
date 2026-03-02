@@ -30,7 +30,7 @@ class PaymentMode(lib.StrEnum):
 class WeightUnit(lib.StrEnum):
     """SmartKargo weight units"""
 
-    KG = "KG"   # Kilograms
+    KG = "KG"  # Kilograms
     LBR = "LBR"  # Pounds
 
 
@@ -44,26 +44,30 @@ class DimensionUnit(lib.StrEnum):
 class ShippingService(lib.StrEnum):
     """SmartKargo shipping services"""
 
-    smartkargo_express = "EXP"      # eCommerce Express
-    smartkargo_priority = "EPR"     # eCommerce Priority
-    smartkargo_standard = "EST"     # eCommerce Standard
-    smartkargo_economy = "ECL"      # eCommerce Economy (Five Days)
+    smartkargo_express = "EXP"  # eCommerce Express
+    smartkargo_priority = "EPR"  # eCommerce Priority
+    smartkargo_standard = "EST"  # eCommerce Standard
+    smartkargo_economy = "ECL"  # eCommerce Economy (Five Days)
 
 
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    smartkargo_insurance = lib.OptionEnum("insuranceRequired", bool)
-    smartkargo_declared_value = lib.OptionEnum("declaredValue", float)
+    smartkargo_insurance = lib.OptionEnum("hasInsurance", bool)
+    smartkargo_declared_value = lib.OptionEnum("insuranceAmmount", float)
     smartkargo_delivery_type = lib.OptionEnum("deliveryType", str)
     smartkargo_channel = lib.OptionEnum("channel", str)
     smartkargo_label_ref2 = lib.OptionEnum("labelRef2", str)
     smartkargo_special_handling = lib.OptionEnum("specialHandlingType", str)
     smartkargo_commodity_type = lib.OptionEnum("commodityType", str)
+    smartkargo_incoterm = lib.OptionEnum("incoterm", str)
+    smartkargo_additional_info_01 = lib.OptionEnum("additionalInfo01", str)
+    smartkargo_additional_info_02 = lib.OptionEnum("additionalInfo02", str)
+    smartkargo_additional_info_03 = lib.OptionEnum("additionalInfo03", str)
+    smartkargo_additional_info_04 = lib.OptionEnum("additionalInfo04", str)
 
     """ Unified Option type mapping """
-    insurance = smartkargo_insurance
-    declared_value = smartkargo_declared_value
+    insurance = smartkargo_declared_value
 
 
 def shipping_options_initializer(
@@ -111,6 +115,11 @@ class TrackingIncidentReason(lib.Enum):
 class ConnectionConfig(lib.Enum):
     """SmartKargo connection configuration options."""
 
+    primary_id = lib.OptionEnum("primary_id", str)
+    site_id = lib.OptionEnum("site_id", str)
+    additional_id = lib.OptionEnum("additional_id", str)
+    origin = lib.OptionEnum("origin", str)
+    destination = lib.OptionEnum("destination", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
-    label_type = lib.OptionEnum("label_type", str)  # PDF or ZPL
+    # label_type = lib.OptionEnum("label_type", str)  # PDF or ZPL

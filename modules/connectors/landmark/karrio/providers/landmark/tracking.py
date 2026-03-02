@@ -55,54 +55,67 @@ def _extract_details(
     )
     package = lib.find_element("Package", data, landmark_res.PackageType, first=True)
 
-    # Transform events to TrackingEvent models
-    tracking_events = lib.sort_events(
-        [
-            models.TrackingEvent(
-                date=lib.fdate(event.DateTime, try_formats=DATETIME_FORMATS),
-                time=lib.flocaltime(
-                    event.DateTime,
-                    output_format="%I:%M %p",
-                    try_formats=DATETIME_FORMATS,
+    # Build events in carrier order (preserves multi-leg sequencing)
+    tracking_events = [
+        models.TrackingEvent(
+            date=lib.fdate(event.DateTime, try_formats=DATETIME_FORMATS),
+            time=lib.flocaltime(
+                event.DateTime,
+                output_format="%I:%M %p",
+                try_formats=DATETIME_FORMATS,
+            ),
+            description=event.Status,
+            code=event.EventCode,
+            location=event.Location,
+            timestamp=lib.fiso_timestamp(
+                event.DateTime,
+                try_formats=DATETIME_FORMATS,
+            ),
+            status=next(
+                (
+                    s.name
+                    for s in list(provider_units.TrackingStatus)
+                    if event.EventCode in s.value
                 ),
-                description=event.Status,
-                code=event.EventCode,
-                location=event.Location,
-                timestamp=lib.fiso_timestamp(
-                    event.DateTime,
-                    try_formats=DATETIME_FORMATS,
+                None,
+            ),
+            reason=next(
+                (
+                    r.name
+                    for r in list(provider_units.TrackingIncidentReason)
+                    if event.EventCode in r.value
                 ),
-                status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.EventCode in s.value
-                    ),
-                    None,
-                ),
-                reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.EventCode in r.value
-                    ),
-                    None,
-                ),
-            )
-            for event in package.Events.Event
-        ]
-    )
+                None,
+            ),
+        )
+        for event in package.Events.Event
+    ]
 
-    # Determine status based on the most recent event
-    latest_event = tracking_events[0] if tracking_events else None
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if latest_event and latest_event.code in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
-    )
+    # Ensure newest-first order (Karrio convention)
+    # Detect carrier order by comparing first and last event timestamps
+    if len(tracking_events) >= 2:
+        first_ts = tracking_events[0].timestamp or ""
+        last_ts = tracking_events[-1].timestamp or ""
+        if first_ts < last_ts:
+            tracking_events = list(reversed(tracking_events))
+
+    # Determine status: terminal statuses (delivered) take priority
+    # regardless of event ordering in multi-leg shipments
+    _delivered_codes = provider_units.TrackingStatus.delivered.value
+    has_delivered = any(e.code in _delivered_codes for e in tracking_events)
+
+    if has_delivered:
+        status = provider_units.TrackingStatus.delivered.name
+    else:
+        latest_event = tracking_events[0] if tracking_events else None
+        status = next(
+            (
+                status.name
+                for status in list(provider_units.TrackingStatus)
+                if latest_event and latest_event.code in status.value
+            ),
+            provider_units.TrackingStatus.in_transit.name,
+        )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,

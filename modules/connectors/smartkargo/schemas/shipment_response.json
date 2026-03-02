@@ -14,6 +14,7 @@
       "packageReference": "2021-06-03-1",
       "prefix": "AXB",
       "airWaybill": "01234567",
+      "barCode": "LASTMILE123456",
       "estimatedDeliveryDate": "2021-07-05T21:00:00",
       "commodityType": "GEN-6501",
       "serviceType": "EST",
@@ -45,6 +46,11 @@
       "totalCharges": 0.00,
       "total": 10.50,
       "totalTax": 1.05,
+      "lastMilestone": null,
+      "eletronicKey": null,
+      "masterAirWaybill": null,
+      "deliveryToken": null,
+      "commercialInvoice": null,
       "otherCharges": [
         {
           "charge": 0.00,
@@ -76,6 +82,8 @@
           "countryId": "US",
           "phoneNumber": "19999999999",
           "email": "test@test.com",
+          "taxId": null,
+          "deliveryInstruction": null,
           "state": "MA"
         },
         {
@@ -91,9 +99,12 @@
           "countryId": "US",
           "phoneNumber": "8888347867",
           "email": "test2@test.com",
+          "taxId": null,
+          "deliveryInstruction": null,
           "state": "CA"
         }
-      ]
+      ],
+      "customItems": []
     }
   ],
   "validations": []

@@ -308,6 +308,7 @@ export const GET_RATE_SHEET = gql`
       carrier_name
       origin_countries
       metadata
+      pricing_config
       zones {
         id
         label
@@ -337,6 +338,7 @@ export const GET_RATE_SHEET = gql`
         max_weight
         transit_days
         transit_time
+        meta
       }
       services {
         id
@@ -361,6 +363,7 @@ export const GET_RATE_SHEET = gql`
         international
         zone_ids
         surcharge_ids
+        pricing_config
         features {
           first_mile
           last_mile
@@ -846,6 +849,7 @@ export const UPDATE_SERVICE_RATE = gql`
           max_weight
           transit_days
           transit_time
+          meta
         }
       }
       errors {
@@ -870,6 +874,7 @@ export const BATCH_UPDATE_SERVICE_RATES = gql`
           max_weight
           transit_days
           transit_time
+          meta
         }
       }
       errors {
@@ -898,6 +903,7 @@ export const ADD_WEIGHT_RANGE = gql`
           max_weight
           transit_days
           transit_time
+          meta
         }
       }
       errors {
@@ -922,6 +928,7 @@ export const REMOVE_WEIGHT_RANGE = gql`
           max_weight
           transit_days
           transit_time
+          meta
         }
       }
       errors {
@@ -946,6 +953,7 @@ export const DELETE_SERVICE_RATE = gql`
           max_weight
           transit_days
           transit_time
+          meta
         }
       }
       errors {
