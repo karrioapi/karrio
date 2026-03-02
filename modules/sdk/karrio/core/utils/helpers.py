@@ -192,7 +192,7 @@ def process_request(
                 "request_id": request_id,
                 "url": urllib.parse.unquote(kwargs.get("url")),
                 **({"data": kwargs.get("data")} if "data" in kwargs else {}),
-                **({"request_headers": redact_headers(_headers)} if _headers else {}),
+                **({"request_headers": _headers} if _headers else {}),
             },
             "request",
         )
@@ -226,8 +226,6 @@ def process_response(
     on_ok: Callable[[Any], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
-    from karrio.core.utils.redaction import redact_headers
-
     if on_ok is not None:
         _response = on_ok(response)
     else:
@@ -236,7 +234,7 @@ def process_response(
 
     if trace:
         _content = _response if isinstance(_response, str) else "undecoded bytes..."
-        _resp_headers = failsafe(lambda: redact_headers(dict(response.headers))) or {}
+        _resp_headers = failsafe(lambda: dict(response.headers)) or {}
         trace(
             {
                 "request_id": request_id,
@@ -255,8 +253,6 @@ def process_error(
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
-    from karrio.core.utils.redaction import redact_headers
-
     logger.error("HTTP request failed", request_id=request_id, error_code=error.code, error_msg=str(error))
 
     if on_error is not None:
@@ -265,7 +261,7 @@ def process_error(
         _error = decode_bytes(error.read())
 
     if trace:
-        _err_headers = failsafe(lambda: redact_headers(dict(error.headers))) or {} if error.headers else {}
+        _err_headers = (failsafe(lambda: dict(error.headers)) or {}) if error.headers else {}
         trace(
             {
                 "request_id": request_id,
