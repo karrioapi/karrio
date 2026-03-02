@@ -166,6 +166,8 @@ def process_request(
     proxy: str = None,
     **kwargs,
 ) -> Request:
+    from karrio.core.utils.redaction import redact_headers
+
     payload: dict[str, bytes] = {}
     if "data" in kwargs:
         raw = kwargs.get("data")
@@ -184,11 +186,13 @@ def process_request(
                 payload = dict(data=str(raw).encode("utf-8"))
 
     if trace:
+        _headers = kwargs.get("headers") or {}
         trace(
             {
                 "request_id": request_id,
                 "url": urllib.parse.unquote(kwargs.get("url")),
                 **({"data": kwargs.get("data")} if "data" in kwargs else {}),
+                **({"request_headers": redact_headers(_headers)} if _headers else {}),
             },
             "request",
         )
@@ -222,6 +226,8 @@ def process_response(
     on_ok: Callable[[Any], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
+    from karrio.core.utils.redaction import redact_headers
+
     if on_ok is not None:
         _response = on_ok(response)
     else:
@@ -230,9 +236,15 @@ def process_response(
 
     if trace:
         _content = _response if isinstance(_response, str) else "undecoded bytes..."
-        trace({"request_id": request_id, "response": _content}, "response")
-
-    # logger.debug(f"Response content:: {_response}")
+        _resp_headers = failsafe(lambda: redact_headers(dict(response.headers))) or {}
+        trace(
+            {
+                "request_id": request_id,
+                "response": _content,
+                **({"response_headers": _resp_headers} if _resp_headers else {}),
+            },
+            "response",
+        )
 
     return _response
 
@@ -243,6 +255,8 @@ def process_error(
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
+    from karrio.core.utils.redaction import redact_headers
+
     logger.error("HTTP request failed", request_id=request_id, error_code=error.code, error_msg=str(error))
 
     if on_error is not None:
@@ -251,7 +265,15 @@ def process_error(
         _error = decode_bytes(error.read())
 
     if trace:
-        trace({"request_id": request_id, "error": _error}, "error")
+        _err_headers = failsafe(lambda: redact_headers(dict(error.headers))) or {} if error.headers else {}
+        trace(
+            {
+                "request_id": request_id,
+                "error": _error,
+                **({"response_headers": _err_headers} if _err_headers else {}),
+            },
+            "error",
+        )
 
     logger.debug("HTTP error details", request_id=request_id, error=str(error))
 
