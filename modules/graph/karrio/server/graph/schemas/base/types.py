@@ -719,6 +719,26 @@ class TracingRecordType:
         except:
             return self.meta
 
+    @strawberry.field
+    def request_headers(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
+        """HTTP request headers captured when this trace record was created.
+        Sensitive values (Authorization, X-Api-Key, etc.) are redacted as 'val_xxx'."""
+        try:
+            record = lib.to_dict(self.record) if isinstance(self.record, str) else (self.record or {})
+            return record.get("request_headers") or None
+        except Exception:
+            return None
+
+    @strawberry.field
+    def response_headers(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
+        """HTTP response headers received from the carrier API.
+        Sensitive values are redacted as 'val_xxx'."""
+        try:
+            record = lib.to_dict(self.record) if isinstance(self.record, str) else (self.record or {})
+            return record.get("response_headers") or None
+        except Exception:
+            return None
+
     @staticmethod
     @utils.authentication_required
     def resolve(info: Info, id: str) -> typing.Optional["TracingRecordType"]:
