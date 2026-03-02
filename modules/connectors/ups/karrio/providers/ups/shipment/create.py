@@ -267,7 +267,7 @@ def shipment_request(
                     CompanyDisplayableName=shipper.company_name,
                     TaxIdentificationNumber=shipper.federal_tax_id,
                     Phone=ups.ShipToPhoneType(
-                        Number=shipper.phone_number or "000-000-0000",
+                        Number=lib.text(shipper.phone_number, max=15) or "000-000-0000",
                     ),
                     ShipperNumber=settings.account_number,
                     FaxNumber=None,
@@ -291,7 +291,7 @@ def shipment_request(
                     CompanyDisplayableName=recipient.company_name,
                     TaxIdentificationNumber=recipient.federal_tax_id,
                     Phone=ups.ShipToPhoneType(
-                        Number=recipient.phone_number or "000-000-0000",
+                        Number=lib.text(recipient.phone_number, max=15) or "000-000-0000",
                         Extension=None,
                     ),
                     FaxNumber=None,
@@ -319,7 +319,7 @@ def shipment_request(
                     TaxIdentificationNumber=return_address.tax_id,
                     TaxIDType=None,
                     Phone=ups.ShipFromPhoneType(
-                        Number=return_address.phone_number or "000-000-0000",
+                        Number=lib.text(return_address.phone_number, max=15) or "000-000-0000",
                     ),
                     ShipFromAccountNumber=None,
                     FaxNumber=None,
@@ -556,7 +556,7 @@ def shipment_request(
                                             AttentionName=recipient.contact,
                                             TaxIdentificationNumber=recipient.tax_id,
                                             Phone=ups.ShipToPhoneType(
-                                                Number=recipient.phone_number
+                                                Number=lib.text(recipient.phone_number, max=15)
                                                 or "000-000-0000"
                                             ),
                                             Address=ups.AlternateDeliveryAddressAddressType(
