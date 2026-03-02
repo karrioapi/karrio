@@ -726,7 +726,7 @@ class TracingRecordType:
         try:
             record = lib.to_dict(self.record) if isinstance(self.record, str) else (self.record or {})
             return record.get("request_headers") or None
-        except Exception:
+        except (TypeError, ValueError, AttributeError):
             return None
 
     @strawberry.field
@@ -736,7 +736,7 @@ class TracingRecordType:
         try:
             record = lib.to_dict(self.record) if isinstance(self.record, str) else (self.record or {})
             return record.get("response_headers") or None
-        except Exception:
+        except (TypeError, ValueError, AttributeError):
             return None
 
     @staticmethod

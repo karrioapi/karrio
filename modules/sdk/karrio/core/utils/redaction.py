@@ -147,7 +147,7 @@ def redact_query_params(params: typing.Union[str, dict, None]) -> typing.Union[s
                 for k, v in parsed.items()
             }
             return urllib.parse.urlencode(redacted, doseq=True)
-        except Exception:
+        except (ValueError, TypeError):
             return params
 
     return params
