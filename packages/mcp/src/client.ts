@@ -129,4 +129,59 @@ export class KarrioClient {
   async createManifest(payload: Record<string, unknown>): Promise<any> {
     return this.request("POST", "/v1/manifests", { body: payload });
   }
+
+  // GraphQL
+  async queryGraphQL(
+    query: string,
+    variables?: Record<string, unknown>,
+  ): Promise<any> {
+    return this.request("POST", "/graphql", {
+      body: { query, variables },
+    });
+  }
+
+  // Logs
+  async listLogs(filter?: Record<string, unknown>): Promise<any> {
+    const query = `query get_logs($filter: LogFilter) {
+      logs(filter: $filter) {
+        page_info { count has_next_page has_previous_page start_cursor end_cursor }
+        edges {
+          node {
+            id path host data method response_ms remote_addr
+            requested_at status_code query_params response
+            records { id key timestamp test_mode created_at meta record }
+          }
+        }
+      }
+    }`;
+    const result = await this.queryGraphQL(query, { filter });
+    return result?.data?.logs;
+  }
+
+  async getLog(id: number): Promise<any> {
+    const query = `query get_log($id: Int!) {
+      log(id: $id) {
+        id requested_at response_ms path remote_addr host method
+        query_params data response status_code
+        records { id key timestamp test_mode created_at meta record }
+      }
+    }`;
+    const result = await this.queryGraphQL(query, { id });
+    return result?.data?.log;
+  }
+
+  async listTracingRecords(filter?: Record<string, unknown>): Promise<any> {
+    const query = `query get_tracing_records($filter: TracingRecordFilter) {
+      tracing_records(filter: $filter) {
+        page_info { count has_next_page start_cursor end_cursor }
+        edges {
+          node {
+            id key timestamp test_mode created_at meta record
+          }
+        }
+      }
+    }`;
+    const result = await this.queryGraphQL(query, { filter });
+    return result?.data?.tracing_records;
+  }
 }

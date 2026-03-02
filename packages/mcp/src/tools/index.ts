@@ -1,1 +1,1 @@
-// Tool implementations
+export { registerLogTools } from "./logs.js";

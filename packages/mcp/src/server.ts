@@ -6,6 +6,7 @@ import { registerTrackingTools } from "./tools/tracking.js";
 import { registerCarrierTools } from "./tools/carriers.js";
 import { registerPickupTools } from "./tools/pickups.js";
 import { registerManifestTools } from "./tools/manifests.js";
+import { registerLogTools } from "./tools/logs.js";
 import { registerCarrierResources } from "./resources/carriers.js";
 
 export interface ServerConfig {
@@ -31,6 +32,7 @@ export function createServer(config: ServerConfig): McpServer {
   registerCarrierTools(server, client);
   registerPickupTools(server, client);
   registerManifestTools(server, client);
+  registerLogTools(server, client);
 
   // Register resources
   registerCarrierResources(server, client);
