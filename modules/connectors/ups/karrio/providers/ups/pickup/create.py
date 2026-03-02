@@ -61,7 +61,13 @@ def pickup_request(
 
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
-    options = lib.to_shipping_options(payload.options or {})
+    options = lib.units.Options(
+        payload.options or {},
+        option_type=lib.units.create_enum(
+            "PickupOptions",
+            {"ups_pickup_service_code": lib.OptionEnum("PickupServiceCode")},
+        ),
+    )
     weight = packages.weight
     weight_unit_name = weight.unit or "LB"
     weight_unit = provider_units.WeightUnit[weight_unit_name].value
