@@ -8,8 +8,6 @@ describe("MCP Server", () => {
       apiKey: "test_key",
     });
 
-    // Server should be created without errors
-    console.log(server);
     expect(server).toBeDefined();
   });
 
@@ -19,7 +17,7 @@ describe("MCP Server", () => {
       apiKey: "custom_key",
     });
 
-    console.log(server);
+
     expect(server).toBeDefined();
   });
 
@@ -33,7 +31,7 @@ describe("MCP Server", () => {
       apiKey: "test_key",
     });
 
-    console.log(server);
+
     expect(server).toBeInstanceOf(McpServer);
   });
 
@@ -48,8 +46,6 @@ describe("MCP Server", () => {
       apiKey: "key_2",
     });
 
-    console.log(server1);
-    console.log(server2);
     expect(server1).not.toBe(server2);
   });
 });
