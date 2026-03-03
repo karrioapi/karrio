@@ -19,12 +19,14 @@
 3. [Goals & Success Criteria](#goals--success-criteria)
 4. [Alternatives Considered](#alternatives-considered)
 5. [Technical Design](#technical-design)
-6. [Edge Cases & Failure Modes](#edge-cases--failure-modes)
-7. [Implementation Plan](#implementation-plan)
-8. [Testing Strategy](#testing-strategy)
-9. [Risk Assessment](#risk-assessment)
-10. [Migration & Rollback](#migration--rollback)
-11. [Appendices](#appendices)
+6. [Edition Isolation (OSS / Insiders / Platform)](#edition-isolation-oss--insiders--platform)
+7. [Source vs Deployed Build Modes](#source-vs-deployed-build-modes)
+8. [Edge Cases & Failure Modes](#edge-cases--failure-modes)
+9. [Implementation Plan](#implementation-plan)
+10. [Testing Strategy](#testing-strategy)
+11. [Risk Assessment](#risk-assessment)
+12. [Migration & Rollback](#migration--rollback)
+13. [Appendices](#appendices)
 
 ---
 
@@ -474,6 +476,242 @@ uv run python -m unittest discover -s modules/connectors -p "test_*.py" -v
 │  uv.lock  ←─── single committed lockfile ───────────────────────────>    │
 │                                                                           │
 └──────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Edition Isolation (OSS / Insiders / Platform)
+
+Karrio ships in multiple editions — OSS, Insiders, and Platform — each with a superset of the previous edition's dependencies and workspace members. The current approach uses separate `requirements.insiders.dev.txt` / `requirements.platform.dev.txt` files gated by `HAS_INSIDERS` and `HAS_PLATFORM` env var checks in `bin/_env`.
+
+uv handles this natively via two complementary mechanisms: **dependency groups** and **optional workspace members**.
+
+### Dependency Groups (replacing per-edition requirements files)
+
+Groups compose via inclusion, mirroring the edition superset relationship:
+
+```toml
+# Root pyproject.toml
+
+[dependency-groups]
+dev = [
+    "bandit", "black", "coverage", "mypy", "lxml-stubs", "wheel", "setuptools",
+]
+
+server = [
+    { include-group = "dev" },
+    "django-debug-toolbar",
+    "djangorestframework-stubs",
+]
+
+insiders = [
+    { include-group = "server" },
+    # insiders-specific dev dependencies
+]
+
+platform = [
+    { include-group = "server" },
+    # platform-specific dev dependencies
+]
+
+build = [
+    "build",   # removed in Phase 2 when uv build is adopted natively
+]
+```
+
+Install commands per edition:
+
+| Edition | Command | Equivalent to |
+|---------|---------|---------------|
+| OSS dev | `uv sync --group server` | `pip install -r requirements.server.dev.txt` |
+| Insiders dev | `uv sync --group insiders` | `pip install -r requirements.insiders.dev.txt` |
+| Platform dev | `uv sync --group platform` | `pip install -r requirements.platform.dev.txt` |
+| SDK only | `uv sync --group dev` | `pip install -r requirements.sdk.dev.txt` |
+| CI build | `uv sync --group build` | `pip install build twine` |
+
+### Optional Workspace Members (edition-specific packages)
+
+Insiders and platform editions include additional `modules/` packages that don't exist in OSS clones. uv's `optional-members` handles this gracefully — if the directory is absent, the member is silently skipped. No errors on OSS clones.
+
+```toml
+[tool.uv.workspace]
+members = [
+    # Always present (OSS)
+    "modules/sdk",
+    "modules/soap",
+    "modules/core",
+    "modules/graph",
+    "modules/data",
+    "modules/events",
+    "modules/manager",
+    "modules/orders",
+    "modules/proxy",
+    "modules/pricing",
+    "modules/documents",
+    "modules/admin",
+    "apps/api",
+    "modules/connectors/*",
+]
+
+optional-members = [
+    # Only present in insiders/platform clones — skipped silently if absent
+    "modules/platform",
+    "modules/insiders",
+    "community/plugins/*",   # Phase 3
+]
+```
+
+### `HAS_INSIDERS` / `HAS_PLATFORM` → `uv sync --group`
+
+The existing `bin/_env` checks (`HAS_INSIDERS`, `HAS_PLATFORM`) translate directly to group selection:
+
+```bash
+# Current bin/_env logic (simplified)
+if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--oss* ]]; then
+    pip install -r requirements.insiders.dev.txt
+fi
+
+# New bin/_env logic with uv
+if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--oss* ]]; then
+    uv sync --group insiders
+elif [[ "${HAS_PLATFORM}" == "true" && ! "$*" == *--oss* ]]; then
+    uv sync --group platform
+else
+    uv sync --group server   # OSS default
+fi
+```
+
+The interface to `bin/setup-server-env` is **unchanged** — the edition detection and `--oss` flag are preserved; only the internal pip calls are swapped for uv equivalents.
+
+### Single `uv.lock` Across All Editions
+
+Critically, there is **one `uv.lock`** for the entire repo. It contains the union of all dependencies across all groups and workspace members. Each edition's `uv sync --group <edition>` installs the relevant subset — but the lock is always resolved against the full graph, preventing cross-edition version conflicts.
+
+```
+uv.lock
+  ├── group: dev        (bandit, black, mypy, ...)
+  ├── group: server     (+ django-debug-toolbar, ...)
+  ├── group: insiders   (+ insiders extras)
+  ├── group: platform   (+ platform extras)
+  └── workspace members: all packages (optional-members present if edition clone)
+```
+
+---
+
+## Source vs Deployed Build Modes
+
+Karrio uses two distinct Python install modes:
+
+| Mode | Context | What it means |
+|------|---------|---------------|
+| **Source / editable** | Local dev, SDK tests | `pip install -e ./modules/sdk` — code changes reflected immediately |
+| **Frozen / deployed** | Docker images, PyPI releases, version freeze | Pinned wheel installs, no editable links |
+
+This maps directly to two flags in uv and determines how workspace members are installed.
+
+### Development Mode (editable — default for workspace members)
+
+In uv workspaces, all workspace members are editable by default. `uv sync` installs them as editable installs (PEP 660) — equivalent to `pip install -e`:
+
+```bash
+uv sync --group server
+# → All modules/*, apps/api installed as editable
+# → Code changes in modules/sdk/ are immediately reflected without reinstall
+```
+
+This replaces the current `pip install -e ./modules/sdk` repetition across `requirements.sdk.dev.txt` and `requirements.server.dev.txt`.
+
+### Deployed / Docker Mode (`--no-editable`)
+
+For Docker images and deployed environments, workspace members must be installed as regular wheels — not editable symlinks. The `--no-editable` flag enforces this:
+
+```bash
+uv sync --frozen --no-dev --no-editable
+# → All workspace members installed as built wheels
+# → No source paths, no editable links
+# → Identical to what a user gets after `pip install karrio`
+```
+
+**Dockerfile pattern:**
+
+```dockerfile
+FROM python:3.12-slim
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+WORKDIR /app
+COPY uv.lock pyproject.toml ./
+COPY modules/ ./modules/
+COPY apps/ ./apps/
+
+# Frozen + no-editable = reproducible, deployed-mode install
+RUN uv sync --frozen --no-dev --no-editable
+
+CMD ["uv", "run", "gunicorn", "karrio.server.wsgi"]
+```
+
+This replaces the current Docker pattern of `COPY requirements.txt && pip install -r requirements.txt`.
+
+### Version Freeze (`bin/update-version-freeze` → `uv export`)
+
+Currently, `bin/update-source-version-freeze` and `bin/update-version-freeze` generate pinned `requirements.txt` snapshots that:
+1. Are baked into Docker images for reproducible deploys
+2. Are published alongside PyPI releases as install references
+
+With uv, `uv.lock` IS the freeze — content-addressed, with SHA256 hashes for every package. The `requirements*.txt` freeze files are replaced by `uv export`:
+
+```bash
+# Replaces: bin/update-version-freeze (pip freeze equivalent)
+uv export --frozen --no-dev --format requirements-txt > requirements.freeze.txt
+
+# Edition-specific freeze (e.g. insiders deploy)
+uv export --frozen --no-dev --group insiders --format requirements-txt > requirements.insiders.freeze.txt
+```
+
+**Updated `bin/update-version-freeze`:**
+
+```bash
+#!/usr/bin/env bash
+# Replaces pip freeze workflow with uv export
+# Output is pip-compatible for Docker COPY + pip install (or uv pip install -r)
+
+uv export --frozen --no-dev --format requirements-txt > requirements.freeze.txt
+
+if [[ "${HAS_INSIDERS}" == "true" ]]; then
+    uv export --frozen --no-dev --group insiders --format requirements-txt > requirements.insiders.freeze.txt
+fi
+
+if [[ "${HAS_PLATFORM}" == "true" ]]; then
+    uv export --frozen --no-dev --group platform --format requirements-txt > requirements.platform.freeze.txt
+fi
+
+echo "→ Freeze files updated from uv.lock"
+```
+
+The exported `requirements.freeze.txt` files serve two audiences:
+- **Docker**: `COPY requirements.freeze.txt && pip install -r requirements.freeze.txt` (no uv in runtime image)
+- **External consumers**: Downstream users who `pip install` pinned karrio versions
+
+### Summary: Mode Matrix
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        INSTALL MODE MATRIX                               │
+├─────────────────┬──────────────────────────┬────────────────────────────┤
+│ Context         │ Command                  │ Workspace members          │
+├─────────────────┼──────────────────────────┼────────────────────────────┤
+│ OSS dev         │ uv sync --group server   │ editable (PEP 660)         │
+│ Insiders dev    │ uv sync --group insiders │ editable (PEP 660)         │
+│ Platform dev    │ uv sync --group platform │ editable (PEP 660)         │
+│ Docker / deploy │ uv sync --frozen         │ wheels (--no-editable)     │
+│                 │   --no-dev --no-editable │                            │
+│ CI tests        │ uv sync --frozen         │ editable (default)         │
+│                 │   --group server         │                            │
+│ Version freeze  │ uv export --frozen       │ N/A (generates req.txt)    │
+│                 │   --no-dev               │                            │
+│ PyPI release    │ uv build + uv publish    │ N/A (builds wheels)        │
+└─────────────────┴──────────────────────────┴────────────────────────────┘
 ```
 
 ---
