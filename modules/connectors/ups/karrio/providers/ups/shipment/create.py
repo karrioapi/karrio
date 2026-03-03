@@ -140,7 +140,8 @@ def _extract_shipment(
 def _process_label(shipment: ups_response.ShipmentResultsType):
     label_type = lib.identity(
         "ZPL"
-        if "ZPL" in shipment.PackageResults[0].ShippingLabel.ImageFormat.Code
+        if lib.failsafe(lambda: shipment.PackageResults[0].ShippingLabel.ImageFormat.Code)
+        and "ZPL" in shipment.PackageResults[0].ShippingLabel.ImageFormat.Code
         else "PDF"
     )
     labels = [
@@ -154,7 +155,11 @@ def _process_label(shipment: ups_response.ShipmentResultsType):
             else pkg.ShippingLabel.GraphicImage
         )
         for pkg in shipment.PackageResults
+        if pkg.ShippingLabel is not None
     ]
+
+    if not labels:
+        return None
 
     return labels[0] if len(labels) == 1 else lib.bundle_base64(labels, label_type)
 
@@ -262,7 +267,7 @@ def shipment_request(
                     CompanyDisplayableName=shipper.company_name,
                     TaxIdentificationNumber=shipper.federal_tax_id,
                     Phone=ups.ShipToPhoneType(
-                        Number=shipper.phone_number or "000-000-0000",
+                        Number=lib.text(shipper.phone_number, max=15) or "000-000-0000",
                     ),
                     ShipperNumber=settings.account_number,
                     FaxNumber=None,
@@ -286,7 +291,7 @@ def shipment_request(
                     CompanyDisplayableName=recipient.company_name,
                     TaxIdentificationNumber=recipient.federal_tax_id,
                     Phone=ups.ShipToPhoneType(
-                        Number=recipient.phone_number or "000-000-0000",
+                        Number=lib.text(recipient.phone_number, max=15) or "000-000-0000",
                         Extension=None,
                     ),
                     FaxNumber=None,
@@ -314,7 +319,7 @@ def shipment_request(
                     TaxIdentificationNumber=return_address.tax_id,
                     TaxIDType=None,
                     Phone=ups.ShipFromPhoneType(
-                        Number=return_address.phone_number or "000-000-0000",
+                        Number=lib.text(return_address.phone_number, max=15) or "000-000-0000",
                     ),
                     ShipFromAccountNumber=None,
                     FaxNumber=None,
@@ -551,7 +556,7 @@ def shipment_request(
                                             AttentionName=recipient.contact,
                                             TaxIdentificationNumber=recipient.tax_id,
                                             Phone=ups.ShipToPhoneType(
-                                                Number=recipient.phone_number
+                                                Number=lib.text(recipient.phone_number, max=15)
                                                 or "000-000-0000"
                                             ),
                                             Address=ups.AlternateDeliveryAddressAddressType(

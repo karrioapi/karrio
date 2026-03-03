@@ -10,7 +10,9 @@ class Settings(provider_utils.Settings):
 
     # required carrier specific properties
     api_key: str
+    # api_key: str = attr.ib(metadata={"sensitive": True})
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
     account_number: str
 
     # generic properties

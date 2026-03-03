@@ -161,6 +161,12 @@ class Markup(core.Entity):
 
     def _is_applicable(self, rate: datatypes.Rate, options: dict = None) -> bool:
         """Check if this markup should be applied to the given rate."""
+
+        # Check per-rate exclusions (from service/rate-sheet pricing_config)
+        excluded_ids = (rate.meta or {}).get("excluded_markup_ids", [])
+        if self.id in excluded_ids:
+            return False
+
         applicable = []
 
         # Feature gate check via meta.feature_gate

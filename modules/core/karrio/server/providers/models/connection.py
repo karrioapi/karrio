@@ -203,7 +203,8 @@ class SystemConnection(models.Model):
         import karrio.references as references
 
         return (
-            self.credentials.get("display_name")
+            (self.metadata or {}).get("display_name")
+            or self.credentials.get("display_name")
             or references.REFERENCES.get("carriers", {}).get(self.ext)
             or self.carrier_id
         )
@@ -216,12 +217,112 @@ class SystemConnection(models.Model):
         return self.rate_sheet.services.all()
 
     # ─────────────────────────────────────────────────────────────────
+    # CREDENTIAL MANAGEMENT (Encrypted Storage)
+    # ─────────────────────────────────────────────────────────────────
+
+    def get_sensitive_fields(self) -> typing.Set[str]:
+        """
+        Dynamically get sensitive fields for THIS carrier.
+
+        Uses carrier_code to look up field metadata from plugin registry.
+        Each carrier plugin defines which fields are sensitive via attrs metadata.
+
+        Returns:
+            Set of sensitive field names (e.g., {'api_key', 'secret_key', 'password'})
+        """
+        import karrio.references as references
+
+        # Get field metadata for this carrier's plugin
+        connection_fields = references.REFERENCES.get("connection_fields", {})
+        carrier_fields = connection_fields.get(self.ext, {})
+
+        # Filter to only sensitive fields
+        sensitive = {
+            field_name
+            for field_name, field_meta in carrier_fields.items()
+            if field_meta.get("sensitive", False)
+        }
+
+        return sensitive
+
+    def get_allowed_fields(self) -> typing.Set[str]:
+        """
+        Dynamically get all allowed fields for THIS carrier.
+
+        Uses carrier_code to look up field metadata from plugin registry.
+
+        Returns:
+            Set of all allowed field names
+        """
+        import karrio.references as references
+
+        connection_fields = references.REFERENCES.get("connection_fields", {})
+        carrier_fields = connection_fields.get(self.ext, {})
+        return set(carrier_fields.keys())
+
+    def get_credentials(self, user_id: typing.Optional[typing.Any] = None) -> typing.Dict:
+        """
+        Get all credentials (transparently decrypts sensitive fields when enabled).
+
+        When encryption is disabled, returns credentials directly from the JSON field.
+
+        Args:
+            user_id: Optional user ID for audit logging
+
+        Returns:
+            Complete credentials dict with all fields
+        """
+        if not getattr(conf.settings, 'SECRET_ENCRYPTION_ENABLED', False):
+            return dict(self.credentials or {})
+
+        from karrio.server.providers.credential_manager import get_credential_manager
+
+        credential_manager = get_credential_manager()
+
+        return credential_manager.get_system_credentials(
+            system_connection_id=self.id,
+            sensitive_fields=self.get_sensitive_fields(),
+            user_id=user_id
+        )
+
+    def set_credentials(
+        self,
+        credentials_dict: typing.Dict,
+        user_id: typing.Optional[typing.Any] = None
+    ) -> None:
+        """
+        Store credentials (transparently encrypts sensitive fields when enabled).
+
+        When encryption is disabled, stores all credentials in the JSON field.
+
+        Args:
+            credentials_dict: Raw credentials (plaintext values)
+            user_id: Optional user ID for audit logging
+        """
+        if not getattr(conf.settings, 'SECRET_ENCRYPTION_ENABLED', False):
+            self.credentials = credentials_dict
+            self.save(update_fields=['credentials'])
+            return
+
+        from karrio.server.providers.credential_manager import get_credential_manager
+
+        credential_manager = get_credential_manager()
+
+        credential_manager.set_system_credentials(
+            system_connection_id=self.id,
+            credentials_dict=credentials_dict,
+            sensitive_fields=self.get_sensitive_fields(),
+            allowed_fields=self.get_allowed_fields(),
+            user_id=user_id
+        )
+
+    # ─────────────────────────────────────────────────────────────────
     # SDK INTEGRATION
     # ─────────────────────────────────────────────────────────────────
 
     def _get_credentials(self) -> dict:
-        """Get credentials for internal gateway use only."""
-        return self.credentials
+        """Get credentials for internal gateway use only (transparently decrypts)."""
+        return self.get_credentials()
 
     @property
     def data(self) -> datatypes.CarrierSettings:
@@ -244,6 +345,7 @@ class SystemConnection(models.Model):
                         **forms.model_to_dict(s),
                         "zones": s.zones,
                         "surcharges": s.surcharges,
+                        "pricing_config": s.effective_pricing_config,
                     }
                     for s in self.services
                 ]
@@ -454,8 +556,8 @@ class BrokeredConnection(models.Model):
 
     @property
     def display_name(self) -> str:
-        """Get human-readable display name."""
-        return self.effective_carrier_id
+        """Get human-readable display name from system connection."""
+        return self.system_connection.display_name
 
     @property
     def test_mode(self) -> bool:
@@ -554,6 +656,7 @@ class BrokeredConnection(models.Model):
                         **forms.model_to_dict(s),
                         "zones": s.zones,
                         "surcharges": s.surcharges,
+                        "pricing_config": s.effective_pricing_config,
                     }
                     for s in self.services
                 ]

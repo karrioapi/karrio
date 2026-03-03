@@ -5,7 +5,6 @@ import karrio.schemas.smartkargo.rate_response as smartkargo_res
 
 import typing
 import datetime
-import uuid
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.smartkargo.error as error
@@ -62,7 +61,8 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=service.name_or_key,
-        total_charge=lib.to_money(detail.total or 0) + lib.to_money(detail.totalTax or 0),
+        total_charge=lib.to_money(detail.total or 0)
+        + lib.to_money(detail.totalTax or 0),
         currency="USD",
         transit_days=transit_days,
         extra_charges=[
@@ -91,6 +91,7 @@ def rate_request(
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels, required=["weight"])
     service = lib.to_services(payload.services, provider_units.ShippingService).first
+    customs = lib.to_customs_info(payload.customs) if payload.customs else None
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
@@ -112,44 +113,47 @@ def rate_request(
         else provider_units.DimensionUnit.CFT.value
     )
 
-    # Get service type - API requires serviceType (errors if empty)
-    # Default to EST (Standard) when none specified, like UPS defaults to ups_standard
-    service_type = (
-        service.value
-        if service
-        else provider_units.ShippingService.smartkargo_standard.value
+    # Resolve common request fields
+    primary_id = settings.connection_config.primary_id.state or settings.account_number
+    additional_id = settings.connection_config.additional_id.state or primary_id
+    origin = settings.connection_config.origin.state or ""
+    destination = settings.connection_config.destination.state or ""
+    reference = lib.text(
+        payload.reference or settings.tracer.get_context("request_id"),
+        trim=True,
+        max=35,
     )
-
-    # Get shipment date from options or use current date (issueDate is required by API)
-    shipment_date = options.shipment_date.state or datetime.datetime.now()
+    shipment_date = lib.fdatetime(
+        options.shipment_date.state
+        or lib.to_next_business_datetime(datetime.datetime.now()),
+        current_format="%Y-%m-%d",
+        output_format="%Y-%m-%d %H:%M",
+    )
 
     # Build one request per package (SmartKargo API only accepts one package per request)
     request = [
         smartkargo_req.RateRequestType(
-            reference=payload.reference or str(uuid.uuid4().hex),
-            issueDate=lib.fdatetime(
-                shipment_date,
-                current_format="%Y-%m-%d",
-                output_format="%Y-%m-%d %H:%M",
-            ),
+            reference=reference,
+            issueDate=shipment_date,
             packages=[
                 smartkargo_req.PackageType(
                     reference=package.parcel.reference_number or f"PKG-{index}",
                     commodityType=options.smartkargo_commodity_type.state or "9999",
-                    serviceType=service_type,
+                    serviceType=getattr(service, "value", None),
                     paymentMode=provider_units.PaymentMode.PX.value,
+                    origin=origin,
+                    destination=destination,
                     packageDescription=package.parcel.description or "General Shipment",
                     totalPackages=1,
                     totalPieces=1,
-                    grossVolumeUnitMeasure=dimension_unit,
+                    grossVolumeUnityMeasure=dimension_unit,
                     totalGrossWeight=package.weight.value,
-                    grossWeightUnitMeasure=weight_unit,
-                    insuranceRequired=options.insurance.state is not None,
-                    declaredValue=lib.to_money(options.declared_value.state or options.insurance.state or 0),
+                    grossWeightUnityMeasure=weight_unit,
+                    hasInsurance=options.smartkargo_declared_value.state is not None,
+                    insuranceAmmount=lib.to_money(
+                        options.smartkargo_declared_value.state or 0
+                    ),
                     specialHandlingType=options.smartkargo_special_handling.state,
-                    deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
-                    channel=options.smartkargo_channel.state or "Direct",
-                    labelRef2=options.smartkargo_label_ref2.state,
                     dimensions=[
                         smartkargo_req.DimensionType(
                             pieces=1,
@@ -162,8 +166,8 @@ def rate_request(
                     participants=[
                         smartkargo_req.ParticipantType(
                             type="Shipper",
-                            primaryId=settings.account_id,
-                            additionalId=None,
+                            primaryId=primary_id,
+                            additionalId=additional_id,
                             account=settings.account_number,
                             name=shipper.company_name or shipper.person_name,
                             postCode=shipper.postal_code,
@@ -191,6 +195,32 @@ def rate_request(
                             email=recipient.email,
                         ),
                     ],
+                    customItems=(
+                        [
+                            smartkargo_req.CustomItemType(
+                                exportHsCode=item.hs_code,
+                                importHsCode=item.hs_code,
+                                description=item.description or item.title,
+                                quantity=item.quantity,
+                                quantityUnit=item.weight_unit or "kg",
+                                weight=item.weight,
+                                commercialValue=item.value_amount,
+                                commercialValueCurrency=item.value_currency,
+                                manufactureCountryCode=item.origin_country,
+                                sku=item.sku,
+                            )
+                            for item in customs.commodities
+                        ]
+                        if customs is not None and any(customs.commodities)
+                        else []
+                    ),
+                    commercialInvoice=(
+                        smartkargo_req.CommercialInvoiceType(
+                            termsOfSale=customs.incoterm or "DDU",
+                        )
+                        if customs is not None and any(customs.commodities)
+                        else None
+                    ),
                 )
             ],
         )

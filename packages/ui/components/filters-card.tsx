@@ -27,7 +27,7 @@ export const FiltersCard: React.FC<FiltersCardProps> = ({
   };
 
   return (
-    <div className={cn("flex gap-2 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 lg:grid-cols-6 sm:gap-3 mb-5 mt-4", className)}>
+    <div className={cn("flex gap-2 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 lg:grid-cols-7 sm:gap-3 mb-5 mt-4", className)}>
       {filters.map((filter, index) => (
         <Card
           key={index}

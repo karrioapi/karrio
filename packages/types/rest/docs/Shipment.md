@@ -19,6 +19,7 @@ Name | Type | Description | Notes
 **customs** | [**CustomsData**](CustomsData.md) | The customs details.&lt;br/&gt;         **Note that this is required for the shipment of an international Dutiable parcel.**          | [optional] [default to undefined]
 **rates** | [**Array&lt;Rate&gt;**](Rate.md) | The list for shipment rates fetched previously | [optional] [default to undefined]
 **reference** | **string** | The shipment reference | [optional] [default to undefined]
+**order_id** | **string** | The order identifier associated with this shipment | [optional] [default to undefined]
 **label_type** | **string** | The shipment label file type. | [optional] [default to undefined]
 **carrier_ids** | **Array&lt;string&gt;** | The list of configured carriers you wish to get rates from.&lt;br/&gt;         **Note that the request will be sent to all carriers in nothing is specified**          | [optional] [default to undefined]
 **tracker_id** | **string** | The attached tracker id | [optional] [default to undefined]
@@ -61,6 +62,7 @@ const instance: Shipment = {
     customs,
     rates,
     reference,
+    order_id,
     label_type,
     carrier_ids,
     tracker_id,

@@ -10,7 +10,9 @@ class Settings(provider_utils.Settings):
 
     # Add carrier specific API connection properties here
     client_id: str
+    # client_id: str = attr.ib(metadata={"sensitive": True})
     client_secret: str
+    # client_secret: str = attr.ib(metadata={"sensitive": True})
 
     # generic properties
     id: str = None

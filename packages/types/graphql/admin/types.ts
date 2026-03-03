@@ -481,6 +481,7 @@ export interface GetRateSheet_rate_sheet_service_rates {
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface GetRateSheet_rate_sheet_services_features {
@@ -525,6 +526,7 @@ export interface GetRateSheet_rate_sheet_services {
   international: boolean | null;
   zone_ids: string[];
   surcharge_ids: string[];
+  pricing_config: any | null;
   features: GetRateSheet_rate_sheet_services_features;
 }
 
@@ -545,6 +547,7 @@ export interface GetRateSheet_rate_sheet {
   carrier_name: CarrierNameEnum;
   origin_countries: string[] | null;
   metadata: any | null;
+  pricing_config: any | null;
   zones: GetRateSheet_rate_sheet_zones[] | null;
   surcharges: GetRateSheet_rate_sheet_surcharges[] | null;
   service_rates: GetRateSheet_rate_sheet_service_rates[] | null;
@@ -1339,6 +1342,7 @@ export interface UpdateServiceRate_update_service_rate_rate_sheet_service_rates 
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface UpdateServiceRate_update_service_rate_rate_sheet {
@@ -1381,6 +1385,7 @@ export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet_s
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet {
@@ -1423,6 +1428,7 @@ export interface AddWeightRange_add_weight_range_rate_sheet_service_rates {
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface AddWeightRange_add_weight_range_rate_sheet {
@@ -1465,6 +1471,7 @@ export interface RemoveWeightRange_remove_weight_range_rate_sheet_service_rates 
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface RemoveWeightRange_remove_weight_range_rate_sheet {
@@ -1507,6 +1514,7 @@ export interface DeleteServiceRate_delete_service_rate_rate_sheet_service_rates 
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface DeleteServiceRate_delete_service_rate_rate_sheet {
@@ -2585,6 +2593,7 @@ export interface SystemShipmentFilter {
   created_before?: string | null;
   carrier_name?: string[] | null;
   reference?: string | null;
+  order_id?: string | null;
   service?: string[] | null;
   status?: ShipmentStatusEnum[] | null;
   option_key?: string | null;
@@ -2705,6 +2714,7 @@ export interface CreateRateSheetMutationInput {
   carriers?: string[] | null;
   origin_countries?: string[] | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -2734,6 +2744,7 @@ export interface CreateServiceLevelInput {
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -2793,6 +2804,7 @@ export interface ServiceRateInput {
   max_weight?: number | null;
   transit_days?: number | null;
   transit_time?: number | null;
+  meta?: any | null;
 }
 
 // null
@@ -2807,6 +2819,7 @@ export interface UpdateRateSheetMutationInput {
   origin_countries?: string[] | null;
   remove_missing_services?: boolean | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -2837,6 +2850,7 @@ export interface UpdateServiceLevelInput {
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
+  pricing_config?: any | null;
 }
 
 // null
@@ -2905,6 +2919,7 @@ export interface UpdateServiceRateMutationInput {
   max_weight?: number | null;
   transit_days?: number | null;
   transit_time?: number | null;
+  meta?: any | null;
 }
 
 // null

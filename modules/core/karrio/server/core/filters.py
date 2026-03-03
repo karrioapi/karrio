@@ -230,6 +230,11 @@ class ShipmentFilters(filters.FilterSet):
         lookup_expr="icontains",
         help_text="a shipment reference",
     )
+    order_id = filters.CharFilter(
+        field_name="order_id",
+        lookup_expr="icontains",
+        help_text="an order identifier",
+    )
     service = filters.CharInFilter(
         method="service_filter",
         field_name="selected_rate__service",
@@ -334,6 +339,11 @@ class ShipmentFilters(filters.FilterSet):
         ),
         openapi.OpenApiParameter(
             "reference",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "order_id",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),

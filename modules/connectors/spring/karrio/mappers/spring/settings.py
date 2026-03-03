@@ -15,6 +15,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
 
     # Carrier-specific credentials
     api_key: str
+    # api_key: str = attr.ib(metadata={"sensitive": True})
 
     # generic properties
     id: str = None

@@ -10,6 +10,6 @@ gateway = karrio.gateway["smartkargo"].create(
         carrier_id="smartkargo",
         api_key="TEST_API_KEY",
         account_number="TEST_ACCOUNT",
-        account_id="TEST_ID",
+        config={"primary_id": "TEST_ID"},
     )
 )

@@ -15,6 +15,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
 
     # Required credentials (from Austrian Post onboarding)
     client_id: str
+    # client_id: str = attr.ib(metadata={"sensitive": True})
     org_unit_id: str
     org_unit_guid: str
 

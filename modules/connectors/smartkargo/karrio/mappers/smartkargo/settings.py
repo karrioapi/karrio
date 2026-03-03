@@ -12,7 +12,6 @@ class Settings(provider_utils.Settings):
     api_key: str
     # Shipper account credentials (required for booking - used as primaryId and account)
     account_number: str
-    account_id: str
 
     # generic properties
     id: str = None

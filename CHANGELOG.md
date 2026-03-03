@@ -1,3 +1,35 @@
+# Karrio 2026.1.16
+
+## Changes
+
+### Feat
+
+- feat: add order_id field to Shipment model with REST/GraphQL exposure and auto-population
+- feat: add failed shipments tab with failure reasons and request_id propagation
+- feat: add @karrio/mcp server package for AI-powered shipping workflows
+- feat: add optional credential encryption with KEK-based secret storage
+- feat: add rate sheet editor improvements, pricing config, and markup management
+- feat: add DPD Meta connector updates with pickup support and error handling
+
+### Fix
+
+- fix: SmartKargo field names to match actual API (grossVolumeUnityMeasure, hasInsurance, insuranceAmmount)
+- fix: SmartKargo add customs/commercialInvoice support to rate requests and label base64 extraction
+- fix: SmartKargo move account_id to connection config, add SiteId header and barCode extraction
+- fix: DHL Parcel DE add economy and GoGreen Plus options, return billing config, and fix service matrix
+- fix: UPS add transId and transactionSrc headers to tracking requests
+- fix: UPS handle null ShippingLabel in return shipment response
+- fix: Landmark tracking multi-leg event ordering and delivered status
+- fix: propagate x-request-id through tracer context to carrier calls
+- fix: resolve all failing tests and build issues
+
+### Docs
+
+- docs: add Open Shipping Protocol (OSP) specification suite
+- docs: add carrier testing reports for DHL Parcel DE, UPS, and DPD Meta
+
+---
+
 # Karrio 2026.1.15
 
 ## Changes

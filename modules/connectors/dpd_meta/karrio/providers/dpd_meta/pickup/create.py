@@ -1,4 +1,4 @@
-"""Karrio DPD Group pickup scheduling implementation."""
+"""Karrio DPD Global pickup scheduling implementation."""
 
 import typing
 import karrio.lib as lib

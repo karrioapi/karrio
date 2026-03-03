@@ -140,11 +140,21 @@ def shipment_updated(
     related_orders = _find_related_orders_from_json(instance)
 
     if related_orders.exists():
+        updates = {}
+
         meta = {
             **(instance.meta or {}),
             "orders": ",".join([_.id for _ in related_orders]),
         }
-        manager.Shipment.objects.filter(id=instance.id).update(meta=meta)
+        updates["meta"] = meta
+
+        # Auto-populate order_id from first linked Order if not explicitly set
+        if not instance.order_id:
+            first_order = related_orders.first()
+            if first_order and first_order.order_id:
+                updates["order_id"] = first_order.order_id
+
+        manager.Shipment.objects.filter(id=instance.id).update(**updates)
 
     for order in related_orders:
         if order.shipments.filter(id=instance.id).exists() == False:

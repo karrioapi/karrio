@@ -7,14 +7,16 @@
       "commodityType": "GEN-6501",
       "serviceType": "EXP",
       "paymentMode": "PX",
+      "origin": "",
+      "destination": "",
       "packageDescription": "MEDICINES, PHARMACEUTICALS",
       "totalPackages": 1,
       "totalPieces": 1,
-      "grossVolumeUnitMeasure": "CFT",
+      "grossVolumeUnityMeasure": "CFT",
       "totalGrossWeight": 1.0,
-      "grossWeightUnitMeasure": "LBR",
-      "insuranceRequired": true,
-      "declaredValue": 130.0,
+      "grossWeightUnityMeasure": "LBR",
+      "hasInsurance": true,
+      "insuranceAmmount": 130.0,
       "specialHandlingType": null,
       "additionalInfo01": null,
       "additionalInfo02": null,
@@ -23,8 +25,10 @@
       "deliveryType": "DoorToDoor",
       "channel": "Direct",
       "labelRef2": null,
+      "incoterm": "DDU",
       "dimensions": [
         {
+          "pieceReference": "614719",
           "pieces": 1,
           "height": 12.0,
           "width": 10.0,
@@ -70,7 +74,24 @@
           "email": "test2@test.com",
           "taxIdentificationNumbers": null
         }
-      ]
+      ],
+      "customItems": [
+        {
+          "exportHsCode": "48201030",
+          "description": "Paper Notebook",
+          "importHsCode": "48201030",
+          "quantity": 1,
+          "quantityUnit": "kg",
+          "weight": 10,
+          "commercialValue": 20,
+          "commercialValueCurrency": "GBP",
+          "manufactureCountryCode": "UK",
+          "sku": "SKUTEST1"
+        }
+      ],
+      "commercialInvoice": {
+        "termsOfSale": "DDU"
+      }
     }
   ]
 }

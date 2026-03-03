@@ -23,7 +23,7 @@ export function APIMetadataEmbedProvider({
     queryKey: ["references", host],
     queryFn: () =>
       axios
-        .get<References>(`${host}/v1/references?reduced=false`, { headers })
+        .get<References>(`${host}/v1/references?reduced=false`)
         .then(({ data }) => data),
     staleTime: 300000,
     enabled: !!host,

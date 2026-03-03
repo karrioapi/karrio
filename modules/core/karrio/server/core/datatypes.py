@@ -252,6 +252,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     options: typing.Dict = {}
     reference: str = ""
+    order_id: str = ""
     label_type: str = None
     is_return: bool = False
     id: str = None

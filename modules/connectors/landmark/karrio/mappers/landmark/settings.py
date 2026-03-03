@@ -16,7 +16,9 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # Add carrier specific API connection properties here
     username: str
     password: str
+    # password: str = attr.ib(metadata={"sensitive": True})
     client_id: str
+    # client_id: str = attr.ib(metadata={"sensitive": True})
     account_number: str = None
     region: str = "Landmark CMH"  # Default BE region
 

@@ -11,6 +11,7 @@ class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        site_id = self.settings.connection_config.site_id.state
         responses = lib.run_asynchronously(
             lambda payload: lib.request(
                 url=f"{self.settings.server_url}/quotation",
@@ -20,6 +21,7 @@ class Proxy(proxy.Proxy):
                 headers={
                     "Content-Type": "application/json",
                     "code": self.settings.api_key,
+                    **({"SiteId": site_id} if site_id else {}),
                 },
             ),
             request.serialize(),
@@ -33,6 +35,7 @@ class Proxy(proxy.Proxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         label_type = request.ctx.get("label_type", "PDF") if request.ctx else "PDF"
         format_param = "&format=zpl" if label_type.upper() == "ZPL" else ""
+        site_id = self.settings.connection_config.site_id.state
 
         # Step 1: Book each package in parallel (one API call per package)
         booking_responses = lib.run_asynchronously(
@@ -44,6 +47,7 @@ class Proxy(proxy.Proxy):
                 headers={
                     "Content-Type": "application/json",
                     "code": self.settings.api_key,
+                    **({"SiteId": site_id} if site_id else {}),
                 },
             ),
             request.serialize(),
@@ -62,6 +66,7 @@ class Proxy(proxy.Proxy):
                             headers={
                                 "Content-Type": "application/json",
                                 "code": self.settings.api_key,
+                                **({"SiteId": site_id} if site_id else {}),
                             },
                         )
                     )
@@ -87,6 +92,7 @@ class Proxy(proxy.Proxy):
         label_url = payload["labelUrl"]
         label_type = payload.get("labelType", "PDF")
         format_param = "&format=zpl" if label_type.upper() == "ZPL" else ""
+        site_id = self.settings.connection_config.site_id.state
 
         response = lib.request(
             url=f"{label_url}{format_param}",
@@ -95,6 +101,7 @@ class Proxy(proxy.Proxy):
             headers={
                 "Content-Type": "application/json",
                 "code": self.settings.api_key,
+                **({"SiteId": site_id} if site_id else {}),
             },
         )
 
@@ -102,6 +109,7 @@ class Proxy(proxy.Proxy):
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         """Cancel/void shipment(s). For multi-piece, cancels each package in parallel."""
+        site_id = self.settings.connection_config.site_id.state
         responses = lib.run_asynchronously(
             lambda payload: (
                 f"{payload.get('prefix', '')}{payload.get('airWaybill', '')}",
@@ -115,6 +123,7 @@ class Proxy(proxy.Proxy):
                     headers={
                         "Content-Type": "application/json",
                         "code": self.settings.api_key,
+                        **({"SiteId": site_id} if site_id else {}),
                     },
                 ),
             ),
@@ -131,6 +140,7 @@ class Proxy(proxy.Proxy):
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         tracking_requests = request.serialize()
+        site_id = self.settings.connection_config.site_id.state
 
         responses = lib.run_asynchronously(
             lambda payload: (
@@ -142,6 +152,7 @@ class Proxy(proxy.Proxy):
                     headers={
                         "Content-Type": "application/json",
                         "code": self.settings.api_key,
+                        **({"SiteId": site_id} if site_id else {}),
                     },
                 ),
             ),

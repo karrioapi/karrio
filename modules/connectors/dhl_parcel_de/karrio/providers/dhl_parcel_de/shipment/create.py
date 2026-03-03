@@ -264,6 +264,7 @@ def shipment_request(
                             dhl_parcel_de.DhlRetoureType(
                                 billingNumber=(
                                     package.options.dhl_parcel_de_return_billing_number.state
+                                    or settings.get_return_billing_number()
                                     or billing_number
                                 ),
                                 refNo=(
@@ -304,6 +305,8 @@ def shipment_request(
                         )
                     ),
                     postalDeliveryDutyPaid=package.options.dhl_parcel_de_postal_delivery_duty_paid.state,
+                    economy=package.options.dhl_parcel_de_economy.state,
+                    goGreenPlus=package.options.dhl_parcel_de_gogreen_plus.state,
                 ),
                 customs=(
                     dhl_parcel_de.CustomsType(

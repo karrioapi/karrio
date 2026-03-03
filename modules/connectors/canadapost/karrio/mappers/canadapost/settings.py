@@ -10,9 +10,10 @@ class Settings(utils.Settings):
     """Canada post connection settings."""
 
     username: str
-    password: str
+    password: str = attr.ib(metadata={"sensitive": True})
     customer_number: str = None
     contract_id: str = None
+    # contract_id: str = attr.ib(default=None, metadata={"sensitive": True})
     language: utils.LanguageEnum = "en"  # type: ignore
 
     id: str = None

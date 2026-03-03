@@ -15,6 +15,7 @@ class Settings(provider_utils.Settings):
     # required carrier specific properties
     account_id: str
     passphrase: str
+    # passphrase: str = attr.ib(metadata={"sensitive": True})
 
     # generic properties
     id: str = None

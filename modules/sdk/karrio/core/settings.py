@@ -76,7 +76,14 @@ class Settings(abc.ABC):
         )(*args, **kwargs)
 
     def trace_as(self, format: str):
-        return functools.partial(self.trace, format=format)
+        if self.tracer is None:
+            import karrio.lib as lib
+
+            self.tracer = lib.Tracer()
+
+        _partial = functools.partial(self.trace, format=format)
+        _partial._tracer = self.tracer  # type: ignore[attr-defined]  # Preserve tracer reference for request_id propagation
+        return _partial
 
     @classmethod
     def as_stub(cls, settings: typing.Optional[dict] = None) -> "Settings":

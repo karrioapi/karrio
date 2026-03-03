@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.15`.
+    The current version is `2026.1.16`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.15
+  version: 2026.1.16
 paths:
   /:
     get:
@@ -3862,6 +3862,10 @@ paths:
           type: string
       - in: query
         name: option_value
+        schema:
+          type: string
+      - in: query
+        name: order_id
         schema:
           type: string
       - in: query
@@ -11044,6 +11048,10 @@ components:
           type: string
           nullable: true
           description: The shipment reference
+        order_id:
+          type: string
+          nullable: true
+          description: The order identifier associated with this shipment
         label_type:
           enum:
           - PDF
@@ -11260,6 +11268,11 @@ components:
           nullable: true
           description: The shipment reference
           maxLength: 100
+        order_id:
+          type: string
+          nullable: true
+          description: The order identifier associated with this shipment
+          maxLength: 50
         label_type:
           enum:
           - PDF
@@ -11379,6 +11392,11 @@ components:
           nullable: true
           description: The shipment reference
           maxLength: 100
+        order_id:
+          type: string
+          nullable: true
+          description: The order identifier associated with this shipment
+          maxLength: 50
         label_type:
           enum:
           - PDF
@@ -11554,6 +11572,11 @@ components:
           type: string
           nullable: true
           description: The shipment reference
+        order_id:
+          type: string
+          nullable: true
+          description: The order identifier associated with this shipment
+          maxLength: 50
         metadata:
           type: object
           additionalProperties: {}
@@ -11656,6 +11679,11 @@ components:
           nullable: true
           description: The shipment reference
           maxLength: 100
+        order_id:
+          type: string
+          nullable: true
+          description: The order identifier associated with this shipment
+          maxLength: 50
         label_type:
           enum:
           - PDF
@@ -11785,6 +11813,10 @@ components:
           type: string
           nullable: true
           description: The shipment reference
+        order_id:
+          type: string
+          nullable: true
+          description: The order identifier associated with this shipment
         label_type:
           enum:
           - PDF
@@ -13416,13 +13448,10 @@ components:
           type: string
         account_number:
           type: string
-        account_id:
-          type: string
         account_country_code:
           type: string
           nullable: true
       required:
-      - account_id
       - account_number
       - api_key
     spring:
@@ -13730,7 +13759,7 @@ tags:
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
     | dpd | DPD |
-    | dpd_meta | DPD Meta |
+    | dpd_meta | DPD Global |
     | dtdc | DTDC |
     | easypost | EasyPost |
     | easyship | Easyship |
@@ -13940,6 +13969,7 @@ tags:
     | dhl_parcel_de_europaket | V54EPAK |
     | dhl_parcel_de_paket_international | V53WPAK |
     | dhl_parcel_de_warenpost_international | V66WPI |
+    | dhl_parcel_de_retoure | V07PAK |
 
     ### DHL Parcel Poland
     | Code         | Service Name |
@@ -13960,7 +13990,7 @@ tags:
     | dpd_express_18h_guarantee | E18 |
     | dpd_express_b2b_predict | B2B MSG option |
 
-    ### DPD Meta
+    ### DPD Global
     | Code         | Service Name |
     | ------------ | ------------ |
     | dpd_meta_classic | CL |

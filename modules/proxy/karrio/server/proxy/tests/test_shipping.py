@@ -287,6 +287,7 @@ SHIPPING_RESPONSE = {
         },
     ],
     "reference": "",
+    "order_id": None,
     "return_address": None,
     "is_return": False,
     "label_type": "PDF",

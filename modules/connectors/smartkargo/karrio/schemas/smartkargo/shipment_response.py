@@ -27,6 +27,7 @@ class ShipmentType:
     packageReference: typing.Optional[str] = None
     prefix: typing.Optional[str] = None
     airWaybill: typing.Optional[str] = None
+    barCode: typing.Optional[str] = None
     estimatedDeliveryDate: typing.Optional[str] = None
     commodityType: typing.Optional[str] = None
     serviceType: typing.Optional[str] = None
@@ -58,10 +59,16 @@ class ShipmentType:
     totalCharges: typing.Optional[float] = None
     total: typing.Optional[float] = None
     totalTax: typing.Optional[float] = None
+    lastMilestone: typing.Any = None
+    eletronicKey: typing.Any = None
+    masterAirWaybill: typing.Any = None
+    deliveryToken: typing.Any = None
+    commercialInvoice: typing.Any = None
     otherCharges: typing.Optional[typing.List[OtherChargeType]] = jstruct.JList[OtherChargeType]
     validations: typing.Optional[typing.List[typing.Any]] = None
     dimensions: typing.Optional[typing.List[DimensionType]] = jstruct.JList[DimensionType]
     participants: typing.Optional[typing.List[typing.Dict[str, typing.Optional[str]]]] = None
+    customItems: typing.Optional[typing.List[typing.Any]] = None
 
 
 @attr.s(auto_attribs=True)

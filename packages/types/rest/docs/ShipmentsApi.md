@@ -212,6 +212,7 @@ let metadataKey: string; // (optional) (default to undefined)
 let metadataValue: string; // (optional) (default to undefined)
 let optionKey: string; // (optional) (default to undefined)
 let optionValue: string; // (optional) (default to undefined)
+let orderId: string; // (optional) (default to undefined)
 let reference: string; // (optional) (default to undefined)
 let requestId: string; // (optional) (default to undefined)
 let service: string; // (optional) (default to undefined)
@@ -234,6 +235,7 @@ const { status, data } = await apiInstance.list(
     metadataValue,
     optionKey,
     optionValue,
+    orderId,
     reference,
     requestId,
     service,
@@ -261,6 +263,7 @@ const { status, data } = await apiInstance.list(
 | **metadataValue** | [**string**] |  | (optional) defaults to undefined|
 | **optionKey** | [**string**] |  | (optional) defaults to undefined|
 | **optionValue** | [**string**] |  | (optional) defaults to undefined|
+| **orderId** | [**string**] |  | (optional) defaults to undefined|
 | **reference** | [**string**] |  | (optional) defaults to undefined|
 | **requestId** | [**string**] |  | (optional) defaults to undefined|
 | **service** | [**string**] |  | (optional) defaults to undefined|

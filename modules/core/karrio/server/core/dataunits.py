@@ -159,6 +159,27 @@ def _get_system_credentials_status(test_mode: bool = None) -> dict:
     return result
 
 
+def _get_platform_references() -> dict:
+    """Get JTL platform-specific references (template variables, etc.).
+
+    Reads from constance config. Returns empty defaults when constance
+    keys are not configured (e.g. non-JTL deployments).
+    """
+    import json
+
+    result = {}
+
+    try:
+        from constance import config as constance_config
+
+        raw = getattr(constance_config, "WAWI_TEMPLATE_VARIABLES", "{}")
+        result["wawi_template_variables"] = json.loads(raw) if isinstance(raw, str) else raw
+    except (ImportError, Exception):
+        result["wawi_template_variables"] = {}
+
+    return result
+
+
 def contextual_reference(request: Request = None, reduced: bool = True):
     import karrio.server.core.gateway as gateway
     import karrio.server.core.validators as validators
@@ -189,6 +210,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
             for k, v in REFERENCE_MODELS.items()
             if k not in (REFERENCE_EXCLUSIONS if reduced else [])
         },
+        **_get_platform_references(),
     }
 
     def _get_generic_carriers():

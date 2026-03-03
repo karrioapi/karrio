@@ -52,6 +52,7 @@ class ShipmentFilter(utils.Paginated):
     created_before: typing.Optional[str] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET
+    order_id: typing.Optional[str] = strawberry.UNSET
     service: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[utils.ShipmentStatusEnum]] = strawberry.UNSET
     option_key: typing.Optional[str] = strawberry.UNSET
@@ -499,6 +500,7 @@ class PartialShipmentMutationInput(utils.BaseInput):
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET
+    order_id: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -661,6 +663,7 @@ class CreateServiceLevelInput(utils.BaseInput):
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
 
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -704,6 +707,7 @@ class UpdateServiceLevelInput(utils.BaseInput):
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
 
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -717,6 +721,7 @@ class CreateRateSheetMutationInput(utils.BaseInput):
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
     origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -731,6 +736,7 @@ class UpdateRateSheetMutationInput(utils.BaseInput):
     origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
     remove_missing_services: typing.Optional[bool] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -927,6 +933,7 @@ class ServiceRateInput(utils.BaseInput):
     max_weight: typing.Optional[float] = strawberry.UNSET
     transit_days: typing.Optional[int] = strawberry.UNSET
     transit_time: typing.Optional[float] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
@@ -942,6 +949,7 @@ class UpdateServiceRateMutationInput(utils.BaseInput):
     max_weight: typing.Optional[float] = strawberry.UNSET
     transit_days: typing.Optional[int] = strawberry.UNSET
     transit_time: typing.Optional[float] = strawberry.UNSET
+    meta: typing.Optional[utils.JSON] = strawberry.UNSET
 
 
 @strawberry.input
