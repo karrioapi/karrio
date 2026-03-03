@@ -1,3 +1,22 @@
+# Karrio 2026.1.17
+
+## Changes
+
+### Feat
+
+- feat(tracing): capture and store HTTP headers in carrier API tracing records
+- feat(dashboard): include headers as -H flags in devtools cURL copy
+- feat(mcp): add list_carrier_connections tool to MCP server
+
+### Fix
+
+- fix(usps): use lib.failsafe for transit_days parsing from commitment.name
+- fix(ups): truncate phone numbers to 15-character API limit
+- fix(ups): enable pickup service code option override
+- fix(mcp): remove unsupported validate_address tool and clean up tests
+
+---
+
 # Karrio 2026.1.16
 
 ## Changes
