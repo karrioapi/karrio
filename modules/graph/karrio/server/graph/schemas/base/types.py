@@ -719,6 +719,8 @@ class TracingRecordType:
         except:
             return self.meta
 
+
+
     @staticmethod
     @utils.authentication_required
     def resolve(info: Info, id: str) -> typing.Optional["TracingRecordType"]:

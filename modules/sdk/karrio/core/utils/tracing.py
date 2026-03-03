@@ -399,12 +399,23 @@ class Tracer:
 
         This method records request/response data that can be persisted
         to the TracingRecord model for debugging and auditing.
+
+        Sensitive header values (Authorization, X-Api-Key, etc.) are redacted
+        here — at capture time — so the data is always stored clean in the DB.
+        No redaction is needed downstream (GraphQL, serializers, etc.).
         """
+        from karrio.core.utils.redaction import redact_headers
 
         def _save():
+            _data = {"format": format, **data} if isinstance(data, dict) else {"format": format, "data": data}
+            # Redact headers in-place before the Record is created
+            if "request_headers" in _data:
+                _data["request_headers"] = redact_headers(_data["request_headers"])
+            if "response_headers" in _data:
+                _data["response_headers"] = redact_headers(_data["response_headers"])
             return Record(
                 key=key,
-                data={"format": format, **data},
+                data=_data,
                 timestamp=time.time(),
                 metadata=metadata,
             )
