@@ -1,0 +1,2103 @@
+openapi: 3.0.3
+info:
+  title: Domestic Prices
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    The prices API can be used to calculate postage rates for domestic packages:
+
+    * Base postage based on a set of given package characteristics
+    * Base postage based on a given Stock Keeping Units (SKUs)
+    * Extra service postage based on a given extra service code and mail class
+    * A list of eligible products for a given set of package characteristics
+ 
+    For specifications such as package and letter dimensions, delivery information, etc., please refer to the [Domestic Mail Manual (DMM)](https://pe.usps.com/DMM300).
+
+    For a list of published prices please refer to the [USPS&#174; Price List](https://pe.usps.com/text/dmm300/Notice123.htm).
+
+    To discover the rate ingredients for this API, please visit [Publication 205](https://postalpro.usps.com/pub205).
+
+
+
+    **Authentication, Authorization and Access Control**
+      
+      Client applications are given authorized access to protected information resources. Authorization is accomplished via the USPS&#174; Customer Onboarding Platform, where Customer Registration users may grant applications access to their protected business information. All client applications must go through this onboarding process. Any Customer Registration user wishing to share their protected business information with client application(s) may also grant authorized access.
+
+    The OAuth2, version 3 (/v3), API is based on this authorization grant and must be used to get tokens for all V3 APIs.
+    * The resulting OAuth2 access token is to be placed in the **Authorization** header, using the **Bearer** authentication scheme.
+    * All version 3 APIs validate access to protected information resources and will respond with a *401* HTTP status, *Unauthorized* reason, when the client application has not been authorized to access the given information resource.
+
+    The following APIs may include payment account or permit identification used to get contract rates.
+
+    If all mail classes are needed, please use the /total-rates/search endpoint.
+  version: 3.4.27
+servers:
+  - url: https://apis.usps.com/prices/v3
+    description: Production Environment Endpoint
+  - url: https://apis-tem.usps.com/prices/v3
+    description: Testing Environment Endpoint
+paths:
+  /base-rates/search:
+    post:
+      tags:
+        - Resources
+      summary: Performs a search for base price using the submitted rate ingredients.
+      description: Returns an eligible price given a set of package rate ingredients.
+      operationId: post-base-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseRatesQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/BaseRatesQuery'
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseRateOption'
+              examples:
+                BaseRatesSearchExample:
+                  $ref: '#/components/examples/BaseRatesSearchExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BaseRateOption'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - prices
+  /extra-service-rates/search:
+    post:
+      tags:
+        - Resources
+      summary: Search for extra services using rate ingredients.
+      description: |
+        Returns eligible extra service prices, descriptions, and SKUs given a set of package rate ingredients. 
+        NOTE: The request using an integer (instead of an array) for extraServices is deprecated and will be removed in June 2025.
+      operationId: post-extra-service-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ExtraServiceRateQuery'
+                - $ref: '#/components/schemas/ExtraServiceRateQueryWithSingleExtraService'
+          application/xml:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ExtraServiceRateQuery'
+                - $ref: '#/components/schemas/ExtraServiceRateQueryWithSingleExtraService'
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtraServiceRateDetails'
+              examples:
+                ExtraServiceRatesSearchExample:
+                  $ref: '#/components/examples/ExtraServiceRatesSearchExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ExtraServiceRateDetails'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - prices
+  /base-rates-list/search:
+    post:
+      tags:
+        - Resources
+      summary: Search for eligible products using rate ingredients.
+      description: |
+        Returns a list of eligible prices given dimensions/weight/destination of pieces.
+
+        Search for contract prices; either by:
+
+        * Enterprise Payment System (EPS) account
+        * Meter number
+        * Permit number
+
+        A specific mail class is required when searching for contract prices.
+      operationId: post-rate-list
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateListQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/RateListQuery'
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseRatesQueryResult'
+              examples:
+                BaseRatesListSearchExample:
+                  $ref: '#/components/examples/BaseRatesListSearchExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BaseRatesQueryResult'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - prices
+  /total-rates/search:
+    post:
+      tags:
+        - Resources
+      summary: Returns a list of eligible prices including extra service fees given a set of package rate ingredients.
+      description: "This API returns a list of eligible prices, including extra service fees, given the dimensions, weight, origin and destination of your package."
+      operationId: post-total-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TotalRatesQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/TotalRatesQuery'
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalRatesQueryResult'
+              examples:
+                TotalRatesSearchExample:
+                  $ref: '#/components/examples/TotalRatesSearchExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TotalRatesQueryResult'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - prices
+  /letter-rates/search:
+    post:
+      tags:
+        - Resources
+      summary: Performs a search for First-Class Mail letter prices using the submitted rate ingredients.
+      description: |
+        Returns an eligible price given a set of letter rate ingredients for First-Class Mail.
+      operationId: post-letter-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LetterRatesQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/LetterRatesQuery'
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LetterRatesOption'
+              examples:
+                LetterRatesSearchExample:
+                  $ref: '#/components/examples/LetterRatesSearchExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LetterRatesOption'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - prices
+components:
+  schemas:
+    BaseRatesQuery:
+      title: Base Rates Query
+      required:
+        - destinationEntryFacilityType
+        - destinationZIPCode
+        - height
+        - length
+        - mailClass
+        - originZIPCode
+        - priceType
+        - processingCategory
+        - rateIndicator
+        - weight
+        - width
+      type: object
+      properties:
+        originZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: This is the originating ZIP Code&#8482; for the package.
+          example: "22407"
+        destinationZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: This is destination ZIP Code&#8482; for the package.
+          example: "63118"
+        weight:
+          $ref: '#/components/schemas/weightPounds'
+        length:
+          $ref: '#/components/schemas/length'
+        width:
+          $ref: '#/components/schemas/width'
+        height:
+          $ref: '#/components/schemas/height'
+        mailClass:
+          $ref: '#/components/schemas/mailClass'
+        processingCategory:
+          type: string
+          description: |-
+            USPS categorizes parcels into one of two mail processing categories: MACHINABLE or NONSTANDARD. 
+            These categories are based on the physical dimensions of the piece, regardless of the placement (orientation) of the delivery address on the piece.
+            For more information see [Domestic Mail Manual (DMM)](https://pe.usps.com/DMM300/201.htm).
+            
+            Machinable letter-size mail is:
+            
+            * Not less than 5 inches long, 3-1/2 inches high, and 0.007-inch thick. For pieces more than 4-1/4 inches high or 6 inches long, or both, the minimum thickness is 0.009.(Pieces not meeting the 0.009 thickness are non-machinable letters under 2.1.)
+            * Not more than 11-1/2 inches long, or more than 6-1/8 inches high, or greater than 1/4-inch thick.
+            * Rectangular, with four square corners and parallel opposite sides. Letter-size, card-type mailpieces made of cardstock may have finished corners that do not exceed a radius of 0.125 inch (1/8 inch) unless prepared as Customized Market Mail under 243.9.0. See Exhibit 1.1.1.
+            * Within an aspect ratio (length divided by height) of 1.3 to 2.5, inclusive.
+            * Subject to additional dimensional restrictions in 3.0, depending on mailpiece design.
+
+            Flat-size mail must have the following characteristics:
+            
+            * Be more than 11-1/2 inches long, or more than 6-1/8 inches high, or more than 1/4 inch thick, other than automation flats under 6.0 or as allowed for USPS&#174; Marketing Mail pieces with simplified addresses under 5.2.2. Mailpieces other than automation flats or USPS&#174; Marketing Mail pieces with simplified addresses that are 1/4 inch thick or less must be at least 3-1/2 inches high and at least 5 inches long and be at least 0.007 inch thick.
+            * Be not more than 15 inches long or more than 12 inches high or more than 3/4 inch thick, except for:
+            * Periodicals non-machinable flat-size pieces mailed as specified in 207.26.0. They must not be more than 1–1/4 inches thick.
+            * Polywrapped flats, with selvage that extends beyond the contents, up to a maximum length of 15-3/4 inches or a maximum height of 12-1/2 inches. The enclosed contents must not be longer than 15 inches or higher than 12 inches.
+            * Co-mailed polywrapped flats mailed as specified in Customer Support Ruling PS-346, with selvage that extends beyond the contents, up to a maximum height of 12-7/8 inches. The enclosed contents must not be higher than 12 inches.
+            * Be rectangular with four square corners or with finished corners that do not exceed a radius of 0.125 inch (1/8 inch) unless prepared as Customized Market Mail under 9.0.
+            * Be categorized as a catalog.
+            * Other size or weight standards may apply to mail addressed to certain APOs and FPOs, and mail sent by the Department of State to U.S. government personnel abroad.
+
+            Note:
+            * `IRREGULAR` is deprecated and will convert to `NONSTANDARD` as of 01/19/2025.
+            * `NON_MACHINABLE` is deprecated and will convert to `NONSTANDARD` as of 01/19/2025.
+          enum:
+            - LETTERS
+            - FLATS
+            - MACHINABLE
+            - IRREGULAR
+            - NON_MACHINABLE
+            - NONSTANDARD
+          example: MACHINABLE
+        rateIndicator:
+          type: string
+          description: "Rate ingredient to determine pricing categorization for calculating the price\n * 3D - 3-Digit\n * 3N - 3-Digit Dimensional Rectangular\n * 3R - 3-Digit Dimensional Nonrectangular\n * 5D - 5-Digit\n * BA - Basic\n * BB - Mixed NDC\n * BM - NDC\n * C1 - Cubic Pricing Tier 1\n * C2 - Cubic Pricing Tier 2\n * C3 - Cubic Pricing Tier 3\n * C4 - Cubic Pricing Tier 4\n * C5 - Cubic Pricing Tier 5\n * CP - Cubic Parcel\n * CM - USPS Connect Local&#174; Mail\n * DC - NDC\n * DE - SCF\n * DF - 5-Digit\n * DN - Dimensional Nonrectangular \n * DR - Dimensional Rectangular\n * E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee\n * E6 - Priority Mail Express Legal Flat Rate Envelope\n * E7 - Priority Mail Express Legal Flat Rate Envelope Sunday / Holiday\n * FA - Legal Flat Rate Envelope\n * FB - Medium Flat Rate Box/Large Flat Rate Bag\n * FE - Flat Rate Envelope\n * FP - Padded Flat Rate Envelope\n * FS - Small Flat Rate Box\n * LC - USPS Connect&#174; Local Single Piece\n * LF - USPS Connect&#174; Local Flat Rate Box \n * LL - USPS Connect&#174; Local Large Flat Rate Bag\n * LO - USPS Connect&#174; Local Oversized\n * LS - USPS Connect&#174; Local Small Flat Rate Bag\n * NP - Non-Presorted\n * O1 - Full Tray Box\n * O2 - Half Tray Box \n * O3 - EMM Tray Box \n * O4 - Flat Tub Tray Box\n * O5 - Surface Transported Pallet \n * O6 - Full Pallet Box \n * O7 - Half Pallet Box\n * OS - Oversized\n * P5 - Cubic Soft Pack Tier 1\n * P6 - Cubic Soft Pack Tier 2\n * P7 - Cubic Soft Pack Tier 3\n * P8 - Cubic Soft Pack Tier 4\n * P9 - Cubic Soft Pack Tier 5\n * Q6 - Cubic Soft Pack Tier 6\n * Q7 - Cubic Soft Pack Tier 7\n * Q8 - Cubic Soft Pack Tier 8\n * Q9 - Cubic Soft Pack Tier 9\n * Q0 - Cubic Soft Pack Tier 10\n * PA - Priority Mail Express Single Piece\n * PL - Large Flat Rate Box\n * PM - Large Flat Rate Box APO/FPO/DPO\n * PR - Presorted\n * SB - Small Flat Rate Bag\n * SN - SCF Dimensional Nonrectangular\n * SP - Single Piece\n * SR - SCF Dimensional Rectangular           "
+          enum:
+            - 3D
+            - 3N
+            - 3R
+            - 5D
+            - BA
+            - BB
+            - BM
+            - C1
+            - C2
+            - C3
+            - C4
+            - C5
+            - CP
+            - CM
+            - DC
+            - DE
+            - DF
+            - DN
+            - DR
+            - E4
+            - E6
+            - E7
+            - FA
+            - FB
+            - FE
+            - FP
+            - FS
+            - LC
+            - LF
+            - LL
+            - LO
+            - LS
+            - NP
+            - O1
+            - O2
+            - O3
+            - O4
+            - O5
+            - O6
+            - O7
+            - OS
+            - P5
+            - P6
+            - P7
+            - P8
+            - P9
+            - Q6
+            - Q7
+            - Q8
+            - Q9
+            - Q0
+            - PA
+            - PL
+            - PM
+            - PR
+            - SB
+            - SN
+            - SP
+            - SR
+          example: SP
+        destinationEntryFacilityType:
+          type: string
+          description: |-
+            Types of Facilities:
+            * `NONE` - Translate to Destination Rate Indicator N
+            * `DESTINATION_NETWORK_DISTRIBUTION_CENTER` - Translate to Destination Rate Indicator B
+            * `DESTINATION_SECTIONAL_CENTER_FACILITY` - Translate to Destination Rate Indicator S
+            * `DESTINATION_DELIVERY_UNIT` - Translate to Destination Rate Indicator D
+            * `DESTINATION_SERVICE_HUB` - Translate to Destination Rate Indicator H
+            * `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` - Translate to Destination Rate Indicator B
+            
+            Note:
+            * Effective 01/18/2026: `DESTINATION_NETWORK_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is no longer eligible.
+            * Effective 01/18/2026: (NSA Only) `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is available as an option.
+          enum:
+            - NONE
+            - DESTINATION_NETWORK_DISTRIBUTION_CENTER
+            - DESTINATION_SECTIONAL_CENTER_FACILITY
+            - DESTINATION_DELIVERY_UNIT
+            - DESTINATION_SERVICE_HUB
+            - DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER
+        priceType:
+          $ref: '#/components/schemas/priceType'
+        mailingDate:
+          $ref: '#/components/schemas/mailingDate'
+        accountType:
+          type: string
+          description: |
+            The type of payment account linked to a contract rate.
+
+            Note:
+            - `METER` pricing is only available to PC Postage providers.
+            - `MID` pricing is only available for return mail classes.
+          example: EPS
+          enum:
+            - EPS
+            - PERMIT
+            - METER
+            - MID
+        accountNumber:
+          pattern: ^\d+$
+          type: string
+          description: "The Enterprise Payment Account, Permit number, PC Postage meter number, or Mailer ID associated with a contract."
+          example: "1234567890"
+        hasNonstandardCharacteristics:
+          default: false
+          type: boolean
+          description: "Package is nonstandard. Nonstandard packages include cylindrical tubes and rolls, certain high-density items, cartons containing more than 24 ounces of liquids in one or more glass containers, cartons containing 1 gallon or more of liquid in metal or plastic containers, and items in [201.7.6.2](https://pe.usps.com/text/dmm300/201.htm#7.6.2)."
+      additionalProperties: false
+      description: Package rate ingredients used to calculate base prices.
+      xml:
+        wrapped: true
+    RateListQuery:
+      title: Rate List Query
+      required:
+        - destinationZIPCode
+        - height
+        - length
+        - originZIPCode
+        - weight
+        - width
+      type: object
+      properties:
+        originZIPCode:
+          $ref: '#/components/schemas/originZIPCode'
+        destinationZIPCode:
+          $ref: '#/components/schemas/destinationZIPCode'
+        weight:
+          $ref: '#/components/schemas/weightPounds'
+        length:
+          $ref: '#/components/schemas/length'
+        width:
+          $ref: '#/components/schemas/width'
+        height:
+          $ref: '#/components/schemas/height'
+        mailClass:
+          $ref: '#/components/schemas/mailClassOutboundOnly'
+        mailClasses:
+          $ref: '#/components/schemas/mailClassesOutboundOnly'
+        priceType:
+          $ref: '#/components/schemas/priceType'
+        mailingDate:
+          $ref: '#/components/schemas/mailingDate'
+        accountType:
+          type: string
+          description: The type of payment account linked to a contract rate.
+          example: EPS
+          enum:
+            - EPS
+            - PERMIT
+            - METER
+        accountNumber:
+          pattern: ^\d+$
+          type: string
+          description: "The Enterprise Payment Account, Permit number or PC Postage meter number associated with a contract."
+          example: "1234567890"
+        hasNonstandardCharacteristics:
+          default: false
+          type: boolean
+          description: "Package is nonstandard. Nonstandard packages include cylindrical tubes and rolls, certain high-density items, cartons containing more than 24 ounces of liquids in one or more glass containers, cartons containing 1 gallon or more of liquid in metal or plastic containers, and items in [201.7.6.2](https://pe.usps.com/text/dmm300/201.htm#7.6.2)."
+      additionalProperties: false
+      description: Informative details about all possible prices based on the ingredients.
+    ExtraServiceRateQueryWithSingleExtraService:
+      title: Extra Service Rate Query With Integer
+      deprecated: true
+      required:
+        - mailClass
+        - priceType
+      type: object
+      properties:
+        extraServices:
+          $ref: '#/components/schemas/ExtraService'
+        mailClass:
+          $ref: '#/components/schemas/mailClass'
+        priceType:
+          $ref: '#/components/schemas/priceType'
+        itemValue:
+          type: number
+          description: The value of the item. Required for Insurance and Collect On Delivery.  The price for Insurance, Registered Mail, and Collect On Delivery extra services will vary based on this value.
+          format: double
+          minimum: 0
+        weight:
+          $ref: '#/components/schemas/weightPounds'
+        originZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: The originating ZIP code for the package.
+        destinationZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: The destination ZIP code for the package.
+        mailingDate:
+          $ref: '#/components/schemas/mailingDate'
+        accountType:
+          type: string
+          description: The type of payment account linked to a contract rate.
+          example: EPS
+          enum:
+            - EPS
+            - PERMIT
+            - METER
+        accountNumber:
+          pattern: ^\d+$
+          type: string
+          description: "The Enterprise Payment Account, Permit number or PC Postage meter number associated with a contract."
+      additionalProperties: false
+      description: Search parameters for an extra service price.
+    ExtraServiceRateQuery:
+      title: Extra Service Rate Query
+      required:
+        - mailClass
+        - priceType
+      type: object
+      properties:
+        extraServices:
+         $ref: '#/components/schemas/ExtraServices'
+        mailClass:
+          $ref: '#/components/schemas/mailClass'
+        priceType:
+          $ref: '#/components/schemas/priceType'
+        itemValue:
+          type: number
+          description: The value of the item. Required for Insurance and Collect On Delivery.  The price for Insurance, Registered Mail, and Collect On Delivery extra services will vary based on this value.
+          format: double
+          minimum: 0
+        weight:
+          $ref: '#/components/schemas/weightPounds'
+        originZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: The originating ZIP code for the package.
+        destinationZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: The destination ZIP code for the package.
+        mailingDate:
+          $ref: '#/components/schemas/mailingDate'
+        accountType:
+          type: string
+          description: |
+            The type of payment account linked to a contract rate.
+
+            Note:
+            - `METER` pricing is only available to PC Postage providers.
+            - `MID` pricing is only available for return mail classes.
+          example: EPS
+          enum:
+            - EPS
+            - PERMIT
+            - METER
+            - MID
+        accountNumber:
+          pattern: ^\d+$
+          type: string
+          description: "The Enterprise Payment Account, Permit number, PC Postage meter number, or Mailer ID associated with a contract."
+          example: "123457890"
+      additionalProperties: false
+      description: Search parameters for an extra service price.
+    ExtraService:
+      type: integer
+      description: |
+        Extra Service Code requested.
+        * 415 - USPS Label Delivery
+        * 480 - Tracking Plus 6 Months
+        * 481 - Tracking Plus 1 Year
+        * 482 - Tracking Plus 3 Years
+        * 483 - Tracking Plus 5 Years
+        * 484 - Tracking Plus 7 Years
+        * 485 - Tracking Plus 10 Years
+        * 486 - Tracking Plus Signature 3 Years
+        * 487 - Tracking Plus Signature 5 Years
+        * 488 - Tracking Plus Signature 7 Years
+        * 489 - Tracking Plus Signature 10 Years
+        * 498 - PO Box Locker – Stocking Fee (NSA Only)
+        * 500 - PO Box Locker – Self-Service Pickup Fee (NSA Only)
+        * 501 - PO Box Locker – Clerk-Assisted Pickup Fee (NSA Only)
+        * 502 - PO Box Locker – Local Delivery Fee (NSA Only)
+        * 810 - HAZMAT Air Eligible Ethanol Package
+        * 811 - HAZMAT Class 1 - Toy Propellant/Safety Fuse Package
+        * 812 - HAZMAT Class 3 – Flammable Liquid Package
+        * 813 - HAZMAT Class 7 - Radioactive Materials Package
+        * 814 - HAZMAT Class 8 - Corrosive Materials Package
+        * 815 - HAZMAT Class 8 - Nonspillable Wet Battery Package
+        * 816 - HAZMAT Class 9 - Lithium Battery Marked - Ground Only Package
+        * 817 - HAZMAT Class 9 - Lithium Battery - Returns Package
+        * 818 - HAZMAT Class 9 - Lithium batteries, marked package
+        * 819 - HAZMAT Class 9 - Dry Ice Package
+        * 820 - HAZMAT Class 9 - Lithium batteries, unmarked package
+        * 821 - HAZMAT Class 9 - Magnetized Materials Package
+        * 822 - HAZMAT Division 4.1 – Flammable Solids or Safety Matches Package
+        * 823 - HAZMAT Division 5.1 - Oxidizers Package
+        * 824 - HAZMAT Division 5.2 - Organic Peroxides Package
+        * 825 - HAZMAT Division 6.1 – Toxic Materials Package
+        * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+        * 827 - HAZMAT Excepted Quantity Provision Package 
+        * 828 - HAZMAT Ground Only
+        * 829 - HAZMAT ID8000 Consumer Commodity Package
+        * 830 - HAZMAT Lighters Package 
+        * 831 - HAZMAT LTD QTY Ground Package 
+        * 832 - HAZMAT Small Quantity Provision Package
+        * 853 - Perishable Material
+        * 856 - Live Animals Transportation Fee
+        * 857 - Hazardous Material
+        * 858 - Cremated Remains
+        * 910 - Certified Mail
+        * 911 - Certified Mail Restricted Delivery
+        * 912 - Certified Mail Adult Signature Required
+        * 913 - Certified Mail Adult Signature Restricted Delivery
+        * 915 - Collect on Delivery (COD)
+        * 917 - COD Restricted Delivery
+        * 920 - USPS Tracking
+        * 921 - Signature Confirmation
+        * 922 - Adult Signature Required 21 or Over
+        * 923 - Adult Signature Restricted Delivery 21 or Over
+        * 924 - Signature Confirmation Restricted Delivery
+        * 925 - Priority Mail Express Merchandise Insurance
+        * 930 - Insurance <= $500
+        * 931 - Insurance > $500
+        * 934 - Insurance Restricted Delivery
+        * 940 - Registered Mail
+        * 941 - Registered Mail Restricted Delivery
+        * 955 - Return Receipt
+        * 957 - Return Receipt Electronic
+        * 972 - Live Animal and Perishable Handling Fee
+        * 981 - Signature Requested (PRIORITY_MAIL_EXPRESS only)
+        * 984 - Parcel Locker Delivery
+        * 986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)
+        * 991 - Sunday Delivery
+
+        <b>Note:</b> Entering a single extra service will be removed in the next major revision.
+      enum:
+        - 415
+        - 480
+        - 481
+        - 482
+        - 483
+        - 484
+        - 485
+        - 486
+        - 487
+        - 488
+        - 489
+        - 498
+        - 500
+        - 501
+        - 502
+        - 810
+        - 811
+        - 812
+        - 813
+        - 814
+        - 815
+        - 816
+        - 817
+        - 818
+        - 819
+        - 820
+        - 821
+        - 822
+        - 823
+        - 824
+        - 825
+        - 826
+        - 827
+        - 828
+        - 829
+        - 830
+        - 831
+        - 832
+        - 853
+        - 856
+        - 857
+        - 858
+        - 910
+        - 911
+        - 912
+        - 913
+        - 915
+        - 917
+        - 920
+        - 921
+        - 922
+        - 923
+        - 924
+        - 925
+        - 930
+        - 931
+        - 934
+        - 940
+        - 941
+        - 955
+        - 957
+        - 972
+        - 981
+        - 984
+        - 986
+        - 991
+    ExtraServices:
+      type: array
+      description: |
+        Extra Service Codes requested.
+        * 415 - USPS Label Delivery
+        * 480 - Tracking Plus 6 Months
+        * 481 - Tracking Plus 1 Year
+        * 482 - Tracking Plus 3 Years
+        * 483 - Tracking Plus 5 Years
+        * 484 - Tracking Plus 7 Years
+        * 485 - Tracking Plus 10 Years
+        * 486 - Tracking Plus Signature 3 Years
+        * 487 - Tracking Plus Signature 5 Years
+        * 488 - Tracking Plus Signature 7 Years
+        * 489 - Tracking Plus Signature 10 Years
+        * 498 - PO Box Locker – Stocking Fee (NSA Only)
+        * 500 - PO Box Locker – Self-Service Pickup Fee (NSA Only)
+        * 501 - PO Box Locker – Clerk-Assisted Pickup Fee (NSA Only)
+        * 502 - PO Box Locker – Local Delivery Fee (NSA Only)
+        * 810 - HAZMAT Air Eligible Ethanol Package
+        * 811 - HAZMAT Class 1 - Toy Propellant/Safety Fuse Package
+        * 812 - HAZMAT Class 3 – Flammable Liquid Package
+        * 813 - HAZMAT Class 7 - Radioactive Materials Package
+        * 814 - HAZMAT Class 8 - Corrosive Materials Package
+        * 815 - HAZMAT Class 8 - Nonspillable Wet Battery Package
+        * 816 - HAZMAT Class 9 - Lithium Battery Marked - Ground Only Package
+        * 817 - HAZMAT Class 9 - Lithium Battery - Returns Package
+        * 818 - HAZMAT Class 9 - Lithium batteries, marked package
+        * 819 - HAZMAT Class 9 - Dry Ice Package
+        * 820 - HAZMAT Class 9 - Lithium batteries, unmarked package
+        * 821 - HAZMAT Class 9 - Magnetized Materials Package
+        * 822 - HAZMAT Division 4.1 – Flammable Solids or Safety Matches Package
+        * 823 - HAZMAT Division 5.1 - Oxidizers Package
+        * 824 - HAZMAT Division 5.2 - Organic Peroxides Package
+        * 825 - HAZMAT Division 6.1 – Toxic Materials Package
+        * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+        * 827 - HAZMAT Excepted Quantity Provision Package
+        * 828 - HAZMAT Ground Only
+        * 829 - HAZMAT ID8000 Consumer Commodity Package
+        * 830 - HAZMAT Lighters Package
+        * 831 - HAZMAT LTD QTY Ground Package
+        * 832 - HAZMAT Small Quantity Provision Package
+        * 853 - Perishable Material
+        * 856 - Live Animals Transportation Fee
+        * 857 - Hazardous Material
+        * 858 - Cremated Remains
+        * 910 - Certified Mail
+        * 911 - Certified Mail Restricted Delivery
+        * 912 - Certified Mail Adult Signature Required
+        * 913 - Certified Mail Adult Signature Restricted Delivery
+        * 915 - Collect on Delivery (COD)
+        * 917 - COD Restricted Delivery
+        * 920 - USPS Tracking
+        * 921 - Signature Confirmation
+        * 922 - Adult Signature Required 21 or Over
+        * 923 - Adult Signature Restricted Delivery 21 or Over
+        * 924 - Signature Confirmation Restricted Delivery
+        * 925 - Priority Mail Express Merchandise Insurance
+        * 930 - Insurance <= $500
+        * 931 - Insurance > $500
+        * 934 - Insurance Restricted Delivery
+        * 940 - Registered Mail
+        * 941 - Registered Mail Restricted Delivery
+        * 955 - Return Receipt
+        * 957 - Return Receipt Electronic
+        * 972 - Live Animal and Perishable Handling Fee
+        * 981 - Signature Requested (PRIORITY_MAIL_EXPRESS only)
+        * 984 - Parcel Locker Delivery
+        * 986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)
+        * 991 - Sunday Delivery
+
+        <b>Note:</b> Entering a single extra service will be removed in the next major revision.
+      items:
+        $ref: '#/components/schemas/ExtraService'
+    TotalRatesExtraServices:
+      type: array
+      description: |
+        Extra Service Codes requested. If omitted, all available extra services will be returned. To narrow the results, provide a specific set of extra service codes. For convenience, use `986` for `PRIORITY_MAIL_EXPRESS` or `920` for all other `mailClasses`.
+        * 415 - USPS Label Delivery
+        * 480 - Tracking Plus 6 Months
+        * 481 - Tracking Plus 1 Year
+        * 482 - Tracking Plus 3 Years
+        * 483 - Tracking Plus 5 Years
+        * 484 - Tracking Plus 7 Years
+        * 485 - Tracking Plus 10 Years
+        * 486 - Tracking Plus Signature 3 Years
+        * 487 - Tracking Plus Signature 5 Years
+        * 488 - Tracking Plus Signature 7 Years
+        * 489 - Tracking Plus Signature 10 Years
+        * 498 - PO Box Locker – Stocking Fee (NSA Only)
+        * 500 - PO Box Locker – Self-Service Pickup Fee (NSA Only)
+        * 501 - PO Box Locker – Clerk-Assisted Pickup Fee (NSA Only)
+        * 502 - PO Box Locker – Local Delivery Fee (NSA Only)
+        * 810 - HAZMAT Air Eligible Ethanol Package
+        * 811 - HAZMAT Class 1 - Toy Propellant/Safety Fuse Package
+        * 812 - HAZMAT Class 3 – Flammable Liquid Package
+        * 813 - HAZMAT Class 7 - Radioactive Materials Package
+        * 814 - HAZMAT Class 8 - Corrosive Materials Package
+        * 815 - HAZMAT Class 8 - Nonspillable Wet Battery Package
+        * 816 - HAZMAT Class 9 - Lithium Battery Marked - Ground Only Package
+        * 817 - HAZMAT Class 9 - Lithium Battery - Returns Package
+        * 818 - HAZMAT Class 9 - Lithium batteries, marked package
+        * 819 - HAZMAT Class 9 - Dry Ice Package
+        * 820 - HAZMAT Class 9 - Lithium batteries, unmarked package
+        * 821 - HAZMAT Class 9 - Magnetized Materials Package
+        * 822 - HAZMAT Division 4.1 – Flammable Solids or Safety Matches Package
+        * 823 - HAZMAT Division 5.1 - Oxidizers Package
+        * 824 - HAZMAT Division 5.2 - Organic Peroxides Package
+        * 825 - HAZMAT Division 6.1 – Toxic Materials Package
+        * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+        * 827 - HAZMAT Excepted Quantity Provision Package
+        * 828 - HAZMAT Ground Only
+        * 829 - HAZMAT ID8000 Consumer Commodity Package
+        * 830 - HAZMAT Lighters Package
+        * 831 - HAZMAT LTD QTY Ground Package
+        * 832 - HAZMAT Small Quantity Provision Package
+        * 853 - Perishable Material
+        * 856 - Live Animals Transportation Fee
+        * 857 - Hazardous Material
+        * 858 - Cremated Remains
+        * 910 - Certified Mail
+        * 911 - Certified Mail Restricted Delivery
+        * 912 - Certified Mail Adult Signature Required
+        * 913 - Certified Mail Adult Signature Restricted Delivery
+        * 915 - Collect on Delivery (COD)
+        * 917 - COD Restricted Delivery
+        * 920 - USPS Tracking
+        * 921 - Signature Confirmation
+        * 922 - Adult Signature Required 21 or Over
+        * 923 - Adult Signature Restricted Delivery 21 or Over
+        * 924 - Signature Confirmation Restricted Delivery
+        * 925 - Priority Mail Express Merchandise Insurance
+        * 930 - Insurance <= $500
+        * 931 - Insurance > $500
+        * 934 - Insurance Restricted Delivery
+        * 940 - Registered Mail
+        * 941 - Registered Mail Restricted Delivery
+        * 955 - Return Receipt
+        * 957 - Return Receipt Electronic
+        * 972 - Live Animal and Perishable Handling Fee
+        * 981 - Signature Requested (PRIORITY_MAIL_EXPRESS only)
+        * 984 - Parcel Locker Delivery
+        * 986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)
+        * 991 - Sunday Delivery
+      items:
+        $ref: '#/components/schemas/ExtraService'
+    TotalRatesQuery:
+      title: Total Rates Query
+      type: object
+      description: Search parameters for base rate and extra service rate.
+      allOf:
+        - $ref: '#/components/schemas/RateListQuery'
+        - type: object
+          properties:
+            itemValue:
+              type: number
+              description: The value of the item. Required for Insurance and Collect On Delivery.  The price for Insurance, Registered Mail, and Collect On Delivery extra services will vary based on this value.
+              format: double
+              minimum: 0
+            extraServices:
+              $ref: '#/components/schemas/TotalRatesExtraServices'
+    BaseRatesQueryResult:
+      title: Base Rate Details
+      description: A list of rate options based on the search criteria.
+      type: object
+      properties:
+        rateOptions:
+          $ref: '#/components/schemas/RateOptions'
+      xml:
+        name: rateOptions
+        wrapped: true
+    ExtraServiceRateDetails:
+      title: Extra Service Rate Details
+      type: array
+      description: The extra service rate details that match the search criteria.
+      items:
+        type: object
+        properties:
+          extraService:
+            description: Number associated with the extra service
+            type: string
+            example: "922"
+          name:
+            type: string
+            description: Name of the extra service.
+            example: Adult Signature Required
+          SKU:
+            type: string
+            description: The stock keeping unit for the designated rate.
+            example: DPXX0XXXXX07200
+          priceType:
+            type: string
+            description: "The type of price applied (Retail, Commercial, Contract, NSA (deprecated))."
+            enum:
+              - RETAIL
+              - COMMERCIAL
+              - CONTRACT
+              - NSA
+          price:
+            type: number
+            description: The postage rate.
+            format: double
+            example: 3.35
+          warnings:
+            $ref: '#/components/schemas/WarningsList'
+    TotalRatesExtraServiceRateDetails:
+      title: Extra Service Rate Details
+      description: The extra service rate details that match the search criteria.
+      type: object
+      properties:
+        extraService:
+          description: Number associated with the extra service
+          type: string
+          example: "922"
+        name:
+          type: string
+          description: Name of the extra service.
+          example: Adult Signature Required
+        SKU:
+          type: string
+          description: The stock keeping unit for the designated rate.
+          example: DPXX0XXXXX07200
+        priceType:
+          type: string
+          description: "The type of price applied (Retail, Commercial, Contract, NSA (deprecated))."
+          enum:
+            - RETAIL
+            - COMMERCIAL
+            - CONTRACT
+            - NSA
+        price:
+          type: number
+          description: The postage rate.
+          format: double
+          example: 3.35
+        warnings:
+          $ref: '#/components/schemas/WarningsList'
+      additionalProperties: false
+    TotalRatesQueryResult:
+      title: Total Rate Details
+      type: object
+      properties:
+        rateOptions:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/RateOption'
+              - type: object
+                properties:
+                  extraServices:
+                    description: List of extra services associated with the shipment.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TotalRatesExtraServiceRateDetails'
+                  totalPrice:
+                    type: number
+                    description: |
+                      The total price, including the `totalBasePrice` and all extra service prices.
+
+                      Note: This field is only returned when `extraServices` are passed in the request.
+                    example: 3.35
+      description: A list of rate options including applicable extra services.
+      xml:
+        name: rateOptions
+    LetterRatesQuery:
+      title: Letter Rates Query
+      required:
+        - height
+        - length
+        - processingCategory
+        - thickness
+        - weight
+      type: object
+      properties:
+        weight:
+          $ref: '#/components/schemas/weightOunces'
+        length:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat/card length measured in inches.  For  `LETTERS` and `CARDS` the length is the dimension parallel to the delivery address as read. For  `FLATS` the length is the longest dimension.
+          format: double
+        height:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat/card height measured in inches.  The height is the dimension perpendicular to the length.
+          format: double
+        thickness:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat/card thickness measured in inches. The minimum dimension is always the thickness.
+          format: double
+        processingCategory:
+          type: string
+          description: |
+            * LETTERS            
+              
+              To be eligible for mailing at the price for letters, a piece must be:
+                * Rectangular
+                * At least 3-1/2 inches high x 5 inches long x 0.007 inch thick.
+                * No more than 6-1/8 inches high x 11-1/2 inches long x 1/4 inch thick.
+            
+              For additional information on letters, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Letters).
+            
+            * FLATS 
+            
+              The Postal Service uses the word "flats" to refer to large envelopes, newsletters, and magazines. The words large envelopes and flats are used interchangeably. Whatever you call them, flats must:
+            
+                * Have one dimension that is greater than 6-1/8 inches high OR 11-½ inches long OR ¼ inch thick.
+                * Be no more than 12 inches high x 15 inches long x ¾ inch thick.
+            
+              For additional information on flats, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Flats).
+            
+            * CARDS 
+            
+              To be eligible for mailing at the price for postcards, a piece must be:
+                * Rectangular
+                * At least 3-1/2 inches high x 5 inches long x 0.007 inch thick.
+                * No more than 4-1/4 inches high x 6 inches long x 0.016 inch thick.
+            
+              For additional information on postcards, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Cards).
+          enum:
+            - LETTERS
+            - FLATS
+            - CARDS
+        mailingDate:
+          $ref: '#/components/schemas/mailingDate'
+        nonMachinableIndicators:
+          type: object
+          properties:
+            isPolybagged:
+              type: boolean
+              description: "Is the letter/flat/card polybagged, polywrapped, enclosed in any plastic material, or has an exterior surface made of a material that is not paper. Windows in envelopes made of paper do not make mailpieces nonmachinable. Attachments allowable under applicable eligibility standards do not make mailpieces nonmachinable."
+              default: false
+            hasClosureDevices:
+              type: boolean
+              description: "Does the letter/flat/card have clasps, strings, buttons, or similar closure devices."
+              default: false
+            hasLooseItems:
+              type: boolean
+              description: "Does the letter/flat/card contain items such as pens, pencils, keys, or coins that cause the thickness of the mailpiece to be uneven; or loose keys or coins or similar objects not affixed to the contents within the mailpiece. Loose items may cause a letter to be nonmailable when mailed in paper envelopes; (see [DMM 601.3.3](https://pe.usps.com/text/dmm300/601.htm#ep1196660))."
+              default: false
+            isRigid:
+              type: boolean
+              description: Is the letter/flat/card too rigid (does not bend easily when subjected to a transport belt tension of 40 pounds around an 11-inch diameter turn).
+              default: false
+            isSelfMailer:
+              type: boolean
+              description: "Is the letter/flat/card a self-mailer that is not prepared according to [DMM 201.3.14](https://pe.usps.com/text/dmm300/201.htm#ep1079302)."
+              default: false
+            isBooklet:
+              type: boolean
+              description: "Is the letter/flat/card a booklet that is not prepared according to [DMM 201.3.16](https://pe.usps.com/text/dmm300/201.htm#ep1092751)."
+              default: false
+          additionalProperties: false
+          description: Set of boolean indicators used to determine whether a letter/flat/card qualifies as nonmachinable.
+        extraServices:
+          type: array
+          description: |
+            Extra Service Code requested.
+            * 910 - Certified Mail
+            * 911 - Certified Mail Restricted Delivery
+            * 930 - Insurance <=$500
+            * 931 - Insurance > $500
+            * 934 - Insurance Restricted Delivery
+            * 940 - Registered Mail
+            * 941 - Registered Mail Restricted Delivery
+            * 955 - Return Receipt
+            * 957 - Return Receipt Electronic
+            * 985 - Hold for Pickup
+          items:
+            type: integer
+            enum:
+              - 910
+              - 911
+              - 930
+              - 931
+              - 934
+              - 940
+              - 941
+              - 955
+              - 957
+              - 985
+        itemValue:
+          type: number
+          description: The value of the item. Required for Insurance.  The price for Insurance and Registered Mail extra services will vary based on this value.
+          format: double
+          minimum: 0
+      additionalProperties: false
+      description: Letter rate ingredients for calculating base prices.
+      xml:
+        wrapped: true
+    BaseRateOption:
+      title: Base Rates Query Result
+      type: object
+      properties:
+        totalBasePrice:
+          type: number
+          description: "The total price, including the rate, fees and pound postage."
+          format: double
+          example: 3.35
+        rates:
+          description: List of base rate details associated with the shipment.
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/BaseRateDetails'
+      additionalProperties: false
+      description: The prices that match the search criteria.
+      xml:
+        name: rateOption
+    BaseRateDetails:
+      title: Total Rates Query
+      type: object
+      description: Search parameters for base rate and extra service rate.
+      allOf:
+        - $ref: '#/components/schemas/RateDetails'
+        - type: object
+          properties:
+            warnings:
+              $ref: '#/components/schemas/WarningsList'
+    RateDetails:
+      title: Rate Details
+      type: object
+      properties:
+        SKU:
+          type: string
+          description: The stock keeping unit for the designated rate.
+          example: DPXX0XXXXX07200
+        description:
+          type: string
+          description: The description of the price.
+        priceType:
+          type: string
+          description: |-
+            The type of price applied.
+             * Valid Options for Domestic Prices include: 'RETAIL','COMMERCIAL',  'CONTRACT' & 'NSA' (deprecated)
+             * Valid Options for International Prices include: 'RETAIL', 'COMMERCIAL', 'COMMERCIAL_BASE', 'COMMERCIAL_PLUS', 'CONTRACT' & 'NSA' (deprecated)
+          enum:
+            - RETAIL
+            - COMMERCIAL
+            - COMMERCIAL_BASE
+            - COMMERCIAL_PLUS
+            - CONTRACT
+            - NSA
+        price:
+          type: number
+          description: The postage price.
+          format: double
+          example: 3.35
+        weight:
+          type: number
+          description: The calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate.
+          format: double
+          example: 5
+        dimWeight:
+          type: number
+          description: The calculated dimensional weight for the package based on user provided dimensions. The greater of dimWeight and weight will be used to calculated the rate.
+          format: double
+          example: 5
+        fees:
+          type: array
+          description: The fees associated with the package.
+          xml:
+            wrapped: true
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the fee.
+              SKU:
+                type: string
+                description: The pricing SKU for the fee.
+              price:
+                type: number
+                description: The price for the fee.
+                format: double
+            xml:
+              name: fee
+        startDate:
+          type: string
+          description: Effective start date of the rate.
+          format: date
+          example: "2021-07-16"
+        endDate:
+          type: string
+          description: Effective end date of the rate.  If blank the rate doesn't have an end date as of yet.
+          pattern: '^$|^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+          example: "2021-07-16"
+        mailClass:
+          type: string
+          description: The mail class of the price.
+        zone:
+          type: string
+          description: Indicates the calculated zone between the provided `originZIPCode` and `destinationZIPCode` for a given `mailClass`, `mailingDate`, and `weight`.
+          example: "01"
+        productName:
+          type: string
+          description: A business friendly name for a product that can be displayed to a customer on a shipping portal
+          example: Priority Mail
+        productDefinition:
+          type: string
+          description: A business friendly description for a product that can be displayed to a customer on a shipping portal
+          example: 1-3 day specific delivery to all U.S. states and territories
+        processingCategory:
+          type: string
+          description: |
+            Processing category for the provided rate, this value can be used in the labels API to ensure the provided rate is applied.
+
+            * `CARDS` - Cards, translates to PTR code `0`
+            * `LETTERS` - Letters, translates to PTR code `1`
+            * `FLATS` - Flats, translates to PTR code `2`
+            * `MACHINABLE` - Machinable Parcel, translates to PTR code `3`
+            * `IRREGULAR` - Irregular Parcel, translates to PTR code `4`
+            * `NON_MACHINABLE` - Non-machinable parcel, translates to PTR code `5`
+            * `NONSTANDARD` - Nonstandard parcel, translates to PTR code `5`
+            * `CATALOGS` - Catalogs, translates to PTR code `C`
+            * `OPEN_AND_DISTRIBUTE` - Open and Distribute, translates to PTR code `O`
+            * `RETURNS` - Returns, translates to PTR code `R`
+            * `SOFT_PACK_MACHINABLE` - Soft Pack Machinable, translates to PTR code `S`
+            * `SOFT_PACK_NON_MACHINABLE` - Soft Package Non-machinable, translates to PTR code `T`
+            
+            Note:
+            * `IRREGULAR` is deprecated and will convert to `NONSTANDARD` as of 01/19/2025.
+            * `NON_MACHINABLE` is deprecated and will convert to `NONSTANDARD` as of 01/19/2025.
+          enum:
+            - CARDS
+            - LETTERS
+            - FLATS
+            - MACHINABLE
+            - IRREGULAR
+            - NON_MACHINABLE
+            - NONSTANDARD
+            - CATALOGS
+            - OPEN_AND_DISTRIBUTE
+            - RETURNS
+            - SOFT_PACK_MACHINABLE
+            - SOFT_PACK_NON_MACHINABLE
+          example: NONSTANDARD
+        rateIndicator:
+          type: string
+          description: Two-digit rate indicator code for the provided rate, this value can be used in the labels API to ensure the provided rate is applied.
+          example: "SP"
+        destinationEntryFacilityType:
+          type: string
+          description: |
+            Destination Entry Facility type for the provided rate, this value can be used in the labels API to ensure the provided rate is applied.
+
+            * `NONE` - None, translates to PTR code `N`
+            * `AREA_DISTRIBUTION_CENTER` - Area Distribution Center, translates to PTR code `A`
+            * `AUXILIARY_SERVICE_FACILITY` - Auxiliary Service Facility, translates to PTR code `F`
+            * `DESTINATION_DELIVERY_UNIT` - Destination Delivery Unit, translates to PTR code `D`
+            * `DESTINATION_NETWORK_DISTRIBUTION_CENTER` - Destination Network Distribution Center, translates to PTR code `B`
+            * `DESTINATION_SECTIONAL_CENTER_FACILITY` - Destination Sectional Center Facility, translates to PTR code `S`
+            * `DESTINATION_SERVICE_HUB` - Destination Service Hub, translates to PTR code `H`
+            * `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` - Destination Regional Processing Distribution Center, translates to PTR code `B`
+            
+            Note:
+            * Effective 01/18/2026: `DESTINATION_NETWORK_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is no longer eligible.
+            * Effective 01/18/2026: (NSA Only) `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is available as an option.
+          enum:
+            - NONE
+            - AREA_DISTRIBUTION_CENTER
+            - AUXILIARY_SERVICE_FACILITY
+            - DESTINATION_DELIVERY_UNIT
+            - DESTINATION_NETWORK_DISTRIBUTION_CENTER
+            - DESTINATION_SECTIONAL_CENTER_FACILITY
+            - DESTINATION_SERVICE_HUB
+            - DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER
+          example: NONE
+      additionalProperties: true
+      description: Informative details about the price.
+      xml:
+        name: rate
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              description: Additional information regarding the error that was received.
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    LetterRatesOption:
+      title: Letter Rates Query Result
+      type: object
+      properties:
+        totalBasePrice:
+          type: number
+          description: "The total price, including the rate and fees."
+          format: double
+          example: 0.63
+        rates:
+          description: List of letter rate details associated with the shipment.
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/LettersRateDetails'
+      additionalProperties: false
+      description: The prices that match the search criteria.
+      xml:
+        name: rateOption
+    LettersRateDetails:
+      title: Letter Rates
+      type: object
+      description: Rate Details for the request letter search criteria.
+      allOf:
+        - $ref: '#/components/schemas/LetterRateDetail'
+        - type: object
+          properties:
+            warnings:
+              type: array
+              xml:
+                wrapped: true
+              items:
+                type: string
+                xml:
+                  name: warning
+    LetterRateDetail:
+      title: Letter Rate Details
+      type: object
+      properties:
+        SKU:
+          type: string
+          description: The stock keeping unit for the designated rate.
+          example: DPXX0XXXXX07200
+        description:
+          type: string
+          description: The description of the price.
+        priceType:
+          type: string
+          description: The type of price type applied (Retail).
+          enum:
+            - RETAIL
+        price:
+          type: number
+          description: The postage price.
+          format: double
+          example: 3.35
+        weight:
+          type: number
+          description: The calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate.
+          format: double
+          example: 5
+        fees:
+          type: array
+          description: The fees associated with the package.
+          xml:
+            wrapped: true
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the fee.
+              SKU:
+                type: string
+                description: The pricing SKU for the fee.
+              price:
+                type: number
+                description: The price for the fee.
+                format: double
+            xml:
+              name: fee
+        startDate:
+          type: string
+          description: Effective start date of the rate.
+          format: date
+          example: "2021-07-16"
+        endDate:
+          type: string
+          description: Effective end date of the rate.  If blank the rate doesn't have an end date as of yet.
+          pattern: '^$|^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+          example: "2021-07-16"
+        mailClass:
+          type: string
+          description: The mail class of the price.
+          enum:
+            - FIRST-CLASS_MAIL
+        extraServices:
+          $ref: '#/components/schemas/ExtraServiceRateDetails'
+      additionalProperties: true
+      description: Informative details about the price.
+      xml:
+        name: rate
+    weightPounds:
+      type: number
+      description: This is the calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate. Weight unit of measurement is in pounds.
+      format: double
+      example: 5
+    weightOunces:
+      type: number
+      description: This is the calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate. Weight unit of measurement is in ounces.
+      format: double
+      example: 5
+    length:
+      type: number
+      description: This is the package length in inches.  The maximum dimension is always length.
+      format: double
+    width:
+      type: number
+      description: This is the package width in inches.  The second longest dimension is always width.
+      format: double
+    height:
+      type: number
+      description: This is the package height in inches.
+      format: double
+    mailClass:
+      type: string
+      description: |-
+        The mail service requested.
+
+        Note:
+        - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`
+        - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`
+        - `FIRST-CLASS_PACKAGE_RETURN_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE_RETURN_SERVICE`
+        - `GROUND_RETURN_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE_RETURN_SERVICE`
+        - `USPS_RETAIL_GROUND` is no longer supported and will return a 400 if used
+      enum:
+        - PARCEL_SELECT
+        - PARCEL_SELECT_LIGHTWEIGHT
+        - PRIORITY_MAIL_EXPRESS
+        - PRIORITY_MAIL
+        - FIRST-CLASS_PACKAGE_SERVICE
+        - LIBRARY_MAIL
+        - MEDIA_MAIL
+        - BOUND_PRINTED_MATTER
+        - USPS_CONNECT_LOCAL
+        - USPS_CONNECT_MAIL
+        - USPS_CONNECT_REGIONAL
+        - USPS_GROUND_ADVANTAGE
+        - USPS_GROUND_ADVANTAGE_RETURN_SERVICE
+        - USPS_RETAIL_GROUND
+        - GROUND_RETURN_SERVICE
+        - FIRST-CLASS_PACKAGE_RETURN_SERVICE
+        - PRIORITY_MAIL_RETURN_SERVICE
+        - PRIORITY_MAIL_EXPRESS_RETURN_SERVICE
+      example: USPS_GROUND_ADVANTAGE
+    priceType:
+      type: string
+      description: Price type can be  * 'RETAIL' * 'COMMERCIAL' * 'CONTRACT' * 'NSA' (deprecated)
+      enum:
+        - RETAIL
+        - COMMERCIAL
+        - CONTRACT
+        - NSA
+      example: COMMERCIAL
+    mailingDate:
+      type: string
+      description: 'The date the package or letter/flat/card will be mailed. The mailing date may be today plus 0 to 7 days in advance.        '
+      format: date
+      example: "2021-07-01"
+    originZIPCode:
+      pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+      type: string
+      description: The originating ZIP code for the package.
+      example: "22407"
+    destinationZIPCode:
+      pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+      type: string
+      description: The destination ZIP code for the package.
+      example: "63118"
+    mailClassOutboundOnly:
+      type: string
+      description: |-
+        The mail service requested.
+
+         Note:
+         - A single mail class option is deprecated and will be removed in the next major revision.  This attribute will be replaced with the list of mail classes.
+         - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`
+         - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`
+         - `USPS_RETAIL_GROUND` is no longer supported and will return a 400 if used
+      deprecated: true
+      enum:
+        - PARCEL_SELECT
+        - PARCEL_SELECT_LIGHTWEIGHT
+        - PRIORITY_MAIL_EXPRESS
+        - PRIORITY_MAIL
+        - FIRST-CLASS_PACKAGE_SERVICE
+        - LIBRARY_MAIL
+        - MEDIA_MAIL
+        - BOUND_PRINTED_MATTER
+        - USPS_CONNECT_LOCAL
+        - USPS_CONNECT_MAIL
+        - USPS_CONNECT_REGIONAL
+        - USPS_GROUND_ADVANTAGE
+        - USPS_RETAIL_GROUND
+        - ALL
+    mailClassesOutboundOnly:
+      type: array
+      description: |
+        An list of mail classes
+
+        Note:
+        - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`
+        - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`
+        - `USPS_RETAIL_GROUND` is no longer supported and will return a 400 if used
+      example:
+        - USPS_GROUND_ADVANTAGE
+        - PARCEL_SELECT
+      items:
+        $ref: '#/components/schemas/mailClassOutboundOnly'
+    RateOptions:
+      title: Base Rates Query Result
+      type: array
+      description: The prices that match the search criteria.
+      xml:
+        name: rateOptions
+      items:
+        $ref: '#/components/schemas/RateOption'
+    RateOption:
+      title: Base Rates Query Result
+      type: object
+      properties:
+        totalBasePrice:
+          type: number
+          description: "The total price, including the rate, fees and pound postage."
+          format: double
+          example: 3.35
+        rates:
+          description: List of rate details
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/RateDetails'
+      additionalProperties: true
+      description: The prices that match the search criteria.
+      xml:
+        name: rateOption
+    WarningsList:
+      title: Warnings
+      type: array
+      description: A list of warnings associated with the rate calculation.
+      xml:
+        wrapped: true
+      items:
+        type: object
+        properties:
+          warningCode:
+            type: string
+            description: Code representing the type of warning.
+            example: "001"
+          warningDescription:
+            type: string
+            description: Description of the warning.
+            example: "Contract rate not found for request. Published rate returned."
+        xml:
+          name: warning
+  examples:
+    BaseRatesSearchExample:
+      summary: Base Rates Search Example
+      description: Example response for a base rates search.
+      value:
+        totalBasePrice: 8.65
+        rates:
+          - SKU: DUXP0XXXUC01080
+            description: USPS Ground Advantage Nonstandard Single-piece
+            priceType: COMMERCIAL
+            price: 4.65
+            weight: 0.5
+            dimWeight: 0
+            fees:
+              - name: Nonstandard Length > 22
+                SKU: D811XUXXXXX0000
+                price: 4
+            startDate: "2025-07-13"
+            endDate: "2025-10-04"
+            warnings:
+              - warningCode: "001"
+                warningDescription: Contract rate not found for request. Published rate returned.
+            mailClass: USPS_GROUND_ADVANTAGE
+            zone: "01"
+            processingCategory: NONSTANDARD
+            destinationEntryFacilityType: NONE
+            rateIndicator: SP
+    ExtraServiceRatesSearchExample:
+      summary: Extra Service Rates Search Example
+      description: Example response for an extra service rates search.
+      value:
+        - extraService: "915"
+          name: Collect on Delivery
+          SKU: DXCX0XXXXCX0600
+          priceType: COMMERCIAL
+          price: 34.35
+          warnings:
+            - warningCode: "001"
+              warningDescription: Contract rate not found for request. Published rate returned.
+        - extraService: "820"
+          name: Class 9 Lithium batteries unmarked package
+          SKU: NA
+          priceType: COMMERCIAL
+          price: 0
+          warnings: [ ]
+    BaseRatesListSearchExample:
+      summary: Base Rates List Search Example
+      description: Example response for a base rates list search.
+      value:
+        rateOptions:
+          - rates:
+              - mailClass: PARCEL_SELECT
+                priceType: COMMERCIAL
+                dimWeight: 0
+                zone: "05"
+                rateIndicator: SP
+                processingCategory: MACHINABLE
+                fees:
+                  - name: Nonstandard Length > 22
+                    SKU: D811XVUXXXX0000
+                    price: 2
+                startDate: "2025-07-13"
+                endDate: "2025-10-04"
+                productName: ""
+                productDefinition: ""
+                SKU: DVXP0XXUXC00020
+                price: 5.57
+                weight: 1.2
+                destinationEntryFacilityType: DESTINATION_DELIVERY_UNIT
+                description: Parcel Select Machinable DDU Single-piece
+            totalBasePrice: 5.57
+          - rates:
+              - mailClass: PARCEL_SELECT
+                priceType: COMMERCIAL
+                dimWeight: 0
+                zone: "05"
+                rateIndicator: DE
+                processingCategory: MACHINABLE
+                fees:
+                  - name: Nonstandard Length > 22
+                    SKU: D811XVUXXXX0000
+                    price: 2
+                startDate: "2025-07-13"
+                endDate: "2025-10-04"
+                productName: ""
+                productDefinition: ""
+                SKU: DVXP0XXFXC00020
+                price: 6.06
+                weight: 1.2
+                destinationEntryFacilityType: DESTINATION_SECTIONAL_CENTER_FACILITY
+                description: Parcel Select Machinable DSCF SCF
+            totalBasePrice: 6.06
+          - rates:
+              - mailClass: PARCEL_SELECT
+                priceType: COMMERCIAL
+                dimWeight: 0
+                zone: "05"
+                rateIndicator: SP
+                processingCategory: MACHINABLE
+                fees:
+                  - name: Nonstandard Length > 22
+                    SKU: D811XVUXXXX0000
+                    price: 2
+                startDate: "2025-07-13"
+                endDate: "2025-10-04"
+                productName: ""
+                productDefinition: ""
+                SKU: DVXP0XXBXC00020
+                price: 6.06
+                weight: 1.2
+                destinationEntryFacilityType: DESTINATION_SERVICE_HUB
+                description: Parcel Select Machinable DHUB Single-piece
+            totalBasePrice: 6.06
+    TotalRatesSearchExample:
+      summary: Total Rates Search Example
+      description: Example response for a total rates search.
+      value:
+        rateOptions:
+          - totalBasePrice: 9.17
+            totalPrice: 9.17
+            rates:
+              - description: 'Connect Local Nonstandard DDU '
+                priceType: COMMERCIAL
+                price: 7.17
+                weight: 8.0
+                dimWeight: 0.0
+                fees:
+                  - name: Nonstandard Length > 22
+                    SKU: D811XVUXXXX0000
+                    price: 2.00
+                startDate: "2025-07-13"
+                endDate: "2025-10-04"
+                mailClass: USPS_CONNECT_LOCAL
+                zone: "05"
+                productName: ""
+                productDefinition: ""
+                processingCategory: NONSTANDARD
+                rateIndicator: LC
+                destinationEntryFacilityType: DESTINATION_DELIVERY_UNIT
+                SKU: DVGXXXXUXC00080
+            extraServices:
+              - extraService: "920"
+                name: USPS Tracking
+                priceType: COMMERCIAL
+                price: 0.00
+                warnings:
+                  - warningCode: "001"
+                    warningDescription: Contract rate not found for request. Published rate returned.
+                SKU: DXTV0EXXXCX0000
+    LetterRatesSearchExample:
+      summary: Letter Rates Search Example
+      description: Example response for a letter rates search.
+      value:
+        totalBasePrice: 1.23
+        rates:
+          - SKU: DFLL0XXXXR00010
+            description: First Class Letter Metered
+            priceType: RETAIL
+            price: 0.74
+            weight: 0.1
+            fees:
+              - name: Nonmachinable letter fee
+                SKU: DX1F0XXLXRX0000
+                price: 0.49
+            startDate: "2025-10-05"
+            endDate: ""
+            extraServices:
+              - warnings: [ ]
+                priceType: RETAIL
+                SKU: DXEX0XXXXRX0000
+                price: 5.3
+                name: Certified Mail
+                extraService: "910"
+            warnings: [ ]
+            mailClass: FIRST-CLASS_MAIL
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            prices: get prices based on ingredients
+        authorizationCode:
+          authorizationUrl: /oauth2/v3/authorize
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            prices: get prices based on ingredients
