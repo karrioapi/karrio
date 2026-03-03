@@ -61,7 +61,11 @@ def _extract_details(
     if machinable_piece is False and "machinable" in service_code:
         return None
 
-    transit_days = lib.to_int(next(iter(rateOption.commitment.name.split(" "))))
+    # commitment.name is an optional free-text string (e.g. "2 Days", "NO STD").
+    # There is no dedicated transitDays field in the USPS API — transit days are
+    # inferred by parsing the first token. Use failsafe so non-integer values
+    # (e.g. "NO STD") and missing/null fields return None instead of crashing.
+    transit_days = lib.failsafe(lambda: lib.to_int(next(iter(rateOption.commitment.name.split(" ")))))
     estimated_delivery = rateOption.commitment.scheduleDeliveryDate
     charges = [
         ("Base Price", lib.to_money(rateOption.totalBasePrice)),
