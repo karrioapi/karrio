@@ -96,14 +96,14 @@ export class KarrioClient {
     return this.request("GET", "/v1/trackers", { params });
   }
 
-  // Address validation
-  async validateAddress(payload: Record<string, unknown>): Promise<any> {
-    return this.request("POST", "/v1/addresses/validate", { body: payload });
-  }
-
   // Carriers
   async listCarriers(params?: Record<string, string>): Promise<any> {
     return this.request("GET", "/v1/carriers", { params });
+  }
+
+  // Carrier connections (configured accounts)
+  async listConnections(params?: Record<string, string>): Promise<any> {
+    return this.request("GET", "/v1/connections", { params });
   }
 
   // Reference data

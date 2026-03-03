@@ -263,24 +263,6 @@ describe("KarrioClient", () => {
     );
   });
 
-  it("calls correct URL for validateAddress", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ valid: true }),
-    });
-
-    const payload = { address: { postal_code: "10001", country_code: "US" } };
-    const result = await client.validateAddress(payload);
-
-
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.karrio.io/v1/addresses/validate",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify(payload),
-      }),
-    );
-  });
 
   it("calls correct URL for getReferences", async () => {
     global.fetch = vi.fn().mockResolvedValue({

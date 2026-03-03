@@ -6,7 +6,7 @@ Connect any AI agent (Claude, ChatGPT, Cursor, VS Code Copilot) to 50+ shipping 
 
 ## Features
 
-- **11 shipping tools** -- rates, labels, tracking, address validation, pickups, manifests, orders, and more
+- **10 shipping tools** -- rates, labels, tracking, pickups, manifests, orders, and more
 - **MCP Resources** for a live carrier capability catalog -- no other shipping MCP does this
 - **stdio + Streamable HTTP** transport (remote-ready)
 - **Works with any Karrio instance** -- cloud or self-hosted
@@ -114,7 +114,6 @@ The server exposes:
 | `list_shipments` | List shipments with status, carrier, and date filters | No |
 | `cancel_shipment` | Cancel a shipment and void its label | Yes |
 | `track_package` | Track a package by tracking number with full event history | No |
-| `validate_address` | Validate and correct a shipping address | No |
 | `list_carriers` | List connected carriers and their capabilities | No |
 | `schedule_pickup` | Schedule a carrier pickup for one or more shipments | Yes |
 | `create_manifest` | Create an end-of-day manifest (SCAN form) | Yes |
@@ -127,8 +126,6 @@ The server exposes:
 **`create_shipment`** -- Purchase a shipping label. Requires full shipper and recipient addresses, parcel details, carrier name, and service code. Supports PDF, ZPL, and PNG label formats. This tool is marked as destructive because it incurs a charge.
 
 **`track_package`** -- Real-time package tracking. Provide a tracking number and optionally a carrier name (auto-detection is supported). Returns status, estimated delivery, and a chronological event history with locations.
-
-**`validate_address`** -- Verify addresses before shipping. Returns the validated/corrected address with any corrections applied by the carrier.
 
 **`list_carriers`** -- Discover which carriers are connected to your Karrio instance and what capabilities each supports (tracking, rating, shipping, pickup).
 
@@ -197,8 +194,7 @@ src/
     rates.ts            get_shipping_rates
     shipments.ts        create_shipment, get_shipment, list_shipments, cancel_shipment
     tracking.ts         track_package
-    addresses.ts        validate_address
-    carriers.ts         list_carriers
+    carriers.ts         list_carriers, list_carrier_connections
     pickups.ts          schedule_pickup
     manifests.ts        create_manifest
     orders.ts           list_orders
