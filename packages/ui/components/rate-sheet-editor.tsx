@@ -135,7 +135,6 @@ export interface ServiceLevelFeatures {
   last_mile?: string | null;
   form_factor?: string | null;
   age_check?: string | null;
-  transit_label?: string | null;
   tracked?: boolean | null;
   b2c?: boolean | null;
   b2b?: boolean | null;
@@ -461,7 +460,6 @@ export const RateSheetEditor = ({
           form_factor: featuresObj?.form_factor || "",
           age_check: featuresObj?.age_check || "",
           shipment_type: featuresObj?.shipment_type || "",
-          transit_label: featuresObj?.transit_label || "",
         };
       });
 
@@ -707,7 +705,6 @@ export const RateSheetEditor = ({
                       form_factor: service.features.form_factor || "",
                       age_check: service.features.age_check || "",
                       shipment_type: service.features.shipment_type || "",
-                      transit_label: service.features.transit_label || "",
                     }
                   : {}),
               } as ServiceLevelWithZones;
@@ -800,7 +797,7 @@ export const RateSheetEditor = ({
       zones,
       zone_ids: zoneIds,
       surcharge_ids: preset.surcharge_ids || [],
-      features: preset.features,
+      features: preset.features || undefined,
       ...(preset.features
         ? {
             first_mile: preset.features.first_mile || "",
@@ -808,7 +805,6 @@ export const RateSheetEditor = ({
             form_factor: preset.features.form_factor || "",
             age_check: preset.features.age_check || "",
             shipment_type: preset.features.shipment_type || "",
-            transit_label: preset.features.transit_label || "",
           }
         : {}),
     };
