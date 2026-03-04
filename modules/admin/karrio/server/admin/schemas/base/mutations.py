@@ -377,9 +377,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
     ) -> "UpdateRateSheetMutation":
         data = input.copy()
         carriers = data.pop("carriers", [])
-        instance = providers.RateSheet.access_by(info.context.request).get(
-            id=input["id"]
-        )
+        instance = providers.RateSheet.objects.get(id=input["id"])
 
         serializer = graph_serializers.RateSheetModelSerializer(
             instance,
