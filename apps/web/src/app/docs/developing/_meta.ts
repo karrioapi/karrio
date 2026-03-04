@@ -55,6 +55,10 @@ export default {
     title: 'CLI Guide',
     type: 'page',
   },
+  "mcp-server": {
+    title: 'MCP Server',
+    type: 'page',
+  },
   // "address-validation": {
   //   title: 'Address Validation',
   //   type: 'page'
