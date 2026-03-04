@@ -458,7 +458,7 @@ class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
             parcels=[self.parcel_data],
             created_by=self.user,
             test_mode=True,
-            status="purchased",
+            status="created",
             tracking_number="TEST123456",
             label="JVBERi0xLjQKMSAwIG9iago8PAovVGl0bGUgKP7/AFQAZQBzAHQpCj4+CmVuZG9iagoyIDAgb2JqCjw8Cj4+CmVuZG9iagozIDAgb2JqCjw8Cj4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMTUgMDAwMDAgbiAKMDAwMDAwMDA2OCAwMDAwMCBuIAowMDAwMDAwMDg5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNAo+PgpzdGFydHhyZWYKMTEwCiUlRU9GCg==",  # Base64 encoded minimal PDF
             label_type="PDF",

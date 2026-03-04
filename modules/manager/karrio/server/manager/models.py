@@ -823,9 +823,8 @@ class Shipment(core.OwnedEntity):
     )
     status = models.CharField(
         max_length=50,
-        choices=serializers.SHIPMENT_STATUS,
-        default=serializers.SHIPMENT_STATUS[0][0],
         db_index=True,
+        default="draft",
     )
     label_type = models.CharField(max_length=25, null=True, blank=True)
     tracking_number = models.CharField(

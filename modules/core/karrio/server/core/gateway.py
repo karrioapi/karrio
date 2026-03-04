@@ -416,7 +416,7 @@ class Shipments:
                 "selected_rate_id": shipment_rate["id"],
                 "parcels": process_parcel_refs(payload["parcels"]),
                 "tracking_url": process_tracking_url(shipment_rate),
-                "status": serializers.ShipmentStatus.purchased.value,
+                "status": serializers.ShipmentStatus.created.value,
                 "created_at": datetime.datetime.now().strftime(
                     "%Y-%m-%d %H:%M:%S.%f%z"
                 ),

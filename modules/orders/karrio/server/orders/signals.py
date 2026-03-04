@@ -80,7 +80,7 @@ def _update_order_line_items_fulfillment(order, shipment_instance):
     When a shipment is purchased/fulfilled, decrement the unfulfilled_quantity
     of the corresponding order line items.
     """
-    if shipment_instance.status not in ["purchased", "transit", "delivered"]:
+    if shipment_instance.status not in ["created", "transit", "delivered"]:
         return
 
     # Build a map of parent_id -> quantity from shipment items

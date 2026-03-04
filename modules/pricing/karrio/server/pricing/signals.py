@@ -191,7 +191,7 @@ def register_fee_capture(*args, **kwargs):
         # Only capture fees when:
         # 1. Shipment has a selected_rate (label was purchased)
         # 2. Shipment status indicates it's been purchased/processed
-        if instance.selected_rate and instance.status not in ["draft", "created"]:
+        if instance.selected_rate and instance.status not in ["draft"]:
             # Check if we've already captured fees for this shipment
             if not models.Fee.objects.filter(shipment_id=instance.id).exists():
                 capture_fees_for_shipment(instance)
