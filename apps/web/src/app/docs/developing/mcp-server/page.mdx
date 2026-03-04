@@ -1,0 +1,329 @@
+---
+sidebarTitle: MCP Server
+title: Karrio MCP Server
+description: Use Karrio with AI assistants like Claude via the Model Context Protocol
+---
+
+# Karrio MCP Server
+
+## Overview
+
+The **Karrio MCP Server** (`@karrio/mcp`) connects AI assistants to your Karrio shipping API through the [Model Context Protocol](https://modelcontextprotocol.io) (MCP). It exposes shipping tools and carrier resources so Claude, Cursor, VS Code Copilot, and any other MCP-compatible client can rate shipments, purchase labels, track packages, and inspect API logs — all through natural language.
+
+Key capabilities:
+
+- **10 shipping tools** covering rates, labels, tracking, pickups, manifests, and carrier management
+- **MCP Resources** for a live carrier capability catalog
+- **stdio + Streamable HTTP** transport — works locally and as a remote service
+- **Works with any Karrio instance** — Karrio Cloud or self-hosted
+
+## Prerequisites
+
+- A running Karrio instance ([cloud](https://karrio.io) or [self-hosted](/docs/developing/local-development))
+- A Karrio API key (Settings → API Keys in the dashboard)
+- Node.js 18 or later
+
+## Installation
+
+The easiest way is to run the MCP server on demand with `npx` — no global install needed:
+
+```bash
+KARRIO_API_URL=https://your-karrio-instance.com \
+KARRIO_API_KEY=your_api_key \
+npx -y @karrio/mcp
+```
+
+Or install globally:
+
+```bash
+npm install -g @karrio/mcp
+```
+
+### Environment Variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `KARRIO_API_URL` | ✅ | Base URL of your Karrio instance (e.g. `https://api.karrio.io`) |
+| `KARRIO_API_KEY` | ✅ | API key from your Karrio account settings |
+
+## Claude Desktop Setup
+
+Add the server to your Claude Desktop configuration file.
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "karrio": {
+      "command": "npx",
+      "args": ["-y", "@karrio/mcp"],
+      "env": {
+        "KARRIO_API_URL": "https://your-karrio-instance.com",
+        "KARRIO_API_KEY": "your_api_key"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop after saving. You should see a hammer icon (🔨) in the chat input indicating the tools are available.
+
+### Claude Code (CLI)
+
+```bash
+claude mcp add karrio -- npx -y @karrio/mcp \
+  --api-url https://your-karrio-instance.com \
+  --api-key YOUR_KEY
+```
+
+## Cursor Setup
+
+Add to `.cursor/mcp.json` in your project or `~/.cursor/mcp.json` globally:
+
+```json
+{
+  "mcpServers": {
+    "karrio": {
+      "command": "npx",
+      "args": ["-y", "@karrio/mcp"],
+      "env": {
+        "KARRIO_API_URL": "https://your-karrio-instance.com",
+        "KARRIO_API_KEY": "your_api_key"
+      }
+    }
+  }
+}
+```
+
+Enable the server in Cursor → Settings → MCP → select "karrio".
+
+### VS Code / GitHub Copilot
+
+Add to `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "karrio": {
+      "command": "npx",
+      "args": ["-y", "@karrio/mcp"],
+      "env": {
+        "KARRIO_API_URL": "https://your-karrio-instance.com",
+        "KARRIO_API_KEY": "your_api_key"
+      }
+    }
+  }
+}
+```
+
+## Available Tools
+
+### Quick Reference
+
+| Tool | Description | Read-only |
+|---|---|---|
+| `get_shipping_rates` | Quote rates from multiple carriers | ✅ |
+| `list_carriers` | Browse the carrier catalog | ✅ |
+| `list_carrier_connections` | List configured carrier accounts | ✅ |
+| `create_shipment` | Purchase a shipping label | ❌ |
+| `get_shipment` | Retrieve a shipment by ID | ✅ |
+| `list_shipments` | Paginated shipment list with filters | ✅ |
+| `cancel_shipment` | Cancel and void a label | ❌ |
+| `track_package` | Track a package by tracking number | ✅ |
+| `list_api_logs` | Browse API request logs | ✅ |
+| `get_api_log` | Inspect a specific log entry with carrier traces | ✅ |
+| `list_tracing_records` | Raw carrier API request/response records | ✅ |
+
+---
+
+### `get_shipping_rates`
+
+Fetch rate quotes from multiple carriers for a package. Returns ranked rates with carrier name, service, price, and estimated delivery.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `origin_postal_code` | string | ✅ | Origin postal/zip code |
+| `origin_country_code` | string | ✅ | ISO 2-letter country code |
+| `dest_postal_code` | string | ✅ | Destination postal/zip code |
+| `dest_country_code` | string | ✅ | ISO 2-letter country code |
+| `weight` | number | ✅ | Package weight |
+| `weight_unit` | `LB\|KG\|OZ\|G` | — | Weight unit (default: `LB`) |
+| `carrier_ids` | string[] | — | Limit to specific carrier accounts |
+
+---
+
+### `list_carrier_connections`
+
+List carrier accounts connected to your Karrio instance — the carriers configured with credentials you can use for rating, shipping, and tracking.
+
+**Parameters:** `carrier_name`, `limit`, `offset`
+
+---
+
+### `list_shipments`
+
+Paginated list of shipments with optional filters.
+
+**Parameters:** `status`, `carrier_name`, `created_after`, `created_before`, `limit`, `offset`
+
+---
+
+### `create_shipment`
+
+Create a shipment and purchase a shipping label.
+
+> ⚠️ This action **purchases a label and incurs a charge**. Confirm details with the user before calling.
+
+**Parameters:** shipper address, recipient address, parcel dimensions, `carrier_name`, `service`, `label_type`
+
+---
+
+### `track_package`
+
+Track a package by tracking number. Returns current status, location, estimated delivery, and full event history across 50+ carriers.
+
+**Parameters:**
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `tracking_number` | string | ✅ | Package tracking number |
+| `carrier_name` | string | — | Carrier slug (auto-detected if omitted) |
+
+---
+
+### `list_api_logs`
+
+Browse API request logs. Useful for debugging shipping calls, investigating errors, or auditing carrier API usage.
+
+**Parameters:** `api_endpoint`, `method`, `status_code`, `status`, `date_after`, `date_before`, `entity_id`, `limit`
+
+---
+
+### `get_api_log`
+
+Inspect a specific API log entry in full detail — request data, response body, and all associated carrier API tracing records.
+
+**Parameters:** `log_id` (number)
+
+---
+
+### `list_tracing_records`
+
+Raw carrier API tracing records — the actual requests and responses exchanged with carrier APIs (FedEx, UPS, DHL, etc.).
+
+**Parameters:** `key`, `request_log_id`, `date_after`, `date_before`, `limit`
+
+## Usage Examples
+
+Here are natural language prompts and the tools they invoke:
+
+**"What's the cheapest way to ship a 2 lb package from 10001 to 90210?"**  
+→ `get_shipping_rates`
+
+**"Show me my last 10 shipments."**  
+→ `list_shipments`
+
+**"Track package 1Z999AA10123456784."**  
+→ `track_package`
+
+**"Which carriers do I have connected?"**  
+→ `list_carrier_connections`
+
+**"Show me all failed API requests from today."**  
+→ `list_api_logs` with `status: "failed"` and `date_after`
+
+**"What did karrio send to FedEx for shipment ship_abc123?"**  
+→ `list_api_logs` with `entity_id: "ship_abc123"`, then `get_api_log` on the result
+
+**"Create a FedEx Ground label from New York to LA for a 5 lb box."**  
+→ `get_shipping_rates`, then `create_shipment` after user confirms
+
+## Self-Hosting
+
+### Running as a Persistent HTTP Service
+
+For remote or multi-client deployments, run the server with Streamable HTTP transport:
+
+```bash
+karrio-mcp --api-key YOUR_KEY --http --port 3100
+```
+
+The server exposes:
+- `POST /mcp` — MCP session endpoint
+- `GET /health` — Health check
+
+Connect Claude Desktop to the remote server:
+
+```json
+{
+  "mcpServers": {
+    "karrio": {
+      "url": "http://your-server:3100/mcp",
+      "headers": {
+        "Authorization": "Bearer your_token"
+      }
+    }
+  }
+}
+```
+
+### Docker
+
+```dockerfile
+FROM node:20-alpine
+RUN npm install -g @karrio/mcp
+ENV KARRIO_API_URL=https://your-karrio-instance.com
+ENV KARRIO_API_KEY=your_api_key
+CMD ["karrio-mcp"]
+```
+
+### Building from Source
+
+```bash
+git clone https://github.com/karrioapi/karrio.git
+cd karrio/packages/mcp
+npm install
+npm run build
+# Run tests
+npm test
+# Run against a live server
+KARRIO_API_URL=http://localhost:5002 KARRIO_API_KEY=your_key npm test
+```
+
+## Troubleshooting
+
+### "Authentication credentials were not provided"
+
+Your API key is missing or incorrect. Verify:
+1. `KARRIO_API_KEY` is set in your MCP config `env` block
+2. The key is valid — test with `curl -H "Authorization: Token YOUR_KEY" http://your-karrio/v1/shipments`
+
+### Tools not showing in Claude
+
+1. Fully quit and reopen Claude Desktop (not just close the window)
+2. Check `~/Library/Logs/Claude/mcp-server-karrio.log` for startup errors
+3. Validate your JSON config at [jsonlint.com](https://jsonlint.com)
+
+### "No rates returned"
+
+- Verify the carrier connection is active: `list_carrier_connections`
+- Ensure origin/destination postal codes and country codes are valid
+- Check if the carrier supports the requested service for that lane
+
+### Slow or timing out
+
+- Check your Karrio instance is reachable from the MCP server host
+- For remote HTTP transport, increase the client timeout in your MCP client settings
+
+### Running live integration tests
+
+```bash
+cd packages/mcp
+KARRIO_API_URL=http://127.0.0.1:5002 KARRIO_API_KEY=your_key npm run test:integration
+```
+
+Tests are skipped automatically in CI when environment variables are absent.
