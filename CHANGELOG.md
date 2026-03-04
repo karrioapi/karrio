@@ -1,3 +1,25 @@
+# Karrio 2026.1.18
+
+## Changes
+
+### Fix
+
+- fix: sync shipping-platform patches (admin scoping, dhl_parcel_de encryption, element assets)
+- fix: dashboard build type errors and latest schema data
+
+### Docs
+
+- docs(prd): add subtree sync workflow for shipping-platform ↔ karrio
+- docs(prd): add edition isolation + source vs deployed build mode sections
+- docs(prd): UV_MIGRATION — migrate karrio to uv for end-to-end Python toolchain
+- docs(mcp): add MCP server documentation — install, tools, Claude Desktop/Cursor setup
+
+### Test
+
+- test(mcp): add live integration tests against real karrio server
+
+---
+
 # Karrio 2026.1.17
 
 ## Changes
