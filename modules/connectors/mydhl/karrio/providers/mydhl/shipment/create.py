@@ -45,12 +45,30 @@ def _extract_details(
     ctx: dict = None,
 ) -> models.ShipmentDetails:
     tracking_number = str(shipment.shipmentTrackingNumber or "")
+
+    # Collect labels from top-level documents and per-package documents
+    top_level_labels = [
+        doc.content for doc in (shipment.documents or [])
+        if doc and doc.content
+    ]
+    package_labels = [
+        doc.content
+        for pkg in (shipment.packages or [])
+        if pkg and pkg.documents
+        for doc in pkg.documents
+        if doc and doc.content
+    ]
+    labels = top_level_labels or package_labels
     label_doc = next(
         (doc for doc in (shipment.documents or []) if doc and doc.content),
         None,
     )
-    label = label_doc.content if label_doc else ""
     label_format = label_doc.imageFormat if label_doc else "PDF"
+    label = lib.identity(
+        labels[0] if len(labels) == 1
+        else lib.bundle_base64(labels, label_format) if len(labels) > 1
+        else ""
+    )
     package_tracking_numbers = [
         pkg.trackingNumber
         for pkg in (shipment.packages or [])
