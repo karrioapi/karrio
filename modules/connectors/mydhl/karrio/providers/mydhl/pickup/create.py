@@ -138,7 +138,6 @@ def pickup_request(
                     addressLine2=address.address_line2,
                     countyName=address.suburb,
                     provinceName=address.state_name,
-                    countryName=address.country_name,
                 ),
                 contactInformation=pickup_req.ContactInformationType(
                     email=address.email,
