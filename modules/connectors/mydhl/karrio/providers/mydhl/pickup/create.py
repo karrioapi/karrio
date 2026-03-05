@@ -156,7 +156,11 @@ def pickup_request(
                 unitOfMeasurement="metric",
                 packages=[
                     pickup_req.PackageType(
-                        typeCode=provider_units.PackagingType.map(package.packaging_type or "your_packaging").value,
+                        typeCode=lib.identity(
+                            provider_units.PackagingType.map(package.packaging_type).value
+                            if package.packaging_type
+                            else None
+                        ),
                         weight=package.weight.value,
                         dimensions=pickup_req.DimensionsType(
                             length=package.length.value,

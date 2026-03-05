@@ -263,9 +263,11 @@ def shipment_request(
         content=mydhl_req.ContentType(
             packages=[
                 mydhl_req.PackageType(
-                    typeCode=provider_units.PackagingType.map(
-                        package.packaging_type or "your_packaging"
-                    ).value,
+                    typeCode=lib.identity(
+                        provider_units.PackagingType.map(package.packaging_type).value
+                        if package.packaging_type
+                        else None
+                    ),
                     weight=package.weight.value,
                     dimensions=lib.identity(
                         mydhl_req.DimensionsType(

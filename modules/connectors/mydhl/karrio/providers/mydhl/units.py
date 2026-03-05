@@ -13,32 +13,39 @@ import karrio.core.models as models
 
 
 class PackagingType(lib.StrEnum):
-    """DHL Express packaging types (typeCode values)."""
+    """DHL Express packaging types (typeCode values).
+
+    From DHL API spec v3.1.1 — typeCode is optional; omitting it
+    defaults to customer packaging.
+    """
 
     # DHL branded packaging
-    mydhl_flyer = "FLY"
-    mydhl_box_2 = "2BC"
+    mydhl_card_envelope_imperial = "1CE"
+    mydhl_box_2_cube = "2BC"
+    mydhl_box_2_pizza = "2BP"
+    mydhl_box_2_shoe = "2BX"
     mydhl_box_3 = "3BX"
     mydhl_box_4 = "4BX"
     mydhl_box_5 = "5BX"
     mydhl_box_6 = "6BX"
     mydhl_box_7 = "7BX"
     mydhl_box_8 = "8BX"
-    mydhl_express_envelope = "3"
-    mydhl_jumbo_box = "JB"
-    mydhl_jumbo_box_junior = "JJ"
-
-    # Customer packaging
-    mydhl_customer_packaging = "YP"
+    mydhl_card_envelope = "CE1"
+    mydhl_tube_large = "TBL"
+    mydhl_tube_small = "TBS"
+    mydhl_bottle_box_1 = "WB1"
+    mydhl_bottle_box_2 = "WB2"
+    mydhl_bottle_box_3 = "WB3"
+    mydhl_bottle_box_6 = "WB6"
+    mydhl_express_envelope = "XPD"
 
     """ Unified Packaging type mapping """
     envelope = mydhl_express_envelope
-    pak = mydhl_flyer
-    tube = mydhl_box_2
+    pak = mydhl_card_envelope
+    tube = mydhl_tube_small
     small_box = mydhl_box_3
     medium_box = mydhl_box_5
     large_box = mydhl_box_8
-    your_packaging = mydhl_customer_packaging
 
 
 class ShippingService(lib.StrEnum):
