@@ -173,7 +173,8 @@ def shipment_request(
     # Incoterm and planned shipping date
     planned_date = lib.fdatetime(
         options.shipment_date.state or datetime.datetime.now(),
-        "%Y-%m-%dT%H:%M:%S GMT+00:00",
+        current_format="%Y-%m-%d",
+        output_format="%Y-%m-%dT%H:%M:%S GMT+00:00",
     )
     planned_ship_date = lib.fdate(
         options.shipment_date.state or datetime.datetime.now()
