@@ -137,7 +137,6 @@ ShipmentRequest = {
     "content": {
         "packages": [
             {
-                "typeCode": "YP",
                 "weight": 5.0,
                 "dimensions": {"length": 25, "width": 20, "height": 15}
             }

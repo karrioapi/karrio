@@ -29,6 +29,7 @@ def parse_shipment_response(
         _extract_details(
             lib.to_object(mydhl_res.ShipmentResponseType, response),
             settings,
+            ctx=_response.ctx,
         )
         if response.get("status") is None
         and response.get("shipmentTrackingNumber") is not None
@@ -41,6 +42,7 @@ def parse_shipment_response(
 def _extract_details(
     shipment: mydhl_res.ShipmentResponseType,
     settings: provider_utils.Settings,
+    ctx: dict = None,
 ) -> models.ShipmentDetails:
     tracking_number = str(shipment.shipmentTrackingNumber or "")
     label_doc = next(
@@ -67,7 +69,9 @@ def _extract_details(
             models.RateDetails(
                 carrier_id=settings.carrier_id,
                 carrier_name=settings.carrier_name,
-                service=settings.carrier_name,
+                service=provider_units.ShippingService.map(
+                    (ctx or {}).get("service")
+                ).name_or_key,
                 total_charge=lib.to_money(shipment_charge.price),
                 currency=shipment_charge.priceCurrency,
                 extra_charges=[
@@ -373,5 +377,5 @@ def shipment_request(
             shipment=lib.to_dict(req["shipment"]),
             paperless=lib.to_dict(req["paperless"]) if req.get("paperless") else None,
         ),
-        dict(is_paperless=is_paperless),
+        dict(is_paperless=is_paperless, service=payload.service),
     )
