@@ -30,6 +30,7 @@ def parse_error_response(
                     **kwargs,
                     "instance": error.instance,
                     "title": error.title,
+                    "additionalDetails": error.additionalDetails,
                 }
             ),
         )
