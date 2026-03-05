@@ -63,7 +63,9 @@ class ShippingService(lib.StrEnum):
     # Domestic Express Services
     mydhl_express_domestic = "N"
     mydhl_express_domestic_12_00 = "1"
+    mydhl_express_domestic_10_30 = "O"
     mydhl_express_domestic_9_00 = "I"
+    mydhl_medical_express_domestic = "C"
     mydhl_same_day = "S"
 
     # Economy/Freight Services
