@@ -41,10 +41,10 @@ def shipment_updated(
 
     if created:
         return
-    if is_bound and instance.status == serializers.ShipmentStatus.purchased.value:
+    if is_bound and instance.status == serializers.ShipmentStatus.created.value:
         event = EventTypes.shipment_purchased.value
     elif (
-        status_updated and instance.status == serializers.ShipmentStatus.purchased.value
+        status_updated and instance.status == serializers.ShipmentStatus.created.value
     ):
         event = EventTypes.shipment_purchased.value
     elif (

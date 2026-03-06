@@ -296,7 +296,7 @@ SHIPPING_RESPONSE = {
     "created_at": ANY,
     "metadata": {},
     "messages": [],
-    "status": "purchased",
+    "status": "created",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
     "tracking_number": "123456789012",

@@ -590,7 +590,7 @@ class ShipmentCancelSerializer(Shipment):
     def update(
         self, instance: models.Shipment, validated_data: dict, context=None, **kwargs
     ) -> datatypes.ConfirmationResponse:
-        if instance.status == ShipmentStatus.purchased.value:
+        if instance.status == ShipmentStatus.created.value:
             # Resolve carrier from carrier snapshot
             carrier = resolve_carrier(instance.carrier or {}, context)
             gateway.Shipments.cancel(
@@ -826,7 +826,7 @@ def can_mutate_shipment(
     if update and [*(payload or {}).keys()] == ["metadata"]:
         return
 
-    if purchase and shipment.status == ShipmentStatus.purchased.value:
+    if purchase and shipment.status == ShipmentStatus.created.value:
         raise exceptions.APIException(
             f"The shipment is '{shipment.status}' and cannot be purchased again",
             code="state_error",
@@ -841,7 +841,7 @@ def can_mutate_shipment(
         )
 
     if delete and shipment.status not in [
-        ShipmentStatus.purchased.value,
+        ShipmentStatus.created.value,
         ShipmentStatus.draft.value,
     ]:
         raise exceptions.APIException(

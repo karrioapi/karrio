@@ -104,7 +104,7 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
 
     if "status" not in query_params:
         queryset = queryset.filter(
-            Q(status__in=["purchased", "delivered", "shipped", "in_transit"]),
+            Q(status__in=["created", "delivered", "shipped", "in_transit"]),
         )
 
     class Resource(resources.ModelResource):

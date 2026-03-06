@@ -70,7 +70,7 @@ def list_events(
               "type": "shipment_purchased",
               "data": {
                 "shipment_id": "shp_123456789",
-                "status": "purchased"
+                "status": "created"
               },
               "test_mode": false,
               "pending_webhooks": 0,
@@ -134,7 +134,7 @@ def retrieve_event(
         "type": "shipment_purchased",
         "data": {
           "shipment_id": "shp_123456789",
-          "status": "purchased"
+          "status": "created"
         },
         "test_mode": false,
         "pending_webhooks": 0,

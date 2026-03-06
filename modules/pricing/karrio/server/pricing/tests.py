@@ -301,7 +301,7 @@ class TestFeeCapture(TestCase):
         # Create a shipment with markup in extra_charges
         # The signal should automatically capture fees on save
         shipment = manager.Shipment.objects.create(
-            status="purchased",
+            status="created",
             test_mode=True,
             shipper={"city": "Montreal"},
             recipient={"city": "Toronto"},
@@ -354,7 +354,7 @@ class TestFeeCapture(TestCase):
 
         # Create shipment with status that won't trigger signal
         shipment = manager.Shipment.objects.create(
-            status="created",  # Signal won't fire for this status
+            status="draft",  # Signal won't fire for this status
             test_mode=True,
             shipper={"city": "Montreal"},
             recipient={"city": "Toronto"},
@@ -406,7 +406,7 @@ class TestFeeCapture(TestCase):
 
         # Create shipment - signal will capture fee
         shipment = manager.Shipment.objects.create(
-            status="purchased",
+            status="created",
             test_mode=True,
             shipper={"city": "Montreal"},
             recipient={"city": "Toronto"},

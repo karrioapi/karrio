@@ -112,7 +112,7 @@ def can_upload_shipment_document(shipment: models.Shipment, context=None):
 
     if shipment.status not in [
         core.ShipmentStatus.shipped.value,
-        core.ShipmentStatus.purchased.value,
+        core.ShipmentStatus.created.value,
         core.ShipmentStatus.in_transit.value,
     ]:
         raise exceptions.APIException(

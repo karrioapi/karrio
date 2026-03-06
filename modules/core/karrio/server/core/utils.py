@@ -3,7 +3,7 @@ import typing
 import inspect
 import functools
 from concurrent import futures
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 from typing import TypeVar, Union, Callable, Any, List, Optional
 
 from django.conf import settings
@@ -804,14 +804,18 @@ def default_tracking_event(
     code: str = None,
     description: str = None,
 ):
+    _event_dt = (event_at or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    _timestamp = _event_dt.strftime("%Y-%m-%dT%H:%M:%S.") + f"{_event_dt.microsecond // 1000:03d}Z"
     return [
         DP.to_dict(
             datatypes.TrackingEvent(
-                date=DF.fdate(event_at or datetime.now()),
-                description=(description or "Label created and ready for shipment"),
+                date=_event_dt.strftime("%Y-%m-%d"),
+                description=(description or "Shipment label created"),
                 location="",
                 code=(code or "CREATED"),
-                time=DF.ftime(event_at or datetime.now()),
+                time=_event_dt.strftime("%I:%M %p"),
+                timestamp=_timestamp,
+                status="created",
             )
         )
     ]

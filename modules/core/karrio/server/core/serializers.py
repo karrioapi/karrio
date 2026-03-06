@@ -16,7 +16,7 @@ class PickupStatus(utils.Enum):
 
 class ShipmentStatus(utils.Enum):
     draft = "draft"
-    purchased = "purchased"
+    created = "created"
     cancelled = "cancelled"
     shipped = "shipped"
     in_transit = "in_transit"
