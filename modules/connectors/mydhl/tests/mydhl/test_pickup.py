@@ -123,7 +123,6 @@ PickupRequest = {
                 "addressLine1": "123 Main Street",
                 "cityName": "Los Angeles",
                 "countryCode": "US",
-                "countryName": "United States",
                 "postalCode": "90001",
                 "provinceCode": "CA"
             }

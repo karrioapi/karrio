@@ -9,4 +9,5 @@ class ErrorResponseType:
     detail: typing.Optional[str] = None
     title: typing.Optional[str] = None
     message: typing.Optional[str] = None
+    additionalDetails: typing.Optional[typing.List[str]] = None
     status: typing.Optional[int] = None

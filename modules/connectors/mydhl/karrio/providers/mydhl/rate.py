@@ -136,6 +136,7 @@ def rate_request(
     )
     planned_date = lib.fdatetime(
         options.shipment_date.state or datetime.datetime.now(),
+        current_format="%Y-%m-%d",
         output_format="%Y-%m-%dT%H:%M:%S GMT+00:00",
     )
 
@@ -181,11 +182,11 @@ def rate_request(
                 weight=package.weight.value,
                 dimensions=(
                     mydhl_req.DimensionsType(
-                        length=int(package.length.value) if package.length else None,
-                        width=int(package.width.value) if package.width else None,
-                        height=int(package.height.value) if package.height else None,
+                        length=int(package.length.value) if package.length.value else None,
+                        width=int(package.width.value) if package.width.value else None,
+                        height=int(package.height.value) if package.height.value else None,
                     )
-                    if any([package.length, package.width, package.height])
+                    if any([package.length.value, package.width.value, package.height.value])
                     else None
                 ),
             )

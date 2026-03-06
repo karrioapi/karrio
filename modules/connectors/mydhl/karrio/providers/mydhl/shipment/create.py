@@ -29,6 +29,7 @@ def parse_shipment_response(
         _extract_details(
             lib.to_object(mydhl_res.ShipmentResponseType, response),
             settings,
+            ctx=_response.ctx,
         )
         if response.get("status") is None
         and response.get("shipmentTrackingNumber") is not None
@@ -41,14 +42,33 @@ def parse_shipment_response(
 def _extract_details(
     shipment: mydhl_res.ShipmentResponseType,
     settings: provider_utils.Settings,
+    ctx: dict = None,
 ) -> models.ShipmentDetails:
     tracking_number = str(shipment.shipmentTrackingNumber or "")
+
+    # Collect labels from top-level documents and per-package documents
+    top_level_labels = [
+        doc.content for doc in (shipment.documents or [])
+        if doc and doc.content
+    ]
+    package_labels = [
+        doc.content
+        for pkg in (shipment.packages or [])
+        if pkg and pkg.documents
+        for doc in pkg.documents
+        if doc and doc.content
+    ]
+    labels = top_level_labels or package_labels
     label_doc = next(
         (doc for doc in (shipment.documents or []) if doc and doc.content),
         None,
     )
-    label = label_doc.content if label_doc else ""
     label_format = label_doc.imageFormat if label_doc else "PDF"
+    label = lib.identity(
+        labels[0] if len(labels) == 1
+        else lib.bundle_base64(labels, label_format) if len(labels) > 1
+        else ""
+    )
     package_tracking_numbers = [
         pkg.trackingNumber
         for pkg in (shipment.packages or [])
@@ -67,7 +87,9 @@ def _extract_details(
             models.RateDetails(
                 carrier_id=settings.carrier_id,
                 carrier_name=settings.carrier_name,
-                service=settings.carrier_name,
+                service=provider_units.ShippingService.map(
+                    (ctx or {}).get("service")
+                ).name_or_key,
                 total_charge=lib.to_money(shipment_charge.price),
                 currency=shipment_charge.priceCurrency,
                 extra_charges=[
@@ -173,7 +195,8 @@ def shipment_request(
     # Incoterm and planned shipping date
     planned_date = lib.fdatetime(
         options.shipment_date.state or datetime.datetime.now(),
-        "%Y-%m-%dT%H:%M:%S GMT+00:00",
+        current_format="%Y-%m-%d",
+        output_format="%Y-%m-%dT%H:%M:%S GMT+00:00",
     )
     planned_ship_date = lib.fdate(
         options.shipment_date.state or datetime.datetime.now()
@@ -262,9 +285,11 @@ def shipment_request(
         content=mydhl_req.ContentType(
             packages=[
                 mydhl_req.PackageType(
-                    typeCode=provider_units.PackagingType.map(
-                        package.packaging_type or "your_packaging"
-                    ).value,
+                    typeCode=lib.identity(
+                        provider_units.PackagingType.map(package.packaging_type).value
+                        if package.packaging_type
+                        else None
+                    ),
                     weight=package.weight.value,
                     dimensions=lib.identity(
                         mydhl_req.DimensionsType(
@@ -370,5 +395,5 @@ def shipment_request(
             shipment=lib.to_dict(req["shipment"]),
             paperless=lib.to_dict(req["paperless"]) if req.get("paperless") else None,
         ),
-        dict(is_paperless=is_paperless),
+        dict(is_paperless=is_paperless, service=payload.service),
     )
