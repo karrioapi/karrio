@@ -154,7 +154,7 @@ class OptionEnum:
                 (
                     self.type.map(value).name_or_key  # type: ignore
                     if hasattr(value, "map")
-                    else self.type[value].name  # type: ignore
+                    else self.type.map(value).name_or_key  # type: ignore
                 )
                 if value is not None and value != ""
                 else None

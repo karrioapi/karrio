@@ -1,0 +1,1127 @@
+---
+openapi: 3.0.0
+info:
+  title: Package Tracking and Notification
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    This API allows users to retrieve either a summary or detailed information about a specific USPS&#174; package. Using the USPS&#174; Tracking Request, individuals can view the delivery status of various mail items, such as Priority Mail&#174;, Priority Mail Express&#174;, and Package Services (including Parcel Post&#174;, Bound Printed Matter, Library Mail, and Media Mail&#174;) that have USPS&#174; Tracking. By collecting mail class and service information from Product Tracking Systems, USPS&#174; Tracking provides users with delivery status updates. By entering the tracking number, users can view the summarized or detailed delivery status of single Priority Mail&#174; and Package Service parcels with Delivery Confirmation.
+    
+     By registering for the USPS&#174; Tracking by Email service, users can receive email notifications about their package tracking events. This service allows customers to submit their email address to be notified of current or future tracking activity. Users can choose to receive notifications for all activity to date, all future activity, or both. Whenever a mail piece receives an email notifiable event, an email with the relevant information will be generated and sent. With the new request type, users can make multiple requests for a single mail piece in a single request. Tracking status can be obtained using just the impb, and if multiple items are found, users can include additional details in the request.
+    
+     Please refer to the following links for help:
+     * [Business Customer Gateway, Mailer ID](https://gateway.usps.com/eAdmin/view/knowledge?securityId=MID)
+     * [PostalPro MailerID](https://postalpro.usps.com/mailing/mailer-id)
+     * [Publication 199](http://postalpro.usps.com/pub199)
+  version: 3.2.4
+servers:
+  - url: https://apis.usps.com/tracking/v3
+    description: Production Environment Endpoint
+  - url: https://apis-tem.usps.com/tracking/v3
+    description: Testing Environment Endpoint
+paths:
+  /tracking/{trackingNumber}:
+    get:
+      tags:
+        - Resources
+      summary: Get package tracking status and delivery information.
+      description: |-
+        This API allows users to retrieve either a summary or detailed information about a specific USPS&#174; package. Using the USPS&#174; Tracking Request, individuals can view the delivery status of various mail items, such as Priority Mail&#174;, Priority Mail Express&#174;, and Package Services (including Parcel Post&#174;, Bound Printed Matter, Library Mail, and Media Mail&#174;) that have USPS&#174; Tracking. By collecting mail class and service information from Product Tracking Systems, USPS&#174; Tracking provides users with delivery status updates. By entering the tracking number, users can view the summarized or detailed delivery status of single Priority Mail&#174; and Package Service parcels with Delivery Confirmation.
+
+        By registering for the USPS&#174; Tracking by Email service, users can receive email notifications about their package tracking events. This service allows customers to submit their email address to be notified of current or future tracking activity. Users can choose to receive notifications for all activity to date, all future activity, or both. Whenever a mail piece receives an email notifiable event, an email with the relevant information will be generated and sent. With the new request type, users can make multiple requests for a single mail piece in a single request. Tracking status can be obtained using just the impb, and if multiple items are found, users can include additional details in the request.
+      operationId: get-package-tracking
+      parameters:
+        - name: X-Forwarded-For
+          in: header
+          description: "Contains the IP address of the originating client, in additon to intermediate proxies that have forwarded the request. If a request goes through multiple proxies, the IP addresses of each successive proxy is listed. This means, the right-most IP address is the IP address of the most recent proxy and the left-most IP address is the IP address of the originating client."
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: expand
+          in: query
+          description: "Specify the fields that are to be expanded as Summary or Detail.  When ommitted, the tracking summary information is returned. \n* **SUMMARY** - Data returned still contains the summary information, but this information is having only one line of text\n* **DETAIL** - Data returned still contains the detail and summary information, but this information is broken down into fields instead of having only one line of text "
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: string
+            default: SUMMARY
+            enum:
+              - SUMMARY
+              - DETAIL
+        - name: trackingNumber
+          in: path
+          description: |2-
+          
+            The human-readable representation of package barcode data, commonly known as its tracking number.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: destinationZIPCode
+          in: query
+          description: The destination ZIP Code&#8482;.
+          required: false
+          schema:
+            pattern: "^\\d{5}$"
+            type: string
+        - name: mailingDate
+          in: query
+          required: false
+          description: The date the package was mailed.
+          schema:
+            format: date
+            type: string
+      responses:
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/TrackingSummary'
+                  - $ref: '#/components/schemas/TrackingDetails'
+            application/xml:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/TrackingSummary'
+                  - $ref: '#/components/schemas/TrackingDetails'
+            application/vnd.usps.TrackSummary+xml:
+              schema:
+                $ref: '#/components/schemas/TrackingSummary'
+            application/vnd.usps.TrackFields+xml:
+              schema:
+                $ref: '#/components/schemas/TrackingDetails'
+            application/vnd.usps.TrackSummary+json:
+              schema:
+                $ref: '#/components/schemas/TrackingSummary'
+            application/vnd.usps.TrackFields+json:
+              schema:
+                $ref: '#/components/schemas/TrackingDetails'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amout of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service Unavailable
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: An unknown error has occurred.
+          content: { }
+      security:
+        - OAuth:
+            - tracking
+  /tracking/{trackingNumber}/notifications:
+    post:
+      tags:
+        - Resources
+      summary: Register for Tracking Notifications.
+      description: |-
+        By registering for the USPS&#174; Tracking by Email service, users can receive email notifications about their package tracking events. This service allows customers to submit their email address to be notified of current or future tracking activity. Users can choose to receive notifications for all activity to date, all future activity, or both. Whenever a mail piece receives an email notifiable event, an email with the relevant information will be generated and sent. With the new request type, users can make multiple requests for a single mail piece in a single request. Tracking status can be obtained using just the impb, and if multiple items are found, users can include additional details in the request.
+
+        * **uniqueTrackingID (MP-Suffix)** - The impb may be reused during the USPS&#174; retention period. This field uniquely identifies the shipment status of a unique mailpiece when there exists multiple occurrences of the same impb during this retention period.  **MPSUFFIX** value is located in Track/Confirm Fields API response data. Unique to each TrackID.
+        * **OR**
+
+        * **approximateIntakeDate (MP-Date)** - When the mailpiece was taken into USPS&#174; for shipment. The impb may be reused during the USPS&#174; retention period. This field helps to uniquely identify the shipment status of a unique mailpiece when there exists multiple occurrences of the same impb during this retention period.   **MPDATE** value is located in Track/Confirm Fields API response data. Unique to each TrackId.
+
+        **One email address** is required and user can enter up to three for notifications. *SMS cell phone numbers are not supported at this time.*
+
+        **RequestType** at least one is needed and up to 7 within this list [ AL, FD, ED, TD, UP, FS, OA]
+      operationId: post-package-tracking-notifications
+      parameters:
+        - name: X-Forwarded-For
+          in: header
+          description: "Contains the IP address of the originating client, in additon to intermediate proxies that have forwarded the request. If a request goes through multiple proxies, the IP addresses of each successive proxy is listed. This means, the right-most IP address is the IP address of the most recent proxy and the left-most IP address is the IP address of the originating client."
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: trackingNumber
+          in: path
+          description: |2-
+          
+            The human-readable representation of package barcode data, commonly known as its tracking number.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: Contact information to send notifications to.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackingNotificationRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/TrackingNotificationRequest'
+        required: true
+      responses:
+        "202":
+          description: Successful posting of tracking notification request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingNotificationAcknowledgement'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TrackingNotificationAcknowledgement'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Package with tracking number not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too many requests have been received from the client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service Unavailable
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: An unknown error has occurred.
+          content: { }
+      security:
+        - OAuth:
+            - tracking
+  /tracking/{trackingNumber}/proof-of-delivery:
+    post:
+      tags:
+        - Resources
+      summary: Receive a proof of delivery letter for a given track ID.
+      description: 'Proof of Delivery is a letter that includes the recipient''s name and a copy of their signature. The Proof of Delivery API allows the customer to request proof of delivery notification via email. '
+      operationId: proof-of-delivery
+      parameters:
+        - name: X-Forwarded-For
+          in: header
+          description: "Contains the IP address of the originating client, in additon to intermediate proxies that have forwarded the request. If a request goes through multiple proxies, the IP addresses of each successive proxy is listed. This means, the right-most IP address is the IP address of the most recent proxy and the left-most IP address is the IP address of the originating client."
+          required: false
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: trackingNumber
+          in: path
+          description: |2-
+          
+            The human-readble representation of package barcode data, commonly known as its tracking number.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        description: 'Additional information required for returning the proof of delivery to the recipient. '
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackingProofOfDeliveryRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/TrackingProofOfDeliveryRequest'
+        required: true
+      responses:
+        "202":
+          description: Successful posting of tracking notification request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingProofOfDeliveryResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TrackingProofOfDeliveryResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Package with tracking number not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too many requests have been received from the client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service Unavailable
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: An unknown error has occurred.
+          content: {}
+      security:
+        - OAuth:
+            - tracking
+components:
+  schemas:
+    TrackingNotificationRequest:
+      title: Tracking Notification Request
+      required:
+        - notifications
+      type: object
+      properties:
+        uniqueTrackingId:
+          type: string
+          description: |-
+            The UniqueTrackingID is the uniqueTrackingId value located in Track/Confirm Fields API response data. Unique to each TrackID.
+            Internal systems values extracted from the package tracking details.
+          deprecated: true
+        uniqueMailPieceId:
+          type: string
+          description: |-
+            The uniqueMailPieceID is the uniqueMailPieceId value located in Track/Confirm Fields API response data. Unique to each TrackID. The 'expand' field in the original tracking request must be set to "DETAIL" in order to display this value.
+            Internal systems values extracted from the package tracking details.
+        approximateIntakeDate:
+          type: string
+          description: |-
+            The ApproximateIntakeDate is the approximateIntakeDate value located in Track/Confirm Fields API response data. Unique to each TrackId.
+            Internal systems values extracted from the package tracking details.
+          format: date-time
+          deprecated: true
+        mailPieceIntakeDate:
+          type: string
+          description: |-
+            The mailPieceIntakeDate is the mailPieceIntakeDate value located in Track/Confirm Fields API response data. Unique to each TrackId. The 'expand' field in the original tracking request must be set to "DETAIL" in order to display this value.
+            Internal systems values extracted from the package tracking details.
+          format: date-time
+        notifyEventTypes:
+          maxItems: 7
+          minItems: 1
+          type: array
+          description: Identifies the types of mailing events to be notified about.
+          xml:
+            name: notifyEventTypes
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/MailingEventType'
+        firstName:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: The notification recipient's given name.
+        lastName:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: The notification recipient's family name.
+        notifications:
+          maxItems: 3
+          minItems: 1
+          type: array
+          description: Upto 3 Email addresses that notifications are to be sent.
+          xml:
+            name: notifications
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/NotificationMethod'
+      additionalProperties: false
+      description: Alows the customer to submit their e-mail address to be notified of current or future tracking activity.
+      xml:
+        name: trackingNotificationRequest
+    TrackingNotificationAcknowledgement:
+      title: Tracking Notification Acknowledgment
+      type: object
+      properties:
+        resultText:
+          type: string
+          description: A human-readable status of the notification request.
+        returnCode:
+          type: string
+          description: The status of the notification request.
+      additionalProperties: false
+      description: The response replied to the notification request.
+      xml:
+        name: trackingNotificationAcknowledgement
+    TrackingSummary:
+      title: Summary Tracking Information
+      type: object
+      properties:
+        trackingNumber:
+          type: string
+          description: trackingNumber requested by the client.
+        expectedDeliveryDate:
+          type: string
+          description: The expected delivery date.
+          format: date
+        expectedDeliveryTime:
+          type: string
+          description: The expected delivery time.
+        guaranteedDeliveryDate:
+          type: string
+          description: "Guaranteed Delivery Date: Global Express Mail only, certain countries provide a guarantee delivery For Example: April 15, 2020 Or 3 Business Days.  Will only be provided when a package has not yet  been delivered."
+          format: date
+        eventSummaries:
+          maxItems: 99
+          minItems: 1
+          type: array
+          description: Summarized tracking event information for the requested tracking number in reverse chronological order
+          xml:
+            name: eventSummaries
+            wrapped: true
+          items:
+            type: string
+            description: The detailed tracking information from a point in-transit.
+            xml:
+              name: event
+      additionalProperties: false
+      description: Summary tracking information for the requested tracking number.
+      xml:
+        name: trackingSummary
+    TrackingProofOfDeliveryRequest:
+      title: Proof of delivery request
+      required:
+        - email
+        - firstName
+        - lastName
+        - mailPieceIntakeDate
+        - requestType
+        - tableCode
+        - uniqueMailPieceID
+      type: object
+      properties:
+        uniqueTrackingID:
+          type: string
+          description: "Unique mail piece ID (mp-suffix) value, unique to each TrackID, located in Tracking Information Fields API response data. The 'expand' field in the original tracking request must be set to \"DETAIL\" in order to display this value."
+          deprecated: true
+        uniqueMailPieceID:
+          type: string
+          description: "Unique mail piece ID (mp-suffix) value, unique to each TrackID, located in Tracking Information Fields API response data. The 'expand' field in the original tracking request must be set to \"DETAIL\" in order to display this value."
+        approximateIntakeDate:
+          type: string
+          description: "Approximate Intake Date (mp-date) value, unique to each TrackID, located in Tracking Information Fields API response data. The 'expand' field in the original tracking request must be set to \"DETAIL\" in order to display this value. "
+          format: date-time
+          deprecated: true
+        mailPieceIntakeDate:
+          type: string
+          description: "Mail piece intake date (mp-date) value, unique to each TrackID, located in Tracking Information Fields API response data. The 'expand' field in the original tracking request must be set to \"DETAIL\" in order to display this value. "
+          # format: date-time
+        tableCode:
+          type: string
+          description: Table code value located in Tracking Information Fields API response data. Unique to each TrackID.
+        requestType:
+          type: string
+          description: "Enter a notification request type. Currently, email is the only request type available this time. "
+          enum:
+            - email
+        firstName:
+          type: string
+          description: 'Recipient first name. '
+        lastName:
+          type: string
+          description: 'Recipient last name. '
+        email:
+          maxItems: 3
+          minItems: 1
+          type: array
+          description: Upto 3 Email addresses may be provided to receive the proof of delivery documentation.
+          xml:
+            name: emails
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Email'
+        faxNumber:
+          type: string
+          description: 'Recipient fax number '
+        streetAddress:
+          type: string
+          description: The number of a building along with the name of the road or street on which it is located.
+        secondaryAddress:
+          type: string
+          description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+        city:
+          type: string
+          description: This is the city name of the address.
+        state:
+          maxLength: 2
+          minLength: 2
+          pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+          type: string
+          description: This is two-character state code of the address.
+        ZIPCode:
+          pattern: "^\\d{5}"
+          type: string
+          description: This is the 5-digit ZIP code.
+        ZIPPlus4:
+          description: This is the 4-digit component of the ZIP+4 code. Using the correct Zip+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+        CRID:
+          maxLength: 18
+          minLength: 2
+          type: string
+          description: Unique 10-byte numeric value that’s associated to each user. A Customer Registration Identification number (CRID) is a USPS-generated numeric code that uniquely identifies a business at a location.
+      description: 'Proof of Delivery is a letter that includes the recipient''s name and a copy of their signature. '
+      xml:
+        name: proofOfDeliveryRequest
+    TrackingProofOfDeliveryResponse:
+      title: Proof of Delivery Response
+      type: object
+      properties:
+        resultText:
+          type: string
+          description: A human-readable status of the proof of delivery request.
+        returnCode:
+          type: string
+          description: The status code of the proof of delivery request.
+      additionalProperties: false
+      description: Proof of Delivery API response details.
+      xml:
+        name: ProofOfDeliveryResponse
+    TrackingEvent:
+      title: Tracking Event
+      type: object
+      properties:
+        eventType:
+          type: string
+          description: The type of event
+        eventTimestamp:
+          type: string
+          description: The date of the event.
+          format: date-time
+        GMTTimestamp:
+          type: string
+          description: The date-time of the event in Greenwich Mean Time (GMT).
+          format: date-time
+          example: "2024-04-04T14:03:12.041Z"
+        GMTOffset:
+          type: string
+          description: The offset of the local time of the event from Greenwich Mean Time (GMT).
+          example: -7:00
+        eventCountry:
+          type: string
+          description: The country where the event occurred.
+        eventCity:
+          type: string
+          description: The city where the event occurred.
+        eventState:
+          type: string
+          description: The state where the event occurred.
+        eventZIP:
+          type: string
+          description: The ZIP Code&#8482; of the event.
+        firm:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: The company name if delivered to a company.
+        name:
+          type: string
+          description: The name of the persons signing for delivery (if available).
+        authorizedAgent:
+          type: boolean
+          description: Indicating whether the person signing is an Authorized Agent.
+        eventCode:
+          type: string
+          description: 'Refer to the lookup table for all the possible values.  USPS&#174; [Pub 199](http://postalpro.usps.com/pub199) Appendix G-4:USPS&#174; Domestic Tracking Scan Events '
+        veriPoint:
+          type: boolean
+          description: "Delivery scan location certified, if applicable.  Refer to GeoCertified"
+        actionCode:
+          type: string
+          description: Refer to  Pub 199 page 256 for list of Action Codes
+        reasonCode:
+          type: string
+          description: "Refer to the lookup table for all the possible values.  USPS&#174; [Pub 199](http://postalpro.usps.com/pub199) Appendix G-4: USPS&#174; Domestic Tracking Scan Events"
+      additionalProperties: true
+      description: To be done.
+      xml:
+        name: trackingEvent
+    TrackingDetails:
+      title: Tracking Information Fields
+      type: object
+      properties:
+        trackingNumber:
+          type: string
+          description: "The human-readble representation of package barcode data, commonly known as its tracking number"
+        additionalInfo:
+          type: string
+          description: Additional package information.
+        ADPScripting:
+          type: string
+          description: Additional ADP scripting specific to the ADP Type code.
+        archiveRestoreInfo:
+          type: string
+          description: Information regarding availability of Restore service function.
+        associatedLabel:
+          type: string
+          description: "Additional Label on the mail piece, example is&#58; EA123456785US. This is not currently populated."
+        carrierRelease:
+          type: boolean
+          description: Indicating the item qualifies for the customer to electronically authorize shipment release.
+        mailClass:
+          type: string
+          description: |
+            Mail Class of the mail piece (human readable). This will also include the service standard message if it exists.
+
+            Note: Global Express Guaranteed Service is suspended as of September 29, 2024.
+          enum:
+            - BOUND_PRINTED_MATTER
+            - LIBRARY_MAIL
+            - USPS_RETAIL_GROUND
+            - MEDIA_MAIL
+            - CRITICAL_MAIL
+            - PRIORITY_MAIL_INTERNATIONAL_PARCELS
+            - DOMESTIC_MATTER_FOR_THE_BLIND
+            - PRIORITY_MAIL_EXPRESS
+            - FIRST-CLASS_MAIL
+            - PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+            - FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+            - PARCEL_SELECT_LIGHTWEIGHT
+            - PRIORITY_MAIL_GUARANTEED
+            - GLOBAL_EXPRESS_GUARANTEED
+            - PRIORITY_MAIL
+            - PARCEL_SELECT
+            - USPS_MARKETING_MAIL
+            - PRIORITY_MAIL_SAME_DAY
+        destinationCity:
+          type: string
+          description: The destination city.
+        destinationCountryCode:
+          type: string
+          description: The destination country code.
+        destinationState:
+          maxLength: 2
+          minLength: 2
+          pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+          type: string
+        destinationZIP:
+          type: string
+          description: The destination ZIP Code&#8482;.
+        editedLabelId:
+          type: string
+          description: "The edited label identifier or Full Label identifier, example: EA123456795US."
+        emailEnabled:
+          type: boolean
+          description: Signifies if USPS&#174; Tracking by Email service is enabled.
+        endOfDay:
+          type: string
+          description: Populated with the end of day time provided by TRP when TRP API indicates the window is "End of Day" or when the piece is eligible for the PTR default end of day.
+        eSOFEligible:
+          type: boolean
+          description: Indicates if the mail piece is signature on file eligible.
+        expectedDeliveryTimeStamp:
+          type: string
+          description: The expected delivery date.
+          format: date-time
+        expectedDeliveryType:
+          type: string
+          description: Populates Expected Delivery byif there is an expected delivery date.
+        guaranteedDeliveryTimeStamp:
+          type: string
+          description: "Guaranteed Delivery Date Global Express Mail only: certain countries provide a guarantee delivery."
+          format: date-time
+        guaranteedDetails:
+          type: string
+          description: Special messaging related to the guarantee.
+        itemShape:
+          type: string
+          description: Indicates the shape of the item.
+          enum:
+            - LETTER
+            - FLAT
+            - PARCEL
+            - UNKNOWN
+        kahalaIndicator:
+          type: boolean
+          description: Kahala Posts Group (KPG) member indicator
+        mailType:
+          type: string
+          description: "Type of Mail: if kahalaIndicator is true mailTypeCode is IM (International mail) "
+          enum:
+            - INTERNATIONAL_INBOUND
+            - INTERNATIONAL_OUTBOUND
+            - DOMESTIC_MAIL
+            - UNKNOWN
+        approximateIntakeDate:
+          type: string
+          description: "Unique mail piece ID (mp-date) value, unique to each TrackID"
+          deprecated: true
+        mailPieceIntakeDate:
+          type: string
+          description: "Unique mail piece ID (mp-date) value, unique to each TrackID"
+          format: date-time
+        uniqueTrackingId:
+          type: string
+          description: "Unique mail piece ID (mp-suffix) value, unique to each TrackID"
+          deprecated: true
+        uniqueMailPieceId:
+          type: string
+          description: "Unique mail piece ID (mp-suffix) value, unique to each TrackID"
+        onTime:
+          type: boolean
+          description: Indicating if the item will be delivered on time as specified in the Expected or Guaranteed delivery date.
+        originCity:
+          type: string
+          description: The mail item origin city.
+        originCountry:
+          maxLength: 2
+          type: string
+          description: The mail item origin country.
+        originState:
+          maxLength: 3
+          type: string
+          description: The mail item origin state or province.
+        originZIP:
+          maxLength: 5
+          type: string
+          description: The mail item origin ZIP Code&#8482;.
+        proofOfDeliveryEnabled:
+          type: boolean
+          description: Signifies if Proof of Delivery service is enabled.
+        predictedDeliveryTimeStamp:
+          type: string
+          description: The predicted delivery date.
+          format: date-time
+          deprecated: true
+        predictedDeliveryDate:
+          type: string
+          description: The predicted delivery date.
+          format: date
+        predictedDeliveryWindowStartTime:
+          type: string
+          description: The predicted delivery window start time.
+        predictedDeliveryWindowEndTime:
+          type: string
+          description: The predicted delivery window end time.
+        relatedReturnReceiptID:
+          type: string
+          description: "The related label ID between a tracking barcode, the core product, and a PS3811, Green Card Return Reciept. This field can contain either the core product label ID or the Green Card label ID. There is only a one to one relationship."
+        redeliveryEnabled:
+          type: boolean
+          description: Field indicating if the item qualifies for redelivery.
+        enabledNotificationRequests:
+          $ref: '#/components/schemas/EnabledNotificationRequests'
+        restoreEnabled:
+          type: boolean
+          description: Signifies if Restore tracking information service is enabled.
+        returnDateNotice:
+          type: string
+          description: Field indicating the date the item will be Returned to Sender.
+          format: date
+        RRAMenabled:
+          type: boolean
+          description: Signifies if Return Receipt After Mailing service is enabled
+        RREEnabled:
+          type: boolean
+          description: Signifies if Return Receipt Electronic service is enabled
+        services:
+          type: array
+          description: "Additional services purchased. Refer to the lookup table for all the possible values. \n USPS&#174; [Pub 199](http://postalpro.usps.com/pub199) Appendix J-Table 7 Extra Service Codes "
+          xml:
+            name: services
+            wrapped: true
+          items:
+            maxItems: 99
+            type: string
+        serviceTypeCode:
+          type: string
+          description: "The service Type Code of the mail piece.  Refer to the lookup table for all the possible values.  USPS&#174; [Pub 199](http://postalpro.usps.com/pub199) Appendix I: Intelligent Mail Package Barcode Service Type Codes"
+        status:
+          type: string
+          description: "The item status.  Refer to the lookup table for all the possible values.  USPS&#174; [Pub 199](http://postalpro.usps.com/pub199) Appendix G-4: USPS Domestic Tracking Scan Events and Appendix G-5: Scan Event Codes - International Mail"
+        statusCategory:
+          type: string
+          description: "The item status category.  Refer to the lookup table for all the possible values.  USPS&#174; [Pub 199](http://postalpro.usps.com/pub199) Appendix G-4: USPS Domestic Tracking Scan Events and Appendix G-5: Scan Event Codes - International Mail"
+        statusSummary:
+          type: string
+          description: The status summary.
+          example: "Your item was delivered at 12:55 pm on April 05, 2010 in FALMOUTH, MA 02540"
+        tableCode:
+          type: string
+          description: USPS internal description of mail piece.
+          example: '"T"'
+        trackingProofOfDeliveryEnabled:
+          type: boolean
+          description: Signifies if Tracking Proof of Delivery service is enabled.
+        valueofArticle:
+          type: string
+          description: The value of article
+        extendRetentionPurchasedCode:
+          type: string
+          description: Populates the Extended Retention extra service charge purchased on the mail piece.
+        extendRetentionExtraServiceCodeOptions:
+          type: array
+          description: Contain a list of available extended retention ESCs eligible for a mail piece.
+          xml:
+            wrapped: true
+          items:
+            type: object
+            additionalProperties: false
+            description: Populates an extended retention extra service charge eligible for the mail piece.
+            xml:
+              name: extendRetentionExtraServiceCodeOption
+        trackingEvents:
+          maxItems: 99
+          minItems: 0
+          type: array
+          description: The detailed tracking event information for the requested tracking number in reverse chronological order
+          xml:
+            name: trackingEvents
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/TrackingEvent'
+      additionalProperties: true
+      description: Detailed tracking information for the requested tracking number.
+      xml:
+        name: trackingDetails
+    EnabledNotificationRequests:
+      title: Enabled Notification Requests
+      type: object
+      properties:
+        SMS:
+          $ref: '#/components/schemas/AvailableNotificationOptions'
+        EMail:
+          description: E-mail notification.
+          allOf:
+            - $ref: '#/components/schemas/AvailableNotificationOptions'
+            - type: object
+              properties:
+                firstDisplayable:
+                  type: boolean
+                  description: Mail piece eligibility for FS  First displayable event for Informed Delivery / MyUSPS only requests.
+                otherActivity:
+                  type: boolean
+                  description: Mail piece eligibility for OA  In-Transit / Other Activity requests.
+              additionalProperties: false
+      additionalProperties: false
+      description: USPS&#174; Text Tracking is a mechanism by which customers can be notified of the status of their package.
+      xml:
+        name: enabledNotificationRequests
+    AvailableNotificationOptions:
+      title: Available Notification Options
+      type: object
+      properties:
+        futureDelivery:
+          type: boolean
+          description: Mail piece eligibility for Future Delivery  Expected Delivery Date / Time Updates requests. Future activity only on the package.
+        alertDelivery:
+          type: boolean
+          description: Mail piece eligibility for Alert - Delivery Expection requests. All past and future activity on the package.
+        todayDelivery:
+          type: boolean
+          description: Mail piece eligibility for Today Delivery  Day of Delivery Update requests.
+        UP:
+          type: boolean
+          description: Mail piece eligibility for UP / Mail Pickup Available for Pickup requests.
+        DND:
+          type: boolean
+          description: Mail piece eligibility for DND  Delivery Activity requests. Notification of each delivery or delivery attempt.
+      additionalProperties: false
+      description: Noticication options that are available for the tracking number
+      xml:
+        name: availableNotificationOptions
+    MailingEventType:
+      title: Mailing Event Type
+      type: string
+      description: Identifies the type of mailing events that can be notified about.
+      enum:
+        - EMAIL_ALERT
+        - EMAIL_FUTURE_DELIVERY
+        - EMAIL_DELIVERY/NON_DELIVERY_ACTIVITY
+        - EMAIL_TODAY_DELIVERY
+        - EMAIL_AVAILABLE_FOR_PICKUP
+        - PACKAGE_ADDRESSED_TO_ME/MYUSPS_ONLY
+        - OTHER_ACTIVITY
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    NotificationMethod:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/EmailNotification'
+        - $ref: '#/components/schemas/SMSNotification'
+    EmailNotification:
+      type: object
+      properties:
+        email:
+          maxLength: 50
+          type: string
+          description: 'E-mail address of recipient. Valid e-mail addresses must be used used for notifications via email. '
+          format: email
+    SMSNotification:
+      type: object
+      properties:
+        cellNumber:
+          pattern: "\\d{10}"
+          type: string
+          description: "The 10 digit cell number, including the area code, and with no punctuation used for notifications via text messages. This field is for future Use  \n          "
+    Email:
+      maxLength: 50
+      pattern: "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$"
+      type: string
+      description: 'Email address used for redirect notification via email. '
+      format: email
+  parameters:
+    TrackingNumber:
+      name: trackingNumber
+      in: path
+      description: |2-
+
+        The human-readable representation of package barcode data, commonly known as its tracking number.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    Forwarded:
+      name: X-Forwarded-For
+      in: header
+      description: "Contains the IP address of the originating client, in addition to intermediate proxies that have forwarded the request. If a request goes through multiple proxies, the IP addresses of each successive proxy is listed. This means, the right-most IP address is the IP address of the most recent proxy and the left-most IP address is the IP address of the originating client."
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+    Expand:
+      name: expand
+      in: query
+      description: "Specify the fields that are to be expanded as Summary or Detail.  When ommitted, the tracking summary information is returned. \n* **SUMMARY** - Data returned still contains the summary information, but this information is having only one line of text\n* **DETAIL** - Data returned still contains the detail and summary information, but this information is broken down into fields instead of having only one line of text "
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+        default: SUMMARY
+        enum:
+          - SUMMARY
+          - DETAIL
+  examples:
+    TrackingSummary:
+      summary: Tracking Summary Example
+      description: High level information about the tracking event
+      value: "<TrackSummary> <trackingNumber>9261290485210xxxxxxxxxxxxxx</trackingNumber> <deliveryNotificationDate>2022-06-22</deliveryNotificationDate> <expectedDeliveryDate>2022-06-22</expectedDeliveryDate> <expectedDeliveryTime>string</expectedDeliveryTime> <guaranteedDeliveryDate>2022-06-22</guaranteedDeliveryDate> <EventSummaries> <event>Your item was delivered at the front door or porch at 12:01 pm on June 17, 2022 in FAIRFAX, VA 22032.</event> <event>Out for Delivery, 06/17/2022, 6:10 am, FAIRFAX, VA 22032</event> <event>Arrived at Post Office, 06/16/2022, 2:15 pm, FAIRFAX, VA 22031</event> <event>Accepted at USPS Destination Facility, June 16, 2022, 1:00 pm, FAIRFAX, VA 22031</event> <event>Departed Shipping Partner Facility, USPS Awaiting Item, June 16, 2022, 2:18 am, CHANTILLY, VA 20151</event> </EventSummaries> </TrackSummary>"
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            tracking: Get tracking information and create tracking notifications.
+        authorizationCode:
+          authorizationUrl: /oauth2/v3/authorize
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            tracking: Get tracking information and create tracking notifications.
