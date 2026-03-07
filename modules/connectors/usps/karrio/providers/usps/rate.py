@@ -90,7 +90,7 @@ def _extract_details(
         transit_days=transit_days,
         meta=dict(
             service_name=service_name,
-            usps_mail_class=rate.mailClass,
+            usps_mail_class=provider_units.ShippingService.map(rate.mailClass).name_or_key,
             usps_guaranteed_delivery=lib.failsafe(lambda: rateOption.commitment.guaranteedDelivery),
             usps_processing_category=lib.failsafe(lambda: rate.processingCategory),
             usps_dimensional_weight=lib.failsafe(lambda: rate.dimensionalWeight),
