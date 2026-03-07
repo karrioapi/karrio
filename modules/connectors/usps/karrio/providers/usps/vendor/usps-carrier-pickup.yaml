@@ -1,0 +1,906 @@
+openapi: 3.0.1
+info:
+  title: Carrier Pickup
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    Carrier Pickup supports customers scheduling a carrier to pick up packages for free. Carrier Pickup is available for Priority Mail Express&#174;, Priority Mail&#174;, USPS Ground Advantage&#8482;, International delivery services and returns.
+    
+    You are able check carrier pickup service availability, and schedule, inquire, change, and cancel a carrier pickup. 
+    
+    Use the eligibility API to verify that the USPS can pick up at your address.
+    
+    [What is Package Pickup?](https://faq.usps.com/s/article/What-is-Package-Pickup)
+  version: 3.1.7
+servers:
+- url: https://apis.usps.com/pickup/v3
+  description: Production Environment Endpoint
+paths:
+  /carrier-pickup/eligibility:
+    get:
+      tags:
+      - Resources
+      summary: Check pick-up address eligibility.
+      description: |-
+        Check carrier pickup service availability at the specified address.
+        Either the city and state or the ZIP Code&#8482; is required, in addition to the street address.
+        Successful responses include the USPS standardized address when this location is eligible for carrier pickup.
+      operationId: get-carrier-pickup-eligibility
+      parameters:
+      - name: streetAddress
+        in: query
+        description: The number of a building along with the name of the road or street on which it is located.
+        required: true
+        schema:
+          type: string
+      - name: secondaryAddress
+        in: query
+        description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+        required: false
+        schema:
+          type: string
+      - name: city
+        in: query
+        description: This is the city name of the address.
+        required: false
+        schema:
+          type: string
+      - name: state
+        in: query
+        description: This is the state name or two-character state code of the address. The request accepts either the full state name or a two-character state code. The response will always return the two-character state code.
+        required: false
+        schema:
+          maxLength: 100
+          minLength: 2
+          pattern: ^(AA|aa|AE|ae|AP|ap|AL|al|alabama|AK|ak|alaska|AS|as|((am(\.|erican)?[ \t]+)?samoa)|AZ|az|arizona|AR|ar|arkansas|CA|ca|california|CO|co|colorado|CT|ct|connecticut|DC|dc|district of columbia|(d\.[ \t]*c\.)|DE|de|delaware|FL|fl|florida|FM|fm|((federated[ \t]+states[ \t]+of[ \t]+)?micronesia)|GA|ga|georgia|GU|gu|guam|HI|hi|hawaii|IA|ia|iowa|ID|id|idaho|IL|il|illinois|IN|in|indiana|KS|ks|kansas|KY|ky|kentucky|LA|la|louisiana|MA|ma|massachusetts|MD|md|maryland|ME|me|maine|MH|mh|(marshall[ \t]+is(\.|lands)?)|MI|mi|michigan|MN|mn|minnesota|MO|mo|missouri|MP|mp|((northern[ \t]+)?mariana(s|[ \t]+is(\.|lands)?))|MS|ms|mississippi|MT|mt|montana|NC|nc|north carolina|(n\.[ \t]*c\.)|ND|nd|north dakota|(n\.[ \t]*d\.)|NE|ne|nebraska|NH|nh|new hampshire|(n\.[ \t]*h\.)|NJ|nj|new jersey|(n\.[ \t]*j\.)|NM|nm|new mexico|(n\.[ \t]*m\.)|NV|nv|nevada|NY|ny|new york|(n\.[ \t]*y\.)|OH|oh|ohio|OK|ok|oklahoma|OR|or|oregon|PA|pa|pennsylvania|PR|pr|(p(\.|uerto)?[ \t]*r(\.|ico)?)|PW|pw|palau|RI|ri|rhode island|(r\.[ \t]*i\.)|SC|sc|south carolina|(s\.[ \t]*c\.)|SD|sd|south dakota|(s\.[ \t]*d\.)|TN|tn|tennessee|TX|tx|texas|UT|ut|utah|VA|va|virginia|VI|vi|usvi|(u(\.|nited)?[ \t]*s(\.|tates)?[ \t]*)?virgin[ \t]+is(\.|lands)?|VT|vt|vermont|WA|wa|washington|WI|wi|wisconsin|WV|wv|west virginia|(w\.[ \t]*v\.)|WY|wy|wyoming)$
+          type: string
+      - name: ZIPCode
+        in: query
+        description: This is the 5-digit ZIP code.
+        required: false
+        schema:
+          pattern: "^\\d{5}$"
+          type: string
+      - name: ZIPPlus4
+        in: query
+        description: This is the 4-digit component of the ZIP+4 code. Using the correct Zip+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+        required: false
+        schema:
+          pattern: "^\\d{4}$"
+          type: string
+      - name: urbanization
+        in: query
+        description: This is the urbanization code relevant only for Puerto Rico addresses.
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful Operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickupAddress'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PickupAddress'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - carrier-pickup
+  /carrier-pickup:
+    post:
+      tags:
+      - Resources
+      summary: Schedule a carrier pickup.
+      description: |-
+        Schedule a carrier pickup on a specified date.
+        You can schedule pickups Monday - Saturday until 2:00 AM CT on the day of the pickup. After 2:00 AM CT, same-day pickup is not available.
+        If the address is eligible for carrier pickup, then you can schedule your pickup up to one year in advance.
+      operationId: post-carrier-pickup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchedulePickupRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/SchedulePickupRequest'
+        required: true
+      responses:
+        "200":
+          description: Successful Operation.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickupConfirmation'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PickupConfirmation'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - carrier-pickup
+  /carrier-pickup/{confirmationNumber}:
+    get:
+      tags:
+      - Resources
+      summary: Get a previously scheduled carrier pickup.
+      description: |-
+        Get the previously scheduled carrier pickup by confirmation number.
+        Responds with the entity tag (ETag) to use when updating or cancelling this pickup.
+      operationId: get-carrier-pickup-confirmation-number
+      parameters:
+      - name: confirmationNumber
+        in: path
+        description: This is the Carrier Pickup confirmation number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful Operation.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PickupConfirmation'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PickupConfirmation'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - carrier-pickup
+    put:
+      tags:
+      - Resources
+      summary: Update a previously scheduled carrier pickup.
+      description: "Update information contained in a previously scheduled carrier pickup such as the pickup date, the types and counts of packages for the carrier to pick up, the weight or the pickup location."
+      operationId: put-carrier-pickup-confirmation-number
+      parameters:
+      - name: confirmationNumber
+        in: path
+        description: This is the Carrier Pickup confirmation number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: If-Match
+        in: header
+        description: The value of the entity tag indicating the version of the resource to get or update. All DELETE and PUT operations require an ETag to be supplied as the If-Match parameter.  The ETag is returned in the GET operation and is good for one hour or until it is used in a DELETE or PUT operation.
+        required: true
+        schema:
+          type: string
+          example: 33a64df551425fcc55e4d42a148795d9f25f89d4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupConfirmation'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/PickupConfirmation'
+        required: true
+      responses:
+        "200":
+          description: Successful Operation.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PickupConfirmation'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PickupConfirmation'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - carrier-pickup
+    delete:
+      tags:
+      - Resources
+      summary: Cancel a previously scheduled carrier pickup.
+      description: |-
+        Cancel a previously scheduled carrier pick up.
+        A carrier pickup can no longer be updated or cancelled once cancelled.
+        A successful response indicates the carrier pickup has been cancelled.
+      operationId: delete-carrier-pickup-confirmation-number
+      parameters:
+      - name: confirmationNumber
+        in: path
+        description: This is the Carrier Pickup confirmation number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: If-Match
+        in: header
+        description: The value of the entity tag indicating the version of the resource to get or update. All DELETE and PUT operations require an ETag to be supplied as the If-Match parameter.  The ETag is returned in the GET operation and is good for one hour or until it is used in a DELETE or PUT operation.
+        required: true
+        schema:
+          type: string
+          example: 33a64df551425fcc55e4d42a148795d9f25f89d4
+      responses:
+        "200":
+          description: Successful Operation.
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - carrier-pickup
+components:
+  schemas:
+    SchedulePickupRequest:
+      title: Schedule Carrier Pickup Request
+      required:
+      - estimatedWeight
+      - packages
+      - pickupAddress
+      - pickupDate
+      - pickupLocation
+      type: object
+      properties:
+        pickupDate:
+          type: string
+          description: "This is the requested pickup date. You can schedule pickups Monday - Saturday until 2:00 AM CT on the day of the pickup. After 2:00 AM CT, same-day pickup is not available."
+          format: date
+        pickupAddress:
+          $ref: '#/components/schemas/PickupAddress'
+        packages:
+          type: array
+          description: The details on the types and amounts of packages ready for pick-up.
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/SchedulePickupRequest_packages'
+        estimatedWeight:
+          type: number
+          description: Estimated aggregate weight (in pounds) of all packages ready for pick-up.
+        pickupLocation:
+          $ref: '#/components/schemas/SchedulePickupRequest_pickupLocation'
+        nextAvailablePickup:
+          type: boolean
+          description: "If you specify a pickup on a date when pickup service is not available.  The API will automatically schedule your pickup for the next available day when pickup is available."
+          default: false
+      additionalProperties: false
+      description: The Schedule Carrier Pickup Request includes all of the necessary information to schedule a package pickup from your carrier.
+    PickupConfirmation:
+      title: Pickup Confirmation
+      type: object
+      properties:
+        confirmationNumber:
+          type: string
+          description: This is the USPS assigned confirmation number of the pick-up.
+          readOnly: true
+        pickupDate:
+          type: string
+          description: This is the scheduled pick-up date.
+          format: date
+        carrierPickupRequest:
+          $ref: '#/components/schemas/SchedulePickupRequest'
+      additionalProperties: false
+      xml:
+        name: pickupConfirmation
+    PickupAddress:
+      title: Pickup Address
+      required:
+      - contact
+      type: object
+      additionalProperties: false
+      description: This is the point of contact information for a potential pickup.
+      xml:
+        name: pickupAddress
+      allOf:
+      - $ref: '#/components/schemas/Addressee'
+      - type: object
+        required: 
+          - address
+        properties:
+          address:
+            $ref: '#/components/schemas/DomesticAddress'
+          contact:
+            maxItems: 2
+            minItems: 1
+            type: array
+            description: One or more contact methods used to facilitate package pickup.
+            xml:
+              wrapped: true
+            items:
+              $ref: '#/components/schemas/NotificationMethod'
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          $ref: '#/components/schemas/ErrorMessage_error'
+      additionalProperties: true
+      description: Standard error message response.
+    Addressee:
+      title: Addressee
+      type: object
+      required: 
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: This is the first name corresponding to the address.
+        lastName:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: This is the last name corresponding to the address.
+        firm:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: This is the firm corresponding to the address. Firm is required for all domestic addresses in international label requests due to customs form requirements.
+      additionalProperties: true
+      description: Fields used to identity the entity receiving a mail piece or package
+    DomesticAddress:
+      title: Domestic Address
+      additionalProperties: true
+      description: Address fields for US locations. Combinations of streetAddress with ZIPCode, City/State, or City/State/ZIPCode must be used for a valid pickup response.
+      allOf:
+      - $ref: '#/components/schemas/Address'
+      - type: object
+        required: 
+          - streetAddress
+        properties:
+          city:
+            maxLength: 28
+            minLength: 1
+            type: string
+            description: This is the city name of the address.
+          state:
+            maxLength: 100
+            minLength: 2
+            pattern: ^(AA|aa|AE|ae|AP|ap|AL|al|alabama|AK|ak|alaska|AS|as|((am(\.|erican)?[ \t]+)?samoa)|AZ|az|arizona|AR|ar|arkansas|CA|ca|california|CO|co|colorado|CT|ct|connecticut|DC|dc|district of columbia|(d\.[ \t]*c\.)|DE|de|delaware|FL|fl|florida|FM|fm|((federated[ \t]+states[ \t]+of[ \t]+)?micronesia)|GA|ga|georgia|GU|gu|guam|HI|hi|hawaii|IA|ia|iowa|ID|id|idaho|IL|il|illinois|IN|in|indiana|KS|ks|kansas|KY|ky|kentucky|LA|la|louisiana|MA|ma|massachusetts|MD|md|maryland|ME|me|maine|MH|mh|(marshall[ \t]+is(\.|lands)?)|MI|mi|michigan|MN|mn|minnesota|MO|mo|missouri|MP|mp|((northern[ \t]+)?mariana(s|[ \t]+is(\.|lands)?))|MS|ms|mississippi|MT|mt|montana|NC|nc|north carolina|(n\.[ \t]*c\.)|ND|nd|north dakota|(n\.[ \t]*d\.)|NE|ne|nebraska|NH|nh|new hampshire|(n\.[ \t]*h\.)|NJ|nj|new jersey|(n\.[ \t]*j\.)|NM|nm|new mexico|(n\.[ \t]*m\.)|NV|nv|nevada|NY|ny|new york|(n\.[ \t]*y\.)|OH|oh|ohio|OK|ok|oklahoma|OR|or|oregon|PA|pa|pennsylvania|PR|pr|(p(\.|uerto)?[ \t]*r(\.|ico)?)|PW|pw|palau|RI|ri|rhode island|(r\.[ \t]*i\.)|SC|sc|south carolina|(s\.[ \t]*c\.)|SD|sd|south dakota|(s\.[ \t]*d\.)|TN|tn|tennessee|TX|tx|texas|UT|ut|utah|VA|va|virginia|VI|vi|usvi|(u(\.|nited)?[ \t]*s(\.|tates)?[ \t]*)?virgin[ \t]+is(\.|lands)?|VT|vt|vermont|WA|wa|washington|WI|wi|wisconsin|WV|wv|west virginia|(w\.[ \t]*v\.)|WY|wy|wyoming)$
+            type: string
+            description: This is the state name or two-character state code of the address. The request accepts either the full state name or a two-character state code. The response will always return the two-character state code.
+          ZIPCode:
+            pattern: "^\\d{5}$"
+            type: string
+            description: This is the 5-digit ZIP code.
+          ZIPPlus4:
+            pattern: "^\\d{4}$"
+            type: string
+            description: This is the ZIP+4 extension.
+            nullable: true
+          urbanization:
+            maxLength: 96
+            type: string
+            description: "An area, sector, or residential development within a geographic area (typically used for addresses in Puerto Rico)"
+        additionalProperties: true
+    Address:
+      title: Address
+      type: object
+      properties:
+        streetAddress:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: The number of a building along with the name of the road or street on which it is located.
+        streetAddressAbbreviation:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: This is the abbreviation of street address line for the address.
+          readOnly: true
+        secondaryAddress:
+          maxLength: 50
+          type: string
+          description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+        cityAbbreviation:
+          type: string
+          description: This is the abbreviation of city name for the address.
+          readOnly: true
+      additionalProperties: true
+      description: Address fields standard to all locations.
+      xml:
+        name: Address
+    NotificationMethod:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/EmailNotification'
+      - $ref: '#/components/schemas/SMSNotification'
+    EmailNotification:
+      type: object
+      properties:
+        email:
+          maxLength: 50
+          type: string
+          description: 'E-mail address of recipient. Valid e-mail addresses must be used used for notifications via email. '
+          format: email
+    SMSNotification:
+      type: object
+      properties:
+        cellNumber:
+          pattern: "^\\d{10}$"
+          type: string
+          description: "The 10 digit cell number, including the area code, and with no punctuation used for notifications via text messages. This field is for future Use  \n          "
+    SchedulePickupRequest_packages:
+      minItems: 1
+      required:
+      - packageCount
+      - packageType
+      type: object
+      properties:
+        packageType:
+          type: string
+          description: This is the type of package ready for pick-up
+          enum:
+          - FIRST-CLASS_PACKAGE_SERVICE
+          - PRIORITY_MAIL_EXPRESS
+          - PRIORITY_MAIL
+          - RETURNS
+          - USPS_GROUND_ADVANTAGE
+          - INTERNATIONAL
+          - OTHER
+        packageCount:
+          type: integer
+          description: Number of packages ready for pick-up for the associated Mail Class.
+      additionalProperties: false
+      xml:
+        name: package
+    SchedulePickupRequest_pickupLocation:
+      required:
+      - packageLocation
+      type: object
+      properties:
+        packageLocation:
+          type: string
+          description: This is the location of the packages ready for pick-up at the pickup address.
+          enum:
+          - FRONT_DOOR
+          - BACK_DOOR
+          - SIDE_DOOR
+          - KNOCK_ON_DOOR
+          - MAIL_ROOM
+          - OFFICE
+          - PORCH
+          - RECEPTION
+          - MAILBOX
+          - OTHER
+        specialInstructions:
+          type: string
+          description: Additional details on where the packages can be picked-up. This is required when the package location is 'OTHER'.
+        dogPresent:
+          type: boolean
+          description: Used to notify the carrier if a dog is present at the pickup location.
+          default: false
+      additionalProperties: false
+      description: Details of where to pickup packages.
+    ErrorMessage_error_source:
+      type: object
+      properties:
+        parameter:
+          type: string
+          description: The input in the request which caused an error.
+        example:
+          type: string
+          description: An example of a valid value for the input parameter.
+      additionalProperties: true
+      description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+    ErrorMessage_error_errors:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status code response returned to the client.
+        code:
+          type: string
+          description: An internal subordinate code used for error diagnosis.
+        title:
+          type: string
+          description: A human-readable title that identifies the error.
+        detail:
+          type: string
+          description: A human-readable description of the error that occurred.
+        source:
+          $ref: '#/components/schemas/ErrorMessage_error_source'
+      additionalProperties: true
+    ErrorMessage_error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error status code that has been returned in response to the request.
+        message:
+          type: string
+          description: A human-readable message describing the error.
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorMessage_error_errors'
+      additionalProperties: true
+      description: The high-level error that has occurred as indicated by the status code.
+  parameters:
+    ConfirmationNumber:
+      name: confirmationNumber
+      in: path
+      description: This is the Carrier Pickup confirmation number.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    StreetAddress-Required:
+      name: streetAddress
+      in: query
+      description: The number of a building along with the name of the road or street on which it is located.
+      required: true
+      schema:
+        type: string
+    SecondaryAddress:
+      name: secondaryAddress
+      in: query
+      description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+      required: false
+      schema:
+        type: string
+    City-Required:
+      name: city
+      in: query
+      description: This is the city name of the address.
+      required: true
+      schema:
+        type: string
+    State-Required:
+      name: state
+      in: query
+      description: This is the state name or two-character state code of the address. The request accepts either the full state name or a two-character state code. The response will always return the two-character state code.
+      required: true
+      schema:
+        maxLength: 100
+        minLength: 2
+        pattern: ^(AA|aa|AE|ae|AP|ap|AL|al|alabama|AK|ak|alaska|AS|as|((am(\.|erican)?[ \t]+)?samoa)|AZ|az|arizona|AR|ar|arkansas|CA|ca|california|CO|co|colorado|CT|ct|connecticut|DC|dc|district of columbia|(d\.[ \t]*c\.)|DE|de|delaware|FL|fl|florida|FM|fm|((federated[ \t]+states[ \t]+of[ \t]+)?micronesia)|GA|ga|georgia|GU|gu|guam|HI|hi|hawaii|IA|ia|iowa|ID|id|idaho|IL|il|illinois|IN|in|indiana|KS|ks|kansas|KY|ky|kentucky|LA|la|louisiana|MA|ma|massachusetts|MD|md|maryland|ME|me|maine|MH|mh|(marshall[ \t]+is(\.|lands)?)|MI|mi|michigan|MN|mn|minnesota|MO|mo|missouri|MP|mp|((northern[ \t]+)?mariana(s|[ \t]+is(\.|lands)?))|MS|ms|mississippi|MT|mt|montana|NC|nc|north carolina|(n\.[ \t]*c\.)|ND|nd|north dakota|(n\.[ \t]*d\.)|NE|ne|nebraska|NH|nh|new hampshire|(n\.[ \t]*h\.)|NJ|nj|new jersey|(n\.[ \t]*j\.)|NM|nm|new mexico|(n\.[ \t]*m\.)|NV|nv|nevada|NY|ny|new york|(n\.[ \t]*y\.)|OH|oh|ohio|OK|ok|oklahoma|OR|or|oregon|PA|pa|pennsylvania|PR|pr|(p(\.|uerto)?[ \t]*r(\.|ico)?)|PW|pw|palau|RI|ri|rhode island|(r\.[ \t]*i\.)|SC|sc|south carolina|(s\.[ \t]*c\.)|SD|sd|south dakota|(s\.[ \t]*d\.)|TN|tn|tennessee|TX|tx|texas|UT|ut|utah|VA|va|virginia|VI|vi|usvi|(u(\.|nited)?[ \t]*s(\.|tates)?[ \t]*)?virgin[ \t]+is(\.|lands)?|VT|vt|vermont|WA|wa|washington|WI|wi|wisconsin|WV|wv|west virginia|(w\.[ \t]*v\.)|WY|wy|wyoming)$
+        type: string
+    ZIPCode:
+      name: ZIPCode
+      in: query
+      description: This is the 5-digit ZIP code.
+      required: false
+      schema:
+        pattern: "^\\d{5}$"
+        type: string
+    ZIPPlus4:
+      name: ZIPPlus4
+      in: query
+      description: This is the 4-digit component of the ZIP+4 code. Using the correct Zip+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+      required: false
+      schema:
+        pattern: "^\\d{4}$"
+        type: string
+    Urbanization:
+      name: urbanization
+      in: query
+      description: This is the urbanization code relevant only for Puerto Rico addresses.
+      required: false
+      schema:
+        type: string
+    IfMatch:
+      name: If-Match
+      in: header
+      description: The value of the entity tag indicating the version of the resource to get or update. All DELETE and PUT operations require an ETag to be supplied as the If-Match parameter.  The ETag is returned in the GET operation and is good for one hour or until it is used in a DELETE or PUT operation.
+      required: true
+      schema:
+        type: string
+        example: 33a64df551425fcc55e4d42a148795d9f25f89d4
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+    ETag:
+      description: Entity Tag response header indicating version of resource. All DELETE and PUT operations require an ETag.  The ETag is returned in the GET operation and is good for one hour or until it is used in a DELETE or PUT operation.
+      schema:
+        type: string
+        example: "ETag: \"33a64df551425fcc55e4d42a148795d9f25f89d4\""
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            pickup: read write access to all pickup endpoints
+        authorizationCode:
+          authorizationUrl: /oauth2/v3/authorize
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            pickup: read write access to all pickup endpoints

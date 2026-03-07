@@ -1,0 +1,2158 @@
+openapi: 3.0.0
+info:
+  title: International Labels
+  description: | 
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    The USPS&#174; International Labels API allows you to digitally create mailing labels for `FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE`, `PRIORITY_MAIL_INTERNATIONAL`, and `PRIORITY_MAIL_EXPRESS_INTERNATIONAL`.
+
+    * Use the [Getting Started guide](https://developers.usps.com/getting-started) to get started with the Labels API.
+    * The USPS&#174; International Labels API uses a token to authorize the use of an [Enterprise Payment](https://postalpro.usps.com/EPS) or Permit account. The specification to generate the token is in the [Payments 3.0 - Set Payment Account Information](https://developers.usps.com/paymentsv3#tag/Resources/operation/post-payments-payment-authorization).
+    
+    **References**:
+    * [Publication 199](http://postalpro.usps.com/pub199)
+    * [Publication 205](http://postalpro.usps.com/pub205)
+
+    **Manifest Scheduling** 
+    
+    The following table outlines the International Label manifesting schedule for specific conditions listed below. 
+    
+    | Condition                   | Scheduling |
+    | ----------------------------| -------- |
+    | **Value of `true` provided for `immediateManifest` field**| Electronic data is sent to Postal systems within 15 minutes of label creation.  |
+    | **Label is added to a [SCAN Form](https://developers.usps.com/scanv3#tag/Resources/operation/post-scan-form)**| Electronic data is sent to Postal systems within 15 minutes of SCAN Form creation.  |
+    | **All other conditions**    | 12:30am CT on the day after label creation. |
+  version: 3.3.3
+servers:
+  - url: https://apis.usps.com/international-labels/v3
+    description: Production Environment Endpoint
+  - url: https://apis-tem.usps.com/international-labels/v3
+    description: Testing Environment Endpoint
+paths:
+  /international-label:
+    post:
+      tags:
+        - Resources
+      summary: Create a international shipping label
+      description: |
+        Generates a international shipping label based upon the input dimensions requested:
+
+          | Element                       | Description |
+          | ----------------------------- | --------|
+          | **toAddress**                 | International destination address of the recipient. Used in pricing as the country. |
+          | **fromAddress**               | Domestic address where the package is being mailed from. |
+          | **senderAddress**             | Domestic address of the business. Can differ from the `fromAddress` in the case the business is using a third-party logistics provider or mailing from off-site locations. |
+          | **packageDescription**        | Package characteristics used to price the shipment including requested mail class, weight, dimensions, and more. |
+          | **imageInfo**                 | Additional details used to update label characteristics. |
+          | **customsForm**               | Additional details required for sending international packages.|
+
+
+        The default media type of the response has multiple parts. Setting the Accept header to either application/json or application/xml will only affect the metadata part of the multipart response.
+
+        **How to use this API**
+
+        The metadata part of the multipart response representation is only in application/json format media type, as default. The application/xml media type is not supported at this time.
+
+        Ignore the Content-Encoding header in the second part, the label image file. The contents of this part are not compressed.
+
+        Ignore the Content-Transfer-Encoding header in the second part, the label image file. The contents of this part are always Base64 encoded.
+
+
+        **Instructions**
+
+        Extract the first part of the multipart response as application/json media type.
+
+        Extract the second part of the multipart response and Base64 decode it to yield the binary image file.
+
+        Save the binary image file, given the Content-Type header value and the filename of this part (e.g. application/pdf, label.pdf). It is recommended that you run a virus scan on the resulting downloaded file.
+      operationId: post-international-label
+      parameters:
+        - $ref: "#/components/parameters/X-Payment-Authorization-Token"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternationalLabelRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InternationalLabelRequest'
+        required: true
+      responses:
+        "201":
+          description: Success.
+          content:
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/InternationalLabelResponse'
+              encoding:
+                labelMetadata:
+                  contentType: application/json
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"labelMetadata\""
+                  style: form
+                labelImage:
+                  contentType: "application/octet-stream, application/pdf, image/tiff"
+                  headers:
+                    Content-Disposition:
+                      description: Additional information on how the client should handle the content.
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: attachment; filename=\"label-image.pdf\""
+                  style: form
+                labelBrokerQR:
+                  contentType: "image/png"
+                  headers:
+                    Content-Disposition:
+                      description: Label Broker QR Code image, returned if `imageType` of `LABEL_BROKER` was requested and `imageInfo.includeLabelBrokerPDF` is `true`.
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: attachment; filename=\"label-broker-qr.png\""
+                  style: form
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternationalLabelResponse'
+              encoding:
+                metadata:
+                  contentType: application/json
+                  style: form
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InternationalLabelResponse'
+              encoding:
+                metadata:
+                  contentType: application/xml
+                  style: form
+            application/vnd.usps.labels+json:
+              schema:
+                $ref: '#/components/schemas/InternationalLabelVendorResponse'
+              examples:
+                InternationalLabelResponseExample:
+                  $ref: '#/components/examples/InternationalLabelResponseExample'
+                InternationalLabelResponseWithLabelBrokerExample:
+                  $ref: '#/components/examples/InternationalLabelResponseWithLabelBrokerExample'
+            application/vnd.usps.labels+xml:
+              schema:
+                $ref: '#/components/schemas/InternationalLabelVendorResponse'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        "503":
+          $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - international-labels
+  /international-label-reprint/{trackingNumber}:
+    post:
+      tags:
+        - Resources
+      summary: Reprint an international shipping label
+      description: |
+        Reprint an international shipping label. Allows for different `ImageInfo` options to be specified.
+        * Labels can only be reprinted up to the mailing date.
+        * Labels can only be reprinted up to 3 times.
+        * Canceled labels are not eligible for reprint.
+      operationId: post-label-reprint
+      parameters:
+        - $ref: "#/components/parameters/TrackingNumber"
+        - $ref: "#/components/parameters/X-Payment-Authorization-Token"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabelReprintRequest'
+            examples:
+              LabelReprintRequestExample:
+                $ref: '#/components/examples/LabelReprintRequestExample'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/LabelReprintRequest'
+        required: true
+      responses:
+        "200":
+          description: Successful operation.
+          content:
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/LabelReprintInternationalMultipartResponse'
+              encoding:
+                labelMetadata:
+                  contentType: application/json
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"labelMetadata\""
+                  style: form
+                labelImage:
+                  contentType: "application/octet-stream, application/pdf, image/tiff"
+                  headers:
+                    Content-Disposition:
+                      description: Additional information on how the client should handle the content.
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: attachment; filename=\"label-image.pdf\""
+                  style: form
+                reprintInfo:
+                  contentType: application/json
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"reprintInfo\""
+                  style: form
+                examples:
+                  style: form
+            application/vnd.usps.labels+json:
+              schema:
+                $ref: '#/components/schemas/LabelReprintInternationalResponse'
+              examples:
+                LabelReprintResponseExample:
+                  $ref: '#/components/examples/LabelReprintResponseExample'
+            application/vnd.usps.labels+xml:
+              schema:
+                $ref: '#/components/schemas/LabelReprintInternationalResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelReprintInternationalMultipartResponse'
+              encoding:
+                labelMetadata:
+                  contentType: application/json
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"labelMetadata\""
+                  style: form
+                labelImage:
+                  contentType: "application/octet-stream, application/pdf, image/tiff"
+                  headers:
+                    Content-Disposition:
+                      description: Additional information on how the client should handle the content.
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: attachment; filename=\"label-image.pdf\""
+                  style: form
+                reprintInfo:
+                  contentType: application/json
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"reprintInfo\""
+                  style: form
+                examples:
+                  style: form
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LabelReprintInternationalMultipartResponse'
+              encoding:
+                labelMetadata:
+                  contentType: application/xml
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"labelMetadata\""
+                  style: form
+                labelImage:
+                  contentType: "application/octet-stream, application/pdf, image/tiff"
+                  headers:
+                    Content-Disposition:
+                      description: Additional information on how the client should handle the content.
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: attachment; filename=\"label-image.pdf\""
+                  style: form
+                reprintInfo:
+                  contentType: application/xml
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"reprintInfo\""
+                  style: form
+                examples:
+                  style: form
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        "503":
+          $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: { }
+      security:
+        - OAuth:
+            - international-labels
+  /international-label/{trackingNumber}:
+    delete:
+      tags:
+        - Resources
+      summary: Cancel a previously requested label or request a refund on label
+      description: |
+        Cancel a label or submit a refund request by providing the label's tracking number.
+
+        A label can be canceled if a Shipping Services File has not been created. If a Shipping Services File has been created, submit a refund request for an unused label. A label is eligible for a refund if:
+        - If the label has had a Shipping Services File created for it
+        - The label is not from Click-N-Ship or PC Postage
+        - Is a SCAN Form label that has had its Shipping Services File created
+
+        Note:
+        - If the label is canceled, a Shipping Services File will not be created.
+        - If a refund request is successfully submitted, a disputeId will be returned that can be used to then track the status of the refund request. The system will only give one unique disputeId per customer reference ID (CRID) per day. Duplicate submissions of the same label, for the same CRID, on the same day, will be rejected.
+      operationId: delete-international-label
+      parameters:
+        - $ref: "#/components/parameters/TrackingNumber"
+        - $ref: "#/components/parameters/X-Payment-Authorization-Token"
+      responses:
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelResponse'
+              examples:
+                Label Canceled:
+                  $ref: '#/components/examples/ExampleCancel_CANCELED'
+                Refund Submitted:
+                  $ref: '#/components/examples/ExampleCancel_REFUND'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CancelResponse'
+              examples:
+                Label Canceled:
+                  $ref: '#/components/examples/ExampleCancel_CANCELED'
+                Refund Submitted:
+                  $ref: '#/components/examples/ExampleCancel_REFUND'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        "503":
+          $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - international-labels
+  /indicia:
+    post:
+      tags:
+        - Resources
+      summary: Create a First-Class Mail International letter, flat, or card indicia
+      description: |
+        Generates a First-Class Mail International indicia for use on letter, flat, and cards mailings.
+
+        Note:
+        - First-Class Mail International can be used for mailing correspondence (no trading cards, bookmarks, stickers, etc.) or nonnegotiable documents (just paper; no cash, checks, or other items with cash value).  No customs form is required.
+        - Different countries have different rules on what can be mailed.  Look up your shipping destination in the [Index of Countries and Localities](https://pe.usps.com/text/Imm/immctry.htm) for specifics on what can and cannot be mailed with First-Class Mail International.
+        - Only supported for 'PAYER' Roles with an EPS accountType.
+        - Indicia should be placed in the top right corner of letters, flats, and cards in order to avoid delays in processing.
+        - An Indicia created using this endpoint is non-refundable.
+      operationId: post-international-indicia
+      parameters:
+        - $ref: "#/components/parameters/X-Payment-Authorization-Token"
+      requestBody:
+        description: Indicia request payload containing necessary data for generating a First-Class Mail International indicia.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndiciaRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/IndiciaRequest'
+        required: true
+      responses:
+        "201":
+          description: Success
+          content:
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/IndiciaResponse'
+              encoding:
+                indiciaMetadata:
+                  contentType: application/json
+                  headers:
+                    Content-Disposition:
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: form-data; name=\"indiciaMetadata\""
+                  style: form
+                indiciaImage:
+                  contentType: "application/pdf, image/jpg, image/png, image/gif, image/tiff, image/svg+xml"
+                  headers:
+                    Content-Disposition:
+                      description: Additional information on how the client should handle the content.
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: attachment; filename=\"indicia-image.jpg\""
+                  style: form
+                receiptImage:
+                  contentType: "application/pdf, image/jpg, image/png, image/gif, image/tiff, image/svg+xml"
+                  headers:
+                    Content-Disposition:
+                      description: Additional information on how the client should handle the content.
+                      style: simple
+                      explode: false
+                      schema:
+                        type: string
+                        example: "Content-Disposition: attachment; filename=\"receipt-image.jpg\""
+                  style: form
+                examples:
+                  style: form
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndiciaResponse'
+              encoding:
+                metadata:
+                  contentType: application/json
+                  style: form
+                examples:
+                  style: form
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/IndiciaResponse'
+              encoding:
+                metadata:
+                  contentType: application/xml
+                  style: form
+                examples:
+                  style: form
+            application/vnd.usps.labels+json:
+              schema:
+                $ref: '#/components/schemas/IndiciaResponse'
+              examples:
+                IndiciaExampleResponse:
+                  $ref: '#/components/examples/IndiciaExampleResponse'
+            application/vnd.usps.labels+xml:
+              schema:
+                $ref: '#/components/schemas/IndiciaResponse'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "429":
+          $ref: '#/components/responses/TooManyRequests'
+        "503":
+          $ref: '#/components/responses/ServiceUnavailable'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: { }
+      security:
+        - OAuth:
+            - international-labels
+  
+components:
+  schemas:
+    InternationalPackageDescription:
+      title: International Package Description
+      description: Physical and service characteristics of an international package including dimensions, weight, mail class, and processing requirements.
+      allOf:
+        - $ref: '#/components/schemas/PackageDescription'
+        - required:
+            - destinationEntryFacilityType
+            - height
+            - length
+            - mailClass
+            - mailingDate
+            - processingCategory
+            - weight
+            - width
+          type: object
+          properties:
+            mailClass:
+              title: International Mail Class of the label
+              type: string
+              description: |-
+                International Mail classes for label  The mail service requested.
+                 * FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+                 * PRIORITY_MAIL_INTERNATIONAL
+                 * PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+              enum:
+                - FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+                - PRIORITY_MAIL_INTERNATIONAL
+                - PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+            rateIndicator:
+              type: string
+              description: |-
+                Use to specify USPS&#174; containers/packaging or container attributes that may affect postage. A rate indicator value will be required if a value for `packagingType` is not provided.
+                 * E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee
+                 * E6 - Priority Mail Express Legal Flat Rate Envelope
+                 * FA - Legal Flat Rate Envelope
+                 * FB - Medium Flat Rate Box/Large Flat Rate Bag
+                 * FE - Flat Rate Envelope
+                 * FP - Padded Flat Rate Envelope
+                 * FS - Small Flat Rate Box
+                 * PA - Priority Mail Express International Single Piece
+                 * PL - Large Flat Rate Box
+                 * SP - Single Piece
+              default: SP
+              enum:
+                - E4
+                - E6
+                - FA
+                - FB
+                - FE
+                - FP
+                - FS
+                - PA
+                - PL
+                - SP
+            packagingType:
+              type: string
+              description: |
+                Used to specify USPS&#174; packaging attributes that may affect postage. Can be used instead of a rate indicator. Either packagingType or rate indicator is required.
+                 * FLAT_RATE_ENVELOPE
+                 * LEGAL_FLAT_RATE_ENVELOPE
+                 * PADDED_FLAT_RATE_ENVELOPE
+                 * SM_FLAT_RATE_BOX
+                 * MD_FLAT_RATE_BOX
+                 * LG_FLAT_RATE_BOX
+                 * VARIABLE
+              enum:
+                - FLAT_RATE_ENVELOPE
+                - LEGAL_FLAT_RATE_ENVELOPE
+                - PADDED_FLAT_RATE_ENVELOPE
+                - SM_FLAT_RATE_BOX
+                - MD_FLAT_RATE_BOX
+                - LG_FLAT_RATE_BOX
+                - VARIABLE
+            diameter:
+              minimum: 0
+              type: number
+              description: "Future Use - The diameter of the package, in dimensionsUOM."
+            shape:
+              type: string
+              description: |-
+                Indicates the mail piece shape.
+                 * RECTANGLE
+              enum:
+                - RECTANGLE
+            processingCategory:
+              type: string
+              description: |
+                USPS&#174; categorizes international parcels into four processing categories. These categories are based on the physical dimensions of the piece and impact how the mail will be processed.
+                 * `LETTERS`
+                 * `FLATS`
+                 * `MACHINABLE`
+                 * `NONSTANDARD`
+                 * `NON_MACHINABLE` is deprecated and will convert to `NONSTANDARD` as of 01/19/2025
+              enum:
+                - LETTERS
+                - FLATS
+                - MACHINABLE
+                - NON_MACHINABLE
+                - NONSTANDARD
+            destinationEntryFacilityType:
+              type: string
+              description: |
+                Types of Facilities.
+                  * NONE - Translate to Destination Rate Indicator of N in USPS&#174; Pub 205
+                  * INTERNATIONAL_SERVICE_CENTER - Translate to Destination Rate Indicator of I in USPS&#174; Pub 205
+              enum:
+                - NONE
+                - INTERNATIONAL_SERVICE_CENTER
+            mailingDate:
+              type: string
+              description: "The date package will be mailed. The mailing date may be today plus 0 to 7 days in advance. Enter the date in the full-date notation as defined by [RFC 3339, section 5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6)."
+              format: date
+            packageOptions:
+              $ref: '#/components/schemas/InternationalPackageOptions'
+            customerReference:
+              description: "Customer reference information for the package. Up to two customer references may be provided."
+              maxItems: 2
+              minItems: 0
+              type: array
+              items:
+                $ref: '#/components/schemas/CustomerReference'
+            extraServices:
+              maxItems: 3
+              minItems: 0
+              type: array
+              description: |
+                Extra Service Code requested on the package.
+                * 480 - Tracking Plus 6 Months
+                * 481 - Tracking Plus 1 Year
+                * 482 - Tracking Plus 3 Years
+                * 483 - Tracking Plus 5 Years
+                * 484 - Tracking Plus 7 Years
+                * 486 - Tracking Plus Signature 3 Years
+                * 487 - Tracking Plus Signature 5 Years
+                * 488 - Tracking Plus Signature 7 Years
+                * 813 - HAZMAT Class 7 - Radioactive Materials Package
+                * 820 - HAZMAT Class 9 - Lithium batteries, unmarked package
+                * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+                * 857 - Hazardous Material
+                * 930 - Insurance <= $500
+                * 931 - Insurance > $500
+                * 955 - Return Receipt (Unsupported as of 01/19/2025)
+                
+                Note:
+                * Only one USPS Tracking Plus&#174; extra service and one Insurance extra service may be selected per package
+              items:
+                $ref: '#/components/schemas/ExtraService'
+            inductionZIPCode:
+              pattern: "^\\d{5}$"
+              type: string
+              description: This is the 5-digit ZIP code where the package is being mailed from.
+            mailOwnerMID:
+              pattern: "^(\\d{6}|\\d{9})$"
+              type: string
+              description: This is the mailer ID associated with the mail owner for this label This provides an additional copy of the scan extract file to the MID's outbound folder.
+            logisticsManagerMID:
+              pattern: "^(\\d{6}|\\d{9})$"
+              type: string
+              description: This is the mailer ID associated with the logistics manager for this label This provides an additional copy of the scan extract file to the MID's outbound folder.
+            prepayDutiesTaxesFees:
+              type: boolean
+              description: |
+                When set to `true`, duties, taxes, and import fees will be calculated and will be prepaid on behalf of the recipient if supported by the destination country.  The resulting cost will be returned as `response.prepaidDutiesTaxesFees`.
+                
+                By continuing, you agree to the [terms and conditions](https://zonos.com/docs/legal/usps-terms-of-service) for paying international duties, taxes, and fees (DDP), and certify that you will use DDP to ship goods to customers.
+                
+                When set to `false`, duties, taxes, and import fees will not be calculated and you will not have the option to pay duties, taxes, and import fees in advance, on behalf of the recipient.
+              default: false
+          additionalProperties: false
+    InternationalPackageOptions:
+      title: International Package Options
+      description: Additional options for international package shipments including redirect addresses, over-labeling information, and manifest preferences.
+      allOf:
+      - $ref: '#/components/schemas/PackageOptions'
+      - type: object
+        properties:
+          redirectAddress:
+            description: |
+              Address where the package will be redirected to if undeliverable and  a `nonDeliveryOption` of REDIRECT is provided. This field is required if REDIRECT `nonDeliveryOption` is provided.
+              
+              Note:
+              - The First and Last Name or Firm Name are required when `redirectAddress` is populated.
+            allOf:
+            - $ref: '#/components/schemas/DomesticLabelAddress'
+            - type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+          originalPackage:
+            required:
+            - originalConstructCode
+            - originalTrackingNumber
+            type: object
+            description: Information about the original package when an over labeled package is being created.
+            properties:
+              originalTrackingNumber:
+                maxLength: 13
+                minLength: 13
+                type: string
+                description: The tracking number associated with the package before it was over labeled.
+              originalConstructCode:
+                maxLength: 3
+                minLength: 3
+                type: string
+                description: A 3-character code to identify the construct of the Original Label Tracking Number.
+                default: I01
+                enum:
+                - G01
+                - I01
+          generateGXEvent:
+            type: boolean
+            description: "Provides the option for a user to not create a \"GX\" event for the package. By default, a GX event will be created."
+            default: true
+          immediateManifest:
+            type: boolean
+            default: false
+            description: |
+              Setting this field to `true` will send electronic data to Postal systems within 15 minutes of label creation.
+              If invoked, this label <u><strong>cannot</strong></u> be cancelled. Instead, one must request an unused label refund – which may be subject to an admin fee.
+              Depending on time of label creation, your packages could be charged same day instead of next day.
+        additionalProperties: false
+    ExtraService:
+      title: International Extra Service Codes
+      pattern: "\\d{3}"
+      type: integer
+      description: Available extra service codes
+      enum:
+      - 480
+      - 481
+      - 482
+      - 483
+      - 484
+      - 486
+      - 487
+      - 488
+      - 813
+      - 820
+      - 826
+      - 857
+      - 930
+      - 931
+      - 955
+    InternationalCustomsForm:
+      title: International Customs Form
+      description: Customs form information required for international shipments including content type, item details, and references.
+      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/CustomsForm'
+        - required:
+            - AESITN
+            - contents
+            - customsContentType
+          type: object
+          properties:
+            customsContentType:
+              type: string
+              description: |
+                Specifies the content of the package or envelope.
+                
+                Note: 
+                * `CREMATED_REMAINS` is only supported by mailClass `PRIORITY_MAIL_EXPRESS_INTERNATIONAL`
+                * Customs Content Type must be `DANGEROUS_GOODS` when using any of the following extra services:
+                  * 813 - HAZMAT Class 7 - Radioactive Materials Package
+                  * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+              enum:
+                - MERCHANDISE
+                - GIFT
+                - DOCUMENT
+                - COMMERCIAL_SAMPLE
+                - RETURNED_GOODS
+                - OTHER
+                - HUMANITARIAN_DONATIONS
+                - DANGEROUS_GOODS
+                - CREMATED_REMAINS
+                - NON_NEGOTIABLE_DOCUMENT
+                - MEDICAL_SUPPLIES
+                - PHARMACEUTICALS
+            importersReference:
+              $ref: '#/components/schemas/CustomsReference'
+            exportersReference:
+              $ref: '#/components/schemas/CustomsReference'
+            contents:
+              maxItems: 30
+              minItems: 1
+              type: array
+              items:
+                $ref: '#/components/schemas/InternationalShippingContents'
+              description: |
+                Details of the contents of the package. The first five items will print on the label of the customs form, and the rest will print on a separate continuation page.
+                
+                Note:
+                - One of either `itemValue` and `itemWeight` or `itemTotalValue` and `itemTotalWeight` are required.
+          description: Required for international labels to create s required based on Customs Content Type and Weight.
+    CustomsReference:
+      title: Customs Reference Information
+      description: Reference information for customs processing including tax codes, VAT numbers, importer codes, and contact details.
+      type: object
+      properties:
+        referenceType:
+          type: string
+          description: The type of reference number being provided.
+          enum:
+            - TAX_CODE
+            - VAT_NUMBER
+            - IMPORTER_CODE
+        reference:
+          maxLength: 28
+          minLength: 1
+          type: string
+          description: |
+              Customs Reference.
+        contact:
+          description: Contact information for customs reference.
+          type: object
+          properties:
+            phone:
+              $ref: '#/components/schemas/Phone'
+            fax:
+              $ref: '#/components/schemas/Phone'
+            email:
+              $ref: '#/components/schemas/Email'
+      additionalProperties: false
+    InternationalShippingContents:
+      title: International Customs Form Package Contents
+      description: Detailed information about items included in an international shipment for customs documentation purposes.
+      additionalProperties: false
+      allOf:
+        - $ref: '#/components/schemas/ShippingContents'
+        - required:
+            - countryofOrigin
+            - itemDescription
+            - itemQuantity
+          type: object
+    ImageInfo:
+      title: International Image Info
+      type: object
+      properties:
+        imageType:
+          type: string
+          description: |
+            The type of label image requested.
+             * 'LABEL_BROKER'- Request a USPS QR code to allow your customers with no access to a printer to print at participating Post Office Locations. All USPS API users and third party integrators utilizing QR codes are subject to the [Label Broker terms and conditions](https://www.usps.com/terms-conditions/label-broker.htm). For more information please see the Label Broker guide available on [GitHub](https://github.com/USPS/api-examples/blob/main/USPS%20APIs%20Domestic%20Labels%20API%20Documentation_2023_0901%20Published.pdf).
+             * 'PDF'
+             * 'TIFF'
+             * 'ZPL203DPI'
+             * 'ZPL300DPI'
+             * 'NONE'
+          default: PDF
+          enum:
+            - LABEL_BROKER
+            - PDF
+            - TIFF
+            - ZPL203DPI
+            - ZPL300DPI
+            - NONE
+        labelType:
+          type: string
+          description: The requested label image size to generate.
+          default: 4X6LABEL
+          enum:
+            - 4X6LABEL
+        holdForManifest:
+          type: boolean
+          description: |
+            This field is deprecated and will be removed in a future release.
+            By default, all international packages are manifested at the end of the day.
+            Use `packageDescription.packageOptions.immediateManifest` to trigger an immediate manifest.
+          deprecated: true
+          default: false
+        suppressPostage:
+          type: boolean
+          description: |
+            Indicates if Insured Fees and Postal Charges/Fees should be
+            omitted from the label image.  If true, Insured Fees and Postal
+            Charges/Fees values will be removed.
+          default: false
+        includeLabelBrokerPDF:
+          type: boolean
+          default: false
+          description: |
+            Applicable only when `imageType` is `LABEL_BROKER`. When `includeLabelBrokerPDF` is `true`, two label images will be returned in the multi-part and vendor response as `labelBrokerQR` and `labelImage`. `labelBrokerQR` will contain the base64 PNG of the Label Broker QR Code and `labelImage` will contain the base64 PDF of the Label stored in Label Broker. When `includeLabelBrokerPDF` is `false`, one image will be returned in the multi-part and vendor response as `labelImage` as the base64 PNG of the Label Broker QR Code.
+        addZPLComments:
+          type: boolean
+          default: false
+          description: |
+            Applicable only when `imageType` is `ZPL203DPI` or `ZPL300DPI`.  When `addZPLComments` is `true`, comments will be visible within the ZPL text response to the user to denote different sections of their label.  When `addZPLComments` is `false`, no comments will be included in the ZPL text response.  This will be ignored for any other `imageType`.
+
+            Example of a ZPL comment: 
+            `^FX Start of label. 123e4567-e89b-12d3-a456-426614174000 ^FS`
+
+ 
+      additionalProperties: false
+      description: The Image Object defines label characteristics
+    InternationalLabelRequest:
+      title: International Package Request
+      required:
+        - customsForm
+        - fromAddress
+        - packageDescription
+        - toAddress
+      type: object
+      properties:
+        imageInfo:
+          $ref: '#/components/schemas/ImageInfo'
+        toAddress:
+          $ref: '#/components/schemas/InternationalLabelAddress'
+        fromAddress:
+          $ref: '#/components/schemas/DomesticLabelAddress'
+        senderAddress:
+          $ref: '#/components/schemas/DomesticLabelSenderAddress'
+        packageDescription:
+          $ref: '#/components/schemas/InternationalPackageDescription'
+        customsForm:
+          $ref: '#/components/schemas/InternationalCustomsForm'
+      additionalProperties: false
+      description: International Shipment Request
+    InternationalLabelMetadata:
+      title: International Label Metadata response
+      description: Metadata information for an international label including tracking number, pricing details, postage, and extra services.
+      type: object
+      properties:
+        labelAddress:
+          $ref: '#/components/schemas/InternationalLabelAddress'
+        internationalTrackingNumber:
+          type: string
+          description: International Package Tracking number
+          example: EZ000012162US
+          minLength: 13
+          maxLength: 13
+        constructCode:
+          type: string
+          description: The barcode construct code associated with the international tracking number
+          example: I01
+          minLength: 3
+          maxLength: 3
+        SKU:
+          type: string
+          description: Pricing SKU
+          example: IEXX0XXXXB12230
+          minLength: 15
+          maxLength: 15
+        postage:
+          type: number
+          description: "Amount of Postage Required, does not include insurance or other extra service fees."
+          example: 286.03
+          minimum: 0.01
+          maximum: 9999.99
+        extraServices:
+          type: array
+          description: Extra services requested on the package.
+          minItems: 0
+          maxItems: 5
+          items:
+            type: object
+            properties:
+              serviceID:
+                type: string
+                description: The unique identifier of the extra service.
+                example: "857"
+              serviceName:
+                type: string
+                description: The name of the extra service.
+                example: Hazardous Material
+              price:
+                type: number
+                description: The price for the extra service.
+                format: float
+                example: 0.0
+            additionalProperties: false
+        internationalPriceGroup:
+          type: string
+          description: Indicates the price group for a given `countryISOAlpha2Code`, `mailClass`, `mailingDate`, and `rateIndicator`.
+          example: "12"
+          minLength: 2
+          maxLength: 2
+        weightUOM:
+          type: string
+          description: |-
+            Weight Unit of Measurement.
+              * lb - Pounds
+          default: lb
+          enum:
+            - lb
+          example: "lb"
+        weight:
+          $ref: '#/components/schemas/weight'
+        dimensionalWeight:
+          type: string
+          description: "The dimensional weight of the package in pounds, if greater than the value specified in `weight`."
+          example: "0.0"
+          minLength: 3
+        mailingDate:
+          type: string
+          description: The date on which the package will be mailed as provided in the request.
+          format: date
+          example: "2026-01-01"
+        fees:
+          type: array
+          description: Fees associated to the package.
+          minItems: 0
+          maxItems: 5
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Name of the fee.
+              SKU:
+                type: string
+                description: Pricing SKU of the fee.
+              price:
+                type: number
+                description: The price for the fee.
+            additionalProperties: false
+        labelBrokerID:
+          maxLength: 10
+          type: string
+          description: Unique Label Broker ID that can be used as an alternative to the Label Broker QR Code to retrieve the label at a Post Office. Will only be provided when an imageType of LABEL_BROKER is requested.
+          example: H3FNAPGQ
+      additionalProperties: true
+    InternationalLabelResponse:
+      title: International Package Response
+      description: Response containing the international label metadata and Base64-encoded label image for multipart responses.
+      type: object
+      properties:
+        labelMetadata:
+          $ref: '#/components/schemas/InternationalLabelMetadata'
+        labelImage:
+          type: string
+          description: |
+            Contains the Base64-encoded file contents of the label image. Provided only when `imageInfo.imageType` is not `NONE`.
+          format: byte
+        labelBrokerQR:
+          type: string
+          description: "The Label Broker QR Code image, Base64 encoded file contents. Only provided if `imageType` in the `imageInfo` is set to `LABEL_BROKER`."
+          format: byte
+        prepaidDutiesTaxesFees:
+          type: object
+          description: "The total landed cost package and item details. Included if `prepayDutiesTaxesFees` is `true`."
+          properties:
+            packageFee:
+              type: number
+              format: float
+              description: "The value of the delivery fees associated with the package."
+            itemCosts:
+              type: array
+              description: "The prices for taxes and duties on each item."
+              items:
+                type: object
+                properties:
+                  dutyPrice:
+                    type: number
+                    format: float
+                    description: "The value of the duties associated with the item."
+                  taxPrice:
+                    type: number
+                    format: float
+                    description: "The value of the taxes associated with the item."
+                  itemDescription:
+                    type: string
+                    description: "The description of the item provided in `request.customsForm.contents[].itemDescription`."
+                additionalProperties: false
+              example:
+                - dutyPrice: 5.0
+                  taxPrice: 0.0
+                  itemDescription: Hats
+                - dutyPrice: 0.0
+                  taxPrice: 10.0
+                  itemDescription: Shoes
+      additionalProperties: false
+    InternationalLabelVendorResponse:
+      title: International Package Response for `application/vnd.usps.labels+json` and `application/vnd.usps.labels+xml`.
+      description: Response containing the international label metadata and Base64-encoded label image for vendor-specific media types.
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/InternationalLabelMetadata'
+        - type: object
+          properties:
+            labelImage:
+              type: string
+              description: |
+                Contains the Base64-encoded file contents of the label image. Provided only when `imageInfo.imageType` is not `NONE`.
+              format: byte
+            labelBrokerQR:
+              type: string
+              description: "The Label Broker QR Code image, Base64 encoded file contents. Only provided if `imageType` in the `imageInfo` is set to `LABEL_BROKER`."
+              format: byte
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    PackageDescription:
+      title: Package Description
+      description: Basic physical characteristics of a package including weight, dimensions, and destination entry facility address.
+      type: object
+      properties:
+        weightUOM:
+          type: string
+          description: |-
+            Weight Unit of Measure
+              * lb - Pounds
+          default: lb
+          enum:
+            - lb
+        weight:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: |
+            The package weight, in `weightUOM` (Unit Of Measure). Items must weigh 70 pounds (1120 ounces) or less.
+        dimensionsUOM:
+          type: string
+          description: |
+            Dimensions unit of measurement.
+             * in - Inches
+          default: in
+          enum:
+            - in
+        length:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The length of the container, in dimensionsUOM. If partial dimensions are provided, an error response will return. `length`, `width`, and `height` are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. `girth` is required only for a non-rectangular package in addition to `length`, `width`, and `height` when any dimension of the package exceeds 12 inches. For rectangular packages, the `girth` dimension must be left blank as this dimension is to only be used for non-rectangular packages."
+        height:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The height of the container, in `dimensionsUOM`. If partial dimensions are provided, an error response will return. `length`, `width`, and `height` are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. `girth` is required only for a non-rectangular package in addition to `length`, `width`, and `height` when any dimension of the package exceeds 12 inches. For rectangular packages, the `girth` dimension must be left blank as this dimension is to only be used for non-rectangular packages."
+        width:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The width of the container, in `dimensionsUOM`. If partial dimensions are provided, an error response will return. `length`, `width`, and `height` are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. `girth` is required only for a non-rectangular package in addition to `length`, `width`, and `height` when any dimension of the package exceeds 12 inches. For rectangular packages, the `girth` dimension must be left blank as this dimension is to only be used for non-rectangular packages."
+        girth:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The girth of the container, in dimensionsUOM. If partial dimensions are provided, an error response will return. `length`, `width`, and `height` are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. `girth` is required only for a non-rectangular package in addition to `length`, `width`, and `height` when any dimension of the package exceeds 12 inches. For rectangular packages, the `girth` dimension must be left blank as this dimension is to only be used for non-rectangular packages."
+        destinationEntryFacilityAddress:
+          $ref: '#/components/schemas/DomesticAddress'
+      additionalProperties: true
+    DomesticAddress:
+      title: Domestic Address
+      additionalProperties: true
+      description: Address fields for US locations
+      allOf:
+        - $ref: '#/components/schemas/Address'
+        - type: object
+          properties:
+            city:
+              maxLength: 28
+              minLength: 1
+              type: string
+              description: This is the city name of the address.
+            state:
+              $ref: '#/components/schemas/State'
+            ZIPCode:
+              pattern: "^\\d{5}$"
+              type: string
+              description: This is the 5-digit ZIP code.
+            ZIPPlus4:
+              pattern: "^\\d{4}$"
+              type: string
+              description: This is the 4-digit component of the ZIP+4 code. Using the correct Zip+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+              nullable: true
+            urbanization:
+              maxLength: 96
+              type: string
+              description: "An area, sector, or residential development within a geographic area (typically used for addresses in Puerto Rico)."
+          additionalProperties: true
+    Address:
+      title: Address
+      type: object
+      properties:
+        streetAddress:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: The number of a building along with the name of the road or street on which it is located.
+        streetAddressAbbreviation:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: This is the abbreviation of street address line for the address.
+          readOnly: true
+        secondaryAddress:
+          maxLength: 50
+          type: string
+          description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+        cityAbbreviation:
+          type: string
+          description: This is the abbreviation of city name for the address.
+          readOnly: true
+      additionalProperties: true
+      description: Address fields standard to all locations.
+    State:
+      maxLength: 2
+      minLength: 2
+      pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+      type: string
+      description: This is the two-character state code of the address.
+    CustomerReference:
+      title: Customer Reference
+      description: User-assigned reference numbers for internal tracking purposes such as order, invoice, or customer numbers.
+      type: object
+      properties:
+        referenceNumber:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: |
+            A user-assigned number for internal use, such as Order, Invoice,  Customer, or Return Merchandise Authorization Numbers. These values will be included in the Shipping Services File.
+            
+            Note:
+            - Customer Reference numbers are not displayed with Customs Forms.
+      additionalProperties: true
+    PackageOptions:
+      title: Package Options
+      description: Additional options for package shipments including package value and non-delivery preferences.
+      type: object
+      properties:
+        packageValue:
+          minimum: 0
+          type: number
+          description: "The merchandise value of the package, in US dollars. Used to calculate Insurance Fees if requested."
+          example: 35
+        nonDeliveryOption:
+          type: string
+          description: "Requested action in the case a package is undeliverable: * RETURN for the package to be returned to `fromAddress`. * REDIRECT to return the package to address specified in the `redirectAddress`. * ABANDON to dispose of the undeliverable package"
+          enum:
+          - RETURN
+          - REDIRECT
+          - ABANDON
+      additionalProperties: true
+    DomesticLabelAddress:
+      title: Domestic Label Address
+      required:
+        - ZIPCode
+        - city
+        - state
+        - streetAddress
+      type: object
+      additionalProperties: true
+      description: |-
+        Uses for:
+
+        The address of the business where the package is being mailed from. 
+
+        Note:
+        - The First and Last Name or Firm Name are always required.
+      allOf:
+        - $ref: '#/components/schemas/DomesticAddress'
+        - $ref: '#/components/schemas/Addressee'
+        - type: object
+          properties:
+            phone:
+              $ref: '#/components/schemas/Phone'
+            email:
+              $ref: '#/components/schemas/Email'
+            ignoreBadAddress:
+              type: boolean
+              description: |
+                Allows Non-Validated Origin Street Address. Enter `true` to bypass street address validation failures/errors or `false` if only validated addresses should be allowed.
+
+                **Note:** Integrators are recommended to always use `false` to ensure no delivery issues.
+
+                In the event USPS cannot validate the street address, this tag will “bypass” address validation error when “true” is indicated to allow label creation which could impact delivery.
+    Addressee:
+      title: Addressee
+      type: object
+      properties:
+        firstName:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: First Name corresponding to the address.
+        lastName:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Last Name corresponding to the address.
+        firm:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Firm corresponding to the address.
+      additionalProperties: true
+      description: Fields used to identity the entity receiving a mail piece or package.
+    Phone:
+      pattern: "^\\+?[1-9][0-9]{7,14}$|^[0-9]{6,15}$"
+      type: string
+      description: "The phone number, including the country extension and area code or the local national format, with no punctuation."
+    Email:
+      maxLength: 50
+      pattern: "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}$"
+      type: string
+      description: 'Email address used for redirect notification via email. '
+      format: email
+    CustomsForm:
+      title: Customs Form
+      type: object
+      properties:
+        contentComments:
+          maxLength: 25
+          type: string
+          description: Required when customContentType is OTHER.
+        restrictionType:
+          type: string
+          description: |-
+            Restriction Types.
+              * QUARANTINE
+              * SANITARY_INSPECTION
+              * PHYTOSANITARY_INSPECTION
+              * OTHER
+          enum:
+            - QUARANTINE
+            - SANITARY_INSPECTION
+            - PHYTOSANITARY_INSPECTION
+            - OTHER
+        restrictionComments:
+          maxLength: 25
+          type: string
+          description: Restriction Comments.  Required when `restrictionType`=`OTHER`.
+        AESITN:
+          maxLength: 35
+          minLength: 1
+          type: string
+          description: |
+            USPS requires the ITN **_or_** the Exemption.
+
+            * **AES - Automated Export System /   ITN - Internal Transaction Number**\
+              The [internal transaction number (ITN)](https://pe.usps.com/text/imm/immc5_010.htm) is a 14-digit number that corresponds to an export transaction in the Automated Export System. It serves as proof that an exporter met his or her legal obligation to inform the U.S. government about the details of an export shipment.
+            * **EEL- Exemptions, Exclusions, Legend**\
+              An [AES exemption](https://pe.usps.com/text/imm/immc5_012.htm) is an instance in which you would not have to file in AES to get the 14-digit ITN. Instead of the ITN, you would enter the exemption’s section in the U.S. Foreign Trade Regulations on the export documentation where you would otherwise put the ITN.
+
+            Sample - `NO EEI 30.37(a)`: Shipments valued at $2,500 or less.
+          example: "NO EEI 30.37(a)"
+        invoiceNumber:
+          maxLength: 15
+          minLength: 1
+          type: string
+          description: Invoice Number.
+        licenseNumber:
+          maxLength: 16
+          minLength: 1
+          type: string
+          description: License Number.
+        certificateNumber:
+          maxLength: 12
+          minLength: 1
+          type: string
+          description: Certificate Number.
+      additionalProperties: true
+      description: |-
+        Additional details required when creating International shipments.
+    ShippingContents:
+      title: Customs Form Package Contents
+      type: object
+      properties:
+        itemDescription:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: "Description of the item.  It is important to note that the following descriptions, regardless of case sensitivity, are not considered valid: None, Not Applicable, N/A, Null, Gift, and Merchandise."
+          example: Policy guidelines document
+        itemQuantity:
+          maximum: 9999
+          minimum: 1
+          type: integer
+          description: Quantity of the item. Integer value required.
+          example: 1
+        itemValue:
+          maximum: 999999.99
+          minimum: 0.01
+          type: number
+          description: |
+            Value of the individual item in USD.
+
+            Note: This field has been deprecated in favor of itemTotalValue and  will be removed in a future release. Please transition to using itemTotalValue.
+          example: 1
+          deprecated: true
+        itemTotalValue:
+          maximum: 999999.99
+          minimum: 0.01
+          type: number
+          description: "The total item value, in USD, of the items matching the `[itemDescription]`. "
+          example: 1
+        weightUOM:
+          type: string
+          description: |-
+            Weight Unit of Measurement.
+              * lb - Pounds
+          default: lb
+          enum:
+            - lb
+        itemWeight:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: |-
+            Provide the weight in weightUOM for the individual item listed with `[itemDescription]`.
+
+            Note: This field has been deprecated in favor of itemTotalWeight and  will be removed in a future release. Please transition to using itemTotalWeight.
+          example: 1.0001
+          deprecated: true
+        itemTotalWeight:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "Provide the total weight in weightUOM for the all the items matching the `[itemDescription]`."
+          example: 1.0001
+        HSTariffNumber:
+          maxLength: 14
+          minLength: 6
+          type: string
+          description: |
+            For commercial items only. The HS tariff number is based on the Harmonized Commodity Description and Coding System developed by the World Customs Organization. 
+            Providing this value is strongly recommended for faster processing. If not supplied, USPS will attempt to look up the HS tariff number, which may result in longer response times.
+            The value should follow the pattern: `^\.*(?:[A-Za-z\d]\.*){6,14}$`.
+            For more information, see: [https://hts.usitc.gov/current](https://hts.usitc.gov/current).
+        countryofOrigin:
+          pattern: "[A-Z]{2}"
+          type: string
+          description: 2 digit Alpha Country Code defined by ISO is required for an international address.
+        itemCategory:
+          type: string
+          description: Category of the item being shipped.
+        itemSubcategory:
+          type: string
+          description: Subcategory of the item being shipped.
+      additionalProperties: true
+      description: "Required repeating up to 30 times."
+    InternationalLabelAddress:
+      title: International Label Address
+      required:
+        - city
+        - country
+        - countryISOAlpha2Code
+        - streetAddress
+      type: object
+      additionalProperties: true
+      description: |-
+        Uses for:
+
+        The international address where the package is being mailed to. The destination Country Code is used for calculating pricing.
+
+        Note:
+        - The First and Last Name or Firm Name are always required.
+      allOf:
+        - $ref: '#/components/schemas/InternationalAddress'
+        - $ref: '#/components/schemas/Addressee'
+        - type: object
+          properties:
+            phone:
+              $ref: '#/components/schemas/Phone'
+            provinceISOAlpha2Code:
+              $ref: '#/components/schemas/ProvinceISOAlpha2Code'
+    InternationalAddress:
+      title: International Address
+      additionalProperties: true
+      description: Address fields for International locations.
+      allOf:
+        - $ref: '#/components/schemas/Address'
+        - type: object
+          properties:
+            city:
+              maxLength: 28
+              minLength: 1
+              type: string
+              description: This is the city name of the address.
+            postalCode:
+              maxLength: 11
+              type: string
+              description: |
+                This is the Postal Code used for international addresses.
+                
+                Note: when shipping to Canada, this field must start with an alphanumeric character
+            province:
+              maxLength: 40
+              type: string
+              description: This is the province used for international addresses.
+            provinceISOAlpha2Code:
+              $ref: '#/components/schemas/ProvinceISOAlpha2Code'
+            country:
+              minLength: 1
+              type: string
+              description: This is the country name used in an international address.
+            countryISOAlpha2Code:
+              pattern: "^([a-zA-Z]){2}"
+              type: string
+              description: "ISO 3166-1 alpha-2 codes are two-letter country codes defined in ISO 3166-1, part of the ISO 3166 standard[1] published by the International Organization for Standardization (ISO), to represent countries, dependent territories, and special areas of geographical interest. They are the most widely used of the country codes published by ISO (the others being alpha-3 and numeric), and are used most prominently for the Internet's country code top-level domains (with a few exceptions). They are also used as country identifiers extending the postal code when appropriate within the international postal system for paper mail, and have replaced the previous one consisting of one-letter codes. They were first included as part of the ISO 3166 standard in its first edition in 1974."
+          additionalProperties: true
+    DomesticLabelSenderAddress:
+      title: Domestic Label Sender Address
+      required:
+        - ZIPCode
+        - city
+        - state
+        - streetAddress
+      type: object
+      additionalProperties: true
+      description: |-
+        Uses for:
+        
+          The address of the business sending the package. Can differ from the `fromAddress` in the case the business is using a third-party logistics provider or mailing from off-site locations.
+         
+          Note:
+          - The First and Last Name or Firm Name are always required.
+      allOf:
+        - $ref: '#/components/schemas/DomesticLabelAddress'
+        - $ref: '#/components/schemas/Addressee'
+        - type: object
+          properties:
+            platformUserId:
+              maxLength: 30
+              type: string
+              description: This is a third-party unique identifier for the sender used for correlation purposes.
+          additionalProperties: true
+    weight:
+      type: number
+      description: The calculated weight for the package based on user input. The greater of `dimensionalWeight` and `weight` will be used to calculate the rate.
+      format: double
+      example: 5
+      minimum: 0.01
+      maximum: 9999.99
+    CancelResponse:
+      title: Cancel Label Response
+      description: Response information for a label cancellation request including the tracking number, status, and dispute ID if applicable.
+      type: object
+      properties:
+        trackingNumber:
+          type: string
+          description: The tracking number associated with the label that has been canceled or for which a refund request has been submitted.
+          example: EZ000012162US
+        status:
+          type: string
+          description: |
+            * CANCELED indicates that the label has been successfully canceled. 
+            * DISPUTED indicates that a refund request has been submitted.
+          enum:
+          - CANCELED
+          - DISPUTED
+          example: DISPUTED
+        disputeId:
+          type: string
+          description: The Id of the submitted refund request.
+          example: "104660"
+    LabelReprintRequest:
+      title: Label Reprint Request
+      type: object
+      properties:
+        imageInfo:
+          $ref: '#/components/schemas/LabelReprintImageInfo'
+      additionalProperties: false
+      description: Request schema for reprinting an international label.
+    LabelReprintInternationalMultipartResponse:
+      title: International Label Reprint Multipart response.
+      description: Response for an international label reprint request containing label metadata, Base64-encoded label image, and reprint information.
+      type: object
+      properties:
+        labelMetadata:
+          $ref: '#/components/schemas/InternationalLabelMetadata'
+        labelImage:
+          type: string
+          description: |
+            Contains the Base64-encoded file contents of the label image. Provided only when `imageInfo.imageType` is not `NONE`.
+          format: byte
+        reprintInfo:
+          $ref: '#/components/schemas/ReprintInfo'  
+      additionalProperties: false
+    LabelReprintInternationalResponse:
+      title: International Label Reprint Response
+      type: object
+      properties:
+        labelMetadata:
+          $ref: '#/components/schemas/InternationalLabelMetadata'
+        labelImage:
+          type: string
+          description:
+            Contains the Base64-encoded file contents of the label image.
+          format: byte
+        reprintInfo:
+          $ref: '#/components/schemas/ReprintInfo'
+      additionalProperties: false
+      description: Response schema for International label reprint requests.
+    ReprintInfo:
+      title: Reprint Info
+      type: object
+      properties:
+        reprintNumber:
+          type: integer
+          description: "Count of reprints made for the label."
+          format: byte
+        reprintLimit:
+          type: integer
+          description: "Maximum number of reprints permitted for the label."
+          format: byte
+      additionalProperties: false
+      description: Schema containing reprint information for a label.
+    LabelReprintImageInfo:
+      title: Label Reprint International Image Info
+      type: object
+      properties:
+        imageType:
+          type: string
+          description: "The type of label image requested."
+          default: PDF
+          enum:
+            - PDF
+            - TIFF
+            - ZPL203DPI
+            - ZPL300DPI
+        labelType:
+          type: string
+          description: The requested label image size to generate.
+          default: 4X6LABEL
+          enum:
+            - 4X6LABEL
+        suppressPostage:
+          type: boolean
+          description: |
+            Indicates if Insured Fees and Postal Charges/Fees should be
+            omitted from the label image.  If true, Insured Fees and Postal
+            Charges/Fees values will be removed.
+          default: false
+      additionalProperties: false
+      description: The Reprint Image Info Object defines label characteristics
+    IndiciaRequest:
+      title: Indicia Request
+      required:
+        - indiciaDescription
+      type: object
+      properties:
+        indiciaDescription:
+          $ref: '#/components/schemas/IndiciaRequestDescription'
+        imageInfo:
+          type: object
+          properties:
+            receiptOption:
+              type: string
+              description: |
+                Indicia & Receipt print out options: Enter `SEPARATE_PAGE` to print the Indicia and the Receipt on separate pages. Enter `NONE` to print the Indicia only and no Receipt.
+              default: NONE
+              enum:
+                - SEPARATE_PAGE
+                - NONE
+            imageType:
+              type: string
+              description: "The type of indicia image requested.  If omitted then the default image type is PDF."
+              default: PDF
+              enum:
+                - PDF
+                - TIFF
+                - JPG
+                - PNG
+                - GIF
+                - SVG
+            labelType:
+              type: string
+              description: |
+                Ability to select the indicia image size.  If omitted then the default indicia size is 2X1.5LABEL.
+              default: 2X1.5LABEL
+              enum:
+                - 2X1.5LABEL
+              example: "2X1.5LABEL"
+          additionalProperties: false
+          description: Additional details used to determine how to generate the indicia image.
+      additionalProperties: true
+      description: Indicia request for letters, flats, and cards First-Class Mail International mailings.
+    IndiciaRequestDescription:
+      title: Indicia Request Description
+      description: |
+        The `IndiciaRequestDescription` object defines the physical dimensions, mailing date, processing category, and weight required for processing a First-Class Mail International letter, flat, or card.
+      required:
+        - height
+        - length
+        - mailingDate
+        - processingCategory
+        - destinationCountryCode
+        - thickness
+        - weight
+      type: object
+      properties:
+        processingCategory:
+          type: string
+          description: |
+            * LETTERS            
+              
+              To be eligible for mailing at the price for letters, a piece must be:
+                * Rectangular
+                * At least 3-1/2 inches high x 5 inches long x 0.007 inch thick.
+                * No more than 6-1/8 inches high x 11-1/2 inches long x 1/4 inch thick.
+            
+              For additional information on letters, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Letters) and [International Mail Manual](https://pe.usps.com/text/imm/immc2_017.htm#:~:text=241.21%20Physical%20Standards%20%E2%80%94%20Letters).
+            
+            * FLATS 
+            
+              The Postal Service uses the word "flats" to refer to large envelopes, newsletters, and magazines. The words large envelopes and flats are used interchangeably. Whatever you call them, flats must:
+            
+                * Have one dimension that is greater than 6-1/8 inches high OR 11-½ inches long OR ¼ inch thick.
+                * Be no more than 12 inches high x 15 inches long x ¾ inch thick.
+            
+              For additional information on flats, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Flats) and the [International Mail Manual](https://pe.usps.com/text/imm/immc2_017.htm#:~:text=241.23%20Physical%20Standards%20%E2%80%94%20Large%20Envelopes%20(Flats)).
+            
+            * CARDS 
+            
+              To be eligible for mailing at the price for postcards, a piece must be:
+                * Rectangular
+                * At least 3-1/2 inches high x 5 inches long x 0.007 inch thick.
+                * No more than 4-1/4 inches high x 6 inches long x 0.016 inch thick.
+            
+              For additional information on postcards, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Cards) and the [International Mail Manual](https://pe.usps.com/text/imm/immc2_017.htm#:~:text=241.22%20Physical%20Standards%20%E2%80%94%20Cards).
+          enum:
+            - LETTERS
+            - FLATS
+            - CARDS
+        weight:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The letter/flat/card weight, in ounces. The maximum weight of a letter or card is 3.5 oz and the maximum weight of a flat is 13 oz."
+        mailingDate:
+          $ref: '#/components/schemas/MailingDateIndiciaOptions'
+        length:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat/card length in inches.  For  `LETTERS` and `CARDS` the length is the dimension parallel to the delivery address as read. For  `FLATS` the length is the longest dimension.
+          format: double
+        height:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat/card height in inches.  The height is the dimension perpendicular to the length.
+          format: double
+        thickness:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat/card thickness in inches. The minimum dimension is always the thickness.
+          format: double
+        destinationCountryCode:
+          type: string
+          pattern: "[A-Z]{2}"
+          minLength: 2
+          maxLength: 2
+          example: "CA"
+          description: The 2-digit country code of the destination.
+        nonMachinableIndicators:
+          type: object
+          description: Set of boolean indicators used to determine whether a letter qualifies as nonmachinable.
+          properties:
+            isPolybagged:
+              type: boolean
+              description: "Is the letter/flat/card polybagged, polywrapped, enclosed in any plastic material, or has an exterior surface made of a material that is not paper. Windows in envelopes made of paper do not make mailpieces nonmachinable. Attachments allowable under applicable eligibility standards do not make mailpieces nonmachinable."
+              default: false
+            hasClosureDevices:
+              type: boolean
+              description: "Does the letter/flat/card have clasps, strings, buttons, or similar closure devices."
+              default: false
+            hasLooseItems:
+              type: boolean
+              description: "Does the letter/flat/card contain items such as pens, pencils, keys, or coins that cause the thickness of the mailpiece to be uneven; or loose keys or coins or similar objects not affixed to the contents within the mailpiece. Loose items may cause a letter to be nonmailable when mailed in paper envelopes; (see [DMM 601.3.3](https://pe.usps.com/text/dmm300/601.htm#ep1196660))."
+              default: false
+            isRigid:
+              type: boolean
+              description: Is the letter/flat/card too rigid (does not bend easily when subjected to a transport belt tension of 40 pounds around an 11-inch diameter turn).
+              default: false
+            isSelfMailer:
+              type: boolean
+              description: "Is the letter/flat/card a self-mailer that is not prepared according to [DMM 201.3.14](https://pe.usps.com/text/dmm300/201.htm#ep1079302)."
+              default: false
+            isBooklet:
+              type: boolean
+              description: "Is the letter/flat/card a booklet that is not prepared according to [DMM 201.3.16](https://pe.usps.com/text/dmm300/201.htm#ep1092751)."
+              default: false
+          additionalProperties: false
+    MailingDateIndiciaOptions:
+      type: string
+      description: "The date or date and time the letter, flat, or card will be mailed. Accepts either a date-only format or a date-time format. The mailing date may be today plus 0 to 7 days in advance."
+      oneOf:
+        - $ref: '#/components/schemas/MailingDateIndicia'
+        - $ref: '#/components/schemas/MailingDateTimeIndicia'
+    MailingDateIndicia:
+      type: string
+      description: "The date the letter, flat, or card will be mailed. The mailing date may be today plus 0 to 7 days in advance. Enter the date in the full-date notation as defined by [RFC 3339, section 5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6)."
+      format: date
+      example: "2025-01-01"
+    MailingDateTimeIndicia:
+      type: string
+      description: "The date and time the letter, flat, or card will be mailed. The mailing date may be today plus 0 to 7 days in advance. Enter the date in the date-time notation as defined by [RFC 3339, section 5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6)."
+      format: date-time
+      example: "2025-01-01T08:30:00Z"
+    IndiciaResponse:
+      title: Indicia Response
+      type: object
+      description: |
+        The IndiciaResponse object contains metadata for the generated First-Class Mail International indicia.
+      properties:
+        indiciaMetadata:
+          description: Metadata for the generated indicia.
+          type: object
+          properties:
+            SKU:
+              type: string
+              description: Pricing SKU
+              example: IFXC0XXXXR01035
+            postage:
+              type: number
+              description: "Amount of postage required, does not include insurance or other extra service fees."
+              example: 1.7
+            fees:
+              type: array
+              description: Fees associated to the mailpiece.
+              minItems: 0
+              maxItems: 5
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Name of the fee.
+                    example: Nonmachinable letter fee
+                  SKU:
+                    type: string
+                    description: Pricing SKU for the fee.
+                    example: IX1F0XXLXRX0000
+                  price:
+                    type: number
+                    description: The price for the fee.
+                    format: float
+                    example: 0.49
+                additionalProperties: false
+            weight:
+              type: number
+              description: "The mailpiece weight, in ounces."
+              example: 0.1
+            indiciaIMI:
+              $ref: '#/components/schemas/IndiciaIMI'
+        indiciaImage:
+          type: string
+          description: |
+            Contains the Base64-encoded file contents of the indicia image.
+          format: byte
+        receiptImage:
+          type: string
+          description: |
+            Contains the Base64-encoded file contents of the label receipt image. Provided only when `imageInfo.receiptOption` is `SEPARATE_PAGE`.
+          format: byte
+      additionalProperties: false
+    IndiciaIMI:
+      title: Indicia IMI
+      description: Base64 encoded string of the binary data used to create the Intelligent Mail Indicia (IMI) Data Matrix.
+      type: string
+      format: byte
+      example: cjAwMDABAAAAdLjMKySOCABWAjUBCgCxbB9fAAAAAAAAAAAAAAAAzYEBAAAAp/OHEeGyzRpgAzBiLfF3vG+sACslzuX8dkBe9BeqpQC54/V8rYu3BwH0e9z/X62JP6QpT9uwJoFOxaTqHJT6Gg==
+    ProvinceISOAlpha2Code:
+      type: string
+      minLength: 2
+      maxLength: 2
+      pattern: "^([a-zA-Z]){2}"
+      description: The 2 letter abbreviation representing the destination province. Required for select destination countries when `prepayDutiesTaxesFees` is `true`.
+      example: "ON"
+  parameters:
+    TrackingNumber:
+      name: trackingNumber
+      in: path
+      description: The unique tracking number of the label.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      example: EZ000012162US
+    X-Payment-Authorization-Token:
+      name: X-Payment-Authorization-Token
+      in: header
+      description: Payment Authorization Token from the payments API Call.
+      required: true
+      schema:
+        type: string
+      example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6I kpvaG4gRG9lIiwiYWRtaW4iOmZhbHNlfQ.gWDlJdpCTIHVYKkJSfAVNUn0ZkAjMxskDDm-5Fhe WJ7xXgW8k5CllcGk4C9qPrfa1GdqfBrbX_1x1E39JY8BYLobAfAg1fs_Ky8Z7U1oCl6HL63yJq_ wVNBHp49hWzg3-ERxkqiuTv0tIuDOasIdZ5FtBdtIP5LM9Oc1tsuMXQXCGR8GqGf1Hl2qv8MCyn NZJuVdJKO_L3WGBJouaTpK1u2SEleVFGI2HFvrX_jS2ySzDxoO9KjbydK0LNv_zOI7kWv-gAmA j-v0mHdJrLbxD7LcZJEGRScCSyITzo6Z59_jG_97oNLFgBKJbh12nvvPibHpUYWmZuHkoGvuy5RLUA
+  responses:
+    BadRequest:
+      description: Bad Request. There is an error in the received request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+    Unauthorized:
+      description: Unauthorized request.
+      headers:
+        WWW-Authenticate:
+          $ref: '#/components/headers/WWWAuthenticate'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+    Forbidden:
+      description: Access is denied.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+    TooManyRequests:
+      description: Too Many Requests. Too many requests have been received from the client in a short amount of time.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+    ServiceUnavailable:
+      description: Service is unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+  examples:
+    ExampleCancel_CANCELED:
+      summary: Canceled Label
+      description: Cancel Label Response for a label that has been successfully canceled.
+      value:
+        trackingNumber: "MM000043788US"
+        status: CANCELED
+    ExampleCancel_REFUND:
+      summary: Refund Request Submitted
+      description: Cancel Label response for a label that was manifested and now has a refund request submitted.
+      value:
+        trackingNumber: "MM000043788US"
+        status: DISPUTED
+        disputeId: "103789"
+    ExampleCancelError_NOTFOUND:
+      summary: Label Not found
+      description: Cancel Label error response for a label that cannot be found.
+      value:
+        apiVersion: /international-labels/v3
+        error:
+          code: "400"
+          message: Bad Request
+          errors:
+            - title: Bad Request
+              detail: Order not found
+              code: 00000XX
+              source:
+                parameter: trackingNumber
+    InternationalLabelResponseExample:
+      summary: International Label Response
+      description: Example response for an International Label request using the `application/vnd.usps.labels+json` `Accept` header.
+      value:
+        labelAddress:
+          firstName: John
+          lastName: Smith
+          phone: "6148098581"
+          streetAddress: 14 Kendall Lane
+          city: Canberra
+          postalCode: "2601"
+          province: ACT
+          country: Australia
+          countryISOAlpha2Code: AU
+        internationalTrackingNumber: EZ000012162US
+        constructCode: I01
+        postage: 286.03
+        extraServices:
+          - serviceID: "857"
+            serviceName: Hazardous Material
+            price: 0.0
+          - serviceID: "820"
+            serviceName: HAZMAT Class 9 - Lithium batteries, unmarked package
+            price: 0.0
+        internationalPriceGroup: "12"
+        weightUOM: lb
+        weight: 23.0
+        dimensionalWeight: "0.0"
+        mailingDate: "2023-12-01"
+        fees: []
+        labelImage: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAyklEQVR42mNgwAf///5ebGxgYGJiYmBjY2MzDw8PAAzHAxiQI3A4VCYgKQZjIyMjIyMzCwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwK6IBwC7CvHf3RbAAAAAElFTkSuQmCC
+        SKU: IEXX0XXXXB12230
+    InternationalLabelResponseWithLabelBrokerExample:
+      summary: International Label Response with a Label Broker QR Code Returned
+      description: Example response for an International Label with `includeLabelBrokerPDF` as `true` using the `application/vnd.usps.labels+json` `Accept` header.
+      value:
+        labelAddress:
+          firstName: John
+          lastName: Smith
+          phone: "6148098581"
+          streetAddress: 14 Kendall Lane
+          city: Canberra
+          postalCode: "2601"
+          province: ACT
+          country: Australia
+          countryISOAlpha2Code: AU
+        internationalTrackingNumber: EZ000012162US
+        constructCode: I01
+        postage: 286.03
+        extraServices:
+          - serviceID: "857"
+            serviceName: Hazardous Material
+            price: 0.0
+          - serviceID: "820"
+            serviceName: HAZMAT Class 9 - Lithium batteries, unmarked package
+            price: 0.0
+        internationalPriceGroup: "12"
+        weightUOM: lb
+        weight: 23.0
+        dimensionalWeight: "0.0"
+        mailingDate: "2023-12-01"
+        fees: []
+        labelImage: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAyklEQVR42mNgwAf///5ebGxgYGJiYmBjY2MzDw8PAAzHAxiQI3A4VCYgKQZjIyMjIyMzCwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwK6IBwC7CvHf3RbAAAAAElFTkSuQmCC
+        labelBrokerQR: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAyklEQVR42mNgwAf///5ebGxgYGJiYmBjY2MzDw8PAAzHAxiQI3A4VCYgKQZjIyMjIyMzCwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwK6IBwC7CvHf3RbAAAAAElFTkSuQmCC
+        labelBrokerID: HRYMC7EF
+        SKU: IEXX0XXXXB12230
+    IndiciaExampleResponse:
+      summary: Create an Indicia response with embedded image in JSON
+      description: Create an Indicia response with embedded image in JSON
+      value:
+        indiciaImage: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAyklEQVR42mNgwAf///5ebGxgYGJiYmBjY2MzDw8PAAzHAxiQI3A4VCYgKQZjIyMjIyMzCwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwK6IBwC7CvHf3RbAAAAAElFTkSuQmCC
+        receiptImage: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAyklEQVR42mNgwAf///5ebGxgYGJiYmBjY2MzDw8PAAzHAxiQI3A4VCYgKQZjIyMjIyMzCwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwK6IBwC7CvHf3RbAAAAAElFTkSuQmCC
+        indiciaMetadata:
+          SKU: IFXC0XXXXR01035
+          postage: 1.7
+          fees:
+            - name: Nonmachinable letter fee
+              SKU: IX1F0XXLXRX0000
+              price: 0.49
+          weight: 2.0
+          indiciaIMI: cjAwMDABAAAAdLjMKySOCABWAjUBCgCxbB9fAAAAAAAAAAAAAAAAzYEBAAAAp/OHEeGyzRpgAzBiLfF3vG+sACslzuX8dkBe9BeqpQC54/V8rYu3BwH0e9z/X62JP6QpT9uwJoFOxaTqHJT6Gg==
+    LabelReprintRequestExample:
+      summary: Request to reprint a label
+      description: Request to reprint a label
+      value:
+        imageInfo:
+          imageType: TIFF
+          labelType: 4X6LABEL
+          suppressPostage: true
+    LabelReprintResponseExample:
+      summary: Response when reprinting an international label
+      description: Response when reprinting an international label.
+      value:
+        labelMetadata:
+          labelAddress:
+            firstName: John
+            lastName: Smith
+            phone: "6148098581"
+            streetAddress: 14 Kendall Lane
+            city: Canberra
+            postalCode: "2601"
+            province: ACT
+            country: Australia
+            countryISOAlpha2Code: AU
+          internationalTrackingNumber: EZ000012162US
+          constructCode: I01
+          postage: 286.03
+          extraServices:
+            - serviceID: "857"
+              serviceName: Hazardous Material
+              price: 0.0
+            - serviceID: "820"
+              serviceName: HAZMAT Class 9 - Lithium batteries, unmarked package
+              price: 0.0
+          internationalPriceGroup: "12"
+          weightUOM: lb
+          weight: 23.0
+          dimensionalWeight: "0.0"
+          mailingDate: "2023-12-01"
+          fees: []
+          SKU: IEXX0XXXXB12230
+        labelImage: iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAyklEQVR42mNgwAf///5ebGxgYGJiYmBjY2MzDw8PAAzHAxiQI3A4VCYgKQZjIyMjIyMzCwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwK6IBwC7CvHf3RbAAAAAElFTkSuQmCC
+        reprintInfo:
+          reprintNumber: 1
+          reprintLimit: 3
+
+
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            international-labels: "Read, create, and cancel access to Labels."
+        authorizationCode:
+          authorizationUrl: /oauth2/v3/authorize
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            international-labels: "Read, create, and cancel access to Labels."
