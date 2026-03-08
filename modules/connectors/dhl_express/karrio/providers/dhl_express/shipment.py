@@ -200,7 +200,7 @@ def shipment_request(
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
         Request=settings.Request(
-            MetaData=dhl.MetaData(SoftwareName="3PV", SoftwareVersion="10.0")
+            MetaData=dhl.MetaData(SoftwareName=settings.software_name or "3PV", SoftwareVersion="10.0")
         ),
         RegionCode=provider_units.CountryRegion[shipper.country_code].value,
         LanguageCode="en",
