@@ -487,7 +487,7 @@ NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http
     </Billing>
     <Consignee>
         <CompanyName>N/A</CompanyName>
-        <AddressLine1>34 Biryat Hadid</AddressLine1>
+        <AddressLine1>Biryat Hadid 34</AddressLine1>
         <City>Istanbul</City>
         <PostalCode>34020</PostalCode>
         <CountryCode>TR</CountryCode>
