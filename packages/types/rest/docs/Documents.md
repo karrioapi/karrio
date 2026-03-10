@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **label** | **string** | A shipping label in base64 string | [optional] [default to undefined]
 **invoice** | **string** | A shipping invoice in base64 string | [optional] [default to undefined]
+**extra_documents** | [**Array&lt;ShippingDocument&gt;**](ShippingDocument.md) | Additional shipping documents (return labels, COD documents, etc.) | [optional] [default to undefined]
 
 ## Example
 
@@ -16,6 +17,7 @@ import { Documents } from './api';
 const instance: Documents = {
     label,
     invoice,
+    extra_documents,
 };
 ```
 

@@ -2513,6 +2513,10 @@ export interface Documents {
      * A shipping invoice in base64 string
      */
     'invoice'?: string | null;
+    /**
+     * Additional shipping documents (return labels, COD documents, etc.)
+     */
+    'extra_documents'?: Array<ShippingDocument>;
 }
 export interface Dpd {
     'delis_id': string;
@@ -5905,7 +5909,6 @@ export type ShipmentLabelTypeEnum = typeof ShipmentLabelTypeEnum[keyof typeof Sh
 export const ShipmentStatusEnum = {
     Draft: 'draft',
     Created: 'created',
-    Purchased: 'purchased',
     Cancelled: 'cancelled',
     Shipped: 'shipped',
     InTransit: 'in_transit',
