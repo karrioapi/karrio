@@ -1387,6 +1387,12 @@ class Documents(serializers.Serializer):
         allow_null=True,
         help_text="A shipping invoice in base64 string",
     )
+    extra_documents = ShippingDocument(
+        many=True,
+        required=False,
+        default=[],
+        help_text="Additional shipping documents (return labels, COD documents, etc.)",
+    )
 
 
 class Rate(serializers.EntitySerializer):

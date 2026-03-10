@@ -8,6 +8,8 @@ from karrio.core.models import (
     ShipmentDetails,
     ConfirmationDetails,
     ReturnShipment,
+    Documents,
+    ShippingDocument,
 )
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
@@ -1726,3 +1728,149 @@ class TestShipmentOrderIdFilter(TestShipmentFixture):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))
         self.assertEqual(len(results), 0)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EXTRA DOCUMENTS (RETURN LABEL, COD) TESTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+CREATED_SHIPMENT_WITH_EXTRA_DOCS_RESPONSE = (
+    ShipmentDetails(
+        carrier_id="canadapost",
+        carrier_name="canadapost",
+        tracking_number="123456789012",
+        shipment_identifier="123456789012",
+        docs=Documents(
+            label="==label_base64_content",
+            extra_documents=[
+                ShippingDocument(
+                    category="return_label",
+                    format="PDF",
+                    base64="==return_label_base64",
+                    print_format="910-300-710",
+                ),
+                ShippingDocument(
+                    category="cod_document",
+                    format="PDF",
+                    base64="==cod_doc_base64",
+                    print_format="A4",
+                ),
+            ],
+        ),
+        return_shipment=dict(
+            tracking_number="987654321098",
+            shipment_identifier="987654321098",
+            tracking_url="https://tracking.example.com/987654321098",
+            meta={"returnShipmentNo": "987654321098"},
+        ),
+    ),
+    [],
+)
+
+
+PURCHASED_SHIPMENT_WITH_EXTRA_DOCS_SHIPPING_DOCUMENTS = [
+    {
+        "category": "label",
+        "format": "PDF",
+        "url": ANY,
+        "base64": "==label_base64_content",
+    },
+    {
+        "category": "return_label",
+        "format": "PDF",
+        "url": None,
+        "base64": "==return_label_base64",
+    },
+    {
+        "category": "cod_document",
+        "format": "PDF",
+        "url": None,
+        "base64": "==cod_doc_base64",
+    },
+]
+
+PERSISTED_EXTRA_DOCUMENTS = [
+    {
+        "category": "return_label",
+        "format": "PDF",
+        "base64": "==return_label_base64",
+        "print_format": "910-300-710",
+    },
+    {
+        "category": "cod_document",
+        "format": "PDF",
+        "base64": "==cod_doc_base64",
+        "print_format": "A4",
+    },
+]
+
+
+class TestShipmentExtraDocuments(TestShipmentFixture):
+    """Test that extra_documents (return labels, COD docs) are saved and returned in shipping_documents."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        carrier = providers.CarrierConnection.objects.get(carrier_id="canadapost")
+        self.shipment.rates = [
+            {
+                "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
+                "carrier_id": "canadapost",
+                "carrier_name": "canadapost",
+                "currency": "CAD",
+                "estimated_delivery": None,
+                "extra_charges": [
+                    {"amount": 101.83, "currency": "CAD", "name": "Base charge"},
+                ],
+                "service": "canadapost_priority",
+                "total_charge": 101.83,
+                "transit_days": 2,
+                "test_mode": True,
+                "meta": {
+                    "rate_provider": "canadapost",
+                    "service_name": "CANADAPOST PRIORITY",
+                    "carrier_connection_id": carrier.pk,
+                },
+            }
+        ]
+        self.shipment.save()
+
+    def test_purchase_returns_multiple_shipping_documents(self):
+        """Test that shipping_documents includes label + extra_documents (return label, COD)."""
+        url = reverse(
+            "karrio.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        data = SHIPMENT_PURCHASE_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_WITH_EXTRA_DOCS_RESPONSE
+            response = self.client.post(url, data)
+            response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertListEqual(
+            response_data["shipping_documents"],
+            PURCHASED_SHIPMENT_WITH_EXTRA_DOCS_SHIPPING_DOCUMENTS,
+        )
+
+    def test_extra_documents_persisted_in_database(self):
+        """Test that extra_documents are persisted in the database."""
+        url = reverse(
+            "karrio.server.manager:shipment-purchase",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+        data = SHIPMENT_PURCHASE_DATA
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_WITH_EXTRA_DOCS_RESPONSE
+            response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Reload from DB and verify extra_documents are saved
+        shipment = models.Shipment.objects.get(pk=self.shipment.pk)
+        self.assertListEqual(
+            shipment.extra_documents,
+            PERSISTED_EXTRA_DOCUMENTS,
+        )

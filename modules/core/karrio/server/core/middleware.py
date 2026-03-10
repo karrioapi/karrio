@@ -117,6 +117,23 @@ class SessionContext:
 
         response = self.get_response(request)
 
+        # Ensure request_id is tagged on the Sentry scope after the view runs
+        # (in case it was set/modified during request processing)
+        try:
+            import sentry_sdk
+            request_id = getattr(request, "request_id", None)
+            if request_id:
+                sentry_sdk.set_tag("request_id", request_id)
+                with sentry_sdk.configure_scope() as scope:
+                    scope.set_tag("request_id", request_id)
+                    scope.set_context("request_tracking", {
+                        "request_id": request_id,
+                        "method": request.method,
+                        "path": request.path,
+                    })
+        except Exception:
+            pass
+
         # Record request metrics
         self._record_request_metrics(request, response, start_time)
 
@@ -165,6 +182,15 @@ class SessionContext:
             # Set request context tags
             tracer.set_tag("http.method", request.method)
             tracer.set_tag("http.path", request.path)
+
+            # Set request_id directly on Sentry scope for trace search indexing
+            # (Sentry Django integration doesn't pick up custom request attributes automatically)
+            try:
+                import sentry_sdk
+                if request_id:
+                    sentry_sdk.set_tag("request_id", request_id)
+            except Exception:
+                pass
 
             # Set test_mode tag if available
             test_mode = getattr(request, "test_mode", None)

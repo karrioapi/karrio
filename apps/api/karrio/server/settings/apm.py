@@ -66,7 +66,7 @@ SENTRY_DSN = config("SENTRY_DSN", default=None)
 SENTRY_ENVIRONMENT = config("SENTRY_ENVIRONMENT", default=config("ENV", default="production"))
 SENTRY_RELEASE = config("SENTRY_RELEASE", default=config("VERSION", default=None))
 # Lower default sample rates for better performance (was 1.0/100%)
-SENTRY_TRACES_SAMPLE_RATE = config("SENTRY_TRACES_SAMPLE_RATE", default=0.1, cast=float)  # 10% of transactions
+SENTRY_TRACES_SAMPLE_RATE = config("SENTRY_TRACES_SAMPLE_RATE", default=1.0, cast=float)  # 100% - capture all traces
 SENTRY_PROFILES_SAMPLE_RATE = config("SENTRY_PROFILES_SAMPLE_RATE", default=0.0, cast=float)  # Disabled by default
 SENTRY_SEND_PII = config("SENTRY_SEND_PII", default=True, cast=bool)
 SENTRY_DEBUG = config("SENTRY_DEBUG", default=False, cast=bool)
@@ -77,6 +77,19 @@ SENTRY_TRACE_PROPAGATION_TARGETS = config(
     "SENTRY_TRACE_PROPAGATION_TARGETS",
     default=r"localhost",
 )
+
+
+def _sentry_traces_sampler(sampling_context):
+    """Custom traces sampler that ensures requests with x-request-id are always traced."""
+    # Always trace requests with explicit x-request-id
+    wsgi_env = sampling_context.get("wsgi_environ", {})
+    if wsgi_env.get("HTTP_X_REQUEST_ID"):
+        return 1.0
+    # Health checks - never trace
+    path = wsgi_env.get("PATH_INFO", "")
+    if any(path.startswith(ep) for ep in ["/health", "/ready", "/live", "/status"]):
+        return 0.0
+    return SENTRY_TRACES_SAMPLE_RATE
 
 
 def _sentry_before_send(event, hint):
@@ -145,8 +158,8 @@ if SENTRY_DSN:
     integrations = [
         DjangoIntegration(
             transaction_style="url",  # Use URL patterns for transaction names
-            middleware_spans=False,   # Disabled for performance (was True)
-            signals_spans=False,      # Disabled for performance (was True)
+            middleware_spans=False,   # Disabled for performance (request_id is tagged via set_tag, not spans)
+            signals_spans=False,      # Disabled for performance
         ),
     ]
 
@@ -168,6 +181,10 @@ if SENTRY_DSN:
         integrations.append(HueyIntegration())
     except ImportError:
         pass
+
+    # Note: karrio SDK uses urllib (not requests), so RequestsIntegration is not used here.
+    # Carrier HTTP calls are instrumented via _urlopen_with_span() in karrio/core/utils/helpers.py
+    # which wraps urlopen with sentry_sdk.start_span() directly.
 
     # Try to add httpx integration for async HTTP clients
     try:
@@ -198,8 +215,9 @@ if SENTRY_DSN:
         environment=SENTRY_ENVIRONMENT,
         release=SENTRY_RELEASE,
 
-        # Performance monitoring (lower sample rates for better performance)
-        traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,
+        # Performance monitoring — use sampler for fine-grained control
+        # Always trace requests with explicit x-request-id; skip health checks
+        traces_sampler=_sentry_traces_sampler,
         # Only enable profiling if explicitly configured (disabled by default)
         **({"profile_session_sample_rate": SENTRY_PROFILES_SAMPLE_RATE, "profile_lifecycle": "trace"} if SENTRY_PROFILES_SAMPLE_RATE > 0 else {}),
 
@@ -221,10 +239,10 @@ if SENTRY_DSN:
         before_send_transaction=_sentry_before_send_transaction,
 
         # Additional options (reduced for performance)
-        max_breadcrumbs=25,  # Reduced from 50 for lower memory usage
-        attach_stacktrace=True,  # Attach stack traces to messages
-        include_source_context=False,  # Disabled for performance (was True)
-        include_local_variables=False,  # Disabled for performance (was True)
+        max_breadcrumbs=50,           # Enough for carrier call traces without excessive memory
+        attach_stacktrace=True,       # Attach stack traces to messages
+        include_source_context=False, # Disabled for performance (avoids file I/O on capture)
+        include_local_variables=False, # Disabled for performance (avoids capturing all stack locals)
     )
 
     # Set default tags that will be applied to all events
