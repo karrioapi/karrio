@@ -173,7 +173,7 @@ class TestOrderShipments(TestOrderFixture):
             shipment_response = self.client.post(shipment_url, data)
             shipment_data = json.loads(shipment_response.content)
             shipment = manager.Shipment.objects.get(pk=shipment_data["id"])
-            shipment.status = "purchased"
+            shipment.status = "created"
             shipment.save()
 
         # Fetch related order
@@ -223,7 +223,7 @@ class TestOrderShipments(TestOrderFixture):
 
             self.assertEqual(shipment_response.status_code, status.HTTP_201_CREATED)
             shipment = manager.Shipment.objects.get(pk=shipment_data["id"])
-            shipment.status = "purchased"
+            shipment.status = "created"
             shipment.save()
 
         # Fetch related order
@@ -948,7 +948,7 @@ FULFILLED_ORDER_RESPONSE = {
             "created_at": ANY,
             "metadata": {},
             "messages": [],
-            "status": "purchased",
+            "status": "created",
             "carrier_name": None,
             "carrier_id": None,
             "tracking_number": None,
@@ -1206,7 +1206,7 @@ PARTIAL_ORDER_RESPONSE = {
             "created_at": ANY,
             "metadata": {},
             "messages": [],
-            "status": "purchased",
+            "status": "created",
             "carrier_name": None,
             "carrier_id": None,
             "tracking_number": None,

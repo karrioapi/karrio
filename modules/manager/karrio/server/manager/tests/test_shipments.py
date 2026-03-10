@@ -203,7 +203,7 @@ class TestShipmentPurchase(TestShipmentFixture):
             "karrio.server.manager:shipment-cancel",
             kwargs=dict(pk=self.shipment.pk),
         )
-        self.shipment.status = "purchased"
+        self.shipment.status = "created"
         self.shipment.shipment_identifier = "123456789012"
         # Set selected_rate and carrier snapshot
         self.shipment.selected_rate = {
@@ -247,7 +247,7 @@ class TestShipmentPurchase(TestShipmentFixture):
         self.assertResponseNoErrors(response)  # type: ignore
         self.assertDictEqual(
             dict(status=response_data["status"], service=response_data["service"]),
-            dict(status="purchased", service="canadapost_expedited_parcel"),
+            dict(status="created", service="canadapost_expedited_parcel"),
         )
 
 
@@ -278,7 +278,7 @@ class TestSingleCallLabelPurchase(APITestCase):
                 "rates_count": len(response_data["rates"]),
             },
             {
-                "status": "purchased",
+                "status": "created",
                 "carrier_name": "canadapost",
                 "service": "canadapost_priority",
                 "tracking_number": "123456789012",
@@ -320,7 +320,7 @@ class TestSingleCallWithAlternativeServices(APITestCase):
                 ),
             },
             {
-                "status": "purchased",
+                "status": "created",
                 "carrier_name": "canadapost",
                 "service": "canadapost_priority",
                 "tracking_number": "123456789012",
@@ -356,7 +356,7 @@ class TestSingleCallWithAlternativeServices(APITestCase):
                 ),
             },
             {
-                "status": "purchased",
+                "status": "created",
                 "carrier_name": "canadapost",
                 "service": "canadapost_priority",
                 "tracking_number": "123456789012",
@@ -731,7 +731,7 @@ PURCHASED_SHIPMENT = {
     "created_at": ANY,
     "metadata": {},
     "messages": [],
-    "status": "purchased",
+    "status": "created",
     "carrier_name": "canadapost",
     "carrier_id": "canadapost",
     "tracking_number": "123456789012",

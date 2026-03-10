@@ -1,0 +1,867 @@
+openapi: 3.0.1
+info:
+  title: Addresses
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    The Addresses API validates and corrects address information to improve package delivery service and pricing. This suite of APIs provides different utilities for addressing components. The ZIP Code&#8482; lookup finds valid ZIP Code&#8482;(s) for a City and State. The City/State lookup provides the valid cities and states for a provided ZIP Code&#8482;. The Address Standardization API validates and standardizes USPS&#174; domestic addresses, city and state names, and ZIP Code&#8482; in accordance with USPS&#174; addressing standards. The USPS&#174; address standard includes the ZIP + 4&#174;, signifying a USPS&#174; delivery point, given a street address, a city and a state.
+    
+  version: 3.2.2
+servers:
+  - url: https://apis.usps.com/addresses/v3
+    description: Production Environment Endpoint
+  - url: https://apis-tem.usps.com/addresses/v3
+    description: Testing Environment Endpoint
+paths:
+  /address:
+    get:
+      tags:
+        - Resources
+      summary: Returns the best standardized address for a given address.
+      description: |-
+        Standardizes street addresses including city and street abbreviations as well as providing missing information such as ZIP Code&#8482; and ZIP + 4&#174;.
+
+        Must specify a street address, a state, and either a city or a ZIP Code&#8482;.
+      operationId: get-address
+      parameters:
+        - name: firm
+          in: query
+          description: "Firm/business corresponding to the address."
+          schema:
+            type: string
+            maxLength: 50
+            minLength: 0
+        - name: streetAddress
+          in: query
+          description: The number of a building along with the name of the road or street on which it is located.
+          required: true
+          schema:
+            type: string
+        - name: secondaryAddress
+          in: query
+          description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+          required: false
+          schema:
+            type: string
+        - name: city
+          in: query
+          description: This is the city name of the address.
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: The two-character state code of the address.
+          required: true
+          schema:
+            maxLength: 2
+            minLength: 2
+            pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+            type: string
+        - name: urbanization
+          in: query
+          description: This is the urbanization code relevant only for Puerto Rico addresses.
+          required: false
+          schema:
+            type: string
+        - name: ZIPCode
+          in: query
+          description: This is the 5-digit ZIP code.
+          required: false
+          schema:
+            pattern: "^\\d{5}$"
+            type: string
+        - name: ZIPPlus4
+          in: query
+          description: This is the 4-digit component of the ZIP+4 code. Using the correct ZIP+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+          required: false
+          schema:
+            pattern: "^\\d{4}$"
+            type: string
+      responses:
+        "200":
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AddressResponse'
+        "400":
+          description: Bad Request. There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Invalid State Code:
+                  $ref: '#/components/examples/Invalid-State-Code'
+                Invalid City:
+                  $ref: '#/components/examples/Invalid-City'
+                Unverifiable City and State:
+                  $ref: '#/components/examples/Unverifiable-City-and-State'
+                Insufficient Address Data:
+                  $ref: '#/components/examples/Insufficient-Adddress-Data'
+                Invalid Delivery Address:
+                  $ref: '#/components/examples/Invalid-Delivery-Address'
+                Multiple Addresses Found:
+                  $ref: '#/components/examples/Multiple-Addresses-Found'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Address Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Address Not Found:
+                  $ref: '#/components/examples/Address-Not-Found'
+                No Match:
+                  $ref: '#/components/examples/No-Match'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from the client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - addresses
+  /city-state:
+    get:
+      tags:
+        - Resources
+      summary: Returns the city and state for a given ZIP Code.
+      description: Returns the city and state corresponding to the given ZIP Code&#8482;.
+      operationId: get-city-state
+      parameters:
+        - name: ZIPCode
+          in: query
+          description: This is the 5-digit ZIP code.
+          required: true
+          schema:
+            pattern: "^\\d{5}$"
+            type: string
+      responses:
+        "200":
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CityStateResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CityStateResponse'
+        "400":
+          description: A bad request was received.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from the client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - addresses
+  /zipcode:
+    get:
+      tags:
+        - Resources
+      summary: Returns the ZIP Code for a given address.
+      description: "Returns the ZIP Code&#8482; and ZIP + 4&#174; corresponding to the given address, city, and state (use USPS state abbreviations)."
+      operationId: get-ZIPCode
+      parameters:
+        - name: firm
+          in: query
+          description: "Firm/business corresponding to the address."
+          schema:
+            type: string
+            maxLength: 50
+            minLength: 0
+        - name: streetAddress
+          in: query
+          description: The number of a building along with the name of the road or street on which it is located.
+          required: true
+          schema:
+            type: string
+        - name: secondaryAddress
+          in: query
+          description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+          required: false
+          schema:
+            type: string
+        - name: city
+          in: query
+          description: This is the city name of the address.
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: This is the two-character state code of the address.
+          required: true
+          schema:
+            maxLength: 2
+            minLength: 2
+            pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+            type: string
+        - name: ZIPCode
+          in: query
+          description: This is the 5-digit ZIP code.
+          required: false
+          schema:
+            pattern: "^\\d{5}$"
+            type: string
+        - name: ZIPPlus4
+          in: query
+          description: This is the 4-digit component of the ZIP+4 code. Using the correct ZIP+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+          required: false
+          schema:
+            pattern: "^\\d{4}$"
+            type: string
+      responses:
+        "200":
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZIPCodeResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ZIPCodeResponse'
+        "400":
+          description: There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from the client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - addresses
+components:
+  schemas:
+    AddressResponse:
+      title: Address Response
+      type: object
+      properties:
+        firm:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: This is the firm/business name at the address.
+        address:
+          $ref: '#/components/schemas/DomesticAddress'
+        additionalInfo:
+          $ref: '#/components/schemas/AddressAdditionalInfo'
+        corrections:
+          $ref: '#/components/schemas/AddressCorrections'
+        matches:
+          $ref: '#/components/schemas/AddressMatches'
+        warnings:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            type: string
+            xml:
+              name: warning
+      additionalProperties: false
+      description: "Standardizes street addresses including city and street abbreviations, and provides missing information such as ZIP Code&#8482; and ZIP + 4&#174;."
+      xml:
+        name: AddressValidateResponse
+        wrapped: true
+    CityAndState:
+      title: City And State
+      type: object
+      properties:
+        city:
+          maxLength: 28
+          minLength: 1
+          type: string
+          description: This is the city name of the address.
+          example: "Des Moines"
+        state:
+          maxLength: 2
+          minLength: 2
+          pattern: "\\w{2}"
+          type: string
+          description: This is two-character state code of the address.
+          example: IA
+        ZIPCode:
+          maxLength: 5
+          minLength: 5
+          type: string
+          description: This is the ZIP Code of the address.
+          example: "50314"
+    AddressCorrections:
+      title: Address Corrections
+      type: array
+      description: |
+        Codes that indicate how to improve the address input to get a better match.
+        
+        Code `32` will indicate "Default address: The address you entered was found but more information is needed (such as an apartment, suite, or box number." The recommended change would be to add additional information, such as an apartment, suite, or box number, to match to a specific address.
+        
+        Code `22` will indicate "Multiple addresses were found for the information you entered, and no default exists." The address could not be resolved as entered and more information would be needed to identify the address.
+      xml:
+        name: addressCorrections
+        wrapped: true
+      items:
+        type: object
+        properties:
+          code:
+            maxLength: 2
+            minLength: 1
+            pattern: "\\w{2}"
+            type: string
+            description: The code corresponding to the address correction.
+            xml:
+              name: code
+          text:
+            type: string
+            description: This is the description of the address correction.
+            xml:
+              name: text
+        additionalProperties: false
+        xml:
+          name: addressCorrection
+    AddressMatches:
+      title: Address Matches
+      type: array
+      description: |
+        Codes that indicate if an address is an exact match.
+        
+        Code `31` will be returned "Single Response - exact match" indicating that the address was correctly matched to a ZIP+4 record.
+      xml:
+        name: addressMatches
+        wrapped: true
+      items:
+        type: object
+        properties:
+          code:
+            maxLength: 2
+            minLength: 1
+            pattern: "\\w{2}"
+            type: string
+            xml:
+              name: code
+          text:
+            type: string
+            xml:
+              name: text
+        additionalProperties: false
+        xml:
+          name: addressMatch
+    AddressAdditionalInfo:
+      title: Address Additional Information
+      type: object
+      properties:
+        deliveryPoint:
+          type: string
+          description: |-
+            A specific set of digits between 00 and 99 is assigned to every address that is combined with the ZIP + 4&#174; Code to provide a unique identifier for every delivery address.
+
+            A street address does not necessarily represent a single delivery point because a street address such as one for an apartment building may have several delivery points.
+        carrierRoute:
+          maxLength: 5
+          minLength: 0
+          type: string
+          description: This is the carrier route code (values unspecified).
+          example: "C012"
+        DPVConfirmation:
+          type: string
+          description: |
+            The DPV Confirmation indicator identifies whether the address provided maps to a known USPS address record, whether the USPS delivers to the address or not. If the USPS does not deliver to the address, the USPS may deliver to a PO Box instead. `carrierRoute` values of `R777` and `R779`, for example, may require the shipper to ask the recipient where they receive their USPS mail, which may be different than their physical address.
+
+            * `Y` - Address was DPV confirmed for both primary and (if present) secondary numbers.  A value of `Y` does not necessarily imply that USPS delivers to that address.
+            * `D` - Address was DPV confirmed for the primary number only, and the secondary number information was missing.
+            * `S` - Address was DPV confirmed for the primary number only, and the secondary number information was present but not confirmed.
+            * `N` - Both primary and (if present) secondary number information failed to DPV confirm.
+          enum:
+            - "Y"
+            - D
+            - S
+            - "N"
+        DPVCMRA:
+          type: string
+          description: |-
+            Indicates if the location is a [Commercial Mail Receiving Agency (CMRA)](https://faq.usps.com/s/article/Commercial-Mail-Receiving-Agency-CMRA).
+             * `Y` - Address was found in the CMRA table.
+             * `N` - Address was not found in the CMRA table.
+          enum:
+            - "Y"
+            - "N"
+        business:
+          type: string
+          description: |
+            Indicates whether this is a business address.
+            * `Y` - The address is a business address.
+            * `N` - The address is not a business address.
+          enum:
+            - "Y"
+            - "N"
+        centralDeliveryPoint:
+          type: string
+          description: |
+            Central Delivery is for all business office buildings and/or industrial/professional parks. This may include call windows, horizontal locked mail receptacles, and cluster box units.
+            * `Y` - The address is a central delivery point.
+            * `N` - The address is not a central delivery point.
+          enum:
+            - "Y"
+            - "N"
+        vacant:
+          type: string
+          description: |
+            Indicates whether the location designated by the address is occupied.
+            * `Y` - The address is not occupied.
+            * `N` - The address is occupied.
+          enum:
+            - "Y"
+            - "N"
+      additionalProperties: false
+      description: Extra information about the request.
+      xml:
+        name: addressAdditionalInfo
+    CityStateResponse:
+      title: City and State Response
+      description: The validated ZIP Code&#8482; for a given city and state.
+      xml:
+        name: CityStateLookupResponse
+        wrapped: true
+      allOf:
+        - $ref: '#/components/schemas/CityAndState'
+    ZIPCodeResponse:
+      title: ZIP Code&#8482; Response
+      type: object
+      properties:
+        firm:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: This is the firm/business name at the address.
+        address:
+          $ref: '#/components/schemas/DomesticAddress'
+      additionalProperties: false
+      description: The address to validate the ZIP Code&#8482; for.
+      xml:
+        name: ZipCodeLookupResponse
+        wrapped: true
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    DomesticAddress:
+      title: Domestic Address
+      additionalProperties: true
+      description: Address fields for US locations
+      allOf:
+        - $ref: '#/components/schemas/Address'
+        - type: object
+          properties:
+            city:
+              maxLength: 28
+              minLength: 1
+              type: string
+              description: This is the city name of the address.
+            state:
+              $ref: '#/components/schemas/State'
+            ZIPCode:
+              pattern: "\\d{5}"
+              type: string
+              description: This is the 5-digit ZIP code.
+            ZIPPlus4:
+              pattern: "\\d{4}"
+              type: string
+              description: This is the 4-digit component of the ZIP+4 code. Using the correct ZIP+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+              nullable: true
+            urbanization:
+              maxLength: 96
+              type: string
+              description: "An area, sector, or residential development within a geographic area (typically used for addresses in Puerto Rico)."
+          additionalProperties: true
+    Address:
+      title: Address
+      type: object
+      properties:
+        streetAddress:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: The number of a building along with the name of the road or street on which it is located.
+        streetAddressAbbreviation:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: This is the abbreviation of the primary street address line for the address.
+          readOnly: true
+        secondaryAddress:
+          maxLength: 50
+          type: string
+          description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+        cityAbbreviation:
+          type: string
+          description: This is the abbreviation of the city name for the address.
+          readOnly: true
+      additionalProperties: true
+      description: Address fields standard to all locations.
+      xml:
+        name: Address
+    State:
+      maxLength: 2
+      minLength: 2
+      pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+      type: string
+      description: The two-character state code.
+  parameters:
+    StreetAddress-Required:
+      name: streetAddress
+      in: query
+      description: The number of a building along with the name of the road or street on which it is located.
+      required: true
+      schema:
+        type: string
+    SecondaryAddress:
+      name: secondaryAddress
+      in: query
+      description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+      required: false
+      schema:
+        type: string
+    City:
+      name: city
+      in: query
+      description: This is the city name of the address.
+      required: false
+      schema:
+        type: string
+    State-Required:
+      name: state
+      in: query
+      description: This is two-character state code of the address.
+      required: true
+      schema:
+        maxLength: 2
+        minLength: 2
+        pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+        type: string
+    Urbanization:
+      name: urbanization
+      in: query
+      description: This is the urbanization code relevant only for Puerto Rico addresses.
+      required: false
+      schema:
+        type: string
+    ZIPCode:
+      name: ZIPCode
+      in: query
+      description: This is the 5-digit ZIP code.
+      required: false
+      schema:
+        pattern: "^\\d{5}$"
+        type: string
+    ZIPPlus4:
+      name: ZIPPlus4
+      in: query
+      description: This is the 4-digit component of the ZIP+4 code. Using the correct ZIP+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+      required: false
+      schema:
+        pattern: "^\\d{4}$"
+        type: string
+    ZIPCode-Required:
+      name: ZIPCode
+      in: query
+      description: This is the 5-digit ZIP code.
+      required: true
+      schema:
+        pattern: "^\\d{5}$"
+        type: string
+    City-Required:
+      name: city
+      in: query
+      description: This is the city name of the address.
+      required: true
+      schema:
+        type: string
+  examples:
+    Invalid-City:
+      summary: The city is missing or invalid.
+      description: The city is missing or invalid.
+      value:
+        apiVersion: v1
+        error:
+          code: "400"
+          message: The city in the request is missing or invalid.
+          errors: []
+    Invalid-State-Code:
+      summary: The two-letter state code is missing or invalid.
+      description: The two-letter state code is missing or invalid.
+      value:
+        apiVersion: v1
+        error:
+          code: "400"
+          message: The state code in the request is missing or invalid.
+          errors: []
+    Unverifiable-City-and-State:
+      summary: The city and state are missing or together unverifiable.
+      description: The city and state are missing or together unverifiable.
+      value:
+        apiVersion: v1
+        error:
+          code: "400"
+          message: The city and state are missing or together unverifiable.
+          errors: []
+    Insufficient-Adddress-Data:
+      summary: The address information in the request is insufficient to match.
+      description: The address information in the request is insufficient to match.
+      value:
+        apiVersion: v1
+        error:
+          code: "404"
+          message: The address information in the request is insufficient to match.
+          errors: []
+    Address-Not-Found:
+      summary: The address requested could not be found.
+      description: "There is no match for the specified address, try adding as much information as possible."
+      value:
+        apiVersion: v1
+        error:
+          code: "404"
+          message: There is no match for the address requested.
+          errors: []
+    No-Match:
+      summary: Could not find any matching address.
+      description: "There is no match for the specified address, try adding as much information as possible."
+      value:
+        apiVersion: v1
+        error:
+          code: "404"
+          message: There is no match for the address requested.
+          errors: []
+    Invalid-Delivery-Address:
+      summary: The address requested is an invalid delivery address.
+      description: The address requested is an invalid delivery address.
+      value:
+        apiVersion: v1
+        error:
+          code: "404"
+          message: The address requested is an invalid delivery address.
+          errors: []
+    Multiple-Addresses-Found:
+      summary: More than one address was found matching the requested address.
+      description: More than one address was found matching the requested address.
+      value:
+        apiVersion: v1
+        error:
+          code: "404"
+          message: More than one address was found matching the requested address.
+          errors: []
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            addresses: read-only access to all addresses endpoints
+        authorizationCode:
+          authorizationUrl: /oauth2/v3/authorize
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            addresses: read-only access to all addresses endpoints

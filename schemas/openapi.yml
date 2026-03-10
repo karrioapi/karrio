@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.18`.
+    The current version is `2026.1.19`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.18
+  version: 2026.1.19
 paths:
   /:
     get:
@@ -3884,7 +3884,7 @@ paths:
         name: status
         schema:
           type: string
-        description: 'Valid shipment status. <br/>Values: `draft`, `purchased`, `cancelled`,
+        description: 'Valid shipment status. <br/>Values: `draft`, `created`, `cancelled`,
           `shipped`, `in_transit`, `delivered`, `needs_attention`, `out_for_delivery`,
           `delivery_failed`'
       - in: query
@@ -11094,7 +11094,7 @@ components:
         status:
           enum:
           - draft
-          - purchased
+          - created
           - cancelled
           - shipped
           - in_transit
@@ -11103,7 +11103,7 @@ components:
           - out_for_delivery
           - delivery_failed
           type: string
-          x-spec-enum-id: 13f7a4063e5f8ed7
+          x-spec-enum-id: f4c394c6818de493
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -11859,7 +11859,7 @@ components:
         status:
           enum:
           - draft
-          - purchased
+          - created
           - cancelled
           - shipped
           - in_transit
@@ -11868,7 +11868,7 @@ components:
           - out_for_delivery
           - delivery_failed
           type: string
-          x-spec-enum-id: 13f7a4063e5f8ed7
+          x-spec-enum-id: f4c394c6818de493
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -15187,7 +15187,9 @@ tags:
     | mydhl_globalmail_business | M |
     | mydhl_express_domestic | N |
     | mydhl_express_domestic_12_00 | 1 |
+    | mydhl_express_domestic_10_30 | O |
     | mydhl_express_domestic_9_00 | I |
+    | mydhl_medical_express_domestic | C |
     | mydhl_same_day | S |
     | mydhl_economy_select | W |
     | mydhl_europack | H |

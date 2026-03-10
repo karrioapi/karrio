@@ -1,3 +1,29 @@
+# Karrio 2026.1.19
+
+## Changes
+
+### Fix
+
+- fix(usps): resolve KeyError 'PRIORITY_MAIL' in OptionEnum value lookup (#1003)
+- fix(carriers/mydhl): carrier fixes and improvements
+- fix(shipment): rename status purchased→created, remove choices constraint, enrich tracker event
+- fix(mydhl): add missing product codes O and C to ShippingService enum
+- fix(mydhl): bundle multi-piece shipment labels from per-package documents
+- fix(mydhl): pickup creation fails with extraneous countryName key
+- fix(mydhl): resolve service name in shipment response using request context
+- fix(mydhl): correct ShippingService product codes and services.csv to match DHL API spec
+- fix(mydhl): replace invalid PackagingType codes with DHL API spec values and make typeCode optional
+- fix(mydhl): add additionalDetails to error response schema and parser
+- fix(mydhl): fix date parsing in rate and shipment requests and dimension null check
+- fix(migration): data migration purchased→created + remove choices constraint from Shipment.status
+
+### Docs
+
+- docs(mydhl): update carrier testing report
+- docs(readme): add MCP server section with quick install and usage examples
+
+---
+
 # Karrio 2026.1.18
 
 ## Changes

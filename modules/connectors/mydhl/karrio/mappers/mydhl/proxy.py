@@ -68,7 +68,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(
             shipment_response,
             lib.to_dict,
-            dict(paperless_response=paperless_response),
+            dict(**request.ctx, paperless_response=paperless_response),
         )
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
