@@ -258,7 +258,7 @@ export const ShipmentMenu = ({
               <>
                 <DropdownMenuSeparator />
 
-                {shipment.status === ShipmentStatusEnum.purchased && (
+                {shipment.status === ShipmentStatusEnum.created && (
                   <DropdownMenuItem
                     onClick={() => {
                       setConfirmAction({
@@ -278,7 +278,7 @@ export const ShipmentMenu = ({
                 )}
 
                 {[
-                  ShipmentStatusEnum.purchased,
+                  ShipmentStatusEnum.created,
                   ShipmentStatusEnum.in_transit,
                 ].includes(shipment.status as any) && (
                     <DropdownMenuItem
@@ -300,7 +300,7 @@ export const ShipmentMenu = ({
                   )}
 
                 {[
-                  ShipmentStatusEnum.purchased,
+                  ShipmentStatusEnum.created,
                   ShipmentStatusEnum.in_transit,
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (
@@ -323,7 +323,7 @@ export const ShipmentMenu = ({
                   )}
 
                 {[
-                  ShipmentStatusEnum.purchased,
+                  ShipmentStatusEnum.created,
                   ShipmentStatusEnum.in_transit,
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (

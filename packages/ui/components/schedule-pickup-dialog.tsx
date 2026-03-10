@@ -154,7 +154,7 @@ export function SchedulePickupDialog({
   const { query: { data: { addresses } = {} } } = useAddresses();
 
   const { query: { data: { shipments } = {} } } = useShipments({
-    status: ["purchased"] as any,
+    status: ["created"] as any,
     first: 50,
   });
 
