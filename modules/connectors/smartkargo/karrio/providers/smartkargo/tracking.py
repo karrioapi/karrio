@@ -135,12 +135,29 @@ def tracking_request(
 ) -> lib.Serializable:
     """Create a tracking request for SmartKargo API.
 
-    SmartKargo tracking uses GET with packageReference query parameter.
-    The proxy handles the actual HTTP request format.
+    SmartKargo supports two tracking lookup strategies:
+    - Primary:  GET /tracking?prefix=<PREFIX>&Airwaybill=<AWB>
+      Used when the tracking number matches the carrier AWB format: 3 alpha + digits
+      (e.g. "XIA00291643" → prefix="XIA", Airwaybill="00291643")
+    - Fallback: GET /tracking?packageReference=<ref>
+      Used for legacy / non-AWB references (e.g. "yogi045")
     """
-    # Build list of tracking request payloads
+    import re
+
+    _AWB_PATTERN = re.compile(r"^([A-Za-z]{3})[-_ ]?([0-9]+)$")
+
+    def _build_query_params(tracking_number: str) -> dict:
+        match = _AWB_PATTERN.match(tracking_number or "")
+        if match is not None:
+            prefix, airwaybill = match.groups()
+            return dict(prefix=prefix.upper(), Airwaybill=airwaybill)
+        return dict(packageReference=tracking_number)
+
     request = [
-        dict(tracking_number=tracking_number)
+        dict(
+            tracking_number=tracking_number,
+            query_params=_build_query_params(tracking_number),
+        )
         for tracking_number in payload.tracking_numbers
     ]
 

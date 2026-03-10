@@ -1,6 +1,5 @@
 """Karrio SmartKargo client proxy."""
 
-import re
 import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
@@ -143,23 +142,11 @@ class Proxy(proxy.Proxy):
         tracking_requests = request.serialize()
         site_id = self.settings.connection_config.site_id.state
 
-        def _tracking_query(tracking_number: str) -> str:
-            match = re.match(r"^([A-Za-z]{3})[-_ ]?([0-9]+)$", tracking_number or "")
-
-            if match is not None:
-                prefix, airwaybill = match.groups()
-                return urllib.parse.urlencode(
-                    {"prefix": prefix.upper(), "Airwaybill": airwaybill}
-                )
-
-            # Backward compatibility: keep packageReference lookup for legacy refs.
-            return urllib.parse.urlencode({"packageReference": tracking_number})
-
         responses = lib.run_asynchronously(
             lambda payload: (
                 payload["tracking_number"],
                 lib.request(
-                    url=f"{self.settings.server_url}/tracking?{_tracking_query(payload['tracking_number'])}",
+                    url=f"{self.settings.server_url}/tracking?{urllib.parse.urlencode(payload['query_params'])}",
                     trace=self.trace_as("json"),
                     method="GET",
                     headers={
