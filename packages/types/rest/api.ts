@@ -5909,7 +5909,6 @@ export type ShipmentLabelTypeEnum = typeof ShipmentLabelTypeEnum[keyof typeof Sh
 export const ShipmentStatusEnum = {
     Draft: 'draft',
     Created: 'created',
-    Purchased: 'purchased',
     Cancelled: 'cancelled',
     Shipped: 'shipped',
     InTransit: 'in_transit',
