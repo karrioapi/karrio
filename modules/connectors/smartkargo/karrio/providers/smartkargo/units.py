@@ -121,5 +121,5 @@ class ConnectionConfig(lib.Enum):
     origin = lib.OptionEnum("origin", str)
     destination = lib.OptionEnum("destination", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
+    currency = lib.OptionEnum("currency", str)
     shipping_services = lib.OptionEnum("shipping_services", list)
-    # label_type = lib.OptionEnum("label_type", str)  # PDF or ZPL
