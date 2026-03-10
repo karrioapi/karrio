@@ -97,7 +97,11 @@ TrackingResponse = """[
     "flightSegmentDestination": "LAX",
     "pieces": 1.00,
     "weight": 2.8400,
-    "description": "Electronic information submitted by shipper Boston Logan."
+    "description": "Electronic information submitted by shipper Boston Logan.",
+    "referenceAirWaybill": null,
+    "estimatedDeliveryDate": "2021-01-28T23:59:00",
+    "bagNumber": null,
+    "subEventType": null
   },
   {
     "prefix": "AXB",
@@ -114,7 +118,11 @@ TrackingResponse = """[
     "flightSegmentDestination": "LAX",
     "pieces": 1.00,
     "weight": 2.8400,
-    "description": "Package has been successfully delivered to the consignee."
+    "description": "Package has been successfully delivered to the consignee.",
+    "referenceAirWaybill": null,
+    "estimatedDeliveryDate": "2021-01-28T23:59:00",
+    "bagNumber": "T0101",
+    "subEventType": null
   }
 ]"""
 
@@ -131,6 +139,7 @@ ParsedTrackingResponse = [
             "carrier_id": "smartkargo",
             "carrier_name": "smartkargo",
             "delivered": True,
+            "estimated_delivery": "2021-01-28",
             "events": [
                 {
                     "code": "DDL",

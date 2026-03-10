@@ -115,7 +115,10 @@ def _extract_details(
             )
             for event in sorted_events
         ],
-        estimated_delivery=None,
+        estimated_delivery=lib.fdate(
+            latest_event.estimatedDeliveryDate if latest_event else None,
+            "%Y-%m-%dT%H:%M:%S",
+        ),
         delivered=(status == "delivered"),
         status=status,
         info=models.TrackingInfo(

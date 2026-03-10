@@ -20,3 +20,7 @@ class TrackingResponseElementType:
     pieces: typing.Optional[float] = None
     weight: typing.Optional[float] = None
     description: typing.Optional[str] = None
+    referenceAirWaybill: typing.Any = None
+    estimatedDeliveryDate: typing.Optional[str] = None
+    bagNumber: typing.Optional[str] = None
+    subEventType: typing.Any = None
