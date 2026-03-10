@@ -311,6 +311,93 @@ def error_decoder(error: HTTPError) -> Union[dict, list]:
 RETRYABLE_STATUS_CODES = {500, 502, 503, 504, 522, 524}
 
 
+class _BufferedResponse:
+    """Wraps an urllib HTTP response, buffering the body so it can be:
+    1. Attached to the Sentry span immediately after the request completes.
+    2. Re-read by process_response / on_ok callers (who call response.read()).
+
+    Mirrors the attributes that karrio's helpers access: status, headers, url.
+    Supports the context manager protocol used by `with urlopen(...) as f`.
+    """
+
+    def __init__(self, resp):
+        self._raw = resp.read()
+        self.status = resp.status
+        self.headers = resp.headers
+        self.url = getattr(resp, "url", None)
+
+    def read(self):
+        return self._raw
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+
+def _urlopen_with_span(req: Request, timeout=None):
+    """Wrap urllib urlopen with a Sentry performance span.
+
+    Creates a child span under the active Sentry transaction so carrier
+    HTTP calls appear in the trace waterfall, including request body,
+    request headers, response body, and status code.
+    Falls back to plain urlopen when sentry_sdk is not installed or no
+    transaction is active. The outer try/except is deliberately broad —
+    tracing must never break the actual carrier request.
+    """
+    try:
+        import sentry_sdk  # type: ignore[import-not-found]
+        with sentry_sdk.start_span(
+            op="http.client",
+            description=f"{req.get_method()} {req.full_url}",
+        ) as span:
+            span.set_data("http.method", req.get_method())
+            span.set_data("http.url", req.full_url)
+
+            # Request body (decoded, capped at 4KB)
+            if req.data:
+                try:
+                    body = req.data.decode("utf-8") if isinstance(req.data, bytes) else str(req.data)
+                    span.set_data("http.request.body", body[:4096])
+                    span.set_data("request.body", body[:4096])
+                except Exception:
+                    span.set_data("http.request.body", "<binary>")
+
+            # Request headers (sensitive values redacted)
+            try:
+                _redacted = {"authorization", "x-api-key", "x-auth-token", "x-secret-key"}
+                headers = {
+                    k: ("***" if k.lower() in _redacted else v)
+                    for k, v in req.headers.items()
+                }
+                span.set_data("http.request.headers", headers)
+                span.set_data("request.headers", headers)
+            except Exception:
+                pass
+
+            # Make the request and buffer the response body
+            raw_resp = urlopen(req, timeout=timeout)
+            buffered = _BufferedResponse(raw_resp)
+
+            span.set_data("http.status_code", buffered.status)
+            span.set_data("http.response.status_code", buffered.status)
+
+            # Response body (decoded, capped at 4KB)
+            try:
+                resp_body = buffered._raw.decode("utf-8", errors="replace")[:4096]
+                span.set_data("http.response.body", resp_body)
+                span.set_data("response.body", resp_body)
+            except Exception:
+                pass
+
+            return buffered
+    except Exception:
+        # sentry_sdk not available, no active transaction, or span setup error —
+        # always fall back to plain urlopen so the carrier request still goes through
+        return urlopen(req, timeout=timeout)
+
+
 def _resolve_request_id(trace) -> str:
     """Extract request_id from tracer context, or generate a new one.
 
@@ -416,7 +503,7 @@ def request_with_response(
 
             _request = process_request(_request_id, trace if attempt == 0 else None, proxy, **kwargs)
 
-            with urlopen(_request, timeout=timeout) as f:
+            with _urlopen_with_span(_request, timeout=timeout) as f:
                 _content = process_response(
                     _request_id, f, decoder, on_ok=on_ok, trace=trace if attempt == 0 else None
                 )
@@ -533,7 +620,7 @@ def request(
 
             _request = process_request(_request_id, trace if attempt == 0 else None, proxy, **kwargs)
 
-            with urlopen(_request, timeout=timeout) as f:
+            with _urlopen_with_span(_request, timeout=timeout) as f:
                 _response = process_response(
                     _request_id, f, decoder, on_ok=on_ok, trace=trace if attempt == 0 else None
                 )

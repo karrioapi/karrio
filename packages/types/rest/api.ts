@@ -2513,6 +2513,10 @@ export interface Documents {
      * A shipping invoice in base64 string
      */
     'invoice'?: string | null;
+    /**
+     * Additional shipping documents (return labels, COD documents, etc.)
+     */
+    'extra_documents'?: Array<ShippingDocument>;
 }
 export interface Dpd {
     'delis_id': string;

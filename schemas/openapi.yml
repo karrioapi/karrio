@@ -7560,6 +7560,13 @@ components:
           type: string
           nullable: true
           description: A shipping invoice in base64 string
+        extra_documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingDocument'
+          default: []
+          description: Additional shipping documents (return labels, COD documents,
+            etc.)
     Duty:
       type: object
       properties:

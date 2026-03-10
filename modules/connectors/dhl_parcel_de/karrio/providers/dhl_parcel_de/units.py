@@ -213,7 +213,7 @@ class ConnectionConfig(lib.Enum):
     )
     language = lib.OptionEnum(
         "language",
-        lib.units.create_enum("Language", ["de", "en"]),
+        lib.units.create_enum("Language", ["de", "en"]), default="en"
     )
     default_billing_number = lib.OptionEnum(
         "default_billing_number", default=DEFAULT_TEST_BILLING_NUMBER
@@ -228,9 +228,6 @@ class ConnectionConfig(lib.Enum):
     )
     return_billing_number = lib.OptionEnum(
         "return_billing_number", str, default="33333333330701"
-    )
-    return_service_code = lib.OptionEnum(
-        "return_service_code", ShippingService, default="dhl_parcel_de_retoure"
     )
     profile = lib.OptionEnum("profile")
     cost_center = lib.OptionEnum("cost_center")
@@ -552,6 +549,43 @@ class ShippingOption(lib.Enum):
     shipping_charges = dhl_parcel_de_postal_charges
     insurance = dhl_parcel_de_additional_insurance
     locker_id = dhl_parcel_de_locker_id
+
+    # Method-level label / billing / returns configuration (SHIP2-978, SHIP2-979, SHIP2-981)
+    dhl_parcel_de_label_type = lib.OptionEnum(
+        "label_type",
+        lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
+        meta=dict(
+            category="DELIVERY_OPTIONS",
+            configurable=True,
+            help="Label format for this shipping method (PDF or ZPL variant). Overrides carrier connection setting.",
+        )
+    )
+    dhl_parcel_de_cost_center = lib.OptionEnum(
+        "cost_center",
+        meta=dict(
+            category="INVOICE",
+            configurable=True,
+            help="Cost center code for billing allocation. Overrides carrier connection setting.",
+        )
+    )
+    dhl_parcel_de_return_service_code = lib.OptionEnum(
+        "return_service_code",
+        ShippingService,
+        meta=dict(
+            category="RETURN",
+            configurable=True,
+            help="Return service for this shipping method (determines return billing number). Overrides carrier connection setting.",
+            compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
+        )
+    )
+    dhl_parcel_de_profile = lib.OptionEnum(
+        "profile",
+        meta=dict(
+            category="OTHER",
+            configurable=True,
+            help="DHL shipping profile (Gruppenprofil). Overrides carrier connection setting.",
+        )
+    )
     # fmt: on
 
 

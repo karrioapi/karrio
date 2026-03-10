@@ -238,6 +238,12 @@ def owned_model_serializer(
 def link_org(entity: ModelSerializer, context: Context):
     from django.utils.functional import SimpleLazyObject
 
+    # System-level entities are global resources and must never be org-scoped.
+    # Any staff user with admin access should be able to read/write them
+    # regardless of which organization they belong to.
+    if getattr(entity, "is_system", False):
+        return
+
     # Evaluate org from context (handles SimpleLazyObject)
     org = (
         context.org if not isinstance(context.org, SimpleLazyObject)

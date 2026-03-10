@@ -323,7 +323,7 @@ SHIPPING_RESPONSE = {
         },
         "test_mode": True,
     },
-    "docs": {"label": "==apodifjoefr", "invoice": None},
+    "docs": {"label": "==apodifjoefr", "invoice": None, "extra_documents": []},
     "meta": {
         "ext": "canadapost",
         "carrier": "canadapost",

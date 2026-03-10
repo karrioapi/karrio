@@ -163,10 +163,12 @@ class SecretManager:
             secret_id = existing_secret.id if existing_secret else UUID(os.urandom(16).hex()[:32])
 
         try:
+            aad = name.encode("utf-8")
+
             # Encrypt plaintext with DEK using AES-256-GCM
             aesgcm_data = AESGCM(dek)
             nonce_data = os.urandom(12)  # 96-bit nonce for GCM
-            encrypted_data = aesgcm_data.encrypt(nonce_data, plaintext, None)
+            encrypted_data = aesgcm_data.encrypt(nonce_data, plaintext, aad)
 
             # Prepend nonce to ciphertext (nonce || ciphertext || auth_tag)
             ciphertext = nonce_data + encrypted_data
@@ -175,7 +177,7 @@ class SecretManager:
             kek = self.kek_registry[self._current_version]
             aesgcm_kek = AESGCM(kek)
             nonce_kek = os.urandom(12)
-            encrypted_dek = aesgcm_kek.encrypt(nonce_kek, dek, None)
+            encrypted_dek = aesgcm_kek.encrypt(nonce_kek, dek, aad)
 
             # Prepend nonce to wrapped DEK
             wrapped_dek = nonce_kek + encrypted_dek
@@ -238,30 +240,32 @@ class SecretManager:
             raise SecretNotFoundError(f"Secret with ID '{secret_id}' not found")
 
         try:
-            # Extract nonce and encrypted DEK
             wrapped_dek = secret.dek_wrapped
             nonce_kek = wrapped_dek[:12]
             encrypted_dek = wrapped_dek[12:]
 
-            # Unwrap DEK using KEK
             kek = self.kek_registry[secret.key_version]
             aesgcm_kek = AESGCM(kek)
-            dek = aesgcm_kek.decrypt(nonce_kek, encrypted_dek, None)
+            aad = secret.name.encode("utf-8")
+
+            # Try with AAD first, fall back to None for pre-AAD secrets
+            try:
+                dek = aesgcm_kek.decrypt(nonce_kek, encrypted_dek, aad)
+            except InvalidTag:
+                dek = aesgcm_kek.decrypt(nonce_kek, encrypted_dek, None)
+                aad = None  # data was also encrypted without AAD
 
             try:
-                # Extract nonce and encrypted data
                 ciphertext = secret.ciphertext
                 nonce_data = ciphertext[:12]
                 encrypted_data = ciphertext[12:]
 
-                # Decrypt plaintext using DEK
                 aesgcm_data = AESGCM(dek)
-                plaintext = aesgcm_data.decrypt(nonce_data, encrypted_data, None)
+                plaintext = aesgcm_data.decrypt(nonce_data, encrypted_data, aad)
 
                 return plaintext
 
             finally:
-                # Wipe DEK from memory
                 del dek
 
         except InvalidTag:

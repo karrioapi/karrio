@@ -277,6 +277,139 @@ class TestAdminRateSheets(AdminGraphTestCase):
         self.assertFalse(providers.RateSheet.objects.filter(id=new_sheet.id).exists())
 
 
+class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
+    """Tests that any staff admin can read/update system ratesheets,
+    regardless of which admin created them and regardless of org membership."""
+
+    def setUp(self):
+        super().setUp()  # Creates self.user (admin1) + self.organization
+
+        # Create a second independent admin with their own org
+        self.admin2 = get_user_model().objects.create_superuser(
+            "admin2@example.com", "test2"
+        )
+        self.admin2.is_staff = True
+        self.admin2.save()
+        self.token2 = Token.objects.create(user=self.admin2, test_mode=False)
+
+        from django.conf import settings
+        if settings.MULTI_ORGANIZATIONS:
+            from karrio.server.orgs.models import Organization, TokenLink
+            self.org2 = Organization.objects.create(
+                name="Second Organization", slug="second-org"
+            )
+            owner2 = self.org2.add_user(self.admin2, is_admin=True)
+            self.org2.change_owner(owner2)
+            self.org2.save()
+            TokenLink.objects.create(item=self.token2, org=self.org2)
+
+        # Rate sheet created by admin1
+        self.rate_sheet = providers.RateSheet.objects.create(
+            name="Cross Admin Rate Sheet",
+            carrier_name="dhl_parcel_de",
+            slug="cross_admin_rate_sheet",
+            is_system=True,
+            created_by=self.user,
+        )
+
+    def query_as_admin2(self, query, operation_name=None, variables=None):
+        """Execute a GraphQL query authenticated as admin2."""
+        from rest_framework.test import APIClient
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Token " + self.token2.key)
+        url = reverse("karrio.server.admin:admin-graph")
+        data = dict(query=query, variables=variables, operation_name=operation_name)
+        response = client.post(url, data)
+        return Result(status_code=response.status_code, data=json.loads(response.content))
+
+    def test_admin2_can_query_system_ratesheet_created_by_admin1(self):
+        """System ratesheets are global — any staff admin can read them."""
+        response = self.query_as_admin2(
+            """
+            query get_rate_sheet($id: String!) {
+              rate_sheet(id: $id) {
+                id
+                name
+              }
+            }
+            """,
+            operation_name="get_rate_sheet",
+            variables={"id": self.rate_sheet.id},
+        )
+        self.assertResponseNoErrors(response)
+        data = response.data["data"]["rate_sheet"]
+        self.assertIsNotNone(data)
+        self.assertEqual(data["id"], self.rate_sheet.id)
+
+    def test_admin2_can_update_system_ratesheet_created_by_admin1(self):
+        """System ratesheets are global — any staff admin can update them."""
+        response = self.query_as_admin2(
+            """
+            mutation update_rate_sheet($data: UpdateRateSheetMutationInput!) {
+              update_rate_sheet(input: $data) {
+                rate_sheet {
+                  id
+                  name
+                }
+              }
+            }
+            """,
+            operation_name="update_rate_sheet",
+            variables={"data": {"id": self.rate_sheet.id, "name": "Updated By Admin2"}},
+        )
+        self.assertResponseNoErrors(response)
+        result = response.data["data"]["update_rate_sheet"]["rate_sheet"]
+        self.assertEqual(result["name"], "Updated By Admin2")
+        # Confirm persisted in DB
+        self.rate_sheet.refresh_from_db()
+        self.assertEqual(self.rate_sheet.name, "Updated By Admin2")
+
+    def test_system_ratesheet_has_no_org_link_after_create(self):
+        """System ratesheets must not be linked to any org, regardless of who created them."""
+        from django.conf import settings
+        if not settings.MULTI_ORGANIZATIONS:
+            self.skipTest("MULTI_ORGANIZATIONS is disabled")
+
+        # Create via mutation as admin1
+        response = self.query(
+            """
+            mutation create_rate_sheet($data: CreateRateSheetMutationInput!) {
+              create_rate_sheet(input: $data) {
+                rate_sheet {
+                  id
+                  name
+                }
+              }
+            }
+            """,
+            operation_name="create_rate_sheet",
+            variables={"data": {"name": "No Org Sheet", "carrier_name": "dhl_parcel_de"}},
+        )
+        self.assertResponseNoErrors(response)
+        sheet_id = response.data["data"]["create_rate_sheet"]["rate_sheet"]["id"]
+        sheet = providers.RateSheet.objects.get(id=sheet_id)
+
+        # Must have no org link
+        if hasattr(sheet, "org"):
+            self.assertFalse(
+                sheet.org.exists(),
+                "System ratesheet must not be linked to any org",
+            )
+
+        # Admin2 (different org) must still be able to read it
+        r2 = self.query_as_admin2(
+            """
+            query get_rate_sheet($id: String!) {
+              rate_sheet(id: $id) { id name }
+            }
+            """,
+            operation_name="get_rate_sheet",
+            variables={"id": sheet_id},
+        )
+        self.assertResponseNoErrors(r2)
+        self.assertIsNotNone(r2.data["data"]["rate_sheet"])
+
+
 class TestAdminRateSheetZones(AdminGraphTestCase):
     """Tests for admin shared zone CRUD operations."""
 
