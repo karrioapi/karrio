@@ -29,6 +29,18 @@ class TestSmartKargoTracking(unittest.TestCase):
                 mock.call_args[1]["url"],
             )
 
+    def test_get_tracking_by_airwaybill(self):
+        with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
+            mock.return_value = "[]"
+            tracking_request = models.TrackingRequest(
+                tracking_numbers=["XIA00291643"]
+            )
+            karrio.Tracking.fetch(tracking_request).from_(gateway)
+            self.assertIn(
+                "tracking?prefix=XIA&Airwaybill=00291643",
+                mock.call_args[1]["url"],
+            )
+
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
