@@ -6002,6 +6002,7 @@ export enum CarrierNameEnum {
 export enum ShipmentStatusEnum {
   cancelled = "cancelled",
   created = "created",
+  purchased = "purchased",
   delivered = "delivered",
   delivery_failed = "delivery_failed",
   draft = "draft",
