@@ -1,3 +1,37 @@
+# Karrio 2026.1.20
+
+> **Breaking Change:** The shipment status `purchased` has been renamed to `created`.
+> If you have webhook listeners or automation that filter on `shipment.status == "purchased"`,
+> update them to use `"created"` instead. The database migration (0089) automatically updates
+> existing records, but external integrations must be reviewed manually.
+
+## Changes
+
+### Feat
+
+- feat(smartkargo): add taxId field to participant schemas for shipper and consignee
+- feat(smartkargo): add selected_rate with charge breakdown (shippingFee, insurance, tax) to shipment response
+- feat(smartkargo): add configurable currency to ConnectionConfig
+
+### Fix
+
+- fix(smartkargo): resolve tracking params from shipment meta options instead of relying solely on tracking number parsing
+- fix(smartkargo): add missing tracking response fields (estimatedDeliveryDate, referenceAirWaybill, bagNumber, subEventType)
+- fix(smartkargo): add INF and MDL event type mappings for in_transit status
+- fix(smartkargo): enrich tracking info with package weight and shipment package count
+- fix(smartkargo): support tracking by SmartKargo AWB (prefix + Airwaybill) (#1006)
+- fix(dashboard): replace deprecated "purchased" status with "created" after migration 0089 (#1007)
+- fix: restore purchased status to ShipmentStatusEnum in TS types
+- fix: remove is_system from admin ratesheet test query
+- fix: resolve CI test failures (server-tests, sdk-tests, dashboard-ci)
+- fix: sync shipping-platform patches (DHL enhancements, APM tracing, KEK rotation, document handling) (#1004)
+
+### Chore
+
+- chore: generate latest API schemas
+
+---
+
 # Karrio 2026.1.19
 
 ## Changes

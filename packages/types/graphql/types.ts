@@ -5987,7 +5987,6 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
-  smartkargo = "smartkargo",
   spring = "spring",
   teleship = "teleship",
   tge = "tge",

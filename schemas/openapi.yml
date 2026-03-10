@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.19`.
+    The current version is `2026.1.20`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.19
+  version: 2026.1.20
 paths:
   /:
     get:
@@ -1108,7 +1108,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1150,7 +1150,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1203,7 +1203,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1277,7 +1277,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: metadata_key
@@ -1869,7 +1869,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -2507,7 +2507,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: confirmation_number
@@ -3133,7 +3133,6 @@ paths:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -3236,7 +3235,6 @@ paths:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -3339,7 +3337,6 @@ paths:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -3535,7 +3532,6 @@ paths:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -3676,7 +3672,6 @@ paths:
           - royalmail
           - seko
           - sendle
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -3808,7 +3803,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -4304,7 +4299,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -4472,7 +4467,6 @@ paths:
           - royalmail
           - seko
           - sendle
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -5900,7 +5894,6 @@ components:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -5911,7 +5904,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: ae0f7f0940fb5243
+          x-spec-enum-id: fba052f05fc9e3a2
           description: A carrier connection type.
         display_name:
           type: string
@@ -6002,7 +5995,6 @@ components:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -6013,7 +6005,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: ae0f7f0940fb5243
+          x-spec-enum-id: fba052f05fc9e3a2
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -6114,7 +6106,6 @@ components:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -6125,7 +6116,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: ae0f7f0940fb5243
+          x-spec-enum-id: fba052f05fc9e3a2
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -7199,7 +7190,6 @@ components:
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
       - $ref: '#/components/schemas/shipengine'
-      - $ref: '#/components/schemas/smartkargo'
       - $ref: '#/components/schemas/spring'
       - $ref: '#/components/schemas/teleship'
       - $ref: '#/components/schemas/tge'
@@ -9347,7 +9337,6 @@ components:
           - seko
           - sendle
           - shipengine
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -9358,7 +9347,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: ae0f7f0940fb5243
+          x-spec-enum-id: fba052f05fc9e3a2
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -12195,7 +12184,6 @@ components:
           - royalmail
           - seko
           - sendle
-          - smartkargo
           - spring
           - teleship
           - tge
@@ -12206,7 +12194,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: b6c8e3114206d815
+          x-spec-enum-id: aab0f690054e0465
           description: The tracking carrier
         account_number:
           type: string
@@ -13448,19 +13436,6 @@ components:
           nullable: true
       required:
       - api_key
-    smartkargo:
-      type: object
-      properties:
-        api_key:
-          type: string
-        account_number:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - account_number
-      - api_key
     spring:
       type: object
       properties:
@@ -13791,7 +13766,6 @@ tags:
     | seko | SEKO Logistics |
     | sendle | Sendle |
     | shipengine | ShipEngine |
-    | smartkargo | SmartKargo |
     | spring | Spring |
     | teleship | Teleship |
     | tge | TGE |
@@ -15530,14 +15504,6 @@ tags:
     | ups_2nd_day_air | UPS 2nd Day Air |
     | ups_next_day_air | UPS Next Day Air |
     | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
-
-    ### SmartKargo
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | smartkargo_express | EXP |
-    | smartkargo_priority | EPR |
-    | smartkargo_standard | EST |
-    | smartkargo_economy | ECL |
 
     ### Spring
     | Code         | Service Name |
