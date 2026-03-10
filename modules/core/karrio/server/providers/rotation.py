@@ -40,82 +40,78 @@ def rotate_batch(
     from karrio.server.providers.models.secret import Secret
     from django.utils import timezone
 
-    # Validate KEK versions exist
     if old_version not in secret_manager.kek_registry:
         raise ValueError(f"Old KEK version {old_version} not found in registry")
     if new_version not in secret_manager.kek_registry:
         raise ValueError(f"New KEK version {new_version} not found in registry")
 
-    # Fetch batch with row-level locking (allows parallel workers)
-    rows = list(
-        Secret.objects.filter(key_version=old_version)
-        .select_for_update(skip_locked=True)
-        .values('id', 'dek_wrapped', 'name')[:batch_size]
-    )
-
-    if not rows:
-        logger.info("No more secrets to rotate")
-        return 0
-
     old_kek = secret_manager.kek_registry[old_version]
     new_kek = secret_manager.kek_registry[new_version]
 
     rotated_count = 0
+    failed_count = 0
 
-    for row in rows:
-        try:
-            # Extract nonce and encrypted DEK
-            wrapped_dek = row['dek_wrapped']
-            nonce_old = wrapped_dek[:12]
-            encrypted_dek = wrapped_dek[12:]
+    with transaction.atomic():
+        rows = list(
+            Secret.objects.filter(key_version=old_version)
+            .select_for_update(skip_locked=True)
+            .values('id', 'dek_wrapped', 'name')[:batch_size]
+        )
 
-            # Unwrap DEK with old KEK
-            aesgcm_old = AESGCM(old_kek)
-            dek = aesgcm_old.decrypt(nonce_old, encrypted_dek, None)
+        if not rows:
+            logger.info("No more secrets to rotate")
+            return 0
 
+        for row in rows:
             try:
-                # Rewrap DEK with new KEK
-                aesgcm_new = AESGCM(new_kek)
-                nonce_new = os.urandom(12)
-                encrypted_dek_new = aesgcm_new.encrypt(nonce_new, dek, None)
+                wrapped_dek = row['dek_wrapped']
+                nonce_old = wrapped_dek[:12]
+                encrypted_dek = wrapped_dek[12:]
 
-                # Prepend nonce to wrapped DEK
-                new_wrapped = nonce_new + encrypted_dek_new
+                aesgcm_old = AESGCM(old_kek)
+                dek = aesgcm_old.decrypt(nonce_old, encrypted_dek, None)
 
-                # Update database with optimistic locking
-                updated = Secret.objects.filter(
-                    id=row['id'],
-                    key_version=old_version  # Optimistic lock
-                ).update(
-                    dek_wrapped=new_wrapped,
-                    key_version=new_version,
-                    rotated_at=timezone.now()
-                )
+                try:
+                    aesgcm_new = AESGCM(new_kek)
+                    nonce_new = os.urandom(12)
+                    encrypted_dek_new = aesgcm_new.encrypt(nonce_new, dek, None)
+                    new_wrapped = nonce_new + encrypted_dek_new
 
-                if updated:
-                    rotated_count += 1
-                    logger.debug(f"Rotated secret: {row['name']}")
-                else:
-                    logger.warning(
-                        f"Secret {row['name']} already rotated by another worker"
+                    updated = Secret.objects.filter(
+                        id=row['id'],
+                        key_version=old_version,
+                    ).update(
+                        dek_wrapped=new_wrapped,
+                        key_version=new_version,
+                        rotated_at=timezone.now(),
                     )
 
-            finally:
-                # Wipe DEK from memory
-                del dek
+                    if updated:
+                        rotated_count += 1
+                        logger.debug(f"Rotated secret: {row['name']}")
+                    else:
+                        logger.warning(
+                            f"Secret {row['name']} already rotated by another worker"
+                        )
 
-        except InvalidTag as e:
-            logger.error(
-                f"Failed to decrypt secret {row['name']} with old KEK: {e}"
-            )
-            # Continue with next secret instead of failing entire batch
-            continue
-        except Exception as e:
-            logger.error(f"Failed to rotate secret {row['name']}: {e}")
-            # Continue with next secret instead of failing entire batch
-            continue
+                finally:
+                    del dek
 
-    logger.info(f"Rotated {rotated_count}/{len(rows)} secrets in batch")
+            except InvalidTag as e:
+                failed_count += 1
+                logger.error(
+                    f"Failed to decrypt secret {row['name']} with old KEK: {e}"
+                )
+                continue
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"Failed to rotate secret {row['name']}: {e}")
+                continue
+
+    logger.info(
+        f"Rotated {rotated_count}/{len(rows)} secrets in batch"
+        + (f" ({failed_count} failed)" if failed_count else "")
+    )
     return rotated_count
 
 

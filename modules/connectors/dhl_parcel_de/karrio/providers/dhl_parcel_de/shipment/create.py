@@ -124,7 +124,7 @@ def shipment_request(
     return_address = lib.to_address(payload.return_address) if payload.return_address else shipper
     is_intl = shipper.country_code != recipient.country_code
     doc_format, print_format = provider_units.LabelType.map(
-        settings.connection_config.label_type.state or payload.label_type or "PDF"
+        options.label_type.state or settings.connection_config.label_type.state or payload.label_type or "PDF"
     ).value
     shipment_date = lib.to_date(
         options.shipping_date.state or datetime.datetime.now(),
@@ -132,13 +132,13 @@ def shipment_request(
     )
 
     request = dhl_parcel_de.ShippingRequestType(
-        profile=settings.profile,
+        profile=options.dhl_parcel_de_profile.state or settings.connection_config.profile.state or "STANDARD_GRUPPENPROFIL",
         shipments=[
             dhl_parcel_de.ShipmentType(
                 product=service,
                 billingNumber=billing_number,
                 refNo=payload.reference,
-                costCenter=settings.connection_config.cost_center.state,
+                costCenter=options.cost_center.state or settings.connection_config.cost_center.state,
                 creationSoftware=settings.connection_config.creation_software.state,
                 shipDate=lib.fdatetime(
                     shipment_date, output_format="%Y-%m-%dT%H:%M:%S"
@@ -264,7 +264,7 @@ def shipment_request(
                             dhl_parcel_de.DhlRetoureType(
                                 billingNumber=(
                                     package.options.dhl_parcel_de_return_billing_number.state
-                                    or settings.get_return_billing_number()
+                                    or settings.get_return_billing_number(service_code_override=options.return_service_code.state)
                                     or billing_number
                                 ),
                                 refNo=(
@@ -384,10 +384,10 @@ def shipment_request(
         request,
         lib.to_dict,
         dict(
-            includeDocs="include" if is_intl else None,
+            includeDocs="include",
             docFormat=doc_format,
             printFormat=print_format,
-            combine="true",
+            combine="false",
             # validate="true",
             # Meta context for response parsing (not URL params)
             _meta=dict(billing_number=billing_number),

@@ -268,6 +268,19 @@ def shipment_documents_accessor(cls=None, *, include_base64: bool = False):
                     }
                 )
 
+            # Add extra documents (return labels, COD documents, etc.)
+            extra_documents = getattr(instance, "extra_documents", None) or []
+            for doc in extra_documents:
+                doc_data = doc if isinstance(doc, dict) else lib.to_dict(doc)
+                documents.append(
+                    {
+                        "category": doc_data.get("category", "other"),
+                        "format": doc_data.get("format", "PDF"),
+                        "url": doc_data.get("url"),
+                        "base64": doc_data.get("base64") if include_base64 else None,
+                    }
+                )
+
             # Update the data with computed shipping_documents
             data["shipping_documents"] = documents
 

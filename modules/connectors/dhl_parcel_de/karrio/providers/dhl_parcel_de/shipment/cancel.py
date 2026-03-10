@@ -43,7 +43,7 @@ def shipment_cancel_request(
                 )
             )
         ),
-        profile=settings.profile,
+        profile=settings.connection_config.profile.state or "STANDARD_GRUPPENPROFIL",
     )
 
     return lib.Serializable(request)
