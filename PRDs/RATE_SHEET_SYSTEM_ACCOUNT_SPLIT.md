@@ -59,19 +59,18 @@ The result is cleaner ownership boundaries: **system sheets are platform objects
 
 ### Pending Questions
 
-| # | Question | Context | Options | Status |
-|---|----------|---------|---------|--------|
-| Q1 | Should we fully split DB tables now (`system-rate-sheet` + `rate-sheet`) or keep one table with a typed model façade? | Migration complexity vs clarity | A) Full table split, B) Single table + strict guards | ⏳ Pending |
-| Q2 | For base GraphQL `rate_sheets`, should brokered users see linked system sheet as read-only projection? | Product behavior for brokered connections | A) No (account only), B) Yes (read-only union) | ⏳ Pending |
-| Q3 | For admin mutations, should editing account sheets be possible from admin schema? | Admin ops flexibility vs boundary purity | A) Keep admin system-only, B) Add explicit admin account mutations | ⏳ Pending |
-| Q4 | System sheet deletion policy | Safety for active system connections | A) Block delete when referenced, B) Soft-delete/archive | ⏳ Pending |
+None — all resolved.
 
 ### Resolved Decisions
 
 | # | Decision | Choice | Rationale | Date |
 |---|----------|--------|-----------|------|
-| D1 | Ownership model | System sheet should not require ownership (`created_by` not required) | Matches request and system-object semantics | 2026-03-10 |
+| D1 | Ownership model | System sheet has no `created_by` ownership requirement | System-object semantics — not tenant owned | 2026-03-10 |
 | D2 | Mutation surface | System sheet mutations must be admin GraphQL only | Prevent accidental tenant writes to platform pricing | 2026-03-10 |
+| D3 | DB table split | **Two separate tables** — full split | Explicit object types, cleaner migration path, matches connection architecture | 2026-03-10 |
+| D4 | Base GraphQL visibility for system sheets | **Not exposed** — base GraphQL shows account sheets only | Brokered users don't need to see or query system sheets | 2026-03-10 |
+| D5 | Admin mutation scope | **System-only** — admin GraphQL operates exclusively on system sheets | Keep admin domain pure; account sheet mutations remain in base schema | 2026-03-10 |
+| D6 | System sheet deletion | **No delete** — system sheets cannot be deleted | System-level pricing objects; deletion is too destructive | 2026-03-10 |
 
 ---
 
