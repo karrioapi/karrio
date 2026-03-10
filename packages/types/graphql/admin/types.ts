@@ -2269,13 +2269,13 @@ export enum WeightUnitEnum {
 
 export enum ShipmentStatusEnum {
   cancelled = "cancelled",
+  created = "created",
   delivered = "delivered",
   delivery_failed = "delivery_failed",
   draft = "draft",
   in_transit = "in_transit",
   needs_attention = "needs_attention",
   out_for_delivery = "out_for_delivery",
-  purchased = "purchased",
   shipped = "shipped",
 }
 

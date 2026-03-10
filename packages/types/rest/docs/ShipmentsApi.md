@@ -216,7 +216,7 @@ let orderId: string; // (optional) (default to undefined)
 let reference: string; // (optional) (default to undefined)
 let requestId: string; // (optional) (default to undefined)
 let service: string; // (optional) (default to undefined)
-let status: string; //Valid shipment status. <br/>Values: `draft`, `purchased`, `cancelled`, `shipped`, `in_transit`, `delivered`, `needs_attention`, `out_for_delivery`, `delivery_failed` (optional) (default to undefined)
+let status: string; //Valid shipment status. <br/>Values: `draft`, `created`, `cancelled`, `shipped`, `in_transit`, `delivered`, `needs_attention`, `out_for_delivery`, `delivery_failed` (optional) (default to undefined)
 let trackingNumber: string; // (optional) (default to undefined)
 
 const { status, data } = await apiInstance.list(
@@ -267,7 +267,7 @@ const { status, data } = await apiInstance.list(
 | **reference** | [**string**] |  | (optional) defaults to undefined|
 | **requestId** | [**string**] |  | (optional) defaults to undefined|
 | **service** | [**string**] |  | (optional) defaults to undefined|
-| **status** | [**string**] | Valid shipment status. &lt;br/&gt;Values: &#x60;draft&#x60;, &#x60;purchased&#x60;, &#x60;cancelled&#x60;, &#x60;shipped&#x60;, &#x60;in_transit&#x60;, &#x60;delivered&#x60;, &#x60;needs_attention&#x60;, &#x60;out_for_delivery&#x60;, &#x60;delivery_failed&#x60; | (optional) defaults to undefined|
+| **status** | [**string**] | Valid shipment status. &lt;br/&gt;Values: &#x60;draft&#x60;, &#x60;created&#x60;, &#x60;cancelled&#x60;, &#x60;shipped&#x60;, &#x60;in_transit&#x60;, &#x60;delivered&#x60;, &#x60;needs_attention&#x60;, &#x60;out_for_delivery&#x60;, &#x60;delivery_failed&#x60; | (optional) defaults to undefined|
 | **trackingNumber** | [**string**] |  | (optional) defaults to undefined|
 
 
