@@ -51,7 +51,13 @@
           "countryId": "US",
           "phoneNumber": "19999999999",
           "email": "test@test.com",
-          "taxIdentificationNumbers": null
+          "taxId": "IT12345678901",
+          "taxIdentificationNumbers": [
+            {
+              "type": "CUIT",
+              "value": "12345678901"
+            }
+          ]
         },
         {
           "type": "Consignee",
@@ -67,6 +73,7 @@
           "countryId": "US",
           "phoneNumber": "8888347867",
           "email": "test2@test.com",
+          "taxId": null,
           "taxIdentificationNumbers": null
         }
       ],

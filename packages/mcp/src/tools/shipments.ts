@@ -265,7 +265,7 @@ export function registerShipmentTools(
       status: z
         .enum([
           "draft",
-          "purchased",
+          "created",
           "cancelled",
           "shipped",
           "in_transit",

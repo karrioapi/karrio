@@ -92,7 +92,7 @@ class TrackingStatus(lib.Enum):
 
     pending = ["BKD"]  # Electronic information submitted by shipper
     picked_up = ["RCS"]  # Shipment Picked up by Carrier
-    in_transit = ["DEP", "RCF"]  # Departed / Recovered at partner store
+    in_transit = ["DEP", "RCF", "INF", "MDL"]  # Departed / Recovered / Info / Arrived at airport
     out_for_delivery = ["GDL"]  # Package left partner store for consignee door
     delivered = ["DDL", "DLD"]  # Successfully delivered / Delivered and left at door
     delivery_failed = ["ADL"]  # Delivery attempted but failed
@@ -121,5 +121,5 @@ class ConnectionConfig(lib.Enum):
     origin = lib.OptionEnum("origin", str)
     destination = lib.OptionEnum("destination", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
+    currency = lib.OptionEnum("currency", str)
     shipping_services = lib.OptionEnum("shipping_services", list)
-    # label_type = lib.OptionEnum("label_type", str)  # PDF or ZPL

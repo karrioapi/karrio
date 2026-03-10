@@ -53,6 +53,7 @@ class ParticipantType:
     countryId: typing.Optional[str] = None
     phoneNumber: typing.Optional[str] = None
     email: typing.Optional[str] = None
+    taxId: typing.Optional[str] = None
     taxIdentificationNumbers: typing.Optional[typing.List[TaxIdentificationNumberType]] = jstruct.JList[TaxIdentificationNumberType]
 
 

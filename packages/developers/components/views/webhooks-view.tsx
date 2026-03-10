@@ -45,7 +45,7 @@ const TEST_PAYLOADS: Record<string, string> = {
       event: "shipment.purchased",
       data: {
         id: "shp_4998174814864a0690a1d0d626c101e1",
-        status: "purchased",
+        status: "created",
         carrier_name: "canadapost",
         carrier_id: "canadapost",
         label: "JVBERiqrnC --- truncated base64 label ---",

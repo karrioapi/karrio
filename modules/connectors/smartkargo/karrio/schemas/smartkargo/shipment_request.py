@@ -33,6 +33,31 @@ class DimensionType:
 
 
 @attr.s(auto_attribs=True)
+class TaxIdentificationNumberType:
+    type: typing.Optional[str] = None
+    value: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class ParticipantType:
+    type: typing.Optional[str] = None
+    primaryId: typing.Optional[str] = None
+    additionalId: typing.Optional[str] = None
+    account: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    postCode: typing.Optional[str] = None
+    street: typing.Optional[str] = None
+    street2: typing.Optional[str] = None
+    city: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    countryId: typing.Optional[str] = None
+    phoneNumber: typing.Optional[str] = None
+    email: typing.Optional[str] = None
+    taxId: typing.Optional[str] = None
+    taxIdentificationNumbers: typing.Optional[typing.List[TaxIdentificationNumberType]] = jstruct.JList[TaxIdentificationNumberType]
+
+
+@attr.s(auto_attribs=True)
 class PackageType:
     reference: typing.Optional[str] = None
     commodityType: typing.Optional[str] = None
@@ -58,7 +83,7 @@ class PackageType:
     labelRef2: typing.Any = None
     incoterm: typing.Optional[str] = None
     dimensions: typing.Optional[typing.List[DimensionType]] = jstruct.JList[DimensionType]
-    participants: typing.Optional[typing.List[typing.Dict[str, typing.Optional[str]]]] = None
+    participants: typing.Optional[typing.List[ParticipantType]] = jstruct.JList[ParticipantType]
     customItems: typing.Optional[typing.List[CustomItemType]] = jstruct.JList[CustomItemType]
     commercialInvoice: typing.Optional[CommercialInvoiceType] = jstruct.JStruct[CommercialInvoiceType]
 

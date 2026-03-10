@@ -63,13 +63,13 @@ def _extract_details(
         service=service.name_or_key,
         total_charge=lib.to_money(detail.total or 0)
         + lib.to_money(detail.totalTax or 0),
-        currency="USD",
+        currency=settings.connection_config.currency.state or "USD",
         transit_days=transit_days,
         extra_charges=[
             models.ChargeDetails(
                 name=name,
                 amount=lib.to_money(amount),
-                currency="USD",
+                currency=settings.connection_config.currency.state or "USD",
             )
             for name, amount in charges
             if amount is not None and amount > 0
@@ -178,6 +178,7 @@ def rate_request(
                             countryId=shipper.country_code,
                             phoneNumber=shipper.phone_number,
                             email=shipper.email,
+                            taxId=shipper.tax_id,
                         ),
                         smartkargo_req.ParticipantType(
                             type="Consignee",
@@ -193,6 +194,7 @@ def rate_request(
                             countryId=recipient.country_code,
                             phoneNumber=recipient.phone_number,
                             email=recipient.email,
+                            taxId=recipient.tax_id,
                         ),
                     ],
                     customItems=(

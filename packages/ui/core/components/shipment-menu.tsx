@@ -170,7 +170,7 @@ export const ShipmentMenu = ({
               <>
                 <hr className="my-1" style={{ height: "1px" }} />
 
-                {shipment.status === ShipmentStatusEnum.purchased && (
+                {shipment.status === ShipmentStatusEnum.created && (
                   <a
                     className="dropdown-item"
                     onClick={() =>
@@ -191,7 +191,7 @@ export const ShipmentMenu = ({
                 )}
 
                 {[
-                  ShipmentStatusEnum.purchased,
+                  ShipmentStatusEnum.created,
                   ShipmentStatusEnum.in_transit,
                 ].includes(shipment.status as any) && (
                     <a
@@ -216,7 +216,7 @@ export const ShipmentMenu = ({
                   )}
 
                 {[
-                  ShipmentStatusEnum.purchased,
+                  ShipmentStatusEnum.created,
                   ShipmentStatusEnum.in_transit,
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (
@@ -242,7 +242,7 @@ export const ShipmentMenu = ({
                   )}
 
                 {[
-                  ShipmentStatusEnum.purchased,
+                  ShipmentStatusEnum.created,
                   ShipmentStatusEnum.in_transit,
                   ShipmentStatusEnum.needs_attention,
                 ].includes(shipment.status as any) && (

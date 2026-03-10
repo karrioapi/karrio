@@ -146,7 +146,7 @@ class Proxy(proxy.Proxy):
             lambda payload: (
                 payload["tracking_number"],
                 lib.request(
-                    url=f"{self.settings.server_url}/tracking?packageReference={payload['tracking_number']}",
+                    url=f"{self.settings.server_url}/tracking?{urllib.parse.urlencode(payload['query_params'])}",
                     trace=self.trace_as("json"),
                     method="GET",
                     headers={
