@@ -65,7 +65,7 @@ export default function Page(pageProps: any) {
     const documentPrinter = useDocumentPrinter();
     const context = useShipments({
       status: [
-        "purchased",
+        "created",
         "delivered",
         "in_transit",
         "cancelled",
@@ -178,11 +178,11 @@ export default function Page(pageProps: any) {
     const getFilterOptions = () => [
       {
         label: "All",
-        value: ["purchased", "delivered", "in_transit", "cancelled", "needs_attention", "out_for_delivery", "delivery_failed"]
+        value: ["created", "delivered", "in_transit", "cancelled", "needs_attention", "out_for_delivery", "delivery_failed"]
       },
       {
         label: "Purchased", 
-        value: ["purchased", "in_transit", "out_for_delivery"]
+        value: ["created", "in_transit", "out_for_delivery"]
       },
       {
         label: "Delivered",

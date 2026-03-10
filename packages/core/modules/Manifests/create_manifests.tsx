@@ -41,7 +41,7 @@ export default function Page() {
     const { user_connections } = useCarrierConnections();
     const { system_connections } = useSystemConnections();
     const context = useShipments({
-      status: ["purchased"] as any,
+      status: ["created"] as any,
       meta_key: "manifest_required",
       meta_value: true,
       has_manifest: false,
