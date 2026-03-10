@@ -43,6 +43,22 @@ class TestSmartKargoTracking(unittest.TestCase):
             self.assertIn("prefix=XIA", mock.call_args[1]["url"])
             self.assertIn("Airwaybill=00291643", mock.call_args[1]["url"])
 
+    def test_get_tracking_from_shipment_meta(self):
+        with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
+            mock.return_value = "[]"
+            tracking_request = models.TrackingRequest(
+                tracking_numbers=["XIA00291643"],
+                options={
+                    "XIA00291643": {
+                        "smartkargo_prefix": "XIA",
+                        "smartkargo_air_waybill": "00291643",
+                    }
+                },
+            )
+            karrio.Tracking.fetch(tracking_request).from_(gateway)
+            self.assertIn("prefix=XIA", mock.call_args[1]["url"])
+            self.assertIn("Airwaybill=00291643", mock.call_args[1]["url"])
+
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
@@ -162,11 +178,17 @@ ParsedTrackingResponse = [
             ],
             "info": {
                 "carrier_tracking_link": "https://www.deliverdirect.com/tracking?ref=yogi045",
+                "package_weight": 2.84,
+                "package_weight_unit": "KG",
+                "shipment_package_count": 1,
             },
             "meta": {
-                "air_waybill": "00006510",
-                "package_reference": "yogi045",
-                "prefix": "AXB",
+                "smartkargo_air_waybill": "00006510",
+                "smartkargo_flight_number": "AC123",
+                "smartkargo_header_reference": "yogi045",
+                "smartkargo_package_reference": "yogi045",
+                "smartkargo_piece_reference": "yogi045-002",
+                "smartkargo_prefix": "AXB",
             },
             "status": "delivered",
             "tracking_number": "yogi045",

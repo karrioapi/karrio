@@ -18,7 +18,9 @@ def parse_tracking_response(
 
     messages: typing.List[models.Message] = sum(
         [
-            error.parse_error_response(response, settings, tracking_number=tracking_number)
+            error.parse_error_response(
+                response, settings, tracking_number=tracking_number
+            )
             for tracking_number, response in responses
         ],
         start=[],
@@ -72,13 +74,9 @@ def _extract_details(
     latest_status_code = latest_event.eventType if latest_event else ""
 
     # Map carrier status to karrio standard tracking status
-    status = next(
-        (
-            s.name
-            for s in list(provider_units.TrackingStatus)
-            if latest_status_code in s.value
-        ),
-        "in_transit",
+    status = (
+        provider_units.TrackingStatus.find(latest_status_code).name
+        or "in_transit"
     )
 
     return models.TrackingDetails(
@@ -96,22 +94,8 @@ def _extract_details(
                     event.eventDate,
                     current_format="%Y-%m-%dT%H:%M:%S",
                 ),
-                status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.eventType in s.value
-                    ),
-                    None,
-                ),
-                reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.eventType in r.value
-                    ),
-                    None,
-                ),
+                status=provider_units.TrackingStatus.find(event.eventType).name,
+                reason=provider_units.TrackingIncidentReason.find(event.eventType).name,
             )
             for event in sorted_events
         ],
@@ -123,11 +107,25 @@ def _extract_details(
         status=status,
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
+            shipment_package_count=lib.to_int(getattr(latest_event, "pieces", None)),
+            package_weight=lib.to_decimal(getattr(latest_event, "weight", None)),
+            package_weight_unit="KG",
         ),
-        meta=dict(
-            prefix=latest_event.prefix if latest_event else None,
-            air_waybill=latest_event.airWaybill if latest_event else None,
-            package_reference=latest_event.packageReference if latest_event else None,
+        meta=lib.to_dict(
+            dict(
+                smartkargo_flight_number=getattr(latest_event, "flightNumber", None),
+                smartkargo_air_waybill=getattr(latest_event, "airWaybill", None),
+                smartkargo_prefix=getattr(latest_event, "prefix", None),
+                smartkargo_header_reference=getattr(
+                    latest_event, "headerReference", None
+                ),
+                smartkargo_package_reference=getattr(
+                    latest_event, "packageReference", None
+                ),
+                smartkargo_piece_reference=getattr(
+                    latest_event, "pieceReference", None
+                ),
+            )
         ),
     )
 
@@ -140,20 +138,32 @@ def tracking_request(
 
     SmartKargo supports two tracking lookup strategies:
     - Primary:  GET /tracking?prefix=<PREFIX>&Airwaybill=<AWB>
-      Used when the tracking number matches the carrier AWB format: 3 alpha + digits
-      (e.g. "XIA00291643" → prefix="XIA", Airwaybill="00291643")
+      Resolved from shipment meta options (smartkargo_prefix, smartkargo_air_waybill)
+      or by parsing the tracking number (3 alpha + digits, e.g. "XIA00291643")
     - Fallback: GET /tracking?packageReference=<ref>
       Used for legacy / non-AWB references (e.g. "yogi045")
     """
     import re
 
     _AWB_PATTERN = re.compile(r"^([A-Za-z]{3})[-_ ]?([0-9]+)$")
+    options = payload.options or {}
 
     def _build_query_params(tracking_number: str) -> dict:
+        # Check shipment meta passed via options (per-tracking or global)
+        tracking_options = options.get(tracking_number) or options
+        prefix = tracking_options.get("smartkargo_prefix")
+        airwaybill = tracking_options.get("smartkargo_air_waybill")
+
+        if prefix and airwaybill:
+            return dict(prefix=prefix, Airwaybill=airwaybill)
+
+        # Parse from tracking number format (e.g. "XIA00291643")
         match = _AWB_PATTERN.match(tracking_number or "")
         if match is not None:
             prefix, airwaybill = match.groups()
             return dict(prefix=prefix.upper(), Airwaybill=airwaybill)
+
+        # Last resort: lookup by package reference
         return dict(packageReference=tracking_number)
 
     request = [
