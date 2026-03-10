@@ -347,7 +347,7 @@ def _urlopen_with_span(req: Request, timeout=None):
     tracing must never break the actual carrier request.
     """
     try:
-        import sentry_sdk  # type: ignore[import-not-found]
+        import sentry_sdk
         with sentry_sdk.start_span(
             op="http.client",
             description=f"{req.get_method()} {req.full_url}",

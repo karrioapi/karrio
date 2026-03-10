@@ -330,6 +330,7 @@ class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
               rate_sheet(id: $id) {
                 id
                 name
+                is_system
               }
             }
             """,
@@ -340,6 +341,7 @@ class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
         data = response.data["data"]["rate_sheet"]
         self.assertIsNotNone(data)
         self.assertEqual(data["id"], self.rate_sheet.id)
+        self.assertTrue(data["is_system"])
 
     def test_admin2_can_update_system_ratesheet_created_by_admin1(self):
         """System ratesheets are global — any staff admin can update them."""
