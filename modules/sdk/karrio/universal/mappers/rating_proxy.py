@@ -530,7 +530,7 @@ def get_available_rates(
                     name="Base Charge",
                     amount=base_rate,
                     currency=service.currency,
-                    **({"cost": base_cost} if base_cost is not None else {}),
+                    cost=base_cost,
                 )
             ]
             extra_charges.extend(surcharge_charges)

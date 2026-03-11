@@ -288,8 +288,8 @@ export function RateSheetCsvPreview({
   // ── Lazy guard: skip all computation when panel is closed ──
   // Build a lookup for service rates
   const rateLookup = useMemo(() => {
-    if (!open) return new Map<string, { rate: number; planCosts: Record<string, number> }>();
-    const map = new Map<string, { rate: number; planCosts: Record<string, number> }>();
+    if (!open) return new Map<string, { rate: number; planCosts: Record<string, number>; planCostTypes: Record<string, string> }>();
+    const map = new Map<string, { rate: number; planCosts: Record<string, number>; planCostTypes: Record<string, string> }>();
     for (const sr of serviceRates) {
       const key = `${sr.service_id}:${sr.zone_id}:${sr.min_weight ?? 0}:${sr.max_weight ?? 0}`;
       map.set(key, {
