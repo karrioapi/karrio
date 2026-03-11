@@ -21,14 +21,17 @@ def parse_shipment_response(
     air_way_bill = lib.find_element("AirwayBillNumber", response, first=True)
 
     return (
-        _extract_shipment(response, settings) if air_way_bill is not None else None,
+        _extract_shipment(response, settings, _response.ctx) if air_way_bill is not None else None,
         provider_error.parse_error_response(response, settings),
     )
 
 
 def _extract_shipment(
-    shipment_node, settings: provider_utils.Settings
+    shipment_node,
+    settings: provider_utils.Settings,
+    ctx: typing.Dict[str, typing.Any] = None,
 ) -> typing.Optional[models.ShipmentDetails]:
+    ctx = ctx or {}
     tracking_number = lib.find_element(
         "AirwayBillNumber", shipment_node, first=True
     ).text
@@ -42,10 +45,10 @@ def _extract_shipment(
         (item for item in multilabels if item.DocName == "CustomInvoiceImage"), None
     )
 
+    currency = ctx.get("currency") or settings.default_currency
     pricing_data = {
         "package_charge": lib.find_element("PackageCharge", shipment_node, first=True),
         "shipping_charge": lib.find_element("ShippingCharge", shipment_node, first=True),
-        "currency": lib.find_element("QtdSInAdCur/CurrencyCode", shipment_node, first=True),
     }
 
     charges = [
@@ -58,9 +61,9 @@ def _extract_shipment(
             carrier_name=settings.carrier_name,
             service="dhl_express",
             total_charge=lib.to_money(pricing_data["shipping_charge"].text),
-            currency=lib.failsafe(lambda: pricing_data["currency"].text) or "USD",
+            currency=currency,
             extra_charges=[
-                models.ChargeDetails(name=name, amount=lib.to_money(amount), currency=lib.failsafe(lambda: pricing_data["currency"].text) or "USD")
+                models.ChargeDetails(name=name, amount=lib.to_money(amount), currency=currency)
                 for name, amount in charges
                 if amount and lib.to_money(amount) != 0
             ],
@@ -200,7 +203,7 @@ def shipment_request(
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
         Request=settings.Request(
-            MetaData=dhl.MetaData(SoftwareName="3PV", SoftwareVersion="10.0")
+            MetaData=dhl.MetaData(SoftwareName=settings.software_name or "3PV", SoftwareVersion="10.0")
         ),
         RegionCode=provider_units.CountryRegion[shipper.country_code].value,
         LanguageCode="en",
@@ -214,7 +217,7 @@ def shipment_request(
         Consignee=dhl.Consignee(
             CompanyName=recipient.company_name or "N/A",
             SuiteDepartmentName=None,
-            AddressLine1=recipient.street,
+            AddressLine1=recipient.address_line1,
             AddressLine2=lib.text(recipient.address_line2),
             AddressLine3=None,
             City=recipient.city,
@@ -463,7 +466,7 @@ def shipment_request(
             CompanyName=shipper.company_name or "N/A",
             SuiteDepartmentName=None,
             RegisteredAccount=settings.account_number,
-            AddressLine1=shipper.street,
+            AddressLine1=shipper.address_line1,
             AddressLine2=lib.join(shipper.address_line2, join=True),
             AddressLine3=None,
             City=shipper.city,
@@ -573,4 +576,5 @@ def shipment_request(
             .replace("<Image>b'", "<Image>")
             .replace("'</Image>", "</Image>")
         ),
+        dict(currency=currency),
     )

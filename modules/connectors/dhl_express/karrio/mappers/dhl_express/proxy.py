@@ -33,7 +33,7 @@ class Proxy(BaseProxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
