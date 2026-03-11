@@ -64,8 +64,9 @@ def migrate_system_rate_sheets(apps, schema_editor):
     if migrated_count:
         print(f"\n  Migrated {migrated_count} system rate sheet(s) to SystemRateSheet table")
 
-    # Delete all migrated rows from the old RateSheet table
-    RateSheet.objects.filter(id__in=all_ids).delete()
+    # DO NOT delete here — deleting before the FK switch in 0107 triggers
+    # on_delete=SET_NULL and nulls SystemConnection.rate_sheet_id. Cleanup
+    # runs in 0109_cleanup_legacy_system_rate_sheets after the FK transition.
 
 
 class Migration(migrations.Migration):
