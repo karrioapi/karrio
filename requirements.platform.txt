@@ -97,7 +97,7 @@ karrio-server-orders==2026.1.21
 karrio-server-orgs==2026.1.21
 karrio-server-pricing==2026.1.21
 karrio-server-proxy==2026.1.21
--e git+https://github.com/karrioapi/karrio-platform.git@738c85958f2cac53d3c19af27c8dad9079f18a1e#egg=karrio_server_tenants&subdirectory=ee/platform/modules/tenants
+-e git+https://github.com/karrioapi/karrio-platform.git@e936bf8c685e055f250466ef4178dfbf0328ba98#egg=karrio_server_tenants&subdirectory=ee/platform/modules/tenants
 karrio-smartkargo==2026.1.21
 karrio-spring==2026.1.21
 karrio-teleship==2026.1.21
