@@ -200,8 +200,8 @@ def rate_request(
                     customItems=(
                         [
                             smartkargo_req.CustomItemType(
-                                exportHsCode=item.hs_code,
-                                importHsCode=item.hs_code,
+                                exportHsCode=item.hs_code or lib.identity(item.metadata or {}).get("export_hs_code") or "N/A",
+                                importHsCode=lib.identity(item.metadata or {}).get("import_hs_code") or item.hs_code or "N/A",
                                 description=item.description or item.title,
                                 quantity=item.quantity,
                                 quantityUnit=item.weight_unit or "kg",

@@ -139,11 +139,11 @@ describe("KarrioClient", () => {
       json: () => Promise.resolve({ results: [] }),
     });
 
-    await client.listShipments({ status: "purchased", limit: "10" });
+    await client.listShipments({ status: "created", limit: "10" });
 
     const calledUrl = (fetch as any).mock.calls[0][0];
 
-    expect(calledUrl).toContain("status=purchased");
+    expect(calledUrl).toContain("status=created");
     expect(calledUrl).toContain("limit=10");
   });
 
@@ -183,7 +183,7 @@ describe("KarrioClient", () => {
   it("calls correct URL for purchaseShipment", async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ id: "shp_123", status: "purchased" }),
+      json: () => Promise.resolve({ id: "shp_123", status: "created" }),
     });
 
     const payload = { selected_rate_id: "rate_456" };

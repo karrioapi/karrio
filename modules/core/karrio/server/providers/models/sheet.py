@@ -8,10 +8,14 @@ import karrio.server.core.models as core
 _ = translation.gettext_lazy
 
 
-@core.register_model
-class RateSheet(core.OwnedEntity):
+# ─────────────────────────────────────────────────────────────────────────────
+# BASE RATE SHEET MIXIN — shared fields and methods for both models
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class BaseRateSheetMixin(models.Model):
     """
-    Rate sheet with shared zones, surcharges, and service-zone rate mappings.
+    Abstract mixin with all shared rate sheet fields and methods.
 
     Structure:
     - zones: Shared geographic zone definitions
@@ -21,29 +25,16 @@ class RateSheet(core.OwnedEntity):
     """
 
     class Meta:
-        db_table = "rate-sheet"
-        verbose_name = "Rate Sheet"
-        verbose_name_plural = "Rate Sheets"
-        ordering = ["-created_at"]
+        abstract = True
 
-    id = models.CharField(
-        max_length=50,
-        editable=False,
-        primary_key=True,
-        default=functools.partial(core.uuid, prefix="rsht_"),
-    )
     name = models.CharField(_("name"), max_length=50, db_index=True)
     slug = models.CharField(_("slug"), max_length=50, db_index=True)
     carrier_name = models.CharField(max_length=50, db_index=True)
-    is_system = models.BooleanField(default=False, db_index=True)
     origin_countries = models.JSONField(
         blank=True,
         null=True,
         default=core.field_default([]),
         help_text="List of origin country codes this rate sheet applies to",
-    )
-    services = models.ManyToManyField(
-        "ServiceLevel", blank=True, related_name="service_sheet"
     )
 
     # ─────────────────────────────────────────────────────────────────
@@ -95,35 +86,6 @@ class RateSheet(core.OwnedEntity):
         default=core.field_default({}),
         help_text="Pricing config: {excluded_markup_ids: [...]}",
     )
-
-    created_by = models.ForeignKey(
-        conf.settings.AUTH_USER_MODEL,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        editable=False,
-    )
-
-    def delete(self, *args, **kwargs):
-        self.services.all().delete()
-        return super().delete(*args, **kwargs)
-
-    @property
-    def object_type(self):
-        return "rate-sheet"
-
-    @property
-    def carriers(self):
-        import karrio.server.providers.models as providers
-
-        if self.is_system:
-            return providers.SystemConnection.objects.filter(
-                carrier_code=self.carrier_name, rate_sheet__id=self.id
-            )
-
-        return providers.CarrierConnection.objects.filter(
-            carrier_code=self.carrier_name, rate_sheet__id=self.id
-        )
 
     # ─────────────────────────────────────────────────────────────────
     # ZONE MANAGEMENT
@@ -566,3 +528,122 @@ class RateSheet(core.OwnedEntity):
                     "active": surcharge.get("active", True),
                 })
         return result
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ACCOUNT RATE SHEET — tenant-scoped, base GraphQL
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@core.register_model
+class RateSheet(core.OwnedEntity, BaseRateSheetMixin):
+    """
+    Tenant-scoped rate sheet, accessible via base GraphQL.
+
+    Owned by users/organizations. Uses access_by() for tenant scoping.
+    """
+
+    class Meta:
+        db_table = "rate-sheet"
+        verbose_name = "Rate Sheet"
+        verbose_name_plural = "Rate Sheets"
+        ordering = ["-created_at"]
+
+    id = models.CharField(
+        max_length=50,
+        editable=False,
+        primary_key=True,
+        default=functools.partial(core.uuid, prefix="rsht_"),
+    )
+    services = models.ManyToManyField(
+        "ServiceLevel", blank=True, related_name="service_sheet"
+    )
+
+    created_by = models.ForeignKey(
+        conf.settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        editable=False,
+    )
+
+    def delete(self, *args, **kwargs):
+        self.services.all().delete()
+        return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "rate-sheet"
+
+    @property
+    def carriers(self):
+        import karrio.server.providers.models as providers
+
+        return providers.CarrierConnection.objects.filter(
+            carrier_code=self.carrier_name, rate_sheet__id=self.id
+        )
+
+
+# Backward-compatible alias
+AccountRateSheet = RateSheet
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SYSTEM RATE SHEET — admin-managed, admin GraphQL only
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@core.register_model
+class SystemRateSheet(BaseRateSheetMixin):
+    """
+    Admin-managed system rate sheet, accessible via admin GraphQL only.
+
+    Not tenant-scoped. Managed by platform admins.
+    System connections reference these for platform-wide carrier pricing.
+    """
+
+    class Meta:
+        db_table = "system-rate-sheet"
+        verbose_name = "System Rate Sheet"
+        verbose_name_plural = "System Rate Sheets"
+        ordering = ["-created_at"]
+
+    id = models.CharField(
+        max_length=50,
+        editable=False,
+        primary_key=True,
+        default=functools.partial(core.uuid, prefix="rsht_"),
+    )
+    services = models.ManyToManyField(
+        "ServiceLevel", blank=True, related_name="system_service_sheet"
+    )
+
+    created_by = models.ForeignKey(
+        conf.settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="system_rate_sheets_created",
+        editable=False,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name or str(self.id)
+
+    def delete(self, *args, **kwargs):
+        self.services.all().delete()
+        return super().delete(*args, **kwargs)
+
+    @property
+    def object_type(self):
+        return "system-rate-sheet"
+
+    @property
+    def carriers(self):
+        import karrio.server.providers.models as providers
+
+        return providers.SystemConnection.objects.filter(
+            carrier_code=self.carrier_name, rate_sheet__id=self.id
+        )

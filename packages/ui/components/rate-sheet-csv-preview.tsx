@@ -54,6 +54,10 @@ interface FlatRow {
   currency: string;
   weightUnit: string;
   surcharges: Record<string, number>;
+  /** Per-plan COGS from rate meta.plan_costs: { [markup_id]: cost } */
+  planCosts: Record<string, number>;
+  /** Per-plan COGS type from rate meta.plan_cost_types: { [markup_id]: "PERCENTAGE" | "AMOUNT" } */
+  planCostTypes: Record<string, string>;
   /** Progressive totals for each markup column */
   markups: Record<string, number>;
   /** Which markups are disabled for this row (service doesn't support or toggle off) */
@@ -284,11 +288,15 @@ export function RateSheetCsvPreview({
   // ── Lazy guard: skip all computation when panel is closed ──
   // Build a lookup for service rates
   const rateLookup = useMemo(() => {
-    if (!open) return new Map<string, number>();
-    const map = new Map<string, number>();
+    if (!open) return new Map<string, { rate: number; planCosts: Record<string, number>; planCostTypes: Record<string, string> }>();
+    const map = new Map<string, { rate: number; planCosts: Record<string, number>; planCostTypes: Record<string, string> }>();
     for (const sr of serviceRates) {
       const key = `${sr.service_id}:${sr.zone_id}:${sr.min_weight ?? 0}:${sr.max_weight ?? 0}`;
-      map.set(key, sr.rate);
+      map.set(key, {
+        rate: sr.rate,
+        planCosts: (sr.meta?.plan_costs as Record<string, number>) || {},
+        planCostTypes: (sr.meta?.plan_cost_types as Record<string, string>) || {},
+      });
     }
     return map;
   }, [open, serviceRates]);
@@ -377,11 +385,14 @@ export function RateSheetCsvPreview({
       for (const zone of assignedZones) {
         for (const wr of effectiveRanges) {
           const rateKey = `${service.id}:${zone.id}:${wr.min_weight}:${wr.max_weight}`;
-          const rate = rateLookup.get(rateKey) ?? null;
+          const rateEntry = rateLookup.get(rateKey) ?? null;
 
           // Skip rows without a base rate
-          if (rate == null) continue;
+          if (rateEntry == null) continue;
 
+          const rate = rateEntry.rate;
+          const ratePlanCosts = rateEntry.planCosts;
+          const ratePlanCostTypes = rateEntry.planCostTypes;
           const baseRate = rate;
 
           // Per-rate meta for exclusion checks (reuses rateKey from above)
@@ -496,6 +507,8 @@ export function RateSheetCsvPreview({
             currency: service.currency || "USD",
             weightUnit: service.weight_unit || weightUnit,
             surcharges: surchAmounts,
+            planCosts: ratePlanCosts,
+            planCostTypes: ratePlanCostTypes,
             markups: mkpTotals,
             markupDisabled: mkpDisabled,
           });
@@ -630,6 +643,15 @@ export function RateSheetCsvPreview({
     return set;
   }, [sortedPreviewMarkups]);
 
+  // Build a set of plan markup IDs for COGS override display
+  const planMarkupIds = useMemo(() => {
+    const set = new Set<string>();
+    for (const m of sortedPreviewMarkups) {
+      if (m.meta?.plan) set.add(m.id);
+    }
+    return set;
+  }, [sortedPreviewMarkups]);
+
   // Brokerage cell data: returns { contribution, total } or null
   const getBrokerageData = useCallback(
     (row: FlatRow, markupId: string): { contribution: string; total: string } | null => {
@@ -696,6 +718,20 @@ export function RateSheetCsvPreview({
             const brokData = isMkp && !isDisabled
               ? getBrokerageData(row, mid)
               : null;
+            // Plan markup COGS override: show COGS as primary, COGS-based total as secondary
+            const planCogs = isMkp && !isDisabled && planMarkupIds.has(mid)
+              ? row.planCosts[mid]
+              : undefined;
+            // Compute plan total using stored COGS type
+            // AMOUNT: total = base + COGS, PERCENTAGE: total = base + (COGS% * base)
+            let planTotal: number | undefined;
+            if (planCogs != null) {
+              const baseRate = row.rate ?? 0;
+              const cogsType = row.planCostTypes[mid] || "AMOUNT";
+              planTotal = cogsType === "PERCENTAGE"
+                ? baseRate + (planCogs / 100) * baseRate
+                : baseRate + planCogs;
+            }
 
             return (
               <div
@@ -707,9 +743,16 @@ export function RateSheetCsvPreview({
                     : "text-foreground"
                 )}
                 style={{ width: `${col.width}px` }}
-                title={value}
+                title={planCogs != null
+                  ? `COGS: ${planCogs.toFixed(2)} | Total: ${planTotal?.toFixed(2) ?? ""}`
+                  : value}
               >
-                {brokData ? (
+                {planCogs != null ? (
+                  <span className="flex items-baseline gap-1">
+                    <span className="font-medium text-amber-600">{planCogs.toFixed(2)}</span>
+                    <span className="text-[10px] text-muted-foreground">{planTotal?.toFixed(2) ?? ""}</span>
+                  </span>
+                ) : brokData ? (
                   <span className="flex items-baseline gap-1">
                     <span>{brokData.contribution}</span>
                     <span className="text-[10px] text-muted-foreground">{brokData.total}</span>
@@ -723,7 +766,7 @@ export function RateSheetCsvPreview({
         </div>
       );
     },
-    [formatMarkupCell, getBrokerageData]
+    [formatMarkupCell, getBrokerageData, planMarkupIds, markupById]
   );
 
   return (

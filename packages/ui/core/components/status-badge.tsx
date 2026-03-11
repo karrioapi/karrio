@@ -18,7 +18,7 @@ export const StatusBadge = ({
       unfulfilled: "is-primary is-light",
       cancelled: "is-light",
       partial: "is-info is-light",
-      purchased: "is-info is-light",
+      created: "is-info is-light",
       in_transit: "is-info is-light",
       unknown: "is-light",
       transit: "is-info is-light",

@@ -118,7 +118,7 @@ opentelemetry-util-http==0.61b0
 packaging==26.0
 phonenumbers==9.0.25
 pillow==12.1.1
-posthog==7.9.8
+posthog==7.9.11
 protobuf==6.33.5
 psutil==7.2.2
 psycopg2-binary==2.9.11
@@ -142,7 +142,7 @@ rpds-py==0.30.0
 sentry-sdk==2.54.0
 six==1.17.0
 sqlparse==0.5.5
-strawberry-graphql==0.311.0
+strawberry-graphql==0.311.1
 tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.1.0

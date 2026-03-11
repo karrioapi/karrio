@@ -1,3 +1,20 @@
+# Karrio 2026.1.21
+
+## Changes
+
+### Fix
+
+- fix: replace lingering purchased status references with created
+- fix(smartkargo): fallback to N/A for empty importHsCode and exportHsCode
+- fix(dhl_express): community reported bugs - certification, address formatting, and currency
+- fix: sync shipping-platform patches (admin COGS, rate sheet split, dhl_parcel_de creds)
+
+### Docs
+
+- docs(prd): rate sheet system vs account separation
+
+---
+
 # Karrio 2026.1.20
 
 > **Breaking Change:** The shipment status `purchased` has been renamed to `created`.

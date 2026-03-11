@@ -212,7 +212,7 @@ export function useRateSheetMutation() {
 
   // Service Rate Mutations
   const updateServiceRate = useMutation(
-    (data: { rate_sheet_id: string; service_id: string; zone_id: string; rate?: number; cost?: number; min_weight?: number; max_weight?: number }) => karrio.graphql.request<any>(
+    (data: { rate_sheet_id: string; service_id: string; zone_id: string; rate?: number; cost?: number; min_weight?: number; max_weight?: number; transit_days?: number; transit_time?: number; meta?: Record<string, any> }) => karrio.graphql.request<any>(
       gqlstr(UPDATE_SERVICE_RATE), { data }
     ),
     { onSuccess: invalidateCache, onError }

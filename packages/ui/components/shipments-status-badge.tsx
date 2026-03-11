@@ -22,7 +22,7 @@ export const ShipmentsStatusBadge = ({
       cancelled: "bg-gray-50 text-gray-500",
       unknown: "bg-gray-50 text-gray-500",
       partial: "bg-cyan-50 text-cyan-500",
-      purchased: "bg-blue-50 text-blue-500",
+      created: "bg-blue-50 text-blue-500",
       in_transit: "bg-cyan-50 text-cyan-500",
       transit: "bg-cyan-50 text-cyan-500", 
       running: "bg-cyan-50 text-cyan-500",

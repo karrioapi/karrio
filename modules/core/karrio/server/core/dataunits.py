@@ -154,6 +154,20 @@ def _get_system_credentials_status(test_mode: bool = None) -> dict:
                     sandbox_configured if test_mode else prod_configured
                 )
 
+            # Extract field names from system config keys
+            # e.g., DHL_PARCEL_DE_CLIENT_ID -> client_id
+            prefix = carrier_id.upper() + "_"
+            sandbox_prefix = carrier_id.upper() + "_SANDBOX_"
+            system_fields = set()
+            for var in (prod_vars + sandbox_vars):
+                name = var.upper()
+                if name.startswith(sandbox_prefix):
+                    name = name[len(sandbox_prefix):]
+                elif name.startswith(prefix):
+                    name = name[len(prefix):]
+                system_fields.add(name.lower())
+            entry["fields"] = list(system_fields)
+
             result[carrier_id] = entry
 
     return result

@@ -3010,6 +3010,7 @@ export const UPDATE_SERVICE_RATE = gql`
           max_weight
           transit_days
           transit_time
+          meta
         }
       }
       errors {
@@ -3034,6 +3035,7 @@ export const BATCH_UPDATE_SERVICE_RATES = gql`
           max_weight
           transit_days
           transit_time
+          meta
         }
       }
       errors {
@@ -3196,6 +3198,7 @@ export const GET_RATE_SHEET = gql`
         max_weight
         transit_days
         transit_time
+        meta
       }
       services {
         id
@@ -3294,6 +3297,7 @@ export const GET_RATE_SHEETS = gql`
             max_weight
             transit_days
             transit_time
+            meta
           }
           services {
             id

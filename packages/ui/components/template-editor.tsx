@@ -496,7 +496,7 @@ export function TemplateEditor({ templateId, onClose, onSave }: TemplateEditorPr
             created_at: new Date().toISOString(),
             metadata: { order_ids: '1073459962,394873849374' },
             messages: [],
-            status: 'purchased',
+            status: 'created',
             carrier_name: 'generic',
             carrier_id: 'tst-overland',
           }

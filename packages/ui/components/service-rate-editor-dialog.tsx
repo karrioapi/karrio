@@ -45,21 +45,35 @@ export function ServiceRateEditorDialog({
   surcharges,
 }: ServiceRateEditorDialogProps) {
   const [rate, setRate] = useState("");
-  const [cost, setCost] = useState("");
   const [transitDays, setTransitDays] = useState("");
   const [transitTime, setTransitTime] = useState("");
   const [excludedMarkupIds, setExcludedMarkupIds] = useState<string[]>([]);
   const [excludedSurchargeIds, setExcludedSurchargeIds] = useState<string[]>([]);
+  const [planCosts, setPlanCosts] = useState<Record<string, string>>({});
+  const [planCostTypes, setPlanCostTypes] = useState<Record<string, "PERCENTAGE" | "AMOUNT">>({});
+
+  // Plan markups are markups with meta.plan set
+  const planMarkups = (markups || []).filter((m) => m.active && m.meta?.plan);
 
   useEffect(() => {
     if (serviceRate && open) {
       setRate(serviceRate.rate?.toString() || "0");
-      setCost(serviceRate.cost?.toString() || "");
       setTransitDays(serviceRate.transit_days?.toString() || "");
       setTransitTime(serviceRate.transit_time?.toString() || "");
       const meta = serviceRate.meta || {};
       setExcludedMarkupIds(meta.excluded_markup_ids || []);
       setExcludedSurchargeIds(meta.excluded_surcharge_ids || []);
+      // Initialize per-plan costs and types from meta
+      const existingPlanCosts = meta.plan_costs || {};
+      const existingPlanCostTypes = meta.plan_cost_types || {};
+      const costState: Record<string, string> = {};
+      const typeState: Record<string, "PERCENTAGE" | "AMOUNT"> = {};
+      planMarkups.forEach((m) => {
+        costState[m.id] = existingPlanCosts[m.id]?.toString() || "";
+        typeState[m.id] = existingPlanCostTypes[m.id] || "AMOUNT";
+      });
+      setPlanCosts(costState);
+      setPlanCostTypes(typeState);
     }
   }, [serviceRate, open]);
 
@@ -82,6 +96,8 @@ export function ServiceRateEditorDialog({
     : "";
 
   const activeMarkups = (markups || []).filter((m) => m.active);
+  // Non-plan markups for exclusion section
+  const nonPlanMarkups = activeMarkups.filter((m) => !m.meta?.plan);
   const activeSurcharges = (surcharges || []).filter((s) => s.active);
 
   const toggleMarkupExclusion = (markupId: string) => {
@@ -107,7 +123,7 @@ export function ServiceRateEditorDialog({
     const parsedTransitDays = transitDays ? parseInt(transitDays, 10) : null;
     const parsedTransitTime = transitTime ? parseFloat(transitTime) : null;
 
-    // Build meta with exclusions merged into existing meta
+    // Build meta with exclusions and plan costs merged into existing meta
     const existingMeta = serviceRate.meta || {};
     const newMeta: Record<string, any> = { ...existingMeta };
     if (excludedMarkupIds.length > 0) {
@@ -121,10 +137,28 @@ export function ServiceRateEditorDialog({
       delete newMeta.excluded_surcharge_ids;
     }
 
+    // Build plan_costs: { [markup_id]: cost_value }
+    // Build plan_cost_types: { [markup_id]: "PERCENTAGE" | "AMOUNT" }
+    const parsedPlanCosts: Record<string, number> = {};
+    const parsedPlanCostTypes: Record<string, string> = {};
+    for (const [markupId, value] of Object.entries(planCosts)) {
+      if (value && !isNaN(parseFloat(value))) {
+        parsedPlanCosts[markupId] = parseFloat(value);
+        parsedPlanCostTypes[markupId] = planCostTypes[markupId] || "AMOUNT";
+      }
+    }
+    if (Object.keys(parsedPlanCosts).length > 0) {
+      newMeta.plan_costs = parsedPlanCosts;
+      newMeta.plan_cost_types = parsedPlanCostTypes;
+    } else {
+      delete newMeta.plan_costs;
+      delete newMeta.plan_cost_types;
+    }
+
     onSave({
       ...serviceRate,
       rate: parseFloat(rate) || 0,
-      cost: cost ? parseFloat(cost) : null,
+      cost: null, // cost is now per-plan, clear legacy single cost
       transit_days:
         parsedTransitDays !== null && !isNaN(parsedTransitDays)
           ? parsedTransitDays
@@ -166,8 +200,8 @@ export function ServiceRateEditorDialog({
               </div>
             </div>
 
-            {/* Editable fields */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Rate + Transit */}
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Rate (Sell Price)</Label>
                 <Input
@@ -180,20 +214,6 @@ export function ServiceRateEditorDialog({
                   autoFocus
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Cost (COGS)</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={cost}
-                  onChange={(e) => setCost(e.target.value)}
-                  placeholder="0.00"
-                  className="h-9"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Transit Days</Label>
                 <Input
@@ -220,15 +240,90 @@ export function ServiceRateEditorDialog({
               </div>
             </div>
 
-            {/* Excluded Markups */}
-            {activeMarkups.length > 0 && (
+            {/* Per-Plan COGS + Exclusion table */}
+            {planMarkups.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-xs font-medium">Plans</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Set custom cost (COGS) per plan. Check to exclude a plan from this rate.
+                </p>
+                <div className="border border-border rounded-md overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-muted/50 text-xs text-muted-foreground">
+                        <th className="text-left px-3 py-1.5 font-medium">Plan</th>
+                        <th className="text-left px-3 py-1.5 font-medium w-28">COGS</th>
+                        <th className="text-center px-3 py-1.5 font-medium w-16">Exclude</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {planMarkups.map((markup) => (
+                        <tr key={markup.id} className="border-t border-border">
+                          <td className="px-3 py-1.5">
+                            <div className="text-sm text-foreground">{markup.name}</div>
+                            <div className="text-[10px] text-muted-foreground">
+                              {markup.markup_type === "PERCENTAGE"
+                                ? `${markup.amount}%`
+                                : markup.amount}
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5">
+                            <div className="flex items-center gap-1">
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={planCosts[markup.id] || ""}
+                                onChange={(e) =>
+                                  setPlanCosts((prev) => ({
+                                    ...prev,
+                                    [markup.id]: e.target.value,
+                                  }))
+                                }
+                                placeholder="0.00"
+                                className="h-7 text-xs flex-1"
+                                disabled={excludedMarkupIds.includes(markup.id)}
+                              />
+                              <button
+                                type="button"
+                                className="h-7 px-1.5 text-[10px] font-medium border border-border rounded hover:bg-muted/50 shrink-0 min-w-[28px]"
+                                disabled={excludedMarkupIds.includes(markup.id)}
+                                onClick={() =>
+                                  setPlanCostTypes((prev) => ({
+                                    ...prev,
+                                    [markup.id]: prev[markup.id] === "PERCENTAGE" ? "AMOUNT" : "PERCENTAGE",
+                                  }))
+                                }
+                                title={planCostTypes[markup.id] === "PERCENTAGE" ? "Percentage" : "Fixed amount"}
+                              >
+                                {planCostTypes[markup.id] === "PERCENTAGE" ? "%" : "$"}
+                              </button>
+                            </div>
+                          </td>
+                          <td className="px-3 py-1.5 text-center">
+                            <input
+                              type="checkbox"
+                              checked={excludedMarkupIds.includes(markup.id)}
+                              onChange={() => toggleMarkupExclusion(markup.id)}
+                              className="h-3.5 w-3.5 rounded border-border"
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Excluded Markups (non-plan markups only) */}
+            {nonPlanMarkups.length > 0 && (
               <div className="space-y-2">
                 <Label className="text-xs font-medium">Excluded Markups</Label>
                 <p className="text-[11px] text-muted-foreground">
                   Checked markups will NOT apply to this specific rate
                 </p>
                 <div className="space-y-1.5 max-h-32 overflow-y-auto">
-                  {activeMarkups.map((markup) => (
+                  {nonPlanMarkups.map((markup) => (
                     <label
                       key={markup.id}
                       className="flex items-center gap-2 px-2 py-1 rounded hover:bg-muted/50 cursor-pointer"

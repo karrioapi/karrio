@@ -165,7 +165,9 @@ export interface ServiceLevelWithZones {
   max_length?: number | null;
   dimension_unit?: string | null;
   max_weight?: number | null;
+  min_weight?: number | null;
   weight_unit?: string | null;
+  cost?: number | null;
   domicile?: boolean | null;
   international?: boolean | null;
   use_volumetric?: boolean;

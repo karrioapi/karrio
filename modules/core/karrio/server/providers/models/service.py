@@ -144,7 +144,10 @@ class ServiceLevel(core.OwnedEntity):
     @property
     def rate_sheet(self):
         """Get the rate sheet this service belongs to."""
-        return self.service_sheet.first()
+        return (
+            self.service_sheet.first()
+            or self.system_service_sheet.first()
+        )
 
     @property
     def zones(self):
@@ -202,6 +205,7 @@ class ServiceLevel(core.OwnedEntity):
                 "radius": zone_def.get("radius"),
                 "latitude": zone_def.get("latitude"),
                 "longitude": zone_def.get("longitude"),
+                "meta": rate_data.get("meta") or {},
             })
 
         return result
