@@ -8,17 +8,6 @@ from django.conf import settings
 from django.db import migrations, models
 
 
-def _get_dependencies():
-    deps = [
-        ('providers', '0105_migrate_smartkargo_account_id_to_config'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
-    # In OSS mode, orgs module doesn't have this migration
-    if getattr(settings, "MULTI_ORGANIZATIONS", False):
-        deps.append(("orgs", "0030_remove_system_ratesheet_org_links"))
-    return deps
-
-
 def migrate_system_rate_sheets(apps, schema_editor):
     """Copy rate sheets used by SystemConnections to the new SystemRateSheet table.
 
@@ -75,13 +64,17 @@ def migrate_system_rate_sheets(apps, schema_editor):
     if migrated_count:
         print(f"\n  Migrated {migrated_count} system rate sheet(s) to SystemRateSheet table")
 
-    # Delete all migrated rows from the old RateSheet table
-    RateSheet.objects.filter(id__in=all_ids).delete()
+    # DO NOT delete here — deleting before the FK switch in 0107 triggers
+    # on_delete=SET_NULL and nulls SystemConnection.rate_sheet_id. Cleanup
+    # runs in 0109_cleanup_legacy_system_rate_sheets after the FK transition.
 
 
 class Migration(migrations.Migration):
 
-    dependencies = _get_dependencies()
+    dependencies = [
+        ('providers', '0105_migrate_smartkargo_account_id_to_config'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
     operations = [
         # Step 1: Create the new SystemRateSheet table
