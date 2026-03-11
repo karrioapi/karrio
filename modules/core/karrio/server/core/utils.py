@@ -1001,10 +1001,11 @@ def load_and_apply_shipping_method(
         method = None
 
     if method is None:
-        raise exceptions.APIException(
-            f"Shipping method '{shipping_method_id}' not found or inactive.",
+        from rest_framework.exceptions import NotFound
+
+        raise NotFound(
+            detail=f"Shipping method '{shipping_method_id}' not found or inactive.",
             code="shipping_method_not_found",
-            status_code=status.HTTP_404_NOT_FOUND,
         )
 
     # Apply shipping method configuration using shared helper

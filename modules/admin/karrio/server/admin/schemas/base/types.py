@@ -313,7 +313,7 @@ class SystemRateSheetType(base.RateSheetType):
 
     @strawberry.field
     def carriers(
-        self: providers.RateSheet,
+        self: providers.SystemRateSheet,
     ) -> typing.List[SystemCarrierConnectionType]:
         return self.carriers
 
@@ -324,8 +324,7 @@ class SystemRateSheetType(base.RateSheetType):
         info: Info,
         id: str,
     ) -> typing.Optional["SystemRateSheetType"]:
-        _test_mode = getattr(info.context.request, "test_mode", False)
-        return providers.RateSheet.objects.filter(id=id, is_system=True).first()
+        return providers.SystemRateSheet.objects.filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
@@ -337,8 +336,8 @@ class SystemRateSheetType(base.RateSheetType):
         _filter = (
             filter if not utils.is_unset(filter) else inputs.base.RateSheetFilter()
         )
-        queryset = filters.RateSheetFilter(
-            _filter.to_dict(), providers.RateSheet.objects.filter(is_system=True)
+        queryset = filters.SystemRateSheetFilter(
+            _filter.to_dict(), providers.SystemRateSheet.objects.all()
         ).qs
 
         return utils.paginated_connection(queryset, **_filter.pagination())

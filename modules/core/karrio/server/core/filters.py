@@ -1053,6 +1053,39 @@ class RateSheetFilter(filters.FilterSet):
         )
 
 
+class SystemRateSheetFilter(filters.FilterSet):
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="system rate sheet keyword and indexes search",
+    )
+
+    class Meta:
+        import karrio.server.providers.models as providers
+
+        model = providers.SystemRateSheet
+        fields: typing.List[str] = []
+
+    def keyword_filter(self, queryset, name, value):
+        if "postgres" in conf.settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "id",
+                    "name",
+                    "slug",
+                    "carrier_name",
+                )
+            ).filter(search=value)
+
+        return queryset.filter(
+            models.Q(id__icontains=value)
+            | models.Q(name__icontains=value)
+            | models.Q(slug__icontains=value)
+            | models.Q(carrier_name__icontains=value)
+        )
+
+
 class ManifestFilters(filters.FilterSet):
     id = filters.CharInFilter(
         field_name="id",

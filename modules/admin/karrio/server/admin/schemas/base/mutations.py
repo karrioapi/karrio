@@ -325,8 +325,8 @@ class CreateRateSheetMutation(utils.BaseMutation):
         ]
 
         slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
-        serializer = graph_serializers.RateSheetModelSerializer(
-            data={**data, "slug": slug, "is_system": True},
+        serializer = graph_serializers.SystemRateSheetModelSerializer(
+            data={**data, "slug": slug},
             context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
@@ -377,9 +377,9 @@ class UpdateRateSheetMutation(utils.BaseMutation):
     ) -> "UpdateRateSheetMutation":
         data = input.copy()
         carriers = data.pop("carriers", [])
-        instance = providers.RateSheet.objects.get(id=input["id"], is_system=True)
+        instance = providers.SystemRateSheet.objects.get(id=input["id"])
 
-        serializer = graph_serializers.RateSheetModelSerializer(
+        serializer = graph_serializers.SystemRateSheetModelSerializer(
             instance,
             data=data,
             context=info.context.request,
@@ -409,7 +409,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
             )
 
         return UpdateRateSheetMutation(
-            rate_sheet=providers.RateSheet.objects.get(id=input["id"])
+            rate_sheet=providers.SystemRateSheet.objects.get(id=input["id"])
         )
 
 
@@ -425,7 +425,7 @@ class DeleteRateSheetServiceMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.base.DeleteRateSheetServiceMutationInput
     ) -> "DeleteRateSheetServiceMutation":
-        rate_sheet = providers.RateSheet.objects.get(
+        rate_sheet = providers.SystemRateSheet.objects.get(
             id=input["rate_sheet_id"]
         )
         service = rate_sheet.services.get(id=input["service_id"])
@@ -456,7 +456,7 @@ class AddSharedZoneMutation(utils.BaseMutation):
     ) -> "AddSharedZoneMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         zone_data = input["zone"]
         zone_dict = {k: v for k, v in zone_data.items() if not utils.is_unset(v)}
 
@@ -482,7 +482,7 @@ class UpdateSharedZoneMutation(utils.BaseMutation):
     ) -> "UpdateSharedZoneMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         zone_data = input["zone"]
         zone_dict = {k: v for k, v in zone_data.items() if not utils.is_unset(v)}
 
@@ -508,7 +508,7 @@ class DeleteSharedZoneMutation(utils.BaseMutation):
     ) -> "DeleteSharedZoneMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         try:
             rate_sheet.remove_zone(input["zone_id"])
@@ -537,7 +537,7 @@ class AddSharedSurchargeMutation(utils.BaseMutation):
     ) -> "AddSharedSurchargeMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         surcharge_data = input["surcharge"]
         surcharge_dict = {k: v for k, v in surcharge_data.items() if not utils.is_unset(v)}
 
@@ -563,7 +563,7 @@ class UpdateSharedSurchargeMutation(utils.BaseMutation):
     ) -> "UpdateSharedSurchargeMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         surcharge_data = input["surcharge"]
         surcharge_dict = {k: v for k, v in surcharge_data.items() if not utils.is_unset(v)}
 
@@ -589,7 +589,7 @@ class DeleteSharedSurchargeMutation(utils.BaseMutation):
     ) -> "DeleteSharedSurchargeMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         try:
             rate_sheet.remove_surcharge(input["surcharge_id"])
@@ -613,7 +613,7 @@ class BatchUpdateSurchargesMutation(utils.BaseMutation):
     ) -> "BatchUpdateSurchargesMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         surcharges = [
             {k: v for k, v in s.items() if not utils.is_unset(v)}
             for s in input["surcharges"]
@@ -646,11 +646,11 @@ class UpdateServiceRateMutation(utils.BaseMutation):
     ) -> "UpdateServiceRateMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         # Build the rate update dict from input fields
         rate_data = {}
-        rate_fields = ["rate", "cost", "min_weight", "max_weight", "transit_days", "transit_time"]
+        rate_fields = ["rate", "cost", "min_weight", "max_weight", "transit_days", "transit_time", "meta"]
         for field in rate_fields:
             if field in input and not utils.is_unset(input[field]):
                 rate_data[field] = input[field]
@@ -681,7 +681,7 @@ class BatchUpdateServiceRatesMutation(utils.BaseMutation):
     ) -> "BatchUpdateServiceRatesMutation":
         from rest_framework import exceptions
 
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         updates = [
             {k: v for k, v in rate.items() if not utils.is_unset(v)}
@@ -708,7 +708,7 @@ class DeleteServiceRateMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.base.DeleteServiceRateMutationInput
     ) -> "DeleteServiceRateMutation":
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         min_weight = input.get("min_weight")
         max_weight = input.get("max_weight")
@@ -744,7 +744,7 @@ class AddWeightRangeMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.base.AddWeightRangeMutationInput
     ) -> "AddWeightRangeMutation":
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         rate_sheet.add_weight_range(
             min_weight=input["min_weight"],
@@ -766,7 +766,7 @@ class RemoveWeightRangeMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.base.RemoveWeightRangeMutationInput
     ) -> "RemoveWeightRangeMutation":
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         rate_sheet.remove_weight_range(
             min_weight=input["min_weight"],
@@ -793,7 +793,7 @@ class UpdateServiceZoneIdsMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.base.UpdateServiceZoneIdsMutationInput
     ) -> "UpdateServiceZoneIdsMutation":
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         service = rate_sheet.services.get(id=input["service_id"])
 
         service.zone_ids = input["zone_ids"]
@@ -814,7 +814,7 @@ class UpdateServiceSurchargeIdsMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.base.UpdateServiceSurchargeIdsMutationInput
     ) -> "UpdateServiceSurchargeIdsMutation":
-        rate_sheet = providers.RateSheet.objects.get(id=input["rate_sheet_id"])
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         service = rate_sheet.services.get(id=input["service_id"])
 
         service.surcharge_ids = input["surcharge_ids"]

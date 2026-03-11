@@ -42,6 +42,10 @@ export function useShipments({
   const [filter, _setFilter] = React.useState<ShipmentFilter>({
     ...PAGINATION,
     ...initialData,
+    ...(initialData.status ? {
+      status: ([] as string[]).concat(initialData.status as any)
+        .map((v: string) => v === "purchased" ? "created" : v) as any
+    } : {}),
   });
   const fetch = (variables: { filter: ShipmentFilter }) =>
     karrio.graphql.request<get_shipments>(gqlstr(GET_SHIPMENTS), { variables });
@@ -70,7 +74,8 @@ export function useShipments({
                   ? [].concat(acc, item.split(",") as any)
                   : [].concat(acc, item),
               [],
-            ),
+            )
+            .map((v: string) => v === "purchased" ? "created" : v),
         };
       if (["offset", "first"].includes(key))
         return {

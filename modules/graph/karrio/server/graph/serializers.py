@@ -241,12 +241,8 @@ class LabelTemplateModelSerializer(serializers.ModelSerializer):
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 
-@serializers.owned_model_serializer
-class RateSheetModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = providers.RateSheet
-        exclude = ["created_at", "updated_at", "created_by"]
-        extra_kwargs = {field: {"read_only": True} for field in ["id", "services"]}
+class _RateSheetSerializerMixin:
+    """Shared methods for account and system rate sheet serializers."""
 
     def update_services(
         self, services_data: list, remove_missing: bool = False
@@ -458,3 +454,42 @@ class RateSheetModelSerializer(serializers.ModelSerializer):
             self.process_service_rates(service_rates_data)
 
         return instance
+
+
+@serializers.owned_model_serializer
+class RateSheetModelSerializer(_RateSheetSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = providers.RateSheet
+        exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id", "services"]}
+
+
+class _SystemRateSheetSerializer(_RateSheetSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = providers.SystemRateSheet
+        exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id", "services"]}
+
+    context: dict = {}
+
+    def __init__(self, *args, **kwargs):
+        if "context" in kwargs:
+            context = kwargs.pop("context")
+            user = (
+                context.get("user") if isinstance(context, dict)
+                else getattr(context, "user", None)
+            )
+            self.context = {"user": user}
+        super().__init__(*args, **kwargs)
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        user = self.context.get("user") if isinstance(self.context, dict) else None
+        if user:
+            instance.created_by = user
+            instance.save(update_fields=["created_by"])
+        return instance
+
+
+# Apply the same name for consistency
+SystemRateSheetModelSerializer = _SystemRateSheetSerializer

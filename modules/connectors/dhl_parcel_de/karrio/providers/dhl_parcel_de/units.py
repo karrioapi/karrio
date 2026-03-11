@@ -13,16 +13,6 @@ import karrio.schemas.dhl_parcel_de.shipping_request as ship_req
 # Format: Dict[str, Tuple[default_value, description, type]]
 # Note: The actual env values are read by the server (constance.py) using decouple
 SYSTEM_CONFIG = {
-    "DHL_PARCEL_DE_USERNAME": (
-        "",
-        "DHL Parcel DE API username for production",
-        str,
-    ),
-    "DHL_PARCEL_DE_PASSWORD": (
-        "",
-        "DHL Parcel DE API password for production",
-        str,
-    ),
     "DHL_PARCEL_DE_CLIENT_ID": (
         "",
         "DHL Parcel DE OAuth client ID for production",
@@ -31,16 +21,6 @@ SYSTEM_CONFIG = {
     "DHL_PARCEL_DE_CLIENT_SECRET": (
         "",
         "DHL Parcel DE OAuth client secret for production",
-        str,
-    ),
-    "DHL_PARCEL_DE_SANDBOX_USERNAME": (
-        "user-valid",
-        "DHL Parcel DE API username for sandbox/test mode",
-        str,
-    ),
-    "DHL_PARCEL_DE_SANDBOX_PASSWORD": (
-        "SandboxPasswort2023!",
-        "DHL Parcel DE API password for sandbox/test mode",
         str,
     ),
     "DHL_PARCEL_DE_SANDBOX_CLIENT_ID": (

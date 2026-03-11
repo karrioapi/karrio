@@ -48,6 +48,12 @@ def catch_auth_exception(func):
 
 
 class TokenAuthentication(BaseTokenAuthentication):
+    # Cache token → (user, token) for 5 minutes to avoid DB query per request.
+    # Safe because API tokens are static secrets — they don't expire or rotate
+    # frequently. Cache is invalidated naturally by TTL, and revoked/deleted
+    # tokens will fail on next cache miss (within 5 minutes worst case).
+    TOKEN_CACHE_TTL = 300  # 5 minutes
+
     def get_model(self):
         if self.model is not None:
             return self.model
@@ -61,7 +67,7 @@ class TokenAuthentication(BaseTokenAuthentication):
         if getattr(request, "_karrio_auth_result", None) is not None:
             return request._karrio_auth_result
 
-        auth = super().authenticate(request)
+        auth = self._authenticate_with_cache(request)
 
         if auth is not None:
             user, token = auth
@@ -79,8 +85,41 @@ class TokenAuthentication(BaseTokenAuthentication):
 
         return auth
 
+    def _authenticate_with_cache(self, request):
+        """Authenticate with Django cache to avoid DB query on every request."""
+        from rest_framework.authentication import get_authorization_header
+
+        auth_header = get_authorization_header(request).split()
+        if not auth_header or auth_header[0].lower() != self.keyword.lower().encode():
+            return None
+        if len(auth_header) != 2:
+            return None
+
+        try:
+            key = auth_header[1].decode()
+        except UnicodeError:
+            return None
+
+        # Check cache first
+        import hashlib
+        from django.core.cache import cache
+
+        cache_key = f"token_auth:{hashlib.sha256(key.encode()).hexdigest()}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+
+        # Cache miss — fall back to DB lookup
+        auth = super().authenticate(request)
+        if auth is not None:
+            cache.set(cache_key, auth, self.TOKEN_CACHE_TTL)
+
+        return auth
+
 
 class TokenBasicAuthentication(BaseBasicAuthentication):
+    TOKEN_CACHE_TTL = 300  # 5 minutes
+
     @catch_auth_exception
     def authenticate(self, request):
         # Return cached auth from middleware to avoid duplicate DB query
@@ -108,8 +147,16 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
     def authenticate_credentials(self, api_key, *args, **kwargs):
         """
         Authenticate the api token with optional request for context.
+        Uses Django cache to avoid DB query on every request.
         """
+        import hashlib
+        from django.core.cache import cache
         from karrio.server.user.models import Token
+
+        cache_key = f"token_basic_auth:{hashlib.sha256(api_key.encode()).hexdigest()}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
 
         token = Token.objects.filter(key=api_key).first()
         user = getattr(token, "user", None)
@@ -120,7 +167,9 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
         if not user.is_active:
             raise exceptions.AuthenticationFailed(_("User inactive or deleted."))
 
-        return (user, token)
+        result = (user, token)
+        cache.set(cache_key, result, self.TOKEN_CACHE_TTL)
+        return result
 
 
 class JWTAuthentication(BaseJWTAuthentication):

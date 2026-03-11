@@ -20,25 +20,13 @@ class Settings(core.Settings):
     # Computed credential properties with system config fallback
     @property
     def connection_username(self) -> typing.Optional[str]:
-        """Return user-provided username or fallback to system config."""
-        if self.username:
-            return self.username
-        return (
-            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_USERNAME")
-            if self.test_mode
-            else self.connection_system_config.get("DHL_PARCEL_DE_USERNAME")
-        )
+        """Return user-provided username (no system config fallback)."""
+        return self.username or None
 
     @property
     def connection_password(self) -> typing.Optional[str]:
-        """Return user-provided password or fallback to system config."""
-        if self.password:
-            return self.password
-        return (
-            self.connection_system_config.get("DHL_PARCEL_DE_SANDBOX_PASSWORD")
-            if self.test_mode
-            else self.connection_system_config.get("DHL_PARCEL_DE_PASSWORD")
-        )
+        """Return user-provided password (no system config fallback)."""
+        return self.password or None
 
     @property
     def connection_client_id(self) -> typing.Optional[str]:

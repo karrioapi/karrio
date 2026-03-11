@@ -147,7 +147,7 @@ class SystemConnection(models.Model):
     # RATE SHEET
     # ─────────────────────────────────────────────────────────────────
     rate_sheet = models.ForeignKey(
-        "RateSheet",
+        "SystemRateSheet",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -338,16 +338,20 @@ class SystemConnection(models.Model):
         )
 
         # Include services from rate sheet
-        if any(self.services or []):
+        # Pass pre-loaded rate_sheet to get_zones/get_surcharges to avoid
+        # N+1 queries (each service would otherwise query rate_sheet separately)
+        _services = self.services
+        if any(_services or []):
+            _rate_sheet = self.rate_sheet  # Already select_related via manager
             _computed_data.update(
                 services=[
                     {
                         **forms.model_to_dict(s),
-                        "zones": s.zones,
-                        "surcharges": s.surcharges,
+                        "zones": s.get_zones(_rate_sheet=_rate_sheet),
+                        "surcharges": s.get_surcharges(_rate_sheet=_rate_sheet),
                         "pricing_config": s.effective_pricing_config,
                     }
-                    for s in self.services
+                    for s in _services
                 ]
             )
 
@@ -649,16 +653,20 @@ class BrokeredConnection(models.Model):
         )
 
         # Include services from rate sheet
-        if any(self.services or []):
+        # Pass pre-loaded rate_sheet to get_zones/get_surcharges to avoid
+        # N+1 queries (each service would otherwise query rate_sheet separately)
+        _services = self.services
+        if any(_services or []):
+            _rate_sheet = self.rate_sheet  # Already select_related via manager
             _computed_data.update(
                 services=[
                     {
                         **forms.model_to_dict(s),
-                        "zones": s.zones,
-                        "surcharges": s.surcharges,
+                        "zones": s.get_zones(_rate_sheet=_rate_sheet),
+                        "surcharges": s.get_surcharges(_rate_sheet=_rate_sheet),
                         "pricing_config": s.effective_pricing_config,
                     }
-                    for s in self.services
+                    for s in _services
                 ]
             )
 

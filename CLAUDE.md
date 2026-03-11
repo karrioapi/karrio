@@ -51,6 +51,7 @@ Scoped rules are in `.claude/rules/`:
 - `git-workflow.md` — commits, submodules, changelog
 - `django-patterns.md` — multi-tenancy, N+1, migrations, Huey jobs
 - `carrier-integration.md` — connector structure, definition of done
+- `prd-and-review.md` — PRD-first workflow, fresh-context review gates
 
 ## Skills
 
@@ -59,6 +60,8 @@ Skills in `.claude/skills/` provide step-by-step guides:
 - `release/` — Version bumping, package sync, frozen requirements, changelog
 - `debugging/` — Request lifecycle, debugging commands, common pitfalls
 - `project-setup/` — Environment setup, running servers, schema generation
+- `create-prd/` — Write PRDs with ASCII diagrams before non-trivial features
+- `review-implementation/` — Fresh-context review checklist for quality gates
 
 ## Full Reference
 

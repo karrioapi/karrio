@@ -639,6 +639,9 @@ class ServiceZone:
     postal_codes: List[str] = []
     country_codes: List[str] = []
 
+    # Rate-level metadata (exclusions, per-plan costs, etc.)
+    meta: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class Surcharge:

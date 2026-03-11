@@ -514,23 +514,38 @@ def get_available_rates(
 
             # Calculate base rate and apply surcharges
             base_rate = selected_zone.rate
+            # COGS: rate-level cost overrides service-level cost
+            base_cost = (
+                selected_zone.cost
+                if selected_zone.cost is not None
+                else service.cost
+            )
             total_charge, surcharge_charges = apply_surcharges(
                 base_rate, service.surcharges or [], service.currency
             )
 
-            # Build extra charges list
+            # Build extra charges list (with COGS when available)
             extra_charges = [
                 models.ChargeDetails(
                     name="Base Charge",
                     amount=base_rate,
                     currency=service.currency,
+                    **({"cost": base_cost} if base_cost is not None else {}),
                 )
             ]
             extra_charges.extend(surcharge_charges)
 
-            # Merge markup exclusions from service pricing_config
+            # Merge markup exclusions from service pricing_config + rate-level meta
             _svc_config = getattr(service, 'pricing_config', None) or {}
-            _excluded_markup_ids = list(_svc_config.get("excluded_markup_ids", []))
+            _zone_meta = getattr(selected_zone, 'meta', None) or {}
+            _excluded_markup_ids = list(dict.fromkeys(
+                list(_svc_config.get("excluded_markup_ids", []))
+                + list(_zone_meta.get("excluded_markup_ids", []))
+            ))
+            _excluded_surcharge_ids = list(_zone_meta.get("excluded_surcharge_ids", []))
+
+            # Per-plan costs from rate-level meta
+            _plan_costs = _zone_meta.get("plan_costs") or {}
 
             _rate_meta = dict(
                 carrier_service_code=service.carrier_service_code,
@@ -541,6 +556,10 @@ def get_available_rates(
             )
             if _excluded_markup_ids:
                 _rate_meta["excluded_markup_ids"] = _excluded_markup_ids
+            if _excluded_surcharge_ids:
+                _rate_meta["excluded_surcharge_ids"] = _excluded_surcharge_ids
+            if _plan_costs:
+                _rate_meta["plan_costs"] = _plan_costs
 
             rates.append(
                 models.RateDetails(

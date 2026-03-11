@@ -83,11 +83,11 @@ class TestAdminRateSheets(AdminGraphTestCase):
 
         # Create a test rate sheet with shared zones and surcharges
         # Using dhl_parcel_de which supports ratesheets (not carriers with live rates like ups/fedex)
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Admin Test Rate Sheet",
             carrier_name="dhl_parcel_de",
             slug="admin_test_rate_sheet",
-            is_system=True,
+
             zones=[
                 {
                     "id": "zone_1",
@@ -252,11 +252,11 @@ class TestAdminRateSheets(AdminGraphTestCase):
     def test_delete_rate_sheet(self):
         """Test deleting a rate sheet through admin API."""
         # Create a rate sheet to delete
-        new_sheet = providers.RateSheet.objects.create(
+        new_sheet = providers.SystemRateSheet.objects.create(
             name="To Be Deleted",
             carrier_name="ups",
             slug="to_be_deleted",
-            is_system=True,
+
             created_by=self.user,
         )
 
@@ -274,7 +274,7 @@ class TestAdminRateSheets(AdminGraphTestCase):
 
         self.assertResponseNoErrors(response)
         self.assertEqual(response.data["data"]["delete_rate_sheet"]["id"], new_sheet.id)
-        self.assertFalse(providers.RateSheet.objects.filter(id=new_sheet.id).exists())
+        self.assertFalse(providers.SystemRateSheet.objects.filter(id=new_sheet.id).exists())
 
 
 class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
@@ -304,11 +304,11 @@ class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
             TokenLink.objects.create(item=self.token2, org=self.org2)
 
         # Rate sheet created by admin1
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Cross Admin Rate Sheet",
             carrier_name="dhl_parcel_de",
             slug="cross_admin_rate_sheet",
-            is_system=True,
+
             created_by=self.user,
         )
 
@@ -387,7 +387,7 @@ class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
         )
         self.assertResponseNoErrors(response)
         sheet_id = response.data["data"]["create_rate_sheet"]["rate_sheet"]["id"]
-        sheet = providers.RateSheet.objects.get(id=sheet_id)
+        sheet = providers.SystemRateSheet.objects.get(id=sheet_id)
 
         # Must have no org link
         if hasattr(sheet, "org"):
@@ -416,11 +416,11 @@ class TestAdminRateSheetZones(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Zone Test Sheet",
             carrier_name="ups",
             slug="zone_test_sheet",
-            is_system=True,
+
             zones=[
                 {
                     "id": "zone_1",
@@ -547,11 +547,11 @@ class TestAdminRateSheetSurcharges(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Surcharge Test Sheet",
             carrier_name="ups",
             slug="surcharge_test_sheet",
-            is_system=True,
+
             surcharges=[
                 {
                     "id": "surch_1",
@@ -732,11 +732,11 @@ class TestAdminServiceRates(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Service Rate Test Sheet",
             carrier_name="ups",
             slug="service_rate_test_sheet",
-            is_system=True,
+
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -844,11 +844,11 @@ class TestAdminServiceAssignments(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Assignment Test Sheet",
             carrier_name="ups",
             slug="assignment_test_sheet",
-            is_system=True,
+
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -950,11 +950,11 @@ class TestAdminRateSheetService(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Service Test Sheet",
             carrier_name="ups",
             slug="service_test_sheet",
-            is_system=True,
+
             created_by=self.user,
         )
 
@@ -1006,11 +1006,11 @@ class TestAdminDeleteServiceRate(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Delete Rate Test Sheet",
             carrier_name="ups",
             slug="delete_rate_test_sheet",
-            is_system=True,
+
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -1159,11 +1159,11 @@ class TestAdminWeightRanges(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Weight Range Test Sheet",
             carrier_name="ups",
             slug="weight_range_test_sheet",
-            is_system=True,
+
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -1391,11 +1391,11 @@ class TestAdminRateSheetQueryVerification(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Query Verify Test Sheet",
             carrier_name="ups",
             slug="query_verify_test_sheet",
-            is_system=True,
+
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
             ],
@@ -1703,11 +1703,11 @@ class TestAdminRateSheetEdgeCases(AdminGraphTestCase):
     def setUp(self):
         super().setUp()
 
-        self.rate_sheet = providers.RateSheet.objects.create(
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
             name="Edge Case Sheet",
             carrier_name="ups",
             slug="edge_case_sheet",
-            is_system=True,
+
             zones=[],
             surcharges=[],
             service_rates=[],
@@ -1783,11 +1783,11 @@ class TestAdminRateSheetEdgeCases(AdminGraphTestCase):
 
     def test_delete_rate_sheet_cascades_services(self):
         """Test that deleting a rate sheet also deletes its associated services."""
-        sheet = providers.RateSheet.objects.create(
+        sheet = providers.SystemRateSheet.objects.create(
             name="Cascade Test Sheet",
             carrier_name="ups",
             slug="cascade_test_sheet",
-            is_system=True,
+
             created_by=self.user,
         )
         service = providers.ServiceLevel.objects.create(
@@ -1814,7 +1814,7 @@ class TestAdminRateSheetEdgeCases(AdminGraphTestCase):
 
         print(response.data)
         self.assertResponseNoErrors(response)
-        self.assertFalse(providers.RateSheet.objects.filter(id=sheet.id).exists())
+        self.assertFalse(providers.SystemRateSheet.objects.filter(id=sheet.id).exists())
         self.assertFalse(providers.ServiceLevel.objects.filter(id=service_id).exists())
 
     def test_surcharge_with_zero_amount(self):
