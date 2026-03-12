@@ -5,8 +5,18 @@ source "bin/activate-env" >/dev/null 2>&1
 
 echo 'run server tests...'
 
-# Run all server modules serially — parallel SQLite workers deadlock on Linux CI.
-karrio test --failfast \
+# Use --parallel when running against PostgreSQL (supports row-level locking).
+# Fall back to serial when using SQLite (parallel workers deadlock on Linux).
+DB_ENGINE="${DATABASE_ENGINE:-sqlite3}"
+if [[ "$DB_ENGINE" == "postgresql" ]]; then
+    PARALLEL_FLAG="--parallel"
+    echo "PostgreSQL detected — running tests in parallel"
+else
+    PARALLEL_FLAG=""
+    echo "SQLite detected — running tests serially"
+fi
+
+karrio test $PARALLEL_FLAG --failfast \
     karrio.server.core.tests \
     karrio.server.providers.tests \
     karrio.server.proxy.tests \
@@ -20,7 +30,7 @@ karrio test --failfast \
     || exit 1
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
-    karrio test --failfast \
+    karrio test $PARALLEL_FLAG --failfast \
         karrio.server.orgs.tests \
         || exit 1
     # automation must remain serial — WORKER_IMMEDIATE_MODE is not parallel-safe
