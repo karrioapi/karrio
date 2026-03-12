@@ -30,11 +30,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-          enable-cache: true
-          cache-dependency-glob: |
-            requirements.sdk.dev.txt
-            modules/sdk/**/pyproject.toml
-            modules/connectors/**/pyproject.toml
+          enable-cache: false
 
       - name: Cache SDK venv
         id: sdk-venv-cache
@@ -87,12 +83,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-          enable-cache: true
-          cache-dependency-glob: |
-            requirements.server.dev.txt
-            requirements.sdk.dev.txt
-            modules/**/pyproject.toml
-            apps/**/pyproject.toml
+          enable-cache: false
 
       - name: Cache server venv
         id: server-venv-cache
