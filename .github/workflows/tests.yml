@@ -1,7 +1,8 @@
 # Python testing with uv, pip/venv caching, PostgreSQL parallel tests
 # Optimisations applied:
 #   - uv for dep install (10-100x faster than pip)
-#   - venv cached by requirements hash (skips install on cache hit)
+#   - uv cache persisted between runs via astral-sh/setup-uv enable-cache
+#   - venv cached by requirements hash (skips reinstall on cache hit)
 #   - PostgreSQL service for server-tests → enables --parallel
 #   - npm cache for dashboard-ci
 #   - actions/checkout@v4 + shallow submodule fetch
@@ -32,22 +33,20 @@ jobs:
           enable-cache: true
           cache-dependency-glob: |
             requirements.sdk.dev.txt
-            **/pyproject.toml
+            modules/sdk/**/pyproject.toml
+            modules/connectors/**/pyproject.toml
 
       - name: Cache SDK venv
         id: sdk-venv-cache
         uses: actions/cache@v4
         with:
-          path: .venv/sdk
-          key: sdk-venv-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.sdk.dev.txt', 'modules/connectors/**/pyproject.toml', 'modules/sdk/**/pyproject.toml') }}
+          path: .venv
+          key: sdk-venv-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('requirements.sdk.dev.txt', 'modules/sdk/**/pyproject.toml', 'modules/connectors/**/pyproject.toml') }}
           restore-keys: |
             sdk-venv-${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Setup SDK env
-        run: |
-          ./bin/setup-sdk-env -v
-        env:
-          UV_SYSTEM_PYTHON: "0"
+        run: ./bin/setup-sdk-env -v
 
       - name: Run SDK typechecks
         run: ./bin/run-sdk-typecheck -v
@@ -92,7 +91,8 @@ jobs:
           cache-dependency-glob: |
             requirements.server.dev.txt
             requirements.sdk.dev.txt
-            **/pyproject.toml
+            modules/**/pyproject.toml
+            apps/**/pyproject.toml
 
       - name: Cache server venv
         id: server-venv-cache
@@ -104,6 +104,13 @@ jobs:
             server-venv-${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Setup server env
+        env:
+          DATABASE_ENGINE: postgresql
+          DATABASE_NAME: karrio
+          DATABASE_HOST: localhost
+          DATABASE_PORT: "5432"
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: postgres
         run: ./bin/setup-server-env -v
 
       - name: Run migrations
@@ -111,7 +118,7 @@ jobs:
           DATABASE_ENGINE: postgresql
           DATABASE_NAME: karrio
           DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
+          DATABASE_PORT: "5432"
           DATABASE_USERNAME: postgres
           DATABASE_PASSWORD: postgres
           ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
@@ -122,7 +129,7 @@ jobs:
           DATABASE_ENGINE: postgresql
           DATABASE_NAME: karrio
           DATABASE_HOST: localhost
-          DATABASE_PORT: 5432
+          DATABASE_PORT: "5432"
           DATABASE_USERNAME: postgres
           DATABASE_PASSWORD: postgres
           ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
