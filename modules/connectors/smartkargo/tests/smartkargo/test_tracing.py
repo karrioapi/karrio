@@ -1,8 +1,8 @@
-"""SmartKargo Sentry tracing context propagation tests.
+"""SmartKargo tracing tests.
 
-Verifies that _urlopen_with_span (not plain urlopen) is called when
-lib.request() runs inside exec_async worker threads, and that the
-Sentry span context is available in those threads.
+Verifies:
+1. Sentry span context propagation through exec_async worker threads.
+2. SDK trace recordings (Tracer.records) are captured for all proxy operations.
 """
 
 import unittest
@@ -123,6 +123,112 @@ class TestSmartKargoTracingContext(unittest.TestCase):
                 "new_scope was not called — scope not propagated to workers",
             )
             self.assertEqual(sorted(results), [2, 4, 6])
+
+
+class TestSmartKargoTraceRecordings(unittest.TestCase):
+    """Assert that tracer.records captures request/response pairs for all operations."""
+
+    def _mock_urlopen(self):
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = b'{"test": true}'
+        mock_resp.status = 200
+        mock_resp.headers = {}
+        mock_resp.__enter__ = MagicMock(return_value=mock_resp)
+        mock_resp.__exit__ = MagicMock(return_value=False)
+        return mock_resp
+
+    def test_tracking_records_captured(self):
+        """get_tracking must produce trace records in gateway.tracer."""
+        with patch(
+            "karrio.core.utils.helpers._urlopen_with_span"
+        ) as mock_open:
+            mock_open.return_value = self._mock_urlopen()
+
+            # Create a fresh gateway so tracer is clean
+            gw = karrio.gateway["smartkargo"].create(
+                dict(
+                    id="trace-test",
+                    test_mode=True,
+                    carrier_id="smartkargo",
+                    api_key="TEST_API_KEY",
+                    account_number="TEST_ACCOUNT",
+                    config={"primary_id": "TEST_ID"},
+                )
+            )
+
+            karrio.Tracking.fetch(
+                models.TrackingRequest(tracking_numbers=["TRK001"])
+            ).from_(gw)
+
+            records = gw.tracer.records
+            self.assertGreater(
+                len(records), 0,
+                "No trace records captured for tracking operation",
+            )
+
+    def test_rates_records_captured(self):
+        """get_rates must produce trace records in gateway.tracer."""
+        with patch(
+            "karrio.core.utils.helpers._urlopen_with_span"
+        ) as mock_open:
+            mock_open.return_value = self._mock_urlopen()
+
+            gw = karrio.gateway["smartkargo"].create(
+                dict(
+                    id="trace-test",
+                    test_mode=True,
+                    carrier_id="smartkargo",
+                    api_key="TEST_API_KEY",
+                    account_number="TEST_ACCOUNT",
+                    config={"primary_id": "TEST_ID"},
+                )
+            )
+
+            karrio.Rating.fetch(
+                models.RateRequest(
+                    shipper={"city": "Boston", "country_code": "US"},
+                    recipient={"city": "LA", "country_code": "US"},
+                    parcels=[{"weight": 1.0, "weight_unit": "KG"}],
+                )
+            ).from_(gw)
+
+            records = gw.tracer.records
+            self.assertGreater(
+                len(records), 0,
+                "No trace records captured for rating operation",
+            )
+
+    def test_parallel_tracking_all_records_captured(self):
+        """Multiple tracking numbers in parallel must all produce records."""
+        with patch(
+            "karrio.core.utils.helpers._urlopen_with_span"
+        ) as mock_open:
+            mock_open.return_value = self._mock_urlopen()
+
+            gw = karrio.gateway["smartkargo"].create(
+                dict(
+                    id="trace-test",
+                    test_mode=True,
+                    carrier_id="smartkargo",
+                    api_key="TEST_API_KEY",
+                    account_number="TEST_ACCOUNT",
+                    config={"primary_id": "TEST_ID"},
+                )
+            )
+
+            karrio.Tracking.fetch(
+                models.TrackingRequest(
+                    tracking_numbers=["TRK001", "TRK002", "TRK003"]
+                )
+            ).from_(gw)
+
+            records = gw.tracer.records
+            # Each tracking number produces a request + response = 2 records
+            # 3 tracking numbers = 6 records minimum
+            self.assertGreaterEqual(
+                len(records), 6,
+                f"Expected at least 6 trace records for 3 tracking numbers, got {len(records)}",
+            )
 
 
 if __name__ == "__main__":
