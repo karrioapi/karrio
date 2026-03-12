@@ -360,8 +360,10 @@ DATABASES = {
         "HOST": config("DATABASE_HOST", default="localhost"),
         "USER": config("DATABASE_USERNAME", default="postgres"),
         "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
-        # Note: don't use ":memory:" with --parallel — each worker needs its own
-        # file-based DB (Django names them test_db_1, test_db_2, etc. automatically)
+        # In-memory SQLite for tests — eliminates disk I/O.
+        # Safe with serial runner (no --parallel). Do NOT re-add --parallel with this;
+        # shared in-memory URI deadlocks forked workers on Linux.
+        "TEST": {"NAME": ":memory:"} if "sqlite3" in DB_ENGINE else {},
     }
 }
 

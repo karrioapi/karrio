@@ -7,6 +7,7 @@ without downtime. Uses optimistic locking to prevent race conditions.
 import os
 import logging
 import typing
+import contextlib
 from django.db import transaction
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.exceptions import InvalidTag
@@ -51,14 +52,17 @@ def rotate_batch(
     rotated_count = 0
     failed_count = 0
 
-    with transaction.atomic():
-        from django.db import connection as _conn
+    from django.db import connection as _conn
+    _use_atomic = _conn.vendor in ("postgresql", "mysql")
+
+    def _run_batch():
         _qs = Secret.objects.filter(key_version=old_version)
-        # select_for_update(skip_locked=True) requires PostgreSQL/MySQL.
-        # Fall back to a plain queryset on SQLite (tests / local dev).
         if _conn.vendor in ("postgresql", "mysql"):
             _qs = _qs.select_for_update(skip_locked=True)
-        rows = list(_qs.values('id', 'dek_wrapped', 'name')[:batch_size])
+        return list(_qs.values('id', 'dek_wrapped', 'name')[:batch_size])
+
+    with transaction.atomic() if _use_atomic else contextlib.nullcontext():
+        rows = _run_batch()
 
         if not rows:
             logger.info("No more secrets to rotate")

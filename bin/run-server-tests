@@ -5,11 +5,8 @@ source "bin/activate-env" >/dev/null 2>&1
 
 echo 'run server tests...'
 
-# Run all independent server modules in a single parallel invocation.
-# Django distributes them across CPU cores automatically via multiprocessing.
-# NOTE: automation.tests is excluded here because WORKER_IMMEDIATE_MODE=True
-#       is not safe with --parallel (spawned workers don't inherit env properly).
-karrio test --parallel --failfast \
+# Run all server modules serially — parallel SQLite workers deadlock on Linux CI.
+karrio test --failfast \
     karrio.server.core.tests \
     karrio.server.providers.tests \
     karrio.server.proxy.tests \
@@ -23,7 +20,7 @@ karrio test --parallel --failfast \
     || exit 1
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
-    karrio test --parallel --failfast \
+    karrio test --failfast \
         karrio.server.orgs.tests \
         || exit 1
     # automation must remain serial — WORKER_IMMEDIATE_MODE is not parallel-safe
