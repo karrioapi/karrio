@@ -17,46 +17,42 @@ class Result:
 
 
 class GraphTestCase(BaseAPITestCase):
-    def setUp(self) -> None:
-        self.maxDiff = None
-        # Loguru is already configured globally in settings
+    """
+    Base test case for GraphQL tests with class-level fixtures.
 
-        # Setup user and API Token.
-        self.user = get_user_model().objects.create_superuser(
+    Shared DB objects are created once per test class via setUpTestData,
+    wrapped in a savepoint. Each test method rolls back its own changes
+    but the class-level data is re-used, avoiding redundant bcrypt and
+    carrier insertions on every method.
+    """
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        # Setup user and API Token (once per class).
+        cls.user = get_user_model().objects.create_superuser(
             "admin@example.com", "test"
         )
+        cls.token = Token.objects.create(user=cls.user, test_mode=False)
 
-        self.token = Token.objects.create(user=self.user, test_mode=False)
-
-        # Create organization for multi-org support (if enabled)
+        # Create organization for multi-org support (if enabled).
         from django.conf import settings
         if settings.MULTI_ORGANIZATIONS:
             from karrio.server.orgs.models import Organization, TokenLink
-            self.organization = Organization.objects.create(
+            cls.organization = Organization.objects.create(
                 name="Test Organization",
-                slug="test-org"
+                slug="test-org",
             )
-            # Add user as owner (triggers permission sync via signals)
-            owner = self.organization.add_user(self.user, is_admin=True)
-            self.organization.change_owner(owner)
-            self.organization.save()
+            owner = cls.organization.add_user(cls.user, is_admin=True)
+            cls.organization.change_owner(owner)
+            cls.organization.save()
+            TokenLink.objects.create(item=cls.token, org=cls.organization)
 
-            # Link token to organization
-            TokenLink.objects.create(
-                item=self.token,
-                org=self.organization
-            )
-
-        # Setup API client.
-        self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
-
-        # Setup test carrier connections.
-        self.carrier = providers.CarrierConnection.objects.create(
+        # Setup test carrier connections (shared across all test methods).
+        cls.carrier = providers.CarrierConnection.objects.create(
             carrier_code="canadapost",
             carrier_id="canadapost",
             test_mode=False,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 username="6e93d53968881714",
                 customer_number="2004381",
@@ -65,11 +61,11 @@ class GraphTestCase(BaseAPITestCase):
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )
-        self.ups_carrier = providers.CarrierConnection.objects.create(
+        cls.ups_carrier = providers.CarrierConnection.objects.create(
             carrier_code="ups",
             carrier_id="ups_package",
             test_mode=False,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 client_id="test",
                 client_secret="test",
@@ -77,11 +73,11 @@ class GraphTestCase(BaseAPITestCase):
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )
-        self.fedex_carrier = providers.CarrierConnection.objects.create(
+        cls.fedex_carrier = providers.CarrierConnection.objects.create(
             carrier_code="fedex",
             carrier_id="fedex_express",
             test_mode=False,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 api_key="test",
                 secret_key="password",
@@ -91,11 +87,11 @@ class GraphTestCase(BaseAPITestCase):
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )
-        self.dhl_carrier = providers.CarrierConnection.objects.create(
+        cls.dhl_carrier = providers.CarrierConnection.objects.create(
             carrier_code="dhl_universal",
             carrier_id="dhl_universal",
             test_mode=False,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 consumer_key="test",
                 consumer_secret="password",
@@ -103,8 +99,8 @@ class GraphTestCase(BaseAPITestCase):
             capabilities=["tracking"],
         )
 
-        # Setup system connections for system_connections queries
-        self.dhl_system_connection = providers.SystemConnection.objects.create(
+        # Setup system connections for system_connections queries.
+        cls.dhl_system_connection = providers.SystemConnection.objects.create(
             carrier_code="dhl_universal",
             carrier_id="dhl_universal",
             test_mode=False,
@@ -115,7 +111,7 @@ class GraphTestCase(BaseAPITestCase):
             ),
             capabilities=["tracking"],
         )
-        self.fedex_system_connection = providers.SystemConnection.objects.create(
+        cls.fedex_system_connection = providers.SystemConnection.objects.create(
             carrier_code="fedex",
             carrier_id="fedex_express",
             test_mode=False,
@@ -129,6 +125,12 @@ class GraphTestCase(BaseAPITestCase):
             ),
             capabilities=["pickup", "rating", "tracking", "shipping"],
         )
+
+    def setUp(self) -> None:
+        self.maxDiff = None
+        # Re-create client per test so credential changes don't bleed between methods.
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def query(
         self,
@@ -155,12 +157,8 @@ class GraphTestCase(BaseAPITestCase):
 
     def getJWTToken(self, email: str, password: str) -> str:
         url = reverse("jwt-obtain-pair")
-        data = dict(
-            email=email,
-            password=password,
-        )
+        data = dict(email=email, password=password)
         response = self.client.post(url, data)
-
         return response.data.get("access")
 
     def assertResponseNoErrors(self, result: Result):
@@ -168,9 +166,11 @@ class GraphTestCase(BaseAPITestCase):
             result.status_code not in [status.HTTP_200_OK, status.HTTP_201_CREATED]
             or result.data.get("errors") is not None
         ):
-            logger.error("GraphQL response has errors",
-                        status_code=result.status_code,
-                        response_data=result.data)
+            logger.error(
+                "GraphQL response has errors",
+                status_code=result.status_code,
+                response_data=result.data,
+            )
 
         if result.status_code != status.HTTP_201_CREATED:
             self.assertEqual(result.status_code, status.HTTP_200_OK)

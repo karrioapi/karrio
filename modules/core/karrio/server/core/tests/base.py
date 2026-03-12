@@ -8,27 +8,30 @@ import karrio.server.providers.models as providers
 
 
 class APITestCase(BaseAPITestCase):
-    def setUp(self) -> None:
-        self.maxDiff = None
-        # Loguru is already configured globally in settings
+    """
+    Base test case with class-level fixtures via setUpTestData.
 
-        # Setup user and API Token.
-        self.user = get_user_model().objects.create_superuser(
+    Shared DB objects (user, carriers, token) are created once per test class
+    inside a transaction savepoint — each test method rolls back its own
+    changes but the class-level data is preserved. This avoids re-running
+    bcrypt and multiple DB inserts for every individual test method.
+    """
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        # Setup user and API Token (runs once per test class).
+        cls.user = get_user_model().objects.create_superuser(
             "admin@example.com", "test"
         )
-        self.token = Token.objects.create(user=self.user, test_mode=True)
+        cls.token = Token.objects.create(user=cls.user, test_mode=True)
 
-        # Setup API client.
-        self.client = APIClient()
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
-
-        # Setup test carrier connections.
-        self.carrier = providers.CarrierConnection.objects.create(
+        # Setup test carrier connections (shared across all test methods).
+        cls.carrier = providers.CarrierConnection.objects.create(
             carrier_code="canadapost",
             carrier_id="canadapost",
             test_mode=True,
             active=True,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 username="6e93d53968881714",
                 customer_number="2004381",
@@ -36,24 +39,24 @@ class APITestCase(BaseAPITestCase):
                 password="0bfa9fcb9853d1f51ee57a",
             ),
         )
-        self.ups_carrier = providers.CarrierConnection.objects.create(
+        cls.ups_carrier = providers.CarrierConnection.objects.create(
             carrier_code="ups",
             carrier_id="ups_package",
             test_mode=True,
             active=True,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 client_id="test",
                 client_secret="test",
                 account_number="000000",
             ),
         )
-        self.fedex_carrier = providers.CarrierConnection.objects.create(
+        cls.fedex_carrier = providers.CarrierConnection.objects.create(
             carrier_code="fedex",
             carrier_id="fedex_express",
             test_mode=True,
             active=True,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 api_key="test",
                 secret_key="password",
@@ -62,18 +65,24 @@ class APITestCase(BaseAPITestCase):
                 track_secret_key="password",
             ),
         )
-        self.dhl_carrier = providers.CarrierConnection.objects.create(
+        cls.dhl_carrier = providers.CarrierConnection.objects.create(
             carrier_code="dhl_express",
             carrier_id="dhl_express",
             test_mode=True,
             active=True,
-            created_by=self.user,
+            created_by=cls.user,
             credentials=dict(
                 site_id="test",
                 password="password",
                 account_number="000000",
-            )
+            ),
         )
+
+    def setUp(self) -> None:
+        self.maxDiff = None
+        # Re-create client each test so credential changes in one test don't bleed.
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def getJWTToken(self, email: str, password: str) -> str:
         url = reverse("jwt-obtain-pair")
