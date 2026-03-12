@@ -17,29 +17,29 @@ class TestEventCreation(GraphTestCase):
 
         webhook.notify_webhook_subscribers(event_type, event_data, event_at, context)
 
-    # def test_query_events(self):
-    #     response = self.query(
-    #         """
-    #         query get_events {
-    #           events {
-    #             edges {
-    #               node {
-    #                 id
-    #                 type
-    #                 data
-    #                 test_mode
-    #                 pending_webhooks
-    #               }
-    #             }
-    #           }
-    #         }
-    #         """,
-    #         operation_name="get_events",
-    #     )
-    #     response_data = response.data
+    def test_query_events(self):
+        response = self.query(
+            """
+            query get_events {
+              events {
+                edges {
+                  node {
+                    id
+                    type
+                    data
+                    test_mode
+                    pending_webhooks
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="get_events",
+        )
+        response_data = response.data
 
-    #     self.assertResponseNoErrors(response)
-    #     self.assertDictEqual(response_data, EVENTS_RESPONSE)
+        self.assertResponseNoErrors(response)
+        self.assertDictEqual(response_data, EVENTS_RESPONSE)
 
     def test_query_event(self):
         response = self.query(

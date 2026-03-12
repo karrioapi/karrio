@@ -360,8 +360,20 @@ DATABASES = {
         "HOST": config("DATABASE_HOST", default="localhost"),
         "USER": config("DATABASE_USERNAME", default="postgres"),
         "PASSWORD": config("DATABASE_PASSWORD", default="postgres"),
+        # In-memory SQLite for tests — eliminates disk I/O.
+        # Safe with serial runner (no --parallel). Do NOT re-add --parallel with this;
+        # shared in-memory URI deadlocks forked workers on Linux.
+        "TEST": {"NAME": ":memory:"} if "sqlite3" in DB_ENGINE else {},
     }
 }
+
+# Speed up test suite: use fast MD5 hasher instead of bcrypt/PBKDF2
+# This only applies when running `manage.py test` — production is unaffected
+import sys as _sys
+if "test" in _sys.argv or "karrio" in _sys.argv[0]:
+    PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+    ]
 
 if config("DATABASE_URL", default=None):
     db_from_env = dj_database_url.config(

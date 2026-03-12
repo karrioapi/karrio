@@ -72,6 +72,15 @@ class TestUPSRating(unittest.TestCase):
                 lib.to_dict(parsed_response), ParsedRateResponseWithMissingAmount
             )
 
+    def test_rate_request_contains_semantic_shipper_recipient_fields(self):
+        """Semantic assertion on structured UPS request payload."""
+        request_data = gateway.mapper.create_rate_request(self.RateRequest).serialize()
+        shipment = request_data["RateRequest"]["Shipment"]
+
+        self.assertEqual(shipment["Shipper"]["Address"]["CountryCode"], "CA")
+        self.assertEqual(shipment["ShipTo"]["Address"]["CountryCode"], "CA")
+        self.assertEqual(shipment["Service"]["Code"], "11")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,18 +4,31 @@
 source "bin/activate-env" >/dev/null 2>&1
 
 echo 'run server tests...'
-karrio test --failfast karrio.server.core.tests || exit 1
-karrio test --failfast karrio.server.providers.tests || exit 1
-karrio test --failfast karrio.server.proxy.tests || exit 1
-karrio test --failfast karrio.server.pricing.tests || exit 1
-karrio test --failfast karrio.server.manager.tests || exit 1
-karrio test --failfast karrio.server.events.tests || exit 1
-karrio test --failfast karrio.server.graph.tests || exit 1
-karrio test --failfast karrio.server.orders.tests || exit 1
-karrio test --failfast karrio.server.documents.tests || exit 1
-karrio test --failfast karrio.server.admin.tests || exit 1
+
+# Serial execution is required — Django parallel runner deadlocks on both SQLite
+# (shared :memory: URI) and PostgreSQL (select_for_update / row-level locking
+# across forked worker processes). automation.tests requires serial execution
+# explicitly via WORKER_IMMEDIATE_MODE. Keep all tests serial for consistency.
+
+karrio test --failfast \
+    karrio.server.core.tests \
+    karrio.server.providers.tests \
+    karrio.server.proxy.tests \
+    karrio.server.pricing.tests \
+    karrio.server.manager.tests \
+    karrio.server.events.tests \
+    karrio.server.graph.tests \
+    karrio.server.orders.tests \
+    karrio.server.documents.tests \
+    karrio.server.admin.tests \
+    || exit 1
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
-    karrio test --failfast karrio.server.orgs.tests || exit 1
+    karrio test --failfast \
+        karrio.server.orgs.tests \
+        || exit 1
+    # automation must remain serial — WORKER_IMMEDIATE_MODE is not parallel-safe
     WORKER_IMMEDIATE_MODE=True karrio test --failfast karrio.server.automation.tests || exit 1
 fi
+
+echo -e "\033[0;32mAll server tests completed successfully\033[0m"
