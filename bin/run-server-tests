@@ -5,21 +5,12 @@ source "bin/activate-env" >/dev/null 2>&1
 
 echo 'run server tests...'
 
-# Use --parallel when running against PostgreSQL (supports row-level locking).
-# Fall back to serial on SQLite (parallel workers deadlock on Linux).
-# --failfast is omitted with --parallel: a crashing worker + failfast can deadlock.
-DB_ENGINE="${DATABASE_ENGINE:-sqlite3}"
-if [[ "$DB_ENGINE" == "postgresql" ]]; then
-    echo "PostgreSQL detected — running tests with --parallel 4"
-    PARALLEL_FLAG="--parallel 4"
-    FAILFAST_FLAG=""
-else
-    echo "SQLite detected — running tests serially"
-    PARALLEL_FLAG=""
-    FAILFAST_FLAG="--failfast"
-fi
+# Serial execution is required — Django parallel runner deadlocks on both SQLite
+# (shared :memory: URI) and PostgreSQL (select_for_update / row-level locking
+# across forked worker processes). automation.tests requires serial execution
+# explicitly via WORKER_IMMEDIATE_MODE. Keep all tests serial for consistency.
 
-karrio test $PARALLEL_FLAG $FAILFAST_FLAG \
+karrio test --failfast \
     karrio.server.core.tests \
     karrio.server.providers.tests \
     karrio.server.proxy.tests \
@@ -33,7 +24,7 @@ karrio test $PARALLEL_FLAG $FAILFAST_FLAG \
     || exit 1
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
-    karrio test $PARALLEL_FLAG $FAILFAST_FLAG \
+    karrio test --failfast \
         karrio.server.orgs.tests \
         || exit 1
     # automation must remain serial — WORKER_IMMEDIATE_MODE is not parallel-safe
