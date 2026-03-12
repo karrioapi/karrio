@@ -52,11 +52,13 @@ def rotate_batch(
     failed_count = 0
 
     with transaction.atomic():
-        rows = list(
-            Secret.objects.filter(key_version=old_version)
-            .select_for_update(skip_locked=True)
-            .values('id', 'dek_wrapped', 'name')[:batch_size]
-        )
+        from django.db import connection as _conn
+        _qs = Secret.objects.filter(key_version=old_version)
+        # select_for_update(skip_locked=True) requires PostgreSQL/MySQL.
+        # Fall back to a plain queryset on SQLite (tests / local dev).
+        if _conn.vendor in ("postgresql", "mysql"):
+            _qs = _qs.select_for_update(skip_locked=True)
+        rows = list(_qs.values('id', 'dek_wrapped', 'name')[:batch_size])
 
         if not rows:
             logger.info("No more secrets to rotate")

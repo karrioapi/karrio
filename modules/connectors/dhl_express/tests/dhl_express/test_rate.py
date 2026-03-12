@@ -76,6 +76,14 @@ class TestDHLRating(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestFromPresetXML)
 
+    def test_rate_request_contains_semantic_origin_destination_fields(self):
+        """Semantic assertion: request includes origin/destination countries and service."""
+        request_xml = gateway.mapper.create_rate_request(self.RateRequest).serialize()
+
+        self.assertIn("<CountryCode>CA</CountryCode>", request_xml)
+        self.assertIn("<CountryCode>US</CountryCode>", request_xml)
+        self.assertIn("<GlobalProductCode>P</GlobalProductCode>", request_xml)
+
     @patch("karrio.mappers.dhl_express.proxy.lib.request", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)

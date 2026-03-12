@@ -3,6 +3,7 @@
 import base64
 import json
 import secrets
+from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import patch, ANY
 from django.urls import reverse
 from django.utils import timezone
@@ -125,6 +126,24 @@ class TestSecretManager(APITestCase):
             self.secret_manager.read_secret(secret1_id),
             self.secret_manager.read_secret(secret2_id),
         )
+
+    def test_concurrent_updates_keep_single_secret_row(self):
+        """Concurrent writes for same secret name must not create duplicates."""
+        secret_name = "test:secret:concurrent"
+
+        def _writer(i: int):
+            return self.secret_manager.write_secret(secret_name, f"value-{i}".encode())
+
+        # Use a small worker pool to simulate concurrent updates.
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            ids = list(pool.map(_writer, range(8)))
+
+        # All updates should converge to a single secret row by unique name.
+        self.assertEqual(Secret.objects.filter(name=secret_name).count(), 1)
+        self.assertEqual(len(set(ids)), 1)
+
+        final = self.secret_manager.read_secret_by_name(secret_name)
+        self.assertTrue(final.startswith(b"value-"))
 
 
 class TestSystemConnectionCredentials(APITestCase):

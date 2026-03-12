@@ -45,6 +45,24 @@ class TestFedExRating(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), IntlParsedRateResponse)
 
+    def test_rate_request_contains_semantic_address_fields(self):
+        """Semantic assertion on structured request payload fields."""
+        request_data = gateway.mapper.create_rate_request(self.RateRequest).serialize()
+
+        # Ensure destination country and account settings are mapped.
+        self.assertEqual(
+            request_data["requestedShipment"]["recipient"]["address"]["countryCode"],
+            "TG",
+        )
+        self.assertEqual(
+            request_data["requestedShipment"]["shipper"]["address"]["countryCode"],
+            "CA",
+        )
+        self.assertEqual(
+            request_data["accountNumber"]["value"],
+            gateway.settings.account_number,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

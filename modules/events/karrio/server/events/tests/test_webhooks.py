@@ -82,6 +82,27 @@ class TestWebhookDetails(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, WEBHOOK_NOTIFIED_RESPONSE)
 
+    def test_webhook_failure_streak_increments_and_auto_disables_after_threshold(self):
+        """Failed deliveries increment failure_streak_count and eventually disable."""
+        with patch("karrio.server.events.task_definitions.base.webhook.identity") as mocks:
+            failed = Response()
+            failed.status_code = 500
+            mocks.return_value = failed
+
+            # Trigger 6 failed notifications (disable when > 5)
+            for _ in range(6):
+                notify_webhook_subscribers(
+                    event="shipment.purchased",
+                    data={"shipment": "content"},
+                    event_at=NOTIFICATION_DATETIME,
+                    ctx=dict(user_id=self.user.id, test_mode=True),
+                )
+
+        self.webhook.refresh_from_db()
+        self.assertEqual(self.webhook.failure_streak_count, 6)
+        self.assertTrue(self.webhook.disabled)
+        self.assertIsNone(self.webhook.last_event_at)
+
 
 WEBHOOK_DATA = {
     "url": "https://api.karrio.io",
