@@ -40,11 +40,37 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(
 )
 TRACKER_BATCH_SIZE = 10
 TRACKER_BATCH_DELAY = int(getattr(settings, "TRACKER_BATCH_DELAY", 3))
+TRACKER_MAX_ACTIVE_DAYS = int(getattr(settings, "TRACKER_MAX_ACTIVE_DAYS", 90))
 
 
 # ─────────────────────────────────────────────────────────────────
 # Dispatcher
 # ─────────────────────────────────────────────────────────────────
+
+
+def _get_max_active_days() -> int:
+    """Return the live TRACKER_MAX_ACTIVE_DAYS value from constance (falls back to settings)."""
+    try:
+        from constance import config as constance_config
+        return int(getattr(constance_config, "TRACKER_MAX_ACTIVE_DAYS", TRACKER_MAX_ACTIVE_DAYS))
+    except Exception:
+        return TRACKER_MAX_ACTIVE_DAYS
+
+
+def _retire_aged_out_trackers(max_age_cutoff: datetime.datetime) -> int:
+    """Mark trackers older than max_age_cutoff as retired.
+
+    Sets status='unknown' and delivered=None so they are excluded from the
+    ``delivered=False`` filter on the next polling cycle.
+    """
+    return models.Tracking.objects.filter(
+        delivered=False,
+        created_at__lt=max_age_cutoff,
+    ).update(
+        status="unknown",
+        delivered=None,
+        updated_at=timezone.now(),
+    )
 
 
 def update_trackers(
@@ -55,11 +81,25 @@ def update_trackers(
     schema: str = None,
 ):
     """Group stale trackers by carrier and enqueue one sub-task per carrier."""
+    max_active_days = _get_max_active_days()
+    max_age_cutoff = timezone.now() - datetime.timedelta(days=max_active_days)
+
     logger.info(
         "Starting tracker update dispatcher",
         delta_seconds=delta.total_seconds(),
         tracker_count=len(tracker_ids) if tracker_ids else 0,
+        max_active_days=max_active_days,
     )
+
+    # Retire trackers that have exceeded the maximum active age
+    if not tracker_ids:
+        retired = _retire_aged_out_trackers(max_age_cutoff)
+        if retired:
+            logger.info(
+                "Retired aged-out trackers",
+                count=retired,
+                max_active_days=max_active_days,
+            )
 
     qs = (
         models.Tracking.objects.filter(id__in=tracker_ids)
@@ -67,6 +107,7 @@ def update_trackers(
         else models.Tracking.objects.filter(
             delivered=False,
             updated_at__lt=timezone.now() - delta,
+            created_at__gt=max_age_cutoff,
         )
     )
     active_tracker_data = list(qs.values_list("id", "carrier"))
