@@ -106,9 +106,10 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    shipper = lib.to_address(payload.shipper)
-    recipient = lib.to_address(payload.recipient)
-    return_address = lib.to_address(payload.return_address or payload.shipper)
+    is_return = (payload.options or {}).get("is_return", False)
+    shipper = lib.to_address(payload.recipient if is_return else payload.shipper)
+    recipient = lib.to_address(payload.shipper if is_return else payload.recipient)
+    return_address = lib.to_address(payload.return_address or shipper)
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     service = lib.to_services(payload.services, provider_units.ServiceCode).first
@@ -122,8 +123,8 @@ def rate_request(
     currency = options.currency.state or settings.default_currency
     customs = lib.to_customs_info(
         payload.customs,
-        shipper=payload.shipper,
-        recipient=payload.recipient,
+        shipper=(payload.recipient if is_return else payload.shipper),
+        recipient=(payload.shipper if is_return else payload.recipient),
         weight_unit=packages.weight_unit,
     )
     declared_value = (
@@ -135,7 +136,7 @@ def rate_request(
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
     weight_unit, dim_unit = lib.identity(
-        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        provider_units.COUNTRY_PREFERED_UNITS.get(shipper.country_code)
         or packages.compatible_units
     )
     indications = [
