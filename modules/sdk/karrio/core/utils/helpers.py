@@ -366,7 +366,22 @@ def _urlopen_with_span(req: Request, timeout=None):
 
             # Request headers (sensitive values redacted)
             try:
-                _redacted = {"authorization", "x-api-key", "x-auth-token", "x-secret-key"}
+                _redacted = {
+                    "authorization",
+                    "x-api-key",
+                    "x-auth-token",
+                    "x-secret-key",
+                    # carrier-specific API key headers
+                    "access_key",
+                    "access-key",
+                    "api-key",
+                    "apikey",
+                    "x-access-key",
+                    "x-api-secret",
+                    "x-client-secret",
+                    "client-secret",
+                    "client_secret",
+                }
                 headers = {
                     k: ("***" if k.lower() in _redacted else v)
                     for k, v in req.headers.items()
