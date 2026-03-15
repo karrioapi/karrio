@@ -12,12 +12,11 @@ class Proxy(proxy.Proxy):
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         site_id = self.settings.connection_config.site_id.state
-        _trace = self.trace_as("json")
         responses = lib.run_asynchronously(
             lambda payload: lib.request(
                 url=f"{self.settings.server_url}/quotation",
                 data=lib.to_json(payload),
-                trace=_trace,
+                trace=self.trace_as("json"),
                 method="POST",
                 headers={
                     "Content-Type": "application/json",
@@ -37,14 +36,13 @@ class Proxy(proxy.Proxy):
         label_type = request.ctx.get("label_type", "PDF") if request.ctx else "PDF"
         format_param = "&format=zpl" if label_type.upper() == "ZPL" else ""
         site_id = self.settings.connection_config.site_id.state
-        _trace = self.trace_as("json")
 
         # Step 1: Book each package in parallel (one API call per package)
         booking_responses = lib.run_asynchronously(
             lambda payload: lib.request(
                 url=f"{self.settings.server_url}/exchange/single?version=2.0",
                 data=lib.to_json(payload),
-                trace=_trace,
+                trace=self.trace_as("json"),
                 method="POST",
                 headers={
                     "Content-Type": "application/json",
@@ -63,7 +61,7 @@ class Proxy(proxy.Proxy):
                     lib.to_dict(
                         lib.request(
                             url=f"{data['label_url']}{format_param}",
-                            trace=_trace,
+                            trace=self.trace_as("json"),
                             method="GET",
                             headers={
                                 "Content-Type": "application/json",
@@ -112,7 +110,6 @@ class Proxy(proxy.Proxy):
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         """Cancel/void shipment(s). For multi-piece, cancels each package in parallel."""
         site_id = self.settings.connection_config.site_id.state
-        _trace = self.trace_as("json")
         responses = lib.run_asynchronously(
             lambda payload: (
                 f"{payload.get('prefix', '')}{payload.get('airWaybill', '')}",
@@ -121,7 +118,7 @@ class Proxy(proxy.Proxy):
                         f"{self.settings.server_url}/shipment/void?"
                         f"{urllib.parse.urlencode({k: v for k, v in payload.items() if v is not None})}"
                     ),
-                    trace=_trace,
+                    trace=self.trace_as("json"),
                     method="GET",
                     headers={
                         "Content-Type": "application/json",
@@ -144,14 +141,13 @@ class Proxy(proxy.Proxy):
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         tracking_requests = request.serialize()
         site_id = self.settings.connection_config.site_id.state
-        _trace = self.trace_as("json")
 
         responses = lib.run_asynchronously(
             lambda payload: (
                 payload["tracking_number"],
                 lib.request(
                     url=f"{self.settings.server_url}/tracking?{urllib.parse.urlencode(payload['query_params'])}",
-                    trace=_trace,
+                    trace=self.trace_as("json"),
                     method="GET",
                     headers={
                         "Content-Type": "application/json",

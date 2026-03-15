@@ -29,9 +29,6 @@ TRACKER_DATA_RETENTION = config("TRACKER_DATA_RETENTION", default=183, cast=int)
 SHIPMENT_DATA_RETENTION = config("SHIPMENT_DATA_RETENTION", default=183, cast=int)
 API_LOGS_DATA_RETENTION = config("API_LOGS_DATA_RETENTION", default=92, cast=int)
 
-# background tracking max active age
-TRACKER_MAX_ACTIVE_DAYS = config("TRACKER_MAX_ACTIVE_DAYS", default=90, cast=int)
-
 # registry config
 ENABLE_ALL_PLUGINS_BY_DEFAULT = config(
     "ENABLE_ALL_PLUGINS_BY_DEFAULT", default=True if base.DEBUG else False, cast=bool
@@ -200,11 +197,6 @@ CONSTANCE_CONFIG = {
         "API request and SDK tracing logs retention period (in days)",
         int,
     ),
-    "TRACKER_MAX_ACTIVE_DAYS": (
-        TRACKER_MAX_ACTIVE_DAYS,
-        "Maximum age (in days) for active background tracking. Trackers created more than this many days ago will be retired from polling and their status set to 'unknown'.",
-        int,
-    ),
     **FEATURE_FLAGS_CONFIG,
     **PLUGIN_REGISTRY,
     **PLUGIN_SYSTEM_CONFIG,
@@ -228,7 +220,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "TRACKER_DATA_RETENTION",
         "SHIPMENT_DATA_RETENTION",
         "API_LOGS_DATA_RETENTION",
-        "TRACKER_MAX_ACTIVE_DAYS",
     ),
     "Feature Flags": tuple(FEATURE_FLAGS_FIELDSET),
     "Registry Config": ("ENABLE_ALL_PLUGINS_BY_DEFAULT",),

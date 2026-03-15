@@ -34,13 +34,6 @@ def return_shipment_request(
     }
 
     return create.shipment_request(
-        models.ShipmentRequest(
-            **{
-                **lib.to_dict(payload),
-                "options": options,
-                # ShipFrom should be the customer (shipper after SDK swap), not the merchant
-                "return_address": lib.to_dict(payload.shipper),
-            }
-        ),
+        models.ShipmentRequest(**{**lib.to_dict(payload), "options": options}),
         settings,
     )

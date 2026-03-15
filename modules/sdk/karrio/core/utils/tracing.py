@@ -16,7 +16,6 @@ import uuid
 import attr
 import time
 import typing
-import threading
 import functools
 import concurrent.futures as futures
 
@@ -382,7 +381,6 @@ class Tracer:
         self.id = id or str(uuid.uuid4())
         self.inner_context: typing.Dict[str, typing.Any] = {}
         self.inner_recordings: typing.Dict[futures.Future, dict] = {}
-        self._recordings_lock = threading.Lock()
         self._telemetry = telemetry or get_default_telemetry()
 
     @property
@@ -424,9 +422,7 @@ class Tracer:
 
         # Use shared executor to avoid creating new thread pools per trace
         executor = _get_trace_executor()
-        future = executor.submit(_save)
-        with self._recordings_lock:
-            self.inner_recordings[future] = data
+        self.inner_recordings.update({executor.submit(_save): data})
 
         # Add telemetry breadcrumb for APM context
         self._telemetry.add_breadcrumb(
@@ -456,9 +452,7 @@ class Tracer:
     @property
     def records(self) -> typing.List[Record]:
         """Get all recorded trace records."""
-        with self._recordings_lock:
-            pending = dict(self.inner_recordings)
-        return [rec.result() for rec in futures.as_completed(pending)]
+        return [rec.result() for rec in futures.as_completed(self.inner_recordings)]
 
     @property
     def context(self) -> typing.Dict[str, typing.Any]:
