@@ -697,24 +697,42 @@ def exec_parrallel(
 
 
 def exec_async(action: Callable, sequence: List[S]) -> List[T]:
+    if not sequence:
+        return []
+
+    # Propagate Sentry context into worker threads.
+    # asyncio.run() creates a new context boundary; Sentry's ContextVar-based scopes
+    # are not visible to asyncio.to_thread workers. Capture the parent scope now
+    # (in the calling thread) and re-apply it in each worker.
+    _parent_scope = None
+    try:
+        import sentry_sdk  # noqa: PLC0415
+
+        _parent_scope = sentry_sdk.get_isolation_scope()
+    except Exception:
+        pass
+
+    _original_action = action
+    if _parent_scope is not None:
+        import sentry_sdk as _sentry  # noqa: PLC0415
+
+        def _action_with_scope(item):
+            with _sentry.new_scope() as scope:
+                scope.update_from_scope(_parent_scope)
+                return _original_action(item)
+
+        action = _action_with_scope
+
     async def run_tasks():
-        # Use asyncio.to_thread instead of loop.run_in_executor
-        # This ensures proper task scheduling and prevents potential task dropping
         return await asyncio.gather(
             *[asyncio.to_thread(action, args) for args in sequence]
         )
 
     async def run_loop():
-        # Simplified to just return the result of run_tasks
-        # No need for manual loop creation and closing
         return await run_tasks()
 
-    # Use asyncio.run instead of ThreadPoolExecutor
-    # This properly sets up and tears down the event loop
-    # Preventing issues with loop closure and task cleanup
     result = asyncio.run(run_loop())
 
-    # Cast the result to the expected type
     return cast(List[T], result)
 
 
