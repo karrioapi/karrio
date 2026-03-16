@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     # password: str = attr.ib(metadata={"sensitive": True})
     account_number: str = None
     account_country_code: str = None
-    software_name: str = None
     metadata: dict = {}
     config: dict = {}
 
