@@ -287,6 +287,7 @@ class PackageType(lib.StrEnum):
 
 class ConnectionConfig(lib.Enum):
     label_type = lib.OptionEnum("label_type", LabelType)
+    software_name = lib.OptionEnum("software_name", str)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
     skip_service_filter = lib.OptionEnum("skip_service_filter", bool)

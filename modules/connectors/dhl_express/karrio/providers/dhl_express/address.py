@@ -59,7 +59,7 @@ def address_validation_request(
     request = RouteRequest(
         schemaVersion="2.0",
         Request=settings.Request(
-            MetaData=MetaData(SoftwareName=settings.software_name or "3PV", SoftwareVersion=1.0)
+            MetaData=MetaData(SoftwareName=settings.connection_config.software_name.state or "3PV", SoftwareVersion=1.0)
         ),
         RegionCode=CountryRegion[payload.address.country_code].value,
         RequestType=RequestType.D.value,

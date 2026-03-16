@@ -13,7 +13,6 @@ class Settings(core.Settings):
     password: str
     account_number: str = None
     account_country_code: str = None
-    software_name: str = None
     metadata: dict = {}
 
     id: str = None
