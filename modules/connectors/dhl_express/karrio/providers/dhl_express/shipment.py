@@ -444,7 +444,7 @@ def shipment_request(
             ),
             WeightUnit=provider_units.WeightUnit[weight_unit.name].value,
             GlobalProductCode=product,
-            LocalProductCode=product,
+            LocalProductCode=None,
             Date=(options.shipment_date.state or time.strftime("%Y-%m-%d")),
             Contents=content,
             DimensionUnit=provider_units.DimensionUnit[dim_unit.name].value,

@@ -192,7 +192,7 @@ def rate_request(
                     [
                         dhl.QtdShpType(
                             GlobalProductCode=svc.value,
-                            LocalProductCode=svc.value,
+                            LocalProductCode=None,
                             QtdShpExChrg=(
                                 [
                                     dhl.QtdShpExChrgType(SpecialServiceType=option.code)
