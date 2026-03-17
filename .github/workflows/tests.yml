@@ -6,6 +6,12 @@
 #   - PostgreSQL service for server-tests → enables --parallel
 #   - npm cache for dashboard-ci
 #   - actions/checkout@v4 + shallow submodule fetch
+#
+# Coverage:
+#   - SDK tests emit coverage-sdk.xml (parallel coverage, combined after run)
+#   - Server tests emit coverage-server.xml
+#   - Both are uploaded to Codacy (https://app.codacy.com/gh/karrioapi/karrio)
+#   - Requires CODACY_PROJECT_TOKEN secret in repo settings
 
 name: karrio-tests
 
@@ -47,8 +53,19 @@ jobs:
       - name: Run SDK typechecks
         run: ./bin/run-sdk-typecheck -v
 
-      - name: Run SDK tests
-        run: ./bin/run-sdk-tests -v
+      - name: Run SDK tests with coverage
+        run: ./bin/run-sdk-tests -v --coverage
+
+      - name: Upload SDK coverage to Codacy
+        if: ${{ success() && env.CODACY_PROJECT_TOKEN != '' }}
+        uses: codacy/codacy-coverage-reporter-action@v1.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage-sdk.xml
+          language: Python
+          partial-coverage: true
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
   server-tests:
     runs-on: ubuntu-latest
@@ -115,7 +132,7 @@ jobs:
           ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
         run: ./bin/migrate
 
-      - name: Run server tests
+      - name: Run server tests with coverage
         env:
           DATABASE_ENGINE: postgresql
           DATABASE_NAME: karrio
@@ -124,7 +141,20 @@ jobs:
           DATABASE_USERNAME: postgres
           DATABASE_PASSWORD: postgres
           ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
-        run: ./bin/run-server-tests -v
+        run: ./bin/run-server-tests -v --coverage
+
+      - name: Upload server coverage to Codacy
+        if: ${{ success() && env.CODACY_PROJECT_TOKEN != '' }}
+        uses: codacy/codacy-coverage-reporter-action@v1.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage-server.xml
+          language: Python
+          # Mark as partial so Codacy waits for both SDK + server before
+          # computing the final combined coverage percentage
+          partial-coverage: true
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
   dashbaord-ci:
     runs-on: ubuntu-latest

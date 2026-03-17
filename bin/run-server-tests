@@ -3,14 +3,34 @@
 # Activate python env
 source "bin/activate-env" >/dev/null 2>&1
 
+# Parse --coverage flag
+WITH_COVERAGE=false
+for arg in "$@"; do
+    case $arg in
+        --coverage) WITH_COVERAGE=true ;;
+    esac
+done
+
 echo 'run server tests...'
+
+if [[ "$WITH_COVERAGE" == "true" ]]; then
+    minimal_log "Coverage mode enabled — reports will be written to coverage-server.xml"
+    rm -f .coverage.server 2>/dev/null || true
+
+    # coverage run wraps the karrio CLI entry point script directly.
+    # We use `command -v karrio` to get the absolute path of the venv binary
+    # so coverage can instrument the Django test runner it invokes.
+    KARRIO_BIN="$(command -v karrio)"
+    KARRIO_TEST="python -m coverage run --rcfile=.coveragerc --parallel-mode \"${KARRIO_BIN}\""
+else
+    KARRIO_TEST="karrio test"
+fi
 
 # Serial execution is required — Django parallel runner deadlocks on both SQLite
 # (shared :memory: URI) and PostgreSQL (select_for_update / row-level locking
 # across forked worker processes). automation.tests requires serial execution
 # explicitly via WORKER_IMMEDIATE_MODE. Keep all tests serial for consistency.
-
-karrio test --failfast \
+$KARRIO_TEST --failfast \
     karrio.server.core.tests \
     karrio.server.providers.tests \
     karrio.server.proxy.tests \
@@ -24,11 +44,23 @@ karrio test --failfast \
     || exit 1
 
 if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
-    karrio test --failfast \
+    $KARRIO_TEST --failfast \
         karrio.server.orgs.tests \
         || exit 1
     # automation must remain serial — WORKER_IMMEDIATE_MODE is not parallel-safe
-    WORKER_IMMEDIATE_MODE=True karrio test --failfast karrio.server.automation.tests || exit 1
+    WORKER_IMMEDIATE_MODE=True $KARRIO_TEST --failfast karrio.server.automation.tests || exit 1
+fi
+
+# Generate coverage report
+if [[ "$WITH_COVERAGE" == "true" ]]; then
+    echo "Combining parallel coverage data..."
+    python -m coverage combine --rcfile=.coveragerc
+
+    echo "Writing coverage-server.xml..."
+    python -m coverage xml --rcfile=.coveragerc -o coverage-server.xml
+
+    echo "Coverage summary:"
+    python -m coverage report --rcfile=.coveragerc || true
 fi
 
 echo -e "\033[0;32mAll server tests completed successfully\033[0m"

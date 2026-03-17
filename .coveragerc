@@ -1,11 +1,46 @@
-# .coveragerc to control coverage.py
+# .coveragerc — coverage.py configuration for karrio SDK + server
 [run]
 branch = True
+parallel = True
+source =
+    karrio
 omit =
+    # Skip generated SOAP/XML schema files
     */sdk/extensions/dicom/*
+    # Skip migrations
+    */migrations/*
+    # Skip test files themselves
+    */tests/*
+    */test_*.py
+    # Skip setup/config
+    setup.py
+    manage.py
+    */wsgi.py
+    */asgi.py
 
 [report]
+# SDK modules
 include =
-    */sdk/core/*
-    */sdk/extensions/*
-    */sdk/vendors/*
+    */modules/sdk/karrio/*
+    */modules/connectors/*/karrio/*
+    # Server modules
+    */modules/core/karrio/server/*
+    */apps/api/karrio/server/*
+    */modules/graph/karrio/server/*
+    */modules/data/karrio/server/*
+    */modules/events/karrio/server/*
+    */modules/manager/karrio/server/*
+    */modules/orders/karrio/server/*
+    */modules/proxy/karrio/server/*
+    */modules/pricing/karrio/server/*
+    */modules/documents/karrio/server/*
+    */modules/admin/karrio/server/*
+precision = 2
+show_missing = True
+skip_covered = False
+
+[xml]
+output = coverage.xml
+
+[html]
+directory = htmlcov
