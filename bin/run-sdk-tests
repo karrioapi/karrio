@@ -20,7 +20,10 @@ if [[ "$WITH_COVERAGE" == "true" ]]; then
     minimal_log "Coverage mode enabled — reports will be written to coverage-sdk.xml"
 
     COVERAGE_FILE="${ROOT}/.coverage.sdk.core"
-    RUNNER_PREFIX="python -m coverage run --rcfile=.coveragerc --parallel-mode"
+    # The trailing -m tells coverage run to invoke the next arg as a Python module
+    # (i.e. "coverage run --parallel-mode -m unittest discover ...").
+    # Without it, coverage treats "unittest" as a script file path and fails.
+    RUNNER_PREFIX="python -m coverage run --rcfile=.coveragerc --parallel-mode -m"
 else
     RUNNER_PREFIX="python -m"
 fi
@@ -44,10 +47,10 @@ run_connector() {
     module_name=$(basename "$module")
     if [[ "$WITH_COVERAGE" == "true" ]]; then
         if [[ "$VERBOSE" == "true" ]]; then
-            python -m coverage run --rcfile=.coveragerc --parallel-mode \
+            python -m coverage run --rcfile="${ROOT}/.coveragerc" --parallel-mode \
                 -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
         else
-            python -m coverage run --rcfile=.coveragerc --parallel-mode \
+            python -m coverage run --rcfile="${ROOT}/.coveragerc" --parallel-mode \
                 -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
         fi
     else

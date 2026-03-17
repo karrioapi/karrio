@@ -20,8 +20,10 @@ if [[ "$WITH_COVERAGE" == "true" ]]; then
     # coverage run wraps the karrio CLI entry point script directly.
     # We use `command -v karrio` to get the absolute path of the venv binary
     # so coverage can instrument the Django test runner it invokes.
+    # Note: no extra quoting around KARRIO_BIN — bash word-splits the variable
+    # when the command runs, and embedded quotes in the string become literal chars.
     KARRIO_BIN="$(command -v karrio)"
-    KARRIO_TEST="python -m coverage run --rcfile=.coveragerc --parallel-mode \"${KARRIO_BIN}\""
+    KARRIO_TEST="python -m coverage run --rcfile=.coveragerc --parallel-mode ${KARRIO_BIN}"
 else
     KARRIO_TEST="karrio test"
 fi
