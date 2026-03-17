@@ -1,3 +1,31 @@
+# Karrio 2026.1.22
+
+## Changes
+
+### Feat
+
+- feat(sdk): add is_return field to RateRequest model and serializer (#1027)
+- feat(tracking): retire aged trackers (#1023)
+- feat(return): return shipments support (#1016)
+
+### Fix
+
+- fix(fedex): signature and email notification (#1029)
+- fix(sdk): redact API key headers (#1023)
+- fix(smartkargo): ensure trace_as records for all proxy ops (#1019)
+- fix(migration): remove orgs dependency and preserve system rate sheet links
+- fix(migration): remove nonexistent orgs.0030 dependency from migration 0106
+
+### Test
+
+- test(events): assert webhook payload structure per event type (#1017)
+
+### Perf
+
+- perf(tests+ci): test suite speed improvements and CI optimisation (#1015)
+
+---
+
 # Karrio 2026.1.21
 
 ## Changes

@@ -170,6 +170,7 @@ class RateRequest:
     services: List[str] = []
     options: Dict = {}
     reference: str = ""
+    is_return: bool = False
 
 
 @attr.s(auto_attribs=True)

@@ -203,7 +203,7 @@ def shipment_request(
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
         Request=settings.Request(
-            MetaData=dhl.MetaData(SoftwareName=settings.software_name or "3PV", SoftwareVersion="10.0")
+            MetaData=dhl.MetaData(SoftwareName=settings.connection_config.software_name.state or "3PV", SoftwareVersion="10.0")
         ),
         RegionCode=provider_units.CountryRegion[shipper.country_code].value,
         LanguageCode="en",
@@ -444,7 +444,7 @@ def shipment_request(
             ),
             WeightUnit=provider_units.WeightUnit[weight_unit.name].value,
             GlobalProductCode=product,
-            LocalProductCode=product,
+            LocalProductCode=None,
             Date=(options.shipment_date.state or time.strftime("%Y-%m-%d")),
             Contents=content,
             DimensionUnit=provider_units.DimensionUnit[dim_unit.name].value,

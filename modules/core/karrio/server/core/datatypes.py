@@ -231,6 +231,7 @@ class RateRequest(BaseRateRequest):
     services: typing.List[str] = []
     options: typing.Dict = {}
     reference: str = ""
+    is_return: bool = False
 
     carrier_ids: typing.List[str] = []
 
