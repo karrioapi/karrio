@@ -381,23 +381,6 @@ ShipmentRequest = {
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
         },
-        "emailNotificationDetail": {
-            "aggregationType": "PER_SHIPMENT",
-            "emailNotificationRecipients": [
-                {
-                    "emailAddress": "Input Your Information",
-                    "emailNotificationRecipientType": "RECIPIENT",
-                    "name": "Input Your Information",
-                    "notificationEventType": [
-                        "ON_DELIVERY",
-                        "ON_EXCEPTION",
-                        "ON_SHIPMENT",
-                    ],
-                    "notificationFormatType": "HTML",
-                    "notificationType": "EMAIL",
-                }
-            ],
-        },
         "labelSpecification": {
             "imageType": "PDF",
             "labelFormatType": "COMMON2D",
@@ -436,7 +419,7 @@ ShipmentRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
+                "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 20.0},
             }
@@ -503,23 +486,6 @@ ShipmentPaidByRecipientRequest = {
     "oneLabelAtATime": False,
     "requestedShipment": {
         "blockInsightVisibility": False,
-        "emailNotificationDetail": {
-            "aggregationType": "PER_SHIPMENT",
-            "emailNotificationRecipients": [
-                {
-                    "emailAddress": "Recipient Information",
-                    "emailNotificationRecipientType": "RECIPIENT",
-                    "name": "Recipient Information",
-                    "notificationEventType": [
-                        "ON_DELIVERY",
-                        "ON_EXCEPTION",
-                        "ON_SHIPMENT",
-                    ],
-                    "notificationFormatType": "HTML",
-                    "notificationType": "EMAIL",
-                }
-            ],
-        },
         "labelSpecification": {
             "imageType": "PDF",
             "labelFormatType": "COMMON2D",
@@ -558,7 +524,7 @@ ShipmentPaidByRecipientRequest = {
                     "width": 12.0,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
+                "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 20.0},
             }
@@ -674,23 +640,6 @@ MultiPieceShipmentRequest = {
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
         },
-        "emailNotificationDetail": {
-            "aggregationType": "PER_SHIPMENT",
-            "emailNotificationRecipients": [
-                {
-                    "emailAddress": "Input Your Information",
-                    "emailNotificationRecipientType": "RECIPIENT",
-                    "name": "Input Your Information",
-                    "notificationEventType": [
-                        "ON_DELIVERY",
-                        "ON_EXCEPTION",
-                        "ON_SHIPMENT",
-                    ],
-                    "notificationFormatType": "HTML",
-                    "notificationType": "EMAIL",
-                }
-            ],
-        },
         "labelSpecification": {
             "imageType": "PDF",
             "labelFormatType": "COMMON2D",
@@ -729,7 +678,7 @@ MultiPieceShipmentRequest = {
                     "width": 12,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
+                "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 1.0},
             },
@@ -742,7 +691,7 @@ MultiPieceShipmentRequest = {
                     "width": 11,
                 },
                 "groupPackageCount": 1,
-                "packageSpecialServices": {"signatureOptionType": "SERVICE_DEFAULT"},
+                "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 2.0},
             },
