@@ -475,8 +475,8 @@ def shipment_request(
                     ],
                     personalMessage=None,
                 )
-                if options.email_notification.state
-                or any([options.email_notification_to.state, recipient.email])
+                if (payload.options or {}).get("email_notification") is True
+                or options.email_notification_to.state
                 else None
             ),
             expressFreightDetail=None,

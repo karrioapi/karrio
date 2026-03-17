@@ -381,23 +381,6 @@ ShipmentRequest = {
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
         },
-        "emailNotificationDetail": {
-            "aggregationType": "PER_SHIPMENT",
-            "emailNotificationRecipients": [
-                {
-                    "emailAddress": "Input Your Information",
-                    "emailNotificationRecipientType": "RECIPIENT",
-                    "name": "Input Your Information",
-                    "notificationEventType": [
-                        "ON_DELIVERY",
-                        "ON_EXCEPTION",
-                        "ON_SHIPMENT",
-                    ],
-                    "notificationFormatType": "HTML",
-                    "notificationType": "EMAIL",
-                }
-            ],
-        },
         "labelSpecification": {
             "imageType": "PDF",
             "labelFormatType": "COMMON2D",
@@ -503,23 +486,6 @@ ShipmentPaidByRecipientRequest = {
     "oneLabelAtATime": False,
     "requestedShipment": {
         "blockInsightVisibility": False,
-        "emailNotificationDetail": {
-            "aggregationType": "PER_SHIPMENT",
-            "emailNotificationRecipients": [
-                {
-                    "emailAddress": "Recipient Information",
-                    "emailNotificationRecipientType": "RECIPIENT",
-                    "name": "Recipient Information",
-                    "notificationEventType": [
-                        "ON_DELIVERY",
-                        "ON_EXCEPTION",
-                        "ON_SHIPMENT",
-                    ],
-                    "notificationFormatType": "HTML",
-                    "notificationType": "EMAIL",
-                }
-            ],
-        },
         "labelSpecification": {
             "imageType": "PDF",
             "labelFormatType": "COMMON2D",
@@ -673,23 +639,6 @@ MultiPieceShipmentRequest = {
             },
             "insuranceCharge": {"amount": 0.0, "currency": "USD"},
             "isDocumentOnly": False,
-        },
-        "emailNotificationDetail": {
-            "aggregationType": "PER_SHIPMENT",
-            "emailNotificationRecipients": [
-                {
-                    "emailAddress": "Input Your Information",
-                    "emailNotificationRecipientType": "RECIPIENT",
-                    "name": "Input Your Information",
-                    "notificationEventType": [
-                        "ON_DELIVERY",
-                        "ON_EXCEPTION",
-                        "ON_SHIPMENT",
-                    ],
-                    "notificationFormatType": "HTML",
-                    "notificationType": "EMAIL",
-                }
-            ],
         },
         "labelSpecification": {
             "imageType": "PDF",
