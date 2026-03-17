@@ -62,59 +62,6 @@ Default Login: `admin@example.com` | `demo`
   <img alt="Developer Tools" src="screenshots/developer-tools.png" width="800" style="max-width: 100%;" />
 </p>
 
-## MCP Server
-
-Karrio ships with a built-in [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server, letting AI assistants like Claude, Cursor, and Windsurf query rates, purchase labels, track shipments, and manage carriers directly from your IDE or chat interface.
-
-### Quick install
-
-**Claude Desktop / Cursor / Windsurf** — add to your MCP config:
-
-```json
-{
-  "mcpServers": {
-    "karrio": {
-      "command": "uvx",
-      "args": ["karrio-mcp"],
-      "env": {
-        "KARRIO_API_KEY": "your_api_key",
-        "KARRIO_API_URL": "https://api.karrio.io"
-      }
-    }
-  }
-}
-```
-
-**Self-hosted instance:**
-
-```json
-{
-  "mcpServers": {
-    "karrio": {
-      "command": "uvx",
-      "args": ["karrio-mcp"],
-      "env": {
-        "KARRIO_API_KEY": "your_api_key",
-        "KARRIO_API_URL": "http://localhost:5002"
-      }
-    }
-  }
-}
-```
-
-### What you can do
-
-Once connected, ask your AI assistant things like:
-
-- _"Get me shipping rates from DHL and FedEx for a 2kg package to Germany"_
-- _"Purchase a UPS label for order #1234"_
-- _"Track shipment 1Z999AA10123456784"_
-- _"List my connected carrier accounts"_
-
-→ **[Full MCP server docs and tool reference](https://www.karrio.io/docs/developing/mcp-server)**
-
----
-
 ## Get started
 
 ### Quick start demo
@@ -204,6 +151,57 @@ Carrier plugins and integrations can be developed under permissive licenses (Apa
 - Contribute plugins to the community repository
 
 See our [Plugin Development Guide](https://www.karrio.io/docs/developing/plugin-development) for details.
+
+## MCP Server
+
+Karrio ships with a built-in [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server, letting AI assistants like Claude, Cursor, and Windsurf query rates, purchase labels, track shipments, and manage carriers directly from your IDE or chat interface.
+
+### Quick install
+
+**Claude Desktop / Cursor / Windsurf** — add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "karrio": {
+      "command": "npx",
+      "args": ["karrio-mcp"],
+      "env": {
+        "KARRIO_API_KEY": "your_api_key",
+        "KARRIO_API_URL": "https://api.karrio.io"
+      }
+    }
+  }
+}
+```
+
+**Self-hosted instance:**
+
+```json
+{
+  "mcpServers": {
+    "karrio": {
+      "command": "npx",
+      "args": ["karrio-mcp"],
+      "env": {
+        "KARRIO_API_KEY": "your_api_key",
+        "KARRIO_API_URL": "http://localhost:5002"
+      }
+    }
+  }
+}
+```
+
+### What you can do
+
+Once connected, ask your AI assistant things like:
+
+- _"Get me shipping rates from DHL and FedEx for a 2kg package to Germany"_
+- _"Purchase a UPS label for order #1234"_
+- _"Track shipment 1Z999AA10123456784"_
+- _"List my connected carrier accounts"_
+
+→ **[Full MCP server docs and tool reference](https://www.karrio.io/docs/developing/mcp-server)**
 
 ## Contributing
 

@@ -92,8 +92,9 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    shipper = lib.to_address(payload.shipper)
-    recipient = lib.to_address(payload.recipient)
+    is_return = (payload.options or {}).get("is_return", False)
+    shipper = lib.to_address(payload.recipient if is_return else payload.shipper)
+    recipient = lib.to_address(payload.shipper if is_return else payload.recipient)
     service = lib.to_services(payload.services, provider_units.ShippingService).first
     options = lib.to_shipping_options(
         payload.options,
@@ -114,11 +115,11 @@ def rate_request(
     default_currency = lib.identity(
         options.currency.state
         or settings.default_currency
-        or units.CountryCurrency.map(payload.shipper.country_code).value
+        or units.CountryCurrency.map(shipper.country_code).value
         or "USD"
     )
     weight_unit, dim_unit = lib.identity(
-        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        provider_units.COUNTRY_PREFERED_UNITS.get(shipper.country_code)
         or packages.compatible_units
     )
     request_types = lib.identity(
@@ -149,8 +150,8 @@ def rate_request(
 
     customs = lib.to_customs_info(
         payload.customs,
-        shipper=payload.shipper,
-        recipient=payload.recipient,
+        shipper=(payload.recipient if is_return else payload.shipper),
+        recipient=(payload.shipper if is_return else payload.recipient),
         weight_unit=weight_unit.value,
     )
     commodities = lib.identity(

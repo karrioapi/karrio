@@ -421,7 +421,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
         </Pieces>
         <WeightUnit>K</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
-        <LocalProductCode>P</LocalProductCode>
         <Date>{time.strftime('%Y-%m-%d')}</Date>
         <Contents>N/A</Contents>
         <DimensionUnit>C</DimensionUnit>
@@ -550,7 +549,6 @@ NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http
         </Pieces>
         <WeightUnit>K</WeightUnit>
         <GlobalProductCode>8</GlobalProductCode>
-        <LocalProductCode>8</LocalProductCode>
         <Date>2023-12-15</Date>
         <Contents>title</Contents>
         <DimensionUnit>C</DimensionUnit>
