@@ -266,7 +266,11 @@ def rate_request(
                                     provider_units.SignatureOptionType.map(
                                         package.options.fedex_signature_option.state
                                     ).value
-                                    or "SERVICE_DEFAULT"
+                                    or (
+                                        "DIRECT"
+                                        if package.options.fedex_signature_option.state
+                                        else None
+                                    )
                                 )
                             ],
                             alcoholDetail=None,
