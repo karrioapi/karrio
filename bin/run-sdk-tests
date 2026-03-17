@@ -46,11 +46,14 @@ run_connector() {
     module="$1"
     module_name=$(basename "$module")
     if [[ "$WITH_COVERAGE" == "true" ]]; then
+        # Use relative path for .coveragerc — xargs subprocesses inherit CWD
+        # from the parent (repo root), so .coveragerc resolves correctly.
+        # ${ROOT} is not exported to xargs children, making it empty there.
         if [[ "$VERBOSE" == "true" ]]; then
-            python -m coverage run --rcfile="${ROOT}/.coveragerc" --parallel-mode \
+            python -m coverage run --rcfile=.coveragerc --parallel-mode \
                 -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
         else
-            python -m coverage run --rcfile="${ROOT}/.coveragerc" --parallel-mode \
+            python -m coverage run --rcfile=.coveragerc --parallel-mode \
                 -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
         fi
     else

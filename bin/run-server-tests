@@ -23,7 +23,9 @@ if [[ "$WITH_COVERAGE" == "true" ]]; then
     # Note: no extra quoting around KARRIO_BIN — bash word-splits the variable
     # when the command runs, and embedded quotes in the string become literal chars.
     KARRIO_BIN="$(command -v karrio)"
-    KARRIO_TEST="python -m coverage run --rcfile=.coveragerc --parallel-mode ${KARRIO_BIN}"
+    # Include the 'test' subcommand here so "$KARRIO_TEST --failfast ..."
+    # expands to "coverage run karrio test --failfast ..." not "coverage run karrio --failfast ..."
+    KARRIO_TEST="python -m coverage run --rcfile=.coveragerc --parallel-mode ${KARRIO_BIN} test"
 else
     KARRIO_TEST="karrio test"
 fi
