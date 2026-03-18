@@ -1,4 +1,4 @@
---extra-index-url https://github.com/karrioapi/karrio-insiders/releases/
+--extra-index-url https://karrio.gateway.scarf.sh/simple/
 asgiref==3.11.1
 attrs==25.4.0
 backoff==2.2.1
@@ -97,7 +97,7 @@ karrio-server-orders==2026.1.24
 karrio-server-orgs==2026.1.24
 karrio-server-pricing==2026.1.24
 karrio-server-proxy==2026.1.24
-karrio-server-tenants==2026.1.24
+karrio_server_tenants @ file://${PWD}/ee/platform/modules/tenants
 karrio-smartkargo==2026.1.24
 karrio-spring==2026.1.24
 karrio-teleship==2026.1.24
