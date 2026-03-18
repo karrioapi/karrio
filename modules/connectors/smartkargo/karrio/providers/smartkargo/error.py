@@ -22,6 +22,20 @@ def parse_error_response(
     errors: typing.List[models.Message] = []
 
     for res in responses:
+        # Handle plain text error responses (e.g. 'Entity "Site" (...) not found')
+        if isinstance(res, str):
+            if res.strip():
+                errors.append(
+                    models.Message(
+                        carrier_id=settings.carrier_id,
+                        carrier_name=settings.carrier_name,
+                        code="API_ERROR",
+                        message=res.strip(),
+                        details={**kwargs},
+                    )
+                )
+            continue
+
         if not isinstance(res, dict):
             continue
 
