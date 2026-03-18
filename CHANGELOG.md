@@ -2,6 +2,19 @@
 
 ## Changes
 
+### Feat
+- feat(dev): add automated release script
+
+### Fix
+- fix(smartkargo): use production API URL for live mode
+- fix(smartkargo): trim text fields to SmartKargo API max lengths
+
+---
+
+# Karrio 2026.1.25
+
+## Changes
+
 ### Fix
 
 - fix(smartkargo): trim text fields to SmartKargo API max lengths (#1037)
@@ -3543,4 +3556,3 @@ danh91.docker.scarf.sh/purplship/server:2022.1.4
 -   Prevent confusing Purolator exception when address properties are required and not defined
 -   Fix invalid `CM` -> `IN` conversion
 -   Consolidated `Purolator` shipment cancellation request"
-
