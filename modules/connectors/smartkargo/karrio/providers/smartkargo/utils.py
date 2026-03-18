@@ -21,7 +21,7 @@ class Settings(core.Settings):
         return (
             "https://uatihub.smartkargo.com/ihub-devtest-mt-api-function"
             if self.test_mode
-            else "https://uatihub.smartkargo.com/ihub-uat-mt-api-function"
+            else "https://ihub.smartkargo.com/ihub-prod-mt-api-function"
         )
 
     @property

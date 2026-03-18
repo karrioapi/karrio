@@ -5,6 +5,7 @@
 ### Fix
 
 - fix(smartkargo): trim text fields to SmartKargo API max lengths (#1037)
+- fix(smartkargo): use production API URL for live mode
 - fix(build): convert absolute paths in frozen requirements to portable format (#1036)
 
 ---
