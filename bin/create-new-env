@@ -14,9 +14,15 @@ mkdir -p "${ROOT:?}/$ENV_DIR"
 
 [[ -d "${ROOT:?}/$ENV_DIR/$BASE_DIR" ]] && rm -rf "${ROOT:?}/$ENV_DIR/$BASE_DIR"
 
-# create virtual environment
+# create virtual environment — use uv when available (much faster resolver),
+# fall back to python3 -m venv for environments where uv is not installed
 minimal_log "Creating Python environment"
-python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR"
+if command -v uv >/dev/null 2>&1; then
+    uv venv "${ROOT:?}/$ENV_DIR/$BASE_DIR" --python 3.12 2>/dev/null || \
+        uv venv "${ROOT:?}/$ENV_DIR/$BASE_DIR"
+else
+    python3 -m venv "${ROOT:?}/$ENV_DIR/$BASE_DIR"
+fi
 
 if [[ "$VERBOSE" == "true" ]]; then
     echo "activating $BASE_DIR env ..."
@@ -34,7 +40,10 @@ if [[ "$VERBOSE" == "true" ]]; then
     echo "installing base requirements ..."
 fi
 
-run_command "python -m pip install pip --upgrade" "Failed to upgrade pip" "Upgrading pip..." || exit $?
+if ! command -v uv >/dev/null 2>&1; then
+    # Only needed when uv is absent — uv manages its own package resolver
+    run_command "python -m pip install pip --upgrade" "Failed to upgrade pip" "Upgrading pip..." || exit $?
+fi
 
 if [[ "$*" != *--empty* ]]; then
     run_pip_install "${ROOT}/requirements.dev.txt" "Failed to install development requirements" || exit $?

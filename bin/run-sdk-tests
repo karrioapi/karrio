@@ -2,34 +2,72 @@
 
 source "bin/activate-env" "$@"
 
+# Parse --coverage flag
+WITH_COVERAGE=false
+for arg in "$@"; do
+    case $arg in
+        --coverage) WITH_COVERAGE=true ;;
+    esac
+done
+
 log_section "Running SDK Tests"
 
-# SDK base tests (fast, run first to fail early)
+if [[ "$WITH_COVERAGE" == "true" ]]; then
+    # Clean up any stale parallel coverage data
+    find . -maxdepth 1 -name '.coverage.*' -delete 2>/dev/null || true
+    rm -f .coverage
+
+    minimal_log "Coverage mode enabled — reports will be written to coverage-sdk.xml"
+
+    COVERAGE_FILE="${ROOT}/.coverage.sdk.core"
+    # The trailing -m tells coverage run to invoke the next arg as a Python module
+    # (i.e. "coverage run --parallel-mode -m unittest discover ...").
+    # Without it, coverage treats "unittest" as a script file path and fails.
+    RUNNER_PREFIX="python -m coverage run --rcfile=.coveragerc --parallel-mode -m"
+else
+    RUNNER_PREFIX="python -m"
+fi
+
+# SDK base tests
 minimal_log "Running SDK core tests"
 if [[ "$VERBOSE" == "true" ]]; then
-    run_command "python -m unittest discover -v -f modules/sdk/tests" "SDK tests failed" "Running SDK tests with verbose output..." || exit 1
+    run_command "${RUNNER_PREFIX} unittest discover -v -f modules/sdk/tests" \
+        "SDK tests failed" "Running SDK core tests..." || exit 1
 else
-    run_command "python -m unittest discover -f modules/sdk/tests" "SDK tests failed" "Running SDK tests..." || exit 1
+    run_command "${RUNNER_PREFIX} unittest discover -f modules/sdk/tests" \
+        "SDK tests failed" "Running SDK core tests..." || exit 1
 fi
 
 # Connector tests — run in parallel (pure unit tests, no shared state)
 log_section "Running Connector Tests (parallel)"
 packages=$(find modules/connectors -type d -name "tests" -exec dirname '{}' \;)
 
-# xargs -P: run up to 8 connector test suites concurrently
-# exit 255 propagates failure out of xargs immediately
 run_connector() {
     module="$1"
     module_name=$(basename "$module")
-    if [[ "$VERBOSE" == "true" ]]; then
-        python -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+    if [[ "$WITH_COVERAGE" == "true" ]]; then
+        # Use relative path for .coveragerc — xargs subprocesses inherit CWD
+        # from the parent (repo root), so .coveragerc resolves correctly.
+        # ${ROOT} is not exported to xargs children, making it empty there.
+        if [[ "$VERBOSE" == "true" ]]; then
+            python -m coverage run --rcfile=.coveragerc --parallel-mode \
+                -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        else
+            python -m coverage run --rcfile=.coveragerc --parallel-mode \
+                -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        fi
     else
-        python -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        if [[ "$VERBOSE" == "true" ]]; then
+            python -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        else
+            python -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        fi
     fi
     return ${PIPESTATUS[0]}
 }
 export -f run_connector
 export VERBOSE
+export WITH_COVERAGE
 
 echo "$packages" | xargs -P 8 -I{} bash -c 'run_connector "$@"' _ {} || exit 1
 
@@ -42,4 +80,17 @@ if [ -d "community/plugins" ]; then
     fi
 fi
 
-echo -e "\033[0;32mAll tests completed successfully\033[0m"
+# Generate coverage report
+if [[ "$WITH_COVERAGE" == "true" ]]; then
+    log_section "Generating SDK Coverage Report"
+    minimal_log "Combining parallel coverage data..."
+    python -m coverage combine --rcfile=.coveragerc
+
+    minimal_log "Writing coverage-sdk.xml..."
+    python -m coverage xml --rcfile=.coveragerc -o coverage-sdk.xml
+
+    minimal_log "Coverage summary:"
+    python -m coverage report --rcfile=.coveragerc || true
+fi
+
+echo -e "\033[0;32mAll SDK tests completed successfully\033[0m"

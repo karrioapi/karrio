@@ -109,12 +109,37 @@ run_command() {
     return 0
 }
 
+ensure_uv() {
+    if command -v uv >/dev/null 2>&1; then
+        return 0
+    fi
+    minimal_log "uv not found — installing..."
+    if command -v brew >/dev/null 2>&1; then
+        brew install uv >/dev/null 2>&1
+    else
+        curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+        # shellcheck source=/dev/null
+        [ -f "$HOME/.local/bin/env" ] && source "$HOME/.local/bin/env" || true
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+    if ! command -v uv >/dev/null 2>&1; then
+        log_warning "uv installation failed — falling back to pip"
+        return 1
+    fi
+    minimal_log "uv installed: $(uv --version)"
+}
+
 run_pip_install() {
     local requirements_file="$1"
     local error_msg="${2:-Failed to install requirements}"
     local package_name=$(basename $requirements_file .txt)
 
-    run_command "pip install -r $requirements_file" "$error_msg" "Installing ${package_name} packages..."
+    # Prefer uv (10–100x faster than pip) when available
+    if ensure_uv 2>/dev/null; then
+        run_command "uv pip install -r $requirements_file" "$error_msg" "Installing ${package_name} packages (uv)..."
+    else
+        run_command "pip install -r $requirements_file" "$error_msg" "Installing ${package_name} packages..."
+    fi
     return $?
 }
 
