@@ -60,6 +60,11 @@ generate_pypi_requirements() {
                 # If we can't extract egg name, keep the original line
                 echo "$line" >>"$TMP_FILE"
             fi
+        elif [[ $line =~ ^([a-zA-Z0-9_]+)\ @\ file:// ]]; then
+            # Handle named file:// references (e.g., karrio @ file://${PWD}/modules/sdk)
+            local pkg_name="${BASH_REMATCH[1]}"
+            local pypi_package=$(convert_egg_to_pypi "$pkg_name")
+            echo "$pypi_package==$target_version" >>"$TMP_FILE"
         elif [[ $line != --extra-index* ]]; then
             # Copy non-git requirements as-is
             echo "$line" >>"$TMP_FILE"
@@ -114,6 +119,9 @@ generate_source_requirements() {
                 # Replace git URL with local file path
                 echo "${egg_name} @ file://\${PWD}/${subdir}" >>"$TMP_FILE"
             fi
+        elif [[ $line =~ ^([a-zA-Z0-9_]+)\ @\ file:// ]]; then
+            # Pass through named file:// references as-is (already in correct format)
+            echo "$line" >>"$TMP_FILE"
         elif [[ $line != --extra-index* ]]; then
             # Copy non-git requirements as-is
             echo "$line" >>"$TMP_FILE"
@@ -149,7 +157,7 @@ generate_platform_pypi_requirements() {
             # Extract egg name from git URL
             if [[ $line =~ \#egg=([^&]+) ]]; then
                 egg_name="${BASH_REMATCH[1]}"
-                
+
                 # Keep karrio_server_tenants as git, convert all others to PyPI
                 if [[ "$egg_name" == "karrio_server_tenants" ]]; then
                     # Clean up the subdirectory path by removing ../../ prefix
@@ -163,6 +171,16 @@ generate_platform_pypi_requirements() {
             else
                 # If we can't extract egg name, keep the original line
                 echo "$line" >>"$TMP_FILE"
+            fi
+        elif [[ $line =~ ^([a-zA-Z0-9_]+)\ @\ file:// ]]; then
+            # Handle named file:// references (e.g., karrio_server_tenants @ file://${PWD}/...)
+            local pkg_name="${BASH_REMATCH[1]}"
+            if [[ "$pkg_name" == "karrio_server_tenants" ]]; then
+                # Keep tenants as file:// reference for source builds
+                echo "$line" >>"$TMP_FILE"
+            else
+                local pypi_package=$(convert_egg_to_pypi "$pkg_name")
+                echo "$pypi_package==$target_version" >>"$TMP_FILE"
             fi
         elif [[ $line != --extra-index* ]]; then
             # Copy non-git requirements as-is
