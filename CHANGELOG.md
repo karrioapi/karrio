@@ -1,3 +1,15 @@
+# Karrio 2026.1.26
+
+## Changes
+
+### Fix
+
+- fix(smartkargo): handle plain text error responses from API
+- fix(smartkargo): fix trace persistence and shipment cancellation
+- fix(dashboard): show request_id in API logs and enable text selection
+
+---
+
 # Karrio 2026.1.25
 
 ## Changes
