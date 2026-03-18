@@ -53,11 +53,11 @@ jobs:
       - name: Run SDK typechecks
         run: ./bin/run-sdk-typecheck -v
 
-      - name: Run SDK tests with coverage
-        run: ./bin/run-sdk-tests -v --coverage
+      - name: Run SDK tests
+        run: ./bin/run-sdk-tests -v ${{ github.ref == 'refs/heads/main' && '--coverage' || '' }}
 
       - name: Upload SDK coverage to Codacy
-        if: ${{ success() && env.CODACY_API_TOKEN != '' }}
+        if: ${{ github.ref == 'refs/heads/main' && success() && env.CODACY_API_TOKEN != '' }}
         uses: codacy/codacy-coverage-reporter-action@v1.3.0
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
@@ -135,7 +135,7 @@ jobs:
           ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
         run: ./bin/migrate
 
-      - name: Run server tests with coverage
+      - name: Run server tests
         env:
           DATABASE_ENGINE: postgresql
           DATABASE_NAME: karrio
@@ -144,10 +144,10 @@ jobs:
           DATABASE_USERNAME: postgres
           DATABASE_PASSWORD: postgres
           ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
-        run: ./bin/run-server-tests -v --coverage
+        run: ./bin/run-server-tests -v ${{ github.ref == 'refs/heads/main' && '--coverage' || '' }}
 
       - name: Upload server coverage to Codacy
-        if: ${{ success() && env.CODACY_API_TOKEN != '' }}
+        if: ${{ github.ref == 'refs/heads/main' && success() && env.CODACY_API_TOKEN != '' }}
         uses: codacy/codacy-coverage-reporter-action@v1.3.0
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
