@@ -228,6 +228,33 @@ else
 fi
 
 # =============================================================================
+# STEP 2b: UV INSTALLATION
+# =============================================================================
+print_step "Setting up uv (fast Python package manager)..."
+
+if command_exists uv; then
+    print_success "uv already installed: $(uv --version)"
+else
+    print_step "Installing uv..."
+    if [[ "$(uname)" == "Darwin" ]] && command_exists brew; then
+        brew install uv 2>/dev/null && print_success "uv installed via Homebrew" || {
+            print_warning "brew install uv failed, trying standalone installer..."
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            source "$HOME/.local/bin/env" 2>/dev/null || export PATH="$HOME/.local/bin:$PATH"
+        }
+    else
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        source "$HOME/.local/bin/env" 2>/dev/null || export PATH="$HOME/.local/bin:$PATH"
+    fi
+
+    if command_exists uv; then
+        print_success "uv installed: $(uv --version)"
+    else
+        print_warning "uv installation failed — pip will be used as fallback (slower installs)"
+    fi
+fi
+
+# =============================================================================
 # STEP 3: PYENV AND PYTHON SETUP
 # =============================================================================
 print_step "Setting up Python environment..."

@@ -1,3 +1,17 @@
+# Karrio 2026.1.23
+
+## Changes
+
+### Fix
+
+- fix(smartkargo): test/live mode API URLs
+
+### Chores
+
+- chore(dev): use uv for faster local installs + Codacy coverage reporting in CI (#1032)
+
+---
+
 # Karrio 2026.1.22
 
 ## Changes
