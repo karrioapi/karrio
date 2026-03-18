@@ -15,7 +15,7 @@ deprecation==2.1.0
 diff-match-patch==20241021
 distro==1.9.0
 dj-database-url==3.1.2
-Django==6.0.3
+django==6.0.3
 django-auditlog==3.4.1
 django-constance==4.3.5
 django-cors-headers==4.9.0
@@ -34,7 +34,7 @@ django-picklefield==3.4.0
 django-redis==6.0.0
 django-two-factor-auth==1.18.1
 djangorestframework==3.16.1
-djangorestframework_simplejwt==5.5.1
+djangorestframework-simplejwt==5.5.1
 dnspython==2.8.0
 drf-api-tracking==1.8.4
 drf-spectacular==0.29.0
@@ -47,65 +47,65 @@ h11==0.16.0
 hiredis==3.3.1
 huey==2.6.0
 idna==3.11
-importlib_metadata==8.7.1
+importlib-metadata==8.7.1
 inflection==0.5.1
-Jinja2==3.1.6
+jinja2==3.1.6
 jsonfield==3.2.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 jstruct==2021.11
 jwcrypto==1.5.6
-karrio==2026.1.23
-karrio-australiapost==2026.1.23
-karrio-canadapost==2026.1.23
-karrio-chronopost==2026.1.23
-karrio-dhl-express==2026.1.23
-karrio-dhl-parcel-de==2026.1.23
-karrio-dhl-poland==2026.1.23
-karrio-dhl-universal==2026.1.23
-karrio-dpd==2026.1.23
-karrio-dpd-meta==2026.1.23
-karrio-dtdc==2026.1.23
-karrio-easypost==2026.1.23
-karrio-easyship==2026.1.23
-karrio-eshipper==2026.1.23
-karrio-fedex==2026.1.23
-karrio-freightcom==2026.1.23
-karrio-generic==2026.1.23
-karrio-gls==2026.1.23
-karrio-hermes==2026.1.23
-karrio-landmark==2026.1.23
-karrio-laposte==2026.1.23
-karrio-purolator==2026.1.23
-karrio-sapient==2026.1.23
-karrio-seko==2026.1.23
-karrio-sendle==2026.1.23
-karrio-server==2026.1.23
-karrio-server-admin==2026.1.23
-karrio-server-apps==2026.1.23
-karrio-server-audit==2026.1.23
-karrio-server-automation==2026.1.23
-karrio-server-cloud==2026.1.23
-karrio-server-core==2026.1.23
-karrio-server-data==2026.1.23
-karrio-server-documents==2026.1.23
-karrio-server-events==2026.1.23
-karrio-server-graph==2026.1.23
-karrio-server-manager==2026.1.23
-karrio-server-orders==2026.1.23
-karrio-server-orgs==2026.1.23
-karrio-server-pricing==2026.1.23
-karrio-server-proxy==2026.1.23
-karrio-smartkargo==2026.1.23
-karrio-spring==2026.1.23
-karrio-teleship==2026.1.23
-karrio-ups==2026.1.23
-karrio-usps==2026.1.23
-karrio-usps-international==2026.1.23
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/sdk
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/australiapost
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/canadapost
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/chronopost
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_express
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_parcel_de
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_poland
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_universal
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dpd
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dpd_meta
+-e file:///Users/danielkobina/Workspace/karrio/karrio/ee/insiders/modules/connectors/dtdc
+-e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/easypost
+-e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/easyship
+-e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/eshipper
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/fedex
+-e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/freightcom
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/generic
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/gls
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/hermes
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/landmark
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/laposte
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/purolator
+-e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/sapient
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/seko
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/sendle
+-e file:///Users/danielkobina/Workspace/karrio/karrio/apps/api
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/admin
+-e file:///Users/danielkobina/Workspace/karrio/karrio/ee/insiders/modules/apps
+-e file:///Users/danielkobina/Workspace/karrio/karrio/ee/insiders/modules/audit
+-e file:///Users/danielkobina/Workspace/karrio/karrio/ee/insiders/modules/automation
+-e file:///Users/danielkobina/Workspace/karrio/karrio/ee/insiders/modules/cloud
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/core
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/data
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/documents
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/events
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/graph
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/manager
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/orders
+-e file:///Users/danielkobina/Workspace/karrio/karrio/ee/insiders/modules/orgs
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/pricing
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/proxy
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/smartkargo
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/spring
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/teleship
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/ups
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/usps
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/usps_international
 loguru==0.7.3
 lxml==6.0.2
 lxml-stubs==0.5.1
-MarkupSafe==3.0.3
+markupsafe==3.0.3
 more-itertools==10.8.0
 oauthlib==3.3.1
 opentelemetry-api==1.40.0
@@ -128,21 +128,22 @@ opentelemetry-util-http==0.61b0
 packaging==26.0
 phonenumbers==9.0.26
 pillow==12.1.1
+pip==26.0.1
 posthog==7.9.12
 protobuf==6.33.5
 psutil==7.2.2
 psycopg2-binary==2.9.11
-py-soap==2026.1.23
+-e file:///Users/danielkobina/Workspace/karrio/karrio/modules/soap
 pycparser==3.0
 pydyf==0.12.1
-PyJWT==2.12.1
-PyPDF2==3.0.1
+pyjwt==2.12.1
+pypdf2==3.0.1
 pyphen==0.17.2
 python-barcode==0.16.1
 python-dateutil==2.9.0.post0
 python-decouple==3.8
 pytz==2026.1.post1
-PyYAML==6.0.3
+pyyaml==6.0.3
 pyzint==0.1.10
 qrcode==8.2
 redis==7.3.0
@@ -157,7 +158,7 @@ tablib==3.9.0
 tinycss2==1.5.1
 tinyhtml5==2.1.0
 toml==0.10.2
-typing_extensions==4.15.0
+typing-extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.6.3
 uvicorn==0.42.0
