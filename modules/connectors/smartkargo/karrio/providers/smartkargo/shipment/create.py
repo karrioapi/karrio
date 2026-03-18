@@ -165,8 +165,10 @@ def shipment_request(
     additional_id = settings.connection_config.additional_id.state or primary_id
     origin = settings.connection_config.origin.state or ""
     destination = settings.connection_config.destination.state or ""
-    reference = lib.identity(
-        payload.reference or settings.tracer.get_context("request_id")
+    reference = lib.text(
+        payload.reference or settings.tracer.get_context("request_id"),
+        trim=True,
+        max=35,
     )
     shipment_date = lib.identity(
         options.shipment_date.state
@@ -184,14 +186,14 @@ def shipment_request(
             ),
             packages=[
                 smartkargo_req.PackageType(
-                    reference=package.parcel.reference_number or f"PKG-{index}",
+                    reference=lib.text(package.parcel.reference_number or f"PKG-{index}", max=36),
                     commodityType=options.smartkargo_commodity_type.state or "9999",
                     serviceType=service,
                     paymentMode=provider_units.PaymentMode.PX.value,
                     origin=origin,
                     destination=destination,
-                    packageDescription=lib.identity(
-                        package.parcel.description or packages.description
+                    packageDescription=lib.text(
+                        package.parcel.description or packages.description, max=100
                     ),
                     totalPackages=1,
                     totalPieces=1,
@@ -204,8 +206,8 @@ def shipment_request(
                     ),
                     specialHandlingType=options.smartkargo_special_handling.state,
                     deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
-                    channel=options.smartkargo_channel.state or "Direct",
-                    labelRef2=lib.identity(options.smartkargo_label_ref2.state),
+                    channel=lib.text(options.smartkargo_channel.state or "Direct", max=15),
+                    labelRef2=lib.text(options.smartkargo_label_ref2.state, max=20),
                     dimensions=[
                         smartkargo_req.DimensionType(
                             pieces=1,
@@ -218,35 +220,35 @@ def shipment_request(
                     participants=[
                         smartkargo_req.ParticipantType(
                             type="Shipper",
-                            primaryId=primary_id,
-                            additionalId=additional_id,
-                            account=settings.account_number,
-                            name=shipper.company_name or shipper.person_name,
-                            postCode=shipper.postal_code,
-                            street=shipper.street,
-                            street2=shipper.address_line2,
-                            city=shipper.city,
-                            state=shipper.state_code,
+                            primaryId=lib.text(primary_id, max=36),
+                            additionalId=lib.text(additional_id, max=36),
+                            account=lib.text(settings.account_number, max=120),
+                            name=lib.text(shipper.company_name or shipper.person_name, max=120),
+                            postCode=lib.text(shipper.postal_code, max=15),
+                            street=lib.text(shipper.street, max=250),
+                            street2=lib.text(shipper.address_line2, max=250),
+                            city=lib.text(shipper.city, max=60),
+                            state=lib.text(shipper.state_code, max=60),
                             countryId=shipper.country_code,
-                            phoneNumber=shipper.phone_number,
-                            email=shipper.email,
-                            taxId=shipper.tax_id,
+                            phoneNumber=lib.text(shipper.phone_number, max=25),
+                            email=lib.text(shipper.email, max=120),
+                            taxId=lib.text(shipper.tax_id, max=50),
                         ),
                         smartkargo_req.ParticipantType(
                             type="Consignee",
                             primaryId=None,
                             additionalId=None,
                             account=None,
-                            name=recipient.company_name or recipient.person_name,
-                            postCode=recipient.postal_code,
-                            street=recipient.street,
-                            street2=recipient.address_line2,
-                            city=recipient.city,
-                            state=recipient.state_code,
+                            name=lib.text(recipient.company_name or recipient.person_name, max=120),
+                            postCode=lib.text(recipient.postal_code, max=15),
+                            street=lib.text(recipient.street, max=250),
+                            street2=lib.text(recipient.address_line2, max=250),
+                            city=lib.text(recipient.city, max=60),
+                            state=lib.text(recipient.state_code, max=60),
                             countryId=recipient.country_code,
-                            phoneNumber=recipient.phone_number,
-                            email=recipient.email,
-                            taxId=recipient.tax_id,
+                            phoneNumber=lib.text(recipient.phone_number, max=25),
+                            email=lib.text(recipient.email, max=120),
+                            taxId=lib.text(recipient.tax_id, max=50),
                         ),
                     ],
                     customItems=(
@@ -254,14 +256,14 @@ def shipment_request(
                             smartkargo_req.CustomItemType(
                                 exportHsCode=item.hs_code or lib.identity(item.metadata or {}).get("export_hs_code") or "N/A",
                                 importHsCode=lib.identity(item.metadata or {}).get("import_hs_code") or item.hs_code or "N/A",
-                                description=item.description or item.title,
+                                description=lib.text(item.description or item.title, max=500),
                                 quantity=item.quantity,
                                 quantityUnit=item.weight_unit or "kg",
                                 weight=item.weight,
                                 commercialValue=item.value_amount,
                                 commercialValueCurrency=item.value_currency,
                                 manufactureCountryCode=item.origin_country,
-                                sku=item.sku,
+                                sku=lib.text(item.sku, max=25),
                             )
                             for item in customs.commodities
                         ]
