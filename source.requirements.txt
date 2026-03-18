@@ -51,47 +51,47 @@ jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 jstruct==2021.11
 jwcrypto==1.5.6
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/sdk
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/australiapost
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/canadapost
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/chronopost
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_express
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_parcel_de
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_poland
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dhl_universal
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dpd
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/dpd_meta
--e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/easypost
--e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/easyship
--e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/eshipper
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/fedex
--e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/freightcom
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/generic
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/gls
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/hermes
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/landmark
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/laposte
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/purolator
--e file:///Users/danielkobina/Workspace/karrio/karrio/community/plugins/sapient
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/seko
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/sendle
--e file:///Users/danielkobina/Workspace/karrio/karrio/apps/api
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/admin
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/core
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/data
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/documents
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/events
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/graph
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/manager
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/orders
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/pricing
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/proxy
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/smartkargo
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/spring
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/teleship
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/ups
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/usps
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/connectors/usps_international
+karrio @ file://${PWD}/modules/sdk
+karrio_australiapost @ file://${PWD}/modules/connectors/australiapost
+karrio_canadapost @ file://${PWD}/modules/connectors/canadapost
+karrio_chronopost @ file://${PWD}/modules/connectors/chronopost
+karrio_dhl_express @ file://${PWD}/modules/connectors/dhl_express
+karrio_dhl_parcel_de @ file://${PWD}/modules/connectors/dhl_parcel_de
+karrio_dhl_poland @ file://${PWD}/modules/connectors/dhl_poland
+karrio_dhl_universal @ file://${PWD}/modules/connectors/dhl_universal
+karrio_dpd @ file://${PWD}/modules/connectors/dpd
+karrio_dpd_meta @ file://${PWD}/modules/connectors/dpd_meta
+karrio_easypost @ file://${PWD}/community/plugins/easypost
+karrio_easyship @ file://${PWD}/community/plugins/easyship
+karrio_eshipper @ file://${PWD}/community/plugins/eshipper
+karrio_fedex @ file://${PWD}/modules/connectors/fedex
+karrio_freightcom @ file://${PWD}/community/plugins/freightcom
+karrio_generic @ file://${PWD}/modules/connectors/generic
+karrio_gls @ file://${PWD}/modules/connectors/gls
+karrio_hermes @ file://${PWD}/modules/connectors/hermes
+karrio_landmark @ file://${PWD}/modules/connectors/landmark
+karrio_laposte @ file://${PWD}/modules/connectors/laposte
+karrio_purolator @ file://${PWD}/modules/connectors/purolator
+karrio_sapient @ file://${PWD}/community/plugins/sapient
+karrio_seko @ file://${PWD}/modules/connectors/seko
+karrio_sendle @ file://${PWD}/modules/connectors/sendle
+karrio_server @ file://${PWD}/apps/api
+karrio_server_admin @ file://${PWD}/modules/admin
+karrio_server_core @ file://${PWD}/modules/core
+karrio_server_data @ file://${PWD}/modules/data
+karrio_server_documents @ file://${PWD}/modules/documents
+karrio_server_events @ file://${PWD}/modules/events
+karrio_server_graph @ file://${PWD}/modules/graph
+karrio_server_manager @ file://${PWD}/modules/manager
+karrio_server_orders @ file://${PWD}/modules/orders
+karrio_server_pricing @ file://${PWD}/modules/pricing
+karrio_server_proxy @ file://${PWD}/modules/proxy
+karrio_smartkargo @ file://${PWD}/modules/connectors/smartkargo
+karrio_spring @ file://${PWD}/modules/connectors/spring
+karrio_teleship @ file://${PWD}/modules/connectors/teleship
+karrio_ups @ file://${PWD}/modules/connectors/ups
+karrio_usps @ file://${PWD}/modules/connectors/usps
+karrio_usps_international @ file://${PWD}/modules/connectors/usps_international
 loguru==0.7.3
 lxml==6.0.2
 lxml-stubs==0.5.1
@@ -123,7 +123,7 @@ posthog==7.9.12
 protobuf==6.33.5
 psutil==7.2.2
 psycopg2-binary==2.9.11
--e file:///Users/danielkobina/Workspace/karrio/karrio/modules/soap
+py_soap @ file://${PWD}/modules/soap
 pycparser==3.0
 pydyf==0.12.1
 pyjwt==2.12.1
