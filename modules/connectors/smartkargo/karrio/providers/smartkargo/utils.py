@@ -19,9 +19,9 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://uatihub.smartkargo.com/ihub-uat-mt-api-function"
+            "https://uatihub.smartkargo.com/ihub-devtest-mt-api-function"
             if self.test_mode
-            else "https://ihub.smartkargo.com/ihub-mt-api-function"
+            else "https://uatihub.smartkargo.com/ihub-uat-mt-api-function"
         )
 
     @property
