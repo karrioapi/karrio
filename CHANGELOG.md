@@ -3,17 +3,8 @@
 ## Changes
 
 ### Feat
+
 - feat(dev): add automated release script
-
-### Fix
-- fix(smartkargo): use production API URL for live mode
-- fix(smartkargo): trim text fields to SmartKargo API max lengths
-
----
-
-# Karrio 2026.1.25
-
-## Changes
 
 ### Fix
 

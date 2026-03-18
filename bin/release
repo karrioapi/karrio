@@ -140,9 +140,23 @@ CHANGELOG_ENTRY="# Karrio ${NEW_VERSION}\n\n## Changes"
 [ -n "$CHORES" ] && CHANGELOG_ENTRY="${CHANGELOG_ENTRY}\n\n### Chores${CHORES}"
 CHANGELOG_ENTRY="${CHANGELOG_ENTRY}\n\n---\n"
 
-# Prepend to CHANGELOG.md
-EXISTING=$(cat CHANGELOG.md)
-echo -e "${CHANGELOG_ENTRY}\n${EXISTING}" >CHANGELOG.md
+# Replace existing section for this version or prepend new one
+if grep -q "^# Karrio ${NEW_VERSION}$" CHANGELOG.md; then
+    # Remove existing section and replace with new one
+    CLEANED=$(awk -v ver="$NEW_VERSION" '
+        BEGIN { skip=0 }
+        /^# Karrio / {
+            if ($0 == "# Karrio " ver) { skip=1; next }
+            else { skip=0 }
+        }
+        /^---$/ { if (skip) { skip=0; next } }
+        !skip { print }
+    ' CHANGELOG.md)
+    echo -e "${CHANGELOG_ENTRY}\n${CLEANED}" >CHANGELOG.md
+else
+    EXISTING=$(cat CHANGELOG.md)
+    echo -e "${CHANGELOG_ENTRY}\n${EXISTING}" >CHANGELOG.md
+fi
 ok "CHANGELOG.md updated"
 
 echo ""
