@@ -133,9 +133,24 @@ kill %1
 ./bin/build-and-release-packages
 ```
 
-## Quick Release Command
+## Automated Release
 
-For a standard release with no schema regeneration:
+The full release process is automated via `bin/release`:
+
+```bash
+# Auto-increment patch version
+./bin/release
+
+# Or specify a version explicitly
+./bin/release 2026.2.0
+```
+
+This script handles everything: version bump, package sync, frozen requirements,
+CHANGELOG generation, submodule commits, branch push, and PR creation/update.
+
+## Manual Release Command
+
+For a manual release with no schema regeneration:
 
 ```bash
 ./bin/update-version <OLD> <NEW> && \

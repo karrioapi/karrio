@@ -1,0 +1,240 @@
+#!/usr/bin/env bash
+#
+# release - Automate the Karrio release process
+#
+# Usage:
+#   ./bin/release [new_version]
+#
+# If no version is provided, auto-increments the patch number.
+#
+# This script:
+#   1. Validates preconditions (clean tree, submodules, gh auth)
+#   2. Computes next version if not provided
+#   3. Bumps version in all files and generates frozen requirements
+#   4. Updates CHANGELOG.md from git log
+#   5. Commits and pushes in submodules (community, ee/insiders, ee/platform)
+#   6. Commits and pushes on hotfix branch, creates or updates PR
+#
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$ROOT_DIR"
+
+# Source environment
+source "$SCRIPT_DIR/_env"
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
+
+die() { echo -e "\033[0;31m[ERROR]\033[0m $1" >&2; exit 1; }
+info() { echo -e "\033[0;34m[INFO]\033[0m $1"; }
+ok() { echo -e "\033[0;32m[OK]\033[0m $1"; }
+warn() { echo -e "\033[0;33m[WARN]\033[0m $1"; }
+
+# ── Step 0: Validate preconditions ──────────────────────────────────────────
+
+info "Validating preconditions..."
+
+# Verify gh CLI
+command -v gh &>/dev/null || die "GitHub CLI (gh) is not installed"
+gh auth status &>/dev/null || die "GitHub CLI is not authenticated. Run 'gh auth login'"
+
+# Read current version
+CURRENT_VERSION=$(cat "$ROOT_DIR/apps/api/karrio/server/VERSION")
+[ -n "$CURRENT_VERSION" ] || die "Could not read current version from VERSION file"
+
+# ── Step 1: Compute next version ────────────────────────────────────────────
+
+if [ -n "${1:-}" ]; then
+    NEW_VERSION="$1"
+else
+    # Auto-increment patch: YYYY.M.PATCH -> YYYY.M.(PATCH+1)
+    IFS='.' read -r year month patch <<<"$CURRENT_VERSION"
+    NEW_VERSION="${year}.${month}.$((patch + 1))"
+fi
+
+info "Release: $CURRENT_VERSION → $NEW_VERSION"
+
+# ── Step 2: Determine branch ────────────────────────────────────────────────
+
+BRANCH="hotfix-${NEW_VERSION}"
+CURRENT_BRANCH=$(git branch --show-current)
+
+if [ "$CURRENT_BRANCH" = "$BRANCH" ]; then
+    info "Already on branch $BRANCH"
+elif git show-ref --verify --quiet "refs/heads/$BRANCH" 2>/dev/null; then
+    info "Checking out existing branch $BRANCH"
+    git checkout "$BRANCH"
+else
+    info "Creating branch $BRANCH from main"
+    git checkout main
+    git pull origin main
+    git checkout -b "$BRANCH"
+fi
+
+# ── Step 3: Bump version + generate requirements ────────────────────────────
+
+info "Bumping version and generating requirements..."
+
+# Activate python env for freeze steps
+source "$SCRIPT_DIR/activate-env" >/dev/null 2>&1
+
+"$SCRIPT_DIR/update-version" "$CURRENT_VERSION" "$NEW_VERSION"
+ok "Version files updated"
+
+"$SCRIPT_DIR/update-package-versions"
+ok "Package versions synced"
+
+"$SCRIPT_DIR/update-version-freeze"
+ok "Frozen requirements generated"
+
+"$SCRIPT_DIR/update-source-version-freeze"
+ok "Source requirements generated"
+
+# Verify no absolute paths leaked into requirements
+if grep -q "$HOME" source.requirements.txt 2>/dev/null; then
+    die "Absolute paths detected in source.requirements.txt — freeze script is broken"
+fi
+ok "Requirements validation passed"
+
+# ── Step 4: Update CHANGELOG ────────────────────────────────────────────────
+
+info "Generating CHANGELOG entry..."
+
+# Find the last release tag or commit
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+if [ -z "$LAST_TAG" ]; then
+    # Fall back to finding last release commit on main
+    LAST_REF=$(git log main --oneline --grep="^release:" -1 --format="%H" 2>/dev/null || echo "HEAD~20")
+else
+    LAST_REF="$LAST_TAG"
+fi
+
+# Collect commits since last release (from main + current branch)
+COMMITS=$(git log "$LAST_REF"..HEAD --oneline --no-merges 2>/dev/null || git log --oneline -20 --no-merges)
+
+# Categorize commits
+FEATS=""
+FIXES=""
+CHORES=""
+DOCS=""
+
+while IFS= read -r line; do
+    msg="${line#* }"  # strip commit hash
+    case "$msg" in
+        feat*)  FEATS="${FEATS}\n- ${msg}" ;;
+        fix*)   FIXES="${FIXES}\n- ${msg}" ;;
+        docs*)  DOCS="${DOCS}\n- ${msg}" ;;
+        chore*|refactor*|test*|perf*|ci*) CHORES="${CHORES}\n- ${msg}" ;;
+        release:*) ;; # skip release commits
+        *) CHORES="${CHORES}\n- ${msg}" ;;  # default to chores
+    esac
+done <<<"$COMMITS"
+
+# Build changelog section
+CHANGELOG_ENTRY="# Karrio ${NEW_VERSION}\n\n## Changes"
+[ -n "$FEATS" ] && CHANGELOG_ENTRY="${CHANGELOG_ENTRY}\n\n### Feat${FEATS}"
+[ -n "$FIXES" ] && CHANGELOG_ENTRY="${CHANGELOG_ENTRY}\n\n### Fix${FIXES}"
+[ -n "$DOCS" ] && CHANGELOG_ENTRY="${CHANGELOG_ENTRY}\n\n### Docs${DOCS}"
+[ -n "$CHORES" ] && CHANGELOG_ENTRY="${CHANGELOG_ENTRY}\n\n### Chores${CHORES}"
+CHANGELOG_ENTRY="${CHANGELOG_ENTRY}\n\n---\n"
+
+# Prepend to CHANGELOG.md
+EXISTING=$(cat CHANGELOG.md)
+echo -e "${CHANGELOG_ENTRY}\n${EXISTING}" >CHANGELOG.md
+ok "CHANGELOG.md updated"
+
+echo ""
+echo "──── CHANGELOG preview ────"
+head -30 CHANGELOG.md
+echo "────────────────────────────"
+echo ""
+
+# ── Step 5: Release submodules ──────────────────────────────────────────────
+
+release_submodule() {
+    local dir="$1"
+    local name="$2"
+
+    if [ ! -d "$dir" ]; then
+        warn "Submodule $name not found at $dir, skipping"
+        return 0
+    fi
+
+    info "Releasing submodule: $name"
+    (
+        cd "$dir"
+
+        # Ensure we're on main
+        local current=$(git branch --show-current)
+        if [ "$current" != "main" ]; then
+            git checkout main
+        fi
+        git pull origin main 2>/dev/null || true
+
+        # Check if there are version changes to commit
+        if git diff --quiet && git diff --cached --quiet; then
+            # pyproject.toml versions were updated by update-package-versions
+            # but submodule working dir may not reflect it yet
+            # Stage everything and check
+            git add -A
+            if git diff --cached --quiet; then
+                warn "$name: no changes to commit"
+                return 0
+            fi
+        else
+            git add -A
+        fi
+
+        git commit -m "release: ${NEW_VERSION}"
+        git push origin main
+        ok "$name released"
+    )
+}
+
+release_submodule "community" "community"
+release_submodule "ee/insiders" "ee/insiders"
+release_submodule "ee/platform" "ee/platform"
+
+# ── Step 6: Commit and push root repo ───────────────────────────────────────
+
+info "Committing release at root..."
+
+git add -A
+if git diff --cached --quiet; then
+    warn "No changes to commit at root"
+else
+    git commit -m "release: ${NEW_VERSION}"
+fi
+
+git push -u origin "$BRANCH"
+ok "Branch $BRANCH pushed"
+
+# ── Step 7: Create or update PR ────────────────────────────────────────────
+
+info "Checking for existing PR..."
+
+EXISTING_PR=$(gh pr list --head "$BRANCH" --base main --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+if [ -n "$EXISTING_PR" ] && [ "$EXISTING_PR" != "null" ]; then
+    ok "PR #${EXISTING_PR} already exists — updated with latest push"
+    PR_URL=$(gh pr view "$EXISTING_PR" --json url --jq '.url')
+else
+    info "Creating PR..."
+    # Build PR body from changelog
+    PR_BODY=$(echo -e "## Changes\n${FEATS:+\n### Feat${FEATS}}\n${FIXES:+\n### Fix${FIXES}}\n${DOCS:+\n### Docs${DOCS}}\n${CHORES:+\n### Chores${CHORES}}")
+    PR_URL=$(gh pr create \
+        --title "[patch] ${NEW_VERSION}" \
+        --body "$PR_BODY" \
+        --base main \
+        --head "$BRANCH")
+    ok "PR created"
+fi
+
+echo ""
+echo "══════════════════════════════════════════════════════════"
+echo "  Release ${NEW_VERSION} ready for review"
+echo "  PR: ${PR_URL}"
+echo "══════════════════════════════════════════════════════════"
+echo ""
