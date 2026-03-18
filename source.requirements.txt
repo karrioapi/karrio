@@ -120,7 +120,7 @@ phonenumbers==9.0.26
 pillow==12.1.1
 pip==26.0.1
 posthog==7.9.12
-protobuf==6.33.5
+protobuf==6.33.6
 psutil==7.2.2
 psycopg2-binary==2.9.11
 py_soap @ file://${PWD}/modules/soap

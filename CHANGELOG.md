@@ -1,3 +1,14 @@
+# Karrio 2026.1.25
+
+## Changes
+
+### Fix
+
+- fix(smartkargo): trim text fields to SmartKargo API max lengths (#1037)
+- fix(build): convert absolute paths in frozen requirements to portable format (#1036)
+
+---
+
 # Karrio 2026.1.24
 
 ## Changes
