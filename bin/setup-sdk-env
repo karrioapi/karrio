@@ -3,6 +3,10 @@
 # Create new python virtual environment
 source "bin/create-new-env"
 
-# Install requirements
-cd "${ROOT}" &&
+# Install requirements — prefer uv for faster installs
+cd "${ROOT}" || exit 1
+if command -v uv >/dev/null 2>&1; then
+    uv pip install -r "${ROOT:?}/requirements.sdk.dev.txt"
+else
     pip install -r "${ROOT:?}/requirements.sdk.dev.txt"
+fi

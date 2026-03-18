@@ -2,44 +2,93 @@
 
 source "bin/activate-env" "$@"
 
+# Parse --coverage flag
+WITH_COVERAGE=false
+for arg in "$@"; do
+    case $arg in
+        --coverage) WITH_COVERAGE=true ;;
+    esac
+done
+
 log_section "Running SDK Tests"
 
-# SDK base tests (fast, run first to fail early)
-minimal_log "Running SDK core tests"
-if [[ "$VERBOSE" == "true" ]]; then
-    run_command "python -m unittest discover -v -f modules/sdk/tests" "SDK tests failed" "Running SDK tests with verbose output..." || exit 1
+if [[ "$WITH_COVERAGE" == "true" ]]; then
+    # Clean up any stale parallel coverage data
+    find . -maxdepth 1 -name '.coverage.*' -delete 2>/dev/null || true
+    rm -f .coverage
+
+    minimal_log "Coverage mode enabled — reports will be written to coverage-sdk.xml"
+
+    COVERAGE_FILE="${ROOT}/.coverage.sdk.core"
+    RUNNER_PREFIX="python -m coverage run --rcfile=.coveragerc --parallel-mode -m"
 else
-    run_command "python -m unittest discover -f modules/sdk/tests" "SDK tests failed" "Running SDK tests..." || exit 1
+    RUNNER_PREFIX="python -m"
 fi
 
-# Connector tests — run in parallel (pure unit tests, no shared state)
+# SDK base tests
+minimal_log "Running SDK core tests"
+if [[ "$VERBOSE" == "true" ]]; then
+    run_command "${RUNNER_PREFIX} unittest discover -v -f modules/sdk/tests" \
+        "SDK tests failed" "Running SDK core tests..." || exit 1
+else
+    run_command "${RUNNER_PREFIX} unittest discover -f modules/sdk/tests" \
+        "SDK tests failed" "Running SDK core tests..." || exit 1
+fi
+
+# Connector + community plugin tests — single parallel batch
 log_section "Running Connector Tests (parallel)"
 packages=$(find modules/connectors -type d -name "tests" -exec dirname '{}' \;)
 
-# xargs -P: run up to 8 connector test suites concurrently
-# exit 255 propagates failure out of xargs immediately
+# Include community plugins in the same batch
+if [ -d "community/plugins" ]; then
+    community_packages=$(find community/plugins -type d -name "tests" -exec dirname '{}' \;)
+    if [ -n "$community_packages" ]; then
+        packages=$(printf '%s\n%s' "$packages" "$community_packages")
+    fi
+fi
+
+# Use all available CPU cores for maximum parallelism
+NCPU=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 8)
+
 run_connector() {
     module="$1"
     module_name=$(basename "$module")
-    if [[ "$VERBOSE" == "true" ]]; then
-        python -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+    if [[ "$WITH_COVERAGE" == "true" ]]; then
+        if [[ "$VERBOSE" == "true" ]]; then
+            python -m coverage run --rcfile=.coveragerc --parallel-mode \
+                -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        else
+            python -m coverage run --rcfile=.coveragerc --parallel-mode \
+                -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        fi
     else
-        python -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        if [[ "$VERBOSE" == "true" ]]; then
+            python -m unittest discover -v -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        else
+            python -m unittest discover -f "${module}/tests" 2>&1 | sed "s/^/[${module_name}] /"
+        fi
     fi
     return ${PIPESTATUS[0]}
 }
 export -f run_connector
 export VERBOSE
+export WITH_COVERAGE
 
-echo "$packages" | xargs -P 8 -I{} bash -c 'run_connector "$@"' _ {} || exit 1
+PACKAGE_COUNT=$(echo "$packages" | wc -l | tr -d ' ')
+minimal_log "Running ${PACKAGE_COUNT} test suites (${NCPU} parallel workers)"
+echo "$packages" | xargs -P "$NCPU" -I{} bash -c 'run_connector "$@"' _ {} || exit 1
 
-# Community plugin tests
-if [ -d "community/plugins" ]; then
-    community_packages=$(find community/plugins -type d -name "tests" -exec dirname '{}' \;)
-    if [ -n "$community_packages" ]; then
-        log_section "Running Community Plugin Tests (parallel)"
-        echo "$community_packages" | xargs -P 8 -I{} bash -c 'run_connector "$@"' _ {} || exit 1
-    fi
+# Generate coverage report
+if [[ "$WITH_COVERAGE" == "true" ]]; then
+    log_section "Generating SDK Coverage Report"
+    minimal_log "Combining parallel coverage data..."
+    python -m coverage combine --rcfile=.coveragerc
+
+    minimal_log "Writing coverage-sdk.xml..."
+    python -m coverage xml --rcfile=.coveragerc -o coverage-sdk.xml
+
+    minimal_log "Coverage summary:"
+    python -m coverage report --rcfile=.coveragerc || true
 fi
 
-echo -e "\033[0;32mAll tests completed successfully\033[0m"
+echo -e "\033[0;32mAll SDK tests completed successfully\033[0m"

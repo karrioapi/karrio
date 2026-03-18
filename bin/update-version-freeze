@@ -9,9 +9,13 @@ generate_requirements() {
     local output_file=$2
 
     echo "Generating ${output_file}..."
-    pip install -r "$input_file"
-
-    echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(pip freeze)" >"$output_file"
+    if command -v uv >/dev/null 2>&1; then
+        uv pip install -r "$input_file"
+        echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(uv pip freeze)" >"$output_file"
+    else
+        pip install -r "$input_file"
+        echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(pip freeze)" >"$output_file"
+    fi
 
     # Replace git+ssh:// with git+https://
     sed -i '' -e 's/git+ssh:\/\/git@/git+https:\/\//g' "$output_file"
