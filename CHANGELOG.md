@@ -1,3 +1,15 @@
+# Karrio 2026.1.24
+
+## Changes
+
+### Fix
+
+- fix(fedex): include signature option in rating request (#1034)
+- fix(dev): add --seed to uv venv for pip compatibility; use uv in version freeze
+- fix(dev): combine parallel test batches and auto-detect CPU cores in run-sdk-tests
+
+---
+
 # Karrio 2026.1.23
 
 ## Changes
