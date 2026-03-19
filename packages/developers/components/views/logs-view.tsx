@@ -10,6 +10,8 @@ import { Input } from "@karrio/ui/components/ui/input";
 import { Label } from "@karrio/ui/components/ui/label";
 import { Badge } from "@karrio/ui/components/ui/badge";
 import CodeMirror from "@uiw/react-codemirror";
+import { EditorView } from "@codemirror/view";
+import { EditorState } from "@codemirror/state";
 import { json } from "@codemirror/lang-json";
 import { Copy, Check, Server, Terminal } from "lucide-react";
 import { useLogs } from "@karrio/hooks/log";
@@ -132,11 +134,38 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
       )}
       {(log?.records || []).length > 0 && (
         <div className="space-y-4">
-          {Object.values(
-            groupBy(log!.records, (r: any) => r.record?.request_id),
-          ).map((records: any, key) => {
-            const request = records.find((r: any) => r.key === "request");
-            const response = records.find((r: any) => r.key !== "request");
+          {(() => {
+            // Pair request/response records by sorting by timestamp and matching
+            // consecutive request→response/error pairs. Records share the same
+            // request_id so we can't group by that; instead we pair by order.
+            const sorted = [...(log!.records || [])].sort(
+              (a: any, b: any) => (a.timestamp || 0) - (b.timestamp || 0)
+            );
+            const pairs: { request: any; response: any }[] = [];
+            const used = new Set<string>();
+            for (const rec of sorted) {
+              if (rec.key === "request" && !used.has(rec.id)) {
+                used.add(rec.id);
+                // Find the closest response/error after this request from the same carrier
+                const match = sorted.find(
+                  (r: any) =>
+                    !used.has(r.id) &&
+                    (r.key === "response" || r.key === "error") &&
+                    r.meta?.carrier_name === rec.meta?.carrier_name &&
+                    (r.timestamp || 0) >= (rec.timestamp || 0)
+                );
+                if (match) used.add(match.id);
+                pairs.push({ request: rec, response: match || null });
+              }
+            }
+            // Also add any orphaned response/error records (no matching request)
+            for (const rec of sorted) {
+              if (!used.has(rec.id) && (rec.key === "response" || rec.key === "error")) {
+                pairs.push({ request: null, response: rec });
+              }
+            }
+            return pairs;
+          })().map(({ request, response }, key) => {
             const requestData = parseRecordData(request?.record);
             const responseData = parseRecordData(response?.record);
             const requestId = (request?.record || response?.record)?.request_id || key;
@@ -209,12 +238,12 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
                           ]}
                           theme="dark"
                           className="text-xs"
-                          readOnly
+                          editable={false}
                           basicSetup={{
                             lineNumbers: false,
                             foldGutter: true,
                             dropCursor: false,
-                            allowMultipleSelections: false,
+                            allowMultipleSelections: true,
                             indentOnInput: false,
                             bracketMatching: true,
                             closeBrackets: false,
@@ -247,12 +276,12 @@ const TimelineTab = ({ log, parseRecordData, copyToClipboard }: {
                           ]}
                           theme="dark"
                           className="text-xs"
-                          readOnly
+                          editable={false}
                           basicSetup={{
                             lineNumbers: false,
                             foldGutter: true,
                             dropCursor: false,
-                            allowMultipleSelections: false,
+                            allowMultipleSelections: true,
                             indentOnInput: true,
                             bracketMatching: true,
                             closeBrackets: true,
@@ -409,6 +438,7 @@ const LogDetailViewer = ({ log }: { log: any }) => {
         <div className="text-xs text-muted-foreground space-y-1">
           <div className="text-sm font-medium truncate text-foreground">{log.method} {log.path}</div>
           <div>ID: {log.id}</div>
+          {log.request_id && <div>Request ID: {log.request_id}</div>}
           {log.response_ms && <div>Response: {log.response_ms}ms</div>}
           {log.remote_addr && <div>Remote: {log.remote_addr}</div>}
           <div>{formatDateTimeLong(log.requested_at)}</div>
@@ -475,13 +505,12 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                   extensions={[json()]}
                   theme="dark"
                   className="text-xs"
-                  readOnly
-
+                  editable={false}
                   basicSetup={{
                     lineNumbers: false,
                     foldGutter: true,
                     dropCursor: false,
-                    allowMultipleSelections: false,
+                    allowMultipleSelections: true,
                     indentOnInput: false,
                     bracketMatching: true,
                     closeBrackets: false,
@@ -534,13 +563,12 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                     extensions={[json()]}
                     theme="dark"
                     className="text-xs"
-                    readOnly
-  
+                    editable={false}
                     basicSetup={{
                       lineNumbers: false,
                       foldGutter: true,
                       dropCursor: false,
-                      allowMultipleSelections: false,
+                      allowMultipleSelections: true,
                       indentOnInput: false,
                       bracketMatching: true,
                       closeBrackets: false,
@@ -571,13 +599,12 @@ const LogDetailViewer = ({ log }: { log: any }) => {
                     extensions={[json()]}
                     theme="dark"
                     className="text-xs"
-                    readOnly
-  
+                    editable={false}
                     basicSetup={{
                       lineNumbers: false,
                       foldGutter: true,
                       dropCursor: false,
-                      allowMultipleSelections: false,
+                      allowMultipleSelections: true,
                       indentOnInput: false,
                       bracketMatching: true,
                       closeBrackets: false,

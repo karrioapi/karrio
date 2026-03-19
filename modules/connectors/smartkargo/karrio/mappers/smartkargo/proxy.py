@@ -24,6 +24,7 @@ class Proxy(proxy.Proxy):
                     "code": self.settings.api_key,
                     **({"SiteId": site_id} if site_id else {}),
                 },
+                on_error=provider_utils.parse_http_error,
             ),
             request.serialize(),
         )
@@ -51,6 +52,7 @@ class Proxy(proxy.Proxy):
                     "code": self.settings.api_key,
                     **({"SiteId": site_id} if site_id else {}),
                 },
+                on_error=provider_utils.parse_http_error,
             ),
             request.serialize(),
         )
@@ -70,6 +72,7 @@ class Proxy(proxy.Proxy):
                                 "code": self.settings.api_key,
                                 **({"SiteId": site_id} if site_id else {}),
                             },
+                            on_error=provider_utils.parse_http_error,
                         )
                     )
                     if data.get("label_url")
@@ -105,6 +108,7 @@ class Proxy(proxy.Proxy):
                 "code": self.settings.api_key,
                 **({"SiteId": site_id} if site_id else {}),
             },
+            on_error=provider_utils.parse_http_error,
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -128,6 +132,7 @@ class Proxy(proxy.Proxy):
                         "code": self.settings.api_key,
                         **({"SiteId": site_id} if site_id else {}),
                     },
+                    on_error=provider_utils.parse_http_error,
                 ),
             ),
             request.serialize(),
@@ -158,6 +163,7 @@ class Proxy(proxy.Proxy):
                         "code": self.settings.api_key,
                         **({"SiteId": site_id} if site_id else {}),
                     },
+                    on_error=provider_utils.parse_http_error,
                 ),
             ),
             tracking_requests,
