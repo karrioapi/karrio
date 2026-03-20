@@ -31,17 +31,71 @@ def constance_updated(sender, **_kwargs):
     update_settings(sender)
 
 
-def update_settings(current):
-    """Sync constance values to Django settings."""
-    keys = [k for k in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, k)]
+def _batch_fetch_constance(keys: list) -> dict:
+    """Fetch all constance values in a single query.
 
+    Returns a dict of {key: deserialized_value} for all keys found in the DB.
+    Falls back to CONSTANCE_CONFIG defaults for missing keys.
+    """
+    try:
+        from constance.models import Constance
+
+        prefix = getattr(settings, "CONSTANCE_DATABASE_PREFIX", "")
+        db_keys = [f"{prefix}{k}" for k in keys]
+
+        rows = Constance.objects.filter(key__in=db_keys).values_list("key", "value")
+        raw_map = {k.removeprefix(prefix): v for k, v in rows}
+
+        # Deserialize using pickle (constance default) and fall back to config defaults
+        import pickle
+
+        result = {}
+        for key in keys:
+            if key in raw_map and raw_map[key] is not None:
+                try:
+                    result[key] = pickle.loads(raw_map[key])
+                except Exception:
+                    result[key] = settings.CONSTANCE_CONFIG[key][0]
+            else:
+                result[key] = settings.CONSTANCE_CONFIG[key][0]
+
+        return result
+    except Exception:
+        # Fallback: table doesn't exist yet (migrations not run)
+        return {}
+
+
+def update_settings(current):
+    """Sync constance values to Django settings.
+
+    Uses a single batch query instead of per-key lookups to avoid N+1.
+    Falls back to individual getattr() if batch fetch fails.
+    """
+    keys = [k for k in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, k)]
+    email_keys = ["EMAIL_HOST", "EMAIL_HOST_USER"]
+    all_keys = list(set(keys + email_keys))
+
+    # Try batch fetch first (1 query instead of N)
+    values = _batch_fetch_constance(all_keys)
+
+    if values:
+        for key in keys:
+            if key in values:
+                setattr(settings, key, values[key])
+
+        settings.EMAIL_ENABLED = all(
+            values.get(k) not in (None, "")
+            for k in email_keys
+        )
+        return
+
+    # Fallback: individual lookups (e.g., during tests or when table doesn't exist)
     for key in keys:
         try:
             setattr(settings, key, getattr(current, key))
         except Exception:
-            pass  # Ignore errors during test/initialization when constance table may not exist
+            pass
 
-    # Update EMAIL_ENABLED based on email config
     try:
         settings.EMAIL_ENABLED = all(
             cfg not in (None, "")
