@@ -197,10 +197,9 @@ class CarrierConnection(core.OwnedEntity):
     def ext(self) -> str:
         """Get carrier extension name for SDK lookup.
 
-        NOTE: Reads the raw JSON field intentionally — ``custom_carrier_name``
-        and ``display_name`` must NEVER be classified as sensitive in any
-        carrier plugin, otherwise this property breaks when encryption strips
-        them from the JSON field.
+        NOTE: Reads the raw JSON field directly — custom_carrier_name
+        and display_name are always resolved from the JSON field, never
+        through get_credentials().
         """
         _creds = self.credentials or {}
         return (
@@ -218,7 +217,6 @@ class CarrierConnection(core.OwnedEntity):
     def display_name(self) -> str:
         """Get human-readable display name.
 
-        NOTE: Reads the raw JSON field — see ``ext`` docstring for invariant.
         """
         import karrio.references as references
 
