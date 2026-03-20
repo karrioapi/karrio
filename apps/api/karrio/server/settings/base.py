@@ -14,13 +14,14 @@ import os
 import decouple
 import importlib
 import dj_database_url
-import base64
 
 from pathlib import Path
 from datetime import timedelta
 from django.urls import reverse_lazy
 from corsheaders.defaults import default_headers
 from django.core.management.utils import get_random_secret_key
+from django.utils.translation import gettext_lazy as _
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -57,7 +58,12 @@ USE_HTTPS = config("USE_HTTPS", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="http://*").split(",")
 
-CORS_ALLOW_ALL_ORIGINS = True
+_cors_allowed_origins = config("CORS_ALLOWED_ORIGINS", default="")
+if _cors_allowed_origins:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_allowed_origins.split(",") if o.strip()]
+else:
+    CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-test-mode",
@@ -297,6 +303,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "karrio.server.core.middleware.RequestIDMiddleware",
@@ -423,7 +430,16 @@ SESSION_COOKIE_SAMESITE = config("SESSION_COOKIE_SAMESITE", default="Lax")
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = config("LANGUAGE_CODE", default="en")
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("de", _("German")),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR.parent / "locale",
+]
 
 TIME_ZONE = "UTC"
 
@@ -702,53 +718,12 @@ else:
     }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# SECRET ENCRYPTION (KEK Configuration)
+# SECRET ENCRYPTION (defaults — overridden by security module when installed)
 # ─────────────────────────────────────────────────────────────────────────────
 
-
-active_versions_str = config("ACTIVE_KEK_VERSIONS", default=None)
-
-SECRET_ENCRYPTION_ENABLED = bool(active_versions_str)
+SECRET_ENCRYPTION_ENABLED = False
 SECRET_KEK_REGISTRY = {}
-
-if SECRET_ENCRYPTION_ENABLED:
-    try:
-        active_versions = [
-            int(v.strip()) for v in active_versions_str.split(',') if v.strip()
-        ]
-    except ValueError as e:
-        raise ValueError(
-            f"Invalid ACTIVE_KEK_VERSIONS format: {active_versions_str}. "
-            "Expected comma-separated integers (e.g., '1,2,3')"
-        ) from e
-
-    if not active_versions:
-        raise ValueError(
-            "ACTIVE_KEK_VERSIONS must contain at least one version number"
-        )
-
-    for version in active_versions:
-        env_key = f'SECRET_KEK_V{version}'
-        kek_b64 = config(env_key, default=None)
-
-        if not kek_b64:
-            raise ValueError(
-                f"KEK version {version} is listed in ACTIVE_KEK_VERSIONS "
-                f"but {env_key} environment variable is not set"
-            )
-
-        try:
-            kek_bytes = base64.b64decode(kek_b64)
-
-            if len(kek_bytes) != 32:
-                raise ValueError(
-                    f"{env_key} must decode to exactly 32 bytes (256 bits), "
-                    f"got {len(kek_bytes)}"
-                )
-
-            SECRET_KEK_REGISTRY[version] = kek_bytes
-        except Exception as e:
-            raise ValueError(f"Invalid {env_key}: {e}") from e
+SECRET_CURRENT_KEK_VERSION = None
 
 # Initialize Loguru if enabled
 if USE_LOGURU:

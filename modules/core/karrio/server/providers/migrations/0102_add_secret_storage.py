@@ -26,7 +26,7 @@ def restore_plaintext_credentials(apps, schema_editor):
     When unapplying this migration, decrypt all secrets and put them back
     into the credentials JSONField on the connections.
     """
-    from karrio.server.providers.secret_manager import get_secret_manager
+    from karrio.server.security.secret_manager import get_secret_manager
     
     Secret = apps.get_model('providers', 'Secret')
     SystemSecretRef = apps.get_model('providers', 'SystemSecretRef')

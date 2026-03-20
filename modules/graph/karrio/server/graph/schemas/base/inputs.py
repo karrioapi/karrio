@@ -659,6 +659,11 @@ class CreateServiceLevelInput(utils.BaseInput):
     # Service features as structured object
     features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
 
+    # Backward-compat: allow feature fields at root level (merged into features)
+    age_check: typing.Optional[str] = strawberry.UNSET
+    neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
+    saturday_delivery: typing.Optional[bool] = strawberry.UNSET
+
     zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
 
@@ -702,6 +707,11 @@ class UpdateServiceLevelInput(utils.BaseInput):
 
     # Service features as structured object
     features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
+
+    # Backward-compat: allow feature fields at root level (merged into features)
+    age_check: typing.Optional[str] = strawberry.UNSET
+    neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
+    saturday_delivery: typing.Optional[bool] = strawberry.UNSET
 
     zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
@@ -777,6 +787,7 @@ class SystemCarrierMutationInput(utils.BaseInput):
     id: str
     enable: typing.Optional[bool] = strawberry.UNSET
     config: typing.Optional[utils.JSON] = strawberry.UNSET
+    tc_accepted: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input

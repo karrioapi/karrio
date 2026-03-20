@@ -7,6 +7,43 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
+class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
+    """Test that shipping options override connection_config values."""
+
+    def setUp(self):
+        self.maxDiff = None
+        self.ShipmentWithOptionsRequest = models.ShipmentRequest(
+            **ShipmentPayloadWithOptions
+        )
+
+    def test_create_shipment_request_with_option_overrides(self):
+        """Shipping options should override connection_config in the request payload."""
+        request = gateway.mapper.create_shipment_request(
+            self.ShipmentWithOptionsRequest
+        )
+        serialized = request.serialize()
+
+        # Profile should be overridden by shipping option
+        self.assertEqual(serialized["profile"], "MY_CUSTOM_PROFILE")
+        # Cost center should be set from shipping option
+        self.assertEqual(
+            serialized["shipments"][0]["costCenter"], "CC-12345"
+        )
+
+    def test_create_shipment_with_label_type_option(self):
+        """Shipping option label_type should override connection_config label_type in the URL."""
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Shipment.create(self.ShipmentWithOptionsRequest).from_(
+                gateway
+            )
+
+            url = mock.call_args[1]["url"]
+            # Option sets PDF_910_300_600, overriding connection config ZPL2_910_300_700_oz
+            self.assertIn("docFormat=PDF", url)
+            self.assertIn("printFormat=910-300-600", url)
+
+
 class TestDPDHLGermanyShipping(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
@@ -134,6 +171,41 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
+ShipmentPayloadWithOptions = {
+    "service": "dhl_parcel_de_paket",
+    "reference": "Order No. 5678",
+    "shipper": {
+        "company_name": "My Online Shop GmbH",
+        "address_line1": "Sträßchensweg",
+        "street_number": "10",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "max@mustermann.de",
+    },
+    "recipient": {
+        "company_name": "Maria Muster",
+        "address_line1": "Kurt-Schumacher-Str. 20",
+        "address_line2": "Apartment 107",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "maria@musterfrau.de",
+        "phone_number": "+49 987654321",
+    },
+    "parcels": [
+        {
+            "weight": 0.5,
+            "weight_unit": "KG",
+        }
+    ],
+    "options": {
+        "dhl_parcel_de_label_type": "PDF_910_300_600",
+        "dhl_parcel_de_cost_center": "CC-12345",
+        "dhl_parcel_de_profile": "MY_CUSTOM_PROFILE",
+    },
+}
 
 ShipmentPayload = {
     "service": "dhl_parcel_de_paket",

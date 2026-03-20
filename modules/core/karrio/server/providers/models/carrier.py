@@ -195,10 +195,17 @@ class CarrierConnection(core.OwnedEntity):
 
     @property
     def ext(self) -> str:
-        """Get carrier extension name for SDK lookup."""
+        """Get carrier extension name for SDK lookup.
+
+        NOTE: Reads the raw JSON field intentionally — ``custom_carrier_name``
+        and ``display_name`` must NEVER be classified as sensitive in any
+        carrier plugin, otherwise this property breaks when encryption strips
+        them from the JSON field.
+        """
+        _creds = self.credentials or {}
         return (
             "generic"
-            if "custom_carrier_name" in self.credentials
+            if "custom_carrier_name" in _creds
             else lib.failsafe(lambda: self.carrier_code) or "generic"
         )
 
@@ -209,11 +216,15 @@ class CarrierConnection(core.OwnedEntity):
 
     @property
     def display_name(self) -> str:
-        """Get human-readable display name."""
+        """Get human-readable display name.
+
+        NOTE: Reads the raw JSON field — see ``ext`` docstring for invariant.
+        """
         import karrio.references as references
 
+        _creds = self.credentials or {}
         return (
-            self.credentials.get("display_name")
+            _creds.get("display_name")
             or references.REFERENCES.get("carriers", {}).get(self.ext)
             or self.carrier_id
         )
@@ -271,28 +282,12 @@ class CarrierConnection(core.OwnedEntity):
 
     def get_credentials(self, user_id: typing.Optional[typing.Any] = None) -> typing.Dict:
         """
-        Get all credentials (transparently decrypts sensitive fields when enabled).
+        Get all credentials for this carrier connection.
 
-        When encryption is disabled, returns credentials directly from the JSON field.
-
-        Args:
-            user_id: Optional user ID for audit logging
-
-        Returns:
-            Complete credentials dict with all fields
+        Returns credentials from the JSON field by default.
+        Extension modules can override via hooks.override("get_credentials", fn).
         """
-        if not getattr(conf.settings, 'SECRET_ENCRYPTION_ENABLED', False):
-            return dict(self.credentials or {})
-
-        from karrio.server.providers.credential_manager import get_credential_manager
-
-        credential_manager = get_credential_manager()
-
-        return credential_manager.get_carrier_credentials(
-            carrier_id=self.id,
-            sensitive_fields=self.get_sensitive_fields(),
-            user_id=user_id
-        )
+        return dict(self.credentials or {})
 
     def set_credentials(
         self,
@@ -300,30 +295,13 @@ class CarrierConnection(core.OwnedEntity):
         user_id: typing.Optional[typing.Any] = None
     ) -> None:
         """
-        Store credentials (transparently encrypts sensitive fields when enabled).
+        Store credentials for this carrier connection.
 
-        When encryption is disabled, stores all credentials in the JSON field.
-
-        Args:
-            credentials_dict: Raw credentials (plaintext values)
-            user_id: Optional user ID for audit logging
+        Stores in the JSON field by default.
+        Extension modules can override via hooks.override("set_credentials", fn).
         """
-        if not getattr(conf.settings, 'SECRET_ENCRYPTION_ENABLED', False):
-            self.credentials = credentials_dict
-            self.save(update_fields=['credentials'])
-            return
-
-        from karrio.server.providers.credential_manager import get_credential_manager
-
-        credential_manager = get_credential_manager()
-
-        credential_manager.set_carrier_credentials(
-            carrier_id=self.id,
-            credentials_dict=credentials_dict,
-            sensitive_fields=self.get_sensitive_fields(),
-            allowed_fields=self.get_allowed_fields(),
-            user_id=user_id
-        )
+        self.credentials = credentials_dict
+        self.save(update_fields=['credentials'])
 
     # ─────────────────────────────────────────────────────────────────
     # SDK INTEGRATION

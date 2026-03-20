@@ -179,7 +179,7 @@ class CarrierConnection(serializers.Serializer):
 
 
 @serializers.owned_model_serializer
-@utils.pre_processing(methods=["create"])
+@utils.hookable
 class CarrierConnectionModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = providers.CarrierConnection
@@ -398,7 +398,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
-@utils.pre_processing(methods=["_create_new"])
+@utils.hookable
 class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
     """
     Serializer for BrokeredConnection (user's enabled instance of SystemConnection).
@@ -493,7 +493,7 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
         validated_data.setdefault("capabilities_overrides", [])
         validated_data.setdefault("carrier_id", system_connection.carrier_id)
 
-        return self._create_new(validated_data, context, **kwargs)
+        return self._create_new(validated_data, context=context, **kwargs)
 
     def _create_new(
         self,
