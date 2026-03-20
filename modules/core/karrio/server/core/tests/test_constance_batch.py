@@ -73,7 +73,7 @@ class TestBatchFetchConstance(TestCase):
     )
     def test_batch_fetch_uses_single_query(self):
         """Verify batch fetch makes exactly 1 DB query (WHERE key IN ...)."""
-        import pickle
+        import pickle  # nosec B403,B301 — test uses pickle to mimic constance's own serialization
 
         with mock.patch(
             "constance.models.Constance"
