@@ -326,6 +326,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
             mapped_credentials = CONNECTION_SERIALIZERS[carrier_name].map(
                 data=credentials_data
             ).data
+            # Use encryption-aware method to set credentials
             instance.set_credentials(mapped_credentials)
 
         return instance
@@ -350,6 +351,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
             validated_data["credentials"] = validated_data.pop("get_credentials")
 
         if "credentials" in validated_data:
+            # Get decrypted credentials for merging (not the JSONField which lacks encrypted fields)
             existing_decrypted_creds = instance.get_credentials()
             new_creds = validated_data.get("credentials", {}) or {}
             
@@ -377,6 +379,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
                 data=merged_credentials
             ).data
             
+            # Use encryption-aware method to set credentials
             instance.set_credentials(mapped_credentials)
             # Refresh instance to get updated credentials JSONField
             instance.refresh_from_db()

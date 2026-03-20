@@ -199,7 +199,7 @@ class CarrierConnection(core.OwnedEntity):
 
         NOTE: Reads the raw JSON field intentionally — ``custom_carrier_name``
         and ``display_name`` must NEVER be classified as sensitive in any
-        carrier plugin
+        carrier plugin, otherwise this property breaks when encryption strips
         them from the JSON field.
         """
         _creds = self.credentials or {}
@@ -280,12 +280,26 @@ class CarrierConnection(core.OwnedEntity):
         carrier_fields = connection_fields.get(self.ext, {})
         return set(carrier_fields.keys())
 
-    def get_credentials(self) -> typing.Dict:
+    def get_credentials(self, user_id: typing.Optional[typing.Any] = None) -> typing.Dict:
+        """
         Get all credentials for this carrier connection.
+
+        Returns credentials from the JSON field by default.
+        Extension modules can override via hooks.override("get_credentials", fn).
+        """
         return dict(self.credentials or {})
 
-    def set_credentials(self, credentials_dict: typing.Dict) -> None:
+    def set_credentials(
+        self,
+        credentials_dict: typing.Dict,
+        user_id: typing.Optional[typing.Any] = None
+    ) -> None:
+        """
         Store credentials for this carrier connection.
+
+        Stores in the JSON field by default.
+        Extension modules can override via hooks.override("set_credentials", fn).
+        """
         self.credentials = credentials_dict
         self.save(update_fields=['credentials'])
 
