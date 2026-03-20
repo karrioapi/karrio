@@ -615,7 +615,7 @@ try {
 - Reference issues: `refs #123` or `fixes #123`
 - Keep commits focused and atomic
 - Rebase on `main` before PR
-- Run lint/test before pushing
+- **Run tests locally before every push — no exceptions** (see pre-push checklist below)
 - Fill out PR template, link discussions, enable "Allow edits from maintainers"
 
 ---
@@ -626,6 +626,30 @@ try {
 - `./bin/create-new-env` - Generate fresh config
 - `docker-compose.yml` - Container orchestration
 - `turbo.json` - Monorepo build configuration
+
+---
+
+## 🚨 Pre-Push Checklist — Mandatory Before Every `git push`
+
+**Never push without running tests first. CI runs are not a substitute for local testing.**
+
+1. `source bin/activate` — ensure venv is active
+2. Run tests for every module you touched:
+   ```bash
+   LOG_LEVEL=30 python -m karrio test karrio.server.<changed_module>.tests
+   ```
+3. Run the SDK test suite if you touched SDK or connector code:
+   ```bash
+   LOG_LEVEL=30 python -m unittest discover -s modules/sdk/tests -p "test_*.py" -v
+   ```
+4. Zero failures, zero errors → then push
+5. If a test fails: fix it before pushing. "CI will catch it" is not acceptable.
+
+**Common gotchas:**
+- New settings guards must be reflected in `@override_settings` in the relevant tests
+- Submodule pointers (`ee/platform`, `ee/insiders`, `community`) must match the expected SHAs — never leave them dirty or pointing to unreachable commits
+- Signal handlers: check for N+1 before committing (use `assertNumQueries`)
+- Carrier credentials: never hardcode — always from `settings`/env; tests must use `pending()`/`test.skip` when credentials absent
 
 ---
 
