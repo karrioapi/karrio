@@ -4,15 +4,11 @@ Verifies that zone, surcharge, and service mutations use batched writes
 instead of per-item saves.
 """
 
-from unittest.mock import MagicMock
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 import karrio.server.providers.models as providers
-from karrio.server.graph.serializers import (
-    _RateSheetSerializerMixin,
-    ServiceLevelModelSerializer,
-)
+from karrio.server.graph.serializers import _RateSheetSerializerMixin
 
 
 class MockRateSheetSerializer(_RateSheetSerializerMixin):

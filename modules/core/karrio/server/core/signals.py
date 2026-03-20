@@ -47,13 +47,13 @@ def _batch_fetch_constance(keys: list) -> dict:
         raw_map = {k.removeprefix(prefix): v for k, v in rows}
 
         # Deserialize using pickle (constance default) and fall back to config defaults
-        import pickle
+        import pickle  # nosec — mirrors constance's own pickle serialization for DB-stored values
 
         result = {}
         for key in keys:
             if key in raw_map and raw_map[key] is not None:
                 try:
-                    result[key] = pickle.loads(raw_map[key])
+                    result[key] = pickle.loads(raw_map[key])  # nosec B301 — constance stores values as pickle, same pattern as constance internals
                 except Exception:
                     result[key] = settings.CONSTANCE_CONFIG[key][0]
             else:
