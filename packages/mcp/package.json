@@ -10,8 +10,13 @@
     "karrio-mcp": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",

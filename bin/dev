@@ -28,6 +28,7 @@ SERVER_PID=""
 DASHBOARD_PID=""
 DOCS_PID=""
 STUDIO_PID=""
+MCP_PID=""
 
 # Resolve directories
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -246,6 +247,13 @@ run_down() {
   lsof -ti:4002 | xargs kill -9 2>/dev/null || true
   print_success "Studio stopped (if it was running)"
 
+  # Stop MCP
+  print_step "Stopping MCP server..."
+  pgrep -f "tsup.*packages/mcp" 2>/dev/null | xargs kill -TERM 2>/dev/null || true
+  sleep 1
+  pgrep -f "tsup.*packages/mcp" 2>/dev/null | xargs kill -9 2>/dev/null || true
+  print_success "MCP stopped (if it was running)"
+
   # Stop Maildev
   if is_maildev_running; then
     print_step "Stopping Maildev SMTP capture..."
@@ -271,6 +279,7 @@ run_up() {
   local START_DASHBOARD=true
   local START_DOCS=true
   local START_STUDIO=true
+  local START_MCP=false
   local WAIT_AT_END=true
   local DASHBOARD_USE_ENV=false
 
@@ -296,13 +305,15 @@ run_up() {
         START_API=false; START_DASHBOARD=false; START_DOCS=false; START_STUDIO=true; shift ;;
       --no-studio)
         START_STUDIO=false; shift ;;
+      --with-mcp)
+        START_MCP=true; shift ;;
       --dashboard-use-env)
         DASHBOARD_USE_ENV=true; shift ;;
       --no-wait|--detach)
         WAIT_AT_END=false; shift ;;
       -h|--help)
         SHOW_HELP=true; shift ;;
-      api|dashboard|docs|studio|all)
+      api|dashboard|docs|studio|mcp|all)
         COMPONENTS+=("$1"); shift ;;
       *)
         print_error "Unknown option: $1"; exit 1 ;;
@@ -323,9 +334,10 @@ run_up() {
     echo "  --no-docs            Skip starting the Docs"
     echo "  --studio-only        Start only the Studio UI"
     echo "  --no-studio          Skip starting the Studio UI"
+    echo "  --with-mcp           Also start the MCP server (tsup watch mode)"
     echo "  -h, --help           Show this help message"
     echo ""
-    echo "COMPONENTS: api | dashboard | docs | studio | all"
+    echo "COMPONENTS: api | dashboard | docs | studio | mcp | all"
     return 0
   fi
 
@@ -337,7 +349,8 @@ run_up() {
         dashboard) START_DASHBOARD=true ;;
         docs) START_DOCS=true ;;
         studio) START_STUDIO=true ;;
-        all) START_API=true; START_DASHBOARD=true; START_DOCS=true; START_STUDIO=true ;;
+        mcp) START_MCP=true ;;
+        all) START_API=true; START_DASHBOARD=true; START_DOCS=true; START_STUDIO=true; START_MCP=true ;;
         *) print_error "Unknown component '$component'"; return 1 ;;
       esac
     done
@@ -404,6 +417,7 @@ run_up() {
   $START_API && SELECTED_LABELS+=("API")
   $START_DASHBOARD && SELECTED_LABELS+=("Dashboard")
   $START_DOCS && SELECTED_LABELS+=("Docs")
+  $START_MCP && SELECTED_LABELS+=("MCP")
   if [[ ${#SELECTED_LABELS[@]} -gt 0 ]]; then
     echo "→ Selected components: ${SELECTED_LABELS[*]}"
     echo ""
@@ -458,7 +472,7 @@ run_up() {
   cleanup_trap() {
     echo ""
     echo "Shutting down development environment..."
-    for pid in "$SERVER_PID" "$DASHBOARD_PID" "$DOCS_PID" "$STUDIO_PID"; do
+    for pid in "$SERVER_PID" "$DASHBOARD_PID" "$DOCS_PID" "$STUDIO_PID" "$MCP_PID"; do
       if [[ -n "$pid" ]]; then
         kill "$pid" 2>/dev/null || true
         wait "$pid" 2>/dev/null || true
@@ -679,6 +693,21 @@ run_up() {
     fi
   fi
 
+  if $START_MCP; then
+    print_step "Starting MCP server (tsup watch)..."
+    MCP_LOG=/tmp/karrio-mcp.log
+    rm -f "$MCP_LOG"
+    (npm run dev -w packages/mcp >"$MCP_LOG" 2>&1) &
+    MCP_PID=$!
+    sleep 2
+    if ps -p "$MCP_PID" >/dev/null 2>&1; then
+      print_success "MCP server rebuilding on change (log: $MCP_LOG)"
+    else
+      print_warning "MCP server failed to start. See $MCP_LOG for details."
+      MCP_PID=""
+    fi
+  fi
+
   if $START_API; then
     print_step "Starting Maildev (SMTP capture)..."
     if is_maildev_running; then
@@ -709,6 +738,7 @@ run_up() {
   $START_DASHBOARD && enabled+=("Dashboard")
   $START_DOCS && enabled+=("Docs")
   $START_STUDIO && enabled+=("Studio")
+  $START_MCP && enabled+=("MCP")
   if [[ ${#enabled[@]} -gt 0 ]]; then
     echo "Components: ${enabled[*]}"
     echo ""
@@ -739,6 +769,9 @@ run_up() {
   fi
   if $START_STUDIO; then
     echo "   → Studio: http://127.0.0.1:4002"
+  fi
+  if $START_MCP; then
+    echo "   → MCP: stdio (or --http on port 3100)"
   fi
   if [[ -n "$MAILDEV_PID" ]]; then
     echo "   → Maildev: http://localhost:1080"
