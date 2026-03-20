@@ -717,13 +717,6 @@ else:
         },
     }
 
-# ─────────────────────────────────────────────────────────────────────────────
-# SECRET ENCRYPTION (defaults — overridden by security module when installed)
-# ─────────────────────────────────────────────────────────────────────────────
-
-SECRET_ENCRYPTION_ENABLED = False
-SECRET_KEK_REGISTRY = {}
-SECRET_CURRENT_KEK_VERSION = None
 
 # Initialize Loguru if enabled
 if USE_LOGURU:

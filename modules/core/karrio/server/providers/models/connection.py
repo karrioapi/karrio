@@ -189,7 +189,7 @@ class SystemConnection(models.Model):
 
         NOTE: Reads the raw JSON field intentionally — ``custom_carrier_name``
         and ``display_name`` must NEVER be classified as sensitive in any
-        carrier plugin, otherwise this property breaks when encryption strips
+        carrier plugin
         them from the JSON field.
         """
         _creds = self.credentials or {}
@@ -271,26 +271,12 @@ class SystemConnection(models.Model):
         carrier_fields = connection_fields.get(self.ext, {})
         return set(carrier_fields.keys())
 
-    def get_credentials(self, user_id: typing.Optional[typing.Any] = None) -> typing.Dict:
-        """
+    def get_credentials(self) -> typing.Dict:
         Get all credentials for this system connection.
-
-        Returns credentials from the JSON field by default.
-        Extension modules can override via hooks.override("get_credentials", fn).
-        """
         return dict(self.credentials or {})
 
-    def set_credentials(
-        self,
-        credentials_dict: typing.Dict,
-        user_id: typing.Optional[typing.Any] = None
-    ) -> None:
-        """
+    def set_credentials(self, credentials_dict: typing.Dict) -> None:
         Store credentials for this system connection.
-
-        Stores in the JSON field by default.
-        Extension modules can override via hooks.override("set_credentials", fn).
-        """
         self.credentials = credentials_dict
         self.save(update_fields=['credentials'])
 
