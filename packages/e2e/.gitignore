@@ -1,5 +1,0 @@
-node_modules/
-dist/
-playwright/.auth/
-playwright-report/
-test-results/

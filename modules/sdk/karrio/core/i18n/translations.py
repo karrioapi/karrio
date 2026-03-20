@@ -130,7 +130,7 @@ def format_label(name: str) -> str:
 def _gettext(text: str) -> str:
     """Translate a string using Django's active language, with fallback."""
     try:
-        from django.utils.translation import gettext
+        from django.utils.translation import gettext  # type: ignore[import-not-found]
 
         return gettext(text)
     except Exception:
@@ -141,7 +141,7 @@ def _translate_service_names(
     service_names: dict, catalogs: dict
 ) -> dict:
     """Apply carrier-specific translations to service names with fallback."""
-    result = {}
+    result: dict = {}
     for carrier_id, services in service_names.items():
         carrier_catalog = catalogs.get(carrier_id, {}).get("service_names", {})
         result[carrier_id] = {}
@@ -159,7 +159,7 @@ def _translate_option_names(
     option_names: dict, catalogs: dict
 ) -> dict:
     """Apply carrier-specific translations to option names with fallback."""
-    result = {}
+    result: dict = {}
     for carrier_id, options in option_names.items():
         carrier_catalog = catalogs.get(carrier_id, {}).get("option_names", {})
         result[carrier_id] = {}
@@ -175,7 +175,7 @@ def _translate_option_names(
 
 def _translate_field_entries(fields: dict, label_map: dict) -> dict:
     """Add translated label field to field/config entries."""
-    result = {}
+    result: dict = {}
     for carrier_id, entries in fields.items():
         result[carrier_id] = {}
         for field_name, field_data in entries.items():
@@ -198,7 +198,7 @@ def _translate_options(
     options: dict, option_names: dict, catalogs: dict
 ) -> dict:
     """Add translated label field to shipping option entries."""
-    result = {}
+    result: dict = {}
     for carrier_id, entries in options.items():
         carrier_catalog = catalogs.get(carrier_id, {}).get("option_names", {})
         result[carrier_id] = {}
@@ -224,7 +224,7 @@ def _translate_carrier_names(carriers: dict) -> dict:
 
 def _translate_capabilities(capabilities: dict) -> dict:
     """Translate carrier capability names."""
-    result = {}
+    result: dict = {}
     for carrier_id, caps in capabilities.items():
         result[carrier_id] = [
             _gettext(CAPABILITY_LABELS.get(cap, format_label(cap)))
