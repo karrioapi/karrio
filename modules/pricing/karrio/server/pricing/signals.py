@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from karrio.server.serializers import Context
 from karrio.server.core.gateway import Rates
 from karrio.server.core.logging import logger
 import karrio.server.pricing.models as models
@@ -24,16 +25,15 @@ import karrio.server.pricing.models as models
 
 def register_rate_post_processing(*args, **kwargs):
     """Register the markup application function for rate post-processing."""
-    Rates.hooks.after("fetch", apply_custom_markups)
-    Rates.hooks.after("resolve", apply_custom_markups)
+    Rates.post_process_functions += [apply_custom_markups]
     logger.info("Markup rate post-processing registered", module="karrio.pricing")
 
 
-def apply_custom_markups(result, *args, **kwargs):
+def apply_custom_markups(context: Context, result):
     """
     Apply active markups to rate quotes.
 
-    This function is called as an after-hook on Rates.fetch/resolve.
+    This function is called after rates are fetched from carriers.
     It applies all active markups that match the organization context
     and the tenant's pricing plan.
 
@@ -46,10 +46,6 @@ def apply_custom_markups(result, *args, **kwargs):
     - Markups with metadata.plan only apply when the tenant's plan matches
     - Plan is resolved from: request filter > org metadata > default "launch"
     """
-    context = kwargs.get("context")
-    if context is None:
-        return result
-
     org_id = getattr(context.org, "id", None)
 
     if org_id:

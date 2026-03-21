@@ -70,18 +70,9 @@ class GraphQLView(AccessMixin, views.GraphQLView):
             )
             formatted_error["status_code"] = error.original_error.status_code
 
-        elif isinstance(error.original_error, exceptions.ValidationError):
+        if isinstance(error.original_error, exceptions.ValidationError):
             formatted_error["message"] = str(error.original_error.default_detail)
             formatted_error["validation"] = error.original_error.detail
-
-        elif error.original_error is not None:
-            # Log unhandled exceptions so they reach Sentry instead of being
-            # silently masked as generic INTERNAL_SERVER_ERROR responses.
-            logger.error(
-                "Unhandled GraphQL error: %s",
-                error.original_error,
-                exc_info=error.original_error,
-            )
 
         return formatted_error
 

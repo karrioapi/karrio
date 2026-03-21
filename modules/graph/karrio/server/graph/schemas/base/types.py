@@ -2136,13 +2136,6 @@ class RateSheetType:
 
 
 @strawberry.type
-class SystemConnectionRateSheetInfo:
-    """Lightweight rate sheet info for carrier overview display."""
-
-    has_central_rates: bool
-
-
-@strawberry.type
 class SystemConnectionType:
     """Represents a SystemConnection that can be enabled by users via BrokeredConnection."""
 
@@ -2160,40 +2153,6 @@ class SystemConnectionType:
     @strawberry.field
     def carrier_name(self: providers.SystemConnection) -> str:
         return self.carrier_code
-
-    @strawberry.field
-    def rate_sheet_info(
-        self: providers.SystemConnection,
-    ) -> typing.Optional[SystemConnectionRateSheetInfo]:
-        """Rate sheet info for carrier overview (central rates indicator)."""
-        rate_sheet = getattr(self, "rate_sheet", None)
-        if rate_sheet is None:
-            return None
-        return SystemConnectionRateSheetInfo(
-            has_central_rates=bool(rate_sheet.service_rates),
-        )
-
-    @strawberry.field
-    def account_country_code(self: providers.SystemConnection) -> typing.Optional[str]:
-        """Country code from credentials (e.g., 'DE', 'AT') — safe to expose."""
-        credentials = getattr(self, "credentials", None) or {}
-        return credentials.get("account_country_code") or None
-
-    @strawberry.field
-    def terms_and_conditions(self: providers.SystemConnection) -> typing.Optional[str]:
-        """Carrier-specific terms and conditions text set by admin."""
-        metadata = getattr(self, "metadata", None) or {}
-        return metadata.get("terms_and_conditions") or None
-
-    @strawberry.field
-    def user_contracts_count(self: providers.SystemConnection) -> int:
-        """Count of user's own connections for this carrier (set via annotation)."""
-        return getattr(self, "_user_contracts_count", 0)
-
-    @strawberry.field
-    def user_active_contracts_count(self: providers.SystemConnection) -> int:
-        """Count of user's active connections for this carrier (set via annotation)."""
-        return getattr(self, "_user_active_contracts_count", 0)
 
     @strawberry.field
     def enabled(self: providers.SystemConnection, info: Info) -> bool:
@@ -2278,44 +2237,6 @@ class SystemConnectionType:
             )
         )
 
-        # Annotate user_contracts_count and user_active_contracts_count:
-        # count of user's own CarrierConnections matching the same carrier_code
-        # (scoped to current org/user).
-        user_connections_qs = providers.CarrierConnection.access_by(
-            info.context.request
-        ).filter(
-            carrier_code=models.OuterRef("carrier_code"),
-            credentials__account_country_code=models.OuterRef(
-                "credentials__account_country_code"
-            ),
-        )
-        queryset = queryset.annotate(
-            _user_contracts_count=functions.Coalesce(
-                models.Subquery(
-                    user_connections_qs.values("carrier_code")
-                    .annotate(_cnt=models.Count("id"))
-                    .values("_cnt")
-                ),
-                models.Value(0),
-            ),
-            _user_active_contracts_count=functions.Coalesce(
-                models.Subquery(
-                    user_connections_qs.filter(active=True).values("carrier_code")
-                    .annotate(_cnt=models.Count("id"))
-                    .values("_cnt")
-                ),
-                models.Value(0),
-            ),
-            _has_central_rates=models.Case(
-                models.When(
-                    rate_sheet__service_rates__isnull=False,
-                    then=models.Value(True),
-                ),
-                default=models.Value(False),
-                output_field=models.BooleanField(),
-            ),
-        ).order_by("-_has_central_rates", "carrier_id")
-
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
@@ -2335,12 +2256,6 @@ class CarrierConnectionType:
     @strawberry.field
     def credentials(self: providers.CarrierConnection, info: Info) -> utils.JSON:
         return self.credentials
-
-    @strawberry.field
-    def account_country_code(self: providers.CarrierConnection) -> typing.Optional[str]:
-        """Country code from credentials (e.g., 'DE', 'AT') — safe to expose."""
-        credentials = getattr(self, "credentials", None) or {}
-        return credentials.get("account_country_code") or None
 
     @strawberry.field
     def metadata(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:

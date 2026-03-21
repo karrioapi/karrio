@@ -7,7 +7,6 @@ from rest_framework.request import Request
 from rest_framework.renderers import JSONRenderer
 from django.urls import path
 from django.conf import settings
-from django.utils import translation
 
 from karrio.server.conf import FEATURE_FLAGS
 from karrio.server.core.router import router
@@ -70,22 +69,10 @@ def references(request: Request):
     try:
         reduced = bool(yaml.safe_load(request.query_params.get("reduced", "true")))
 
-        lang = request.query_params.get("lang")
-        if lang:
-            supported = {code for code, _ in settings.LANGUAGES}
-            if lang not in supported:
-                return Response(
-                    {"error": f"Unsupported language: {lang}. Supported: {sorted(supported)}"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-        from karrio.core.i18n import translate_references
-
-        with translation.override(lang or getattr(request, 'LANGUAGE_CODE', settings.LANGUAGE_CODE)):
-            data = dataunits.contextual_reference(reduced=reduced)
-            data = translate_references(data)
-
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(
+            dataunits.contextual_reference(reduced=reduced),
+            status=status.HTTP_200_OK,
+        )
     except Exception as e:
         from karrio.server.core.logging import logger
 

@@ -17,10 +17,7 @@ from karrio.server.providers.models.connection import (
     SystemConnection,
     BrokeredConnection,
 )
-
-# Apply @hookable to model classes that need hook extensibility.
-# Imported from hooks module (not utils) to avoid circular imports.
-from karrio.server.core.hooks import hookable as _hookable
-
-_hookable(CarrierConnection)
-_hookable(SystemConnection)
+from karrio.server.providers.models.secret import (
+    Secret,
+    CarrierSecretRef,
+)
