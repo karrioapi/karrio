@@ -247,63 +247,94 @@ class _RateSheetSerializerMixin:
     def update_services(
         self, services_data: list, remove_missing: bool = False
     ) -> None:
-        """Update services of the rate sheet."""
+        """Update services of the rate sheet using bulk operations.
+
+        Collects all changes in memory, then:
+        - bulk_update for modified services (1 query)
+        - bulk_create for new services (1 query)
+        - single M2M add for new services (1 query)
+        """
         existing_services = {s.id: s for s in self.instance.services.all()}
+        services_to_update = []
+        update_fields = set()
+        services_to_create = []
 
         for service_data in services_data:
             service_id = service_data.get("id")
             if service_id and service_id in existing_services:
-                # Update existing service
                 service = existing_services[service_id]
-                service_serializer = ServiceLevelModelSerializer(
-                    service,
-                    data=service_data,
-                    context=self.context,
-                    partial=True,
-                )
-                service_serializer.is_valid(raise_exception=True)
-                service_serializer.save()
+                changed = False
+                for field, value in service_data.items():
+                    if field == "id":
+                        continue
+                    if getattr(service, field, None) != value:
+                        setattr(service, field, value)
+                        update_fields.add(field)
+                        changed = True
+                if changed:
+                    services_to_update.append(service)
             else:
-                # Create new service
                 service_serializer = ServiceLevelModelSerializer(
                     data=service_data,
                     context=self.context,
                 )
                 service_serializer.is_valid(raise_exception=True)
-                service = service_serializer.save()
-                self.instance.services.add(service)
+                instance = providers.ServiceLevel(**service_serializer.validated_data)
+                # Set created_by from context (required NOT NULL field)
+                user = (
+                    self.context.get("user")
+                    if isinstance(self.context, dict)
+                    else getattr(self.context, "user", None)
+                )
+                if user and not instance.created_by_id:
+                    instance.created_by = user
+                services_to_create.append(instance)
+
+        # Bulk update existing services (1 query)
+        if services_to_update and update_fields:
+            providers.ServiceLevel.objects.bulk_update(
+                services_to_update, list(update_fields)
+            )
+
+        # Bulk create new services and add to M2M (2 queries)
+        if services_to_create:
+            created = providers.ServiceLevel.objects.bulk_create(services_to_create)
+            self.instance.services.add(*created)
 
         # Remove services that are not in the update
         if remove_missing:
             service_ids = {s.get("id") for s in services_data if "id" in s}
-            for service in existing_services.values():
-                if service.id not in service_ids:
-                    self.instance.services.remove(service)
-                    service.delete()
+            to_remove = [s for s in existing_services.values() if s.id not in service_ids]
+            if to_remove:
+                remove_ids = [s.id for s in to_remove]
+                self.instance.services.remove(*to_remove)
+                providers.ServiceLevel.objects.filter(id__in=remove_ids).delete()
 
     def update_carriers(self, carriers: list) -> None:
-        """Update carrier associations."""
+        """Update carrier associations using bulk queries instead of per-carrier saves."""
         if carriers is not None:
-            _ids = set(
-                [*carriers, *(self.instance.carriers.values_list("id", flat=True))]
-            )
-            _carriers = gateway.Carriers.list(
+            carrier_qs = gateway.Carriers.list(
                 context=self.context,
                 carrier_name=self.instance.carrier_name,
-            ).filter(id__in=list(_ids))
-
-            for carrier in _carriers:
-                carrier.rate_sheet = self.instance if carrier.id in carriers else None
-                carrier.save(update_fields=["rate_sheet"])
+            )
+            # Link requested carriers (1 query)
+            carrier_qs.filter(id__in=carriers).update(rate_sheet=self.instance)
+            # Unlink carriers no longer associated (1 query)
+            carrier_qs.filter(rate_sheet=self.instance).exclude(
+                id__in=carriers
+            ).update(rate_sheet=None)
 
     def process_zones(self, zones_data: list, remove_missing: bool = False) -> None:
         """Process zones for the rate sheet.
+
+        Batches all zone mutations in memory and writes once to avoid N+1 UPDATEs.
 
         Args:
             zones_data: List of zone dicts with id, label, country_codes, etc.
             remove_missing: If True, remove zones not present in zones_data.
         """
-        existing_zone_ids = {z["id"] for z in (self.instance.zones or [])}
+        zones = list(self.instance.zones or [])
+        zone_map = {z["id"]: i for i, z in enumerate(zones) if z.get("id")}
         incoming_zone_ids = set()
 
         for zone_data in zones_data:
@@ -313,25 +344,36 @@ class _RateSheetSerializerMixin:
             if zone_id:
                 incoming_zone_ids.add(zone_id)
 
-            if zone_id and zone_id in existing_zone_ids:
-                self.instance.update_zone(zone_id, zone_dict)
+            if zone_id and zone_id in zone_map:
+                # Update existing zone in memory
+                idx = zone_map[zone_id]
+                zones[idx] = {"id": zone_id, **{k: v for k, v in zone_dict.items() if k != "id"}}
             else:
-                self.instance.add_zone(zone_dict)
+                # Add new zone in memory
+                if not zone_id:
+                    zone_dict["id"] = f"zone_{len(zones) + 1}"
+                zones.append(zone_dict)
+                zone_map[zone_dict["id"]] = len(zones) - 1
 
         # Remove zones not in incoming data
         if remove_missing:
-            zones_to_remove = existing_zone_ids - incoming_zone_ids
-            for zone_id in zones_to_remove:
-                self.instance.remove_zone(zone_id)
+            zones = [z for z in zones if z.get("id") in incoming_zone_ids]
+
+        # Single write for all zone mutations
+        self.instance.zones = zones
+        self.instance.save(update_fields=["zones"])
 
     def process_surcharges(self, surcharges_data: list, remove_missing: bool = False) -> None:
         """Process surcharges for the rate sheet.
+
+        Batches all surcharge mutations in memory and writes once to avoid N+1 UPDATEs.
 
         Args:
             surcharges_data: List of surcharge dicts with id, name, amount, etc.
             remove_missing: If True, remove surcharges not present in surcharges_data.
         """
-        existing_surcharge_ids = {s["id"] for s in (self.instance.surcharges or [])}
+        surcharges = list(self.instance.surcharges or [])
+        surcharge_map = {s["id"]: i for i, s in enumerate(surcharges) if s.get("id")}
         incoming_surcharge_ids = set()
 
         for surcharge_data in surcharges_data:
@@ -341,16 +383,26 @@ class _RateSheetSerializerMixin:
             if surcharge_id:
                 incoming_surcharge_ids.add(surcharge_id)
 
-            if surcharge_id and surcharge_id in existing_surcharge_ids:
-                self.instance.update_surcharge(surcharge_id, surcharge_dict)
+            if surcharge_id and surcharge_id in surcharge_map:
+                # Update existing surcharge in memory
+                idx = surcharge_map[surcharge_id]
+                surcharges[idx] = {"id": surcharge_id, **{k: v for k, v in surcharge_dict.items() if k != "id"}}
             else:
-                self.instance.add_surcharge(surcharge_dict)
+                # Add new surcharge in memory
+                if not surcharge_id:
+                    surcharge_dict["id"] = f"surch_{len(surcharges) + 1}"
+                surcharge_dict.setdefault("active", True)
+                surcharge_dict.setdefault("surcharge_type", "fixed")
+                surcharges.append(surcharge_dict)
+                surcharge_map[surcharge_dict["id"]] = len(surcharges) - 1
 
         # Remove surcharges not in incoming data
         if remove_missing:
-            surcharges_to_remove = existing_surcharge_ids - incoming_surcharge_ids
-            for surcharge_id in surcharges_to_remove:
-                self.instance.remove_surcharge(surcharge_id)
+            surcharges = [s for s in surcharges if s.get("id") in incoming_surcharge_ids]
+
+        # Single write for all surcharge mutations
+        self.instance.surcharges = surcharges
+        self.instance.save(update_fields=["surcharges"])
 
     def process_service_rates(
         self, service_rates_data: list, temp_to_real_id_map: dict = None

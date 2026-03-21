@@ -1,0 +1,4588 @@
+# German translations for Karrio API.
+# Copyright (C) 2026 JTL Shipping
+# This file is distributed under the same license as the Karrio package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: karrio\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-17 00:11+0000\n"
+"PO-Revision-Date: 2026-02-25 00:00+0000\n"
+"Last-Translator: JTL Shipping <dev@jtl-shipping.com>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: karrio-insiders/modules/apps/karrio/server/apps/apps.py:7
+msgid "Apps"
+msgstr ""
+
+#: karrio-insiders/modules/audit/karrio/server/audit/apps.py:7
+msgid "Audit Log"
+msgstr ""
+
+#: karrio-insiders/modules/audit/karrio/server/audit/models.py:10
+msgid "log entry"
+msgstr ""
+
+#: karrio-insiders/modules/audit/karrio/server/audit/models.py:11
+msgid "log entries"
+msgstr ""
+
+#: karrio-insiders/modules/automation/karrio/server/automation/apps.py:9
+#, fuzzy
+#| msgid "Hold At Location"
+msgid "Automation"
+msgstr "Halten Bei Location"
+
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:37
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:114
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:231
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:396
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:520
+#: karrio/modules/core/karrio/server/core/models/metafield.py:34
+#: karrio/modules/core/karrio/server/providers/models/sheet.py:30
+#, fuzzy
+#| msgid "Username"
+msgid "name"
+msgstr "Benutzername"
+
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:38
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:115
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:232
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:395
+#: karrio-insiders/modules/automation/karrio/server/automation/models.py:521
+#: karrio/modules/core/karrio/server/providers/models/sheet.py:31
+msgid "slug"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/apps.py:7
+msgid "Organizations"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.html:3
+#, python-format
+msgid ""
+"\n"
+"You have been invited to join the <strong>%(organization_name)s</strong> team owned by <strong>%(owner_email)s</strong> on <strong>%(app_name)s</strong>.\n"
+"<br/><br/>\n"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.html:8
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.txt:7
+msgid "To get started, accept the invite below:"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.html:18
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.txt:10
+msgid "Joining the team will give you access to the team's dashboard."
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.html:20
+#, python-format
+msgid "The <strong>%(app_name)s</strong> team"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.txt:3
+#, python-format
+msgid ""
+"\n"
+"You have been invited to join the %(organization_name)s team owned by %(owner_email)s on %(app_name)s.\n"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/invitation_email.txt:12
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/password_reset_email.html:12
+#, python-format
+msgid "The %(app_name)s team"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/organization_ownership_email.html:3
+msgid ""
+"\n"
+"Hello,\n"
+"<br/><br/>\n"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/organization_ownership_email.html:8
+#, python-format
+msgid ""
+"\n"
+"This is just to let you know that %(current_owner_email)s has transferred ownership of\n"
+"the <strong>%(organization_name)s</strong> %(APP_NAME)s organization to you.\n"
+"<br/><br/>\n"
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/organization_ownership_email.html:14
+msgid "Best."
+msgstr ""
+
+#: karrio-insiders/modules/orgs/karrio/server/orgs/templates/karrio/organization_ownership_email.html:16
+#, python-format
+msgid "The <strong>%(APP_NAME)s</strong> team"
+msgstr ""
+
+#: karrio/apps/api/karrio/server/settings/base.py:437
+msgid "English"
+msgstr "Englisch"
+
+#: karrio/apps/api/karrio/server/settings/base.py:438
+msgid "German"
+msgstr "Deutsch"
+
+#: karrio/apps/api/karrio/server/templates/admin/base_site.html:4
+msgid "Site admin"
+msgstr ""
+
+#: karrio/apps/api/karrio/server/templates/admin/base_site.html:11
+msgid "Administration"
+msgstr ""
+
+#: karrio/apps/api/karrio/server/urls/jwt.py:91
+#: karrio/apps/api/karrio/server/urls/jwt.py:151
+#: karrio/apps/api/karrio/server/urls/jwt.py:194
+msgid "Refresh token is required."
+msgstr ""
+
+#: karrio/apps/api/karrio/server/urls/jwt.py:158
+msgid "This refresh token is not verified."
+msgstr ""
+
+#: karrio/apps/api/karrio/server/urls/jwt.py:225
+msgid "Two Factor authentication is not enabled for this user"
+msgstr ""
+
+#: karrio/apps/api/karrio/server/urls/jwt.py:233
+#: karrio/modules/graph/karrio/server/graph/schemas/base/mutations.py:411
+msgid "Invalid or Expired OTP token"
+msgstr ""
+
+#: karrio/modules/admin/karrio/server/admin/apps.py:8
+msgid "Karrio Admin"
+msgstr ""
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:6
+msgid "Asendia Epaq Standard"
+msgstr "Asendia Epaq Standard"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:7
+msgid "Asendia Epaq Standard Cup"
+msgstr "Asendia Epaq Standard Cup"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:8
+msgid "Asendia Epaq Plus"
+msgstr "Asendia Epaq Plus"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:9
+msgid "Asendia Epaq Plus Cup"
+msgstr "Asendia Epaq Plus Cup"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:10
+msgid "Asendia Epaq Elite"
+msgstr "Asendia Epaq Elite"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:11
+msgid "Asendia Epaq Elite Cup"
+msgstr "Asendia Epaq Elite Cup"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:12
+msgid "Asendia Epaq Returns"
+msgstr "Asendia Epaq Retouren"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:13
+msgid "Asendia Epaq Returns Domestic"
+msgstr "Asendia Epaq Retouren Inland"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:14
+msgid "Asendia Country Road"
+msgstr "Asendia Land Straße"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:15
+msgid "Asendia Country Road Plus"
+msgstr "Asendia Land Straße Plus"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:16
+msgid "Asendia Priority"
+msgstr "Asendia Priority"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:17
+msgid "Asendia Priority Tracked"
+msgstr "Asendia Priority Verfolgt"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:21
+msgid "Asendia Insurance"
+msgstr "Asendia Versicherung"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:22
+msgid "Asendia Return Label"
+msgstr "Asendia Retoure Etikett"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:23
+msgid "Asendia Return Label Type"
+msgstr "Asendia Retoure Etikett Typ"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:24
+msgid "Asendia Return Label Payment"
+msgstr "Asendia Retoure Etikett Payment"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:25
+msgid "Asendia Sender Eori"
+msgstr "Asendia Sender Eori"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:26
+msgid "Asendia Seller Eori"
+msgstr "Asendia Seller Eori"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:27
+msgid "Asendia Sender Tax ID"
+msgstr "Asendia Sender Tax ID"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:28
+msgid "Asendia Receiver Tax ID"
+msgstr "Asendia Receiver Tax ID"
+
+#: karrio/modules/connectors/asendia/karrio/providers/asendia/i18n.py:29
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:31
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:55
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:22
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:18
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:80
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:39
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:108
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:38
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:25
+msgid "Insurance"
+msgstr "Versicherung"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:6
+msgid "Australia Post Parcel Post"
+msgstr "Australia Post Paket Post"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:7
+msgid "Australia Post Express Post"
+msgstr "Australia Post Express Post"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:8
+msgid "Australia Post Parcel Post Signature"
+msgstr "Australia Post Paket Post Unterschrift"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:9
+msgid "Australia Post Express Post Signature"
+msgstr "Australia Post Express Post Unterschrift"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:10
+msgid "Australia Post INTL Standard Pack Track"
+msgstr "Australia Post INTL Standard Pack Track"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:11
+msgid "Australia Post INTL Standard With Signature"
+msgstr "Australia Post INTL Standard With Unterschrift"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:12
+msgid "Australia Post INTL Express Merch"
+msgstr "Australia Post INTL Express Merch"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:13
+msgid "Australia Post INTL Express Docs"
+msgstr "Australia Post INTL Express Docs"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:14
+msgid "Australia Post Eparcel Post Returns"
+msgstr "Australia Post Eparcel Post Retouren"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:15
+msgid "Australia Post Express Eparcel Post Returns"
+msgstr "Australia Post Express Eparcel Post Retouren"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:19
+msgid "Australia Post Delivery Date"
+msgstr "Australia Post Zustellung Date"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:20
+msgid "Australia Post Delivery Time Start"
+msgstr "Australia Post Zustellung Time Start"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:21
+msgid "Australia Post Delivery Time End"
+msgstr "Australia Post Zustellung Time End"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:22
+msgid "Australia Post Pickup Date"
+msgstr "Australia Post Abholung Date"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:23
+msgid "Australia Post Pickup Time"
+msgstr "Australia Post Abholung Time"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:24
+msgid "Australia Post Identity On Delivery"
+msgstr "Australia Post Identity Bei Zustellung"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:25
+msgid "Australia Post Print At Depot"
+msgstr "Australia Post Print Bei Depot"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:26
+msgid "Australia Post Transit Cover"
+msgstr "Australia Post Transit Deckung"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:27
+msgid "Australia Post Sameday Identity On Delivery"
+msgstr "Australia Post Sameday Identity Bei Zustellung"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:28
+msgid "Australia Post Authority To Leave"
+msgstr "Australia Post Authority To Leave"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:29
+msgid "Australia Post Allow Partial Delivery"
+msgstr "Australia Post Allow Partial Zustellung"
+
+#: karrio/modules/connectors/australiapost/karrio/providers/australiapost/i18n.py:30
+msgid "Australia Post Contains Dangerous Goods"
+msgstr "Australia Post Contains Gefahrgut Güter"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:6
+msgid "Bpack 24h Pro"
+msgstr "Bpack 24h Pro"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:7
+msgid "Bpack 24h Business"
+msgstr "Bpack 24h Business"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:8
+msgid "Bpack Bus"
+msgstr "Bpack Bus"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:9
+msgid "Bpack Pallet"
+msgstr "Bpack Pallet"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:10
+msgid "Bpack Easy Retour"
+msgstr "Bpack Easy Retour"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:11
+msgid "Bpack Xl"
+msgstr "Bpack Xl"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:12
+msgid "Bpack bpost"
+msgstr "Bpack bpost"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:13
+msgid "Bpack 24 7"
+msgstr "Bpack 24 7"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:14
+msgid "Bpack World Business"
+msgstr "Bpack World Business"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:15
+msgid "Bpack World Express Pro"
+msgstr "Bpack World Express Pro"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:16
+msgid "Bpack Europe Business"
+msgstr "Bpack Europe Business"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:17
+msgid "Bpack World Easy Return"
+msgstr "Bpack World Easy Retoure"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:18
+msgid "Bpack bpost International"
+msgstr "Bpack bpost International"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:19
+msgid "Bpack 24 7 International"
+msgstr "Bpack 24 7 International"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:20
+msgid "Athome"
+msgstr "Athome"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:21
+msgid "Atbpost"
+msgstr "Atbpost"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:22
+msgid "At24 7"
+msgstr "At24 7"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:23
+msgid "Bpostonappointment"
+msgstr "Bpostonappointment"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:24
+msgid "International"
+msgstr "International"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:25
+msgid "Atintlhome"
+msgstr "Atintlhome"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:26
+msgid "Atintlpugo"
+msgstr "Atintlpugo"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:27
+msgid "Atintlparceldepot"
+msgstr "Atintlparceldepot"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:31
+msgid "bpost Info Distributed"
+msgstr "bpost Info Distributed"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:32
+msgid "bpost Info Next Day"
+msgstr "bpost Info Nächster Tag"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:33
+msgid "bpost Info Reminder"
+msgstr "bpost Info Reminder"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:34
+msgid "bpost Keep Me Informed"
+msgstr "bpost Keep Me Informed"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:35
+msgid "bpost Automatic Second Presentation"
+msgstr "bpost Automatic Zweiter Presentation"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:36
+msgid "bpost Fragile"
+msgstr "bpost Zerbrechlich"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:37
+msgid "bpost Insured"
+msgstr "bpost Versichert"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:38
+msgid "bpost Signed"
+msgstr "bpost Signed"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:39
+msgid "bpost Time Slot Delivery"
+msgstr "bpost Time Slot Zustellung"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:40
+msgid "bpost Saturday Delivery"
+msgstr "bpost Samstag Zustellung"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:41
+msgid "bpost Sunday Delivery"
+msgstr "bpost Sonntag Zustellung"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:42
+msgid "bpost Same Day Delivery"
+msgstr "bpost Gleicher Tag Zustellung"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:43
+msgid "bpost COD"
+msgstr "bpost COD"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:44
+msgid "bpost Preferred Delivery Window"
+msgstr "bpost Bevorzugt Zustellung Window"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:45
+msgid "bpost Full Service"
+msgstr "bpost Full Dienst"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:46
+msgid "bpost Door Step Plus Service"
+msgstr "bpost Door Step Plus Dienst"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:47
+msgid "bpost Ultra Late In Evening Delivery"
+msgstr "bpost Ultra Late In Abend Zustellung"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:48
+msgid "bpost Pugo ID"
+msgstr "bpost Pugo ID"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:49
+msgid "bpost Pugo Name"
+msgstr "bpost Pugo Name"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:50
+msgid "bpost Pugo Address"
+msgstr "bpost Pugo Address"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:51
+msgid "bpost Parcels Depot ID"
+msgstr "bpost Parcels Depot ID"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:52
+msgid "bpost Parcels Depot Name"
+msgstr "bpost Parcels Depot Name"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:53
+msgid "bpost Parcels Depot Address"
+msgstr "bpost Parcels Depot Address"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:54
+msgid "bpost Parcel Return Instructions"
+msgstr "bpost Paket Retoure Anweisungen"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:56
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:23
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:19
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:99
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:37
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:24
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:117
+msgid "Cash On Delivery"
+msgstr "Nachnahme Bei Zustellung"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:57
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:24
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:109
+msgid "Signature Confirmation"
+msgstr "Unterschrift Bestätigung"
+
+#: karrio/modules/connectors/bpost/karrio/providers/bpost/i18n.py:58
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:20
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:20
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:24
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:102
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:83
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:111
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:40
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:27
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:80
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:48
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:120
+msgid "Saturday Delivery"
+msgstr "Samstag Zustellung"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:8
+msgid "Canada Post Signature"
+msgstr "Canada Post Unterschrift"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:9
+msgid "Canada Post Coverage"
+msgstr "Canada Post Coverage"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:10
+msgid "Canada Post Collect On Delivery"
+msgstr "Canada Post Collect Bei Zustellung"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:11
+msgid "Canada Post Proof Of Age Required 18"
+msgstr "Canada Post Nachweis Of Alter Erforderlich 18"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:12
+msgid "Canada Post Proof Of Age Required 19"
+msgstr "Canada Post Nachweis Of Alter Erforderlich 19"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:13
+msgid "Canada Post Card For Pickup"
+msgstr "Canada Post Card Für Abholung"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:14
+msgid "Canada Post Do Not Safe Drop"
+msgstr "Canada Post Do Not Sicher Drop"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:15
+msgid "Canada Post Leave At Door"
+msgstr "Canada Post Leave Bei Door"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:16
+msgid "Canada Post Deliver To Post Office"
+msgstr "Canada Post Deliver To Post Büro"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:17
+msgid "Canada Post Return At Senders Expense"
+msgstr "Canada Post Retoure Bei Senders Expense"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:18
+msgid "Canada Post Return To Sender"
+msgstr "Canada Post Retoure To Sender"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:19
+msgid "Canada Post Abandon"
+msgstr "Canada Post Abandon"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:20
+msgid "Canada Post Cost Center"
+msgstr "Canada Post Cost Center"
+
+#: karrio/modules/connectors/canadapost/karrio/providers/canadapost/i18n.py:21
+msgid "Canada Post Submit Shipment"
+msgstr "Canada Post Submit Sendung"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:6
+msgid "Chronopost Retrait Bureau"
+msgstr "Chronopost Retrait Bureau"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:7
+msgid "Chronopost 13"
+msgstr "Chronopost 13"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:8
+msgid "Chronopost 10"
+msgstr "Chronopost 10"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:9
+msgid "Chronopost 18"
+msgstr "Chronopost 18"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:10
+msgid "Chronopost Relais"
+msgstr "Chronopost Relais"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:11
+msgid "Chronopost Express International"
+msgstr "Chronopost Express International"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:12
+msgid "Chronopost Premium International"
+msgstr "Chronopost Premium International"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:13
+msgid "Chronopost Classic International"
+msgstr "Chronopost Klassisch International"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:17
+msgid "Chronopost Delivery On Monday"
+msgstr "Chronopost Zustellung Bei Monday"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:18
+msgid "Chronopost Delivery On Saturday"
+msgstr "Chronopost Zustellung Bei Samstag"
+
+#: karrio/modules/connectors/chronopost/karrio/providers/chronopost/i18n.py:19
+msgid "Chronopost Delivery Normal"
+msgstr "Chronopost Zustellung Normal"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:6
+msgid "DHL Logistics Services"
+msgstr "DHL Logistikdienste"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:7
+msgid "DHL Domestic Express 12:00"
+msgstr "DHL Inland Express 12:00"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:8
+msgid "DHL Express Choice"
+msgstr "DHL Express Choice"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:9
+msgid "DHL Express Choice (Non-Documents)"
+msgstr "DHL Express Choice (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:10
+msgid "DHL Jetline"
+msgstr "DHL Jetline"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:11
+msgid "DHL Sprintline"
+msgstr "DHL Sprintline"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:12
+msgid "DHL Air Capacity Sales"
+msgstr "DHL Luftfracht-Kapazitätsverkauf"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:13
+msgid "DHL Express Easy"
+msgstr "DHL Express Easy"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:14
+msgid "DHL Express Easy (Non-Documents)"
+msgstr "DHL Express Easy (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:15
+msgid "DHL Parcel Product"
+msgstr "DHL Paketprodukt"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:16
+msgid "DHL Accounting"
+msgstr "DHL Abrechnung"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:17
+msgid "DHL Breakbulk Express"
+msgstr "DHL Breakbulk Express"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:18
+msgid "DHL Medical Express"
+msgstr "DHL Medical Express"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:19
+msgid "DHL Express Worldwide (Documents)"
+msgstr "DHL Express Weltweit (Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:20
+msgid "DHL Express 9:00 (Non-Documents)"
+msgstr "DHL Express 9:00 (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:21
+msgid "DHL Freight Worldwide (Non-Documents)"
+msgstr "DHL Fracht Weltweit (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:22
+msgid "DHL Economy Select Domestic"
+msgstr "DHL Economy Select Inland"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:23
+msgid "DHL Economy Select (Non-Documents)"
+msgstr "DHL Economy Select (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:24
+msgid "DHL Express Domestic 9:00"
+msgstr "DHL Express Inland 9:00"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:25
+msgid "DHL Jumbo Box (Non-Documents)"
+msgstr "DHL Jumbo Box (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:26
+msgid "DHL Express 9:00"
+msgstr "DHL Express 9:00"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:27
+msgid "DHL Express 10:30"
+msgstr "DHL Express 10:30"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:28
+msgid "DHL Express 10:30 (Non-Documents)"
+msgstr "DHL Express 10:30 (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:29
+msgid "DHL Express Domestic"
+msgstr "DHL Express Inland"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:30
+msgid "DHL Express Domestic 10:30"
+msgstr "DHL Express Inland 10:30"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:31
+msgid "DHL Express Worldwide (Non-Documents)"
+msgstr "DHL Express Weltweit (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:32
+msgid "DHL Medical Express (Non-Documents)"
+msgstr "DHL Medical Express (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:33
+msgid "DHL GlobalMail"
+msgstr "DHL GlobalMail"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:34
+msgid "DHL Same Day"
+msgstr "DHL Same Day"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:35
+msgid "DHL Express 12:00"
+msgstr "DHL Express 12:00"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:36
+msgid "DHL Express Worldwide"
+msgstr "DHL Express Weltweit"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:37
+msgid "DHL Parcel Product (Non-Documents)"
+msgstr "DHL Paketprodukt (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:38
+msgid "DHL Economy Select"
+msgstr "DHL Economy Select"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:39
+msgid "DHL Express Envelope"
+msgstr "DHL Express Umschlag"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:40
+msgid "DHL Express 12:00 (Non-Documents)"
+msgstr "DHL Express 12:00 (Nicht-Dokumente)"
+
+#: karrio/modules/connectors/dhl_express/karrio/providers/dhl_express/i18n.py:41
+msgid "DHL Destination Charges"
+msgstr "DHL Zielgebühren"
+
+#: karrio/modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/i18n.py:6
+msgid "DHL Paket"
+msgstr "DHL Paket"
+
+#: karrio/modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/i18n.py:7
+msgid "DHL Kleinpaket"
+msgstr "DHL Kleinpaket"
+
+#: karrio/modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/i18n.py:8
+msgid "DHL Europaket"
+msgstr "DHL Europaket"
+
+#: karrio/modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/i18n.py:9
+msgid "DHL Paket International"
+msgstr "DHL Paket International"
+
+#: karrio/modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/i18n.py:10
+msgid "DHL Warenpost International"
+msgstr "DHL Warenpost International"
+
+#: karrio/modules/connectors/dhl_parcel_de/karrio/providers/dhl_parcel_de/i18n.py:11
+msgid "DHL Warenpost"
+msgstr "DHL Warenpost"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:8
+msgid "DHL Poland Delivery In 18 22 Hours"
+msgstr "DHL Poland Zustellung In 18 22 Hours"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:9
+msgid "DHL Poland Delivery On Saturday"
+msgstr "DHL Poland Zustellung Bei Samstag"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:10
+msgid "DHL Poland Pickup On Staturday"
+msgstr "DHL Poland Abholung Bei Staturday"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:11
+msgid "DHL Poland Insuration"
+msgstr "DHL Poland Insuration"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:12
+msgid "DHL Poland Collect On Delivery"
+msgstr "DHL Poland Collect Bei Zustellung"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:13
+msgid "DHL Poland Information To Receiver"
+msgstr "DHL Poland Information To Receiver"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:14
+msgid "DHL Poland Return Of Document"
+msgstr "DHL Poland Retoure Of Document"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:15
+msgid "DHL Poland Proof Of Delivery"
+msgstr "DHL Poland Nachweis Of Zustellung"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:16
+msgid "DHL Poland Delivery To Neighbour"
+msgstr "DHL Poland Zustellung To Neighbour"
+
+#: karrio/modules/connectors/dhl_poland/karrio/providers/dhl_poland/i18n.py:17
+msgid "DHL Poland Self Collect"
+msgstr "DHL Poland Self Collect"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:6
+msgid "DPD Cl"
+msgstr "DPD Cl"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:7
+msgid "DPD Express 10h"
+msgstr "DPD Express 10h"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:8
+msgid "DPD Express 12h"
+msgstr "DPD Express 12h"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:9
+msgid "DPD Express 18h Guarantee"
+msgstr "DPD Express 18h Guarantee"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:10
+msgid "DPD Express B2b Predict"
+msgstr "DPD Express B2b Predict"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:11
+msgid "DPD Home Europe"
+msgstr "DPD Zuhause Europe"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:12
+msgid "DPD Shop Europe"
+msgstr "DPD Shop Europe"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:13
+msgid "DPD Express Europe"
+msgstr "DPD Express Europe"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:14
+msgid "DPD Express Guarantee"
+msgstr "DPD Express Guarantee"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:15
+msgid "DPD Express International"
+msgstr "DPD Express International"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:19
+msgid "DPD Order Type"
+msgstr "DPD Order Typ"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:20
+msgid "DPD Saturday Delivery"
+msgstr "DPD Samstag Zustellung"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:21
+msgid "DPD Ex Works Delivery"
+msgstr "DPD Ex Works Zustellung"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:22
+msgid "DPD Tyres"
+msgstr "DPD Tyres"
+
+#: karrio/modules/connectors/dpd/karrio/providers/dpd/i18n.py:23
+msgid "DPD Parcel Shop Delivery"
+msgstr "DPD Paket Shop Zustellung"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:6
+msgid "DPD Meta Classic"
+msgstr "DPD Meta Klassisch"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:7
+msgid "DPD Meta Express 830"
+msgstr "DPD Meta Express 830"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:8
+msgid "DPD Meta Express 12"
+msgstr "DPD Meta Express 12"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:9
+msgid "DPD Meta Express 18"
+msgstr "DPD Meta Express 18"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:10
+msgid "DPD Meta International Express"
+msgstr "DPD Meta International Express"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:11
+msgid "DPD Meta Parcel Letter"
+msgstr "DPD Meta Paket Brief"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:12
+msgid "DPD Meta Mail"
+msgstr "DPD Meta Post"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:13
+msgid "DPD Meta Max"
+msgstr "DPD Meta Max"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:17
+msgid "DPD Meta Saturday Delivery"
+msgstr "DPD Meta Samstag Zustellung"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:18
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:21
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:24
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:27
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:30
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:33
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:36
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:39
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:42
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:45
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:48
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:51
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:54
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:57
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:60
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:63
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:66
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:69
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:72
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:75
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:78
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:81
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:15
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:18
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:21
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:24
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:27
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:30
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:33
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:36
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:39
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:42
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:45
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:48
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:51
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:54
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:57
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:60
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:63
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:66
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:69
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:72
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:75
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:78
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:81
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:15
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:18
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:21
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:24
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:27
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:30
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:33
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:36
+msgid "Help"
+msgstr "Help"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:19
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:22
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:25
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:28
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:31
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:34
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:37
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:40
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:43
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:46
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:49
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:52
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:55
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:58
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:61
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:64
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:67
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:70
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:73
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:76
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:79
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:82
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:16
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:19
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:22
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:25
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:28
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:31
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:34
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:37
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:40
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:43
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:46
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:49
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:52
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:55
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:58
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:61
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:64
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:67
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:70
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:73
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:76
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:79
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:82
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:16
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:19
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:22
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:25
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:28
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:31
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:34
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:37
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:82
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:97
+msgid "Meta"
+msgstr "Meta"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:20
+msgid "DPD Meta Small Parcel"
+msgstr "DPD Meta Klein Paket"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:23
+msgid "DPD Meta Exchange Service"
+msgstr "DPD Meta Exchange Dienst"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:26
+msgid "DPD Meta Ex Works"
+msgstr "DPD Meta Ex Works"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:29
+msgid "DPD Meta Delivery Date From"
+msgstr "DPD Meta Zustellung Date From"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:32
+msgid "DPD Meta Delivery Date To"
+msgstr "DPD Meta Zustellung Date To"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:35
+msgid "DPD Meta Delivery Time From"
+msgstr "DPD Meta Zustellung Time From"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:38
+msgid "DPD Meta Delivery Time To"
+msgstr "DPD Meta Zustellung Time To"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:41
+msgid "DPD Meta Dropoff Type"
+msgstr "DPD Meta Dropoff Typ"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:44
+msgid "DPD Meta Parcel Shop ID"
+msgstr "DPD Meta Paket Shop ID"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:47
+msgid "DPD Meta Notification Email"
+msgstr "DPD Meta Benachrichtigung Email"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:50
+msgid "DPD Meta Notification Sms"
+msgstr "DPD Meta Benachrichtigung Sms"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:53
+msgid "DPD Meta Insurance Description"
+msgstr "DPD Meta Versicherung Beschreibung"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:56
+msgid "DPD Meta COD Collect Type"
+msgstr "DPD Meta COD Collect Typ"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:59
+msgid "DPD Meta COD Bank Code"
+msgstr "DPD Meta COD Bank Code"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:62
+msgid "DPD Meta COD Bank Name"
+msgstr "DPD Meta COD Bank Name"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:65
+msgid "DPD Meta COD Bank Account Number"
+msgstr "DPD Meta COD Bank Account Nummer"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:68
+msgid "DPD Meta COD Bank Account Name"
+msgstr "DPD Meta COD Bank Account Name"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:71
+msgid "DPD Meta COD Iban"
+msgstr "DPD Meta COD Iban"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:74
+msgid "DPD Meta COD Bic"
+msgstr "DPD Meta COD Bic"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:77
+msgid "DPD Meta COD Purpose"
+msgstr "DPD Meta COD Purpose"
+
+#: karrio/modules/connectors/dpd_meta/karrio/providers/dpd_meta/i18n.py:80
+msgid "DPD Meta Dangerous Goods"
+msgstr "DPD Meta Gefahrgut Güter"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:6
+msgid "FedEx International Priority Express"
+msgstr "FedEx International Priority Express"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:7
+msgid "FedEx International First"
+msgstr "FedEx International Erster"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:8
+msgid "FedEx International Priority"
+msgstr "FedEx International Priority"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:9
+msgid "FedEx International Economy"
+msgstr "FedEx International Economy"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:10
+msgid "FedEx Ground"
+msgstr "FedEx Boden"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:11
+msgid "FedEx Cargo Mail"
+msgstr "FedEx Cargo Post"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:12
+msgid "FedEx Cargo International Premium"
+msgstr "FedEx Cargo International Premium"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:13
+msgid "FedEx First Overnight"
+msgstr "FedEx Erster Über Nacht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:14
+msgid "FedEx First Overnight Freight"
+msgstr "FedEx Erster Über Nacht Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:15
+msgid "FedEx 1 Day Freight"
+msgstr "FedEx 1 Tag Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:16
+msgid "FedEx 2 Day Freight"
+msgstr "FedEx 2 Tag Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:17
+msgid "FedEx 3 Day Freight"
+msgstr "FedEx 3 Tag Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:18
+msgid "FedEx International Priority Freight"
+msgstr "FedEx International Priority Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:19
+msgid "FedEx International Economy Freight"
+msgstr "FedEx International Economy Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:20
+msgid "FedEx Cargo Airport To Airport"
+msgstr "FedEx Cargo Airport To Airport"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:21
+msgid "FedEx International Priority Distribution"
+msgstr "FedEx International Priority Distribution"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:22
+msgid "FedEx Ip Direct Distribution Freight"
+msgstr "FedEx Ip Direkt Distribution Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:23
+msgid "FedEx INTL Ground Distribution"
+msgstr "FedEx INTL Boden Distribution"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:24
+msgid "FedEx Ground Home Delivery"
+msgstr "FedEx Boden Zuhause Zustellung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:25
+msgid "FedEx Smart Post"
+msgstr "FedEx Smart Post"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:26
+msgid "FedEx Priority Overnight"
+msgstr "FedEx Priority Über Nacht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:27
+msgid "FedEx Standard Overnight"
+msgstr "FedEx Standard Über Nacht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:28
+msgid "FedEx 2 Day"
+msgstr "FedEx 2 Tag"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:29
+msgid "FedEx 2 Day Am"
+msgstr "FedEx 2 Tag Am"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:30
+msgid "FedEx Express Saver"
+msgstr "FedEx Express Spar"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:31
+msgid "FedEx Same Day"
+msgstr "FedEx Gleicher Tag"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:32
+msgid "FedEx Same Day City"
+msgstr "FedEx Gleicher Tag City"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:33
+msgid "FedEx One Day Freight"
+msgstr "FedEx One Tag Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:34
+msgid "FedEx International Economy Distribution"
+msgstr "FedEx International Economy Distribution"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:35
+msgid "FedEx International Connect Plus"
+msgstr "FedEx International Connect Plus"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:36
+msgid "FedEx International Distribution Freight"
+msgstr "FedEx International Distribution Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:37
+msgid "FedEx Regional Economy"
+msgstr "FedEx Regional Economy"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:38
+msgid "FedEx Next Day Freight"
+msgstr "FedEx Nächster Tag Fracht"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:39
+msgid "FedEx Next Day"
+msgstr "FedEx Nächster Tag"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:40
+msgid "FedEx Next Day 10am"
+msgstr "FedEx Nächster Tag 10am"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:41
+msgid "FedEx Next Day 12pm"
+msgstr "FedEx Nächster Tag 12pm"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:42
+msgid "FedEx Next Day End Of Day"
+msgstr "FedEx Nächster Tag End Of Tag"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:43
+msgid "FedEx Distance Deferred"
+msgstr "FedEx Distance Deferred"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:47
+msgid "FedEx Appointment"
+msgstr "FedEx Appointment"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:48
+msgid "FedEx Broker Select Option"
+msgstr "FedEx Broker Select Option"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:49
+msgid "FedEx Call Before Delivery"
+msgstr "FedEx Call Before Zustellung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:50
+msgid "FedEx COD"
+msgstr "FedEx COD"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:51
+msgid "FedEx Custom Delivery Window"
+msgstr "FedEx Custom Zustellung Window"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:52
+msgid "FedEx Cut Flowers"
+msgstr "FedEx Cut Flowers"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:53
+msgid "FedEx Do Not Break Down Pallets"
+msgstr "FedEx Do Not Break Down Pallets"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:54
+msgid "FedEx Do Not Stack Pallets"
+msgstr "FedEx Do Not Stack Pallets"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:55
+msgid "FedEx Dry Ice"
+msgstr "FedEx Dry Ice"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:56
+msgid "FedEx East Coast Special"
+msgstr "FedEx East Coast Spezial"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:57
+msgid "FedEx Exclude From Consolidation"
+msgstr "FedEx Exclude From Consolidation"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:58
+msgid "FedEx Extreme Length"
+msgstr "FedEx Extreme Länge"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:59
+msgid "FedEx Inside Delivery"
+msgstr "FedEx Inside Zustellung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:60
+msgid "FedEx Inside Pickup"
+msgstr "FedEx Inside Abholung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:61
+msgid "FedEx International Controlled Export Service"
+msgstr "FedEx International Controlled Export Dienst"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:62
+msgid "FedEx Third Party Consignee"
+msgstr "FedEx Third Party Consignee"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:63
+msgid "FedEx Electronic Trade Documents"
+msgstr "FedEx Electronic Trade Dokumente"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:64
+msgid "FedEx Food"
+msgstr "FedEx Lebensmittel"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:65
+msgid "FedEx Future Day Shipment"
+msgstr "FedEx Future Tag Sendung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:66
+msgid "FedEx Hold At Location"
+msgstr "FedEx Halten Bei Location"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:67
+msgid "FedEx International Traffic In Arms Regulations"
+msgstr "FedEx International Traffic In Arms Regulations"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:68
+msgid "FedEx Liftgate Delivery"
+msgstr "FedEx Liftgate Zustellung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:69
+msgid "FedEx Liftgate Pickup"
+msgstr "FedEx Liftgate Abholung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:70
+msgid "FedEx Limited Access Delivery"
+msgstr "FedEx Limited Zugang Zustellung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:71
+msgid "FedEx Limited Access Pickup"
+msgstr "FedEx Limited Zugang Abholung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:72
+msgid "FedEx Over Length"
+msgstr "FedEx Over Länge"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:73
+msgid "FedEx Pending Shipment"
+msgstr "FedEx Pending Sendung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:74
+msgid "FedEx Pharmacy Delivery"
+msgstr "FedEx Pharmacy Zustellung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:75
+msgid "FedEx Poison"
+msgstr "FedEx Poison"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:76
+msgid "FedEx Home Delivery Premium"
+msgstr "FedEx Zuhause Zustellung Premium"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:77
+msgid "FedEx Protection From Freezing"
+msgstr "FedEx Protection From Freezing"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:78
+msgid "FedEx Returns Clearance"
+msgstr "FedEx Retouren Clearance"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:79
+msgid "FedEx Return Shipment"
+msgstr "FedEx Retoure Sendung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:80
+msgid "FedEx Saturday Pickup"
+msgstr "FedEx Samstag Abholung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:81
+msgid "FedEx Event Notification"
+msgstr "FedEx Event Benachrichtigung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:82
+msgid "FedEx Delivery On Invoice Acceptance"
+msgstr "FedEx Zustellung Bei Invoice Acceptance"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:83
+msgid "FedEx Top Load"
+msgstr "FedEx Top Load"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:84
+msgid "FedEx One Rate"
+msgstr "FedEx One Tarif"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:85
+msgid "FedEx Freight Guarantee"
+msgstr "FedEx Fracht Guarantee"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:86
+msgid "FedEx Saturday Delivery"
+msgstr "FedEx Samstag Zustellung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:87
+msgid "FedEx Smart Post Hub ID"
+msgstr "FedEx Smart Post Hub ID"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:88
+msgid "FedEx Smart Post Allowed Indicia"
+msgstr "FedEx Smart Post Allowed Indicia"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:89
+msgid "FedEx Alcohol"
+msgstr "FedEx Alcohol"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:90
+msgid "FedEx Battery"
+msgstr "FedEx Battery"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:91
+msgid "FedEx Dangerous Goods"
+msgstr "FedEx Gefahrgut Güter"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:92
+msgid "FedEx Priority Alert"
+msgstr "FedEx Priority Alert"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:93
+msgid "FedEx Priority Alert Plus"
+msgstr "FedEx Priority Alert Plus"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:94
+msgid "FedEx Non Standard Container"
+msgstr "FedEx Nicht Standard Container"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:95
+msgid "FedEx Piece Count Verification"
+msgstr "FedEx Piece Count Verifizierung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:96
+msgid "FedEx Signature Option"
+msgstr "FedEx Unterschrift Option"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:97
+msgid "FedEx Evening"
+msgstr "FedEx Abend"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:98
+msgid "FedEx Date Certain"
+msgstr "FedEx Date Certain"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:100
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:84
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:118
+msgid "Dangerous Good"
+msgstr "Gefahrgut Good"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:101
+msgid "Notification"
+msgstr "Benachrichtigung"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:103
+msgid "Paperless Trade"
+msgstr "Paperless Trade"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:104
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:116
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:51
+msgid "Doc Files"
+msgstr "Doc Files"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:105
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:52
+msgid "Doc References"
+msgstr "Doc References"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:106
+msgid "Shipper Instructions"
+msgstr "Shipper Anweisungen"
+
+#: karrio/modules/connectors/fedex/karrio/providers/fedex/i18n.py:107
+msgid "Recipient Instructions"
+msgstr "Recipient Anweisungen"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:6
+msgid "GLS Parcel"
+msgstr "GLS Paket"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:7
+msgid "GLS Express"
+msgstr "GLS Express"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:8
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:14
+msgid "GLS Guaranteed24"
+msgstr "GLS Guaranteed24"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:9
+msgid "GLS Business Parcel"
+msgstr "GLS Business Paket"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:10
+msgid "GLS Euro Business Parcel"
+msgstr "GLS Euro Business Paket"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:17
+msgid "GLS Saturday Delivery"
+msgstr "GLS Samstag Zustellung"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:20
+msgid "GLS Flex Delivery"
+msgstr "GLS Flex Zustellung"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:23
+msgid "GLS Deposit Service"
+msgstr "GLS Deposit Dienst"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:26
+msgid "GLS Deposit Description"
+msgstr "GLS Deposit Beschreibung"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:29
+msgid "GLS Deposit Contact"
+msgstr "GLS Deposit Contact"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:32
+msgid "GLS Express Parcel"
+msgstr "GLS Express Paket"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:35
+msgid "GLS Time Definite Service"
+msgstr "GLS Time Definite Dienst"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:38
+msgid "GLS Shop Delivery"
+msgstr "GLS Shop Zustellung"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:41
+msgid "GLS Shop ID"
+msgstr "GLS Shop ID"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:44
+msgid "GLS Shop Auto Determine"
+msgstr "GLS Shop Auto Determine"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:47
+msgid "GLS Addressee Only"
+msgstr "GLS Addressee Only"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:50
+msgid "GLS Signature Service"
+msgstr "GLS Unterschrift Dienst"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:53
+msgid "GLS Ident Pin Service"
+msgstr "GLS Ident Pin Dienst"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:56
+msgid "GLS Add On Liability"
+msgstr "GLS Add Bei Liability"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:59
+msgid "GLS Pick And Return"
+msgstr "GLS Pick And Retoure"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:62
+msgid "GLS Shop Return"
+msgstr "GLS Shop Retoure"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:65
+msgid "GLS Return Enabled"
+msgstr "GLS Retoure Enabled"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:68
+msgid "GLS Limited Quantity"
+msgstr "GLS Limited Quantity"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:71
+msgid "GLS Limited Quantity Weight"
+msgstr "GLS Limited Quantity Gewicht"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:74
+msgid "GLS COD Reference"
+msgstr "GLS COD Referenz"
+
+#: karrio/modules/connectors/gls/karrio/providers/gls/i18n.py:77
+msgid "GLS Premium"
+msgstr "GLS Premium"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:6
+msgid "Hermes Standard"
+msgstr "Hermes Standard"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:7
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:14
+msgid "Hermes Next Day"
+msgstr "Hermes Nächster Tag"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:8
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:26
+msgid "Hermes Stated Day"
+msgstr "Hermes Stated Tag"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:9
+msgid "Hermes Parcel Shop"
+msgstr "Hermes Paket Shop"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:10
+msgid "Hermes International"
+msgstr "Hermes International"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:17
+msgid "Hermes Bulk Goods"
+msgstr "Hermes Bulk Güter"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:20
+msgid "Hermes Compact Parcel"
+msgstr "Hermes Compact Paket"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:23
+msgid "Hermes Redirection Prohibited"
+msgstr "Hermes Redirection Prohibited"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:29
+msgid "Hermes Time Slot"
+msgstr "Hermes Time Slot"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:32
+msgid "Hermes Express"
+msgstr "Hermes Express"
+
+#: karrio/modules/connectors/hermes/karrio/providers/hermes/i18n.py:35
+msgid "Hermes After Hours Delivery"
+msgstr "Hermes After Hours Zustellung"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:6
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:16
+msgid "Landmark Maxipak Scan Ddp"
+msgstr "Landmark Maxipak Scan Ddp"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:7
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:17
+msgid "Landmark Maxipak Scan Ddu"
+msgstr "Landmark Maxipak Scan Ddu"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:8
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:18
+msgid "Landmark Minipak Scan Ddp"
+msgstr "Landmark Minipak Scan Ddp"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:9
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:19
+msgid "Landmark Minipak Scan Ddu"
+msgstr "Landmark Minipak Scan Ddu"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:10
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:21
+msgid "Landmark Maxipak Scan Premium UPS Express Ddp"
+msgstr "Landmark Maxipak Scan Premium UPS Express Ddp"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:11
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:22
+msgid "Landmark Maxipak Scan Premium UPS Express Ddu"
+msgstr "Landmark Maxipak Scan Premium UPS Express Ddu"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:12
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:23
+msgid "Landmark Maxipak Scan Premium UPS Standard Ddp"
+msgstr "Landmark Maxipak Scan Premium UPS Standard Ddp"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:13
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:24
+msgid "Landmark Maxipak Scan Premium UPS Standard Ddu"
+msgstr "Landmark Maxipak Scan Premium UPS Standard Ddu"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:14
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:25
+msgid "Landmark Maxipak Scan Pddp"
+msgstr "Landmark Maxipak Scan Pddp"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:15
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:26
+msgid "Landmark Minipak Scan Pddp"
+msgstr "Landmark Minipak Scan Pddp"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:20
+msgid "Landmark Maxipak Scan Ddp Pudo"
+msgstr "Landmark Maxipak Scan Ddp Pudo"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:27
+msgid "Landmark Maxipak Scan Premium"
+msgstr "Landmark Maxipak Scan Premium"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:31
+msgid "Landmark Shipment Insurance Freight"
+msgstr "Landmark Sendung Versicherung Fracht"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:32
+msgid "Landmark Order Insurance Freight Total"
+msgstr "Landmark Order Versicherung Fracht Total"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:33
+msgid "Landmark Produce Label"
+msgstr "Landmark Produce Etikett"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:34
+msgid "Landmark Import Request"
+msgstr "Landmark Import Request"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:35
+msgid "Fulfilled By Landmark"
+msgstr "Fulfilled By Landmark"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:36
+msgid "Landmark Freight Pro Number"
+msgstr "Landmark Fracht Pro Nummer"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:37
+msgid "Landmark Freight Piece Unit"
+msgstr "Landmark Fracht Piece Unit"
+
+#: karrio/modules/connectors/landmark/karrio/providers/landmark/i18n.py:38
+msgid "Landmark Return Address Code"
+msgstr "Landmark Retoure Address Code"
+
+#: karrio/modules/connectors/laposte/karrio/providers/laposte/i18n.py:6
+msgid "La Poste Standard Service"
+msgstr "La Poste Standard Dienst"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:6
+msgid "MyDHL Express Worldwide"
+msgstr "MyDHL Express Weltweit"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:7
+msgid "MyDHL Express 12 00"
+msgstr "MyDHL Express 12 00"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:8
+msgid "MyDHL Express 9 00"
+msgstr "MyDHL Express 9 00"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:9
+msgid "MyDHL Express 10 30"
+msgstr "MyDHL Express 10 30"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:10
+msgid "MyDHL Express Easy"
+msgstr "MyDHL Express Easy"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:11
+msgid "MyDHL Medical Express"
+msgstr "MyDHL Medical Express"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:12
+msgid "MyDHL Jetline"
+msgstr "MyDHL Jetline"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:13
+msgid "MyDHL Sprintline"
+msgstr "MyDHL Sprintline"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:14
+msgid "MyDHL Globalmail"
+msgstr "MyDHL Globalmail"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:15
+msgid "MyDHL Globalmail Business"
+msgstr "MyDHL Globalmail Business"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:16
+msgid "MyDHL Express Domestic"
+msgstr "MyDHL Express Inland"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:17
+msgid "MyDHL Express Domestic 12 00"
+msgstr "MyDHL Express Inland 12 00"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:18
+msgid "MyDHL Express Domestic 9 00"
+msgstr "MyDHL Express Inland 9 00"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:19
+msgid "MyDHL Same Day"
+msgstr "MyDHL Gleicher Tag"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:20
+msgid "MyDHL Economy Select"
+msgstr "MyDHL Economy Select"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:21
+msgid "MyDHL Europack"
+msgstr "MyDHL Europack"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:22
+msgid "MyDHL Breakbulk Express"
+msgstr "MyDHL Breakbulk Express"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:23
+msgid "MyDHL Express Freight"
+msgstr "MyDHL Express Fracht"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:24
+msgid "MyDHL Express Worldwide Doc"
+msgstr "MyDHL Express Weltweit Doc"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:25
+msgid "MyDHL Express Envelope"
+msgstr "MyDHL Express Umschlag"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:26
+msgid "MyDHL Express Worldwide B2c"
+msgstr "MyDHL Express Weltweit B2c"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:27
+msgid "MyDHL Express Easy B2c"
+msgstr "MyDHL Express Easy B2c"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:31
+msgid "MyDHL Saturday Delivery"
+msgstr "MyDHL Samstag Zustellung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:32
+msgid "MyDHL Hold For Collection"
+msgstr "MyDHL Halten Für Abholung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:33
+msgid "MyDHL Neutral Delivery"
+msgstr "MyDHL Neutral Zustellung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:34
+msgid "MyDHL Residential Delivery"
+msgstr "MyDHL Privat Zustellung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:35
+msgid "MyDHL Scheduled Delivery"
+msgstr "MyDHL Scheduled Zustellung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:36
+msgid "MyDHL Collect From Service Point"
+msgstr "MyDHL Collect From Dienst Punkt"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:37
+msgid "MyDHL Verified Delivery"
+msgstr "MyDHL Verified Zustellung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:38
+msgid "MyDHL Direct Signature"
+msgstr "MyDHL Direkt Unterschrift"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:39
+msgid "MyDHL Signature Release"
+msgstr "MyDHL Unterschrift Release"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:40
+msgid "MyDHL Duty Tax Paid"
+msgstr "MyDHL Duty Tax Paid"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:41
+msgid "MyDHL Receiver Paid"
+msgstr "MyDHL Receiver Paid"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:42
+msgid "MyDHL Import Billing"
+msgstr "MyDHL Import Billing"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:43
+msgid "MyDHL Duty Tax Importer"
+msgstr "MyDHL Duty Tax Importer"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:44
+msgid "MyDHL Shipment Insurance"
+msgstr "MyDHL Sendung Versicherung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:45
+msgid "MyDHL Dangerous Goods"
+msgstr "MyDHL Gefahrgut Güter"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:46
+msgid "MyDHL Dry Ice"
+msgstr "MyDHL Dry Ice"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:47
+msgid "MyDHL Lithium Ion Pi966 Section Ii"
+msgstr "MyDHL Lithium Ion Pi966 Section Ii"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:48
+msgid "MyDHL Lithium Ion Pi967 Section Ii"
+msgstr "MyDHL Lithium Ion Pi967 Section Ii"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:49
+msgid "MyDHL Lithium Metal Pi969 Section Ii"
+msgstr "MyDHL Lithium Metal Pi969 Section Ii"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:50
+msgid "MyDHL Lithium Metal Pi970 Section Ii"
+msgstr "MyDHL Lithium Metal Pi970 Section Ii"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:51
+msgid "MyDHL Excepted Quantities"
+msgstr "MyDHL Excepted Quantities"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:52
+msgid "MyDHL Consumer Commodities"
+msgstr "MyDHL Consumer Commodities"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:53
+msgid "MyDHL Magnetized Material"
+msgstr "MyDHL Magnetized Material"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:54
+msgid "MyDHL Not Restricted Dangerous Goods"
+msgstr "MyDHL Not Restricted Gefahrgut Güter"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:55
+msgid "MyDHL Active Data Logger"
+msgstr "MyDHL Active Data Logger"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:56
+msgid "MyDHL Gogreen Climate Neutral"
+msgstr "MyDHL Gogreen Climate Neutral"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:57
+msgid "MyDHL Gogreen Plus Carbon Reduced"
+msgstr "MyDHL Gogreen Plus Carbon Reduced"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:58
+msgid "MyDHL Verbal Notification"
+msgstr "MyDHL Verbal Benachrichtigung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:59
+msgid "MyDHL Verbal Notification Alternative"
+msgstr "MyDHL Verbal Benachrichtigung Alternative"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:60
+msgid "MyDHL Broker Notification"
+msgstr "MyDHL Broker Benachrichtigung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:61
+msgid "MyDHL Emergency Situation"
+msgstr "MyDHL Emergency Situation"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:62
+msgid "MyDHL Diplomatic Mail"
+msgstr "MyDHL Diplomatic Post"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:63
+msgid "MyDHL Cold Storage"
+msgstr "MyDHL Kalt Storage"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:64
+msgid "MyDHL Sanctions Routing"
+msgstr "MyDHL Sanctions Routing"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:65
+msgid "MyDHL Courier Time Window"
+msgstr "MyDHL Courier Time Window"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:66
+msgid "MyDHL Dedicated Pickup"
+msgstr "MyDHL Dedicated Abholung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:67
+msgid "MyDHL Non Stackable Pallet"
+msgstr "MyDHL Nicht Stackable Pallet"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:68
+msgid "MyDHL Paperless Trade"
+msgstr "MyDHL Paperless Trade"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:69
+msgid "MyDHL Export Declaration"
+msgstr "MyDHL Export Declaration"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:70
+msgid "MyDHL Clearance Authorization"
+msgstr "MyDHL Clearance Authorization"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:71
+msgid "MyDHL Clearance Data Modification"
+msgstr "MyDHL Clearance Data Modification"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:72
+msgid "MyDHL Bonded Storage"
+msgstr "MyDHL Bonded Storage"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:73
+msgid "MyDHL Bonded Transit"
+msgstr "MyDHL Bonded Transit"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:74
+msgid "MyDHL Temporary Import Export"
+msgstr "MyDHL Temporary Import Export"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:75
+msgid "MyDHL Non Routine Entry"
+msgstr "MyDHL Nicht Routine Entry"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:76
+msgid "MyDHL Multiline Entry"
+msgstr "MyDHL Multiline Entry"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:77
+msgid "MyDHL Physical Intervention"
+msgstr "MyDHL Physical Intervention"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:78
+msgid "MyDHL Other Government Agency"
+msgstr "MyDHL Other Government Agency"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:79
+msgid "MyDHL Obtaining Permits Licences"
+msgstr "MyDHL Obtaining Permits Licences"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:80
+msgid "MyDHL Post Clearance Modification"
+msgstr "MyDHL Post Clearance Modification"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:81
+msgid "MyDHL Sale In Transit"
+msgstr "MyDHL Sale In Transit"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:82
+msgid "MyDHL Data Entry"
+msgstr "MyDHL Data Entry"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:83
+msgid "MyDHL Label Free"
+msgstr "MyDHL Etikett Free"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:84
+msgid "MyDHL Personally Identifiable Data"
+msgstr "MyDHL Personally Identifiable Data"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:85
+msgid "MyDHL Neutral Description Label"
+msgstr "MyDHL Neutral Beschreibung Etikett"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:86
+msgid "MyDHL Return To Seller"
+msgstr "MyDHL Retoure To Seller"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:87
+msgid "MyDHL Return To Origin"
+msgstr "MyDHL Retoure To Origin"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:88
+msgid "MyDHL Fuel Surcharge"
+msgstr "MyDHL Fuel Surcharge"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:89
+msgid "MyDHL Remote Area Delivery"
+msgstr "MyDHL Remote Area Zustellung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:90
+msgid "MyDHL Address Correction"
+msgstr "MyDHL Address Correction"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:91
+msgid "MyDHL Packaging"
+msgstr "MyDHL Packaging"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:92
+msgid "MyDHL Import Export Taxes"
+msgstr "MyDHL Import Export Taxes"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:93
+msgid "MyDHL Import Export Duties"
+msgstr "MyDHL Import Export Zollgebühren"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:94
+msgid "MyDHL Merchandise Process"
+msgstr "MyDHL Merchandise Process"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:95
+msgid "MyDHL Trade Zone Process"
+msgstr "MyDHL Trade Zone Process"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:96
+msgid "MyDHL Regulatory Charges"
+msgstr "MyDHL Regulatory Charges"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:97
+msgid "MyDHL Data Staging 03"
+msgstr "MyDHL Data Staging 03"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:98
+msgid "MyDHL Data Staging 06"
+msgstr "MyDHL Data Staging 06"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:99
+msgid "MyDHL Data Staging 12"
+msgstr "MyDHL Data Staging 12"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:100
+msgid "MyDHL Data Staging 24"
+msgstr "MyDHL Data Staging 24"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:101
+msgid "MyDHL Shipment Preparation"
+msgstr "MyDHL Sendung Preparation"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:102
+msgid "MyDHL Automated Digital Imaging"
+msgstr "MyDHL Automated Digital Imaging"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:103
+msgid "MyDHL Plt Images Pending"
+msgstr "MyDHL Plt Images Pending"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:104
+msgid "MyDHL Optical Character Recognition"
+msgstr "MyDHL Optical Character Recognition"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:105
+msgid "MyDHL Commercial Invoice Data Merge"
+msgstr "MyDHL Gewerblich Invoice Data Merge"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:106
+msgid "MyDHL Comat"
+msgstr "MyDHL Comat"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:107
+msgid "MyDHL Import Billing Account"
+msgstr "MyDHL Import Billing Account"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:110
+msgid "Hold For Pickup"
+msgstr "Halten Für Abholung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:112
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:86
+msgid "Dangerous Goods"
+msgstr "Gefahrgut Güter"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:113
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:41
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:28
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:50
+msgid "Email Notification"
+msgstr "Email Benachrichtigung"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:114
+msgid "Dry Ice"
+msgstr "Dry Ice"
+
+#: karrio/modules/connectors/mydhl/karrio/providers/mydhl/i18n.py:115
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:119
+msgid "Hold At Location"
+msgstr "Halten Bei Location"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:6
+msgid "ParcelOne Pa1 Basic"
+msgstr "ParcelOne Pa1 Basic"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:7
+msgid "ParcelOne Pa1 Eco"
+msgstr "ParcelOne Pa1 Eco"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:8
+msgid "ParcelOne Pa1 Premium"
+msgstr "ParcelOne Pa1 Premium"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:9
+msgid "ParcelOne Pa1 Express"
+msgstr "ParcelOne Pa1 Express"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:10
+msgid "ParcelOne DHL Paket"
+msgstr "ParcelOne DHL Paket"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:11
+msgid "ParcelOne DHL Paket International"
+msgstr "ParcelOne DHL Paket International"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:12
+msgid "ParcelOne DHL Express"
+msgstr "ParcelOne DHL Express"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:13
+msgid "ParcelOne DHL Retoure"
+msgstr "ParcelOne DHL Retoure"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:14
+msgid "ParcelOne UPS Standard"
+msgstr "ParcelOne UPS Standard"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:15
+msgid "ParcelOne UPS Express"
+msgstr "ParcelOne UPS Express"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:16
+msgid "ParcelOne UPS Express Saver"
+msgstr "ParcelOne UPS Express Spar"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:20
+msgid "ParcelOne Saturday Delivery"
+msgstr "ParcelOne Samstag Zustellung"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:21
+msgid "ParcelOne Return Label"
+msgstr "ParcelOne Retoure Etikett"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:22
+msgid "ParcelOne COD"
+msgstr "ParcelOne COD"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:23
+msgid "ParcelOne COD Currency"
+msgstr "ParcelOne COD Currency"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:24
+msgid "ParcelOne Insurance"
+msgstr "ParcelOne Versicherung"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:25
+msgid "ParcelOne Insurance Currency"
+msgstr "ParcelOne Versicherung Currency"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:26
+msgid "ParcelOne Notification Email"
+msgstr "ParcelOne Benachrichtigung Email"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:27
+msgid "ParcelOne Notification Sms"
+msgstr "ParcelOne Benachrichtigung Sms"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:28
+msgid "ParcelOne Signature"
+msgstr "ParcelOne Unterschrift"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:29
+msgid "ParcelOne Ident Check"
+msgstr "ParcelOne Ident Check"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:30
+msgid "ParcelOne Age Check"
+msgstr "ParcelOne Alter Check"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:31
+msgid "ParcelOne Personally"
+msgstr "ParcelOne Personally"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:32
+msgid "ParcelOne Neighbor Delivery"
+msgstr "ParcelOne Neighbor Zustellung"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:33
+msgid "ParcelOne No Neighbor"
+msgstr "ParcelOne Keine Neighbor"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:34
+msgid "ParcelOne Drop Off Point"
+msgstr "ParcelOne Drop Off Punkt"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:35
+msgid "ParcelOne Premium"
+msgstr "ParcelOne Premium"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:36
+msgid "ParcelOne Bulky Goods"
+msgstr "ParcelOne Bulky Güter"
+
+#: karrio/modules/connectors/parcelone/karrio/providers/parcelone/i18n.py:39
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:26
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:49
+msgid "Signature Required"
+msgstr "Unterschrift Erforderlich"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:6
+msgid "PostAT Standard Domestic"
+msgstr "PostAT Standard Inland"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:7
+msgid "PostAT Express Domestic"
+msgstr "PostAT Express Inland"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:8
+msgid "PostAT International Standard"
+msgstr "PostAT International Standard"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:9
+msgid "PostAT International Express"
+msgstr "PostAT International Express"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:13
+msgid "PostAT Label Size"
+msgstr "PostAT Etikett Size"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:14
+msgid "PostAT Paper Layout"
+msgstr "PostAT Paper Layout"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:15
+msgid "PostAT COD"
+msgstr "PostAT COD"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:16
+msgid "PostAT COD Currency"
+msgstr "PostAT COD Currency"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:17
+msgid "PostAT Insurance"
+msgstr "PostAT Versicherung"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:18
+msgid "PostAT Insurance Currency"
+msgstr "PostAT Versicherung Currency"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:19
+msgid "PostAT Signature"
+msgstr "PostAT Unterschrift"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:20
+msgid "PostAT Saturday Delivery"
+msgstr "PostAT Samstag Zustellung"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:21
+msgid "PostAT Email Notification"
+msgstr "PostAT Email Benachrichtigung"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:22
+msgid "PostAT Sms Notification"
+msgstr "PostAT Sms Benachrichtigung"
+
+#: karrio/modules/connectors/postat/karrio/providers/postat/i18n.py:23
+msgid "PostAT Age Verification"
+msgstr "PostAT Alter Verifizierung"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:6
+msgid "Purolator Express 9 Am"
+msgstr "Purolator Express 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:7
+msgid "Purolator Express US"
+msgstr "Purolator Express US"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:8
+msgid "Purolator Express 10 30 Am"
+msgstr "Purolator Express 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:9
+msgid "Purolator Express US 9 Am"
+msgstr "Purolator Express US 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:10
+msgid "Purolator Express 12 Pm"
+msgstr "Purolator Express 12 Pm"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:11
+msgid "Purolator Express US 10 30 Am"
+msgstr "Purolator Express US 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:12
+msgid "Purolator Express"
+msgstr "Purolator Express"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:13
+msgid "Purolator Express US 12 00"
+msgstr "Purolator Express US 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:14
+msgid "Purolator Express Evening"
+msgstr "Purolator Express Abend"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:15
+msgid "Purolator Express Envelope US"
+msgstr "Purolator Express Umschlag US"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:16
+msgid "Purolator Express Envelope 9 Am"
+msgstr "Purolator Express Umschlag 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:17
+msgid "Purolator Express US Envelope 9 Am"
+msgstr "Purolator Express US Umschlag 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:18
+msgid "Purolator Express Envelope 10 30 Am"
+msgstr "Purolator Express Umschlag 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:19
+msgid "Purolator Express US Envelope 10 30 Am"
+msgstr "Purolator Express US Umschlag 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:20
+msgid "Purolator Express Envelope 12 Pm"
+msgstr "Purolator Express Umschlag 12 Pm"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:21
+msgid "Purolator Express US Envelope 12 00"
+msgstr "Purolator Express US Umschlag 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:22
+msgid "Purolator Express Envelope"
+msgstr "Purolator Express Umschlag"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:23
+msgid "Purolator Express Pack US"
+msgstr "Purolator Express Pack US"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:24
+msgid "Purolator Express Envelope Evening"
+msgstr "Purolator Express Umschlag Abend"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:25
+msgid "Purolator Express US Pack 9 Am"
+msgstr "Purolator Express US Pack 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:26
+msgid "Purolator Express Pack 9 Am"
+msgstr "Purolator Express Pack 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:27
+msgid "Purolator Express US Pack 10 30 Am"
+msgstr "Purolator Express US Pack 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:28
+msgid "Purolator Express Pack10 30 Am"
+msgstr "Purolator Express Pack10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:29
+msgid "Purolator Express US Pack 12 00"
+msgstr "Purolator Express US Pack 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:30
+msgid "Purolator Express Pack 12 Pm"
+msgstr "Purolator Express Pack 12 Pm"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:31
+msgid "Purolator Express Box US"
+msgstr "Purolator Express Box US"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:32
+msgid "Purolator Express Pack"
+msgstr "Purolator Express Pack"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:33
+msgid "Purolator Express US Box 9 Am"
+msgstr "Purolator Express US Box 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:34
+msgid "Purolator Express Pack Evening"
+msgstr "Purolator Express Pack Abend"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:35
+msgid "Purolator Express US Box 10 30 Am"
+msgstr "Purolator Express US Box 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:36
+msgid "Purolator Express Box 9 Am"
+msgstr "Purolator Express Box 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:37
+msgid "Purolator Express US Box 12 00"
+msgstr "Purolator Express US Box 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:38
+msgid "Purolator Express Box 10 30 Am"
+msgstr "Purolator Express Box 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:39
+msgid "Purolator Ground US"
+msgstr "Purolator Boden US"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:40
+msgid "Purolator Express Box 12 Pm"
+msgstr "Purolator Express Box 12 Pm"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:41
+msgid "Purolator Express International"
+msgstr "Purolator Express International"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:42
+msgid "Purolator Express Box"
+msgstr "Purolator Express Box"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:43
+msgid "Purolator Express International 9 Am"
+msgstr "Purolator Express International 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:44
+msgid "Purolator Express Box Evening"
+msgstr "Purolator Express Box Abend"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:45
+msgid "Purolator Express International 10 30 Am"
+msgstr "Purolator Express International 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:46
+msgid "Purolator Ground"
+msgstr "Purolator Boden"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:47
+msgid "Purolator Express International 12 00"
+msgstr "Purolator Express International 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:48
+msgid "Purolator Ground 9 Am"
+msgstr "Purolator Boden 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:49
+msgid "Purolator Express Envelope International"
+msgstr "Purolator Express Umschlag International"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:50
+msgid "Purolator Ground 10 30 Am"
+msgstr "Purolator Boden 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:51
+msgid "Purolator Express International Envelope 9 Am"
+msgstr "Purolator Express International Umschlag 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:52
+msgid "Purolator Ground Evening"
+msgstr "Purolator Boden Abend"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:53
+msgid "Purolator Express International Envelope 10 30 Am"
+msgstr "Purolator Express International Umschlag 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:54
+msgid "Purolator Quick Ship"
+msgstr "Purolator Quick Ship"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:55
+msgid "Purolator Express International Envelope 12 00"
+msgstr "Purolator Express International Umschlag 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:56
+msgid "Purolator Quick Ship Envelope"
+msgstr "Purolator Quick Ship Umschlag"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:57
+msgid "Purolator Express Pack International"
+msgstr "Purolator Express Pack International"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:58
+msgid "Purolator Quick Ship Pack"
+msgstr "Purolator Quick Ship Pack"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:59
+msgid "Purolator Express International Pack 9 Am"
+msgstr "Purolator Express International Pack 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:60
+msgid "Purolator Quick Ship Box"
+msgstr "Purolator Quick Ship Box"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:61
+msgid "Purolator Express International Pack 10 30 Am"
+msgstr "Purolator Express International Pack 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:62
+msgid "Purolator Express International Pack 12 00"
+msgstr "Purolator Express International Pack 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:63
+msgid "Purolator Express Box International"
+msgstr "Purolator Express Box International"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:64
+msgid "Purolator Express International Box 9 Am"
+msgstr "Purolator Express International Box 9 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:65
+msgid "Purolator Express International Box 10 30 Am"
+msgstr "Purolator Express International Box 10 30 Am"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:66
+msgid "Purolator Express International Box 12 00"
+msgstr "Purolator Express International Box 12 00"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:70
+msgid "Purolator Dangerous Goods"
+msgstr "Purolator Gefahrgut Güter"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:71
+msgid "Purolator Chain Of Signature"
+msgstr "Purolator Kette Of Unterschrift"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:72
+msgid "Purolator Express Cheque"
+msgstr "Purolator Express Cheque"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:73
+msgid "Purolator Hold For Pickup"
+msgstr "Purolator Halten Für Abholung"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:74
+msgid "Purolator Return Services"
+msgstr "Purolator Retoure Services"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:75
+msgid "Purolator Saturday Service"
+msgstr "Purolator Samstag Dienst"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:76
+msgid "Purolator Origin Signature Not Required"
+msgstr "Purolator Origin Unterschrift Not Erforderlich"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:77
+msgid "Purolator Adult Signature Required"
+msgstr "Purolator Erwachsener Unterschrift Erforderlich"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:78
+msgid "Purolator Special Handling"
+msgstr "Purolator Spezial Handhabung"
+
+#: karrio/modules/connectors/purolator/karrio/providers/purolator/i18n.py:79
+msgid "Purolator Show Alternative Services"
+msgstr "Purolator Show Alternative Services"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:6
+msgid "SEKO Ecommerce Standard Tracked"
+msgstr "SEKO Ecommerce Standard Verfolgt"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:7
+msgid "SEKO Ecommerce Express Tracked"
+msgstr "SEKO Ecommerce Express Verfolgt"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:8
+msgid "SEKO Domestic Express"
+msgstr "SEKO Inland Express"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:9
+msgid "SEKO Domestic Standard"
+msgstr "SEKO Inland Standard"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:10
+msgid "SEKO Domestic Large Parcel"
+msgstr "SEKO Inland Groß Paket"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:14
+msgid "SEKO Carrier"
+msgstr "SEKO Carrier"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:15
+msgid "SEKO Ship Type"
+msgstr "SEKO Ship Typ"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:16
+msgid "SEKO Package ID"
+msgstr "SEKO Paket ID"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:17
+msgid "SEKO Destination ID"
+msgstr "SEKO Destination ID"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:18
+msgid "SEKO Product Category"
+msgstr "SEKO Product Category"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:19
+msgid "Origin Instructions"
+msgstr "Origin Anweisungen"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:20
+msgid "Destination Instructions"
+msgstr "Destination Anweisungen"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:21
+msgid "SEKO Is Saturday Delivery"
+msgstr "SEKO Is Samstag Zustellung"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:22
+msgid "SEKO Is Signature Required"
+msgstr "SEKO Is Unterschrift Erforderlich"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:23
+msgid "SEKO Send Tracking Email"
+msgstr "SEKO Send Sendungsverfolgung Email"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:24
+msgid "SEKO Amount Collected"
+msgstr "SEKO Amount Collected"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:25
+msgid "SEKO Tax Collected"
+msgstr "SEKO Tax Collected"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:26
+msgid "SEKO COD Amount"
+msgstr "SEKO COD Amount"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:27
+msgid "SEKO Reference 2"
+msgstr "SEKO Referenz 2"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:28
+msgid "SEKO Reference 3"
+msgstr "SEKO Referenz 3"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:29
+msgid "SEKO Invoice Data"
+msgstr "SEKO Invoice Data"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:30
+msgid "SEKO Origin ID"
+msgstr "SEKO Origin ID"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:31
+msgid "SEKO Print To Printer"
+msgstr "SEKO Print To Printer"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:32
+msgid "SEKO Cif Value"
+msgstr "SEKO Cif Wert"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:33
+msgid "SEKO Freight Value"
+msgstr "SEKO Fracht Wert"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:34
+msgid "SEKO Send Label"
+msgstr "SEKO Send Etikett"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:35
+msgid "SEKO Special Instructions"
+msgstr "SEKO Spezial Anweisungen"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:36
+msgid "SEKO Insurance Value"
+msgstr "SEKO Versicherung Wert"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:37
+msgid "SEKO Estimated Delivery Date"
+msgstr "SEKO Estimated Zustellung Date"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:38
+msgid "SEKO Dangerous Goods"
+msgstr "SEKO Gefahrgut Güter"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:39
+msgid "SEKO Dg Additional Handling"
+msgstr "SEKO Dg Zusätzlich Handhabung"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:40
+msgid "SEKO Dg Hazchem Code"
+msgstr "SEKO Dg Hazchem Code"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:41
+msgid "SEKO Dg Radioactive"
+msgstr "SEKO Dg Radioactive"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:42
+msgid "SEKO Dg Cargo Aircraft Only"
+msgstr "SEKO Dg Cargo Aircraft Only"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:43
+msgid "SEKO Dg Limited Quantity"
+msgstr "SEKO Dg Limited Quantity"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:44
+msgid "SEKO Dg Total Quantity"
+msgstr "SEKO Dg Total Quantity"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:45
+msgid "SEKO Dg Total Kg"
+msgstr "SEKO Dg Total Kg"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:46
+msgid "SEKO Dg Signoff Name"
+msgstr "SEKO Dg Signoff Name"
+
+#: karrio/modules/connectors/seko/karrio/providers/seko/i18n.py:47
+msgid "SEKO Dg Signoff Role"
+msgstr "SEKO Dg Signoff Role"
+
+#: karrio/modules/connectors/sendle/karrio/providers/sendle/i18n.py:6
+msgid "Sendle Standard Pickup"
+msgstr "Sendle Standard Abholung"
+
+#: karrio/modules/connectors/sendle/karrio/providers/sendle/i18n.py:7
+msgid "Sendle Standard Dropoff"
+msgstr "Sendle Standard Dropoff"
+
+#: karrio/modules/connectors/sendle/karrio/providers/sendle/i18n.py:8
+msgid "Sendle Express Pickup"
+msgstr "Sendle Express Abholung"
+
+#: karrio/modules/connectors/sendle/karrio/providers/sendle/i18n.py:12
+msgid "Sendle Hide Pickup Address"
+msgstr "Sendle Hide Abholung Address"
+
+#: karrio/modules/connectors/sendle/karrio/providers/sendle/i18n.py:13
+msgid "Sendle First Mile Option"
+msgstr "Sendle Erster Mile Option"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:6
+msgid "Spring Tracked"
+msgstr "Spring Verfolgt"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:7
+msgid "Spring Signature"
+msgstr "Spring Unterschrift"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:8
+msgid "Spring Untracked"
+msgstr "Spring Untracked"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:9
+msgid "Spring Collect"
+msgstr "Spring Collect"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:10
+msgid "Spring Express"
+msgstr "Spring Express"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:11
+msgid "Spring Import"
+msgstr "Spring Import"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:12
+msgid "Spring Back Returns"
+msgstr "Spring Back Retouren"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:13
+msgid "Spring Back Tracked"
+msgstr "Spring Back Verfolgt"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:14
+msgid "Spring No Label"
+msgstr "Spring Keine Etikett"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:15
+msgid "Spring Postnl Parcel EU"
+msgstr "Spring Postnl Paket EU"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:16
+msgid "Spring Postnl Parcel Benelux"
+msgstr "Spring Postnl Paket Benelux"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:17
+msgid "Spring Postnl Parcel Benelux Sign"
+msgstr "Spring Postnl Paket Benelux Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:18
+msgid "Spring Postnl Parcel Benelux No Neighbor"
+msgstr "Spring Postnl Paket Benelux Keine Neighbor"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:19
+msgid "Spring Postnl Parcel Benelux Sign No Neighbor"
+msgstr "Spring Postnl Paket Benelux Sign Keine Neighbor"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:20
+msgid "Spring Postnl Parcel Benelux Upu"
+msgstr "Spring Postnl Paket Benelux Upu"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:21
+msgid "Spring Postnl Parcel Globalpack Ems"
+msgstr "Spring Postnl Paket Globalpack Ems"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:22
+msgid "Spring Postnl Parcel Globalpack Upu"
+msgstr "Spring Postnl Paket Globalpack Upu"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:23
+msgid "Spring Postnl Parcel Epg"
+msgstr "Spring Postnl Paket Epg"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:24
+msgid "Spring Postnl Parcel Epg Noneu"
+msgstr "Spring Postnl Paket Epg Noneu"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:25
+msgid "Spring Postnl Lightweight China"
+msgstr "Spring Postnl Lightweight China"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:26
+msgid "Spring Postnl Collect Service"
+msgstr "Spring Postnl Collect Dienst"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:27
+msgid "Spring Postnl Packet Tracked"
+msgstr "Spring Postnl Packet Verfolgt"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:28
+msgid "Spring Postnl Packet Registered"
+msgstr "Spring Postnl Packet Eingeschrieben"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:29
+msgid "Spring Postnl Packet Non Tracked"
+msgstr "Spring Postnl Packet Nicht Verfolgt"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:30
+msgid "Spring Postnl Packet Boxable Bag Trace"
+msgstr "Spring Postnl Packet Boxable Beutel Trace"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:31
+msgid "Spring Postnl Packet Bag Trace"
+msgstr "Spring Postnl Packet Beutel Trace"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:32
+msgid "Spring Postnl Packet Boxable Tracked"
+msgstr "Spring Postnl Packet Boxable Verfolgt"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:33
+msgid "Spring Postnl Packet Boxable Non Tracked"
+msgstr "Spring Postnl Packet Boxable Nicht Verfolgt"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:34
+msgid "Spring Royal Mail Tracked 24"
+msgstr "Spring Royal Post Verfolgt 24"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:35
+msgid "Spring Royal Mail Tracked 24 Sign"
+msgstr "Spring Royal Post Verfolgt 24 Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:36
+msgid "Spring Royal Mail Tracked 48"
+msgstr "Spring Royal Post Verfolgt 48"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:37
+msgid "Spring Royal Mail Tracked 48 2"
+msgstr "Spring Royal Post Verfolgt 48 2"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:38
+msgid "Spring Royal Mail Tracked 48 Sign"
+msgstr "Spring Royal Post Verfolgt 48 Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:39
+msgid "Spring Sending Mainland"
+msgstr "Spring Sending Mainland"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:40
+msgid "Spring Sending Islands"
+msgstr "Spring Sending Islands"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:41
+msgid "Spring Italian Post Crono"
+msgstr "Spring Italian Post Crono"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:42
+msgid "Spring Italian Post Crono Express"
+msgstr "Spring Italian Post Crono Express"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:43
+msgid "Spring DPD DE"
+msgstr "Spring DPD DE"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:44
+msgid "Spring Hermes Sign"
+msgstr "Spring Hermes Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:45
+msgid "Spring Hermes Collect"
+msgstr "Spring Hermes Collect"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:46
+msgid "Spring Colis Prive"
+msgstr "Spring Colis Prive"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:47
+msgid "Spring Colis Prive Sign"
+msgstr "Spring Colis Prive Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:48
+msgid "Spring Com Standard"
+msgstr "Spring Com Standard"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:49
+msgid "Spring Com Standard Sign"
+msgstr "Spring Com Standard Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:50
+msgid "Spring Com Express"
+msgstr "Spring Com Express"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:51
+msgid "Spring Com Express Sign"
+msgstr "Spring Com Express Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:52
+msgid "Spring Usa Parcel Ground"
+msgstr "Spring Usa Paket Boden"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:53
+msgid "Spring Usa Parcel Ground Sign"
+msgstr "Spring Usa Paket Boden Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:54
+msgid "Spring Usa Parcel Express"
+msgstr "Spring Usa Paket Express"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:55
+msgid "Spring Usa Parcel Express Sign"
+msgstr "Spring Usa Paket Express Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:56
+msgid "Spring Usa Parcel Max"
+msgstr "Spring Usa Paket Max"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:57
+msgid "Spring Usa Parcel Max Sign"
+msgstr "Spring Usa Paket Max Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:58
+msgid "Spring Usa Parcel Ground Dg"
+msgstr "Spring Usa Paket Boden Dg"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:59
+msgid "Spring Usa Parcel Ground Dg Sign"
+msgstr "Spring Usa Paket Boden Dg Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:60
+msgid "Spring Usa Parcel Plus Ground Dg"
+msgstr "Spring Usa Paket Plus Boden Dg"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:61
+msgid "Spring Usa Parcel Plus Ground Dg Sign"
+msgstr "Spring Usa Paket Plus Boden Dg Sign"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:62
+msgid "Spring Packeta"
+msgstr "Spring Packeta"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:63
+msgid "Spring Mailalliance Boxable"
+msgstr "Spring Mailalliance Boxable"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:64
+msgid "Spring Austrian Post"
+msgstr "Spring Austrian Post"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:68
+msgid "Spring Customs Duty"
+msgstr "Spring Zoll Duty"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:69
+msgid "Spring Declaration Type"
+msgstr "Spring Declaration Typ"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:70
+msgid "Spring Dangerous Goods"
+msgstr "Spring Gefahrgut Güter"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:71
+msgid "Spring Shipping Value"
+msgstr "Spring Versand Wert"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:72
+msgid "Spring Display ID"
+msgstr "Spring Display ID"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:73
+msgid "Spring Invoice Number"
+msgstr "Spring Invoice Nummer"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:74
+msgid "Spring Order Reference"
+msgstr "Spring Order Referenz"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:75
+msgid "Spring Order Date"
+msgstr "Spring Order Date"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:76
+msgid "Spring Consignor Vat"
+msgstr "Spring Consignor Vat"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:77
+msgid "Spring Consignor Eori"
+msgstr "Spring Consignor Eori"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:78
+msgid "Spring Consignor Nl Vat"
+msgstr "Spring Consignor Nl Vat"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:79
+msgid "Spring Consignor EU Eori"
+msgstr "Spring Consignor EU Eori"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:80
+msgid "Spring Consignor Gb Eori"
+msgstr "Spring Consignor Gb Eori"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:81
+msgid "Spring Consignor Ioss"
+msgstr "Spring Consignor Ioss"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:82
+msgid "Spring Consignor Local Tax Number"
+msgstr "Spring Consignor Local Tax Nummer"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:83
+msgid "Spring Export Carrier Name"
+msgstr "Spring Export Carrier Name"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:84
+msgid "Spring Export Awb"
+msgstr "Spring Export Awb"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:85
+msgid "Spring Pudo Location ID"
+msgstr "Spring Pudo Location ID"
+
+#: karrio/modules/connectors/spring/karrio/providers/spring/i18n.py:87
+msgid "Shipment Date"
+msgstr "Sendung Date"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:6
+msgid "Teleship Expedited Pickup"
+msgstr "Teleship Expedited Abholung"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:7
+msgid "Teleship Expedited Dropoff"
+msgstr "Teleship Expedited Dropoff"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:8
+msgid "Teleship Standard Dropoff"
+msgstr "Teleship Standard Dropoff"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:9
+msgid "Teleship Standard Pickup"
+msgstr "Teleship Standard Abholung"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:10
+msgid "Teleship Postal Dropoff"
+msgstr "Teleship Postal Dropoff"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:11
+msgid "Teleship Postal Pickup"
+msgstr "Teleship Postal Abholung"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:15
+msgid "Teleship Signature Required"
+msgstr "Teleship Unterschrift Erforderlich"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:16
+msgid "Teleship Delivery Warranty"
+msgstr "Teleship Zustellung Warranty"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:17
+msgid "Teleship Delivery Pudo"
+msgstr "Teleship Zustellung Pudo"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:18
+msgid "Teleship Low Carbon"
+msgstr "Teleship Low Carbon"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:19
+msgid "Teleship Duty Tax Calculation"
+msgstr "Teleship Duty Tax Calculation"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:20
+msgid "Teleship Customer Reference"
+msgstr "Teleship Customer Referenz"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:21
+msgid "Teleship Order Tracking Reference"
+msgstr "Teleship Order Sendungsverfolgung Referenz"
+
+#: karrio/modules/connectors/teleship/karrio/providers/teleship/i18n.py:22
+msgid "Teleship Commercial Invoice Reference"
+msgstr "Teleship Gewerblich Invoice Referenz"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:6
+msgid "UPS Standard"
+msgstr "UPS Standard"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:7
+msgid "UPS Worldwide Express"
+msgstr "UPS Weltweit Express"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:8
+msgid "UPS Worldwide Expedited"
+msgstr "UPS Weltweit Expedited"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:9
+msgid "UPS Worldwide Express Plus"
+msgstr "UPS Weltweit Express Plus"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:10
+msgid "UPS Worldwide Saver"
+msgstr "UPS Weltweit Spar"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:11
+msgid "UPS 2nd Day Air"
+msgstr "UPS 2nd Tag Air"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:12
+msgid "UPS 2nd Day Air Am"
+msgstr "UPS 2nd Tag Air Am"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:13
+msgid "UPS 3 Day Select"
+msgstr "UPS 3 Tag Select"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:14
+msgid "UPS Ground"
+msgstr "UPS Boden"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:15
+msgid "UPS Next Day Air"
+msgstr "UPS Nächster Tag Air"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:16
+msgid "UPS Next Day Air Early"
+msgstr "UPS Nächster Tag Air Early"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:17
+msgid "UPS Next Day Air Saver"
+msgstr "UPS Nächster Tag Air Spar"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:18
+msgid "UPS Expedited CA"
+msgstr "UPS Expedited CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:19
+msgid "UPS Express Saver CA"
+msgstr "UPS Express Spar CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:20
+msgid "UPS 3 Day Select CA US"
+msgstr "UPS 3 Tag Select CA US"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:21
+msgid "UPS Access Point Economy CA"
+msgstr "UPS Zugang Punkt Economy CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:22
+msgid "UPS Express CA"
+msgstr "UPS Express CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:23
+msgid "UPS Express Early CA"
+msgstr "UPS Express Early CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:24
+msgid "UPS Express Saver INTL CA"
+msgstr "UPS Express Spar INTL CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:25
+msgid "UPS Standard CA"
+msgstr "UPS Standard CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:26
+msgid "UPS Worldwide Expedited CA"
+msgstr "UPS Weltweit Expedited CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:27
+msgid "UPS Worldwide Express CA"
+msgstr "UPS Weltweit Express CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:28
+msgid "UPS Worldwide Express Plus CA"
+msgstr "UPS Weltweit Express Plus CA"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:29
+msgid "UPS Express Early CA US"
+msgstr "UPS Express Early CA US"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:30
+msgid "UPS Access Point Economy EU"
+msgstr "UPS Zugang Punkt Economy EU"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:31
+msgid "UPS Expedited EU"
+msgstr "UPS Expedited EU"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:32
+msgid "UPS Express EU"
+msgstr "UPS Express EU"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:33
+msgid "UPS Standard EU"
+msgstr "UPS Standard EU"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:34
+msgid "UPS Worldwide Express Plus EU"
+msgstr "UPS Weltweit Express Plus EU"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:35
+msgid "UPS Worldwide Saver EU"
+msgstr "UPS Weltweit Spar EU"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:36
+msgid "UPS Access Point Economy Mx"
+msgstr "UPS Zugang Punkt Economy Mx"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:37
+msgid "UPS Expedited Mx"
+msgstr "UPS Expedited Mx"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:38
+msgid "UPS Express Mx"
+msgstr "UPS Express Mx"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:39
+msgid "UPS Standard Mx"
+msgstr "UPS Standard Mx"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:40
+msgid "UPS Worldwide Express Plus Mx"
+msgstr "UPS Weltweit Express Plus Mx"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:41
+msgid "UPS Worldwide Saver Mx"
+msgstr "UPS Weltweit Spar Mx"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:42
+msgid "UPS Access Point Economy Pl"
+msgstr "UPS Zugang Punkt Economy Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:43
+msgid "UPS Today Dedicated Courrier Pl"
+msgstr "UPS Today Dedicated Courrier Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:44
+msgid "UPS Today Express Pl"
+msgstr "UPS Today Express Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:45
+msgid "UPS Today Express Saver Pl"
+msgstr "UPS Today Express Spar Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:46
+msgid "UPS Today Standard Pl"
+msgstr "UPS Today Standard Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:47
+msgid "UPS Expedited Pl"
+msgstr "UPS Expedited Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:48
+msgid "UPS Express Pl"
+msgstr "UPS Express Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:49
+msgid "UPS Express Plus Pl"
+msgstr "UPS Express Plus Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:50
+msgid "UPS Express Saver Pl"
+msgstr "UPS Express Spar Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:51
+msgid "UPS Standard Pl"
+msgstr "UPS Standard Pl"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:52
+msgid "UPS 2nd Day Air Pr"
+msgstr "UPS 2nd Tag Air Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:53
+msgid "UPS Ground Pr"
+msgstr "UPS Boden Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:54
+msgid "UPS Next Day Air Pr"
+msgstr "UPS Nächster Tag Air Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:55
+msgid "UPS Next Day Air Early Pr"
+msgstr "UPS Nächster Tag Air Early Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:56
+msgid "UPS Worldwide Expedited Pr"
+msgstr "UPS Weltweit Expedited Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:57
+msgid "UPS Worldwide Express Pr"
+msgstr "UPS Weltweit Express Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:58
+msgid "UPS Worldwide Express Plus Pr"
+msgstr "UPS Weltweit Express Plus Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:59
+msgid "UPS Worldwide Saver Pr"
+msgstr "UPS Weltweit Spar Pr"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:60
+msgid "UPS Express 12 00 DE"
+msgstr "UPS Express 12 00 DE"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:61
+msgid "UPS Worldwide Express Freight"
+msgstr "UPS Weltweit Express Fracht"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:62
+msgid "UPS Worldwide Express Freight Midday"
+msgstr "UPS Weltweit Express Fracht Midday"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:63
+msgid "UPS Worldwide Economy Ddu"
+msgstr "UPS Weltweit Economy Ddu"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:64
+msgid "UPS Worldwide Economy Ddp"
+msgstr "UPS Weltweit Economy Ddp"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:68
+msgid "UPS Saturday Pickup Indicator"
+msgstr "UPS Samstag Abholung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:69
+msgid "UPS Saturday Delivery Indicator"
+msgstr "UPS Samstag Zustellung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:70
+msgid "UPS Sunday Delivery Indicator"
+msgstr "UPS Sonntag Zustellung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:71
+msgid "UPS Access Point COD"
+msgstr "UPS Zugang Punkt COD"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:72
+msgid "UPS Deliver To Addressee Only Indicator"
+msgstr "UPS Deliver To Addressee Only Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:73
+msgid "UPS Direct Delivery Only Indicator"
+msgstr "UPS Direkt Zustellung Only Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:74
+msgid "UPS COD"
+msgstr "UPS COD"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:75
+msgid "UPS Return Of Document Indicator"
+msgstr "UPS Retoure Of Document Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:76
+msgid "UPS Carbonneutral Indicator"
+msgstr "UPS Carbonneutral Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:77
+msgid "UPS Certificate Of Origin Indicator"
+msgstr "UPS Certificate Of Origin Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:78
+msgid "UPS Shipper Export Declaration Indicator"
+msgstr "UPS Shipper Export Declaration Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:79
+msgid "UPS Commercial Invoice Removal Indicator"
+msgstr "UPS Gewerblich Invoice Removal Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:80
+msgid "UPS Import Control"
+msgstr "UPS Import Control"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:81
+msgid "UPS Return Service"
+msgstr "UPS Retoure Dienst"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:83
+msgid "UPS Epra Indicator"
+msgstr "UPS Epra Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:84
+msgid "UPS Lift Gate At Pickup Indicator"
+msgstr "UPS Lift Gate Bei Abholung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:85
+msgid "UPS Lift Gate At Delivery Indicator"
+msgstr "UPS Lift Gate Bei Zustellung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:86
+msgid "UPS Drop Off At UPS Facility Indicator"
+msgstr "UPS Drop Off Bei UPS Facility Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:87
+msgid "UPS Master Carton Indicator"
+msgstr "UPS Master Carton Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:88
+msgid "UPS Exchange Forward Indicator"
+msgstr "UPS Exchange Forward Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:89
+msgid "UPS Hold For Pickup Indicator"
+msgstr "UPS Halten Für Abholung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:90
+msgid "UPS Dropoff At UPS Facility Indicator"
+msgstr "UPS Dropoff Bei UPS Facility Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:91
+msgid "UPS Lift Gate For Pickup Indicator"
+msgstr "UPS Lift Gate Für Abholung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:92
+msgid "UPS Lift Gate For Delivery Indicator"
+msgstr "UPS Lift Gate Für Zustellung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:93
+msgid "UPS Sdl Shipment Indicator"
+msgstr "UPS Sdl Sendung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:94
+msgid "UPS Item Disposal"
+msgstr "UPS Item Disposal"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:95
+msgid "UPS Available Services Option"
+msgstr "UPS Available Services Option"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:96
+msgid "UPS Delivery Confirmation"
+msgstr "UPS Zustellung Bestätigung"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:98
+msgid "UPS Delivery Confirmation Level"
+msgstr "UPS Zustellung Bestätigung Level"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:99
+msgid "UPS Inside Delivery"
+msgstr "UPS Inside Zustellung"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:100
+msgid "UPS Restricted Articles"
+msgstr "UPS Restricted Articles"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:101
+msgid "UPS Alcoholic Beverages Indicator"
+msgstr "UPS Alcoholic Beverages Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:102
+msgid "UPS Diagnostic Specimens Indicator"
+msgstr "UPS Diagnostic Specimens Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:103
+msgid "UPS Perishables Indicator"
+msgstr "UPS Perishables Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:104
+msgid "UPS Plants Indicator"
+msgstr "UPS Plants Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:105
+msgid "UPS Seeds Indicator"
+msgstr "UPS Seeds Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:106
+msgid "UPS Special Exceptions Indicator"
+msgstr "UPS Spezial Exceptions Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:107
+msgid "UPS Tobacco Indicator"
+msgstr "UPS Tobacco Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:108
+msgid "UPS Ecigarettes Indicator"
+msgstr "UPS Ecigarettes Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:109
+msgid "UPS Hemp Cbd Indicator"
+msgstr "UPS Hemp Cbd Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:110
+msgid "UPS Negotiated Rates Indicator"
+msgstr "UPS Negotiated Rates Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:111
+msgid "UPS Frs Shipment Indicator"
+msgstr "UPS Frs Sendung Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:112
+msgid "UPS Rate Chart Indicator"
+msgstr "UPS Tarif Chart Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:113
+msgid "UPS User Level Discount Indicator"
+msgstr "UPS User Level Discount Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:114
+msgid "UPS Tpfc Negotiated Rates Indicator"
+msgstr "UPS Tpfc Negotiated Rates Indicator"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:115
+msgid "UPS Access Point Pickup"
+msgstr "UPS Zugang Punkt Abholung"
+
+#: karrio/modules/connectors/ups/karrio/providers/ups/i18n.py:116
+msgid "UPS Access Point Delivery"
+msgstr "UPS Zugang Punkt Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:6
+msgid "USPS Parcel Select Lightweight"
+msgstr "USPS Paket Select Lightweight"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:7
+msgid "USPS Parcel Select"
+msgstr "USPS Paket Select"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:8
+msgid "USPS Priority Mail Express"
+msgstr "USPS Priority Post Express"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:9
+msgid "USPS Priority Mail"
+msgstr "USPS Priority Post"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:10
+msgid "USPS Library Mail"
+msgstr "USPS Library Post"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:11
+msgid "USPS Media Mail"
+msgstr "USPS Media Post"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:12
+msgid "USPS Bound Printed Matter"
+msgstr "USPS Bound Printed Matter"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:13
+msgid "USPS Connect Local"
+msgstr "USPS Connect Local"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:14
+msgid "USPS Connect Mail"
+msgstr "USPS Connect Post"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:15
+msgid "USPS Connect Next Day"
+msgstr "USPS Connect Nächster Tag"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:16
+msgid "USPS Connect Regional"
+msgstr "USPS Connect Regional"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:17
+msgid "USPS Connect Same Day"
+msgstr "USPS Connect Gleicher Tag"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:18
+msgid "USPS Ground Advantage"
+msgstr "USPS Boden Advantage"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:19
+msgid "USPS Domestic Matter For The Blind"
+msgstr "USPS Inland Matter Für The Blind"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:20
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:10
+msgid "USPS All"
+msgstr "USPS All"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:21
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:11
+msgid "Product Code"
+msgstr "Product Code"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:22
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:12
+msgid "Product Name"
+msgstr "Product Name"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:26
+msgid "USPS Label Delivery Service"
+msgstr "USPS Etikett Zustellung Dienst"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:27
+msgid "USPS Tracking Plus 6 Months"
+msgstr "USPS Sendungsverfolgung Plus 6 Months"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:28
+msgid "USPS Tracking Plus 1 Year"
+msgstr "USPS Sendungsverfolgung Plus 1 Year"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:29
+msgid "USPS Tracking Plus 3 Years"
+msgstr "USPS Sendungsverfolgung Plus 3 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:30
+msgid "USPS Tracking Plus 5 Years"
+msgstr "USPS Sendungsverfolgung Plus 5 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:31
+msgid "USPS Tracking Plus 7 Years"
+msgstr "USPS Sendungsverfolgung Plus 7 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:32
+msgid "USPS Tracking Plus 10 Years"
+msgstr "USPS Sendungsverfolgung Plus 10 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:33
+msgid "USPS Tracking Plus Signature 3 Years"
+msgstr "USPS Sendungsverfolgung Plus Unterschrift 3 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:34
+msgid "USPS Tracking Plus Signature 5 Years"
+msgstr "USPS Sendungsverfolgung Plus Unterschrift 5 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:35
+msgid "USPS Tracking Plus Signature 7 Years"
+msgstr "USPS Sendungsverfolgung Plus Unterschrift 7 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:36
+msgid "USPS Tracking Plus Signature 10 Years"
+msgstr "USPS Sendungsverfolgung Plus Unterschrift 10 Years"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:37
+msgid "USPS Hazardous Materials Air Eligible Ethanol"
+msgstr "USPS Gefährlich Materialien Air Eligible Ethanol"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:38
+msgid "USPS Hazardous Materials Class 1 Toy Propellant Safety Fuse Package"
+msgstr "USPS Gefährlich Materialien Class 1 Toy Propellant Safety Fuse Paket"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:39
+msgid "USPS Hazardous Materials Class 3 Flammable And Combustible Liquids"
+msgstr "USPS Gefährlich Materialien Class 3 Flammable And Combustible Liquids"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:40
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:16
+msgid "USPS Hazardous Materials Class 7 Radioactive Materials"
+msgstr "USPS Gefährlich Materialien Class 7 Radioactive Materialien"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:41
+msgid "USPS Hazardous Materials Class 8 Air Eligible Corrosive Materials"
+msgstr "USPS Gefährlich Materialien Class 8 Air Eligible Corrosive Materialien"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:42
+msgid "USPS Hazardous Materials Class 8 Nonspillable Wet Batteries"
+msgstr "USPS Gefährlich Materialien Class 8 Nonspillable Wet Batteries"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:43
+msgid "USPS Hazardous Materials Class 9 Lithium Battery Marked Ground Only"
+msgstr "USPS Gefährlich Materialien Class 9 Lithium Battery Marked Boden Only"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:44
+msgid "USPS Hazardous Materials Class 9 Lithium Battery Returns"
+msgstr "USPS Gefährlich Materialien Class 9 Lithium Battery Retouren"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:45
+msgid "USPS Hazardous Materials Class 9 Marked Lithium Batteries"
+msgstr "USPS Gefährlich Materialien Class 9 Marked Lithium Batteries"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:46
+msgid "USPS Hazardous Materials Class 9 Dry Ice"
+msgstr "USPS Gefährlich Materialien Class 9 Dry Ice"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:47
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:17
+msgid "USPS Hazardous Materials Class 9 Unmarked Lithium Batteries"
+msgstr "USPS Gefährlich Materialien Class 9 Unmarked Lithium Batteries"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:48
+msgid "USPS Hazardous Materials Class 9 Magnetized Materials"
+msgstr "USPS Gefährlich Materialien Class 9 Magnetized Materialien"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:49
+msgid "USPS Hazardous Materials Division 4 1 Mailable Flammable Solids And Safety Matches"
+msgstr "USPS Gefährlich Materialien Division 4 1 Mailable Flammable Solids And Safety Matches"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:50
+msgid "USPS Hazardous Materials Division 5 1 Oxidizers"
+msgstr "USPS Gefährlich Materialien Division 5 1 Oxidizers"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:51
+msgid "USPS Hazardous Materials Division 5 2 Organic Peroxides"
+msgstr "USPS Gefährlich Materialien Division 5 2 Organic Peroxides"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:52
+msgid "USPS Hazardous Materials Division 6 1 Toxic Materials"
+msgstr "USPS Gefährlich Materialien Division 6 1 Toxic Materialien"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:53
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:18
+msgid "USPS Hazardous Materials Division 6 2 Biological Materials"
+msgstr "USPS Gefährlich Materialien Division 6 2 Biological Materialien"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:54
+msgid "USPS Hazardous Materials Excepted Quantity Provision"
+msgstr "USPS Gefährlich Materialien Excepted Quantity Provision"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:55
+msgid "USPS Hazardous Materials Ground Only Hazardous Materials"
+msgstr "USPS Gefährlich Materialien Boden Only Gefährlich Materialien"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:56
+msgid "USPS Hazardous Materials Air Eligible Id8000 Consumer Commodity"
+msgstr "USPS Gefährlich Materialien Air Eligible Id8000 Consumer Commodity"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:57
+msgid "USPS Hazardous Materials Lighters"
+msgstr "USPS Gefährlich Materialien Lighters"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:58
+msgid "USPS Hazardous Materials Limited Quantity Ground"
+msgstr "USPS Gefährlich Materialien Limited Quantity Boden"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:59
+msgid "USPS Hazardous Materials Small Quantity Provision Markings Required"
+msgstr "USPS Gefährlich Materialien Klein Quantity Provision Markings Erforderlich"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:60
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:19
+msgid "USPS Hazardous Materials"
+msgstr "USPS Gefährlich Materialien"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:61
+msgid "USPS Certified Mail"
+msgstr "USPS Certified Post"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:62
+msgid "USPS Certified Mail Restricted Delivery"
+msgstr "USPS Certified Post Restricted Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:63
+msgid "USPS Certified Mail Adult Signature Required"
+msgstr "USPS Certified Post Erwachsener Unterschrift Erforderlich"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:64
+msgid "USPS Certified Mail Adult Signature Restricted Delivery"
+msgstr "USPS Certified Post Erwachsener Unterschrift Restricted Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:65
+msgid "USPS Collect On Delivery"
+msgstr "USPS Collect Bei Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:66
+msgid "USPS Collect On Delivery Restricted Delivery"
+msgstr "USPS Collect Bei Zustellung Restricted Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:67
+msgid "USPS Tracking Electronic"
+msgstr "USPS Sendungsverfolgung Electronic"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:68
+msgid "USPS Signature Confirmation"
+msgstr "USPS Unterschrift Bestätigung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:69
+msgid "USPS Adult Signature Required"
+msgstr "USPS Erwachsener Unterschrift Erforderlich"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:70
+msgid "USPS Adult Signature Restricted Delivery"
+msgstr "USPS Erwachsener Unterschrift Restricted Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:71
+msgid "USPS Signature Confirmation Restricted Delivery"
+msgstr "USPS Unterschrift Bestätigung Restricted Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:72
+msgid "USPS Priority Mail Express Merchandise Insurance"
+msgstr "USPS Priority Post Express Merchandise Versicherung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:73
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:20
+msgid "USPS Insurance Below 500"
+msgstr "USPS Versicherung Below 500"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:74
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:21
+msgid "USPS Insurance Above 500"
+msgstr "USPS Versicherung Above 500"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:75
+msgid "USPS Insurance Restricted Delivery"
+msgstr "USPS Versicherung Restricted Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:76
+msgid "USPS Registered Mail"
+msgstr "USPS Eingeschrieben Post"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:77
+msgid "USPS Registered Mail Restricted Delivery"
+msgstr "USPS Eingeschrieben Post Restricted Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:78
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:22
+msgid "USPS Return Receipt"
+msgstr "USPS Retoure Receipt"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:79
+msgid "USPS Return Receipt Electronic"
+msgstr "USPS Retoure Receipt Electronic"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:80
+msgid "USPS Signature Requested Priority Mail Express Only"
+msgstr "USPS Unterschrift Requested Priority Post Express Only"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:81
+msgid "USPS Parcel Locker Delivery"
+msgstr "USPS Paket Locker Zustellung"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:82
+msgid "USPS Po To Addressee Priority Mail Express Only"
+msgstr "USPS Po To Addressee Priority Post Express Only"
+
+#: karrio/modules/connectors/usps/karrio/providers/usps/i18n.py:83
+msgid "USPS Sunday Delivery"
+msgstr "USPS Sonntag Zustellung"
+
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:6
+msgid "USPS First Class Package International Service"
+msgstr "USPS Erster Class Paket International Dienst"
+
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:7
+msgid "USPS Priority Mail International"
+msgstr "USPS Priority Post International"
+
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:8
+msgid "USPS Priority Mail Express International"
+msgstr "USPS Priority Post Express International"
+
+#: karrio/modules/connectors/usps_international/karrio/providers/usps_international/i18n.py:9
+msgid "USPS Global Express Guaranteed"
+msgstr "USPS Global Express Guaranteed"
+
+#: karrio/modules/core/karrio/server/core/authentication.py:165
+msgid "Invalid username/password."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/core/authentication.py:168
+msgid "User inactive or deleted."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/core/authentication.py:224
+#: karrio/modules/core/karrio/server/core/authentication.py:426
+msgid "Authentication token not verified"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/core/authentication.py:407
+msgid "Organization is inactive"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/core/authentication.py:412
+msgid "No active organization found with the given credentials"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/core/exceptions.py:66
+msgid "Invalid input."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/core/models/metafield.py:37
+msgid "type"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/core/utils.py:333
+msgid "The email service is not configured."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/apps.py:7
+msgid "IAM"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/models.py:14
+#: karrio/modules/core/karrio/server/iam/models.py:15
+msgid "context permission"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/models.py:24
+msgid "content type"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/models.py:27
+msgid "object pk"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/models.py:32
+msgid "groups"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/models.py:35
+msgid "The groups this user context belongs to. A user will get all permissions granted to each of their groups."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/models.py:43
+msgid "user context permissions"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/iam/models.py:45
+msgid "Specific permissions for this user context."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/tracing/apps.py:7
+#, fuzzy
+#| msgid "Tracking"
+msgid "Tracing"
+msgstr "Sendungsverfolgung"
+
+#: karrio/modules/core/karrio/server/user/admin.py:17
+msgid "Personal info"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/admin.py:19
+msgid "Permissions"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/admin.py:30
+msgid "Important dates"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/apps.py:7
+msgid "AUTHENTICATION AND AUTHORIZATION"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/models.py:46
+msgid "full name"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/models.py:47
+msgid "email address"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/models.py:122
+msgid "label"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/models.py:129
+msgid "Token"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/models.py:130
+msgid "Tokens"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:28
+msgid "We are calling your phone right now, please enter the digits you hear."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:31
+msgid "We sent you a text message, please enter the tokens we sent."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:34
+msgid "Please enter the tokens generated by your token generator."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:38
+msgid "Use this form for entering backup tokens for logging in. These tokens have been generated for you to print and keep safe. Please enter one of these backup tokens to login to your account."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:46
+msgid "Please correct the error below."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:48
+msgid "Please correct the errors below."
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:71
+msgid "Log in"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:80
+msgid "Continue"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:85
+msgid "Or, alternatively, use one of your backup phones:"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:95
+msgid "As a last resort, you can use a backup token:"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/login.html:98
+msgid "Use Backup Token"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/registration_confirm_email.html:4
+msgid "You are almost there,"
+msgstr ""
+
+#: karrio/modules/core/karrio/server/user/templates/registration/registration_confirm_email.html:6
+msgid "Please click the following link to verify your email address."
+msgstr ""
+
+#: karrio/modules/data/karrio/server/data/apps.py:7
+#, fuzzy
+#| msgid "MyDHL Import Export Taxes"
+msgid "Import/Export"
+msgstr "MyDHL Import Export Taxes"
+
+#: karrio/modules/documents/karrio/server/documents/apps.py:7
+#, fuzzy
+#| msgid "Development"
+msgid "Documents"
+msgstr "Entwicklung"
+
+#: karrio/modules/events/karrio/server/events/apps.py:7
+msgid "Custom Pricing"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/schemas/base/mutations.py:405
+msgid "You need to enable Two factor auth first."
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/schemas/base/mutations.py:1087
+msgid "this shipment is tracked automatically by API"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.html:2
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.txt:2
+#, python-format
+msgid "You're receiving this email because you requested an email change for your user account at %(APP_NAME)s."
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.html:4
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.txt:4
+msgid "Please open the following link to confirm:"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.html:9
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.txt:9
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/password_reset_email.html:10
+msgid "Thanks for using our platform!"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.html:11
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/email_change_email.txt:11
+#, python-format
+msgid "The %(APP_NAME)s team"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/password_reset_email.html:2
+#, python-format
+msgid "You're receiving this email because you requested a password reset for your user account at %(app_name)s."
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/templates/karrio/password_reset_email.html:8
+msgid "Your username, in case you’ve forgotten:"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/utils.py:174
+msgid "You are not authenticated"
+msgstr ""
+
+#: karrio/modules/graph/karrio/server/graph/utils.py:179
+msgid "Authentication Token not verified"
+msgstr ""
+
+#: karrio/modules/manager/karrio/server/manager/apps.py:7
+#, fuzzy
+#| msgid "Shipment Date"
+msgid "Shipment Manager"
+msgstr "Sendung Date"
+
+#: karrio/modules/orders/karrio/server/orders/apps.py:7
+msgid "Orders"
+msgstr ""
+
+#: karrio/modules/pricing/karrio/server/pricing/apps.py:7
+#, fuzzy
+#| msgid "Shipping"
+msgid "Shipping Markup"
+msgstr "Versand"
+
+#: modules/entitlements/karrio/server/entitlements/apps.py:12
+msgid "Entitlements"
+msgstr ""
+
+#: modules/shipping/karrio/server/shipping/apps.py:7
+#, fuzzy
+#| msgid "Shipping"
+msgid "JTL Shipping"
+msgstr "Versand"
+
+#~ msgid "Password"
+#~ msgstr "Passwort"
+
+#~ msgid "API Key"
+#~ msgstr "API-Schlüssel"
+
+#~ msgid "API Secret"
+#~ msgstr "API-Geheimnis"
+
+#~ msgid "Account Number"
+#~ msgstr "Kontonummer"
+
+#~ msgid "Site ID"
+#~ msgstr "Standort-ID"
+
+#~ msgid "Secret Key"
+#~ msgstr "Geheimer Schlüssel"
+
+#~ msgid "Client ID"
+#~ msgstr "Client-ID"
+
+#~ msgid "Client Secret"
+#~ msgstr "Client-Geheimnis"
+
+#~ msgid "Customer Number"
+#~ msgstr "Kundennummer"
+
+#~ msgid "Contract ID"
+#~ msgstr "Vertrags-ID"
+
+#~ msgid "Access License Number"
+#~ msgstr "Zugangslizenz-Nummer"
+
+#~ msgid "Meter Number"
+#~ msgstr "Zählernummer"
+
+#~ msgid "Account PIN"
+#~ msgstr "Konto-PIN"
+
+#~ msgid "Account Entity"
+#~ msgstr "Kontoeinheit"
+
+#~ msgid "Account Country Code"
+#~ msgstr "Konto-Ländercode"
+
+#~ msgid "Test Mode"
+#~ msgstr "Testmodus"
+
+#~ msgid "Carrier ID"
+#~ msgstr "Carrier-ID"
+
+#~ msgid "Tracking URL"
+#~ msgstr "Sendungsverfolgungs-URL"
+
+#~ msgid "Server URL"
+#~ msgstr "Server-URL"
+
+#~ msgid "Label Type"
+#~ msgstr "Etikettentyp"
+
+#~ msgid "Label Template"
+#~ msgstr "Etikettenvorlage"
+
+#~ msgid "Brand Color"
+#~ msgstr "Markenfarbe"
+
+#~ msgid "Text Color"
+#~ msgstr "Textfarbe"
+
+#~ msgid "Cost Center"
+#~ msgstr "Kostenstelle"
+
+#~ msgid "Shipping Options"
+#~ msgstr "Versandoptionen"
+
+#~ msgid "Shipping Services"
+#~ msgstr "Versanddienste"
+
+#~ msgid "Enforce ZPL"
+#~ msgstr "ZPL erzwingen"
+
+#~ msgid "Skip Service Filter"
+#~ msgstr "Dienstfilter überspringen"
+
+#~ msgid "Service Suffix"
+#~ msgstr "Dienstsuffix"
+
+#~ msgid "Billing Numbers"
+#~ msgstr "Abrechnungsnummern"
+
+#~ msgid "Rating"
+#~ msgstr "Tarifberechnung"
+
+#~ msgid "Pickup"
+#~ msgstr "Abholung"
+
+#~ msgid "Paperless"
+#~ msgstr "Papierlos"
+
+#~ msgid "Manifest"
+#~ msgstr "Manifest"
+
+#~ msgid "Duties"
+#~ msgstr "Zollgebühren"
+
+#~ msgid "Webhook"
+#~ msgstr "Webhook"
+
+#~ msgid "OAuth"
+#~ msgstr "OAuth"
+
+#~ msgid "Production Ready"
+#~ msgstr "Produktionsbereit"
+
+#~ msgid "Beta"
+#~ msgstr "Beta"
+
+#~ msgid "Alpha"
+#~ msgstr "Alpha"
+
+#~ msgid "SENDER"
+#~ msgstr "Absender"
+
+#~ msgid "RECIPIENT"
+#~ msgstr "Empfänger"
+
+#~ msgid "THIRD_PARTY"
+#~ msgstr "Drittpartei"
+
+#~ msgid "DOCUMENTS"
+#~ msgstr "Dokumente"
+
+#~ msgid "GIFT"
+#~ msgstr "Geschenk"
+
+#~ msgid "SAMPLE"
+#~ msgstr "Muster"
+
+#~ msgid "MERCHANDISE"
+#~ msgstr "Waren"
+
+#~ msgid "RETURN_MERCHANDISE"
+#~ msgstr "Rücksendung"
+
+#~ msgid "OTHER"
+#~ msgstr "Sonstiges"
+
+#~ msgid "Cost and Freight"
+#~ msgstr "Kosten und Fracht"
+
+#~ msgid "Cost Insurance and Freight"
+#~ msgstr "Kosten, Versicherung und Fracht"
+
+#~ msgid "Carriage and Insurance Paid"
+#~ msgstr "Frachtfrei versichert"
+
+#~ msgid "Carriage Paid To"
+#~ msgstr "Frachtfrei"
+
+#~ msgid "Delivery at Place"
+#~ msgstr "Geliefert benannter Ort"
+
+#~ msgid "Delivered at Frontier"
+#~ msgstr "Geliefert Grenze"
+
+#~ msgid "Delivery Duty Paid"
+#~ msgstr "Geliefert verzollt"
+
+#~ msgid "Delivery Duty Unpaid"
+#~ msgstr "Geliefert unverzollt"
+
+#~ msgid "Delivered Ex Quay"
+#~ msgstr "Geliefert ab Kai"
+
+#~ msgid "Delivered Ex Ship"
+#~ msgstr "Geliefert ab Schiff"
+
+#~ msgid "Ex Works"
+#~ msgstr "Ab Werk"
+
+#~ msgid "Free Alongside Ship"
+#~ msgstr "Frei Längsseite Schiff"
+
+#~ msgid "Free Carrier"
+#~ msgstr "Frei Frachtführer"
+
+#~ msgid "Free On Board"
+#~ msgstr "Frei an Bord"
+
+#~ msgid "Germany"
+#~ msgstr "Deutschland"
+
+#~ msgid "Austria"
+#~ msgstr "Österreich"
+
+#~ msgid "Switzerland"
+#~ msgstr "Schweiz"
+
+#~ msgid "United States"
+#~ msgstr "Vereinigte Staaten"
+
+#~ msgid "United Kingdom"
+#~ msgstr "Vereinigtes Königreich"
+
+#~ msgid "France"
+#~ msgstr "Frankreich"
+
+#~ msgid "Italy"
+#~ msgstr "Italien"
+
+#~ msgid "Spain"
+#~ msgstr "Spanien"
+
+#~ msgid "Netherlands"
+#~ msgstr "Niederlande"
+
+#~ msgid "Belgium"
+#~ msgstr "Belgien"
+
+#~ msgid "Poland"
+#~ msgstr "Polen"
+
+#~ msgid "Czech Republic"
+#~ msgstr "Tschechische Republik"
+
+#~ msgid "Denmark"
+#~ msgstr "Dänemark"
+
+#~ msgid "Sweden"
+#~ msgstr "Schweden"
+
+#~ msgid "Norway"
+#~ msgstr "Norwegen"
+
+#~ msgid "Finland"
+#~ msgstr "Finnland"
+
+#~ msgid "Portugal"
+#~ msgstr "Portugal"
+
+#~ msgid "Ireland"
+#~ msgstr "Irland"
+
+#~ msgid "Luxembourg"
+#~ msgstr "Luxemburg"
+
+#~ msgid "Hungary"
+#~ msgstr "Ungarn"
+
+#~ msgid "Romania"
+#~ msgstr "Rumänien"
+
+#~ msgid "Bulgaria"
+#~ msgstr "Bulgarien"
+
+#~ msgid "Greece"
+#~ msgstr "Griechenland"
+
+#~ msgid "Croatia"
+#~ msgstr "Kroatien"
+
+#~ msgid "Slovakia"
+#~ msgstr "Slowakei"
+
+#~ msgid "Slovenia"
+#~ msgstr "Slowenien"
+
+#~ msgid "Lithuania"
+#~ msgstr "Litauen"
+
+#~ msgid "Latvia"
+#~ msgstr "Lettland"
+
+#~ msgid "Estonia"
+#~ msgstr "Estland"
+
+#~ msgid "Canada"
+#~ msgstr "Kanada"
+
+#~ msgid "Australia"
+#~ msgstr "Australien"
+
+#~ msgid "Japan"
+#~ msgstr "Japan"
+
+#~ msgid "China"
+#~ msgstr "China"
+
+#~ msgid "Brazil"
+#~ msgstr "Brasilien"
+
+#~ msgid "Mexico"
+#~ msgstr "Mexiko"
+
+#~ msgid "India"
+#~ msgstr "Indien"
+
+#~ msgid "Turkey"
+#~ msgstr "Türkei"
+
+#~ msgid "Russia"
+#~ msgstr "Russland"
+
+#~ msgid "South Korea"
+#~ msgstr "Südkorea"
+
+#~ msgid "South Africa"
+#~ msgstr "Südafrika"
+
+#~ msgid "New Zealand"
+#~ msgstr "Neuseeland"
+
+#~ msgid "Singapore"
+#~ msgstr "Singapur"
+
+#~ msgid "Hong Kong"
+#~ msgstr "Hongkong"
+
+#~ msgid "Taiwan"
+#~ msgstr "Taiwan"
+
+#~ msgid "Thailand"
+#~ msgstr "Thailand"
+
+#~ msgid "Malaysia"
+#~ msgstr "Malaysia"
+
+#~ msgid "Indonesia"
+#~ msgstr "Indonesien"
+
+#~ msgid "Philippines"
+#~ msgstr "Philippinen"
+
+#~ msgid "Vietnam"
+#~ msgstr "Vietnam"
+
+#~ msgid "United Arab Emirates"
+#~ msgstr "Vereinigte Arabische Emirate"
+
+#~ msgid "Saudi Arabia"
+#~ msgstr "Saudi-Arabien"
+
+#~ msgid "Israel"
+#~ msgstr "Israel"
+
+#~ msgid "Egypt"
+#~ msgstr "Ägypten"
+
+#~ msgid "Argentina"
+#~ msgstr "Argentinien"
+
+#~ msgid "Chile"
+#~ msgstr "Chile"
+
+#~ msgid "Colombia"
+#~ msgstr "Kolumbien"
