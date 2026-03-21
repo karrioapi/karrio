@@ -8,6 +8,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
+import logging
 
 from karrio.server.data.serializers.data import ImportDataSerializer
 import karrio.server.data.serializers as serializers
@@ -95,8 +96,15 @@ class DataImport(api.BaseAPIView):
                     rate_sheet_id=rate_sheet_id,
                 )
             except Exception as exc:
+                logging.exception("Error while processing rate sheet import")
                 return Response(
-                    {"errors": [{"message": str(exc)}]},
+                    {
+                        "errors": [
+                            {
+                                "message": "An error occurred while processing the rate sheet import."
+                            }
+                        ]
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             if result.get("errors"):
