@@ -90,6 +90,27 @@ class TestTrackersBackgroundUpdate(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(UPDATED_TRACKERS_LIST, response_data)
 
+    def test_schedule_tracker_updates_enqueues_one_task_per_carrier(self):
+        tracker_ids = [str(tracker.id) for tracker in models.Tracking.objects.all()]
+
+        with patch(
+            "karrio.server.events.task_definitions.base.update_trackers_for_carrier"
+        ) as enqueue_refresh:
+            scheduled_count = tracking.schedule_tracker_updates(
+                tracker_ids=tracker_ids,
+                schema="test_schema",
+            )
+
+        self.assertEqual(scheduled_count, 2)
+        self.assertEqual(enqueue_refresh.call_count, 2)
+        self.assertCountEqual(
+            [call.kwargs["carrier_id"] for call in enqueue_refresh.call_args_list],
+            ["ups_package", "dhl_express"],
+        )
+        self.assertTrue(
+            all(call.kwargs["schema"] == "test_schema" for call in enqueue_refresh.call_args_list)
+        )
+
 
 RETURNED_VALUE = (
     [

@@ -1,7 +1,8 @@
 import logging
 from django.conf import settings
 from huey import crontab
-from huey.contrib.djhuey import db_task, db_periodic_task
+from huey.contrib.djhuey import HUEY, db_task, db_periodic_task
+from huey.exceptions import TaskLockedException
 
 import karrio.server.core.utils as utils
 from karrio.server.core.telemetry import with_task_telemetry
@@ -20,9 +21,34 @@ def background_trackers_update():
 
     @utils.run_on_all_tenants
     def _run(**kwargs):
-        tracking.update_trackers()
+        schema = kwargs.get("schema")
+        lock_name = tracking.get_scheduler_lock_name(schema)
+
+        try:
+            with HUEY.lock_task(lock_name):
+                scheduled_count = tracking.schedule_tracker_updates(schema=schema)
+                logger.info(
+                    "Scheduled tracker refresh tasks",
+                    schema=schema,
+                    scheduled_task_count=scheduled_count,
+                )
+        except TaskLockedException:
+            logger.info(
+                "Skipping tracker refresh scheduling because a previous run is still active",
+                schema=schema,
+                lock_name=lock_name,
+            )
 
     _run()
+
+
+@db_task(retries=1, retry_delay=60)
+@utils.tenant_aware
+@with_task_telemetry("update_trackers_for_carrier")
+def update_trackers_for_carrier(*args, **kwargs):
+    from karrio.server.events.task_definitions.base import tracking
+
+    tracking.update_trackers(*args, **kwargs)
 
 
 @db_task(retries=5, retry_delay=60)
@@ -66,6 +92,7 @@ def daily_pickup_close():
 
 TASK_DEFINITIONS = [
     background_trackers_update,
+    update_trackers_for_carrier,
     periodic_data_archiving,
     daily_pickup_close,
     notify_webhooks,

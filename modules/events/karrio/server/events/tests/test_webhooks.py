@@ -1,6 +1,6 @@
 import json
 from unittest.mock import ANY, patch
-from requests import Response
+from requests import RequestException, Response
 
 from django.urls import reverse
 from django.utils import timezone
@@ -61,11 +61,11 @@ class TestWebhookDetails(APITestCase):
         )
 
         with patch(
-            "karrio.server.events.task_definitions.base.webhook.identity"
-        ) as mocks:
+            "karrio.server.events.task_definitions.base.webhook.requests.post"
+        ) as requests_post:
             response = Response()
             response.status_code = 200
-            mocks.return_value = response
+            requests_post.return_value = response
 
             notify_webhook_subscribers(
                 event="shipment.purchased",
@@ -81,6 +81,27 @@ class TestWebhookDetails(APITestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, WEBHOOK_NOTIFIED_RESPONSE)
+        _, kwargs = requests_post.call_args
+        self.assertEqual(kwargs["timeout"], 10)
+
+    def test_webhook_notify_timeout_failure_increments_failure_streak(self):
+        with patch(
+            "karrio.server.events.task_definitions.base.webhook.requests.post",
+            side_effect=RequestException("timeout"),
+        ):
+            notify_webhook_subscribers(
+                event="shipment.purchased",
+                data={"shipment": "content"},
+                event_at=NOTIFICATION_DATETIME,
+                ctx=dict(
+                    user_id=self.user.id,
+                    test_mode=True,
+                ),
+            )
+
+        self.webhook.refresh_from_db()
+        self.assertEqual(self.webhook.failure_streak_count, 1)
+        self.assertFalse(self.webhook.disabled)
 
 
 WEBHOOK_DATA = {

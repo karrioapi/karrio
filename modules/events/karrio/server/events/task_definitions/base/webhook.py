@@ -6,13 +6,13 @@ from django.db.models import Q
 from django.contrib.auth import get_user_model
 
 from karrio.core import utils
-from karrio.server.core.utils import identity
 from karrio.server.core.logging import logger
 from karrio.server.serializers import Context
 from karrio.server.events import models
 import karrio.server.events.serializers.event as serializers
-NotificationResponse = typing.Tuple[str, requests.Response]
+NotificationResponse = typing.Tuple[str, typing.Optional[requests.Response]]
 User = get_user_model()
+WEBHOOK_REQUEST_TIMEOUT = float(getattr(settings, "WEBHOOK_REQUEST_TIMEOUT", 10))
 
 
 def notify_webhook_subscribers(
@@ -54,16 +54,24 @@ def notify_webhook_subscribers(
 
 def notify_subscribers(webhooks: typing.List[models.Webhook], payload: dict):
     def notify_subscriber(webhook: models.Webhook):
-        response = identity(
-            lambda: requests.post(
+        try:
+            response = requests.post(
                 webhook.url,
                 json=payload,
                 headers={
                     "Content-type": "application/json",
                     "X-Event-Id": webhook.secret,
                 },
+                timeout=WEBHOOK_REQUEST_TIMEOUT,
             )
-        )
+        except requests.RequestException as request_error:
+            logger.warning(
+                "Webhook notification request failed",
+                webhook_id=webhook.id,
+                webhook_url=webhook.url,
+                error=str(request_error),
+            )
+            return webhook.id, None
 
         return webhook.id, response
 
@@ -82,7 +90,7 @@ def update_notified_webhooks(
             logger.debug("Updating webhook", webhook_id=webhook_id)
 
             webhook = next((w for w in webhooks if w.id == webhook_id))
-            if response.ok:
+            if response is not None and response.ok:
                 webhook.last_event_at = event_at
                 webhook.failure_streak_count = 0
             else:

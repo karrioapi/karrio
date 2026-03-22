@@ -1,8 +1,7 @@
-import time
 import typing
 import datetime
 import functools
-from itertools import groupby
+from collections import defaultdict
 
 from django.conf import settings
 from django.utils import timezone
@@ -20,46 +19,118 @@ import karrio.server.manager.models as models
 import karrio.server.tracing.utils as tracing
 import karrio.server.core.datatypes as datatypes
 import karrio.server.manager.serializers as serializers
-Delay = int
-RequestBatches = typing.Tuple[
-    Gateway, IRequestFrom, Delay, typing.List[models.Tracking]
-]
+RequestBatches = typing.Tuple[Gateway, IRequestFrom, typing.List[models.Tracking]]
 BatchResponse = typing.List[typing.Tuple[TrackingDetails, typing.List[Message]]]
 
 DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(
     settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200
 )
+TRACKING_REQUEST_BATCH_SIZE = int(getattr(settings, "TRACKING_REQUEST_BATCH_SIZE", 10))
 
 
-def update_trackers(
-    delta: datetime.timedelta = datetime.timedelta(
-        seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
-    ),
-    tracker_ids: typing.List[str] = [],
-):
-    logger.info("Starting scheduled trackers update", delta_seconds=delta.seconds, tracker_count=len(tracker_ids) if tracker_ids else 0)
+def get_scheduler_lock_name(schema: typing.Optional[str] = None) -> str:
+    return f"background_trackers_update:{schema or 'public'}"
 
-    # TrackingManager now handles all necessary prefetching including carrier config
-    active_trackers = lib.identity(
+
+def get_active_trackers(
+    delta: datetime.timedelta,
+    tracker_ids: typing.Optional[typing.List[str]] = None,
+    carrier_id: typing.Optional[str] = None,
+) -> typing.List[models.Tracking]:
+    queryset = (
         models.Tracking.objects.filter(id__in=tracker_ids)
-        if any(tracker_ids)
+        if any(tracker_ids or [])
         else models.Tracking.objects.filter(
             delivered=False,
             updated_at__lt=timezone.now() - delta,
         )
     )
 
-    if any(active_trackers):
-        trackers_grouped_by_carrier = [
-            list(g) for _, g in groupby(active_trackers, key=lambda t: t.carrier_id)
-        ]
-        request_batches: typing.List[RequestBatches] = sum(
-            [create_request_batches(group) for group in trackers_grouped_by_carrier], []
+    if carrier_id:
+        queryset = queryset.filter(carrier__carrier_id=carrier_id)
+
+    return list(queryset.order_by("carrier__carrier_id", "updated_at", "id"))
+
+
+def group_trackers_by_carrier(
+    trackers: typing.Iterable[models.Tracking],
+) -> dict[str, typing.List[models.Tracking]]:
+    grouped: dict[str, typing.List[models.Tracking]] = defaultdict(list)
+
+    for tracker in trackers:
+        grouped[str(tracker.carrier_id)].append(tracker)
+
+    return dict(grouped)
+
+
+def schedule_tracker_updates(
+    delta: datetime.timedelta = datetime.timedelta(
+        seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
+    ),
+    tracker_ids: typing.Optional[typing.List[str]] = None,
+    schema: typing.Optional[str] = None,
+) -> int:
+    active_trackers = get_active_trackers(delta=delta, tracker_ids=tracker_ids)
+
+    if not any(active_trackers):
+        logger.info("No active trackers found needing update")
+        return 0
+
+    trackers_by_carrier = group_trackers_by_carrier(active_trackers)
+    logger.info(
+        "Queueing carrier tracker refresh tasks",
+        schema=schema,
+        tracker_count=len(active_trackers),
+        carrier_count=len(trackers_by_carrier),
+    )
+
+    from karrio.server.events.task_definitions.base import update_trackers_for_carrier
+
+    for carrier_key, carrier_trackers in trackers_by_carrier.items():
+        update_trackers_for_carrier(
+            tracker_ids=[str(tracker.id) for tracker in carrier_trackers],
+            carrier_id=carrier_key,
+            schema=schema,
         )
 
-        responses = lib.run_concurently(fetch_tracking_info, request_batches, 2)
-        save_tracing_records(request_batches)
-        save_updated_trackers(responses, active_trackers)
+    return len(trackers_by_carrier)
+
+
+def update_trackers(
+    delta: datetime.timedelta = datetime.timedelta(
+        seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
+    ),
+    tracker_ids: typing.Optional[typing.List[str]] = None,
+    carrier_id: typing.Optional[str] = None,
+):
+    logger.info(
+        "Starting scheduled trackers update",
+        delta_seconds=delta.seconds,
+        tracker_count=len(tracker_ids) if tracker_ids else 0,
+        carrier_id=carrier_id,
+    )
+    active_trackers = get_active_trackers(
+        delta=delta,
+        tracker_ids=tracker_ids,
+        carrier_id=carrier_id,
+    )
+
+    if any(active_trackers):
+        for grouped_carrier_id, carrier_trackers in group_trackers_by_carrier(
+            active_trackers
+        ).items():
+            request_batches = create_request_batches(carrier_trackers)
+            responses = [
+                fetch_tracking_info(request_batch) for request_batch in request_batches
+            ]
+            save_tracing_records(request_batches)
+            save_updated_trackers(responses, carrier_trackers)
+            logger.info(
+                "Finished carrier tracker refresh",
+                carrier_id=grouped_carrier_id,
+                tracker_count=len(carrier_trackers),
+                batch_count=len(request_batches),
+            )
     else:
         logger.info("No active trackers found needing update")
 
@@ -69,17 +140,12 @@ def update_trackers(
 def create_request_batches(
     trackers: typing.List[models.Tracking],
 ) -> typing.List[RequestBatches]:
-    start = 0
-    end = 10
     batches = []
+    carrier = resolve_carrier(trackers[0].carrier, context=None)
 
-    while any(trackers[start:end]):
+    for start in range(0, len(trackers), TRACKING_REQUEST_BATCH_SIZE):
+        end = start + TRACKING_REQUEST_BATCH_SIZE
         try:
-            # Add a request delay to avoid sending two request batches to a carrier at the same time
-            delay = int(((end / 10) * 10) - 10)
-            # Get the common tracking carrier from the JSON snapshot
-            carrier = resolve_carrier(trackers[0].carrier, context=None)
-            # Collect the 5 trackers between the start and end indexes
             batch_trackers = trackers[start:end]
             tracking_numbers = [t.tracking_number for t in batch_trackers]
             options: dict = functools.reduce(
@@ -96,23 +162,19 @@ def create_request_batches(
             )
             gateway: Gateway = carrier.gateway
 
-            batches.append((gateway, request, delay, batch_trackers))
+            batches.append((gateway, request, batch_trackers))
 
         except Exception as request_error:
             logger.warning("Failed to prepare tracking batch request", batch_range=(start, end), error=str(request_error))
             logger.exception("Tracking batch request preparation error", batch_range=(start, end))
 
-        end += 10
-        start += 10
-
     return batches
 
 
 def fetch_tracking_info(request_batch: RequestBatches) -> BatchResponse:
-    gateway, request, delay, trackers = request_batch
+    gateway, request, trackers = request_batch
     tracking_numbers = [t.tracking_number for t in trackers]
-    logger.debug("Fetching tracking batch", tracking_numbers=tracking_numbers, delay_seconds=delay)
-    time.sleep(delay)  # apply delay before request
+    logger.debug("Fetching tracking batch", tracking_numbers=tracking_numbers)
 
     try:
         return utils.identity(lambda: request.from_(gateway).parse())
@@ -129,7 +191,7 @@ def save_tracing_records(request_batches: typing.List[RequestBatches]):
 
     try:
         for request_batch in request_batches:
-            gateway, _, __, trackers = request_batch
+            gateway, _, trackers = request_batch
 
             if not any(trackers):
                 continue
