@@ -39,6 +39,10 @@ export default {
     title: 'Digital Ocean',
     type: 'page'
   },
+  "kubernetes": {
+    title: 'Kubernetes',
+    type: 'page'
+  },
   "guides": {
     title: 'Guides',
     type: 'separator',
