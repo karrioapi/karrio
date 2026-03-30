@@ -57,6 +57,22 @@ class TestLandmarkGlobalTracking(unittest.TestCase):
                 lib.to_dict(parsed_response), PARSED_IN_TRANSIT_RESPONSE
             )
 
+    def test_parse_early_stage_pending_response(self):
+        """Test that early Landmark fulfillment events (60/75/80/100) produce pending status.
+
+        These events occur at Landmark's facility before the package is physically
+        picked up by the last-mile carrier. The shipment should remain in 'pending'
+        status so it can still be cancelled via the cancel API.
+        """
+        with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
+            mock.return_value = EARLY_STAGE_TRACKING_RESPONSE_XML
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(
+                lib.to_dict(parsed_response), PARSED_EARLY_STAGE_PENDING_RESPONSE
+            )
+
     def test_parse_out_for_delivery_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = OUT_FOR_DELIVERY_TRACKING_RESPONSE_XML
@@ -211,7 +227,7 @@ PARSED_IN_TRANSIT_RESPONSE = [
                     "date": "2025-09-29",
                     "description": "Shipment Processed",
                     "location": "Los Angeles, CA, US",
-                    "status": "in_transit",
+                    "status": "pending",
                     "time": "09:00 AM",
                     "timestamp": "2025-09-29T09:00:00.000Z",
                 },
@@ -234,6 +250,123 @@ PARSED_IN_TRANSIT_RESPONSE = [
             },
             "status": "in_transit",
             "tracking_number": "LTN48392101N1",
+        }
+    ],
+    [],
+]
+
+EARLY_STAGE_TRACKING_RESPONSE_XML = """<?xml version="1.0"?>
+<TrackResponse>
+    <Test>true</Test>
+    <Result>
+        <Success>true</Success>
+        <ShipmentDetails>
+            <EndDeliveryCarrier>Canada Post</EndDeliveryCarrier>
+        </ShipmentDetails>
+        <Packages>
+            <Package>
+                <TrackingNumber>1Z999AA10123456784</TrackingNumber>
+                <LandmarkTrackingNumber>LTN38570299N1</LandmarkTrackingNumber>
+                <PackageReference>ORDER-2001</PackageReference>
+                <Events>
+                    <Event>
+                        <Status>Shipment Data Uploaded</Status>
+                        <DateTime>10/01/2025 08:00 AM</DateTime>
+                        <Location>Los Angeles, CA, US</Location>
+                        <EventCode>50</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Shipment inventory allocated</Status>
+                        <DateTime>10/01/2025 09:00 AM</DateTime>
+                        <Location>Los Angeles, CA, US</Location>
+                        <EventCode>60</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Shipment Processed</Status>
+                        <DateTime>10/01/2025 10:00 AM</DateTime>
+                        <Location>Los Angeles, CA, US</Location>
+                        <EventCode>75</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Shipment Fulfilled</Status>
+                        <DateTime>10/01/2025 11:00 AM</DateTime>
+                        <Location>Los Angeles, CA, US</Location>
+                        <EventCode>80</EventCode>
+                    </Event>
+                    <Event>
+                        <Status>Shipment information transmitted to carrier</Status>
+                        <DateTime>10/01/2025 12:00 PM</DateTime>
+                        <Location>Los Angeles, CA, US</Location>
+                        <EventCode>100</EventCode>
+                    </Event>
+                </Events>
+            </Package>
+        </Packages>
+    </Result>
+</TrackResponse>"""
+
+PARSED_EARLY_STAGE_PENDING_RESPONSE = [
+    [
+        {
+            "carrier_id": "landmark",
+            "carrier_name": "landmark",
+            "delivered": False,
+            "events": [
+                {
+                    "code": "100",
+                    "date": "2025-10-01",
+                    "description": "Shipment information transmitted to carrier",
+                    "location": "Los Angeles, CA, US",
+                    "status": "pending",
+                    "time": "12:00 PM",
+                    "timestamp": "2025-10-01T12:00:00.000Z",
+                },
+                {
+                    "code": "80",
+                    "date": "2025-10-01",
+                    "description": "Shipment Fulfilled",
+                    "location": "Los Angeles, CA, US",
+                    "status": "pending",
+                    "time": "11:00 AM",
+                    "timestamp": "2025-10-01T11:00:00.000Z",
+                },
+                {
+                    "code": "75",
+                    "date": "2025-10-01",
+                    "description": "Shipment Processed",
+                    "location": "Los Angeles, CA, US",
+                    "status": "pending",
+                    "time": "10:00 AM",
+                    "timestamp": "2025-10-01T10:00:00.000Z",
+                },
+                {
+                    "code": "60",
+                    "date": "2025-10-01",
+                    "description": "Shipment inventory allocated",
+                    "location": "Los Angeles, CA, US",
+                    "status": "pending",
+                    "time": "09:00 AM",
+                    "timestamp": "2025-10-01T09:00:00.000Z",
+                },
+                {
+                    "code": "50",
+                    "date": "2025-10-01",
+                    "description": "Shipment Data Uploaded",
+                    "location": "Los Angeles, CA, US",
+                    "status": "pending",
+                    "time": "08:00 AM",
+                    "timestamp": "2025-10-01T08:00:00.000Z",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570299N1"
+            },
+            "meta": {
+                "last_mile_tracking_number": "1Z999AA10123456784",
+                "last_mile_carrier": "Canada Post",
+            },
+            "status": "pending",
+            "tracking_number": "LTN38570299N1",
         }
     ],
     [],
@@ -939,7 +1072,7 @@ PARSED_MIDNIGHT_TIME_SORTING_RESPONSE = [
                     "date": "2025-10-28",
                     "description": "Processed",
                     "location": "Feltham, SRY",
-                    "status": "in_transit",
+                    "status": "pending",
                     "time": "08:42 AM",
                     "timestamp": "2025-10-28T08:42:00.000Z",
                 },
