@@ -26,5 +26,8 @@
     "ee/packages/*",
     "ee/insiders/packages/*"
   ],
-  "packageManager": "npm@10.8.2"
+  "packageManager": "npm@10.8.2",
+  "overrides": {
+    "axios": "1.13.2"
+  }
 }
