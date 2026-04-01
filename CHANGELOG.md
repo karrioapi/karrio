@@ -1,16 +1,3 @@
-# Karrio 2026.1.27
-
-## Changes
-
-### Performance
-- perf: eliminate N+1 queries in tenant middleware, rate sheets, and constance settings
-
-### Chores
-- chore(deps): bump next from 16.1.5 to 16.1.7 in /apps/web
-- chore(deps): bump next from 16.1.5 to 16.1.7 in /packages/core
-
----
-
 # Karrio 2026.1.26
 
 ## Changes

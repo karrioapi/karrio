@@ -203,7 +203,7 @@ export function ServiceRateEditorDialog({
             {/* Rate + Transit */}
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label className="text-xs">Base Rate</Label>
+                <Label className="text-xs">Rate (Sell Price)</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -240,19 +240,19 @@ export function ServiceRateEditorDialog({
               </div>
             </div>
 
-            {/* Per-Plan Custom Margin + Exclusion table */}
+            {/* Per-Plan COGS + Exclusion table */}
             {planMarkups.length > 0 && (
               <div className="space-y-2">
                 <Label className="text-xs font-medium">Plans</Label>
                 <p className="text-[11px] text-muted-foreground">
-                  Set a custom margin per plan that overrides the standard tier margin for this weight bucket.
+                  Set custom cost (COGS) per plan. Check to exclude a plan from this rate.
                 </p>
                 <div className="border border-border rounded-md overflow-hidden">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-muted/50 text-xs text-muted-foreground">
                         <th className="text-left px-3 py-1.5 font-medium">Plan</th>
-                        <th className="text-left px-3 py-1.5 font-medium w-36">Custom Margin</th>
+                        <th className="text-left px-3 py-1.5 font-medium w-28">COGS</th>
                         <th className="text-center px-3 py-1.5 font-medium w-16">Exclude</th>
                       </tr>
                     </thead>
@@ -269,23 +269,20 @@ export function ServiceRateEditorDialog({
                           </td>
                           <td className="px-3 py-1.5">
                             <div className="flex items-center gap-1">
-                              <div className="relative flex-1 min-w-[9rem]">
-                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">€</span>
-                                <Input
-                                  type="number"
-                                  step="0.01"
-                                  value={planCosts[markup.id] || ""}
-                                  onChange={(e) =>
-                                    setPlanCosts((prev) => ({
-                                      ...prev,
-                                      [markup.id]: e.target.value,
-                                    }))
-                                  }
-                                  placeholder="0.00"
-                                  className="h-7 text-xs pl-6"
-                                  disabled={excludedMarkupIds.includes(markup.id)}
-                                />
-                              </div>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={planCosts[markup.id] || ""}
+                                onChange={(e) =>
+                                  setPlanCosts((prev) => ({
+                                    ...prev,
+                                    [markup.id]: e.target.value,
+                                  }))
+                                }
+                                placeholder="0.00"
+                                className="h-7 text-xs flex-1"
+                                disabled={excludedMarkupIds.includes(markup.id)}
+                              />
                               <button
                                 type="button"
                                 className="h-7 px-1.5 text-[10px] font-medium border border-border rounded hover:bg-muted/50 shrink-0 min-w-[28px]"

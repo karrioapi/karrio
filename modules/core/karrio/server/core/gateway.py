@@ -404,7 +404,7 @@ class Shipments:
 
         shipment_rate = process_selected_rate()
 
-        result = lib.to_object(
+        return lib.to_object(
             datatypes.Shipment,
             {
                 "id": f"shp_{uuid.uuid4().hex}",
@@ -424,17 +424,6 @@ class Shipments:
                 "messages": messages,
             },
         )
-
-        try:
-            import sentry_sdk
-
-            sentry_sdk.set_tag("shipment_id", result.id)
-            if getattr(result, "tracking_number", None):
-                sentry_sdk.set_tag("tracking_number", result.tracking_number)
-        except Exception:
-            pass
-
-        return result
 
     @staticmethod
     @utils.with_telemetry("shipment_cancel")
@@ -713,8 +702,9 @@ class Pickups:
         )
 
 
-@utils.hookable
+@utils.post_processing(methods=["fetch", "resolve"])
 class Rates:
+    post_process_functions: typing.List[typing.Callable] = []
 
     @staticmethod
     @utils.with_telemetry("rates_fetch")

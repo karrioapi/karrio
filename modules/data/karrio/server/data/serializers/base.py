@@ -8,7 +8,6 @@ class ResourceType(lib.StrEnum):
     shipment = "shipments"
     trackers = "trackers"
     billing = "billing"
-    rate_sheet = "rate_sheet"
 
     @classmethod
     def get_default_mapping(cls, resource_type: str) -> dict:
@@ -20,8 +19,6 @@ class ResourceType(lib.StrEnum):
             return resources.shipments.DEFAULT_HEADERS
         if resource_type == "trackers":
             return resources.trackers.DEFAULT_HEADERS
-        if resource_type == "rate_sheet":
-            return resources.rate_sheets.DEFAULT_HEADERS
 
         return {}
 

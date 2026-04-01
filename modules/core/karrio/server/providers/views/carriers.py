@@ -3,10 +3,7 @@ import base64
 import re
 from django.http import JsonResponse
 from django.urls import path, re_path
-from django.conf import settings
-from django.utils import translation
 from rest_framework import status, views
-from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.core.files.base import ContentFile
@@ -22,34 +19,6 @@ from karrio.server.core import datatypes, dataunits, serializers
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
-def _validate_lang(request: Request):
-    """Validate and return the lang query parameter, or None."""
-    lang = request.query_params.get("lang")
-    if lang:
-        supported = {code for code, _ in settings.LANGUAGES}
-        if lang not in supported:
-            return None, Response(
-                {"error": f"Unsupported language: {lang}. Supported: {sorted(supported)}"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-    return lang, None
-
-
-def _resolve_lang(request: Request, lang: str = None) -> str:
-    """Resolve language: explicit param > Accept-Language header > default."""
-    return lang or getattr(request, 'LANGUAGE_CODE', settings.LANGUAGE_CODE)
-
-
-def _translated_references(request: Request, lang: str = None, reduced: bool = False):
-    """Build contextual references with optional i18n translation."""
-    from karrio.core.i18n import translate_references
-
-    resolved = _resolve_lang(request, lang)
-    with translation.override(resolved):
-        references = dataunits.contextual_reference(reduced=reduced)
-        return translate_references(references)
-
-
 class CarrierList(views.APIView):
     permission_classes = []
 
@@ -59,18 +28,8 @@ class CarrierList(views.APIView):
         operation_id=f"{ENDPOINT_ID}list",
         extensions={"x-operationId": "listCarriers"},
         summary="List all carriers",
-        parameters=[
-            openapi.OpenApiParameter(
-                "lang",
-                location=openapi.OpenApiParameter.QUERY,
-                type=openapi.OpenApiTypes.STR,
-                required=False,
-                description="Language code for translated labels (e.g., 'de', 'en').",
-            ),
-        ],
         responses={
             200: serializers.CarrierDetails(many=True),
-            400: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
         },
         examples=[
@@ -82,11 +41,7 @@ class CarrierList(views.APIView):
     )
     def get(self, request: Request):
         """Returns the list of configured carriers"""
-        lang, error_response = _validate_lang(request)
-        if error_response:
-            return error_response
-
-        references = _translated_references(request, lang=lang, reduced=False)
+        references = dataunits.contextual_reference(reduced=False)
         carriers = [
             dataunits.get_carrier_details(
                 carrier_name,
@@ -128,14 +83,10 @@ class CarrierDetails(api.APIView):
         """
         Retrieve a carrier's details
         """
-        lang, error_response = _validate_lang(request)
-        if error_response:
-            return error_response
-
-        references = _translated_references(request, lang=lang, reduced=False)
+        references = dataunits.contextual_reference(reduced=False)
 
         if carrier_name not in references["carriers"]:
-            raise NotFound(f"Unknown carrier: {carrier_name}")
+            raise Exception(f"Unknown carrier: {carrier_name}")
 
         carrier_details = dataunits.get_carrier_details(
             carrier_name,
@@ -181,14 +132,10 @@ class CarrierServices(api.APIView):
         """
         Retrieve a carrier's services
         """
-        lang, error_response = _validate_lang(request)
-        if error_response:
-            return error_response
-
-        references = _translated_references(request, lang=lang)
+        references = dataunits.contextual_reference()
 
         if carrier_name not in references["carriers"]:
-            raise NotFound(f"Unknown carrier: {carrier_name}")
+            raise Exception(f"Unknown carrier: {carrier_name}")
 
         services = references["services"].get(carrier_name, {})
 
@@ -231,14 +178,10 @@ class CarrierOptions(api.APIView):
         """
         Retrieve a carrier's options
         """
-        lang, error_response = _validate_lang(request)
-        if error_response:
-            return error_response
-
-        references = _translated_references(request, lang=lang)
+        references = dataunits.contextual_reference()
 
         if carrier_name not in references["carriers"]:
-            raise NotFound(f"Unknown carrier: {carrier_name}")
+            raise Exception(f"Unknown carrier: {carrier_name}")
 
         options = references["options"].get(carrier_name, {})
 
@@ -306,7 +249,7 @@ class CarrierLabelPreview(VirtualDownloadView):
         shipment, _ = karrio.Shipment.create(request).from_(carrier.gateway).parse()
 
         if shipment is None:
-            raise ValidationError("Failed to generate label")
+            raise Exception("Failed to generate label")
 
         return shipment.docs.label
 

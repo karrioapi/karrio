@@ -337,8 +337,61 @@ def email_setup_required(func):
     return wrapper
 
 
-# Re-export hook system from the standalone module (no circular imports).
-from karrio.server.core.hooks import HookError, HookRegistry, hookable  # noqa: F401
+def post_processing(methods: List[str] = None):
+    def class_wrapper(klass):
+        setattr(
+            klass,
+            "post_process_functions",
+            getattr(klass, "post_process_functions") or [],
+        )
+
+        for name in methods:
+            method = getattr(klass, name)
+
+            def wrapper(*args, _method=method, **kwargs):
+                result = _method(*args, **kwargs)
+                processes = klass.post_process_functions
+                context = kwargs.get("context")
+
+                return functools.reduce(
+                    lambda cummulated_result, process: process(
+                        context, cummulated_result
+                    ),
+                    processes,
+                    result,
+                )
+
+            setattr(klass, name, wrapper)
+
+        return klass
+
+    return class_wrapper
+
+
+def pre_processing(methods: List[str] = None):
+    def class_wrapper(klass):
+        setattr(
+            klass,
+            "pre_process_functions",
+            getattr(klass, "pre_process_functions", None) or [],
+        )
+
+        for name in methods:
+            method = getattr(klass, name)
+
+            def wrapper(*args, _method=method, **kwargs):
+                context = kwargs.get("context")
+
+                for process in klass.pre_process_functions:
+                    process(context)
+
+                return _method(*args, **kwargs)
+
+            setattr(klass, name, wrapper)
+
+        return klass
+
+    return class_wrapper
 
 
 def upper(value_str: Optional[str]) -> Optional[str]:

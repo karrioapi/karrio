@@ -23,27 +23,6 @@ import karrio.server.graph.serializers as graph_serializers
 import karrio.server.providers.serializers as providers_serializers
 from karrio.server.core.logging import logger
 
-# Feature fields that clients may send at service root level instead of nested
-# in features{}. Pop them from each service dict and merge into features.
-_ROOT_FEATURE_KEYS = ("age_check", "neighbor_delivery", "saturday_delivery")
-
-
-def _merge_root_features(services: list) -> list:
-    """Move root-level feature fields into the features dict for each service."""
-    result = []
-    for svc in services:
-        svc = svc.copy() if isinstance(svc, dict) else dict(svc)
-        root_features = {
-            k: svc.pop(k)
-            for k in _ROOT_FEATURE_KEYS
-            if k in svc and svc[k] is not None
-        }
-        if root_features:
-            features = svc.get("features") or {}
-            svc["features"] = {**features, **root_features}
-        result.append(svc)
-    return result
-
 
 @strawberry.type
 class InstanceConfigMutation(utils.BaseMutation):
@@ -340,8 +319,10 @@ class CreateRateSheetMutation(utils.BaseMutation):
         zones_data = data.pop("zones", [])
         surcharges_data = data.pop("surcharges", [])
         service_rates_data = data.pop("service_rates", [])
-        services_data = _merge_root_features(data.get("services", []))
-        data["services"] = services_data
+        services_data = [
+            (svc.copy() if isinstance(svc, dict) else dict(svc))
+            for svc in data.get("services", [])
+        ]
 
         slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
         serializer = graph_serializers.SystemRateSheetModelSerializer(
@@ -396,8 +377,6 @@ class UpdateRateSheetMutation(utils.BaseMutation):
     ) -> "UpdateRateSheetMutation":
         data = input.copy()
         carriers = data.pop("carriers", [])
-        if "services" in data:
-            data["services"] = _merge_root_features(data["services"])
         instance = providers.SystemRateSheet.objects.get(id=input["id"])
 
         serializer = graph_serializers.SystemRateSheetModelSerializer(

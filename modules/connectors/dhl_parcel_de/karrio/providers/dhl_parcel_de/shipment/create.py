@@ -124,7 +124,7 @@ def shipment_request(
     return_address = lib.to_address(payload.return_address) if payload.return_address else shipper
     is_intl = shipper.country_code != recipient.country_code
     doc_format, print_format = provider_units.LabelType.map(
-        options.dhl_parcel_de_label_type.state or settings.connection_config.label_type.state or payload.label_type or "PDF"
+        options.label_type.state or settings.connection_config.label_type.state or payload.label_type or "PDF"
     ).value
     shipment_date = lib.to_date(
         options.shipping_date.state or datetime.datetime.now(),
@@ -138,7 +138,7 @@ def shipment_request(
                 product=service,
                 billingNumber=billing_number,
                 refNo=payload.reference,
-                costCenter=options.dhl_parcel_de_cost_center.state or settings.connection_config.cost_center.state,
+                costCenter=options.cost_center.state or settings.connection_config.cost_center.state,
                 creationSoftware=settings.connection_config.creation_software.state,
                 shipDate=lib.fdatetime(
                     shipment_date, output_format="%Y-%m-%dT%H:%M:%S"
@@ -200,15 +200,11 @@ def shipment_request(
                     poBoxID=package.options.dhl_parcel_de_po_box_id.state,
                 ),
                 details=dhl_parcel_de.DetailsType(
-                    dim=(
-                        dhl_parcel_de.DimType(
-                            uom=units.DimensionUnit.CM.name.lower(),
-                            height=package.height.CM,
-                            length=package.length.CM,
-                            width=package.width.CM,
-                        )
-                        if package.height.value is not None and package.length.value is not None and package.width.value is not None
-                        else None
+                    dim=dhl_parcel_de.DimType(
+                        uom=units.DimensionUnit.CM.name.lower(),
+                        height=package.height.CM,
+                        length=package.length.CM,
+                        width=package.width.CM,
                     ),
                     weight=dhl_parcel_de.WeightType(
                         uom=units.WeightUnit.KG.name.lower(),
@@ -268,7 +264,7 @@ def shipment_request(
                             dhl_parcel_de.DhlRetoureType(
                                 billingNumber=(
                                     package.options.dhl_parcel_de_return_billing_number.state
-                                    or settings.get_return_billing_number(service_code_override=options.dhl_parcel_de_return_service_code.state)
+                                    or settings.get_return_billing_number(service_code_override=options.return_service_code.state)
                                     or billing_number
                                 ),
                                 refNo=(

@@ -722,25 +722,15 @@ export function RateSheetCsvPreview({
             const planCogs = isMkp && !isDisabled && planMarkupIds.has(mid)
               ? row.planCosts[mid]
               : undefined;
-            // Compute plan total using stored custom margin type.
-            // Mirrors the standard plan markup formula exactly:
-            //   contribution = PERCENTAGE → baseRate × margin%  |  AMOUNT → margin value
-            //   planTotal    = baseRate + surchargeTotal + contribution
-            // Surcharges must be included — the standard markup running total starts at
-            // baseRate + surchargeTotal, so the custom override must too.
+            // Compute plan total using stored COGS type
+            // AMOUNT: total = base + COGS, PERCENTAGE: total = base + (COGS% * base)
             let planTotal: number | undefined;
             if (planCogs != null) {
               const baseRate = row.rate ?? 0;
-              const surchargeTotal = Object.values(row.surcharges).reduce(
-                (sum, v) => sum + (v ?? 0),
-                0
-              );
               const cogsType = row.planCostTypes[mid] || "AMOUNT";
-              const customContribution =
-                cogsType === "PERCENTAGE"
-                  ? baseRate * (planCogs / 100)  // percentage applies to base rate only
-                  : planCogs;
-              planTotal = baseRate + surchargeTotal + customContribution;
+              planTotal = cogsType === "PERCENTAGE"
+                ? baseRate + (planCogs / 100) * baseRate
+                : baseRate + planCogs;
             }
 
             return (

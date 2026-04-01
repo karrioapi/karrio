@@ -8,13 +8,10 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
-import logging
 
 from karrio.server.data.serializers.data import ImportDataSerializer
 import karrio.server.data.serializers as serializers
 import karrio.server.data.resources as resources
-import karrio.server.data.resources.rate_sheets as rate_sheet_resource
-import karrio.server.data.serializers.batch_rate_sheets as batch_rate_sheets
 import karrio.server.core.views.api as api
 import karrio.server.openapi as openapi
 
@@ -49,7 +46,6 @@ class DataImport(api.BaseAPIView):
         operation_id=f"{ENDPOINT_ID}import_file",
         summary="Import data files",
         responses={
-            200: openapi.OpenApiTypes.OBJECT,
             202: serializers.BatchOperation(),
             400: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
@@ -58,10 +54,16 @@ class DataImport(api.BaseAPIView):
             'multipart/form-data': {
                 'type': 'object',
                 'properties': {
-                    'resource_type': {'type': 'string'},
-                    'data_template': {'type': 'string'},
-                    'dry_run': {'type': 'boolean'},
-                    'data_file': {'type': 'string', 'format': 'binary'},
+                    'resource_type': {
+                        'type': 'string',
+                    },
+                    'data_template': {
+                        'type': 'string',
+                    },
+                    'data_file': {
+                        'type': 'string',
+                        'format': 'binary'
+                    }
                 }
             }
         },
@@ -72,45 +74,10 @@ class DataImport(api.BaseAPIView):
         - trackers data
         - orders data
         - shipments data
-        - rate_sheet data (Excel/CSV)<br/><br/>
-        **For rate_sheet imports, pass dry_run=true to validate and preview a diff
-        without writing. For other resource types, a BatchOperation is returned.**
+        - billing data (soon)<br/><br/>
+        **This operation will return a batch operation that you can poll to follow
+        the import progression.**
         """
-        resource_type = request.data.get("resource_type", "")
-
-        # Rate sheet import is handled synchronously (data is small, no queue needed)
-        if resource_type == "rate_sheet":
-            data_file = request.data.get("data_file")
-            if not data_file:
-                return Response(
-                    {"errors": [{"message": "data_file is required"}]},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            dry_run = str(request.data.get("dry_run", "false")).lower() in ("true", "1", "yes")
-            rate_sheet_id = request.data.get("rate_sheet_id")
-            try:
-                result = batch_rate_sheets.process_rate_sheet_import(
-                    data_file=data_file,
-                    context=request,
-                    dry_run=dry_run,
-                    rate_sheet_id=rate_sheet_id,
-                )
-            except Exception as exc:
-                logging.exception("Error while processing rate sheet import")
-                return Response(
-                    {
-                        "errors": [
-                            {
-                                "message": "An error occurred while processing the rate sheet import."
-                            }
-                        ]
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if result.get("errors"):
-                return Response(result, status=status.HTTP_400_BAD_REQUEST)
-            return Response(result, status=status.HTTP_200_OK)
-
         operation = (
             ImportDataSerializer.map(data=request.data, context=request)
             .save()
@@ -170,41 +137,7 @@ class DataExport(api.BaseAPIView):
             """Generate a file to export."""
             query_params = request.GET
 
-            # Rate sheet export — dedicated xlsx handler
-            if resource_type == "rate_sheet":
-                from karrio.server.providers.models import RateSheet, SystemRateSheet
-                sheet_id = query_params.get("id")
-                if not sheet_id:
-                    return JsonResponse(
-                        {"errors": [{"message": "id query param is required for rate_sheet export"}]},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-                sheet = (
-                    RateSheet.access_by(request).filter(id=sheet_id).first()
-                    or RateSheet.access_by(request).filter(slug=sheet_id).first()
-                )
-                if sheet is None:
-                    # Try system rate sheet (admin access)
-                    sheet = (
-                        SystemRateSheet.objects.filter(id=sheet_id).first()
-                        or SystemRateSheet.objects.filter(slug=sheet_id).first()
-                    )
-                if sheet is None:
-                    return JsonResponse(
-                        {"errors": [{"message": f"Rate sheet '{sheet_id}' not found"}]},
-                        status=status.HTTP_404_NOT_FOUND,
-                    )
-                xlsx_bytes = rate_sheet_resource.export_rate_sheet_xlsx(sheet)
-                slug = getattr(sheet, "slug", sheet_id) or sheet_id
-                response = HttpResponse(
-                    xlsx_bytes,
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                )
-                response["Content-Disposition"] = f'attachment; filename="rate-sheet-{slug}.xlsx"'
-                response["X-Frame-Options"] = "ALLOWALL"
-                return response
-
-            # Standard tablib export
+            # Export the data
             dataset = resources.export(
                 resource_type, query_params, context=request
             )
@@ -230,6 +163,9 @@ class DataExport(api.BaseAPIView):
             filename = f"{resource_type}.{export_format}"
             response['Content-Disposition'] = f'attachment; filename="{filename}"'
             response['X-Frame-Options'] = 'ALLOWALL'
+
+            # Don't set Content-Length to avoid mismatch issues with proxies
+            # The response will use chunked transfer encoding instead
 
             return response
 

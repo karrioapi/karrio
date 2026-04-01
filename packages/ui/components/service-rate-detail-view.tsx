@@ -191,20 +191,15 @@ export function ServiceRateDetailView({
     [serviceRates]
   );
 
-  // Use service-filtered weight ranges if non-empty, else fall back to global.
-  // A service with no tiered rates of its own should still show the global
-  // weight-range rows (with empty cells) instead of a single flat-rate row.
-  const effectiveWeightRanges =
-    serviceFilteredWeightRanges && serviceFilteredWeightRanges.length > 0
-      ? serviceFilteredWeightRanges
-      : weightRanges;
+  // Use service-filtered weight ranges if provided, else global
+  const effectiveWeightRanges = serviceFilteredWeightRanges ?? weightRanges;
 
   const rows = useMemo(() => {
     if (effectiveWeightRanges.length === 0) {
       return [{ min_weight: 0, max_weight: 0 }];
     }
     return effectiveWeightRanges;
-  }, [effectiveWeightRanges, weightRanges]);
+  }, [effectiveWeightRanges]);
 
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -480,16 +475,6 @@ export function ServiceRateDetailView({
                         const key: RateCellKey = `${service.id}:${zone.id}:${wr.min_weight}:${wr.max_weight}`;
                         const cell = rateLookup.get(key);
                         const hasValue = cell?.rate != null && cell.rate > 0;
-                        // Check if this cell has a custom margin override
-                        const fullRate = serviceRates.find(
-                          (r) =>
-                            r.service_id === service.id &&
-                            r.zone_id === zone.id &&
-                            (r.min_weight ?? 0) === wr.min_weight &&
-                            (r.max_weight ?? 0) === wr.max_weight
-                        );
-                        const hasCustomMargin = fullRate?.meta?.plan_costs &&
-                          Object.keys(fullRate.meta.plan_costs).length > 0;
 
                         return (
                           <div
@@ -512,13 +497,6 @@ export function ServiceRateDetailView({
                                 }
                               }}
                             />
-                            {hasCustomMargin && (
-                              <div
-                                className="absolute top-1 right-1 h-2 w-2 rounded-full bg-amber-500 z-10"
-                                title="Custom margin override"
-                                data-testid="custom-margin-indicator"
-                              />
-                            )}
                             {hasValue && (
                               <div className="absolute inset-y-0 right-px my-auto h-4 flex items-center gap-0 opacity-0 group-hover/cell:opacity-100 transition-opacity z-10">
                                 {onEditRate && (

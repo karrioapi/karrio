@@ -298,11 +298,6 @@ def save_many_to_many_data(
     remove_if_missing: bool = False,
     **kwargs,
 ):
-    """Save many-to-many related data with bulk operations where possible.
-
-    For new items: validates via serializer, bulk_creates, then adds to M2M in one call.
-    For existing items: updates individually (serializer may have custom save logic).
-    """
     if not any((key in payload for key in [name])):
         return None
 
@@ -310,40 +305,30 @@ def save_many_to_many_data(
     collection = getattr(parent, name)
 
     if collection_data is None and any(collection.all()):
-        collection.all().delete()
-        return None
+        for item in collection.all():
+            item.delete()
 
     if remove_if_missing and collection.exists():
         collection.exclude(id__in=[item.get("id") for item in collection_data]).delete()
 
-    # Separate new items from updates
-    new_items_data = []
-    update_items_data = []
-
     for data in collection_data:
-        if "id" in data:
-            update_items_data.append(data)
+        item_instance = (
+            collection.filter(id=data.pop("id")).first() if "id" in data else None
+        )
+
+        if item_instance is None:
+            item = serializer.map(data=data, **kwargs).save().instance
+            getattr(parent, name).add(item)
         else:
-            new_items_data.append(data)
-
-    # Process updates (need serializer validation per item)
-    for data in update_items_data:
-        item_id = data.pop("id")
-        item_instance = collection.filter(id=item_id).first()
-        if item_instance is not None:
-            serializer.map(
-                data=data,
-                instance=item_instance,
-                **{**kwargs, "partial": True},
-            ).save()
-
-    # Create new items and batch-add to M2M (1 add call instead of N)
-    if new_items_data:
-        created_items = [
-            serializer.map(data=data, **kwargs).save().instance
-            for data in new_items_data
-        ]
-        collection.add(*created_items)
+            item = (
+                serializer.map(
+                    data=data,
+                    instance=item_instance,
+                    **{**kwargs, "partial": True},
+                )
+                .save()
+                .instance
+            )
 
 
 def save_one_to_one_data(
