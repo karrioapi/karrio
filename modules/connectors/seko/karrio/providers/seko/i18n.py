@@ -1,0 +1,53 @@
+"""Translation catalog for Seko service and option names."""
+
+from django.utils.translation import gettext_lazy as _
+
+SERVICE_NAME_TRANSLATIONS = {
+    "seko_ecommerce_standard_tracked": _("SEKO Ecommerce Standard Tracked"),
+    "seko_ecommerce_express_tracked": _("SEKO Ecommerce Express Tracked"),
+    "seko_domestic_express": _("SEKO Domestic Express"),
+    "seko_domestic_standard": _("SEKO Domestic Standard"),
+    "seko_domestic_large_parcel": _("SEKO Domestic Large Parcel"),
+}
+
+OPTION_NAME_TRANSLATIONS = {
+    "seko_carrier": _("SEKO Carrier"),
+    "seko_ship_type": _("SEKO Ship Type"),
+    "seko_package_id": _("SEKO Package ID"),
+    "seko_destination_id": _("SEKO Destination ID"),
+    "seko_product_category": _("SEKO Product Category"),
+    "origin_instructions": _("Origin Instructions"),
+    "destination_instructions": _("Destination Instructions"),
+    "seko_is_saturday_delivery": _("SEKO Is Saturday Delivery"),
+    "seko_is_signature_required": _("SEKO Is Signature Required"),
+    "seko_send_tracking_email": _("SEKO Send Tracking Email"),
+    "seko_amount_collected": _("SEKO Amount Collected"),
+    "seko_tax_collected": _("SEKO Tax Collected"),
+    "seko_cod_amount": _("SEKO COD Amount"),
+    "seko_reference_2": _("SEKO Reference 2"),
+    "seko_reference_3": _("SEKO Reference 3"),
+    "seko_invoice_data": _("SEKO Invoice Data"),
+    "seko_origin_id": _("SEKO Origin ID"),
+    "seko_print_to_printer": _("SEKO Print To Printer"),
+    "seko_cif_value": _("SEKO Cif Value"),
+    "seko_freight_value": _("SEKO Freight Value"),
+    "seko_send_label": _("SEKO Send Label"),
+    "seko_special_instructions": _("SEKO Special Instructions"),
+    "seko_insurance_value": _("SEKO Insurance Value"),
+    "seko_estimated_delivery_date": _("SEKO Estimated Delivery Date"),
+    "seko_dangerous_goods": _("SEKO Dangerous Goods"),
+    "seko_dg_additional_handling": _("SEKO Dg Additional Handling"),
+    "seko_dg_hazchem_code": _("SEKO Dg Hazchem Code"),
+    "seko_dg_radioactive": _("SEKO Dg Radioactive"),
+    "seko_dg_cargo_aircraft_only": _("SEKO Dg Cargo Aircraft Only"),
+    "seko_dg_limited_quantity": _("SEKO Dg Limited Quantity"),
+    "seko_dg_total_quantity": _("SEKO Dg Total Quantity"),
+    "seko_dg_total_kg": _("SEKO Dg Total Kg"),
+    "seko_dg_signoff_name": _("SEKO Dg Signoff Name"),
+    "seko_dg_signoff_role": _("SEKO Dg Signoff Role"),
+    "saturday_delivery": _("Saturday Delivery"),
+    "signature_required": _("Signature Required"),
+    "email_notification": _("Email Notification"),
+    "doc_files": _("Doc Files"),
+    "doc_references": _("Doc References"),
+}
