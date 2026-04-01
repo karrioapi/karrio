@@ -16,9 +16,9 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = decouple.config(
 TRACKER_BATCH_DELAY = decouple.config(
     "TRACKER_BATCH_DELAY", default=3, cast=int
 )  # flat seconds between tracking batches (per-carrier)
-TRACKER_MAX_ACTIVE_DAYS = decouple.config(
-    "TRACKER_MAX_ACTIVE_DAYS", default=90, cast=int
-)  # trackers older than this many days are retired from background polling
+# TRACKER_MAX_ACTIVE_DAYS is defined in constance.py (runtime-configurable via admin).
+# The tracking task reads it from constance at runtime, falling back to settings.
+# No need to duplicate here — constance.py is the canonical source.
 
 # Check if worker is running in detached mode (separate from API server)
 DETACHED_WORKER = decouple.config("DETACHED_WORKER", default=False, cast=bool)
