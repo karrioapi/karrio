@@ -18,28 +18,25 @@ def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None)
     @utils.tenant_aware
     def persist_records(**kwarg):
         actor = getattr(context, "user", None)
-        _records = tracer.records  # access once — avoid redundant futures.as_completed()
-        if len(_records) == 0 or getattr(actor, "id", None) is None:
+        if len(tracer.records) == 0 or getattr(actor, "id", None) is None:
             return
 
         try:
-            request_log_id = tracer.context.get("request_log_id")
-            if request_log_id is not None:
-                exists = lib.identity(
-                    models.TracingRecord.access_by(context)
-                    .filter(
-                        meta__request_log_id__isnull=False,
-                        meta__request_log_id=request_log_id,
-                    )
-                    .exists()
-                )
-
-                if exists:
-                    return
-
             records = []
-            for record in _records:
-                connection: dict = record.metadata.get("connection") or {}
+            exists = lib.identity(
+                models.TracingRecord.access_by(context)
+                .filter(
+                    meta__request_log_id__isnull=False,
+                    meta__request_log_id=tracer.context.get("request_log_id"),
+                )
+                .exists()
+            )
+
+            if exists:
+                return
+
+            for record in tracer.records:
+                connection: dict = record.metadata.get("connection")
 
                 records.append(
                     models.TracingRecord(
@@ -56,7 +53,7 @@ def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None)
                                 "carrier_account_id": connection.get("id"),
                                 "carrier_id": connection.get("carrier_id"),
                                 "carrier_name": connection.get("carrier_name"),
-                                "request_log_id": request_log_id,
+                                "request_log_id": tracer.context.get("request_log_id"),
                             }
                         ),
                     )
@@ -111,3 +108,37 @@ def set_tracing_context(**kwargs):
 
     request = middleware.SessionContext.get_current_request()
     request.tracer.add_context(kwargs)
+
+    _propagate_to_sentry(kwargs)
+
+
+_SENTRY_TAG_KEYS = {"shipment_id", "tracking_number", "object_id"}
+
+
+def _propagate_to_sentry(context: dict):
+    """Propagate shipment-related context to Sentry tags and structured context."""
+    try:
+        import sentry_sdk
+    except ImportError:
+        return
+
+    try:
+        for key in _SENTRY_TAG_KEYS:
+            value = context.get(key)
+            if value:
+                sentry_sdk.set_tag(key, value)
+
+        shipment_id = context.get("shipment_id")
+        tracking_number = context.get("tracking_number")
+        if shipment_id or tracking_number:
+            sentry_sdk.set_context(
+                "shipment",
+                lib.to_dict(
+                    {
+                        "shipment_id": shipment_id,
+                        "tracking_number": tracking_number,
+                    }
+                ),
+            )
+    except Exception:
+        pass

@@ -38,12 +38,14 @@ import { SurchargeEditorDialog } from "@karrio/ui/components/surcharge-editor-di
 import { MarkupEditorDialog } from "@karrio/ui/components/markup-editor-dialog";
 import { ServiceRateEditorDialog } from "@karrio/ui/components/service-rate-editor-dialog";
 import { RateSheetCsvPreview, type MarkupPreviewItem } from "@karrio/ui/components/rate-sheet-csv-preview";
+import { RateSheetImportPanel, type DryRunResult } from "@karrio/ui/components/rate-sheet-import-panel";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@karrio/ui/components/ui/popover";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useSyncedSession } from "@karrio/hooks/session";
 import type { MarkupType } from "@karrio/hooks/admin-markups";
 import { useToast } from "@karrio/ui/hooks/use-toast";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -59,11 +61,23 @@ import {
   HamburgerMenuIcon,
   TableIcon,
 } from "@radix-ui/react-icons";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Upload, Download } from "lucide-react";
 
 // Generate a unique ID for new entities
 const generateId = (prefix: string = "temp") =>
   `${prefix}-${crypto.randomUUID()}`;
+
+// Detect weight-range-like strings (e.g. "750g-1kg", "0-2kg", "10-20 kg")
+// used as service names by some carriers (e.g. Spring GDS).
+const WEIGHT_RANGE_PATTERN = /^\d+[\.,]?\d*\s*[gk]?g?\s*[-–]\s*\d+[\.,]?\d*\s*[gk]?g?\s*$/i;
+
+const getServiceDisplayName = (svc: ServiceLevelWithZones): string => {
+  const name = svc.service_name || "";
+  if (WEIGHT_RANGE_PATTERN.test(name.trim())) {
+    return svc.carrier_service_code || svc.service_code || name || "Unnamed";
+  }
+  return name || svc.service_code || "Unnamed";
+};
 
 // Convert features to object format for GraphQL mutation
 // Handles both array format ['tracked', 'b2c'] and object format { tracked: true, b2c: true, first_mile: "drop_off" }
@@ -295,6 +309,10 @@ export const RateSheetEditor = ({
   // CSV preview state
   const [csvPreviewOpen, setCsvPreviewOpen] = useState(false);
 
+  // Editor mode: edit | import | export
+  const [editorMode, setEditorMode] = useState<"edit" | "import" | "export">("edit");
+  const [isImportConfirming, setIsImportConfirming] = useState(false);
+
   // Service add popover state
   const [serviceAddPopoverOpen, setServiceAddPopoverOpen] = useState(false);
 
@@ -317,7 +335,8 @@ export const RateSheetEditor = ({
   const [rateSheetPricingConfig, setRateSheetPricingConfig] = useState<Record<string, any>>({});
 
   // Hooks
-  const { references, metadata } = useAPIMetadata();
+  const { references, metadata, getHost } = useAPIMetadata();
+  const { query: { data: session } } = useSyncedSession();
   const { toast } = useToast();
   const { query } = useRateSheet({ id: isEditMode ? rateSheetId : undefined });
   const mutations = useRateSheetMutation();
@@ -401,10 +420,26 @@ export const RateSheetEditor = ({
     }
   }, [services]);
 
-  // Clear optimistic overlay when server data refreshes (after mutation + refetch)
+  // Clear optimistic overlay when server data refreshes — but only if all
+  // overlay edits have been flushed to the server.  This prevents a race
+  // where mutation A completes and triggers a refetch while mutation B is
+  // still in-flight, which would discard B's optimistic value.
   useEffect(() => {
     if (editModeRatesOverride !== null) {
-      setEditModeRatesOverride(null);
+      const serverRates = (((existingRateSheet as any)?.service_rates ?? []) as ServiceRate[]);
+      const hasUnflushedEdits = editModeRatesOverride.some((overlayRate) => {
+        const serverRate = serverRates.find(
+          (sr) =>
+            sr.service_id === overlayRate.service_id &&
+            sr.zone_id === overlayRate.zone_id &&
+            (sr.min_weight ?? 0) === (overlayRate.min_weight ?? 0) &&
+            (sr.max_weight ?? 0) === (overlayRate.max_weight ?? 0)
+        );
+        return !serverRate || serverRate.rate !== overlayRate.rate;
+      });
+      if (!hasUnflushedEdits) {
+        setEditModeRatesOverride(null);
+      }
     }
   }, [(existingRateSheet as any)?.service_rates]);
 
@@ -1443,6 +1478,40 @@ export const RateSheetEditor = ({
     [serviceRatesData]
   );
 
+  // Merge serviceRatesData with placeholder entries for edit-mode pending ranges
+  // so the rateLookup in ServiceRateDetailView preserves existing rates when new rows are added
+  const mergedServiceRates: ServiceRate[] = useMemo(() => {
+    if (!isEditMode || Object.keys(editModePendingRanges).length === 0) {
+      return serviceRatesData;
+    }
+    const existingKeys = new Set(
+      serviceRatesData.map(
+        (r) => `${r.service_id}:${r.zone_id}:${r.min_weight ?? 0}:${r.max_weight ?? 0}`
+      )
+    );
+    const placeholders: ServiceRate[] = [];
+    for (const [serviceId, ranges] of Object.entries(editModePendingRanges)) {
+      const svc = services.find((s) => s.id === serviceId);
+      if (!svc) continue;
+      const zoneIds = svc.zone_ids || [];
+      for (const wr of ranges) {
+        for (const zoneId of zoneIds) {
+          const key = `${serviceId}:${zoneId}:${wr.min_weight}:${wr.max_weight}`;
+          if (!existingKeys.has(key)) {
+            placeholders.push({
+              service_id: serviceId,
+              zone_id: zoneId,
+              rate: 0,
+              min_weight: wr.min_weight,
+              max_weight: wr.max_weight,
+            } as ServiceRate);
+          }
+        }
+      }
+    }
+    return placeholders.length > 0 ? [...serviceRatesData, ...placeholders] : serviceRatesData;
+  }, [serviceRatesData, editModePendingRanges, isEditMode, services]);
+
   const weightRangePresets = useMemo(() => {
     if (!carrierName || !references?.ratesheets?.[carrierName]?.service_rates) return [];
     const rates = references.ratesheets[carrierName].service_rates as any[];
@@ -1866,6 +1935,93 @@ export const RateSheetEditor = ({
     };
   };
 
+  // ─── Import/Export helpers ───────────────────────────────────────────────
+
+  const getApiBase = () => {
+    try { return ((getHost as any)?.() || "").replace(/\/+$/, ""); } catch { return ""; }
+  };
+
+  const getAuthHeaders = (): Record<string, string> => {
+    const token = (session as any)?.accessToken;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  const handleDryRun = async (file: File) => {
+    const base = getApiBase();
+    const url = `${base}/v1/batches/data/import`;
+    const form = new FormData();
+    form.append("resource_type", "rate_sheet");
+    form.append("dry_run", "true");
+    form.append("data_file", file);
+    if (isEditMode && rateSheetId && rateSheetId !== "new") {
+      form.append("rate_sheet_id", rateSheetId);
+    }
+    const res = await fetch(url, { method: "POST", body: form, credentials: "include", headers: getAuthHeaders() });
+    const json = await res.json();
+    if (!res.ok && !json.diff) {
+      throw new Error(
+        json.errors?.[0]?.message || json.detail || "Import validation failed"
+      );
+    }
+    return json;
+  };
+
+  const handleImportConfirm = async (file: File) => {
+    setIsImportConfirming(true);
+    try {
+      const base = getApiBase();
+      const url = `${base}/v1/batches/data/import`;
+      const form = new FormData();
+      form.append("resource_type", "rate_sheet");
+      form.append("data_file", file);
+      if (isEditMode && rateSheetId && rateSheetId !== "new") {
+        form.append("rate_sheet_id", rateSheetId);
+      }
+      const res = await fetch(url, { method: "POST", body: form, credentials: "include", headers: getAuthHeaders() });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.errors?.[0]?.message || json.detail || "Import failed");
+      }
+      toast({ title: "Rate sheet imported successfully" });
+      setEditorMode("edit");
+      // Trigger refetch
+      query?.refetch?.();
+    } catch (err: any) {
+      toast({ title: "Import failed", description: err?.message, variant: "destructive" });
+    } finally {
+      setIsImportConfirming(false);
+    }
+  };
+
+  const handleExport = async () => {
+    if (!isEditMode || !rateSheetId || rateSheetId === "new") {
+      toast({ title: "Save the rate sheet first before exporting", variant: "destructive" });
+      return;
+    }
+    const base = getApiBase();
+    const url = `${base}/v1/batches/data/export/rate_sheet.xlsx?id=${encodeURIComponent(rateSheetId)}`;
+    try {
+      const res = await fetch(url, { credentials: "include", headers: getAuthHeaders() });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.errors?.[0]?.message || "Export failed");
+      }
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      const slug = (existingRateSheet as any)?.slug || rateSheetId;
+      a.download = `rate-sheet-${slug}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+      toast({ title: "Export downloaded" });
+    } catch (err: any) {
+      toast({ title: "Export failed", description: err?.message, variant: "destructive" });
+    }
+  };
+
   const handleSave = async () => {
     const validation = validateForm();
 
@@ -1978,6 +2134,7 @@ export const RateSheetEditor = ({
         max_weight?: number | null;
         transit_days?: number | null;
         transit_time?: number | null;
+        meta?: Record<string, any>;
       }> = [];
 
       const surchargeIdMap = new Map<string, string>();
@@ -1998,6 +2155,38 @@ export const RateSheetEditor = ({
 
       if (isEditMode) {
         // Full update for edit mode
+        // Build a map of service IDs for temp→mutation remapping
+        const editServiceIdRemap = new Map<string, string>();
+        services.forEach((service, i) => {
+          const serviceId = service.id?.startsWith("temp-")
+            ? `temp-${i}`
+            : service.id;
+          editServiceIdRemap.set(service.id, serviceId);
+        });
+
+        // Build service_rates from serviceRatesData (preserves weight tiers)
+        // rather than from service.zones (which collapses to flat rates)
+        for (const sr of serviceRatesData) {
+          const mappedServiceId = editServiceIdRemap.get(sr.service_id);
+          if (!mappedServiceId) continue;
+          // Remap zone ID via label lookup
+          const zone = sharedZones.find((z) => z.id === sr.zone_id);
+          const zoneId = zone
+            ? zoneLabelToId.get(zone.label || "") || sr.zone_id
+            : sr.zone_id;
+          serviceRates.push({
+            service_id: mappedServiceId,
+            zone_id: zoneId,
+            rate: sr.rate ?? 0,
+            cost: sr.cost ?? null,
+            min_weight: sr.min_weight ?? null,
+            max_weight: sr.max_weight ?? null,
+            transit_days: sr.transit_days ?? null,
+            transit_time: sr.transit_time ?? null,
+            meta: sr.meta || undefined,
+          });
+        }
+
         const updateServices = services.map((service, serviceIndex) => {
           const serviceId = service.id?.startsWith("temp-")
             ? `temp-${serviceIndex}`
@@ -2005,22 +2194,6 @@ export const RateSheetEditor = ({
           const zoneIds = (service.zones || [])
             .map((z) => zoneLabelToId.get(z.label || ""))
             .filter(Boolean) as string[];
-
-          (service.zones || []).forEach((zone) => {
-            const zoneId = zoneLabelToId.get(zone.label || "");
-            if (zoneId) {
-              serviceRates.push({
-                service_id: serviceId,
-                zone_id: zoneId,
-                rate: zone.rate || 0,
-                cost: zone.cost ?? null,
-                min_weight: zone.min_weight ?? null,
-                max_weight: zone.max_weight ?? null,
-                transit_days: zone.transit_days ?? null,
-                transit_time: zone.transit_time ?? null,
-              });
-            }
-          });
 
           const mappedSurchargeIds = (service.surcharge_ids || [])
             .map((id) => surchargeIdMap.get(id) || id)
@@ -2193,9 +2366,37 @@ export const RateSheetEditor = ({
                     : "Create Rate Sheet"}
               </SheetTitle>
               <div className="flex items-center gap-2">
+                {/* Edit / Import / Export mode toggle */}
+                <div className="flex items-center rounded-md border border-border overflow-hidden text-xs">
+                  {(["edit", "import", "export"] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      onClick={() => {
+                        if (mode === "export") { handleExport(); return; }
+                        setEditorMode(mode);
+                      }}
+                      className={cn(
+                        "px-2.5 py-1 capitalize transition-colors border-r border-border last:border-r-0",
+                        editorMode === mode && mode !== "export"
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                      )}
+                      title={
+                        mode === "edit" ? "Edit rate grid" :
+                        mode === "import" ? "Import from Excel/CSV" :
+                        "Export to Excel"
+                      }
+                      disabled={isInitialLoading}
+                    >
+                      {mode === "import" && <Upload className="inline h-3 w-3 mr-1" />}
+                      {mode === "export" && <Download className="inline h-3 w-3 mr-1" />}
+                      {mode}
+                    </button>
+                  ))}
+                </div>
                 <button
                   onClick={handleSave}
-                  disabled={isSaving || isInitialLoading}
+                  disabled={isSaving || isInitialLoading || editorMode !== "edit"}
                   className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:pointer-events-none"
                   aria-label="Save"
                   title="Save"
@@ -2230,6 +2431,16 @@ export const RateSheetEditor = ({
             <div className="flex h-[calc(100vh-73px)] flex-col items-center justify-center gap-3 text-muted-foreground">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm">Loading rate sheet...</p>
+            </div>
+          ) : editorMode === "import" ? (
+            <div className="h-[calc(100vh-73px)] overflow-y-auto p-4">
+              <RateSheetImportPanel
+                rateSheetId={isEditMode ? rateSheetId : undefined}
+                onDryRun={handleDryRun}
+                onConfirm={handleImportConfirm}
+                onCancel={() => setEditorMode("edit")}
+                isConfirming={isImportConfirming}
+              />
             </div>
           ) : (
             <div className="flex h-[calc(100vh-73px)] overflow-hidden relative">
@@ -2493,7 +2704,7 @@ export const RateSheetEditor = ({
                                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                   )}
                                 >
-                                  {svc.service_name || svc.service_code || "Unnamed"}
+                                  {getServiceDisplayName(svc)}
                                 </button>
                                 {isActive && (
                                   <div className="flex items-center gap-0.5 ml-0.5">
@@ -2563,7 +2774,7 @@ export const RateSheetEditor = ({
                               <ServiceRateDetailView
                                 service={svc}
                                 sharedZones={sharedZones}
-                                serviceRates={serviceRatesData}
+                                serviceRates={mergedServiceRates}
                                 weightRanges={weightRanges}
                                 weightUnit={selectedWeightUnit}
                                 onCellEdit={handleWeightRateCellEdit}
@@ -2854,7 +3065,7 @@ export const RateSheetEditor = ({
         originCountries={originCountries}
         services={services}
         sharedZones={sharedZones}
-        serviceRates={serviceRatesData}
+        serviceRates={mergedServiceRates}
         weightRanges={weightRanges}
         surcharges={surcharges}
         weightUnit={selectedWeightUnit}

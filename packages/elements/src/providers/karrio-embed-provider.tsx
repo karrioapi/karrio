@@ -32,9 +32,9 @@ export function KarrioEmbedProvider({
   const headers = useMemo(
     () => ({
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: admin ? `Bearer ${token}` : `Token ${token}`,
     }),
-    [token],
+    [token, admin],
   );
 
   const graphqlEndpoint = admin ? `${host}/admin/graphql` : `${host}/graphql`;

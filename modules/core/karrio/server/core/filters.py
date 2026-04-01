@@ -42,6 +42,7 @@ class UserFilter(filters.FilterSet):
 
 class CarrierFilters(filters.FilterSet):
     carrier_name = filters.CharFilter(
+        field_name="carrier_code",
         help_text=f"""
         carrier_name used to fulfill the shipment
         Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
@@ -117,6 +118,7 @@ class CarrierFilters(filters.FilterSet):
 
 class CarrierConnectionFilter(filters.FilterSet):
     carrier_name = filters.CharFilter(
+        field_name="carrier_code",
         help_text=f"""
         carrier_name used to fulfill the shipment
         Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
