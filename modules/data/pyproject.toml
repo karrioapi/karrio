@@ -20,6 +20,7 @@ dependencies = [
     "karrio_server_events",
     "karrio_server_manager",
     "django-import-export",
+    "openpyxl",
 ]
 
 [project.urls]

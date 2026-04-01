@@ -3,21 +3,60 @@
 # Activate python env
 source "bin/activate-env" >/dev/null 2>&1
 
+# Function to convert editable file:// installs to named package format
+# uv pip freeze outputs: -e file:///absolute/path/to/module
+# We convert to: package_name @ file://${PWD}/relative/path
+convert_editable_to_named() {
+    local output_file=$1
+    local repo_root=$(pwd)
+    local tmp=$(mktemp)
+
+    while IFS= read -r line; do
+        if [[ $line == -e\ file://* ]]; then
+            # Extract absolute path from the file:// URI
+            local abs_path="${line#-e file://}"
+            # Get relative path from repo root
+            local rel_path="${abs_path#${repo_root}/}"
+            # Read package name from pyproject.toml
+            local pkg_name=""
+            if [[ -f "${abs_path}/pyproject.toml" ]]; then
+                pkg_name=$(grep -m1 '^name' "${abs_path}/pyproject.toml" | sed 's/.*= *"\([^"]*\)".*/\1/' | tr '-' '_')
+            fi
+            if [[ -n "$pkg_name" ]]; then
+                echo "${pkg_name} @ file://\${PWD}/${rel_path}" >>"$tmp"
+            else
+                echo "$line" >>"$tmp"
+            fi
+        else
+            echo "$line" >>"$tmp"
+        fi
+    done <"$output_file"
+
+    mv "$tmp" "$output_file"
+}
+
 # Function to generate requirements file
 generate_requirements() {
     local input_file=$1
     local output_file=$2
 
     echo "Generating ${output_file}..."
-    pip install -r "$input_file"
-
-    echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(pip freeze)" >"$output_file"
+    if command -v uv >/dev/null 2>&1; then
+        uv pip install -r "$input_file"
+        echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(uv pip freeze)" >"$output_file"
+    else
+        pip install -r "$input_file"
+        echo -e "--extra-index-url https://karrio.gateway.scarf.sh/simple/\n$(pip freeze)" >"$output_file"
+    fi
 
     # Replace git+ssh:// with git+https://
     sed -i '' -e 's/git+ssh:\/\/git@/git+https:\/\//g' "$output_file"
 
     # Fix community plugin paths - remove the ../../ prefix
     sed -i '' -e 's/subdirectory=\.\.\/\.\.\/community\/plugins\//subdirectory=community\/plugins\//g' "$output_file"
+
+    # Convert editable file:// installs to named package format
+    convert_editable_to_named "$output_file"
 }
 
 # Start with clean environment

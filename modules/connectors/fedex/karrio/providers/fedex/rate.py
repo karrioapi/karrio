@@ -262,14 +262,16 @@ def rate_request(
                                 option.code
                                 for option in package_options(package.options)
                             ],
-                            signatureOptionType=[
-                                lib.identity(
-                                    provider_units.SignatureOptionType.map(
-                                        package.options.fedex_signature_option.state
-                                    ).value
-                                    or "SERVICE_DEFAULT"
+                            signatureOptionType=lib.identity(
+                                provider_units.SignatureOptionType.map(
+                                    package.options.fedex_signature_option.state
+                                ).value
+                                or (
+                                    "DIRECT"
+                                    if package.options.fedex_signature_option.state
+                                    else None
                                 )
-                            ],
+                            ),
                             alcoholDetail=None,
                             dangerousGoodsDetail=None,
                             packageCODDetail=None,
@@ -278,6 +280,7 @@ def rate_request(
                             dryIceWeight=None,
                         )
                         if any(package_options(package.options))
+                        or package.options.fedex_signature_option.state
                         else None
                     ),
                 )

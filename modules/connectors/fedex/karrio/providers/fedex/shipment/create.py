@@ -475,8 +475,8 @@ def shipment_request(
                     ],
                     personalMessage=None,
                 )
-                if options.email_notification.state
-                or any([options.email_notification_to.state, recipient.email])
+                if (payload.options or {}).get("email_notification") is True
+                or options.email_notification_to.state
                 else None
             ),
             expressFreightDetail=None,
@@ -766,7 +766,11 @@ def shipment_request(
                             provider_units.SignatureOptionType.map(
                                 package.options.fedex_signature_option.state
                             ).value
-                            or "SERVICE_DEFAULT"
+                            or (
+                                "DIRECT"
+                                if package.options.fedex_signature_option.state
+                                else None
+                            )
                         ),
                         signatureOptionDetail=None,
                         alcoholDetail=None,

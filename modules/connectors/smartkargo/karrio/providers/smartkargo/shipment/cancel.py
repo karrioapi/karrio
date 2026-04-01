@@ -88,9 +88,10 @@ def shipment_cancel_request(
     tracking_numbers = list(set(options.get("tracking_numbers") or []))
 
     # Fallback for single-piece shipments: reconstruct from meta prefix + air_waybill
+    # Meta keys are stored with smartkargo_ prefix (e.g. smartkargo_prefix, smartkargo_air_waybill)
     if not tracking_numbers:
-        prefix = options.get("prefix")
-        air_waybill = options.get("air_waybill")
+        prefix = options.get("prefix") or options.get("smartkargo_prefix")
+        air_waybill = options.get("air_waybill") or options.get("smartkargo_air_waybill")
         if prefix and air_waybill:
             tracking_numbers = [f"{prefix}{air_waybill}"]
 
@@ -102,8 +103,8 @@ def shipment_cancel_request(
     request = [
         {
             k: v for k, v in dict(
-                prefix=tracking_number[:3] if len(tracking_number) >= 11 else options.get("prefix"),
-                airWaybill=tracking_number[3:] if len(tracking_number) >= 11 else options.get("air_waybill"),
+                prefix=tracking_number[:3] if len(tracking_number) >= 11 else (options.get("prefix") or options.get("smartkargo_prefix")),
+                airWaybill=tracking_number[3:] if len(tracking_number) >= 11 else (options.get("air_waybill") or options.get("smartkargo_air_waybill")),
                 userName=user_name,
                 reason=reason,
             ).items() if v is not None

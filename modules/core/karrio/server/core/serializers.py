@@ -774,6 +774,11 @@ class RateRequest(validators.OptionDefaultSerializer):
         allow_null=True,
         help_text="The billing address for this shipment.",
     )
+    is_return = serializers.BooleanField(
+        required=False,
+        default=False,
+        help_text="Indicates whether this is a return shipment rate request.",
+    )
     carrier_ids = serializers.StringListField(
         required=False,
         allow_null=True,

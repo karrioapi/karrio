@@ -353,6 +353,7 @@ class ShippingOption(lib.Enum):
     doc_references = lib.OptionEnum("doc_references", lib.to_dict, meta=dict(category="PAPERLESS"))
     shipper_instructions = lib.OptionEnum("shipper_instructions", meta=dict(category="INSTRUCTIONS"))
     recipient_instructions = lib.OptionEnum("recipient_instructions", meta=dict(category="INSTRUCTIONS"))
+    signature_confirmation = fedex_signature_option
     # fmt: on
 
 
@@ -373,7 +374,6 @@ PACKAGE_OPTIONS = [
     "PRIORITY_ALERT_PLUS",
     "NON_STANDARD_CONTAINER",
     "PIECE_COUNT_VERIFICATION",
-    "SIGNATURE_OPTION",
     "EVENING",
     "DATE_CERTAIN",
     "SATURDAY_PICKUP",

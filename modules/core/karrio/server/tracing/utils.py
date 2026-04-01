@@ -108,3 +108,37 @@ def set_tracing_context(**kwargs):
 
     request = middleware.SessionContext.get_current_request()
     request.tracer.add_context(kwargs)
+
+    _propagate_to_sentry(kwargs)
+
+
+_SENTRY_TAG_KEYS = {"shipment_id", "tracking_number", "object_id"}
+
+
+def _propagate_to_sentry(context: dict):
+    """Propagate shipment-related context to Sentry tags and structured context."""
+    try:
+        import sentry_sdk
+    except ImportError:
+        return
+
+    try:
+        for key in _SENTRY_TAG_KEYS:
+            value = context.get(key)
+            if value:
+                sentry_sdk.set_tag(key, value)
+
+        shipment_id = context.get("shipment_id")
+        tracking_number = context.get("tracking_number")
+        if shipment_id or tracking_number:
+            sentry_sdk.set_context(
+                "shipment",
+                lib.to_dict(
+                    {
+                        "shipment_id": shipment_id,
+                        "tracking_number": tracking_number,
+                    }
+                ),
+            )
+    except Exception:
+        pass

@@ -1,3 +1,98 @@
+# Karrio 2026.1.27
+
+## Changes
+
+### Performance
+- perf: eliminate N+1 queries in tenant middleware, rate sheets, and constance settings
+
+### Chores
+- chore(deps): bump next from 16.1.5 to 16.1.7 in /apps/web
+- chore(deps): bump next from 16.1.5 to 16.1.7 in /packages/core
+
+---
+
+# Karrio 2026.1.26
+
+## Changes
+
+### Fix
+
+- fix(smartkargo): handle plain text error responses from API
+- fix(smartkargo): fix trace persistence and shipment cancellation
+- fix(dashboard): show request_id in API logs and enable text selection
+
+---
+
+# Karrio 2026.1.25
+
+## Changes
+
+### Feat
+
+- feat(dev): add automated release script
+
+### Fix
+
+- fix(smartkargo): trim text fields to SmartKargo API max lengths (#1037)
+- fix(smartkargo): use production API URL for live mode
+- fix(build): convert absolute paths in frozen requirements to portable format (#1036)
+
+---
+
+# Karrio 2026.1.24
+
+## Changes
+
+### Fix
+
+- fix(fedex): include signature option in rating request (#1034)
+- fix(dev): add --seed to uv venv for pip compatibility; use uv in version freeze
+- fix(dev): combine parallel test batches and auto-detect CPU cores in run-sdk-tests
+
+---
+
+# Karrio 2026.1.23
+
+## Changes
+
+### Fix
+
+- fix(smartkargo): test/live mode API URLs
+
+### Chores
+
+- chore(dev): use uv for faster local installs + Codacy coverage reporting in CI (#1032)
+
+---
+
+# Karrio 2026.1.22
+
+## Changes
+
+### Feat
+
+- feat(sdk): add is_return field to RateRequest model and serializer (#1027)
+- feat(tracking): retire aged trackers (#1023)
+- feat(return): return shipments support (#1016)
+
+### Fix
+
+- fix(fedex): signature and email notification (#1029)
+- fix(sdk): redact API key headers (#1023)
+- fix(smartkargo): ensure trace_as records for all proxy ops (#1019)
+- fix(migration): remove orgs dependency and preserve system rate sheet links
+- fix(migration): remove nonexistent orgs.0030 dependency from migration 0106
+
+### Test
+
+- test(events): assert webhook payload structure per event type (#1017)
+
+### Perf
+
+- perf(tests+ci): test suite speed improvements and CI optimisation (#1015)
+
+---
+
 # Karrio 2026.1.21
 
 ## Changes
@@ -3477,4 +3572,3 @@ danh91.docker.scarf.sh/purplship/server:2022.1.4
 -   Prevent confusing Purolator exception when address properties are required and not defined
 -   Fix invalid `CM` -> `IN` conversion
 -   Consolidated `Purolator` shipment cancellation request"
-

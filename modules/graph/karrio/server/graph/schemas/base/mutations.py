@@ -1498,11 +1498,26 @@ class SystemCarrierMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.SystemCarrierMutationInput
     ) -> "SystemCarrierMutation":
+        import datetime
         from karrio.server.providers.serializers import BrokeredConnectionModelSerializer
 
         pk = input.get("id")
+        tc_accepted = input.get("tc_accepted")
         context = info.context.request
         system_connection = providers.SystemConnection.objects.get(pk=pk)
+
+        # Validate T&C acceptance when enabling a carrier with central rates
+        is_enabling = input.get("enable") is True
+        tc_text = (system_connection.metadata or {}).get("terms_and_conditions", "")
+        rate_sheet = getattr(system_connection, "rate_sheet", None)
+        has_central_rates = bool(
+            rate_sheet and getattr(rate_sheet, "service_rates", None)
+        )
+
+        if is_enabling and has_central_rates and tc_text.strip() and not tc_accepted:
+            raise exceptions.ValidationError(
+                {"tc_accepted": "You must accept the terms and conditions to enable this carrier."}
+            )
 
         # Build serializer data from input
         # Map 'config' to 'config_overrides' and 'enable' to 'is_enabled'
@@ -1524,6 +1539,21 @@ class SystemCarrierMutation(utils.BaseMutation):
             .save()
             .instance
         )
+
+        # Log T&C acceptance in BrokeredConnection metadata
+        if tc_accepted and tc_text.strip():
+            brokered_metadata = brokered.metadata or {}
+            brokered_metadata.update({
+                "tc_accepted": True,
+                "tc_accepted_at": datetime.datetime.now(
+                    datetime.timezone.utc
+                ).isoformat(),
+                "tc_accepted_by": getattr(
+                    context.user, "email", str(context.user)
+                ),
+            })
+            brokered.metadata = brokered_metadata
+            brokered.save(update_fields=["metadata"])
 
         return SystemCarrierMutation(
             carrier=system_connection
