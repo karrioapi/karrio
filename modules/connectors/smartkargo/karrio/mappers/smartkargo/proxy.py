@@ -150,7 +150,7 @@ class Proxy(proxy.Proxy):
         tracking_requests = request.serialize()
         site_id = self.settings.connection_config.site_id.state
         partner_tracking_url = self.settings.connection_config.partner_tracking_url.state
-        partner_tracking_code = self.settings.connection_config.partner_tracking_code.state
+        partner_tracking_api_code = self.settings.connection_config.partner_tracking_api_code.state
         _trace = self.trace_as("json")
 
         if partner_tracking_url:
@@ -163,7 +163,7 @@ class Proxy(proxy.Proxy):
                         method="GET",
                         headers={
                             "Content-Type": "application/json",
-                            "code": partner_tracking_code or self.settings.api_key,
+                            "code": partner_tracking_api_code or self.settings.api_key,
                         },
                         on_error=provider_utils.parse_http_error,
                     ),

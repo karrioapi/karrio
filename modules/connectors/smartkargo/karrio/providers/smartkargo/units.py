@@ -124,4 +124,4 @@ class ConnectionConfig(lib.Enum):
     currency = lib.OptionEnum("currency", str)
     shipping_services = lib.OptionEnum("shipping_services", list)
     partner_tracking_url = lib.OptionEnum("partner_tracking_url", str)
-    partner_tracking_code = lib.OptionEnum("partner_tracking_code", str)
+    partner_tracking_api_code = lib.OptionEnum("partner_tracking_api_code", str)
