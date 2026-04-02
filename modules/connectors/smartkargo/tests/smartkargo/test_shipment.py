@@ -399,12 +399,5 @@ ParsedRejectedShipmentResponse = [
             },
             "message": "171 The requested destination ZIP code is currently not serviceable",
         },
-        {
-            "carrier_id": "smartkargo",
-            "carrier_name": "smartkargo",
-            "code": "ERROR",
-            "details": {},
-            "message": "An unknown error occurred",
-        },
     ],
 ]
