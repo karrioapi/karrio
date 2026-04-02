@@ -82,6 +82,17 @@ class TestSmartKargoShipment(unittest.TestCase):
                 ParsedErrorResponse,
             )
 
+    def test_parse_rejected_shipment_response(self):
+        with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
+            mock.return_value = RejectedShipmentResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedRejectedShipmentResponse,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -345,6 +356,55 @@ ParsedErrorResponse = [
             "code": "INVALID_REQUEST",
             "details": {},
             "message": "Invalid shipment request",
+        },
+    ],
+]
+
+RejectedShipmentResponse = """[{
+  "exchangeId": "test-aaaa-bbbb-cccc-dddddddddddd",
+  "fileIdentifier": null,
+  "siteId": "TEST",
+  "inputType": "StandardJson",
+  "status": "Rejected",
+  "valid": "No",
+  "createdOn": "2025-01-15T10:30:00.0000000",
+  "shipments": [
+    {
+      "issueDate": "2025-01-15T10:30:00",
+      "siteId": "TEST",
+      "headerReference": "#ORDER-TEST-001",
+      "packageReference": "TEST-PKG-001",
+      "status": "Rejected",
+      "validations": [
+        {
+          "message": "171 The requested destination ZIP code is currently not serviceable"
+        }
+      ]
+    }
+  ],
+  "validations": []
+}]"""
+
+ParsedRejectedShipmentResponse = [
+    None,
+    [
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "code": "VALIDATION_ERROR",
+            "details": {
+                "header_reference": "#ORDER-TEST-001",
+                "package_reference": "TEST-PKG-001",
+                "shipment_status": "REJECTED",
+            },
+            "message": "171 The requested destination ZIP code is currently not serviceable",
+        },
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "code": "ERROR",
+            "details": {},
+            "message": "An unknown error occurred",
         },
     ],
 ]

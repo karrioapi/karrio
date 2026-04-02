@@ -80,6 +80,26 @@ def parse_error_response(
                     )
                 )
 
+        # Extract nested shipment validation errors
+        for shipment in (res.get('shipments') or []):
+            shipment_status = (shipment.get('status') or '').upper()
+            for validation in (shipment.get('validations') or []):
+                if isinstance(validation, dict):
+                    errors.append(
+                        models.Message(
+                            carrier_id=settings.carrier_id,
+                            carrier_name=settings.carrier_name,
+                            code=validation.get('code', 'VALIDATION_ERROR'),
+                            message=validation.get('message', 'Unknown validation error'),
+                            details=lib.to_dict({
+                                'package_reference': shipment.get('packageReference'),
+                                'header_reference': shipment.get('headerReference'),
+                                'shipment_status': shipment_status or None,
+                                **kwargs,
+                            }),
+                        )
+                    )
+
         # Extract general error details
         details = res.get("details")
         if details and status.upper() in ["ERROR", "FAILED", "REJECTED"]:
