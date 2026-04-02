@@ -148,20 +148,29 @@ class Proxy(proxy.Proxy):
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         tracking_requests = request.serialize()
-        site_id = self.settings.connection_config.site_id.state
         _trace = self.trace_as("json")
+
+        # Resolve tracking endpoint: partner URL takes precedence when configured
+        _partner_url = self.settings.connection_config.partner_tracking_url.state
+        _base_url = f"{_partner_url}/api" if _partner_url else self.settings.server_url
+        _code = (
+            self.settings.connection_config.partner_tracking_api_code.state
+            if _partner_url
+            else self.settings.api_key
+        ) or self.settings.api_key
+        _site_id = self.settings.connection_config.site_id.state
 
         responses = lib.run_asynchronously(
             lambda payload: (
                 payload["tracking_number"],
                 lib.request(
-                    url=f"{self.settings.server_url}/tracking?{urllib.parse.urlencode(payload['query_params'])}",
+                    url=f"{_base_url}/tracking?{urllib.parse.urlencode(payload['query_params'])}",
                     trace=_trace,
                     method="GET",
                     headers={
                         "Content-Type": "application/json",
-                        "code": self.settings.api_key,
-                        **({"SiteId": site_id} if site_id else {}),
+                        "code": _code,
+                        **({"SiteId": _site_id} if _site_id else {}),
                     },
                     on_error=provider_utils.parse_http_error,
                 ),
