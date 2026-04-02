@@ -149,25 +149,45 @@ class Proxy(proxy.Proxy):
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         tracking_requests = request.serialize()
         site_id = self.settings.connection_config.site_id.state
+        partner_tracking_url = self.settings.connection_config.partner_tracking_url.state
+        partner_tracking_code = self.settings.connection_config.partner_tracking_code.state
         _trace = self.trace_as("json")
 
-        responses = lib.run_asynchronously(
-            lambda payload: (
-                payload["tracking_number"],
-                lib.request(
-                    url=f"{self.settings.server_url}/tracking?{urllib.parse.urlencode(payload['query_params'])}",
-                    trace=_trace,
-                    method="GET",
-                    headers={
-                        "Content-Type": "application/json",
-                        "code": self.settings.api_key,
-                        **({"SiteId": site_id} if site_id else {}),
-                    },
-                    on_error=provider_utils.parse_http_error,
+        if partner_tracking_url:
+            responses = lib.run_asynchronously(
+                lambda payload: (
+                    payload["tracking_number"],
+                    lib.request(
+                        url=f"{partner_tracking_url}/api/tracking?{urllib.parse.urlencode(payload['query_params'])}",
+                        trace=_trace,
+                        method="GET",
+                        headers={
+                            "Content-Type": "application/json",
+                            "code": partner_tracking_code or self.settings.api_key,
+                        },
+                        on_error=provider_utils.parse_http_error,
+                    ),
                 ),
-            ),
-            tracking_requests,
-        )
+                tracking_requests,
+            )
+        else:
+            responses = lib.run_asynchronously(
+                lambda payload: (
+                    payload["tracking_number"],
+                    lib.request(
+                        url=f"{self.settings.server_url}/tracking?{urllib.parse.urlencode(payload['query_params'])}",
+                        trace=_trace,
+                        method="GET",
+                        headers={
+                            "Content-Type": "application/json",
+                            "code": self.settings.api_key,
+                            **({"SiteId": site_id} if site_id else {}),
+                        },
+                        on_error=provider_utils.parse_http_error,
+                    ),
+                ),
+                tracking_requests,
+            )
 
         return lib.Deserializable(
             responses,

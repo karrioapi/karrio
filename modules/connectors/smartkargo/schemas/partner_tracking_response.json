@@ -1,0 +1,31 @@
+[
+  {
+    "headerReference": "TEST-REF-001",
+    "packageReference": "TEST-PKG-001",
+    "pieceReference": "TEST-PCE-001",
+    "eventDate": "2024-03-15T10:30:00",
+    "flightNumber": "AB1234",
+    "flightDate": "2024-03-15T08:00:00",
+    "eventLocation": "JFK",
+    "flightSegmentOrigin": "JFK",
+    "flightSegmentDestination": "LAX",
+    "pieces": 1.0,
+    "weight": 5.5,
+    "description": "Shipment has departed from origin facility.",
+    "prefix": "ABC",
+    "airWaybill": "12345678",
+    "eventType": "DEP",
+    "location": {
+      "eventLocation": "JFK",
+      "street": "123 Main St",
+      "city": "Anytown",
+      "state": "NY",
+      "zip": "10001",
+      "latitude": "40.7128",
+      "longitude": "-74.0060",
+      "timezone": "America/New_York",
+      "countryId": "US"
+    },
+    "estimatedDeliveryDate": "2024-03-17T23:59:00"
+  }
+]
