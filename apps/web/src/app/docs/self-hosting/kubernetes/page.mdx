@@ -1,0 +1,425 @@
+---
+sidebarTitle: Guides
+title: Kubernetes
+description: Deploy Karrio on Kubernetes using Helm
+tags: [self-hosting, kubernetes, helm]
+author: Karrio Team
+---
+
+# Kubernetes
+
+Deploy Karrio on any Kubernetes cluster using the official Helm chart.
+
+## Prerequisites
+
+- Kubernetes cluster (1.25+)
+- Helm 3.10+
+- `kubectl` configured for your cluster
+- An Ingress controller (e.g. [ingress-nginx](https://kubernetes.github.io/ingress-nginx/))
+- [cert-manager](https://cert-manager.io/) (recommended for TLS)
+- External PostgreSQL 14+ database
+- External Redis 6+ instance
+
+## Architecture Overview
+
+The Helm chart deploys three workloads into your cluster:
+
+```
+                  ┌─────────────┐
+                  │   Ingress   │
+                  └──────┬──────┘
+             ┌───────────┴───────────┐
+             ▼                       ▼
+    ┌────────────────┐     ┌─────────────────┐
+    │  API (Django)   │     │  Dashboard       │
+    │  Port 5002      │     │  (Next.js)       │
+    │  2 replicas     │     │  Port 3002       │
+    └───────┬────────┘     └─────────────────┘
+            │
+    ┌───────┴────────┐
+    │  Worker         │
+    │  (async tasks)  │
+    │  1 replica      │
+    └───────┬────────┘
+            │
+   ─────────┴──────────
+   │                  │
+┌──▼───┐        ┌────▼────┐
+│ Postgres │     │  Redis  │
+│ (ext.)   │     │  (ext.) │
+└──────────┘     └─────────┘
+```
+
+**What the chart manages:** API deployment + service, Worker deployment, Dashboard deployment + service, Ingress, ConfigMap, Secret, ServiceAccount, HPA (optional), PodDisruptionBudgets.
+
+**What stays external:** PostgreSQL and Redis. Use a managed service (e.g. RDS, Cloud SQL, ElastiCache) or deploy your own — the chart does not include stateful dependencies.
+
+## Quick Start
+
+### 1. Add the chart (local)
+
+Clone the repository and install from the local chart:
+
+```bash
+git clone https://github.com/karrioapi/karrio.git
+cd karrio
+```
+
+### 2. Create a namespace
+
+```bash
+kubectl create namespace karrio
+```
+
+### 3. Create your values file
+
+```bash
+cat > my-values.yaml <<EOF
+config:
+  secretKey: "$(openssl rand -hex 32)"
+  jwtSecret: "$(openssl rand -hex 32)"
+
+database:
+  host: your-postgres-host
+  port: 5432
+  name: karrio
+  username: karrio
+  password: your-db-password
+
+redis:
+  host: your-redis-host
+  port: 6379
+
+ingress:
+  enabled: true
+  className: nginx
+  api:
+    host: api.yourdomain.com
+  dashboard:
+    host: app.yourdomain.com
+  tls:
+    - secretName: karrio-tls
+      hosts:
+        - api.yourdomain.com
+        - app.yourdomain.com
+
+dashboardUrl: "https://app.yourdomain.com"
+karrioPublicUrl: "https://api.yourdomain.com"
+EOF
+```
+
+### 4. Install
+
+```bash
+helm install karrio ./charts/karrio \
+  --namespace karrio \
+  -f my-values.yaml
+```
+
+### 5. Verify
+
+```bash
+kubectl get pods -n karrio
+```
+
+Wait for all pods to reach `Running` / `Ready` state (the API takes 1–2 minutes to start). Then access:
+
+- **API:** `https://api.yourdomain.com`
+- **Dashboard:** `https://app.yourdomain.com`
+
+Default login: `admin@example.com` / `demo`
+
+## Configuration Reference
+
+### Images
+
+| Parameter | Description | Default |
+|---|---|---|
+| `image.server.repository` | API / Worker image | `karrio.docker.scarf.sh/karrio/server` |
+| `image.server.tag` | Image tag (defaults to chart appVersion) | `""` |
+| `image.dashboard.repository` | Dashboard image | `karrio.docker.scarf.sh/karrio/dashboard` |
+| `image.dashboard.tag` | Image tag | `""` |
+| `imagePullSecrets` | Registry pull secrets | `[]` |
+
+### API
+
+| Parameter | Description | Default |
+|---|---|---|
+| `api.replicaCount` | Number of API pods | `2` |
+| `api.resources.requests.cpu` | CPU request | `250m` |
+| `api.resources.requests.memory` | Memory request | `512Mi` |
+| `api.resources.limits.cpu` | CPU limit | `1000m` |
+| `api.resources.limits.memory` | Memory limit | `1Gi` |
+| `api.autoscaling.enabled` | Enable HPA | `false` |
+| `api.autoscaling.minReplicas` | HPA min replicas | `2` |
+| `api.autoscaling.maxReplicas` | HPA max replicas | `10` |
+| `api.autoscaling.targetCPUUtilizationPercentage` | HPA CPU target | `70` |
+| `api.podDisruptionBudget.enabled` | Enable PDB | `true` |
+| `api.podDisruptionBudget.minAvailable` | PDB min available | `1` |
+
+### Worker
+
+| Parameter | Description | Default |
+|---|---|---|
+| `worker.replicaCount` | Number of Worker pods | `1` |
+| `worker.resources.requests.cpu` | CPU request | `250m` |
+| `worker.resources.requests.memory` | Memory request | `512Mi` |
+| `worker.resources.limits.cpu` | CPU limit | `1000m` |
+| `worker.resources.limits.memory` | Memory limit | `1Gi` |
+| `worker.podDisruptionBudget.enabled` | Enable PDB | `true` |
+
+### Dashboard
+
+| Parameter | Description | Default |
+|---|---|---|
+| `dashboard.replicaCount` | Number of Dashboard pods | `1` |
+| `dashboard.resources.requests.cpu` | CPU request | `100m` |
+| `dashboard.resources.requests.memory` | Memory request | `256Mi` |
+| `dashboard.resources.limits.cpu` | CPU limit | `500m` |
+| `dashboard.resources.limits.memory` | Memory limit | `512Mi` |
+
+### Ingress
+
+| Parameter | Description | Default |
+|---|---|---|
+| `ingress.enabled` | Enable Ingress resource | `true` |
+| `ingress.className` | Ingress class name | `nginx` |
+| `ingress.annotations` | Ingress annotations | `{}` |
+| `ingress.api.host` | API hostname | `api.example.com` |
+| `ingress.dashboard.host` | Dashboard hostname | `app.example.com` |
+| `ingress.tls` | TLS configuration | `[]` |
+
+### Application Config
+
+| Parameter | Description | Default |
+|---|---|---|
+| `config.secretKey` | Django `SECRET_KEY` (required) | `""` |
+| `config.jwtSecret` | Dashboard `NEXTAUTH_SECRET` (required) | `""` |
+| `config.debugMode` | Django debug mode | `"False"` |
+| `config.useHttps` | Enforce HTTPS | `"True"` |
+| `config.detachedWorker` | Run worker separately | `"True"` |
+| `config.enableAllPlugins` | Enable all carrier plugins | `"True"` |
+
+### External Dependencies
+
+| Parameter | Description | Default |
+|---|---|---|
+| `database.host` | PostgreSQL host (required) | `""` |
+| `database.port` | PostgreSQL port | `5432` |
+| `database.name` | Database name | `karrio` |
+| `database.username` | Database user | `karrio` |
+| `database.password` | Database password (required) | `""` |
+| `redis.host` | Redis host (required) | `""` |
+| `redis.port` | Redis port | `6379` |
+
+### Secrets
+
+| Parameter | Description | Default |
+|---|---|---|
+| `existingSecret` | Use an existing Secret (must contain `SECRET_KEY`, `JWT_SECRET`, `DATABASE_PASSWORD`) | `""` |
+| `dashboardUrl` | Public URL of the dashboard | `""` |
+| `karrioPublicUrl` | Public URL of the API | `""` |
+
+## Production Hardening
+
+### TLS with cert-manager
+
+If you have cert-manager installed, add a `ClusterIssuer` annotation and TLS block:
+
+```yaml
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: karrio-tls
+      hosts:
+        - api.yourdomain.com
+        - app.yourdomain.com
+```
+
+### External secrets
+
+For production, store secrets in an external secrets manager (e.g. AWS Secrets Manager, HashiCorp Vault) and reference an existing Kubernetes Secret:
+
+```yaml
+existingSecret: karrio-secrets
+```
+
+The Secret must contain these keys: `SECRET_KEY`, `JWT_SECRET`, `DATABASE_PASSWORD`.
+
+### Resource tuning
+
+The defaults are conservative starting points. Monitor actual usage and adjust:
+
+```yaml
+api:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+```
+
+### Autoscaling
+
+Enable the Horizontal Pod Autoscaler for the API under load:
+
+```yaml
+api:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+```
+
+### Pod Disruption Budgets
+
+PDBs are enabled by default for both the API and Worker to ensure availability during node drains and cluster upgrades. Adjust `minAvailable` based on your replica count:
+
+```yaml
+api:
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+```
+
+### Node affinity and topology
+
+For multi-zone clusters, the API deployment automatically applies `topologySpreadConstraints` when `api.replicaCount > 1` to spread pods across availability zones.
+
+You can also set explicit node selectors or tolerations:
+
+```yaml
+api:
+  nodeSelector:
+    node.kubernetes.io/instance-type: m5.large
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: karrio
+      effect: NoSchedule
+```
+
+## Upgrading
+
+### Upgrade the chart
+
+```bash
+helm upgrade karrio ./charts/karrio \
+  --namespace karrio \
+  -f my-values.yaml
+```
+
+### Upgrade to a new Karrio version
+
+Set the image tag explicitly:
+
+```bash
+helm upgrade karrio ./charts/karrio \
+  --namespace karrio \
+  -f my-values.yaml \
+  --set image.server.tag=2026.1.27 \
+  --set image.dashboard.tag=2026.1.27
+```
+
+### Rolling back
+
+```bash
+helm rollback karrio -n karrio
+```
+
+## Troubleshooting
+
+### Pods stuck in CrashLoopBackOff
+
+Check the logs:
+
+```bash
+kubectl logs -n karrio deploy/karrio-api --tail=100
+kubectl logs -n karrio deploy/karrio-worker --tail=100
+```
+
+**Common causes:**
+- Database not reachable — verify `database.host` and network policies
+- Invalid `SECRET_KEY` or `DATABASE_PASSWORD` — check the Secret contents
+- Missing database — run `CREATE DATABASE karrio;` on your PostgreSQL instance
+
+### API pods not becoming Ready
+
+The Django API takes 1–2 minutes to start. If readiness probes keep failing:
+
+```bash
+kubectl describe pod -n karrio -l app.kubernetes.io/component=api
+```
+
+Increase the probe timings if your cluster is slow:
+
+```yaml
+api:
+  readinessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 20
+    failureThreshold: 10
+  livenessProbe:
+    initialDelaySeconds: 120
+    failureThreshold: 10
+```
+
+### OOMKilled pods
+
+If pods are terminated with `OOMKilled`, increase memory limits:
+
+```yaml
+api:
+  resources:
+    limits:
+      memory: 2Gi
+worker:
+  resources:
+    limits:
+      memory: 2Gi
+```
+
+### Worker liveness probe failing
+
+The worker liveness probe uses `celery inspect ping`. If it fails:
+
+```bash
+kubectl exec -n karrio deploy/karrio-worker -- \
+  celery -A karrio.server.asgi inspect ping
+```
+
+If Redis is unreachable, the probe will fail. Verify connectivity:
+
+```bash
+kubectl exec -n karrio deploy/karrio-worker -- \
+  bash -c "redis-cli -h \$REDIS_HOST -p \$REDIS_PORT ping"
+```
+
+### Dashboard showing "Internal Server Error"
+
+Ensure `dashboardUrl` and `karrioPublicUrl` are set correctly and the API is reachable from within the cluster:
+
+```bash
+kubectl exec -n karrio deploy/karrio-dashboard -- \
+  wget -qO- http://karrio-api:5002/v1/references
+```
+
+### Checking all resources
+
+```bash
+kubectl get all -n karrio
+helm status karrio -n karrio
+```
+
+## Uninstalling
+
+```bash
+helm uninstall karrio -n karrio
+kubectl delete namespace karrio
+```
+
+This removes all chart-managed resources. External databases and Redis instances are not affected.

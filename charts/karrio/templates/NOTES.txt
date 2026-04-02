@@ -1,0 +1,23 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Your release is named: {{ .Release.Name }}
+
+{{- if .Values.ingress.enabled }}
+
+Karrio is available at:
+  API:       https://{{ .Values.ingress.api.host }}
+  Dashboard: https://{{ .Values.ingress.dashboard.host }}
+{{- else }}
+
+To access Karrio, set up port-forwarding:
+
+  API:
+    kubectl port-forward svc/{{ include "karrio.fullname" . }}-api 5002:5002 -n {{ .Release.Namespace }}
+
+  Dashboard:
+    kubectl port-forward svc/{{ include "karrio.fullname" . }}-dashboard 3002:3002 -n {{ .Release.Namespace }}
+{{- end }}
+
+Default login: admin@example.com / demo
+
+For more information, visit: https://docs.karrio.io
