@@ -189,3 +189,35 @@ jobs:
         run: |
           npm ci
           npm run build -w apps/dashboard
+
+  mcp-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: packages/mcp
+        run: npx tsc --noEmit
+
+      - name: Run unit tests
+        working-directory: packages/mcp
+        run: npm run test:unit
+
+      # Integration tests are skipped in CI — they require a live Karrio API instance.
+      # Run locally with: npm run test:integration -w packages/mcp
+
+      - name: Build
+        working-directory: packages/mcp
+        run: npm run build
