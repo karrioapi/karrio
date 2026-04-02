@@ -48,7 +48,7 @@ def _extract_details(
     """
     events = [
         lib.to_object(smartkargo.TrackingResponseElementType, event)
-        for event in sorted(data, key=lambda e: e.get("eventDate", ""), reverse=True)
+        for event in data
     ]
 
     latest = events[0] if events else None
@@ -87,7 +87,7 @@ def _extract_details(
             for e in events
         ],
         estimated_delivery=lib.fdate(
-            latest.estimatedDeliveryDate if latest else None,
+            getattr(latest, "estimatedDeliveryDate", None),
             "%Y-%m-%dT%H:%M:%S",
         ),
         delivered=(status == "delivered"),

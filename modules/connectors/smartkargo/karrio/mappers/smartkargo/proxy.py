@@ -158,7 +158,7 @@ class Proxy(proxy.Proxy):
             if _partner_url
             else self.settings.api_key
         ) or self.settings.api_key
-        _site_id = self.settings.connection_config.site_id.state if not _partner_url else None
+        _site_id = self.settings.connection_config.site_id.state
 
         responses = lib.run_asynchronously(
             lambda payload: (
