@@ -17,6 +17,9 @@ name: karrio-tests
 
 on: [push]
 
+permissions:
+  contents: read
+
 jobs:
   sdk-tests:
     runs-on: ubuntu-latest

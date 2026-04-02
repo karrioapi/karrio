@@ -9,6 +9,9 @@ on:
         description: 'Version to publish (e.g. 1.0.1) — must match package.json'
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   publish:
     runs-on: ubuntu-latest
