@@ -1267,6 +1267,85 @@ class TestShipmentCancelIdempotent(APITestCase):
         self.assertEqual(response_data["status"], "cancelled")
 
 
+class TestShipmentCancelStateValidation(TestShipmentFixture):
+    """Test that cancellation is allowed for created/draft shipments and rejected for in_transit.
+
+    These tests directly verify the can_mutate_shipment(delete=True) guard and ensure
+    the cancel API honours the correct state machine transitions.
+    """
+
+    def setUp(self) -> None:
+        super().setUp()
+        # Set up a purchased (created) shipment with carrier snapshot for cancel-with-carrier tests
+        self.carrier = providers.CarrierConnection.objects.get(carrier_id="canadapost")
+        self.shipment.shipment_identifier = "123456789012"
+        self.shipment.carrier = create_carrier_snapshot(self.carrier)
+        self.shipment.selected_rate = {
+            "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
+            "carrier_id": "canadapost",
+            "carrier_name": "canadapost",
+            "service": "canadapost_priority",
+            "total_charge": 106.71,
+            "currency": "CAD",
+            "test_mode": True,
+            "meta": {"carrier_connection_id": self.carrier.pk},
+        }
+        self.shipment.save()
+
+    def _cancel_url(self):
+        return reverse(
+            "karrio.server.manager:shipment-cancel",
+            kwargs=dict(pk=self.shipment.pk),
+        )
+
+    def test_cancel_allowed_for_created_shipment(self):
+        """Cancellation must succeed for a shipment in 'created' state (purchased label)."""
+        self.shipment.status = "created"
+        self.shipment.save(update_fields=["status"])
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_CANCEL_VALUE
+            response = self.client.post(self._cancel_url())
+            response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_data["status"], "cancelled")
+
+    def test_cancel_allowed_for_draft_shipment(self):
+        """Cancellation must succeed for a shipment in 'draft' state (no carrier API call)."""
+        self.shipment.status = "draft"
+        self.shipment.save(update_fields=["status"])
+
+        response = self.client.post(self._cancel_url())
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_data["status"], "cancelled")
+
+    def test_cancel_rejected_for_in_transit_shipment(self):
+        """Cancellation must be rejected for a shipment in 'in_transit' state."""
+        self.shipment.status = "in_transit"
+        self.shipment.save(update_fields=["status"])
+
+        response = self.client.post(self._cancel_url())
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(response_data["errors"][0]["code"], "state_error")
+        self.assertIn("in_transit", response_data["errors"][0]["message"])
+
+    def test_cancel_rejected_for_delivered_shipment(self):
+        """Cancellation must be rejected for a delivered shipment."""
+        self.shipment.status = "delivered"
+        self.shipment.save(update_fields=["status"])
+
+        response = self.client.post(self._cancel_url())
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(response_data["errors"][0]["code"], "state_error")
+
+
 class TestComputeEstimatedDelivery(APITestCase):
     """Test compute_estimated_delivery utility function."""
 
