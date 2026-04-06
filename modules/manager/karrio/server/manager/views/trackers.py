@@ -231,18 +231,20 @@ class TrackersDetails(APIView):
         operation_id=f"{ENDPOINT_ID}retrieve",
         extensions={"x-operationId": "retrieveTracker"},
         summary="Retrieves a package tracker",
+        description="Retrieve a package tracker by ID or tracking number.",
+        parameters=[openapi.OpenApiParameter("identifier", str, openapi.OpenApiParameter.PATH, description="Tracker ID (trk_...) or tracking number")],
         responses={
             200: serializers.TrackingStatus(),
             404: serializers.ErrorMessages(),
             500: serializers.ErrorResponse(),
         },
     )
-    def get(self, request: Request, id_or_tracking_number: str):
+    def get(self, request: Request, identifier: str):
         """
         Retrieve a package tracker
         """
-        __filter = Q(pk=id_or_tracking_number) | Q(
-            tracking_number=id_or_tracking_number
+        __filter = Q(pk=identifier) | Q(
+            tracking_number=identifier
         )
         trackers = models.Tracking.objects.filter(__filter)
 
@@ -256,6 +258,8 @@ class TrackersDetails(APIView):
         operation_id=f"{ENDPOINT_ID}update",
         extensions={"x-operationId": "updateTracker"},
         summary="Update tracker data",
+        description="Update a package tracker by ID.",
+        parameters=[openapi.OpenApiParameter("identifier", str, openapi.OpenApiParameter.PATH, description="Tracker ID (trk_...)")],
         responses={
             200: serializers.TrackingStatus(),
             404: serializers.ErrorResponse(),
@@ -265,9 +269,9 @@ class TrackersDetails(APIView):
         },
         request=serializers.TrackerUpdateData(),
     )
-    def put(self, request: Request, id_or_tracking_number: str):
+    def put(self, request: Request, identifier: str):
         tracker = models.Tracking.access_by(request).get(
-            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number)
+            Q(pk=identifier) | Q(tracking_number=identifier)
         )
         serializers.can_mutate_tracker(tracker, update=True, payload=request.data)
 
@@ -291,19 +295,35 @@ class TrackersDetails(APIView):
         operation_id=f"{ENDPOINT_ID}remove",
         extensions={"x-operationId": "removeTracker"},
         summary="Discard a package tracker",
+        description="Remove a package tracker by ID, tracking number, or request_id. The lookup tries the karrio tracker ID first, then tracking number, then falls back to request_id (most recent match).",
+        parameters=[openapi.OpenApiParameter("identifier", str, openapi.OpenApiParameter.PATH, description="Tracker ID (trk_...), tracking number, or request_id")],
         responses={
             200: serializers.TrackingStatus(),
             404: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
         },
     )
-    def delete(self, request: Request, id_or_tracking_number: str):
+    def delete(self, request: Request, identifier: str):
         """
         Discard a package tracker.
+
+        ``identifier`` can be a karrio tracker ID, a tracking number,
+        or a ``request_id`` stored in ``tracker.meta["request_id"]``.
         """
-        tracker = models.Tracking.access_by(request).get(
-            Q(pk=id_or_tracking_number) | Q(tracking_number=id_or_tracking_number)
-        )
+        qs = models.Tracking.access_by(request)
+        try:
+            tracker = qs.get(
+                Q(pk=identifier) | Q(tracking_number=identifier)
+            )
+        except models.Tracking.DoesNotExist:
+            tracker = (
+                qs.filter(meta__request_id=identifier)
+                .order_by("-created_at")
+                .first()
+            )
+
+        if tracker is None:
+            raise models.Tracking.DoesNotExist()
 
         tracker.delete(keep_parents=True)
 
@@ -402,7 +422,7 @@ class TrackerEventInject(APIView):
 router.urls.append(path("trackers", TrackerList.as_view(), name="trackers-list"))
 router.urls.append(
     path(
-        "trackers/<str:id_or_tracking_number>",
+        "trackers/<str:identifier>",
         TrackersDetails.as_view(),
         name="tracker-details",
     )

@@ -1,7 +1,7 @@
 import io
 import base64
 
-from rest_framework import status
+from rest_framework import status, exceptions as drf_exceptions
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
@@ -182,8 +182,25 @@ class ShipmentCancel(APIView):
     def post(self, request: Request, pk: str):
         """
         Void a shipment with the associated label.
+
+        ``pk`` can be either the karrio shipment ID (``shp_…``) or a
+        ``request_id`` stored in ``shipment.meta["request_id"]``.
+        When multiple records share the same ``request_id`` the most
+        recently created one is used.
         """
-        shipment = models.Shipment.access_by(request).get(pk=pk)
+        # Try primary key first, fall back to meta__request_id
+        qs = models.Shipment.access_by(request)
+        try:
+            shipment = qs.get(pk=pk)
+        except models.Shipment.DoesNotExist:
+            shipment = (
+                qs.filter(meta__request_id=pk)
+                .order_by("-created_at")
+                .first()
+            )
+
+        if shipment is None:
+            raise models.Shipment.DoesNotExist()
 
         # Return 202 if already cancelled (idempotent)
         if shipment.status == ShipmentStatus.cancelled.value:

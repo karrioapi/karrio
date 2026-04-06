@@ -773,6 +773,8 @@ PICKUP_RESPONSE = {
     "ready_time": "13:00",
     "closing_time": "17:00",
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "address": {
         "id": ANY,
         "object_type": "address",
@@ -844,6 +846,8 @@ PICKUP_UPDATE_RESPONSE = {
     "ready_time": "14:00",
     "closing_time": "17:00",
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "address": {
         "id": ANY,
         "object_type": "address",
@@ -895,6 +899,8 @@ PICKUP_UPDATE_RESPONSE = {
     "options": {},
     "metadata": {},
     "meta": ANY,
+    "is_archived": False,
+    "archived_at": None,
 }
 
 PICKUP_CANCEL_RESPONSE = {
@@ -966,6 +972,8 @@ PICKUP_CANCEL_RESPONSE = {
     "metadata": {},
     "test_mode": True,
     "meta": ANY,
+    "is_archived": False,
+    "archived_at": None,
 }
 
 # ─────────────────────────────────────────────────────────────────

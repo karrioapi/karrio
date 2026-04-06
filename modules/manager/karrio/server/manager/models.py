@@ -54,7 +54,19 @@ class CommodityManager(models.Manager):
         )
 
 
-class PickupManager(models.Manager):
+class NotArchivedManager(models.Manager):
+    """Base manager that excludes archived records from default queries.
+
+    Subclass this for Shipment, Tracking, Pickup, and Order so that
+    ``is_archived=True`` records are invisible by default.
+    Use ``Model.all_objects`` (unfiltered) for admin, reporting, etc.
+    """
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_archived=False)
+
+
+class PickupManager(NotArchivedManager):
     def get_queryset(self):
         return (
             super()
@@ -66,7 +78,7 @@ class PickupManager(models.Manager):
         )
 
 
-class ShipmentManager(models.Manager):
+class ShipmentManager(NotArchivedManager):
     def get_queryset(self):
         return (
             super()
@@ -83,7 +95,7 @@ class ShipmentManager(models.Manager):
         )
 
 
-class TrackingManager(models.Manager):
+class TrackingManager(NotArchivedManager):
     def get_queryset(self):
         return (
             super()
@@ -477,9 +489,11 @@ class Pickup(core.OwnedEntity):
         "carrier",  # Carrier snapshot
     ]
     objects = PickupManager()
+    all_objects = models.Manager()  # unfiltered: includes archived records
 
     class Meta:
         db_table = "pickups"
+        base_manager_name = "all_objects"
         verbose_name = "Pickup"
         verbose_name_plural = "Pickups"
         ordering = ["-created_at"]
@@ -532,6 +546,20 @@ class Pickup(core.OwnedEntity):
     )
     meta = models.JSONField(
         blank=True, default=functools.partial(utils.identity, value={})
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # ARCHIVING FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    is_archived = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Archived records are excluded from default queries and background jobs.",
+    )
+    archived_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp when the record was archived. Null if not archived.",
     )
 
     # ─────────────────────────────────────────────────────────────────
@@ -615,9 +643,11 @@ class Tracking(core.OwnedEntity):
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = TrackingManager()
+    all_objects = models.Manager()  # unfiltered: includes archived records
 
     class Meta:
         db_table = "tracking-status"
+        base_manager_name = "all_objects"
         verbose_name = "Tracking Status"
         verbose_name_plural = "Tracking Statuses"
         ordering = ["-created_at"]
@@ -685,6 +715,20 @@ class Tracking(core.OwnedEntity):
         blank=True,
         null=True,
         help_text="Carrier snapshot at time of tracker creation",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # ARCHIVING FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    is_archived = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Archived records are excluded from default queries and background jobs.",
+    )
+    archived_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp when the record was archived. Null if not archived.",
     )
 
     # ─────────────────────────────────────────────────────────────────
@@ -794,9 +838,11 @@ class Shipment(core.OwnedEntity):
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
     objects = ShipmentManager()
+    all_objects = models.Manager()  # unfiltered: includes archived records
 
     class Meta:
         db_table = "shipments"
+        base_manager_name = "all_objects"
         verbose_name = "Shipment"
         verbose_name_plural = "Shipments"
         ordering = ["-created_at"]
@@ -931,6 +977,20 @@ class Shipment(core.OwnedEntity):
         null=True,
         default=functools.partial(utils.identity, value=[]),
         help_text="Applied fees for accounting: addons + surcharge COGS values",
+    )
+
+    # ─────────────────────────────────────────────────────────────────
+    # ARCHIVING FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    is_archived = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Archived records are excluded from default queries and background jobs.",
+    )
+    archived_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp when the record was archived. Null if not archived.",
     )
 
     # ─────────────────────────────────────────────────────────────────

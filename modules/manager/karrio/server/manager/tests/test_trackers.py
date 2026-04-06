@@ -77,7 +77,7 @@ class TestTrackersUpdate(APITestCase):
     def test_update_tracker_info(self):
         url = reverse(
             "karrio.server.manager:tracker-details",
-            kwargs=dict(id_or_tracking_number=self.tracker.pk),
+            kwargs=dict(identifier=self.tracker.pk),
         )
         data = dict(info=TRACKING_INFO)
 
@@ -117,6 +117,8 @@ TRACKING_RESPONSE = {
     "carrier_name": "ups",
     "tracking_number": "1Z12345E6205277936",
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "delivered": False,
     "status": "in_transit",
     "estimated_delivery": ANY,
@@ -193,6 +195,8 @@ UPDATE_TRACKING_RESPONSE = {
     ],
     "delivered": False,
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "status": "in_transit",
     "estimated_delivery": ANY,
     "delivery_image_url": None,
