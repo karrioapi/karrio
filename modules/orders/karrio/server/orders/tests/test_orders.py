@@ -366,6 +366,8 @@ ORDER_RESPONSE = {
     "metadata": {},
     "shipments": [],
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "created_at": ANY,
 }
 
@@ -691,12 +693,16 @@ ORDER_SHIPMENTS_RESPONSE = {
             "service": None,
             "selected_rate_id": None,
             "test_mode": True,
+            "is_archived": False,
+            "archived_at": None,
             "label_url": None,
             "invoice_url": None,
             "shipping_documents": [],
         }
     ],
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "created_at": ANY,
 }
 
@@ -970,12 +976,16 @@ FULFILLED_ORDER_RESPONSE = {
             "service": None,
             "selected_rate_id": None,
             "test_mode": True,
+            "is_archived": False,
+            "archived_at": None,
             "label_url": None,
             "invoice_url": None,
             "shipping_documents": [],
         }
     ],
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "created_at": ANY,
 }
 
@@ -1228,11 +1238,15 @@ PARTIAL_ORDER_RESPONSE = {
             "service": None,
             "selected_rate_id": None,
             "test_mode": True,
+            "is_archived": False,
+            "archived_at": None,
             "label_url": None,
             "invoice_url": None,
             "shipping_documents": [],
         }
     ],
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
     "created_at": ANY,
 }

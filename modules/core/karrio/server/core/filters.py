@@ -298,6 +298,10 @@ class ShipmentFilters(filters.FilterSet):
         method="request_id_filter",
         help_text="filter by request correlation ID in meta",
     )
+    is_archived = filters.BooleanFilter(
+        method="is_archived_filter",
+        help_text="filter by archived status. Default is false (non-archived only).",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -411,6 +415,11 @@ class ShipmentFilters(filters.FilterSet):
         openapi.OpenApiParameter(
             "request_id",
             type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "is_archived",
+            type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
     ]
@@ -547,6 +556,20 @@ class ShipmentFilters(filters.FilterSet):
     def request_id_filter(self, queryset, name, value):
         return queryset.filter(meta__request_id=value)
 
+    def is_archived_filter(self, queryset, name, value):
+        """When is_archived=true return only archived; when false return only non-archived.
+
+        The default manager already excludes archived records.  When value is
+        True we need to reach into all_objects to find them.
+        """
+        import karrio.server.manager.models as mgr_models
+
+        if value:
+            return mgr_models.Shipment.all_objects.filter(
+                pk__in=queryset.values("pk"), is_archived=True
+            )
+        return queryset.filter(is_archived=False)
+
 
 class TrackerFilters(filters.FilterSet):
     tracking_number = filters.CharFilter(
@@ -587,6 +610,10 @@ class TrackerFilters(filters.FilterSet):
     request_id = filters.CharFilter(
         method="request_id_filter",
         help_text="filter by request correlation ID in meta",
+    )
+    is_archived = filters.BooleanFilter(
+        method="is_archived_filter",
+        help_text="filter by archived status. Default is false (non-archived only).",
     )
 
     parameters = [
@@ -633,6 +660,11 @@ class TrackerFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
+        openapi.OpenApiParameter(
+            "is_archived",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -660,6 +692,15 @@ class TrackerFilters(filters.FilterSet):
 
     def request_id_filter(self, queryset, name, value):
         return queryset.filter(meta__request_id=value)
+
+    def is_archived_filter(self, queryset, name, value):
+        import karrio.server.manager.models as mgr_models
+
+        if value:
+            return mgr_models.Tracking.all_objects.filter(
+                pk__in=queryset.values("pk"), is_archived=True
+            )
+        return queryset.filter(is_archived=False)
 
 
 class LogFilter(filters.FilterSet):
@@ -885,6 +926,10 @@ class PickupFilters(filters.FilterSet):
         method="request_id_filter",
         help_text="filter by request correlation ID",
     )
+    is_archived = filters.BooleanFilter(
+        method="is_archived_filter",
+        help_text="filter by archived status. Default is false (non-archived only).",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -943,6 +988,11 @@ class PickupFilters(filters.FilterSet):
         openapi.OpenApiParameter(
             "request_id",
             type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "is_archived",
+            type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
     ]
@@ -1020,6 +1070,15 @@ class PickupFilters(filters.FilterSet):
 
     def request_id_filter(self, queryset, name, value):
         return queryset.filter(meta__request_id=value)
+
+    def is_archived_filter(self, queryset, name, value):
+        import karrio.server.manager.models as mgr_models
+
+        if value:
+            return mgr_models.Pickup.all_objects.filter(
+                pk__in=queryset.values("pk"), is_archived=True
+            )
+        return queryset.filter(is_archived=False)
 
 
 class RateSheetFilter(filters.FilterSet):

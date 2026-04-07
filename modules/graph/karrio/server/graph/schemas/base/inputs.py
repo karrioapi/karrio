@@ -41,6 +41,7 @@ class TrackerFilter(utils.Paginated):
     status: typing.Optional[typing.List[str]] = strawberry.UNSET
     keyword: typing.Optional[str] = strawberry.UNSET
     request_id: typing.Optional[str] = strawberry.UNSET
+    is_archived: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
@@ -65,6 +66,7 @@ class ShipmentFilter(utils.Paginated):
     has_manifest: typing.Optional[bool] = strawberry.UNSET
     is_return: typing.Optional[bool] = strawberry.UNSET
     request_id: typing.Optional[str] = strawberry.UNSET
+    is_archived: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
@@ -93,6 +95,7 @@ class PickupFilter(utils.Paginated):
     meta_key: typing.Optional[str] = strawberry.UNSET
     meta_value: typing.Optional[str] = strawberry.UNSET
     request_id: typing.Optional[str] = strawberry.UNSET
+    is_archived: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input

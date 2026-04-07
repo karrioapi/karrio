@@ -181,6 +181,8 @@ PICKUP_RESPONSE = {
         "parcels_count": None,
         "recurrence": {},
         "test_mode": True,
+        "is_archived": False,
+        "archived_at": None,
         "address": {
             "id": None,
             "object_type": "address",
@@ -250,6 +252,8 @@ PICKUP_UPDATE_RESPONSE = {
         "parcels_count": None,
         "recurrence": {},
         "test_mode": True,
+        "is_archived": False,
+        "archived_at": None,
         "address": {
             "id": None,
             "object_type": "address",

@@ -80,6 +80,22 @@ These features are linked: `request_id`-based cancellation solves the "I don't k
 
 | # | Decision | Choice | Rationale | Date |
 |---|----------|--------|-----------|------|
+| Q1 | Tenant-scoped lookup | A) Tenant-scoped via `access_by` | Same permissions as existing operations | 2026-04-02 |
+| Q2 | GraphQL cancel approach | No new mutations | Cancel stays REST-only; no `cancel_by_request_id` in GraphQL | 2026-04-02 |
+| Q3 | Archive cascade | A) No cascade | Archive each resource independently | 2026-04-02 |
+| Q4 | Analytics inclusion | A) Exclude archived by default | Use `all_objects` explicitly for reports | 2026-04-02 |
+| Q5 | Unarchive eligibility | A) Always allowed | Even cancelled records can be unarchived for audit | 2026-04-02 |
+| Q6 | Webhook events | B) No events | Archive/unarchive is a local-only operation | 2026-04-02 |
+| Q7 | Cancel archived records | A) Allow | Archive and cancel are independent concepts | 2026-04-02 |
+| Q8 | Tracker archive timing | A) Next cycle | Simpler; up to TRACKER_UPDATE_INTERVAL delay | 2026-04-02 |
+| Q9 | DELETE behavior | A) Keep hard-delete | Add separate archive operations (GraphQL mutations) | 2026-04-02 |
+| Q10 | Ambiguous request_id | B) Most recent record | Don't error on non-unique request_id | 2026-04-02 |
+| Q11 | Auto-tracker archiving | A) Independent | Allow archiving tracker separately from shipment | 2026-04-02 |
+| Q12 | Order counter | A) No effect | Archived orders keep their sequence number | 2026-04-02 |
+
+**API Surface Decisions:**
+- Cancel by request_id: **REST only** (extend existing cancel endpoints)
+- Archive/unarchive: **GraphQL only** (new mutations, no REST endpoints)
 
 ### Edge Cases Requiring Input
 

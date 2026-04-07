@@ -1435,6 +1435,8 @@ class TrackerType:
     options: typing.Optional[utils.JSON]
     meta: typing.Optional[utils.JSON]
     shipment: typing.Optional["ShipmentType"]
+    is_archived: bool
+    archived_at: typing.Optional[datetime.datetime]
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
@@ -1481,8 +1483,10 @@ class TrackerType:
         filter: typing.Optional[inputs.TrackerFilter] = strawberry.UNSET,
     ) -> utils.Connection["TrackerType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TrackerFilter()
+        filter_dict = _filter.to_dict()
+        mgr = "all_objects" if filter_dict.get("is_archived") is True else "objects"
         queryset = filters.TrackerFilters(
-            _filter.to_dict(), manager.Tracking.access_by(info.context.request)
+            filter_dict, manager.Tracking.access_by(info.context.request, manager=mgr)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -1559,6 +1563,8 @@ class PickupType:
     options: utils.JSON
     metadata: utils.JSON
     meta: typing.Optional[utils.JSON]
+    is_archived: bool
+    archived_at: typing.Optional[datetime.datetime]
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
@@ -1635,8 +1641,10 @@ class PickupType:
         filter: typing.Optional[inputs.PickupFilter] = strawberry.UNSET,
     ) -> utils.Connection["PickupType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.PickupFilter()
+        filter_dict = _filter.to_dict()
+        mgr = "all_objects" if filter_dict.get("is_archived") is True else "objects"
         queryset = filters.PickupFilters(
-            _filter.to_dict(), manager.Pickup.access_by(info.context.request)
+            filter_dict, manager.Pickup.access_by(info.context.request, manager=mgr)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -1688,6 +1696,8 @@ class ShipmentType:
     invoice_url: typing.Optional[str]
     tracker: typing.Optional[TrackerType]
     is_return: typing.Optional[bool]
+    is_archived: bool
+    archived_at: typing.Optional[datetime.datetime]
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
@@ -1779,8 +1789,11 @@ class ShipmentType:
         filter: typing.Optional[inputs.ShipmentFilter] = strawberry.UNSET,
     ) -> utils.Connection["ShipmentType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ShipmentFilter()
+        filter_dict = _filter.to_dict()
+        # When is_archived=true the caller wants archived records; use all_objects
+        mgr = "all_objects" if filter_dict.get("is_archived") is True else "objects"
         queryset = filters.ShipmentFilters(
-            _filter.to_dict(), manager.Shipment.access_by(info.context.request)
+            filter_dict, manager.Shipment.access_by(info.context.request, manager=mgr)
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 

@@ -1329,3 +1329,37 @@ def resolve_carrier(
 
     # Unknown connection type
     return None
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Resource Archiving Helpers
+# ─────────────────────────────────────────────────────────────────────────────
+
+def archive_resource(instance) -> typing.Any:
+    """Archive a resource by setting is_archived=True and recording archived_at.
+
+    Idempotent: if already archived, returns the instance unchanged.
+    """
+    from django.utils import timezone as tz
+
+    if instance.is_archived:
+        return instance
+
+    instance.is_archived = True
+    instance.archived_at = tz.now()
+    instance.save(update_fields=["is_archived", "archived_at", "updated_at"])
+    return instance
+
+
+def unarchive_resource(instance) -> typing.Any:
+    """Unarchive a resource by clearing is_archived and archived_at.
+
+    Idempotent: if not archived, returns the instance unchanged.
+    """
+    if not instance.is_archived:
+        return instance
+
+    instance.is_archived = False
+    instance.archived_at = None
+    instance.save(update_fields=["is_archived", "archived_at", "updated_at"])
+    return instance

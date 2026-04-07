@@ -65,6 +65,7 @@ def _retire_aged_out_trackers(max_age_cutoff: datetime.datetime) -> int:
     """
     return models.Tracking.objects.filter(
         delivered=False,
+        is_archived=False,  # belt-and-suspenders: manager already excludes archived
         created_at__lt=max_age_cutoff,
     ).update(
         status="unknown",
@@ -106,6 +107,7 @@ def update_trackers(
         if tracker_ids
         else models.Tracking.objects.filter(
             delivered=False,
+            is_archived=False,  # belt-and-suspenders: manager already excludes archived
             updated_at__lt=timezone.now() - delta,
             created_at__gt=max_age_cutoff,
         )

@@ -200,8 +200,22 @@ class PickupCancel(APIView):
     def post(self, request: Request, pk: str):
         """
         Cancel a pickup of one or more shipments.
+
+        ``pk`` can be either the karrio pickup ID (``pck_…``) or a
+        ``request_id`` stored in ``pickup.meta["request_id"]``.
         """
-        pickup = models.Pickup.access_by(request).get(pk=pk)
+        qs = models.Pickup.access_by(request)
+        try:
+            pickup = qs.get(pk=pk)
+        except models.Pickup.DoesNotExist:
+            pickup = (
+                qs.filter(meta__request_id=pk)
+                .order_by("-created_at")
+                .first()
+            )
+
+        if pickup is None:
+            raise models.Pickup.DoesNotExist()
 
         # Idempotent re-cancel: return 409 if already cancelled
         if pickup.status == PickupStatus.cancelled.value:
