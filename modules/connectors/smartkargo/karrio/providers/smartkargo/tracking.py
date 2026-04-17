@@ -47,14 +47,14 @@ def _extract_details(
     When absent (standard response), `eventLocation` code is used.
     """
     events = [
-        lib.to_object(smartkargo.TrackingResponseElementType, event)
-        for event in data
+        lib.to_object(smartkargo.TrackingResponseElementType, event) for event in data
     ]
 
     latest = events[0] if events else None
-    status = provider_units.TrackingStatus.find(
-        latest.eventType if latest else ""
-    ).name or "in_transit"
+    status = (
+        provider_units.TrackingStatus.find(latest.eventType if latest else "").name
+        or "in_transit"
+    )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
@@ -81,8 +81,8 @@ def _extract_details(
                 ),
                 status=provider_units.TrackingStatus.find(e.eventType).name,
                 reason=provider_units.TrackingIncidentReason.find(e.eventType).name,
-                latitude=lib.failsafe(lambda: float(e.location.latitude)) if e.location and e.location.latitude else None,
-                longitude=lib.failsafe(lambda: float(e.location.longitude)) if e.location and e.location.longitude else None,
+                latitude=lib.failsafe(lambda: float(e.location.latitude)),
+                longitude=lib.failsafe(lambda: float(e.location.longitude)),
             )
             for e in events
         ],
