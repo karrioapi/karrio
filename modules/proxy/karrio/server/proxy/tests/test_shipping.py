@@ -334,6 +334,8 @@ SHIPPING_RESPONSE = {
     "service": "canadapost_priority",
     "selected_rate_id": ANY,
     "test_mode": True,
+    "is_archived": False,
+    "archived_at": None,
 }
 
 SHIPPING_CANCEL_SUCCESS_RESPONSE = {

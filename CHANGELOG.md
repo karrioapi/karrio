@@ -1,3 +1,45 @@
+# Karrio 2026.1.27
+
+## Changes
+
+### Feat
+
+- feat: cancel by request_id + resource archiving (soft-delete)
+- feat(smartkargo): add partner tracking API support
+- feat(charts): add production Helm chart for Kubernetes deployment
+- feat(mcp): npm publish workflow, CI test job, and bin/dev up integration
+- feat(tracking): retire aged trackers (#1023)
+- fix(return): fix/return shipments (#1016)
+
+### Fix
+
+- fix(landmark): reclassify early fulfillment events as pending to allow cancellation
+- fix(smartkargo): extract validation errors from nested shipments[]
+- fix(smartkargo): ensure trace_as records for all proxy ops (#1019)
+- fix(dhl_express): remove LocalProductCode from XML API requests
+- fix(dhl_express): move SoftwareName to connection config
+- fix(sdk): redact API key headers (#1023)
+- fix: information exposure through an exception (code scanning alert #98)
+
+### Security
+
+- security: pin axios to 1.13.2 — block compromised 1.14.1 and 0.30.4
+
+### Performance
+
+- perf: eliminate N+1 queries in tenant middleware, rate sheets, and constance settings
+
+### Chores
+
+- chore(deps): bump next from 16.1.5 to 16.1.7 in /apps/web
+- chore(deps): bump next from 16.1.5 to 16.1.7 in /packages/core
+
+### Docs
+
+- docs(self-hosting): add Kubernetes deployment guide
+
+---
+
 # Karrio 2026.1.26
 
 ## Changes

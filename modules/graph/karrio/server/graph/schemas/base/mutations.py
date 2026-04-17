@@ -1498,11 +1498,26 @@ class SystemCarrierMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.SystemCarrierMutationInput
     ) -> "SystemCarrierMutation":
+        import datetime
         from karrio.server.providers.serializers import BrokeredConnectionModelSerializer
 
         pk = input.get("id")
+        tc_accepted = input.get("tc_accepted")
         context = info.context.request
         system_connection = providers.SystemConnection.objects.get(pk=pk)
+
+        # Validate T&C acceptance when enabling a carrier with central rates
+        is_enabling = input.get("enable") is True
+        tc_text = (system_connection.metadata or {}).get("terms_and_conditions", "")
+        rate_sheet = getattr(system_connection, "rate_sheet", None)
+        has_central_rates = bool(
+            rate_sheet and getattr(rate_sheet, "service_rates", None)
+        )
+
+        if is_enabling and has_central_rates and tc_text.strip() and not tc_accepted:
+            raise exceptions.ValidationError(
+                {"tc_accepted": "You must accept the terms and conditions to enable this carrier."}
+            )
 
         # Build serializer data from input
         # Map 'config' to 'config_overrides' and 'enable' to 'is_enabled'
@@ -1524,6 +1539,21 @@ class SystemCarrierMutation(utils.BaseMutation):
             .save()
             .instance
         )
+
+        # Log T&C acceptance in BrokeredConnection metadata
+        if tc_accepted and tc_text.strip():
+            brokered_metadata = brokered.metadata or {}
+            brokered_metadata.update({
+                "tc_accepted": True,
+                "tc_accepted_at": datetime.datetime.now(
+                    datetime.timezone.utc
+                ).isoformat(),
+                "tc_accepted_by": getattr(
+                    context.user, "email", str(context.user)
+                ),
+            })
+            brokered.metadata = brokered_metadata
+            brokered.save(update_fields=["metadata"])
 
         return SystemCarrierMutation(
             carrier=system_connection
@@ -1576,3 +1606,160 @@ class UpdateMetafieldMutation(utils.BaseMutation):
         )
 
         return UpdateMetafieldMutation(metafield=metafield)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Archive / Unarchive Mutations
+# ─────────────────────────────────────────────────────────────────────────────
+
+import karrio.server.orders.models as orders_models
+
+
+def _archive(instance) -> typing.Any:
+    """Set is_archived=True idempotently."""
+    from django.utils import timezone as tz
+
+    if not instance.is_archived:
+        instance.is_archived = True
+        instance.archived_at = tz.now()
+        instance.save(update_fields=["is_archived", "archived_at", "updated_at"])
+    return instance
+
+
+def _unarchive(instance) -> typing.Any:
+    """Clear is_archived idempotently."""
+    if instance.is_archived:
+        instance.is_archived = False
+        instance.archived_at = None
+        instance.save(update_fields=["is_archived", "archived_at", "updated_at"])
+    return instance
+
+
+# ── Shipment ──────────────────────────────────────────────────────────────────
+
+@strawberry.type
+class ArchiveShipmentMutation(utils.BaseMutation):
+    shipment: typing.Optional[types.ShipmentType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "ArchiveShipmentMutation":
+        # access_by with all_objects gives tenant-scoped access including archived
+        instance = manager.Shipment.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        return ArchiveShipmentMutation(errors=None, shipment=_archive(instance))  # type: ignore
+
+
+@strawberry.type
+class UnarchiveShipmentMutation(utils.BaseMutation):
+    shipment: typing.Optional[types.ShipmentType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "UnarchiveShipmentMutation":
+        instance = manager.Shipment.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        return UnarchiveShipmentMutation(errors=None, shipment=_unarchive(instance))  # type: ignore
+
+
+# ── Tracker ───────────────────────────────────────────────────────────────────
+
+@strawberry.type
+class ArchiveTrackerMutation(utils.BaseMutation):
+    tracker: typing.Optional[types.TrackerType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "ArchiveTrackerMutation":
+        instance = manager.Tracking.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        return ArchiveTrackerMutation(errors=None, tracker=_archive(instance))  # type: ignore
+
+
+@strawberry.type
+class UnarchiveTrackerMutation(utils.BaseMutation):
+    tracker: typing.Optional[types.TrackerType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "UnarchiveTrackerMutation":
+        instance = manager.Tracking.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        return UnarchiveTrackerMutation(errors=None, tracker=_unarchive(instance))  # type: ignore
+
+
+# ── Pickup ────────────────────────────────────────────────────────────────────
+
+@strawberry.type
+class ArchivePickupMutation(utils.BaseMutation):
+    pickup: typing.Optional[types.PickupType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "ArchivePickupMutation":
+        instance = manager.Pickup.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        return ArchivePickupMutation(errors=None, pickup=_archive(instance))  # type: ignore
+
+
+@strawberry.type
+class UnarchivePickupMutation(utils.BaseMutation):
+    pickup: typing.Optional[types.PickupType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "UnarchivePickupMutation":
+        instance = manager.Pickup.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        return UnarchivePickupMutation(errors=None, pickup=_unarchive(instance))  # type: ignore
+
+
+
+# ── Order ─────────────────────────────────────────────────────────────────────
+
+@strawberry.type
+class ArchiveOrderMutation(utils.BaseMutation):
+    id: typing.Optional[str] = None
+    is_archived: typing.Optional[bool] = None
+    archived_at: typing.Optional[datetime.datetime] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "ArchiveOrderMutation":
+        instance = orders_models.Order.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        archived = _archive(instance)
+        return ArchiveOrderMutation(  # type: ignore
+            errors=None,
+            id=archived.id,
+            is_archived=archived.is_archived,
+            archived_at=archived.archived_at,
+        )
+
+
+@strawberry.type
+class UnarchiveOrderMutation(utils.BaseMutation):
+    id: typing.Optional[str] = None
+    is_archived: typing.Optional[bool] = None
+    archived_at: typing.Optional[datetime.datetime] = None
+
+    @staticmethod
+    @utils.authentication_required
+    def mutate(info: Info, id: str) -> "UnarchiveOrderMutation":
+        instance = orders_models.Order.access_by(
+            info.context.request, manager="all_objects"
+        ).get(pk=id)
+        unarchived = _unarchive(instance)
+        return UnarchiveOrderMutation(  # type: ignore
+            errors=None,
+            id=unarchived.id,
+            is_archived=unarchived.is_archived,
+            archived_at=unarchived.archived_at,
+        )

@@ -96,6 +96,16 @@ class Order(serializers.EntitySerializer):
     object_type = fields.CharField(
         default="order", help_text="Specifies the object type"
     )
+    is_archived = fields.BooleanField(
+        required=False,
+        default=False,
+        help_text="Indicates whether this order is archived.",
+    )
+    archived_at = fields.CharField(
+        required=False,
+        allow_null=True,
+        help_text="Timestamp when the order was archived.",
+    )
     order_id = fields.CharField(required=True, help_text="The source' order id.")
     order_date = fields.CharField(
         required=False,

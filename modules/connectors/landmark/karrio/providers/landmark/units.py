@@ -145,17 +145,17 @@ class TrackingStatus(lib.Enum):
     """Carrier tracking status mapping"""
 
     pending = [
-        "50",  # Shipment Data Uploaded
+        "50",   # Shipment Data Uploaded
+        "60",   # Shipment inventory allocated (still at Landmark facility — cancellable)
+        "75",   # Shipment Processed (still at Landmark facility — cancellable)
+        "80",   # Shipment Fulfilled (still at Landmark facility — cancellable)
+        "100",  # Shipment information transmitted to carrier (label created, not yet picked up — cancellable)
     ]
     delivered = [
         "500",  # Item successfully delivered
         "510",  # Proof Of Delivery
     ]
     in_transit = [
-        "60",  # Shipment inventory allocated
-        "75",  # Shipment Processed
-        "80",  # Shipment Fulfilled
-        "100",  # Shipment information transmitted to carrier
         "125",  # Customs Cleared
         "150",  # Crossing Border
         "155",  # Crossing Received

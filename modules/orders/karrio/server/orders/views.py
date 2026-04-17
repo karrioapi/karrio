@@ -178,8 +178,24 @@ class OrderCancel(api.APIView):
         request=None,
     )
     def post(self, request: Request, pk: str):
-        """Cancel an order."""
-        order = models.Order.access_by(request).get(pk=pk)
+        """Cancel an order.
+
+        ``pk`` can be either the karrio order ID or a ``request_id``
+        stored in ``order.meta["request_id"]``.
+        """
+        qs = models.Order.access_by(request)
+        try:
+            order = qs.get(pk=pk)
+        except models.Order.DoesNotExist:
+            order = (
+                qs.filter(meta__request_id=pk)
+                .order_by("-created_at")
+                .first()
+            )
+
+        if order is None:
+            raise models.Order.DoesNotExist()
+
         can_mutate_order(order, delete=True)
 
         order.status = OrderStatus.cancelled.value
@@ -193,3 +209,4 @@ router.urls.append(path("orders/<str:pk>", OrderDetail.as_view(), name="order-de
 router.urls.append(
     path("orders/<str:pk>/cancel", OrderCancel.as_view(), name="order-cancel")
 )
+

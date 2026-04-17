@@ -14,7 +14,14 @@ import karrio.server.providers.models as providers
 from karrio.server.orders.serializers.base import ORDER_STATUS
 
 
-class OrderManager(models.Manager):
+class NotArchivedManager(models.Manager):
+    """Base manager that excludes archived records from default queries."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_archived=False)
+
+
+class OrderManager(NotArchivedManager):
     def get_queryset(self):
         from django.db.models import Prefetch
 
@@ -69,9 +76,11 @@ class Order(OwnedEntity):
         "line_items",
     ]
     objects = OrderManager()
+    all_objects = models.Manager()  # unfiltered: includes archived records
 
     class Meta:
         db_table = "orders"  # Clean plural table name
+        base_manager_name = "all_objects"
         verbose_name = "Order"
         verbose_name_plural = "Orders"
         ordering = ["-created_at"]
@@ -129,6 +138,20 @@ class Order(OwnedEntity):
         blank=True, null=True, default=partial(identity, value={})
     )
     meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+
+    # ─────────────────────────────────────────────────────────────────
+    # ARCHIVING FIELDS
+    # ─────────────────────────────────────────────────────────────────
+    is_archived = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Archived records are excluded from default queries.",
+    )
+    archived_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp when the record was archived. Null if not archived.",
+    )
 
     # ─────────────────────────────────────────────────────────────────
     # SHIPMENT RELATION (kept as M2M - operational necessity)

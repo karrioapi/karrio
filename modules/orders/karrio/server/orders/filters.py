@@ -70,6 +70,10 @@ class OrderFilters(filters.FilterSet):
         method="request_id_filter",
         help_text="filter by request correlation ID",
     )
+    is_archived = filters.BooleanFilter(
+        method="is_archived_filter",
+        help_text="filter by archived status. Default is false (non-archived only).",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -136,6 +140,11 @@ class OrderFilters(filters.FilterSet):
         openapi.OpenApiParameter(
             "request_id",
             type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "is_archived",
+            type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
     ]
@@ -239,3 +248,12 @@ class OrderFilters(filters.FilterSet):
 
     def request_id_filter(self, queryset, name, value):
         return queryset.filter(meta__request_id=value)
+
+    def is_archived_filter(self, queryset, name, value):
+        import karrio.server.orders.models as order_models
+
+        if value:
+            return order_models.Order.all_objects.filter(
+                pk__in=queryset.values("pk"), is_archived=True
+            )
+        return queryset.filter(is_archived=False)

@@ -1,0 +1,17 @@
+apiVersion: v2
+name: karrio
+description: A Helm chart for deploying Karrio — the universal shipping API
+type: application
+version: 0.1.0
+appVersion: "2026.1.27"
+keywords:
+  - karrio
+  - shipping
+  - logistics
+  - api
+home: https://karrio.io
+sources:
+  - https://github.com/karrioapi/karrio
+maintainers:
+  - name: Karrio Team
+    url: https://karrio.io

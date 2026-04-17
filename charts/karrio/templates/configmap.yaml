@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "karrio.configMapName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "karrio.labels" . | nindent 4 }}
+data:
+  DEBUG_MODE: {{ .Values.config.debugMode | quote }}
+  USE_HTTPS: {{ .Values.config.useHttps | quote }}
+  DETACHED_WORKER: {{ .Values.config.detachedWorker | quote }}
+  ENABLE_ALL_PLUGINS_BY_DEFAULT: {{ .Values.config.enableAllPlugins | quote }}
+  DATABASE_HOST: {{ .Values.database.host | quote }}
+  DATABASE_NAME: {{ .Values.database.name | quote }}
+  DATABASE_PORT: {{ .Values.database.port | quote }}
+  DATABASE_ENGINE: "postgresql_psycopg2"
+  DATABASE_USERNAME: {{ .Values.database.username | quote }}
+  REDIS_HOST: {{ .Values.redis.host | quote }}
+  REDIS_PORT: {{ .Values.redis.port | quote }}

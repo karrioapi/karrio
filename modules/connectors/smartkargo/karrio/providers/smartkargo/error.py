@@ -5,104 +5,147 @@ import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.smartkargo.utils as provider_utils
 
+_ERROR_STATUSES = {"ERROR", "FAILED", "REJECTED"}
+_SUCCESS_STATUSES = {"PROCESSED", "QUOTED", "SUCCESS", "OK", ""}
+
 
 def parse_error_response(
     response: typing.Union[dict, typing.List[dict]],
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    """Parse SmartKargo API error response.
+    """Parse SmartKargo API error responses.
 
-    SmartKargo errors come in several formats per API manual (Pages 11-12, 20-24):
-    1. Validation errors: {"status": "Rejected", "validations": [{"property": "...", "message": "...", "packageReference": "..."}]}
-    2. Error object: {"error": {"code": "...", "message": "..."}}
-    3. Status-based: {"status": "Error/Failed/Rejected", "details": "..."}
+    Extracts errors from all SmartKargo response formats:
+    - Plain text errors (e.g. 'Entity "Site" not found')
+    - Error object: {"error": {"code": "...", "message": "..."}}
+    - Top-level validations[]: {"validations": [{"message": "..."}]}
+    - Nested shipments[].validations[]: rejected shipment errors
+    - Status-based: {"status": "Rejected", "details": "..."}
     """
     responses = response if isinstance(response, list) else [response]
-    errors: typing.List[models.Message] = []
 
-    for res in responses:
-        # Handle plain text error responses (e.g. 'Entity "Site" (...) not found')
-        if isinstance(res, str):
-            if res.strip():
-                errors.append(
-                    models.Message(
-                        carrier_id=settings.carrier_id,
-                        carrier_name=settings.carrier_name,
-                        code="API_ERROR",
-                        message=res.strip(),
-                        details={**kwargs},
-                    )
-                )
-            continue
+    return sum(
+        [_extract_errors(res, settings, **kwargs) for res in responses],
+        [],
+    )
 
-        if not isinstance(res, dict):
-            continue
 
-        status = res.get("status", "")
-        valid = res.get("valid", "")
+def _extract_errors(
+    res: typing.Union[str, dict],
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    """Extract all errors from a single response object."""
 
-        # Check for explicit error object
-        error_obj = res.get("error")
-        if error_obj and isinstance(error_obj, dict):
-            errors.append(
-                models.Message(
-                    carrier_id=settings.carrier_id,
-                    carrier_name=settings.carrier_name,
-                    code=error_obj.get("code", "ERROR"),
-                    message=error_obj.get("message", "Unknown error"),
-                    details={**kwargs},
-                )
-            )
-            continue
+    # Plain text error (e.g. HTTP error body)
+    if isinstance(res, str) and res.strip():
+        return [_message(settings, "API_ERROR", res.strip(), **kwargs)]
 
-        # Skip successful responses
-        if status.upper() in ["PROCESSED", "QUOTED", "SUCCESS", "OK", ""] and valid.upper() != "NO":
-            # Check for validation warnings in successful responses
-            validations = res.get("validations") or []
-            if not validations:
-                continue
+    if not isinstance(res, dict):
+        return []
 
-        # Extract validation errors
-        validations = res.get("validations") or []
-        for validation in validations:
-            if isinstance(validation, dict):
-                errors.append(
-                    models.Message(
-                        carrier_id=settings.carrier_id,
-                        carrier_name=settings.carrier_name,
-                        code=validation.get("property") or validation.get("code", "VALIDATION_ERROR"),
-                        message=validation.get("message", "Unknown validation error"),
-                        details={
-                            "package_reference": validation.get("packageReference"),
-                            **kwargs,
-                        },
-                    )
-                )
+    status = (res.get("status") or "").upper()
+    valid = (res.get("valid") or "").upper()
 
-        # Extract general error details
-        details = res.get("details")
-        if details and status.upper() in ["ERROR", "FAILED", "REJECTED"]:
-            errors.append(
-                models.Message(
-                    carrier_id=settings.carrier_id,
-                    carrier_name=settings.carrier_name,
-                    code="API_ERROR",
-                    message=str(details) if details else "Unknown API error",
-                    details={**kwargs},
-                )
-            )
+    # Explicit error object: {"error": {"code": "...", "message": "..."}}
+    error_obj = res.get("error")
+    if isinstance(error_obj, dict):
+        return [_message(
+            settings,
+            error_obj.get("code", "ERROR"),
+            error_obj.get("message", "Unknown error"),
+            **kwargs,
+        )]
 
-        # Handle case where there's an error status but no details
-        if status.upper() in ["ERROR", "FAILED", "REJECTED"] and not validations and not details and not error_obj:
-            errors.append(
-                models.Message(
-                    carrier_id=settings.carrier_id,
-                    carrier_name=settings.carrier_name,
-                    code="ERROR",
-                    message="An unknown error occurred",
-                    details={**kwargs},
-                )
-            )
+    # Successful response with no issues — skip
+    if status in _SUCCESS_STATUSES and valid != "NO":
+        top_validations = res.get("validations") or []
+        if not top_validations:
+            return []
+
+    # Collect all errors from validations + shipments + status details
+    top_validations = _parse_validations(res.get("validations"), settings, **kwargs)
+    shipment_validations = _parse_shipment_validations(res.get("shipments"), settings, **kwargs)
+    status_errors = _parse_status_error(res, settings, **kwargs)
+
+    errors = [*top_validations, *shipment_validations, *status_errors]
+
+    # Fallback: error status with no extractable details
+    if status in _ERROR_STATUSES and not errors:
+        return [_message(settings, "ERROR", "An unknown error occurred", **kwargs)]
 
     return errors
+
+
+def _parse_validations(
+    validations: typing.Optional[typing.List[dict]],
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    """Parse top-level validations[] array."""
+    return [
+        _message(
+            settings,
+            v.get("property") or v.get("code", "VALIDATION_ERROR"),
+            v.get("message", "Unknown validation error"),
+            package_reference=v.get("packageReference"),
+            **kwargs,
+        )
+        for v in (validations or [])
+        if isinstance(v, dict)
+    ]
+
+
+def _parse_shipment_validations(
+    shipments: typing.Optional[typing.List[dict]],
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    """Parse nested shipments[].validations[] arrays."""
+    return [
+        _message(
+            settings,
+            v.get("code", "VALIDATION_ERROR"),
+            v.get("message", "Unknown validation error"),
+            package_reference=shipment.get("packageReference"),
+            header_reference=shipment.get("headerReference"),
+            shipment_status=(shipment.get("status") or "").upper() or None,
+            **kwargs,
+        )
+        for shipment in (shipments or [])
+        if isinstance(shipment, dict)
+        for v in (shipment.get("validations") or [])
+        if isinstance(v, dict)
+    ]
+
+
+def _parse_status_error(
+    res: dict,
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    """Parse status-based error with details string."""
+    status = (res.get("status") or "").upper()
+    details = res.get("details")
+
+    if status in _ERROR_STATUSES and details:
+        return [_message(settings, "API_ERROR", str(details), **kwargs)]
+
+    return []
+
+
+def _message(
+    settings: provider_utils.Settings,
+    code: str,
+    message: str,
+    **details,
+) -> models.Message:
+    """Build a Message with consistent carrier info and cleaned details."""
+    return models.Message(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        code=code,
+        message=message,
+        details=lib.to_dict(details),
+    )

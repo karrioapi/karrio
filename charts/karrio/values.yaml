@@ -1,0 +1,159 @@
+## Karrio Helm Chart — values.yaml
+## https://karrio.io
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  server:
+    repository: karrio.docker.scarf.sh/karrio/server
+    tag: ""           # defaults to .Chart.AppVersion
+    pullPolicy: IfNotPresent
+  dashboard:
+    repository: karrio.docker.scarf.sh/karrio/dashboard
+    tag: ""
+    pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+## ──────────────────────────────────────────────
+## API (Django)
+## ──────────────────────────────────────────────
+api:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 5
+  readinessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 3
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  podLabels: {}
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+## ──────────────────────────────────────────────
+## Worker (Celery / Huey)
+## ──────────────────────────────────────────────
+worker:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 15
+    failureThreshold: 5
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  podLabels: {}
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+## ──────────────────────────────────────────────
+## Dashboard (Next.js)
+## ──────────────────────────────────────────────
+dashboard:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  podLabels: {}
+
+## ──────────────────────────────────────────────
+## Ingress
+## ──────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  api:
+    host: api.example.com
+  dashboard:
+    host: app.example.com
+  tls: []
+  #  - secretName: karrio-tls
+  #    hosts:
+  #      - api.example.com
+  #      - app.example.com
+
+## ──────────────────────────────────────────────
+## Application config (non-secret)
+## ──────────────────────────────────────────────
+config:
+  secretKey: ""           # required — Django SECRET_KEY
+  jwtSecret: ""           # required — NEXTAUTH_SECRET for dashboard
+  debugMode: "False"
+  useHttps: "True"
+  detachedWorker: "True"
+  enableAllPlugins: "True"
+
+## ──────────────────────────────────────────────
+## External PostgreSQL
+## ──────────────────────────────────────────────
+database:
+  host: ""
+  port: 5432
+  name: karrio
+  username: karrio
+  password: ""            # required
+
+## ──────────────────────────────────────────────
+## External Redis
+## ──────────────────────────────────────────────
+redis:
+  host: ""
+  port: 6379
+
+## ──────────────────────────────────────────────
+## Use an existing Secret instead of creating one
+## Must contain keys: SECRET_KEY, JWT_SECRET, DATABASE_PASSWORD
+## ──────────────────────────────────────────────
+existingSecret: ""
+
+## ──────────────────────────────────────────────
+## Dashboard public URLs
+## ──────────────────────────────────────────────
+dashboardUrl: ""          # e.g. https://app.example.com
+karrioPublicUrl: ""       # e.g. https://api.example.com

@@ -489,3 +489,53 @@ class Mutation:
         return mutations.DeleteMutation.mutate(
             info, model=core.Metafield, **input.to_dict()
         )
+
+    # ── Archive / Unarchive mutations ─────────────────────────────────────────
+
+    @strawberry.mutation
+    def archive_shipment(
+        self, info: Info, id: str
+    ) -> mutations.ArchiveShipmentMutation:
+        return mutations.ArchiveShipmentMutation.mutate(info, id=id)
+
+    @strawberry.mutation
+    def unarchive_shipment(
+        self, info: Info, id: str
+    ) -> mutations.UnarchiveShipmentMutation:
+        return mutations.UnarchiveShipmentMutation.mutate(info, id=id)
+
+    @strawberry.mutation
+    def archive_tracker(
+        self, info: Info, id: str
+    ) -> mutations.ArchiveTrackerMutation:
+        return mutations.ArchiveTrackerMutation.mutate(info, id=id)
+
+    @strawberry.mutation
+    def unarchive_tracker(
+        self, info: Info, id: str
+    ) -> mutations.UnarchiveTrackerMutation:
+        return mutations.UnarchiveTrackerMutation.mutate(info, id=id)
+
+    @strawberry.mutation
+    def archive_pickup(
+        self, info: Info, id: str
+    ) -> mutations.ArchivePickupMutation:
+        return mutations.ArchivePickupMutation.mutate(info, id=id)
+
+    @strawberry.mutation
+    def unarchive_pickup(
+        self, info: Info, id: str
+    ) -> mutations.UnarchivePickupMutation:
+        return mutations.UnarchivePickupMutation.mutate(info, id=id)
+
+    @strawberry.mutation
+    def archive_order(
+        self, info: Info, id: str
+    ) -> mutations.ArchiveOrderMutation:
+        return mutations.ArchiveOrderMutation.mutate(info, id=id)
+
+    @strawberry.mutation
+    def unarchive_order(
+        self, info: Info, id: str
+    ) -> mutations.UnarchiveOrderMutation:
+        return mutations.UnarchiveOrderMutation.mutate(info, id=id)
