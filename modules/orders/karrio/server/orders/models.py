@@ -144,6 +144,7 @@ class Order(OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     is_archived = models.BooleanField(
         default=False,
+        db_default=False,
         db_index=True,
         help_text="Archived records are excluded from default queries.",
     )

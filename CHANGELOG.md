@@ -1,3 +1,18 @@
+# Karrio 2026.1.28
+
+## Changes
+
+### Fix
+
+- fix(core): only flag baseline entries stale when actually evaluated
+- fix(manager,orders): add db_default=False to is_archived fields
+
+### Chores
+
+- ci(core): add rolling-deploy schema safety system check
+
+---
+
 # Karrio 2026.1.27
 
 ## Changes

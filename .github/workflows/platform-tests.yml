@@ -27,6 +27,7 @@ jobs:
           ./bin/setup-server-env -v &&
           ./bin/cli plugins list &&
           ./bin/migrate &&
+          source bin/activate-env && karrio check --tag database --fail-level ERROR &&
           ./bin/run-server-tests -v
 
   platform-ci:
