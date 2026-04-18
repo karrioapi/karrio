@@ -553,6 +553,7 @@ class Pickup(core.OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     is_archived = models.BooleanField(
         default=False,
+        db_default=False,
         db_index=True,
         help_text="Archived records are excluded from default queries and background jobs.",
     )
@@ -722,6 +723,7 @@ class Tracking(core.OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     is_archived = models.BooleanField(
         default=False,
+        db_default=False,
         db_index=True,
         help_text="Archived records are excluded from default queries and background jobs.",
     )
@@ -984,6 +986,7 @@ class Shipment(core.OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     is_archived = models.BooleanField(
         default=False,
+        db_default=False,
         db_index=True,
         help_text="Archived records are excluded from default queries and background jobs.",
     )
