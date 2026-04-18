@@ -94,6 +94,8 @@ def check_rolling_deploy_safe_fields(app_configs, **kwargs):
     )
 
     hazards = set()
+    resolved_safe = set()  # fields we evaluated and found safe (not hazards)
+
     for app_label, model_name, field_name in added_fields:
         if app_label in THIRD_PARTY_APPS:
             continue
@@ -102,16 +104,19 @@ def check_rolling_deploy_safe_fields(app_configs, **kwargs):
         try:
             model = apps.get_model(app_label, model_name)
         except LookupError:
+            # App not loaded in this config (e.g., community build without
+            # insiders submodule). Can't evaluate — leave baseline entry alone.
             continue
         try:
             field = model._meta.get_field(field_name)
         except FieldDoesNotExist:
             continue
 
+        key = (app_label, model_name, field_name)
         if not _is_hazard(field):
+            resolved_safe.add(key)
             continue
 
-        key = (app_label, model_name, field_name)
         hazards.add(key)
 
         if key in BASELINE_HAZARDS:
@@ -137,8 +142,10 @@ def check_rolling_deploy_safe_fields(app_configs, **kwargs):
         )
 
     # Flag stale baseline entries so the allowlist shrinks as hazards are fixed.
+    # Only entries we actually evaluated and found safe count as stale — not
+    # entries whose app isn't loaded in this build variant.
     if selected_app_labels is None:
-        for stale in sorted(BASELINE_HAZARDS - hazards):
+        for stale in sorted(BASELINE_HAZARDS & resolved_safe):
             issues.append(
                 Warning(
                     (
