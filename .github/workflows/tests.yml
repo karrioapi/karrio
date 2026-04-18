@@ -138,6 +138,19 @@ jobs:
           ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
         run: ./bin/migrate
 
+      - name: Check rolling-deploy schema safety
+        env:
+          DATABASE_ENGINE: postgresql
+          DATABASE_NAME: karrio
+          DATABASE_HOST: localhost
+          DATABASE_PORT: "5432"
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: postgres
+          ENABLE_ALL_PLUGINS_BY_DEFAULT: "true"
+        run: |
+          source bin/activate-env
+          karrio check --tag database --fail-level ERROR
+
       - name: Run server tests
         env:
           DATABASE_ENGINE: postgresql
