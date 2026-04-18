@@ -94,7 +94,7 @@ karrio_ups @ file://${PWD}/modules/connectors/ups
 karrio_usps @ file://${PWD}/modules/connectors/usps
 karrio_usps_international @ file://${PWD}/modules/connectors/usps_international
 loguru==0.7.3
-lxml==6.0.4
+lxml==6.1.0
 lxml-stubs==0.5.1
 markupsafe==3.0.3
 more-itertools==11.0.2
