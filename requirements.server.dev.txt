@@ -6,6 +6,7 @@ djangorestframework-stubs
 -r requirements.sdk.dev.txt
 
 # karrio server modules
+-e ./modules/server
 -e ./modules/core
 -e ./apps/api
 -e ./modules/graph

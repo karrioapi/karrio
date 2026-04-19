@@ -84,6 +84,7 @@ karrio_server_documents @ file://${PWD}/modules/documents
 karrio_server_events @ file://${PWD}/modules/events
 karrio_server_graph @ file://${PWD}/modules/graph
 karrio_server_manager @ file://${PWD}/modules/manager
+karrio_server_modules @ file://${PWD}/modules/server
 karrio_server_orders @ file://${PWD}/modules/orders
 karrio_server_pricing @ file://${PWD}/modules/pricing
 karrio_server_proxy @ file://${PWD}/modules/proxy
