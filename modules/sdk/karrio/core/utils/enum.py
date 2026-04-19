@@ -234,7 +234,7 @@ class Spec:
         return Spec(key, bool, compute, default=default)
 
     @staticmethod
-    def asValue(key: str, type: type = str, default: typing.Any = None) -> "Spec":
+    def asValue(key: str, type: type = str, default: typing.Any = None) -> "Spec":  # type: ignore[valid-type]
         """A Spec defined as "typing.Type" means that when it is specified in a payload,
         the value passed by the user will be returned.
 
@@ -256,7 +256,7 @@ class Spec:
         return Spec(key, type, compute, default=default)
 
     @staticmethod
-    def asKeyVal(key: str, type: type = str, default: typing.Any = None) -> "Spec":
+    def asKeyVal(key: str, type: type = str, default: typing.Any = None) -> "Spec":  # type: ignore[valid-type]
         """A Spec defined as "Value" means that when it is specified in a payload,
         the a new spec defined as type is returned.
 
