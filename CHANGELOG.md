@@ -15,6 +15,13 @@
   (2026.1.26+), including instances that are currently stuck on the duplicate
   column error.
 
+### Chores
+
+- chore(documents): stop persisting `POST /v1/documents/generate` responses
+  in `api_logs`. Generated PDFs are returned as base64 in the response body
+  and were bloating the table on every call. Template CRUD endpoints
+  (`/v1/documents/templates*`) remain logged for audit.
+
 ---
 
 # Karrio 2026.1.28

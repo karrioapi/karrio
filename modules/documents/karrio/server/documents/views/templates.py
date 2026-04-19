@@ -148,7 +148,10 @@ class DocumentTemplateDetail(api.APIView):
         return Response(serializers.DocumentTemplate(template).data)
 
 
-class DocumentGenerator(api.APIView):
+class DocumentGenerator(api.BaseAPIView):
+    # Skip LoggingMixin: responses include base64-encoded PDFs that bloat the
+    # APILogIndex table. Template CRUD endpoints above still log normally.
+
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}generateDocument",
