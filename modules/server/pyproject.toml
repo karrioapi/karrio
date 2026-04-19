@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "karrio_server_admin"
+name = "karrio_server_modules"
 version = "2026.1.29"
-description = "Multi-carrier shipping API admin module (shim — code lives in karrio_server_modules)"
+description = "Multi-carrier shipping API consolidated server modules (core + graph + admin)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "LGPL-3.0"
@@ -16,7 +16,15 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "karrio_server_modules",
+    "karrio",
+    "psycopg2-binary",
+    "django-health-check",
+    "dnspython",
+    "psutil",
+    "pyyaml",
+    "Jinja2",
+    "django-filter",
+    "strawberry-graphql",
 ]
 
 [project.urls]
@@ -32,3 +40,8 @@ include-package-data = true
 [tool.setuptools.packages.find]
 exclude = ["tests.*", "tests"]
 namespaces = true
+
+[tool.setuptools.package-data]
+"karrio.server.user" = ["templates/**/*"]
+"karrio.server.graph" = ["templates/**/*"]
+"*" = ["*.html", "*.txt", "*.css", "*.js", "*.png", "*.jpg", "*.gif", "*.ico"]

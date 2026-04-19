@@ -1,1 +1,2 @@
+recursive-include karrio/server/user/templates *
 recursive-include karrio/server/graph/templates *

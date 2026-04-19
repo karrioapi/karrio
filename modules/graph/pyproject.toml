@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "karrio_server_graph"
 version = "2026.1.29"
-description = "Multi-carrier shipping API Graph module"
+description = "Multi-carrier shipping API Graph module (shim — code lives in karrio_server_modules)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "LGPL-3.0"
@@ -16,9 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "karrio_server_core",
-    "django-filter",
-    "strawberry-graphql",
+    "karrio_server_modules",
 ]
 
 [project.urls]
@@ -34,7 +32,3 @@ include-package-data = true
 [tool.setuptools.packages.find]
 exclude = ["tests.*", "tests"]
 namespaces = true
-
-[tool.setuptools.package-data]
-"karrio.server.graph" = ["templates/**/*"]
-"*" = ["*.html", "*.txt", "*.css", "*.js", "*.png", "*.jpg", "*.gif", "*.ico"]

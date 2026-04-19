@@ -37,6 +37,7 @@
 -e ./community/plugins/sapient
 
 # karrio server modules
+-e ./modules/server
 -e ./modules/core
 -e ./apps/api
 -e ./modules/graph

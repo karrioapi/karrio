@@ -61,6 +61,7 @@ main() {
     # Define packages to update
     declare -a packages=(
         "modules/sdk"
+        "modules/server"
         "modules/core"
         "modules/data"
         "modules/documents"

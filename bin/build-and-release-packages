@@ -241,6 +241,7 @@ main() {
     # Define packages to build
     declare -a packages=(
         "modules/sdk:karrio"
+        "modules/server:karrio_server_modules"
         "modules/core:karrio_server_core"
         "modules/data:karrio_server_data"
         "modules/documents:karrio_server_documents"
