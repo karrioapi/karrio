@@ -7,11 +7,33 @@
 
 ## Context Priority
 
-1. **Read this file first** for repository conventions
-2. For carrier integrations, consult `CARRIER_INTEGRATION_GUIDE.md`
-3. Check PRDs in `PRDs/` folder for feature architecture decisions
-4. Review existing code patterns before implementing new features
-5. **Search for existing utilities before writing new code**
+Load context in this order — later items override/refine earlier ones:
+
+1. **`CLAUDE.md`** (lean, project-specific) and this `AGENTS.md` (comprehensive reference) — the two sources of truth for project conventions.
+2. **`.claude/rules/*.md`** (scoped rules) — load the rule that matches what you're doing:
+   - `code-style.md` — naming, imports, formatting
+   - `testing.md` — unittest / `karrio test`, no pytest, 4-method carrier test pattern
+   - `git-workflow.md` — commits, submodules, changelog
+   - `commit-conventions.md` — `type(scope): summary` format
+   - `django-patterns.md` — multi-tenancy, N+1, migrations, Huey
+   - `carrier-integration.md` — connector structure, definition of done
+   - `extension-patterns.md` — "extend, don't modify core"; namespace-package rules
+   - `prd-and-review.md` — PRD-first workflow, fresh-context review gates
+3. **`.claude/skills/<name>/SKILL.md`** (step-by-step guides) — invoke by user or by another skill:
+   - `create-prd` — write PRDs with ASCII diagrams before non-trivial features
+   - `create-extension-module` — scaffold a new `modules/<name>/` extension
+   - `django-graphql` — schema layout + auto-discovery + test patterns
+   - `django-rest-api` — view / serializer / router patterns
+   - `carrier-integration` — full carrier connector implementation
+   - `run-tests` — pick the right test command for the changed files
+   - `review-implementation` — fresh-context review checklist
+   - `debugging` — request lifecycle, debugging commands, common pitfalls
+   - `project-setup` — environment setup, running servers, schema generation
+   - `release` — version bumping, package sync, frozen requirements, changelog
+4. **PRDs in `PRDs/`** — feature architecture decisions and active workstreams (e.g. `RELEASE_2026_5_PLATFORM_UPGRADE.md`, `SUBTREE_SYNC_WORKFLOW.md`).
+5. **Carrier integrations** — consult `CARRIER_INTEGRATION_GUIDE.md` and the existing carriers under `modules/connectors/*/`.
+6. **Existing code patterns** — review before implementing; prefer reuse via `karrio.lib.*` and existing hooks.
+7. **Search for existing utilities before writing new code.**
 
 ---
 

@@ -46,22 +46,28 @@ npm run build                                                    # Turbo build a
 ## Detailed Rules
 
 Scoped rules are in `.claude/rules/`:
-- `code-style.md` — naming, imports, formatting
-- `testing.md` — test commands, patterns, fixtures
+- `code-style.md` — naming, imports, formatting, i18n
+- `testing.md` — test commands, patterns, fixtures, imports-at-top rule
 - `git-workflow.md` — commits, submodules, changelog
+- `commit-conventions.md` — `type(scope): summary` format, branch naming
 - `django-patterns.md` — multi-tenancy, N+1, migrations, Huey jobs
 - `carrier-integration.md` — connector structure, definition of done
+- `extension-patterns.md` — "extend, don't modify core" + namespace-package rules
 - `prd-and-review.md` — PRD-first workflow, fresh-context review gates
 
 ## Skills
 
 Skills in `.claude/skills/` provide step-by-step guides:
 - `carrier-integration/` — Full carrier connector implementation (5 phases)
-- `release/` — Version bumping, package sync, frozen requirements, changelog
-- `debugging/` — Request lifecycle, debugging commands, common pitfalls
-- `project-setup/` — Environment setup, running servers, schema generation
+- `create-extension-module/` — Scaffold a new `modules/<name>/` extension with AppConfig + auto-discovery
 - `create-prd/` — Write PRDs with ASCII diagrams before non-trivial features
+- `debugging/` — Request lifecycle, debugging commands, common pitfalls
+- `django-graphql/` — Schema layout, auto-discovery, mutation/query patterns
+- `django-rest-api/` — View / serializer / router patterns
+- `project-setup/` — Environment setup, running servers, schema generation
+- `release/` — Version bumping, package sync, frozen requirements, changelog
 - `review-implementation/` — Fresh-context review checklist for quality gates
+- `run-tests/` — Decision table: which test command for the changed files
 
 ## Full Reference
 
