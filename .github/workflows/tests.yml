@@ -15,7 +15,9 @@
 
 name: karrio-tests
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 permissions:
   contents: read
@@ -237,3 +239,70 @@ jobs:
       - name: Build
         working-directory: packages/mcp
         run: npm run build
+
+  helm:
+    # Helm chart validation — `helm lint` + `helm template` against each
+    # values-examples file, then `kubeconform` to verify the rendered
+    # manifests against the Kubernetes OpenAPI schema. See
+    # charts/karrio/README.md for install instructions.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.15.4
+
+      - name: Install kubeconform
+        run: |
+          curl -sSL \
+            https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz \
+            | tar xz
+          sudo mv kubeconform /usr/local/bin/kubeconform
+          kubeconform -v
+
+      - name: Build chart dependencies
+        run: helm dependency build charts/karrio
+
+      - name: helm lint (default values)
+        run: helm lint charts/karrio
+
+      - name: helm lint (eks-alb)
+        run: helm lint charts/karrio -f charts/karrio/values-examples/eks-alb.yaml
+
+      - name: helm lint (gke)
+        run: helm lint charts/karrio -f charts/karrio/values-examples/gke.yaml
+
+      - name: helm lint (local)
+        run: helm lint charts/karrio -f charts/karrio/values-examples/local.yaml
+
+      - name: helm template + kubeconform (eks-alb)
+        run: |
+          helm template karrio charts/karrio \
+            -f charts/karrio/values-examples/eks-alb.yaml \
+            | kubeconform -strict -ignore-missing-schemas \
+                -kubernetes-version 1.29.0 \
+                -schema-location default \
+                -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+
+      - name: helm template + kubeconform (gke)
+        run: |
+          helm template karrio charts/karrio \
+            -f charts/karrio/values-examples/gke.yaml \
+            | kubeconform -strict -ignore-missing-schemas \
+                -kubernetes-version 1.29.0 \
+                -schema-location default \
+                -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+
+      - name: helm template + kubeconform (local)
+        run: |
+          helm template karrio charts/karrio \
+            -f charts/karrio/values-examples/local.yaml \
+            | kubeconform -strict -ignore-missing-schemas \
+                -kubernetes-version 1.29.0 \
+                -schema-location default \
+                -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
