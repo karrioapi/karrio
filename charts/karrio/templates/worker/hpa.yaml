@@ -1,0 +1,45 @@
+{{- if .Values.worker.autoscaling.enabled }}
+# ──────────────────────────────────────────────────────────────────────────
+# Worker HorizontalPodAutoscaler
+#
+# Note: This HPA requires a custom metric to be exposed by the cluster
+# (e.g., `karrio_queue_depth` from the Huey broker, or an equivalent
+# queue-depth / job-lag signal surfaced via Prometheus Adapter or
+# KEDA). Enable only after the metric source is installed and
+# registered with the Kubernetes metrics API; otherwise the HPA will
+# stay in `ScalingActive=False` and no-op.
+# ──────────────────────────────────────────────────────────────────────────
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "karrio.fullname" . }}-worker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "karrio.labels" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "karrio.fullname" . }}-worker
+  minReplicas: {{ .Values.worker.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.worker.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.worker.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.worker.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if and .Values.worker.autoscaling.targetMetricName .Values.worker.autoscaling.targetValue }}
+    - type: Pods
+      pods:
+        metric:
+          name: {{ .Values.worker.autoscaling.targetMetricName | quote }}
+        target:
+          type: AverageValue
+          averageValue: {{ .Values.worker.autoscaling.targetValue | quote }}
+    {{- end }}
+{{- end }}
