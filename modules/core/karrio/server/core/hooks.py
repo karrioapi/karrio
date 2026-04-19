@@ -18,13 +18,16 @@ Usage::
     MyModel.hooks.after("get_credentials", decrypt_fields)
     MyModel.hooks.override("get_credentials", encrypted_get)
 """
-import typing
+
+import contextlib
 import functools
-from typing import Callable
+import typing
+from collections.abc import Callable
 
 
 class HookError(Exception):
     """Raised when a hook is misconfigured or returns an invalid value."""
+
     pass
 
 
@@ -42,9 +45,9 @@ class HookRegistry:
 
     def __init__(self, klass):
         self._klass = klass
-        self._hooks: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
-        self._originals: typing.Dict[str, typing.Any] = {}
-        self._wrapped: typing.Set[str] = set()
+        self._hooks: dict[str, dict[str, typing.Any]] = {}
+        self._originals: dict[str, typing.Any] = {}
+        self._wrapped: set[str] = set()
 
     def before(self, name: str, fn: Callable) -> None:
         """Register a before hook. Receives the same args as the method."""
@@ -60,9 +63,7 @@ class HookRegistry:
         """Register an override (replaces original). At most one per method."""
         self._ensure_wrapped(name)
         if self._hooks[name]["override"] is not None:
-            raise HookError(
-                f"Override already registered for {self._klass.__name__}.{name}"
-            )
+            raise HookError(f"Override already registered for {self._klass.__name__}.{name}")
         self._hooks[name]["override"] = fn
 
     def remove(self, name: str, phase: str, fn: Callable) -> None:
@@ -72,10 +73,8 @@ class HookRegistry:
         if phase == "override":
             self._hooks[name]["override"] = None
         else:
-            try:
+            with contextlib.suppress(ValueError):
                 self._hooks[name][phase].remove(fn)
-            except ValueError:
-                pass
 
     class _Scoped:
         """Context manager for temporary hook registration (useful in tests)."""
@@ -114,9 +113,7 @@ class HookRegistry:
         resolved = getattr(self._klass, name, None)
 
         if raw is None and resolved is None:
-            raise HookError(
-                f"{self._klass.__name__} has no attribute '{name}'"
-            )
+            raise HookError(f"{self._klass.__name__} has no attribute '{name}'")
 
         self._hooks[name] = {"before": [], "after": [], "override": None}
         hooks_ref = self._hooks
@@ -147,12 +144,11 @@ class HookRegistry:
 
             @functools.wraps(original_fget)
             def prop_wrapper(instance):
-                return self._execute(
-                    name, hooks_ref, original_fget, (instance,), {}
-                )
+                return self._execute(name, hooks_ref, original_fget, (instance,), {})
 
             setattr(
-                self._klass, name,
+                self._klass,
+                name,
                 property(prop_wrapper, raw.fset, raw.fdel, raw.__doc__),
             )
 
@@ -178,18 +174,14 @@ class HookRegistry:
 
         # Phase 2: override or original
         override = method_hooks["override"]
-        if override is not None:
-            result = override(*args, **kwargs)
-        else:
-            result = original(*args, **kwargs)
+        result = override(*args, **kwargs) if override is not None else original(*args, **kwargs)
 
         # Phase 3: after hooks
         for fn in method_hooks["after"]:
             new_result = fn(result, *args, **kwargs)
             if new_result is None and result is not None:
                 raise HookError(
-                    f"After hook '{fn.__name__}' on '{name}' returned None — "
-                    f"after hooks must return a value"
+                    f"After hook '{fn.__name__}' on '{name}' returned None — after hooks must return a value"
                 )
             result = new_result
 

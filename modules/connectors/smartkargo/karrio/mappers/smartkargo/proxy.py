@@ -149,9 +149,7 @@ class Proxy(proxy.Proxy):
         _partner_url = self.settings.connection_config.partner_tracking_url.state
         _base_url = f"{_partner_url}/api" if _partner_url else self.settings.server_url
         _code = (
-            self.settings.connection_config.partner_tracking_api_code.state
-            if _partner_url
-            else self.settings.api_key
+            self.settings.connection_config.partner_tracking_api_code.state if _partner_url else self.settings.api_key
         ) or self.settings.api_key
         _site_id = self.settings.connection_config.site_id.state
 

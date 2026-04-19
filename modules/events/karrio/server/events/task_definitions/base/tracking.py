@@ -47,6 +47,7 @@ def _get_max_active_days() -> int:
     """Return the live TRACKER_MAX_ACTIVE_DAYS value from constance (falls back to settings)."""
     try:
         from constance import config as constance_config
+
         return int(getattr(constance_config, "TRACKER_MAX_ACTIVE_DAYS", TRACKER_MAX_ACTIVE_DAYS))
     except Exception:
         return TRACKER_MAX_ACTIVE_DAYS

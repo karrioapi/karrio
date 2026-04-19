@@ -11,15 +11,11 @@ Supports two workbook formats:
 CSV imports are considered flat-format when the first row contains `carrier_name`.
 """
 
-import io
 import csv
-import json
-import tablib
-import openpyxl
-
-from typing import Optional
+import io
 
 import karrio.lib as lib
+import openpyxl
 
 # ─────────────────────────────────────────────────────────────────────────────
 # FLAT FORMAT COLUMN DEFINITIONS
@@ -92,21 +88,51 @@ VALID_SHIPMENT_TYPES = {"outbound", "returns", "pickup"}
 RATE_SHEET_COLS = ["name", "carrier_name", "slug", "currency", "origin_countries"]
 ZONE_COLS = ["zone_id", "zone_label", "country_codes", "postal_codes", "cities", "transit_days", "transit_time"]
 SERVICE_COLS = [
-    "service_id", "service_name", "service_code", "carrier_service_code",
-    "currency", "shipment_type", "domicile", "international", "tracked",
-    "b2c", "b2b", "first_mile", "last_mile", "form_factor", "address_validation",
-    "notification", "ddp_available", "ddu_available", "surcharge_ids",
-    "max_weight", "min_weight", "max_length", "max_width", "max_height",
-    "dimension_unit", "weight_unit",
+    "service_id",
+    "service_name",
+    "service_code",
+    "carrier_service_code",
+    "currency",
+    "shipment_type",
+    "domicile",
+    "international",
+    "tracked",
+    "b2c",
+    "b2b",
+    "first_mile",
+    "last_mile",
+    "form_factor",
+    "address_validation",
+    "notification",
+    "ddp_available",
+    "ddu_available",
+    "surcharge_ids",
+    "max_weight",
+    "min_weight",
+    "max_length",
+    "max_width",
+    "max_height",
+    "dimension_unit",
+    "weight_unit",
 ]
 SURCHARGE_COLS = ["surcharge_id", "surcharge_name", "amount", "surcharge_type", "cost", "active"]
 SERVICE_RATE_COLS = [
-    "service_id", "zone_id", "shipment_type", "min_weight", "max_weight",
-    "base_rate", "cost", "transit_days",
-    "plan_rate_start", "plan_cost_start",
-    "plan_rate_advanced", "plan_cost_advanced",
-    "plan_rate_pro", "plan_cost_pro",
-    "plan_rate_enterprise", "plan_cost_enterprise",
+    "service_id",
+    "zone_id",
+    "shipment_type",
+    "min_weight",
+    "max_weight",
+    "base_rate",
+    "cost",
+    "transit_days",
+    "plan_rate_start",
+    "plan_cost_start",
+    "plan_rate_advanced",
+    "plan_cost_advanced",
+    "plan_rate_pro",
+    "plan_cost_pro",
+    "plan_rate_enterprise",
+    "plan_cost_enterprise",
     "surcharge_ids",
 ]
 
@@ -119,6 +145,7 @@ REQUIRED_SERVICE_RATE_COLS = ["service_id", "zone_id", "base_rate"]
 
 class ParseError(Exception):
     """Structured validation error list."""
+
     def __init__(self, errors: list):
         self.errors = errors
         super().__init__(str(errors))
@@ -127,6 +154,7 @@ class ParseError(Exception):
 # ─────────────────────────────────────────────────────────────────────────────
 # HELPERS
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def _rows(ws) -> list:
     """Extract rows from an openpyxl worksheet as list of dicts."""
@@ -146,7 +174,7 @@ def _csv_rows(content: bytes) -> list:
     return [row for row in reader if any(v.strip() for v in row.values())]
 
 
-def _bool(val) -> Optional[bool]:
+def _bool(val) -> bool | None:
     if val is None or val == "":
         return None
     if isinstance(val, bool):
@@ -154,7 +182,7 @@ def _bool(val) -> Optional[bool]:
     return str(val).lower() in ("true", "1", "yes")
 
 
-def _float(val) -> Optional[float]:
+def _float(val) -> float | None:
     if val is None or val == "":
         return None
     try:
@@ -163,7 +191,7 @@ def _float(val) -> Optional[float]:
         return None
 
 
-def _int(val) -> Optional[int]:
+def _int(val) -> int | None:
     if val is None or val == "":
         return None
     try:
@@ -172,7 +200,7 @@ def _int(val) -> Optional[int]:
         return None
 
 
-def _str(val) -> Optional[str]:
+def _str(val) -> str | None:
     if val is None:
         return None
     s = str(val).strip()
@@ -195,14 +223,22 @@ def _build_rate_meta(row: dict) -> dict:
     """Build rate metadata dict from a flat row (surcharges, plans, extras)."""
     meta = {}
     surcharge_fields = [
-        "fuel_surcharge", "seasonal_surcharge", "customs_surcharge",
-        "energy_surcharge", "road_toll", "security_surcharge",
+        "fuel_surcharge",
+        "seasonal_surcharge",
+        "customs_surcharge",
+        "energy_surcharge",
+        "road_toll",
+        "security_surcharge",
     ]
     plan_fields = [
-        "plan_rate_start", "plan_cost_start",
-        "plan_rate_advanced", "plan_cost_advanced",
-        "plan_rate_pro", "plan_cost_pro",
-        "plan_rate_enterprise", "plan_cost_enterprise",
+        "plan_rate_start",
+        "plan_cost_start",
+        "plan_rate_advanced",
+        "plan_cost_advanced",
+        "plan_rate_pro",
+        "plan_cost_pro",
+        "plan_rate_enterprise",
+        "plan_cost_enterprise",
     ]
     for field in surcharge_fields + plan_fields:
         val = _float(row.get(field))
@@ -223,6 +259,7 @@ def _build_rate_meta(row: dict) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 # FORMAT DETECTION
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def detect_format(data: bytes, filename: str) -> str:
     """Return 'xlsx', 'csv', or raise ValueError. (File-type detection.)"""
@@ -268,6 +305,7 @@ def detect_workbook_format(data: bytes) -> str:
 # FLAT FORMAT — PARSER
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def parse_flat_workbook(data: bytes) -> list:
     """
     Parse the new single-sheet flat format.
@@ -278,8 +316,7 @@ def parse_flat_workbook(data: bytes) -> list:
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
     if "service_rates" not in wb.sheetnames:
         raise ValueError(
-            "Workbook does not contain a 'service_rates' sheet. "
-            "Please use the current flat-format template."
+            "Workbook does not contain a 'service_rates' sheet. Please use the current flat-format template."
         )
     ws = wb["service_rates"]
     headers = [cell.value for cell in next(ws.iter_rows(min_row=1, max_row=1))]
@@ -287,7 +324,7 @@ def parse_flat_workbook(data: bytes) -> list:
     for row in ws.iter_rows(min_row=2, values_only=True):
         if not any(v is not None for v in row):
             continue
-        rows.append(dict(zip(headers, row)))
+        rows.append(dict(zip(headers, row, strict=False)))
     wb.close()
     return rows
 
@@ -295,6 +332,7 @@ def parse_flat_workbook(data: bytes) -> list:
 # ─────────────────────────────────────────────────────────────────────────────
 # FLAT FORMAT — VALIDATOR
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def validate_flat_data(rows: list) -> list:
     """
@@ -304,24 +342,28 @@ def validate_flat_data(rows: list) -> list:
     """
     errors = []
     if not rows:
-        errors.append({
-            "sheet": "service_rates",
-            "row": 0,
-            "field": "",
-            "message": "service_rates sheet is empty",
-        })
+        errors.append(
+            {
+                "sheet": "service_rates",
+                "row": 0,
+                "field": "",
+                "message": "service_rates sheet is empty",
+            }
+        )
         return errors
 
     # Check required columns are present at all
     present = set(rows[0].keys())
     for col in REQUIRED_COLUMNS:
         if col not in present:
-            errors.append({
-                "sheet": "service_rates",
-                "row": 1,
-                "field": col,
-                "message": f"Required column '{col}' is missing from the sheet",
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": 1,
+                    "field": col,
+                    "message": f"Required column '{col}' is missing from the sheet",
+                }
+            )
     if errors:
         return errors  # column errors make row-level checks meaningless
 
@@ -339,45 +381,55 @@ def validate_flat_data(rows: list) -> list:
             if col in _NUMERIC_FIELDS:
                 missing = val is None
             else:
-                missing = val is None or (isinstance(val, str) and not val.strip()) or (not isinstance(val, (int, float, bool)) and not val)
+                missing = (
+                    val is None
+                    or (isinstance(val, str) and not val.strip())
+                    or (not isinstance(val, (int, float, bool)) and not val)
+                )
             if missing:
-                errors.append({
-                    "sheet": "service_rates",
-                    "row": i,
-                    "field": col,
-                    "message": f"Required field '{col}' is missing",
-                })
+                errors.append(
+                    {
+                        "sheet": "service_rates",
+                        "row": i,
+                        "field": col,
+                        "message": f"Required field '{col}' is missing",
+                    }
+                )
 
         # Validate shipment_type
         st = _str(row.get("shipment_type"))
         if st and st not in VALID_SHIPMENT_TYPES:
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "shipment_type",
-                "message": (
-                    f"Invalid shipment_type '{st}' — must be outbound, returns, or pickup"
-                ),
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": i,
+                    "field": "shipment_type",
+                    "message": (f"Invalid shipment_type '{st}' — must be outbound, returns, or pickup"),
+                }
+            )
 
         # Validate weight range
         try:
             mn = float(row.get("min_weight") or 0)
             mx = float(row.get("max_weight") or 0)
             if mn > 0 and mx > 0 and mn >= mx:
-                errors.append({
+                errors.append(
+                    {
+                        "sheet": "service_rates",
+                        "row": i,
+                        "field": "min_weight",
+                        "message": "min_weight must be less than max_weight",
+                    }
+                )
+        except (TypeError, ValueError):
+            errors.append(
+                {
                     "sheet": "service_rates",
                     "row": i,
                     "field": "min_weight",
-                    "message": "min_weight must be less than max_weight",
-                })
-        except (TypeError, ValueError):
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "min_weight",
-                "message": "min_weight/max_weight must be numeric",
-            })
+                    "message": "min_weight/max_weight must be numeric",
+                }
+            )
 
         # Duplicate key check
         effective_st = st or "outbound"
@@ -391,16 +443,18 @@ def validate_flat_data(rows: list) -> list:
         )
         if rate_key in seen_keys:
             prev = seen_keys[rate_key]
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "service_code",
-                "message": (
-                    f"Duplicate rate row for {row.get('service_code')}/"
-                    f"{row.get('zone_label')}/{row.get('min_weight')}-"
-                    f"{row.get('max_weight')} kg (rows {prev}, {i})"
-                ),
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": i,
+                    "field": "service_code",
+                    "message": (
+                        f"Duplicate rate row for {row.get('service_code')}/"
+                        f"{row.get('zone_label')}/{row.get('min_weight')}-"
+                        f"{row.get('max_weight')} kg (rows {prev}, {i})"
+                    ),
+                }
+            )
         else:
             seen_keys[rate_key] = i
 
@@ -410,6 +464,7 @@ def validate_flat_data(rows: list) -> list:
 # ─────────────────────────────────────────────────────────────────────────────
 # FLAT FORMAT — BUILDER
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def build_rate_sheet_input_from_flat(rows: list) -> dict:
     """
@@ -467,24 +522,24 @@ def build_rate_sheet_input_from_flat(rows: list) -> dict:
         # Per-row service_rates
         service_rates = []
         for r in carrier_rows:
-            service_rates.append({
-                "service_code": _str(r.get("service_code")),
-                "zone_label": _str(r.get("zone_label")),
-                "min_weight": _float(r.get("min_weight")),
-                "max_weight": _float(r.get("max_weight")),
-                "rate": _float(r.get("base_rate")),
-                "cost": _float(r.get("cost")),
-                "transit_days": _int(r.get("transit_days")),
-                "meta": _build_rate_meta(r),
-            })
+            service_rates.append(
+                {
+                    "service_code": _str(r.get("service_code")),
+                    "zone_label": _str(r.get("zone_label")),
+                    "min_weight": _float(r.get("min_weight")),
+                    "max_weight": _float(r.get("max_weight")),
+                    "rate": _float(r.get("base_rate")),
+                    "cost": _float(r.get("cost")),
+                    "transit_days": _int(r.get("transit_days")),
+                    "meta": _build_rate_meta(r),
+                }
+            )
 
         result[carrier] = {
             "carrier_name": carrier,
-            "origin_countries": list({
-                _str(r.get("origin_country"))
-                for r in carrier_rows
-                if _str(r.get("origin_country"))
-            }),
+            "origin_countries": list(
+                {_str(r.get("origin_country")) for r in carrier_rows if _str(r.get("origin_country"))}
+            ),
             "zones": list(zones.values()),
             "services": list(services.values()),
             "service_rates": service_rates,
@@ -560,31 +615,29 @@ def flat_carrier_to_upsert_payload(carrier_input: dict) -> dict:
     service_rates = []
     for sr in carrier_input["service_rates"]:
         meta = sr.get("meta") or {}
-        service_rates.append({
-            "service_id": sr["service_code"],
-            "zone_id": sr["zone_label"],
-            "shipment_type": "outbound",  # default; per-row st carried in meta if needed
-            "min_weight": sr.get("min_weight") or 0.0,
-            "max_weight": sr.get("max_weight") or 0.0,
-            "rate": sr.get("rate") or 0.0,
-            "cost": sr.get("cost"),
-            "transit_days": _str(sr.get("transit_days")),
-            "plan_rate_start": meta.get("plan_rate_start"),
-            "plan_cost_start": meta.get("plan_cost_start"),
-            "plan_rate_advanced": meta.get("plan_rate_advanced"),
-            "plan_cost_advanced": meta.get("plan_cost_advanced"),
-            "plan_rate_pro": meta.get("plan_rate_pro"),
-            "plan_cost_pro": meta.get("plan_cost_pro"),
-            "plan_rate_enterprise": meta.get("plan_rate_enterprise"),
-            "plan_cost_enterprise": meta.get("plan_cost_enterprise"),
-            "surcharge_ids": [],
-        })
+        service_rates.append(
+            {
+                "service_id": sr["service_code"],
+                "zone_id": sr["zone_label"],
+                "shipment_type": "outbound",  # default; per-row st carried in meta if needed
+                "min_weight": sr.get("min_weight") or 0.0,
+                "max_weight": sr.get("max_weight") or 0.0,
+                "rate": sr.get("rate") or 0.0,
+                "cost": sr.get("cost"),
+                "transit_days": _str(sr.get("transit_days")),
+                "plan_rate_start": meta.get("plan_rate_start"),
+                "plan_cost_start": meta.get("plan_cost_start"),
+                "plan_rate_advanced": meta.get("plan_rate_advanced"),
+                "plan_cost_advanced": meta.get("plan_cost_advanced"),
+                "plan_rate_pro": meta.get("plan_rate_pro"),
+                "plan_cost_pro": meta.get("plan_cost_pro"),
+                "plan_rate_enterprise": meta.get("plan_rate_enterprise"),
+                "plan_cost_enterprise": meta.get("plan_cost_enterprise"),
+                "surcharge_ids": [],
+            }
+        )
 
-    currency = (
-        carrier_input["services"][0].get("currency", "EUR")
-        if carrier_input["services"]
-        else "EUR"
-    )
+    currency = carrier_input["services"][0].get("currency", "EUR") if carrier_input["services"] else "EUR"
     slug = carrier_name.lower().replace(" ", "_").replace("-", "_")
 
     return {
@@ -606,18 +659,21 @@ def flat_carrier_to_upsert_payload(carrier_input: dict) -> dict:
 # LEGACY FORMAT — VALIDATION
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _check_required_cols(rows: list, required: list, sheet: str, errors: list):
     if not rows:
         return
     present = set(rows[0].keys())
     for col in required:
         if col not in present:
-            errors.append({
-                "sheet": sheet,
-                "row": 1,
-                "field": col,
-                "message": f"Missing required column '{col}' in sheet '{sheet}'",
-            })
+            errors.append(
+                {
+                    "sheet": sheet,
+                    "row": 1,
+                    "field": col,
+                    "message": f"Missing required column '{col}' in sheet '{sheet}'",
+                }
+            )
 
 
 def validate_workbook(parsed: dict) -> list:
@@ -640,12 +696,14 @@ def validate_workbook(parsed: dict) -> list:
         return errors
 
     if not service_rates:
-        errors.append({
-            "sheet": "service_rates",
-            "row": 0,
-            "field": "",
-            "message": "service_rates sheet is empty",
-        })
+        errors.append(
+            {
+                "sheet": "service_rates",
+                "row": 0,
+                "field": "",
+                "message": "service_rates sheet is empty",
+            }
+        )
 
     zone_ids = {r.get("zone_id") for r in zones}
     service_ids = {r.get("service_id") for r in services}
@@ -661,61 +719,69 @@ def validate_workbook(parsed: dict) -> list:
         max_w = _float(row.get("max_weight")) or 0.0
 
         if zone_id and zone_id not in zone_ids:
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "zone_id",
-                "message": f"zone_id '{zone_id}' not found in zones sheet (row {i})",
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": i,
+                    "field": "zone_id",
+                    "message": f"zone_id '{zone_id}' not found in zones sheet (row {i})",
+                }
+            )
 
         if service_id and service_id not in service_ids:
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "service_id",
-                "message": f"service_id '{service_id}' not found in services sheet (row {i})",
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": i,
+                    "field": "service_id",
+                    "message": f"service_id '{service_id}' not found in services sheet (row {i})",
+                }
+            )
 
         if shipment_type not in VALID_SHIPMENT_TYPES:
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "shipment_type",
-                "message": (
-                    f"Invalid shipment_type '{shipment_type}' — "
-                    f"must be outbound, returns, or pickup (row {i})"
-                ),
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": i,
+                    "field": "shipment_type",
+                    "message": (
+                        f"Invalid shipment_type '{shipment_type}' — must be outbound, returns, or pickup (row {i})"
+                    ),
+                }
+            )
 
         if not (min_w == 0.0 and max_w == 0.0) and min_w >= max_w:
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "min_weight",
-                "message": f"min_weight must be less than max_weight (row {i})",
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": i,
+                    "field": "min_weight",
+                    "message": f"min_weight must be less than max_weight (row {i})",
+                }
+            )
 
         for sid in _split_ids(row.get("surcharge_ids")):
             if surcharges and sid not in surcharge_ids:
-                errors.append({
-                    "sheet": "service_rates",
-                    "row": i,
-                    "field": "surcharge_ids",
-                    "message": f"surcharge_id '{sid}' not found in surcharges sheet (row {i})",
-                })
+                errors.append(
+                    {
+                        "sheet": "service_rates",
+                        "row": i,
+                        "field": "surcharge_ids",
+                        "message": f"surcharge_id '{sid}' not found in surcharges sheet (row {i})",
+                    }
+                )
 
         rate_key = (service_id, zone_id, shipment_type, min_w, max_w)
         if rate_key in seen_rate_keys:
             prev = seen_rate_keys[rate_key]
-            errors.append({
-                "sheet": "service_rates",
-                "row": i,
-                "field": "service_id",
-                "message": (
-                    f"Duplicate rate row for {service_id}/{zone_id}/{min_w}-{max_w} kg "
-                    f"(rows {prev}, {i})"
-                ),
-            })
+            errors.append(
+                {
+                    "sheet": "service_rates",
+                    "row": i,
+                    "field": "service_id",
+                    "message": (f"Duplicate rate row for {service_id}/{zone_id}/{min_w}-{max_w} kg (rows {prev}, {i})"),
+                }
+            )
         else:
             seen_rate_keys[rate_key] = i
 
@@ -725,6 +791,7 @@ def validate_workbook(parsed: dict) -> list:
 # ─────────────────────────────────────────────────────────────────────────────
 # LEGACY FORMAT — PARSERS
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def parse_xlsx(data: bytes) -> dict:
     """Parse legacy 5-6-sheet Excel workbook. Returns dict of sheet_name → list[dict]."""
@@ -771,6 +838,7 @@ def parse_csv(data: bytes, context=None, rate_sheet_id: str = None) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 # LEGACY FORMAT — PAYLOAD BUILDER
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def build_upsert_payload(parsed: dict) -> dict:
     """
@@ -891,6 +959,7 @@ def build_upsert_payload(parsed: dict) -> dict:
 # DIFF COMPUTATION (for dry_run)
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def compute_diff(existing_sheet, payload: dict) -> dict:
     """
     Compare an existing RateSheet model instance against the incoming payload.
@@ -966,12 +1035,14 @@ def compute_diff(existing_sheet, payload: dict) -> dict:
 
     for key, old_sr in existing_map.items():
         if key not in incoming_map:
-            rows.append({
-                **_diff_row(key),
-                "old_rate": float(old_sr.get("rate", 0) or 0),
-                "new_rate": None,
-                "change": "removed",
-            })
+            rows.append(
+                {
+                    **_diff_row(key),
+                    "old_rate": float(old_sr.get("rate", 0) or 0),
+                    "new_rate": None,
+                    "change": "removed",
+                }
+            )
             removed += 1
 
     return {
@@ -1054,7 +1125,7 @@ def export_rate_sheet_xlsx(rate_sheet) -> bytes:
     row per (carrier × service × zone × weight_range) combination.
     Returns raw bytes.
     """
-    from openpyxl.styles import Font, PatternFill, Alignment
+    from openpyxl.styles import Alignment, Font, PatternFill
     from openpyxl.utils import get_column_letter
 
     NAVY = "1F3864"
@@ -1092,7 +1163,7 @@ def export_rate_sheet_xlsx(rate_sheet) -> bytes:
             services_by_id[svc_id] = svc
 
     zones_by_id: dict = {}
-    for z in (rate_sheet.zones or []):
+    for z in rate_sheet.zones or []:
         zid = z.get("id") or z.get("label")
         if zid:
             zones_by_id[zid] = z
@@ -1100,7 +1171,7 @@ def export_rate_sheet_xlsx(rate_sheet) -> bytes:
     origin_country = ",".join(rate_sheet.origin_countries or [])
 
     data_row = 2
-    for sr in (rate_sheet.service_rates or []):
+    for sr in rate_sheet.service_rates or []:
         svc = services_by_id.get(sr.get("service_id"))
         zone = zones_by_id.get(sr.get("zone_id"))
 
@@ -1124,7 +1195,9 @@ def export_rate_sheet_xlsx(rate_sheet) -> bytes:
             "max_width": svc.max_width if svc and hasattr(svc, "max_width") else None,
             "max_height": svc.max_height if svc and hasattr(svc, "max_height") else None,
             "dimension_unit": (svc.dimension_unit if svc and hasattr(svc, "dimension_unit") else None) or "CM",
-            "currency": (svc.currency if svc and hasattr(svc, "currency") else None) or getattr(rate_sheet, "currency", "EUR") or "EUR",
+            "currency": (svc.currency if svc and hasattr(svc, "currency") else None)
+            or getattr(rate_sheet, "currency", "EUR")
+            or "EUR",
             "base_rate": sr.get("rate"),
             "cost": sr.get("cost"),
             "transit_days": sr.get("transit_days") or (zone.get("transit_days") if zone else None),
@@ -1171,6 +1244,7 @@ def export_rate_sheet_xlsx(rate_sheet) -> bytes:
 # ─────────────────────────────────────────────────────────────────────────────
 # UPSERT LOGIC
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def upsert_rate_sheet(payload: dict, context) -> tuple:
     """

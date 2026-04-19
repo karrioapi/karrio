@@ -182,7 +182,9 @@ def shipment_request(payload: models.ShipmentRequest, settings: provider_utils.S
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
         Request=settings.Request(
-            MetaData=dhl.MetaData(SoftwareName=settings.connection_config.software_name.state or "3PV", SoftwareVersion="10.0")
+            MetaData=dhl.MetaData(
+                SoftwareName=settings.connection_config.software_name.state or "3PV", SoftwareVersion="10.0"
+            )
         ),
         RegionCode=provider_units.CountryRegion[shipper.country_code].value,
         LanguageCode="en",

@@ -1,25 +1,24 @@
 """Karrio SmartKargo shipment API implementation."""
 
+import datetime
+
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.smartkargo.error as error
+import karrio.providers.smartkargo.units as provider_units
+import karrio.providers.smartkargo.utils as provider_utils
 import karrio.schemas.smartkargo.rate_request as smartkargo_req
 import karrio.schemas.smartkargo.shipment_response as smartkargo_res
 
-import typing
-import datetime
-import karrio.lib as lib
-import karrio.core.models as models
-import karrio.providers.smartkargo.error as error
-import karrio.providers.smartkargo.utils as provider_utils
-import karrio.providers.smartkargo.units as provider_units
-
 
 def parse_shipment_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[dict, dict]]],
+    _response: lib.Deserializable[list[tuple[dict, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     responses = _response.deserialize()
     label_type = _response.ctx.get("label_type", "PDF") if _response.ctx else "PDF"
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response, _ in responses],
         start=[],
     )
@@ -143,22 +142,12 @@ def shipment_request(
     # SmartKargo uses KG/LBR for weight and CMQ/CFT for volume
     # Typically KG correlates with CM dimensions, LB with IN
     is_metric = packages.weight_unit == "KG"
-    weight_unit = (
-        provider_units.WeightUnit.KG
-        if is_metric
-        else provider_units.WeightUnit.LBR
-    )
-    dimension_unit = (
-        provider_units.DimensionUnit.CMQ
-        if is_metric
-        else provider_units.DimensionUnit.CFT
-    )
+    weight_unit = provider_units.WeightUnit.KG if is_metric else provider_units.WeightUnit.LBR
+    dimension_unit = provider_units.DimensionUnit.CMQ if is_metric else provider_units.DimensionUnit.CFT
     customs = lib.to_customs_info(payload.customs)
 
     # Get label type from payload or connection config
-    label_type = lib.identity(
-        payload.label_type or settings.connection_config.label_type.state or "PDF"
-    )
+    label_type = lib.identity(payload.label_type or settings.connection_config.label_type.state or "PDF")
 
     # Resolve common request fields
     primary_id = settings.connection_config.primary_id.state or settings.account_number
@@ -170,10 +159,7 @@ def shipment_request(
         trim=True,
         max=35,
     )
-    shipment_date = lib.identity(
-        options.shipment_date.state
-        or lib.to_next_business_datetime(datetime.datetime.now())
-    )
+    shipment_date = lib.identity(options.shipment_date.state or lib.to_next_business_datetime(datetime.datetime.now()))
 
     # Build one request per package (SmartKargo API only accepts one package per booking)
     request = [
@@ -192,18 +178,14 @@ def shipment_request(
                     paymentMode=provider_units.PaymentMode.PX.value,
                     origin=origin,
                     destination=destination,
-                    packageDescription=lib.text(
-                        package.parcel.description or packages.description, max=100
-                    ),
+                    packageDescription=lib.text(package.parcel.description or packages.description, max=100),
                     totalPackages=1,
                     totalPieces=1,
                     grossVolumeUnityMeasure=dimension_unit.value,
                     totalGrossWeight=package.weight.value,
                     grossWeightUnityMeasure=weight_unit.value,
                     hasInsurance=options.smartkargo_declared_value.state is not None,
-                    insuranceAmmount=lib.to_money(
-                        options.smartkargo_declared_value.state or 0
-                    ),
+                    insuranceAmmount=lib.to_money(options.smartkargo_declared_value.state or 0),
                     specialHandlingType=options.smartkargo_special_handling.state,
                     deliveryType=options.smartkargo_delivery_type.state or "DoorToDoor",
                     channel=lib.text(options.smartkargo_channel.state or "Direct", max=15),
@@ -254,8 +236,12 @@ def shipment_request(
                     customItems=(
                         [
                             smartkargo_req.CustomItemType(
-                                exportHsCode=item.hs_code or lib.identity(item.metadata or {}).get("export_hs_code") or "N/A",
-                                importHsCode=lib.identity(item.metadata or {}).get("import_hs_code") or item.hs_code or "N/A",
+                                exportHsCode=item.hs_code
+                                or lib.identity(item.metadata or {}).get("export_hs_code")
+                                or "N/A",
+                                importHsCode=lib.identity(item.metadata or {}).get("import_hs_code")
+                                or item.hs_code
+                                or "N/A",
                                 description=lib.text(item.description or item.title, max=500),
                                 quantity=item.quantity,
                                 quantityUnit=item.weight_unit or "kg",

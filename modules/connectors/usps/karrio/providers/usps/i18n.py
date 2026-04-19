@@ -35,33 +35,65 @@ OPTION_NAME_TRANSLATIONS = {
     "usps_tracking_plus_signature_7_years": _("USPS Tracking Plus Signature 7 Years"),
     "usps_tracking_plus_signature_10_years": _("USPS Tracking Plus Signature 10 Years"),
     "usps_hazardous_materials_air_eligible_ethanol": _("USPS Hazardous Materials Air Eligible Ethanol"),
-    "usps_hazardous_materials_class_1_toy_propellant_safety_fuse_package": _("USPS Hazardous Materials Class 1 Toy Propellant Safety Fuse Package"),
-    "usps_hazardous_materials_class_3_flammable_and_combustible_liquids": _("USPS Hazardous Materials Class 3 Flammable And Combustible Liquids"),
-    "usps_hazardous_materials_class_7_radioactive_materials": _("USPS Hazardous Materials Class 7 Radioactive Materials"),
-    "usps_hazardous_materials_class_8_air_eligible_corrosive_materials": _("USPS Hazardous Materials Class 8 Air Eligible Corrosive Materials"),
-    "usps_hazardous_materials_class_8_nonspillable_wet_batteries": _("USPS Hazardous Materials Class 8 Nonspillable Wet Batteries"),
-    "usps_hazardous_materials_class_9_lithium_battery_marked_ground_only": _("USPS Hazardous Materials Class 9 Lithium Battery Marked Ground Only"),
-    "usps_hazardous_materials_class_9_lithium_battery_returns": _("USPS Hazardous Materials Class 9 Lithium Battery Returns"),
-    "usps_hazardous_materials_class_9_marked_lithium_batteries": _("USPS Hazardous Materials Class 9 Marked Lithium Batteries"),
+    "usps_hazardous_materials_class_1_toy_propellant_safety_fuse_package": _(
+        "USPS Hazardous Materials Class 1 Toy Propellant Safety Fuse Package"
+    ),
+    "usps_hazardous_materials_class_3_flammable_and_combustible_liquids": _(
+        "USPS Hazardous Materials Class 3 Flammable And Combustible Liquids"
+    ),
+    "usps_hazardous_materials_class_7_radioactive_materials": _(
+        "USPS Hazardous Materials Class 7 Radioactive Materials"
+    ),
+    "usps_hazardous_materials_class_8_air_eligible_corrosive_materials": _(
+        "USPS Hazardous Materials Class 8 Air Eligible Corrosive Materials"
+    ),
+    "usps_hazardous_materials_class_8_nonspillable_wet_batteries": _(
+        "USPS Hazardous Materials Class 8 Nonspillable Wet Batteries"
+    ),
+    "usps_hazardous_materials_class_9_lithium_battery_marked_ground_only": _(
+        "USPS Hazardous Materials Class 9 Lithium Battery Marked Ground Only"
+    ),
+    "usps_hazardous_materials_class_9_lithium_battery_returns": _(
+        "USPS Hazardous Materials Class 9 Lithium Battery Returns"
+    ),
+    "usps_hazardous_materials_class_9_marked_lithium_batteries": _(
+        "USPS Hazardous Materials Class 9 Marked Lithium Batteries"
+    ),
     "usps_hazardous_materials_class_9_dry_ice": _("USPS Hazardous Materials Class 9 Dry Ice"),
-    "usps_hazardous_materials_class_9_unmarked_lithium_batteries": _("USPS Hazardous Materials Class 9 Unmarked Lithium Batteries"),
+    "usps_hazardous_materials_class_9_unmarked_lithium_batteries": _(
+        "USPS Hazardous Materials Class 9 Unmarked Lithium Batteries"
+    ),
     "usps_hazardous_materials_class_9_magnetized_materials": _("USPS Hazardous Materials Class 9 Magnetized Materials"),
-    "usps_hazardous_materials_division_4_1_mailable_flammable_solids_and_safety_matches": _("USPS Hazardous Materials Division 4 1 Mailable Flammable Solids And Safety Matches"),
+    "usps_hazardous_materials_division_4_1_mailable_flammable_solids_and_safety_matches": _(
+        "USPS Hazardous Materials Division 4 1 Mailable Flammable Solids And Safety Matches"
+    ),
     "usps_hazardous_materials_division_5_1_oxidizers": _("USPS Hazardous Materials Division 5 1 Oxidizers"),
-    "usps_hazardous_materials_division_5_2_organic_peroxides": _("USPS Hazardous Materials Division 5 2 Organic Peroxides"),
+    "usps_hazardous_materials_division_5_2_organic_peroxides": _(
+        "USPS Hazardous Materials Division 5 2 Organic Peroxides"
+    ),
     "usps_hazardous_materials_division_6_1_toxic_materials": _("USPS Hazardous Materials Division 6 1 Toxic Materials"),
-    "usps_hazardous_materials_division_6_2_biological_materials": _("USPS Hazardous Materials Division 6 2 Biological Materials"),
+    "usps_hazardous_materials_division_6_2_biological_materials": _(
+        "USPS Hazardous Materials Division 6 2 Biological Materials"
+    ),
     "usps_hazardous_materials_excepted_quantity_provision": _("USPS Hazardous Materials Excepted Quantity Provision"),
-    "usps_hazardous_materials_ground_only_hazardous_materials": _("USPS Hazardous Materials Ground Only Hazardous Materials"),
-    "usps_hazardous_materials_air_eligible_id8000_consumer_commodity": _("USPS Hazardous Materials Air Eligible Id8000 Consumer Commodity"),
+    "usps_hazardous_materials_ground_only_hazardous_materials": _(
+        "USPS Hazardous Materials Ground Only Hazardous Materials"
+    ),
+    "usps_hazardous_materials_air_eligible_id8000_consumer_commodity": _(
+        "USPS Hazardous Materials Air Eligible Id8000 Consumer Commodity"
+    ),
     "usps_hazardous_materials_lighters": _("USPS Hazardous Materials Lighters"),
     "usps_hazardous_materials_limited_quantity_ground": _("USPS Hazardous Materials Limited Quantity Ground"),
-    "usps_hazardous_materials_small_quantity_provision_markings_required": _("USPS Hazardous Materials Small Quantity Provision Markings Required"),
+    "usps_hazardous_materials_small_quantity_provision_markings_required": _(
+        "USPS Hazardous Materials Small Quantity Provision Markings Required"
+    ),
     "usps_hazardous_materials": _("USPS Hazardous Materials"),
     "usps_certified_mail": _("USPS Certified Mail"),
     "usps_certified_mail_restricted_delivery": _("USPS Certified Mail Restricted Delivery"),
     "usps_certified_mail_adult_signature_required": _("USPS Certified Mail Adult Signature Required"),
-    "usps_certified_mail_adult_signature_restricted_delivery": _("USPS Certified Mail Adult Signature Restricted Delivery"),
+    "usps_certified_mail_adult_signature_restricted_delivery": _(
+        "USPS Certified Mail Adult Signature Restricted Delivery"
+    ),
     "usps_collect_on_delivery": _("USPS Collect On Delivery"),
     "usps_collect_on_delivery_restricted_delivery": _("USPS Collect On Delivery Restricted Delivery"),
     "usps_tracking_electronic": _("USPS Tracking Electronic"),

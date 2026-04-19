@@ -75,9 +75,7 @@ class TestSmartKargoShipment(unittest.TestCase):
     def test_parse_rejected_shipment_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = RejectedShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedRejectedShipmentResponse,

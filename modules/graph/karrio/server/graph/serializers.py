@@ -1,18 +1,13 @@
-import typing
-import strawberry
-from django.db import transaction
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from rest_framework import exceptions
-
-import karrio.server.serializers as serializers
-import karrio.server.core.validators as validators
-import karrio.server.providers.models as providers
-import karrio.server.manager.models as manager
-import karrio.server.graph.models as graph
-import karrio.server.core.models as core
-import karrio.server.user.models as auth
 import karrio.server.core.gateway as gateway
+import karrio.server.core.models as core
+import karrio.server.core.validators as validators
+import karrio.server.graph.models as graph
+import karrio.server.manager.models as manager
+import karrio.server.providers.models as providers
+import karrio.server.serializers as serializers
+import karrio.server.user.models as auth
+from django.contrib.auth import get_user_model
+from django.db import transaction
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -20,10 +15,7 @@ class UserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        extra_kwargs = {
-            field: {"read_only": True}
-            for field in ["id", "is_staff", "last_login", "date_joined"]
-        }
+        extra_kwargs = {field: {"read_only": True} for field in ["id", "is_staff", "last_login", "date_joined"]}
         fields = [
             "email",
             "full_name",
@@ -38,7 +30,7 @@ class UserModelSerializer(serializers.ModelSerializer):
     def update(self, instance, data: dict, **kwargs):
         user = super().update(instance, data)
 
-        if data.get("is_active") == False:
+        if not data.get("is_active"):
             user.save(update_fields=["is_active"])
 
         return user
@@ -51,15 +43,10 @@ class WorkspaceConfigModelSerializer(serializers.ModelSerializer):
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
         exclude = ["created_at", "updated_at", "created_by"]
 
-    def create(
-        self, validated_data: dict, context: serializers.Context = None, **kwargs
-    ):
+    def create(self, validated_data: dict, context: serializers.Context = None, **kwargs):
         instance = super().create(validated_data, context=context, **kwargs)
 
-        if (
-            hasattr(auth.WorkspaceConfig, "org")
-            and getattr(context, "org", None) is not None
-        ):
+        if hasattr(auth.WorkspaceConfig, "org") and getattr(context, "org", None) is not None:
             context.org.config = instance
             context.org.save()
 
@@ -85,22 +72,16 @@ class MetafieldModelSerializer(serializers.ModelSerializer):
         if object_type and object_id:
             ct = ContentType.objects.filter(model=object_type).first()
             if not ct:
-                raise serializers.ValidationError(
-                    {"object_type": f"Invalid object type: {object_type}"}
-                )
+                raise serializers.ValidationError({"object_type": f"Invalid object type: {object_type}"})
             data["content_type"] = ct
         elif object_type or object_id:
-            raise serializers.ValidationError(
-                "Both object_type and object_id must be provided together"
-            )
+            raise serializers.ValidationError("Both object_type and object_id must be provided together")
 
         return data
 
 
 @serializers.owned_model_serializer
-class AddressModelSerializer(
-    validators.AugmentedAddressSerializer, serializers.ModelSerializer
-):
+class AddressModelSerializer(validators.AugmentedAddressSerializer, serializers.ModelSerializer):
     country_code = serializers.CharField(required=False)
 
     class Meta:
@@ -123,12 +104,8 @@ class CommodityModelSerializer(serializers.ModelSerializer):
 
 @serializers.owned_model_serializer
 class ParcelModelSerializer(validators.PresetSerializer, serializers.ModelSerializer):
-    weight_unit = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
-    )
-    dimension_unit = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
-    )
+    weight_unit = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    dimension_unit = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     class Meta:
         model = manager.Parcel
@@ -166,31 +143,21 @@ class TemplateModelSerializer(serializers.ModelSerializer):
         return super().create(data)
 
     @transaction.atomic
-    def update(
-        self, instance: graph.Template, validated_data: dict, **kwargs
-    ) -> graph.Template:
-        data = {
-            key: value
-            for key, value in validated_data.items()
-            if key not in ["address", "parcel"]
-        }
+    def update(self, instance: graph.Template, validated_data: dict, **kwargs) -> graph.Template:
+        data = {key: value for key, value in validated_data.items() if key not in ["address", "parcel"]}
 
-        serializers.save_one_to_one_data(
-            "address", AddressModelSerializer, instance, payload=validated_data
-        )
-        serializers.save_one_to_one_data(
-            "parcel", ParcelModelSerializer, instance, payload=validated_data
-        )
+        serializers.save_one_to_one_data("address", AddressModelSerializer, instance, payload=validated_data)
+        serializers.save_one_to_one_data("parcel", ParcelModelSerializer, instance, payload=validated_data)
 
         ensure_unique_default_related_data(validated_data, instance)
 
         return super().update(instance, data)
 
 
-def ensure_unique_default_related_data(
-    data: dict = None, instance: typing.Optional[graph.Template] = None, context=None
-):
-    _get = lambda key: data.get(key, getattr(instance, key, None))
+def ensure_unique_default_related_data(data: dict = None, instance: graph.Template | None = None, context=None):
+    def _get(key):
+        return data.get(key, getattr(instance, key, None))
+
     if _get("is_default") is not True:
         return
 
@@ -203,9 +170,9 @@ def ensure_unique_default_related_data(
     else:
         return
 
-    graph.Template.access_by(context or instance.created_by).exclude(
-        id=_get("id")
-    ).filter(**query).update(is_default=False)
+    graph.Template.access_by(context or instance.created_by).exclude(id=_get("id")).filter(**query).update(
+        is_default=False
+    )
 
 
 @serializers.owned_model_serializer
@@ -217,12 +184,8 @@ class ServiceLevelModelSerializer(serializers.ModelSerializer):
     via zone_ids and surcharge_ids.
     """
 
-    dimension_unit = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
-    )
-    weight_unit = serializers.CharField(
-        required=False, allow_null=True, allow_blank=True
-    )
+    dimension_unit = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    weight_unit = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     currency = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     class Meta:
@@ -244,9 +207,7 @@ class LabelTemplateModelSerializer(serializers.ModelSerializer):
 class _RateSheetSerializerMixin:
     """Shared methods for account and system rate sheet serializers."""
 
-    def update_services(
-        self, services_data: list, remove_missing: bool = False
-    ) -> None:
+    def update_services(self, services_data: list, remove_missing: bool = False) -> None:
         """Update services of the rate sheet using bulk operations.
 
         Collects all changes in memory, then:
@@ -282,9 +243,7 @@ class _RateSheetSerializerMixin:
                 instance = providers.ServiceLevel(**service_serializer.validated_data)
                 # Set created_by from context (required NOT NULL field)
                 user = (
-                    self.context.get("user")
-                    if isinstance(self.context, dict)
-                    else getattr(self.context, "user", None)
+                    self.context.get("user") if isinstance(self.context, dict) else getattr(self.context, "user", None)
                 )
                 if user and not instance.created_by_id:
                     instance.created_by = user
@@ -292,9 +251,7 @@ class _RateSheetSerializerMixin:
 
         # Bulk update existing services (1 query)
         if services_to_update and update_fields:
-            providers.ServiceLevel.objects.bulk_update(
-                services_to_update, list(update_fields)
-            )
+            providers.ServiceLevel.objects.bulk_update(services_to_update, list(update_fields))
 
         # Bulk create new services and add to M2M (2 queries)
         if services_to_create:
@@ -320,9 +277,7 @@ class _RateSheetSerializerMixin:
             # Link requested carriers (1 query)
             carrier_qs.filter(id__in=carriers).update(rate_sheet=self.instance)
             # Unlink carriers no longer associated (1 query)
-            carrier_qs.filter(rate_sheet=self.instance).exclude(
-                id__in=carriers
-            ).update(rate_sheet=None)
+            carrier_qs.filter(rate_sheet=self.instance).exclude(id__in=carriers).update(rate_sheet=None)
 
     def process_zones(self, zones_data: list, remove_missing: bool = False) -> None:
         """Process zones for the rate sheet.
@@ -404,9 +359,7 @@ class _RateSheetSerializerMixin:
         self.instance.surcharges = surcharges
         self.instance.save(update_fields=["surcharges"])
 
-    def process_service_rates(
-        self, service_rates_data: list, temp_to_real_id_map: dict = None
-    ) -> None:
+    def process_service_rates(self, service_rates_data: list, temp_to_real_id_map: dict = None) -> None:
         """Process service rates for the rate sheet.
 
         Uses batch_update_service_rates() to avoid the single-entry fallback
@@ -429,9 +382,7 @@ class _RateSheetSerializerMixin:
                 service_id = temp_to_real_id_map.get(service_id, service_id)
 
             if service_id and zone_id:
-                batch_updates.append(
-                    {"service_id": service_id, "zone_id": zone_id, **rate_dict}
-                )
+                batch_updates.append({"service_id": service_id, "zone_id": zone_id, **rate_dict})
 
         if batch_updates:
             self.instance.batch_update_service_rates(batch_updates)
@@ -476,11 +427,7 @@ class _RateSheetSerializerMixin:
         zones/surcharges not in the incoming data will be removed.
         """
         services_data = validated_data.pop("services", None)
-        carriers = (
-            validated_data.pop("carriers", None)
-            if "carriers" in validated_data
-            else None
-        )
+        carriers = validated_data.pop("carriers", None) if "carriers" in validated_data else None
         zones_data = validated_data.pop("zones", None)
         surcharges_data = validated_data.pop("surcharges", None)
         service_rates_data = validated_data.pop("service_rates", None)
@@ -527,10 +474,7 @@ class _SystemRateSheetSerializer(_RateSheetSerializerMixin, serializers.ModelSer
     def __init__(self, *args, **kwargs):
         if "context" in kwargs:
             context = kwargs.pop("context")
-            user = (
-                context.get("user") if isinstance(context, dict)
-                else getattr(context, "user", None)
-            )
+            user = context.get("user") if isinstance(context, dict) else getattr(context, "user", None)
             self.context = {"user": user}
         super().__init__(*args, **kwargs)
 

@@ -77,9 +77,7 @@ class TestWebhookDetails(APITestCase):
 
     def test_tracker_updated_payload_structure(self):
         """Webhook payload for tracker_updated contains tracking-specific fields."""
-        with patch(
-            "karrio.server.events.task_definitions.base.webhook.requests.post"
-        ) as mock_post:
+        with patch("karrio.server.events.task_definitions.base.webhook.requests.post") as mock_post:
             response = Response()
             response.status_code = 200
             mock_post.return_value = response
@@ -106,9 +104,7 @@ class TestWebhookDetails(APITestCase):
 
     def test_shipment_purchased_payload_structure(self):
         """Webhook payload for shipment_purchased contains shipment-specific fields."""
-        with patch(
-            "karrio.server.events.task_definitions.base.webhook.requests.post"
-        ) as mock_post:
+        with patch("karrio.server.events.task_definitions.base.webhook.requests.post") as mock_post:
             response = Response()
             response.status_code = 200
             mock_post.return_value = response

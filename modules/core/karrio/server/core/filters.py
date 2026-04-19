@@ -538,9 +538,7 @@ class ShipmentFilters(filters.FilterSet):
         import karrio.server.manager.models as mgr_models
 
         if value:
-            return mgr_models.Shipment.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return mgr_models.Shipment.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)
 
 
@@ -669,9 +667,7 @@ class TrackerFilters(filters.FilterSet):
         import karrio.server.manager.models as mgr_models
 
         if value:
-            return mgr_models.Tracking.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return mgr_models.Tracking.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)
 
 
@@ -1032,9 +1028,7 @@ class PickupFilters(filters.FilterSet):
         import karrio.server.manager.models as mgr_models
 
         if value:
-            return mgr_models.Pickup.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return mgr_models.Pickup.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)
 
 

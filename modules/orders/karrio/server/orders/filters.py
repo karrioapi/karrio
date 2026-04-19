@@ -244,7 +244,5 @@ class OrderFilters(filters.FilterSet):
         import karrio.server.orders.models as order_models
 
         if value:
-            return order_models.Order.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return order_models.Order.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)

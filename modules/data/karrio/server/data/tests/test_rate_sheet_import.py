@@ -23,13 +23,13 @@ Run with:
     LOG_LEVEL=30 python -m unittest karrio.server.data.tests.test_rate_sheet_import -v
 """
 
-import io
 import csv
+import io
 import unittest
-import openpyxl
 
 import karrio.server.data.resources.rate_sheets as rs
 import karrio.server.data.serializers.batch_rate_sheets as batch_rs
+import openpyxl
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Flat-format fixture builders
@@ -37,19 +37,47 @@ import karrio.server.data.serializers.batch_rate_sheets as batch_rs
 
 # All columns in the exact flat-format order
 FLAT_HEADERS = [
-    "carrier_name", "service_code", "carrier_service_code", "service_name",
-    "shipment_type", "origin_country", "zone_label", "country_codes",
-    "min_weight", "max_weight", "weight_unit",
-    "max_length", "max_width", "max_height", "dimension_unit",
-    "currency", "base_rate", "cost", "transit_days", "transit_time",
-    "plan_rate_start", "plan_cost_start",
-    "plan_rate_advanced", "plan_cost_advanced",
-    "plan_rate_pro", "plan_cost_pro",
-    "plan_rate_enterprise", "plan_cost_enterprise",
-    "tracked", "b2c", "b2b", "first_mile", "last_mile",
-    "form_factor", "signature",
-    "fuel_surcharge", "seasonal_surcharge", "customs_surcharge",
-    "energy_surcharge", "road_toll", "security_surcharge",
+    "carrier_name",
+    "service_code",
+    "carrier_service_code",
+    "service_name",
+    "shipment_type",
+    "origin_country",
+    "zone_label",
+    "country_codes",
+    "min_weight",
+    "max_weight",
+    "weight_unit",
+    "max_length",
+    "max_width",
+    "max_height",
+    "dimension_unit",
+    "currency",
+    "base_rate",
+    "cost",
+    "transit_days",
+    "transit_time",
+    "plan_rate_start",
+    "plan_cost_start",
+    "plan_rate_advanced",
+    "plan_cost_advanced",
+    "plan_rate_pro",
+    "plan_cost_pro",
+    "plan_rate_enterprise",
+    "plan_cost_enterprise",
+    "tracked",
+    "b2c",
+    "b2b",
+    "first_mile",
+    "last_mile",
+    "form_factor",
+    "signature",
+    "fuel_surcharge",
+    "seasonal_surcharge",
+    "customs_surcharge",
+    "energy_surcharge",
+    "road_toll",
+    "security_surcharge",
     "notes",
 ]
 
@@ -110,7 +138,7 @@ def _make_flat_xlsx(service_rate_rows=None) -> bytes:
     ws = wb.active
     ws.title = "service_rates"
     ws.append(FLAT_HEADERS)
-    for row in (service_rate_rows or [_flat_row()]):
+    for row in service_rate_rows or [_flat_row()]:
         ws.append(row)
     buf = io.BytesIO()
     wb.save(buf)
@@ -122,7 +150,7 @@ def _make_flat_csv(rows=None) -> bytes:
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow(FLAT_HEADERS)
-    for row in (rows or [_flat_row()]):
+    for row in rows or [_flat_row()]:
         writer.writerow(row)
     return buf.getvalue().encode("utf-8")
 
@@ -137,6 +165,7 @@ def _make_file(data: bytes, name="test.xlsx"):
 # ─────────────────────────────────────────────────────────────────────────────
 # Tests
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 class TestRateSheetFlatFormat(unittest.TestCase):
     """Tests for the flat-format parser, validator, builder, diff, and export."""
@@ -320,7 +349,7 @@ class TestRateSheetFlatFormat(unittest.TestCase):
         data = _make_flat_xlsx()
         f = _make_file(data, "test.xlsx")
 
-        from unittest.mock import patch, MagicMock
+        from unittest.mock import MagicMock, patch
 
         mock_qs = MagicMock()
         mock_qs.filter.return_value.first.return_value = None
@@ -407,7 +436,7 @@ class TestRateSheetFlatFormat(unittest.TestCase):
         # Check data row exists
         data_rows = list(ws.iter_rows(min_row=2, values_only=True))
         self.assertEqual(len(data_rows), 1)
-        row_dict = dict(zip(headers, data_rows[0]))
+        row_dict = dict(zip(headers, data_rows[0], strict=False))
         self.assertEqual(row_dict["carrier_name"], "dhl_parcel_de")
         self.assertEqual(row_dict["service_code"], "dhl_paket")
         self.assertEqual(row_dict["zone_label"], "Germany")
@@ -495,7 +524,7 @@ class TestRateSheetFlatFormat(unittest.TestCase):
         self.assertEqual(len(ci["service_rates"]), 2)
 
         # Verify rates preserved
-        rates = {sr["zone_label"]: sr for sr in ci["service_rates"]}
+        {sr["zone_label"]: sr for sr in ci["service_rates"]}
         # Both rows have same zone; distinguish by rate value
         rate_vals = sorted([sr.get("rate") for sr in ci["service_rates"]])
         self.assertAlmostEqual(rate_vals[0], 7.50)

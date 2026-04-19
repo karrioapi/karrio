@@ -1,231 +1,227 @@
-import pydoc
-import typing
 import datetime
-import strawberry
 
-import karrio.server.providers.models as providers
-import karrio.server.serializers as serializers
 import karrio.server.graph.utils as utils
+import strawberry
 
 
 @strawberry.input
 class LogFilter(utils.Paginated):
-    query: typing.Optional[str] = strawberry.UNSET
-    api_endpoint: typing.Optional[str] = strawberry.UNSET
-    remote_addr: typing.Optional[str] = strawberry.UNSET
-    date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
-    date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
-    entity_id: typing.Optional[str] = strawberry.UNSET
-    method: typing.Optional[typing.List[str]] = strawberry.UNSET
-    status: typing.Optional[str] = strawberry.UNSET
-    status_code: typing.Optional[typing.List[int]] = strawberry.UNSET
-    request_id: typing.Optional[str] = strawberry.UNSET
+    query: str | None = strawberry.UNSET
+    api_endpoint: str | None = strawberry.UNSET
+    remote_addr: str | None = strawberry.UNSET
+    date_after: datetime.datetime | None = strawberry.UNSET
+    date_before: datetime.datetime | None = strawberry.UNSET
+    entity_id: str | None = strawberry.UNSET
+    method: list[str] | None = strawberry.UNSET
+    status: str | None = strawberry.UNSET
+    status_code: list[int] | None = strawberry.UNSET
+    request_id: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class TracingRecordFilter(utils.Paginated):
-    key: typing.Optional[str] = strawberry.UNSET
-    request_log_id: typing.Optional[int] = strawberry.UNSET
-    date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
-    date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
-    keyword: typing.Optional[str] = strawberry.UNSET
-    request_id: typing.Optional[str] = strawberry.UNSET
+    key: str | None = strawberry.UNSET
+    request_log_id: int | None = strawberry.UNSET
+    date_after: datetime.datetime | None = strawberry.UNSET
+    date_before: datetime.datetime | None = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET
+    request_id: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class TrackerFilter(utils.Paginated):
-    tracking_number: typing.Optional[str] = strawberry.UNSET
-    created_after: typing.Optional[str] = strawberry.UNSET
-    created_before: typing.Optional[str] = strawberry.UNSET
-    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
-    status: typing.Optional[typing.List[str]] = strawberry.UNSET
-    keyword: typing.Optional[str] = strawberry.UNSET
-    request_id: typing.Optional[str] = strawberry.UNSET
-    is_archived: typing.Optional[bool] = strawberry.UNSET
+    tracking_number: str | None = strawberry.UNSET
+    created_after: str | None = strawberry.UNSET
+    created_before: str | None = strawberry.UNSET
+    carrier_name: list[str] | None = strawberry.UNSET
+    status: list[str] | None = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET
+    request_id: str | None = strawberry.UNSET
+    is_archived: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class ShipmentFilter(utils.Paginated):
-    keyword: typing.Optional[str] = strawberry.UNSET
-    address: typing.Optional[str] = strawberry.UNSET
-    id: typing.Optional[typing.List[str]] = strawberry.UNSET
-    created_after: typing.Optional[str] = strawberry.UNSET
-    created_before: typing.Optional[str] = strawberry.UNSET
-    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
-    reference: typing.Optional[str] = strawberry.UNSET
-    order_id: typing.Optional[str] = strawberry.UNSET
-    service: typing.Optional[typing.List[str]] = strawberry.UNSET
-    status: typing.Optional[typing.List[utils.ShipmentStatusEnum]] = strawberry.UNSET
-    option_key: typing.Optional[str] = strawberry.UNSET
-    option_value: typing.Optional[utils.JSON] = strawberry.UNSET
-    metadata_key: typing.Optional[str] = strawberry.UNSET
-    metadata_value: typing.Optional[utils.JSON] = strawberry.UNSET
-    meta_key: typing.Optional[str] = strawberry.UNSET
-    meta_value: typing.Optional[utils.JSON] = strawberry.UNSET
-    has_tracker: typing.Optional[bool] = strawberry.UNSET
-    has_manifest: typing.Optional[bool] = strawberry.UNSET
-    is_return: typing.Optional[bool] = strawberry.UNSET
-    request_id: typing.Optional[str] = strawberry.UNSET
-    is_archived: typing.Optional[bool] = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET
+    address: str | None = strawberry.UNSET
+    id: list[str] | None = strawberry.UNSET
+    created_after: str | None = strawberry.UNSET
+    created_before: str | None = strawberry.UNSET
+    carrier_name: list[str] | None = strawberry.UNSET
+    reference: str | None = strawberry.UNSET
+    order_id: str | None = strawberry.UNSET
+    service: list[str] | None = strawberry.UNSET
+    status: list[utils.ShipmentStatusEnum] | None = strawberry.UNSET
+    option_key: str | None = strawberry.UNSET
+    option_value: utils.JSON | None = strawberry.UNSET
+    metadata_key: str | None = strawberry.UNSET
+    metadata_value: utils.JSON | None = strawberry.UNSET
+    meta_key: str | None = strawberry.UNSET
+    meta_value: utils.JSON | None = strawberry.UNSET
+    has_tracker: bool | None = strawberry.UNSET
+    has_manifest: bool | None = strawberry.UNSET
+    is_return: bool | None = strawberry.UNSET
+    request_id: str | None = strawberry.UNSET
+    is_archived: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class ManifestFilter(utils.Paginated):
-    id: typing.Optional[typing.List[str]] = strawberry.UNSET
-    created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
-    created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
-    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
-    request_id: typing.Optional[str] = strawberry.UNSET
+    id: list[str] | None = strawberry.UNSET
+    created_after: datetime.datetime | None = strawberry.UNSET
+    created_before: datetime.datetime | None = strawberry.UNSET
+    carrier_name: list[str] | None = strawberry.UNSET
+    request_id: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class PickupFilter(utils.Paginated):
-    keyword: typing.Optional[str] = strawberry.UNSET
-    id: typing.Optional[typing.List[str]] = strawberry.UNSET
-    status: typing.Optional[typing.List[str]] = strawberry.UNSET
-    confirmation_number: typing.Optional[str] = strawberry.UNSET
-    pickup_date_after: typing.Optional[str] = strawberry.UNSET
-    pickup_date_before: typing.Optional[str] = strawberry.UNSET
-    created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
-    created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
-    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
-    address: typing.Optional[str] = strawberry.UNSET
-    metadata_key: typing.Optional[str] = strawberry.UNSET
-    metadata_value: typing.Optional[str] = strawberry.UNSET
-    meta_key: typing.Optional[str] = strawberry.UNSET
-    meta_value: typing.Optional[str] = strawberry.UNSET
-    request_id: typing.Optional[str] = strawberry.UNSET
-    is_archived: typing.Optional[bool] = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET
+    id: list[str] | None = strawberry.UNSET
+    status: list[str] | None = strawberry.UNSET
+    confirmation_number: str | None = strawberry.UNSET
+    pickup_date_after: str | None = strawberry.UNSET
+    pickup_date_before: str | None = strawberry.UNSET
+    created_after: datetime.datetime | None = strawberry.UNSET
+    created_before: datetime.datetime | None = strawberry.UNSET
+    carrier_name: list[str] | None = strawberry.UNSET
+    address: str | None = strawberry.UNSET
+    metadata_key: str | None = strawberry.UNSET
+    metadata_value: str | None = strawberry.UNSET
+    meta_key: str | None = strawberry.UNSET
+    meta_value: str | None = strawberry.UNSET
+    request_id: str | None = strawberry.UNSET
+    is_archived: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class TemplateFilter(utils.Paginated):
-    label: typing.Optional[str] = strawberry.UNSET
-    keyword: typing.Optional[str] = strawberry.UNSET
-    usage: typing.Optional[str] = strawberry.UNSET
+    label: str | None = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET
+    usage: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class AddressFilter(TemplateFilter):
-    address: typing.Optional[str] = strawberry.UNSET
+    address: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class ProductFilter(TemplateFilter):
-    sku: typing.Optional[str] = strawberry.UNSET
-    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    sku: str | None = strawberry.UNSET
+    origin_country: utils.CountryCodeEnum | None = strawberry.UNSET
 
 
 @strawberry.input
 class CarrierFilter(utils.Paginated):
-    active: typing.Optional[bool] = strawberry.UNSET
-    metadata_key: typing.Optional[str] = strawberry.UNSET
-    metadata_value: typing.Optional[str] = strawberry.UNSET
-    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
+    active: bool | None = strawberry.UNSET
+    metadata_key: str | None = strawberry.UNSET
+    metadata_value: str | None = strawberry.UNSET
+    carrier_name: list[str] | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateUserInput(utils.BaseInput):
-    full_name: typing.Optional[str] = strawberry.UNSET
-    is_active: typing.Optional[bool] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    full_name: str | None = strawberry.UNSET
+    is_active: bool | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
 class WorkspaceConfigMutationInput(utils.BaseInput):
     # General preferences
-    default_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
-    default_country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    default_label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
+    default_currency: utils.CurrencyCodeEnum | None = strawberry.UNSET
+    default_country_code: utils.CountryCodeEnum | None = strawberry.UNSET
+    default_label_type: utils.LabelTypeEnum | None = strawberry.UNSET
 
-    default_weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
-    default_dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    default_weight_unit: utils.WeightUnitEnum | None = strawberry.UNSET
+    default_dimension_unit: utils.DimensionUnitEnum | None = strawberry.UNSET
 
     # Customs identifiers
-    state_tax_id: typing.Optional[str] = strawberry.UNSET
-    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+    state_tax_id: str | None = strawberry.UNSET
+    federal_tax_id: str | None = strawberry.UNSET
 
-    customs_aes: typing.Optional[str] = strawberry.UNSET
-    customs_eel_pfc: typing.Optional[str] = strawberry.UNSET
-    customs_eori_number: typing.Optional[str] = strawberry.UNSET
-    customs_license_number: typing.Optional[str] = strawberry.UNSET
-    customs_certificate_number: typing.Optional[str] = strawberry.UNSET
-    customs_nip_number: typing.Optional[str] = strawberry.UNSET
-    customs_vat_registration_number: typing.Optional[str] = strawberry.UNSET
+    customs_aes: str | None = strawberry.UNSET
+    customs_eel_pfc: str | None = strawberry.UNSET
+    customs_eori_number: str | None = strawberry.UNSET
+    customs_license_number: str | None = strawberry.UNSET
+    customs_certificate_number: str | None = strawberry.UNSET
+    customs_nip_number: str | None = strawberry.UNSET
+    customs_vat_registration_number: str | None = strawberry.UNSET
 
     # Default options
-    insured_by_default: typing.Optional[bool] = strawberry.UNSET
+    insured_by_default: bool | None = strawberry.UNSET
 
     # Label printing
-    label_message_1: typing.Optional[str] = strawberry.UNSET
-    label_message_2: typing.Optional[str] = strawberry.UNSET
-    label_message_3: typing.Optional[str] = strawberry.UNSET
-    label_logo: typing.Optional[str] = strawberry.UNSET
+    label_message_1: str | None = strawberry.UNSET
+    label_message_2: str | None = strawberry.UNSET
+    label_message_3: str | None = strawberry.UNSET
+    label_logo: str | None = strawberry.UNSET
 
     # ─────────────────────────────────────────────────────────────────
     # Printing Options - Labels (format uses default_label_type above)
     # ─────────────────────────────────────────────────────────────────
-    print_label_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
-    print_label_show_options: typing.Optional[bool] = strawberry.UNSET
+    print_label_size: utils.LabelSizeEnum | None = strawberry.UNSET
+    print_label_show_options: bool | None = strawberry.UNSET
 
     # ─────────────────────────────────────────────────────────────────
     # Printing Options - Return Labels
     # ─────────────────────────────────────────────────────────────────
-    print_return_label_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
-    print_return_label_show_options: typing.Optional[bool] = strawberry.UNSET
+    print_return_label_size: utils.LabelSizeEnum | None = strawberry.UNSET
+    print_return_label_show_options: bool | None = strawberry.UNSET
 
     # ─────────────────────────────────────────────────────────────────
     # Printing Options - Customs Documents
     # ─────────────────────────────────────────────────────────────────
-    print_customs_size: typing.Optional[utils.LabelSizeEnum] = strawberry.UNSET
-    print_customs_show_options: typing.Optional[bool] = strawberry.UNSET
-    print_customs_with_label: typing.Optional[bool] = strawberry.UNSET
-    print_customs_copies: typing.Optional[int] = strawberry.UNSET
+    print_customs_size: utils.LabelSizeEnum | None = strawberry.UNSET
+    print_customs_show_options: bool | None = strawberry.UNSET
+    print_customs_with_label: bool | None = strawberry.UNSET
+    print_customs_copies: int | None = strawberry.UNSET
 
     # ─────────────────────────────────────────────────────────────────
     # Shipping Defaults - Settings
     # ─────────────────────────────────────────────────────────────────
-    default_parcel_weight: typing.Optional[float] = strawberry.UNSET
-    default_shipping_service: typing.Optional[str] = strawberry.UNSET
-    default_shipping_carrier: typing.Optional[str] = strawberry.UNSET
-    default_export_reason: typing.Optional[utils.ExportReasonEnum] = strawberry.UNSET
-    default_delivery_instructions: typing.Optional[str] = strawberry.UNSET
+    default_parcel_weight: float | None = strawberry.UNSET
+    default_shipping_service: str | None = strawberry.UNSET
+    default_shipping_carrier: str | None = strawberry.UNSET
+    default_export_reason: utils.ExportReasonEnum | None = strawberry.UNSET
+    default_delivery_instructions: str | None = strawberry.UNSET
 
     # ─────────────────────────────────────────────────────────────────
     # Shipping Defaults - Label Options
     # ─────────────────────────────────────────────────────────────────
-    label_show_postage_paid_logo: typing.Optional[bool] = strawberry.UNSET
-    label_show_qr_code: typing.Optional[bool] = strawberry.UNSET
-    customs_use_order_as_invoice: typing.Optional[bool] = strawberry.UNSET
+    label_show_postage_paid_logo: bool | None = strawberry.UNSET
+    label_show_qr_code: bool | None = strawberry.UNSET
+    customs_use_order_as_invoice: bool | None = strawberry.UNSET
 
     # ─────────────────────────────────────────────────────────────────
     # Shipping Defaults - Recommendations Preferences
     # ─────────────────────────────────────────────────────────────────
-    pref_first_mile: typing.Optional[typing.List[utils.FirstMileEnum]] = strawberry.UNSET
-    pref_last_mile: typing.Optional[typing.List[utils.LastMileEnum]] = strawberry.UNSET
-    pref_form_factor: typing.Optional[typing.List[utils.FormFactorEnum]] = strawberry.UNSET
-    pref_age_check: typing.Optional[utils.AgeCheckEnum] = strawberry.UNSET
-    pref_signature_required: typing.Optional[bool] = strawberry.UNSET
-    pref_max_lead_time_days: typing.Optional[int] = strawberry.UNSET
+    pref_first_mile: list[utils.FirstMileEnum] | None = strawberry.UNSET
+    pref_last_mile: list[utils.LastMileEnum] | None = strawberry.UNSET
+    pref_form_factor: list[utils.FormFactorEnum] | None = strawberry.UNSET
+    pref_age_check: utils.AgeCheckEnum | None = strawberry.UNSET
+    pref_signature_required: bool | None = strawberry.UNSET
+    pref_max_lead_time_days: int | None = strawberry.UNSET
 
     # ─────────────────────────────────────────────────────────────────
     # Workspace Settings
     # ─────────────────────────────────────────────────────────────────
-    shipping_app_test_mode: typing.Optional[bool] = strawberry.UNSET
+    shipping_app_test_mode: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class TokenMutationInput(utils.BaseInput):
     key: str
-    password: typing.Optional[str] = strawberry.UNSET
-    refresh: typing.Optional[bool] = strawberry.UNSET
+    password: str | None = strawberry.UNSET
+    refresh: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class CreateAPIKeyMutationInput(utils.BaseInput):
     password: str
     label: str
-    permissions: typing.Optional[typing.List[str]] = strawberry.UNSET
+    permissions: list[str] | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -252,7 +248,7 @@ class RegisterUserMutationInput(utils.BaseInput):
     password1: str
     password2: str
     redirect_url: str
-    full_name: typing.Optional[str] = strawberry.UNSET
+    full_name: str | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -301,89 +297,89 @@ class MetadataMutationInput(utils.BaseInput):
     id: str
     object_type: utils.MetadataObjectTypeEnum
     added_values: utils.JSON
-    discarded_keys: typing.Optional[typing.List[str]]
+    discarded_keys: list[str] | None
 
 
 @strawberry.input
 class CommodityInput:
     weight: float
     weight_unit: utils.WeightUnitEnum
-    quantity: typing.Optional[int] = 1
-    sku: typing.Optional[str] = strawberry.UNSET
-    title: typing.Optional[str] = strawberry.UNSET
-    hs_code: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    value_amount: typing.Optional[float] = strawberry.UNSET
-    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    parent_id: typing.Optional[str] = strawberry.UNSET
+    quantity: int | None = 1
+    sku: str | None = strawberry.UNSET
+    title: str | None = strawberry.UNSET
+    hs_code: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    value_amount: float | None = strawberry.UNSET
+    origin_country: utils.CountryCodeEnum | None = strawberry.UNSET
+    value_currency: utils.CurrencyCodeEnum | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    parent_id: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateCommodityInput(CommodityInput):
-    id: typing.Optional[str] = strawberry.UNSET
-    quantity: typing.Optional[int] = strawberry.UNSET
-    weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    id: str | None = strawberry.UNSET
+    quantity: int | None = strawberry.UNSET
+    weight: float | None = strawberry.UNSET
+    weight_unit: utils.WeightUnitEnum | None = strawberry.UNSET
 
 
 @strawberry.input
 class AddressInput:
-    country_code: typing.Optional[utils.CountryCodeEnum]
-    postal_code: typing.Optional[str] = strawberry.UNSET
-    city: typing.Optional[str] = strawberry.UNSET
-    federal_tax_id: typing.Optional[str] = strawberry.UNSET
-    state_tax_id: typing.Optional[str] = strawberry.UNSET
-    person_name: typing.Optional[str] = strawberry.UNSET
-    company_name: typing.Optional[str] = strawberry.UNSET
-    email: typing.Optional[str] = strawberry.UNSET
-    phone_number: typing.Optional[str] = strawberry.UNSET
-    state_code: typing.Optional[str] = strawberry.UNSET
-    residential: typing.Optional[bool] = strawberry.UNSET
-    street_number: typing.Optional[str] = strawberry.UNSET
-    address_line1: typing.Optional[str] = strawberry.UNSET
-    address_line2: typing.Optional[str] = strawberry.UNSET
-    validate_location: typing.Optional[bool] = strawberry.UNSET
+    country_code: utils.CountryCodeEnum | None
+    postal_code: str | None = strawberry.UNSET
+    city: str | None = strawberry.UNSET
+    federal_tax_id: str | None = strawberry.UNSET
+    state_tax_id: str | None = strawberry.UNSET
+    person_name: str | None = strawberry.UNSET
+    company_name: str | None = strawberry.UNSET
+    email: str | None = strawberry.UNSET
+    phone_number: str | None = strawberry.UNSET
+    state_code: str | None = strawberry.UNSET
+    residential: bool | None = strawberry.UNSET
+    street_number: str | None = strawberry.UNSET
+    address_line1: str | None = strawberry.UNSET
+    address_line2: str | None = strawberry.UNSET
+    validate_location: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class ParcelInput:
     weight: float
     weight_unit: utils.WeightUnitEnum
-    width: typing.Optional[float] = strawberry.UNSET
-    height: typing.Optional[float] = strawberry.UNSET
-    length: typing.Optional[float] = strawberry.UNSET
-    packaging_type: typing.Optional[str] = strawberry.UNSET
-    package_preset: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    content: typing.Optional[str] = strawberry.UNSET
-    is_document: typing.Optional[bool] = strawberry.UNSET
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
-    reference_number: typing.Optional[str] = strawberry.UNSET
-    freight_class: typing.Optional[str] = strawberry.UNSET
-    items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
+    width: float | None = strawberry.UNSET
+    height: float | None = strawberry.UNSET
+    length: float | None = strawberry.UNSET
+    packaging_type: str | None = strawberry.UNSET
+    package_preset: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    content: str | None = strawberry.UNSET
+    is_document: bool | None = strawberry.UNSET
+    dimension_unit: utils.DimensionUnitEnum | None = strawberry.UNSET
+    reference_number: str | None = strawberry.UNSET
+    freight_class: str | None = strawberry.UNSET
+    items: list[CommodityInput] | None = strawberry.UNSET
 
 
 @strawberry.input
 class DutyInput:
     paid_by: utils.PaidByEnum
-    currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
-    account_number: typing.Optional[str] = strawberry.UNSET
-    declared_value: typing.Optional[float] = strawberry.UNSET
-    bill_to: typing.Optional[AddressInput] = strawberry.UNSET
+    currency: utils.CurrencyCodeEnum | None = strawberry.UNSET
+    account_number: str | None = strawberry.UNSET
+    declared_value: float | None = strawberry.UNSET
+    bill_to: AddressInput | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateDutyInput(DutyInput):
-    paid_by: typing.Optional[utils.PaidByEnum] = strawberry.UNSET
+    paid_by: utils.PaidByEnum | None = strawberry.UNSET
 
 
 @strawberry.input
 class PaymentInput:
-    account_number: typing.Optional[str] = strawberry.UNSET
-    paid_by: typing.Optional[utils.PaidByEnum] = strawberry.UNSET
-    currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    account_number: str | None = strawberry.UNSET
+    paid_by: utils.PaidByEnum | None = strawberry.UNSET
+    currency: utils.CurrencyCodeEnum | None = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -396,21 +392,21 @@ class CreateAddressInput(utils.BaseInput):
     """Flat address template input with meta for template metadata."""
 
     meta: utils.JSON
-    country_code: typing.Optional[utils.CountryCodeEnum]
-    postal_code: typing.Optional[str] = strawberry.UNSET
-    city: typing.Optional[str] = strawberry.UNSET
-    federal_tax_id: typing.Optional[str] = strawberry.UNSET
-    state_tax_id: typing.Optional[str] = strawberry.UNSET
-    person_name: typing.Optional[str] = strawberry.UNSET
-    company_name: typing.Optional[str] = strawberry.UNSET
-    email: typing.Optional[str] = strawberry.UNSET
-    phone_number: typing.Optional[str] = strawberry.UNSET
-    state_code: typing.Optional[str] = strawberry.UNSET
-    residential: typing.Optional[bool] = strawberry.UNSET
-    street_number: typing.Optional[str] = strawberry.UNSET
-    address_line1: typing.Optional[str] = strawberry.UNSET
-    address_line2: typing.Optional[str] = strawberry.UNSET
-    validate_location: typing.Optional[bool] = strawberry.UNSET
+    country_code: utils.CountryCodeEnum | None
+    postal_code: str | None = strawberry.UNSET
+    city: str | None = strawberry.UNSET
+    federal_tax_id: str | None = strawberry.UNSET
+    state_tax_id: str | None = strawberry.UNSET
+    person_name: str | None = strawberry.UNSET
+    company_name: str | None = strawberry.UNSET
+    email: str | None = strawberry.UNSET
+    phone_number: str | None = strawberry.UNSET
+    state_code: str | None = strawberry.UNSET
+    residential: bool | None = strawberry.UNSET
+    street_number: str | None = strawberry.UNSET
+    address_line1: str | None = strawberry.UNSET
+    address_line2: str | None = strawberry.UNSET
+    validate_location: bool | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -418,22 +414,22 @@ class UpdateAddressInput(utils.BaseInput):
     """Flat address template update input."""
 
     id: str
-    meta: typing.Optional[utils.JSON] = strawberry.UNSET
-    country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    postal_code: typing.Optional[str] = strawberry.UNSET
-    city: typing.Optional[str] = strawberry.UNSET
-    federal_tax_id: typing.Optional[str] = strawberry.UNSET
-    state_tax_id: typing.Optional[str] = strawberry.UNSET
-    person_name: typing.Optional[str] = strawberry.UNSET
-    company_name: typing.Optional[str] = strawberry.UNSET
-    email: typing.Optional[str] = strawberry.UNSET
-    phone_number: typing.Optional[str] = strawberry.UNSET
-    state_code: typing.Optional[str] = strawberry.UNSET
-    residential: typing.Optional[bool] = strawberry.UNSET
-    street_number: typing.Optional[str] = strawberry.UNSET
-    address_line1: typing.Optional[str] = strawberry.UNSET
-    address_line2: typing.Optional[str] = strawberry.UNSET
-    validate_location: typing.Optional[bool] = strawberry.UNSET
+    meta: utils.JSON | None = strawberry.UNSET
+    country_code: utils.CountryCodeEnum | None = strawberry.UNSET
+    postal_code: str | None = strawberry.UNSET
+    city: str | None = strawberry.UNSET
+    federal_tax_id: str | None = strawberry.UNSET
+    state_tax_id: str | None = strawberry.UNSET
+    person_name: str | None = strawberry.UNSET
+    company_name: str | None = strawberry.UNSET
+    email: str | None = strawberry.UNSET
+    phone_number: str | None = strawberry.UNSET
+    state_code: str | None = strawberry.UNSET
+    residential: bool | None = strawberry.UNSET
+    street_number: str | None = strawberry.UNSET
+    address_line1: str | None = strawberry.UNSET
+    address_line2: str | None = strawberry.UNSET
+    validate_location: bool | None = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -448,18 +444,18 @@ class CreateParcelInput(utils.BaseInput):
     meta: utils.JSON
     weight: float
     weight_unit: utils.WeightUnitEnum
-    width: typing.Optional[float] = strawberry.UNSET
-    height: typing.Optional[float] = strawberry.UNSET
-    length: typing.Optional[float] = strawberry.UNSET
-    packaging_type: typing.Optional[str] = strawberry.UNSET
-    package_preset: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    content: typing.Optional[str] = strawberry.UNSET
-    is_document: typing.Optional[bool] = strawberry.UNSET
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
-    reference_number: typing.Optional[str] = strawberry.UNSET
-    freight_class: typing.Optional[str] = strawberry.UNSET
-    items: typing.Optional[typing.List[CommodityInput]] = strawberry.UNSET
+    width: float | None = strawberry.UNSET
+    height: float | None = strawberry.UNSET
+    length: float | None = strawberry.UNSET
+    packaging_type: str | None = strawberry.UNSET
+    package_preset: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    content: str | None = strawberry.UNSET
+    is_document: bool | None = strawberry.UNSET
+    dimension_unit: utils.DimensionUnitEnum | None = strawberry.UNSET
+    reference_number: str | None = strawberry.UNSET
+    freight_class: str | None = strawberry.UNSET
+    items: list[CommodityInput] | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -467,21 +463,21 @@ class UpdateParcelInput(utils.BaseInput):
     """Flat parcel template update input."""
 
     id: str
-    meta: typing.Optional[utils.JSON] = strawberry.UNSET
-    weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
-    width: typing.Optional[float] = strawberry.UNSET
-    height: typing.Optional[float] = strawberry.UNSET
-    length: typing.Optional[float] = strawberry.UNSET
-    packaging_type: typing.Optional[str] = strawberry.UNSET
-    package_preset: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    content: typing.Optional[str] = strawberry.UNSET
-    is_document: typing.Optional[bool] = strawberry.UNSET
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
-    reference_number: typing.Optional[str] = strawberry.UNSET
-    freight_class: typing.Optional[str] = strawberry.UNSET
-    items: typing.Optional[typing.List[UpdateCommodityInput]] = strawberry.UNSET
+    meta: utils.JSON | None = strawberry.UNSET
+    weight: float | None = strawberry.UNSET
+    weight_unit: utils.WeightUnitEnum | None = strawberry.UNSET
+    width: float | None = strawberry.UNSET
+    height: float | None = strawberry.UNSET
+    length: float | None = strawberry.UNSET
+    packaging_type: str | None = strawberry.UNSET
+    package_preset: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    content: str | None = strawberry.UNSET
+    is_document: bool | None = strawberry.UNSET
+    dimension_unit: utils.DimensionUnitEnum | None = strawberry.UNSET
+    reference_number: str | None = strawberry.UNSET
+    freight_class: str | None = strawberry.UNSET
+    items: list[UpdateCommodityInput] | None = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -492,24 +488,24 @@ class UpdateParcelInput(utils.BaseInput):
 @strawberry.input
 class PartialShipmentMutationInput(utils.BaseInput):
     id: str
-    recipient: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    shipper: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    return_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
-    customs: typing.Optional[utils.JSON] = strawberry.UNSET
-    parcels: typing.Optional[typing.List[UpdateParcelInput]] = strawberry.UNSET
-    payment: typing.Optional[PaymentInput] = strawberry.UNSET
-    label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    options: typing.Optional[utils.JSON] = strawberry.UNSET
-    reference: typing.Optional[str] = strawberry.UNSET
-    order_id: typing.Optional[str] = strawberry.UNSET
+    recipient: UpdateAddressInput | None = strawberry.UNSET
+    shipper: UpdateAddressInput | None = strawberry.UNSET
+    return_address: UpdateAddressInput | None = strawberry.UNSET
+    billing_address: UpdateAddressInput | None = strawberry.UNSET
+    customs: utils.JSON | None = strawberry.UNSET
+    parcels: list[UpdateParcelInput] | None = strawberry.UNSET
+    payment: PaymentInput | None = strawberry.UNSET
+    label_type: utils.LabelTypeEnum | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    options: utils.JSON | None = strawberry.UNSET
+    reference: str | None = strawberry.UNSET
+    order_id: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class ChangeShipmentStatusMutationInput(utils.BaseInput):
     id: str
-    status: typing.Optional[utils.ManualShipmentStatusEnum]
+    status: utils.ManualShipmentStatusEnum | None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -524,15 +520,15 @@ class CreateProductInput(utils.BaseInput):
     meta: utils.JSON
     weight: float
     weight_unit: utils.WeightUnitEnum
-    quantity: typing.Optional[int] = 1
-    sku: typing.Optional[str] = strawberry.UNSET
-    title: typing.Optional[str] = strawberry.UNSET
-    hs_code: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    value_amount: typing.Optional[float] = strawberry.UNSET
-    value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
-    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    quantity: int | None = 1
+    sku: str | None = strawberry.UNSET
+    title: str | None = strawberry.UNSET
+    hs_code: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    value_amount: float | None = strawberry.UNSET
+    value_currency: utils.CurrencyCodeEnum | None = strawberry.UNSET
+    origin_country: utils.CountryCodeEnum | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -540,18 +536,18 @@ class UpdateProductInput(utils.BaseInput):
     """Flat product template update input."""
 
     id: str
-    meta: typing.Optional[utils.JSON] = strawberry.UNSET
-    weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
-    quantity: typing.Optional[int] = strawberry.UNSET
-    sku: typing.Optional[str] = strawberry.UNSET
-    title: typing.Optional[str] = strawberry.UNSET
-    hs_code: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    value_amount: typing.Optional[float] = strawberry.UNSET
-    value_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
-    origin_country: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    meta: utils.JSON | None = strawberry.UNSET
+    weight: float | None = strawberry.UNSET
+    weight_unit: utils.WeightUnitEnum | None = strawberry.UNSET
+    quantity: int | None = strawberry.UNSET
+    sku: str | None = strawberry.UNSET
+    title: str | None = strawberry.UNSET
+    hs_code: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    value_amount: float | None = strawberry.UNSET
+    value_currency: utils.CurrencyCodeEnum | None = strawberry.UNSET
+    origin_country: utils.CountryCodeEnum | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -564,10 +560,10 @@ class LabelTemplateInput(utils.BaseInput):
     slug: str
     template: str
     template_type: utils.LabelTemplateTypeEnum
-    width: typing.Optional[int] = strawberry.UNSET
-    height: typing.Optional[int] = strawberry.UNSET
-    shipment_sample: typing.Optional[utils.JSON] = strawberry.UNSET
-    id: typing.Optional[str] = strawberry.UNSET
+    width: int | None = strawberry.UNSET
+    height: int | None = strawberry.UNSET
+    shipment_sample: utils.JSON | None = strawberry.UNSET
+    id: str | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -580,50 +576,50 @@ class ServiceLevelFeaturesInput(utils.BaseInput):
 
     # First Mile: How parcels get to the carrier
     # "pick_up" | "drop_off" | "pick_up_and_drop_off"
-    first_mile: typing.Optional[str] = strawberry.UNSET
+    first_mile: str | None = strawberry.UNSET
 
     # Last Mile: How parcels are delivered to recipient
     # "home_delivery" | "service_point" | "mailbox"
-    last_mile: typing.Optional[str] = strawberry.UNSET
+    last_mile: str | None = strawberry.UNSET
 
     # Form Factor: Type of package the service supports
     # "letter" | "parcel" | "mailbox" | "pallet"
-    form_factor: typing.Optional[str] = strawberry.UNSET
+    form_factor: str | None = strawberry.UNSET
 
     # Type of Shipments: Business model support
-    b2c: typing.Optional[bool] = strawberry.UNSET  # Business to Consumer
-    b2b: typing.Optional[bool] = strawberry.UNSET  # Business to Business
+    b2c: bool | None = strawberry.UNSET  # Business to Consumer
+    b2b: bool | None = strawberry.UNSET  # Business to Business
 
     # Shipment Direction: "outbound" | "returns" | "both"
-    shipment_type: typing.Optional[str] = strawberry.UNSET
+    shipment_type: str | None = strawberry.UNSET
 
     # Age Verification: null | "16" | "18"
-    age_check: typing.Optional[str] = strawberry.UNSET
+    age_check: str | None = strawberry.UNSET
 
     # Default signature requirement
-    signature: typing.Optional[bool] = strawberry.UNSET
+    signature: bool | None = strawberry.UNSET
 
     # Tracking availability
-    tracked: typing.Optional[bool] = strawberry.UNSET
+    tracked: bool | None = strawberry.UNSET
 
     # Insurance availability
-    insurance: typing.Optional[bool] = strawberry.UNSET
+    insurance: bool | None = strawberry.UNSET
 
     # Express/Priority service
-    express: typing.Optional[bool] = strawberry.UNSET
+    express: bool | None = strawberry.UNSET
 
     # Dangerous goods support
-    dangerous_goods: typing.Optional[bool] = strawberry.UNSET
+    dangerous_goods: bool | None = strawberry.UNSET
 
     # Weekend delivery options
-    saturday_delivery: typing.Optional[bool] = strawberry.UNSET
-    sunday_delivery: typing.Optional[bool] = strawberry.UNSET
+    saturday_delivery: bool | None = strawberry.UNSET
+    sunday_delivery: bool | None = strawberry.UNSET
 
     # Multi-package shipment support
-    multicollo: typing.Optional[bool] = strawberry.UNSET
+    multicollo: bool | None = strawberry.UNSET
 
     # Neighbor delivery allowed
-    neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
+    neighbor_delivery: bool | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -634,122 +630,122 @@ class CreateServiceLevelInput(utils.BaseInput):
     service_code: str
     currency: utils.CurrencyCodeEnum
 
-    carrier_service_code: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    active: typing.Optional[bool] = strawberry.UNSET
+    carrier_service_code: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    active: bool | None = strawberry.UNSET
 
-    transit_days: typing.Optional[int] = strawberry.UNSET
-    transit_time: typing.Optional[float] = strawberry.UNSET
+    transit_days: int | None = strawberry.UNSET
+    transit_time: float | None = strawberry.UNSET
 
-    max_width: typing.Optional[float] = strawberry.UNSET
-    max_height: typing.Optional[float] = strawberry.UNSET
-    max_length: typing.Optional[float] = strawberry.UNSET
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    max_width: float | None = strawberry.UNSET
+    max_height: float | None = strawberry.UNSET
+    max_length: float | None = strawberry.UNSET
+    dimension_unit: utils.DimensionUnitEnum | None = strawberry.UNSET
 
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
-    max_volume: typing.Optional[float] = strawberry.UNSET
-    cost: typing.Optional[float] = strawberry.UNSET
+    min_weight: float | None = strawberry.UNSET
+    max_weight: float | None = strawberry.UNSET
+    weight_unit: utils.WeightUnitEnum | None = strawberry.UNSET
+    max_volume: float | None = strawberry.UNSET
+    cost: float | None = strawberry.UNSET
 
     # Volumetric weight fields
-    dim_factor: typing.Optional[float] = strawberry.UNSET
-    use_volumetric: typing.Optional[bool] = strawberry.UNSET
+    dim_factor: float | None = strawberry.UNSET
+    use_volumetric: bool | None = strawberry.UNSET
 
-    domicile: typing.Optional[bool] = strawberry.UNSET
-    international: typing.Optional[bool] = strawberry.UNSET
+    domicile: bool | None = strawberry.UNSET
+    international: bool | None = strawberry.UNSET
 
     # Service features as structured object
-    features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
+    features: ServiceLevelFeaturesInput | None = strawberry.UNSET
 
     # Backward-compat: allow feature fields at root level (merged into features)
-    age_check: typing.Optional[str] = strawberry.UNSET
-    neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
-    saturday_delivery: typing.Optional[bool] = strawberry.UNSET
+    age_check: str | None = strawberry.UNSET
+    neighbor_delivery: bool | None = strawberry.UNSET
+    saturday_delivery: bool | None = strawberry.UNSET
 
-    zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
-    surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+    zone_ids: list[str] | None = strawberry.UNSET
+    surcharge_ids: list[str] | None = strawberry.UNSET
 
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    pricing_config: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateServiceLevelInput(utils.BaseInput):
     """Input for updating a service level."""
 
-    id: typing.Optional[str] = strawberry.UNSET
-    service_name: typing.Optional[str] = strawberry.UNSET
-    service_code: typing.Optional[str] = strawberry.UNSET
-    currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    id: str | None = strawberry.UNSET
+    service_name: str | None = strawberry.UNSET
+    service_code: str | None = strawberry.UNSET
+    currency: utils.CurrencyCodeEnum | None = strawberry.UNSET
 
-    carrier_service_code: typing.Optional[str] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    active: typing.Optional[bool] = strawberry.UNSET
+    carrier_service_code: str | None = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    active: bool | None = strawberry.UNSET
 
-    transit_days: typing.Optional[int] = strawberry.UNSET
-    transit_time: typing.Optional[float] = strawberry.UNSET
+    transit_days: int | None = strawberry.UNSET
+    transit_time: float | None = strawberry.UNSET
 
-    max_width: typing.Optional[float] = strawberry.UNSET
-    max_height: typing.Optional[float] = strawberry.UNSET
-    max_length: typing.Optional[float] = strawberry.UNSET
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+    max_width: float | None = strawberry.UNSET
+    max_height: float | None = strawberry.UNSET
+    max_length: float | None = strawberry.UNSET
+    dimension_unit: utils.DimensionUnitEnum | None = strawberry.UNSET
 
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
-    max_volume: typing.Optional[float] = strawberry.UNSET
-    cost: typing.Optional[float] = strawberry.UNSET
+    min_weight: float | None = strawberry.UNSET
+    max_weight: float | None = strawberry.UNSET
+    weight_unit: utils.WeightUnitEnum | None = strawberry.UNSET
+    max_volume: float | None = strawberry.UNSET
+    cost: float | None = strawberry.UNSET
 
     # Volumetric weight fields
-    dim_factor: typing.Optional[float] = strawberry.UNSET
-    use_volumetric: typing.Optional[bool] = strawberry.UNSET
+    dim_factor: float | None = strawberry.UNSET
+    use_volumetric: bool | None = strawberry.UNSET
 
-    domicile: typing.Optional[bool] = strawberry.UNSET
-    international: typing.Optional[bool] = strawberry.UNSET
+    domicile: bool | None = strawberry.UNSET
+    international: bool | None = strawberry.UNSET
 
     # Service features as structured object
-    features: typing.Optional[ServiceLevelFeaturesInput] = strawberry.UNSET
+    features: ServiceLevelFeaturesInput | None = strawberry.UNSET
 
     # Backward-compat: allow feature fields at root level (merged into features)
-    age_check: typing.Optional[str] = strawberry.UNSET
-    neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
-    saturday_delivery: typing.Optional[bool] = strawberry.UNSET
+    age_check: str | None = strawberry.UNSET
+    neighbor_delivery: bool | None = strawberry.UNSET
+    saturday_delivery: bool | None = strawberry.UNSET
 
-    zone_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
-    surcharge_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+    zone_ids: list[str] | None = strawberry.UNSET
+    surcharge_ids: list[str] | None = strawberry.UNSET
 
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    pricing_config: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
 class CreateRateSheetMutationInput(utils.BaseInput):
     name: str
     carrier_name: utils.CarrierNameEnum
-    services: typing.Optional[typing.List[CreateServiceLevelInput]] = strawberry.UNSET
-    zones: typing.Optional[typing.List["SharedZoneInput"]] = strawberry.UNSET
-    surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
-    service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
-    carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
-    origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
+    services: list[CreateServiceLevelInput] | None = strawberry.UNSET
+    zones: list["SharedZoneInput"] | None = strawberry.UNSET
+    surcharges: list["SharedSurchargeInput"] | None = strawberry.UNSET
+    service_rates: list["ServiceRateInput"] | None = strawberry.UNSET
+    carriers: list[str] | None = strawberry.UNSET
+    origin_countries: list[str] | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    pricing_config: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateRateSheetMutationInput(utils.BaseInput):
     id: str
-    name: typing.Optional[str] = strawberry.UNSET
-    services: typing.Optional[typing.List[UpdateServiceLevelInput]] = strawberry.UNSET
-    zones: typing.Optional[typing.List["SharedZoneInput"]] = strawberry.UNSET
-    surcharges: typing.Optional[typing.List["SharedSurchargeInput"]] = strawberry.UNSET
-    service_rates: typing.Optional[typing.List["ServiceRateInput"]] = strawberry.UNSET
-    carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
-    origin_countries: typing.Optional[typing.List[str]] = strawberry.UNSET
-    remove_missing_services: typing.Optional[bool] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    pricing_config: typing.Optional[utils.JSON] = strawberry.UNSET
+    name: str | None = strawberry.UNSET
+    services: list[UpdateServiceLevelInput] | None = strawberry.UNSET
+    zones: list["SharedZoneInput"] | None = strawberry.UNSET
+    surcharges: list["SharedSurchargeInput"] | None = strawberry.UNSET
+    service_rates: list["ServiceRateInput"] | None = strawberry.UNSET
+    carriers: list[str] | None = strawberry.UNSET
+    origin_countries: list[str] | None = strawberry.UNSET
+    remove_missing_services: bool | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    pricing_config: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -760,7 +756,7 @@ class DeleteRateSheetServiceMutationInput(utils.BaseInput):
 
 @strawberry.input
 class RateSheetFilter(utils.Paginated):
-    keyword: typing.Optional[str] = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -768,66 +764,66 @@ class CreateCarrierConnectionMutationInput(utils.BaseInput):
     carrier_name: utils.CarrierNameEnum
     carrier_id: str
     credentials: utils.JSON
-    active: typing.Optional[bool] = True
-    config: typing.Optional[utils.JSON] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    capabilities: typing.Optional[typing.List[str]] = strawberry.UNSET
+    active: bool | None = True
+    config: utils.JSON | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    capabilities: list[str] | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateCarrierConnectionMutationInput(utils.BaseInput):
     id: str
-    active: typing.Optional[bool] = True
-    carrier_id: typing.Optional[str] = strawberry.UNSET
-    credentials: typing.Optional[utils.JSON] = strawberry.UNSET
-    config: typing.Optional[utils.JSON] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    capabilities: typing.Optional[typing.List[str]] = strawberry.UNSET
+    active: bool | None = True
+    carrier_id: str | None = strawberry.UNSET
+    credentials: utils.JSON | None = strawberry.UNSET
+    config: utils.JSON | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    capabilities: list[str] | None = strawberry.UNSET
 
 
 @strawberry.input
 class SystemCarrierMutationInput(utils.BaseInput):
     id: str
-    enable: typing.Optional[bool] = strawberry.UNSET
-    config: typing.Optional[utils.JSON] = strawberry.UNSET
-    tc_accepted: typing.Optional[bool] = strawberry.UNSET
+    enable: bool | None = strawberry.UNSET
+    config: utils.JSON | None = strawberry.UNSET
+    tc_accepted: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class CreateMetafieldInput(utils.BaseInput):
     key: str
     type: utils.MetafieldTypeEnum
-    value: typing.Optional[utils.JSON] = strawberry.UNSET
-    is_required: typing.Optional[bool] = strawberry.UNSET
-    object_type: typing.Optional[str] = strawberry.UNSET
-    object_id: typing.Optional[str] = strawberry.UNSET
+    value: utils.JSON | None = strawberry.UNSET
+    is_required: bool | None = strawberry.UNSET
+    object_type: str | None = strawberry.UNSET
+    object_id: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateMetafieldInput(CreateMetafieldInput):
     id: str
-    key: typing.Optional[str] = strawberry.UNSET
-    type: typing.Optional[utils.MetafieldTypeEnum] = strawberry.UNSET
+    key: str | None = strawberry.UNSET
+    type: utils.MetafieldTypeEnum | None = strawberry.UNSET
 
 
 @strawberry.input
 class MetafieldInput(utils.BaseInput):
     key: str
     type: utils.MetafieldTypeEnum
-    value: typing.Optional[utils.JSON] = strawberry.UNSET
-    is_required: typing.Optional[bool] = strawberry.UNSET
-    id: typing.Optional[str] = strawberry.UNSET
-    object_type: typing.Optional[str] = strawberry.UNSET
-    object_id: typing.Optional[str] = strawberry.UNSET
+    value: utils.JSON | None = strawberry.UNSET
+    is_required: bool | None = strawberry.UNSET
+    id: str | None = strawberry.UNSET
+    object_type: str | None = strawberry.UNSET
+    object_id: str | None = strawberry.UNSET
 
 
 @strawberry.input
 class MetafieldFilter(utils.Paginated):
-    key: typing.Optional[str] = strawberry.UNSET
-    type: typing.Optional[utils.MetafieldTypeEnum] = strawberry.UNSET
-    is_required: typing.Optional[bool] = strawberry.UNSET
-    object_type: typing.Optional[str] = strawberry.UNSET
-    object_id: typing.Optional[str] = strawberry.UNSET
+    key: str | None = strawberry.UNSET
+    type: utils.MetafieldTypeEnum | None = strawberry.UNSET
+    is_required: bool | None = strawberry.UNSET
+    object_type: str | None = strawberry.UNSET
+    object_id: str | None = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -840,19 +836,19 @@ class SharedZoneInput(utils.BaseInput):
     """Input for creating/updating a shared zone at the RateSheet level."""
 
     label: str
-    id: typing.Optional[str] = strawberry.UNSET
-    country_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
-    postal_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
-    cities: typing.Optional[typing.List[str]] = strawberry.UNSET
-    transit_days: typing.Optional[int] = strawberry.UNSET
-    transit_time: typing.Optional[float] = strawberry.UNSET
-    radius: typing.Optional[float] = strawberry.UNSET
-    latitude: typing.Optional[float] = strawberry.UNSET
-    longitude: typing.Optional[float] = strawberry.UNSET
+    id: str | None = strawberry.UNSET
+    country_codes: list[str] | None = strawberry.UNSET
+    postal_codes: list[str] | None = strawberry.UNSET
+    cities: list[str] | None = strawberry.UNSET
+    transit_days: int | None = strawberry.UNSET
+    transit_time: float | None = strawberry.UNSET
+    radius: float | None = strawberry.UNSET
+    latitude: float | None = strawberry.UNSET
+    longitude: float | None = strawberry.UNSET
     # Weight constraints for this zone
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    min_weight: float | None = strawberry.UNSET
+    max_weight: float | None = strawberry.UNSET
+    weight_unit: utils.WeightUnitEnum | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -891,10 +887,10 @@ class SharedSurchargeInput(utils.BaseInput):
 
     name: str
     amount: float
-    id: typing.Optional[str] = strawberry.UNSET
-    surcharge_type: typing.Optional[str] = "fixed"  # "fixed" or "percentage"
-    cost: typing.Optional[float] = strawberry.UNSET  # COGS
-    active: typing.Optional[bool] = True
+    id: str | None = strawberry.UNSET
+    surcharge_type: str | None = "fixed"  # "fixed" or "percentage"
+    cost: float | None = strawberry.UNSET  # COGS
+    active: bool | None = True
 
 
 @strawberry.input
@@ -927,7 +923,7 @@ class BatchUpdateSurchargesMutationInput(utils.BaseInput):
     """Batch update multiple surcharges in a rate sheet."""
 
     rate_sheet_id: str
-    surcharges: typing.List[SharedSurchargeInput]
+    surcharges: list[SharedSurchargeInput]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -942,12 +938,12 @@ class ServiceRateInput(utils.BaseInput):
     service_id: str
     zone_id: str
     rate: float
-    cost: typing.Optional[float] = strawberry.UNSET  # COGS
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
-    transit_days: typing.Optional[int] = strawberry.UNSET
-    transit_time: typing.Optional[float] = strawberry.UNSET
-    meta: typing.Optional[utils.JSON] = strawberry.UNSET
+    cost: float | None = strawberry.UNSET  # COGS
+    min_weight: float | None = strawberry.UNSET
+    max_weight: float | None = strawberry.UNSET
+    transit_days: int | None = strawberry.UNSET
+    transit_time: float | None = strawberry.UNSET
+    meta: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -958,12 +954,12 @@ class UpdateServiceRateMutationInput(utils.BaseInput):
     service_id: str
     zone_id: str
     rate: float
-    cost: typing.Optional[float] = strawberry.UNSET
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
-    transit_days: typing.Optional[int] = strawberry.UNSET
-    transit_time: typing.Optional[float] = strawberry.UNSET
-    meta: typing.Optional[utils.JSON] = strawberry.UNSET
+    cost: float | None = strawberry.UNSET
+    min_weight: float | None = strawberry.UNSET
+    max_weight: float | None = strawberry.UNSET
+    transit_days: int | None = strawberry.UNSET
+    transit_time: float | None = strawberry.UNSET
+    meta: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -971,7 +967,7 @@ class BatchUpdateServiceRatesMutationInput(utils.BaseInput):
     """Batch update multiple service-zone rates."""
 
     rate_sheet_id: str
-    rates: typing.List[ServiceRateInput]
+    rates: list[ServiceRateInput]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1004,8 +1000,8 @@ class DeleteServiceRateMutationInput(utils.BaseInput):
     rate_sheet_id: str
     service_id: str
     zone_id: str
-    min_weight: typing.Optional[float] = strawberry.UNSET
-    max_weight: typing.Optional[float] = strawberry.UNSET
+    min_weight: float | None = strawberry.UNSET
+    max_weight: float | None = strawberry.UNSET
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1019,7 +1015,7 @@ class UpdateServiceZoneIdsMutationInput(utils.BaseInput):
 
     rate_sheet_id: str
     service_id: str
-    zone_ids: typing.List[str]
+    zone_ids: list[str]
 
 
 @strawberry.input
@@ -1028,4 +1024,4 @@ class UpdateServiceSurchargeIdsMutationInput(utils.BaseInput):
 
     rate_sheet_id: str
     service_id: str
-    surcharge_ids: typing.List[str]
+    surcharge_ids: list[str]

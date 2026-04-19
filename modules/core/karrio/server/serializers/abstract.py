@@ -1,21 +1,20 @@
-import re
-import yaml
 import pydoc
+import re
 import typing
-from django.db import models
-from django.conf import settings
-from django.db import transaction
-from django.forms.models import model_to_dict
-from drf_spectacular.types import OpenApiTypes
-from rest_framework import serializers, request
 
 import karrio.lib as lib
+import yaml
+from django.conf import settings
+from django.db import models, transaction
+from django.forms.models import model_to_dict
+from drf_spectacular.types import OpenApiTypes
 from karrio.server.core.logging import logger
+from rest_framework import request, serializers
 
 T = typing.TypeVar("T")
 
 # Pattern for JSON-generated IDs: prefix_12hexchars (e.g., pcl_a1b2c3d4e5f6)
-JSON_ID_PATTERN = re.compile(r'^[a-z]{2,4}_[a-f0-9]{12}$')
+JSON_ID_PATTERN = re.compile(r"^[a-z]{2,4}_[a-f0-9]{12}$")
 
 
 def is_json_generated_id(value: typing.Any) -> bool:
@@ -51,7 +50,7 @@ class DecoratedSerializer:
         self._serializer = serializer
 
     @property
-    def data(self) -> typing.Optional[dict]:
+    def data(self) -> dict | None:
         return self._serializer.validated_data if self._serializer is not None else None
 
     @property
@@ -73,18 +72,14 @@ class AbstractSerializer:
         super().update(instance, validated_data, **kwargs)
 
     @classmethod
-    def map(
-        cls, instance=None, data: typing.Union[str, dict] = None, **kwargs
-    ) -> "DecoratedSerializer":
+    def map(cls, instance=None, data: str | dict = None, **kwargs) -> "DecoratedSerializer":
         if data is None and instance is None:
             serializer = None
         else:
             serializer = (
                 cls(data=data or {}, **kwargs)  # type:ignore
                 if instance is None
-                else cls(
-                    instance, data=data or {}, **{**kwargs, "partial": True}
-                )  # type:ignore
+                else cls(instance, data=data or {}, **{**kwargs, "partial": True})  # type:ignore
             )
 
             serializer.is_valid(raise_exception=True)  # type:ignore
@@ -131,11 +126,7 @@ class FlagField(serializers.BooleanField):
 class FlagsSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         data = kwargs.get("data", {})
-        self.flags = [
-            (label, label in data)
-            for label, field in self.fields.items()
-            if isinstance(field, FlagField)
-        ]
+        self.flags = [(label, label in data) for label, field in self.fields.items() if isinstance(field, FlagField)]
 
         super().__init__(*args, **kwargs)
 
@@ -157,25 +148,21 @@ Custom serializer utilities functions
 """
 
 
-def PaginatedResult(serializer_name: str, content_serializer: typing.Type[Serializer]):
+def PaginatedResult(serializer_name: str, content_serializer: type[Serializer]):
     return type(
         serializer_name,
         (Serializer,),
         dict(
             count=serializers.IntegerField(required=False, allow_null=True),
-            next=serializers.URLField(
-                required=False, allow_blank=True, allow_null=True
-            ),
-            previous=serializers.URLField(
-                required=False, allow_blank=True, allow_null=True
-            ),
+            next=serializers.URLField(required=False, allow_blank=True, allow_null=True),
+            previous=serializers.URLField(required=False, allow_blank=True, allow_null=True),
             results=content_serializer(many=True),
         ),
     )
 
 
 def owned_model_serializer(
-    serializer: typing.Type[typing.Union[Serializer, ModelSerializer]],
+    serializer: type[Serializer | ModelSerializer],
 ):
     class MetaSerializer(serializer):  # type: ignore
         context: dict = {}
@@ -183,22 +170,14 @@ def owned_model_serializer(
         def __init__(self, *args, **kwargs):
             if "context" in kwargs:
                 context = kwargs.get("context") or {}
-                user = (
-                    context.get("user") if isinstance(context, dict) else context.user
-                )
+                user = context.get("user") if isinstance(context, dict) else context.user
                 org = context.get("org") if isinstance(context, dict) else context.org
-                test_mode = (
-                    context.get("test_mode")
-                    if isinstance(context, dict)
-                    else context.test_mode
-                )
+                test_mode = context.get("test_mode") if isinstance(context, dict) else context.test_mode
 
                 if settings.MULTI_ORGANIZATIONS and org is None:
                     import karrio.server.orgs.models as orgs
 
-                    org = orgs.Organization.objects.filter(
-                        users__id=getattr(user, "id", None)
-                    ).first()
+                    org = orgs.Organization.objects.filter(users__id=getattr(user, "id", None)).first()
 
                 self.__context: Context = Context(user, org, test_mode)
             else:
@@ -217,12 +196,8 @@ def owned_model_serializer(
             except Exception as e:
                 # Log exception with full traceback for debugging
                 meta = getattr(self.__class__, "Meta", None)
-                model_name = getattr(
-                    getattr(meta, "model", None), "__name__", "Unknown"
-                )
-                logger.exception(
-                    f"Failed to create {model_name} instance using {self.__class__.__name__}: {str(e)}"
-                )
+                model_name = getattr(getattr(meta, "model", None), "__name__", "Unknown")
+                logger.exception(f"Failed to create {model_name} instance using {self.__class__.__name__}: {str(e)}")
                 raise
 
             return instance
@@ -245,10 +220,7 @@ def link_org(entity: ModelSerializer, context: Context):
         return
 
     # Evaluate org from context (handles SimpleLazyObject)
-    org = (
-        context.org if not isinstance(context.org, SimpleLazyObject)
-        else (context.org if context.org else None)
-    )
+    org = context.org if not isinstance(context.org, SimpleLazyObject) else (context.org if context.org else None)
 
     # Check if entity can be linked to org
     entity_org = getattr(entity, "org", None)
@@ -260,7 +232,7 @@ def link_org(entity: ModelSerializer, context: Context):
         entity.save(update_fields=(["created_at"] if hasattr(entity, "created_at") else []))
 
 
-def bulk_link_org(entities: typing.List[models.Model], context: Context):
+def bulk_link_org(entities: list[models.Model], context: Context):
     if len(entities) == 0 or settings.MULTI_ORGANIZATIONS is False:
         return
 
@@ -275,13 +247,7 @@ def bulk_link_org(entities: typing.List[models.Model], context: Context):
 
 
 def get_object_context(entity) -> Context:
-    org = lib.failsafe(
-        lambda: (
-            entity.org.first()
-            if (hasattr(entity, "org") and entity.org.exists())
-            else None
-        )
-    )
+    org = lib.failsafe(lambda: entity.org.first() if (hasattr(entity, "org") and entity.org.exists()) else None)
 
     return Context(
         org=org,
@@ -303,7 +269,7 @@ def save_many_to_many_data(
     For new items: validates via serializer, bulk_creates, then adds to M2M in one call.
     For existing items: updates individually (serializer may have custom save logic).
     """
-    if not any((key in payload for key in [name])):
+    if not any(key in payload for key in [name]):
         return None
 
     collection_data = payload.get(name)
@@ -339,10 +305,7 @@ def save_many_to_many_data(
 
     # Create new items and batch-add to M2M (1 add call instead of N)
     if new_items_data:
-        created_items = [
-            serializer.map(data=data, **kwargs).save().instance
-            for data in new_items_data
-        ]
+        created_items = [serializer.map(data=data, **kwargs).save().instance for data in new_items_data]
         collection.add(*created_items)
 
 
@@ -368,15 +331,11 @@ def save_one_to_one_data(
         parent and setattr(parent, name, new_instance)  # type: ignore
         return new_instance
 
-    return (
-        serializer.map(instance=instance, data=data, **{**kwargs, "partial": True})
-        .save()
-        .instance
-    )
+    return serializer.map(instance=instance, data=data, **{**kwargs, "partial": True}).save().instance
 
 
 def allow_model_id(model_paths: []):  # type: ignore
-    def _decorator(serializer: typing.Type[Serializer]):
+    def _decorator(serializer: type[Serializer]):
         class ModelIdSerializer(serializer):  # type: ignore
             def __init__(self, *args, **kwargs):
                 for param, model_path in model_paths:
@@ -387,11 +346,7 @@ def allow_model_id(model_paths: []):  # type: ignore
                     if any([isinstance(val, dict) and "id" in val for val in values]):
                         new_content = []
                         for value in values:
-                            if (
-                                isinstance(value, dict)
-                                and ("id" in value)
-                                and (model is not None)
-                            ):
+                            if isinstance(value, dict) and ("id" in value) and (model is not None):
                                 # Skip database lookup for JSON-generated IDs (pcl_xxx, adr_xxx, etc.)
                                 # These are embedded JSON data, not database references
                                 if is_json_generated_id(value["id"]):
@@ -403,11 +358,7 @@ def allow_model_id(model_paths: []):  # type: ignore
                                 for field, field_data in data.items():
                                     if isinstance(field_data, list):
                                         data[field] = [
-                                            (
-                                                model_to_dict(item)
-                                                if hasattr(item, "_meta")
-                                                else item
-                                            )
+                                            (model_to_dict(item) if hasattr(item, "_meta") else item)
                                             for item in field_data
                                         ]
 
@@ -420,11 +371,7 @@ def allow_model_id(model_paths: []):  # type: ignore
                         kwargs.update(
                             data={
                                 **kwargs["data"],
-                                param: (
-                                    new_content
-                                    if isinstance(content, list)
-                                    else next(iter(new_content))
-                                ),
+                                param: (new_content if isinstance(content, list) else next(iter(new_content))),
                             }
                         )
 
@@ -435,22 +382,19 @@ def allow_model_id(model_paths: []):  # type: ignore
     return _decorator
 
 
-def make_fields_optional(serializer: typing.Type[ModelSerializer]):
+def make_fields_optional(serializer: type[ModelSerializer]):
     _name = f"Partial{serializer.__name__}"
 
     class _Meta(serializer.Meta):  # type: ignore
         extra_kwargs = {
             **getattr(serializer.Meta, "extra_kwargs", {}),
-            **{
-                field.name: {"required": False}
-                for field in serializer.Meta.model._meta.fields
-            },
+            **{field.name: {"required": False} for field in serializer.Meta.model._meta.fields},
         }
 
     return type(_name, (serializer,), dict(Meta=_Meta))
 
 
-def exclude_id_field(serializer: typing.Type[ModelSerializer]):
+def exclude_id_field(serializer: type[ModelSerializer]):
     class _Meta(serializer.Meta):  # type: ignore
         exclude = [*getattr(serializer.Meta, "exclude", []), "id"]
 
@@ -498,9 +442,7 @@ def deep_merge_remove_nulls(base: dict, updates: dict) -> dict:
     return result
 
 
-def process_nested_dictionaries_mutations(
-    keys: typing.List[str], payload: dict, entity
-) -> dict:
+def process_nested_dictionaries_mutations(keys: list[str], payload: dict, entity) -> dict:
     """Process nested dictionary mutations with deep merge and null removal.
 
     This function is designed for complex nested JSON fields where you need:
@@ -540,18 +482,14 @@ def process_nested_dictionaries_mutations(
     return data
 
 
-def process_dictionaries_mutations(
-    keys: typing.List[str], payload: dict, entity
-) -> dict:
+def process_dictionaries_mutations(keys: list[str], payload: dict, entity) -> dict:
     """This function checks if the payload contains dictionary with the keys and if so, it
     mutate the values content by removing any null values and adding the new one.
     """
     data = payload.copy()
 
     for key in [k for k in keys if k in payload and payload.get(k) is not None]:
-        value = lib.to_dict(
-            {**(getattr(entity, key, None) or {}), **(payload.get(key, None) or {})}
-        )
+        value = lib.to_dict({**(getattr(entity, key, None) or {}), **(payload.get(key) or {})})
         data.update({key: value})
 
     return data
@@ -561,7 +499,7 @@ def get_query_flag(
     key: str,
     query_params: dict,
     nullable: bool = True,
-) -> typing.Optional[bool]:
+) -> bool | None:
     _value = yaml.safe_load(query_params.get(key) or "")
 
     if key in query_params and _value is not False:
@@ -591,11 +529,7 @@ def field_to_serializer(args: dict):
     if type == "string":
         return serializers.CharField(
             required=required,
-            **(
-                dict(default=default, allow_blank=True, allow_null=True)
-                if not required
-                else {}
-            ),
+            **(dict(default=default, allow_blank=True, allow_null=True) if not required else {}),
         )
     if type == "integer":
         return serializers.IntegerField(

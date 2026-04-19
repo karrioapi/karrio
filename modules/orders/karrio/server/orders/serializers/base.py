@@ -1,7 +1,7 @@
-import rest_framework.fields as fields
 import karrio.lib as lib
-import karrio.server.serializers as serializers
 import karrio.server.core.validators as validators
+import karrio.server.serializers as serializers
+import rest_framework.fields as fields
 from karrio.server.core.serializers import (
     Address,
     AddressData,
@@ -59,9 +59,7 @@ class OrderData(serializers.Serializer):
         allow_null=True,
         help_text="The customer' or shipping billing address.",
     )
-    line_items = CommodityData(
-        many=True, allow_empty=False, help_text="The order line items."
-    )
+    line_items = CommodityData(many=True, allow_empty=False, help_text="The order line items.")
     options = serializers.PlainDictField(
         required=False,
         allow_null=True,
@@ -83,9 +81,7 @@ class OrderData(serializers.Serializer):
         </details>
         """,
     )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the order."
-    )
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="User metadata for the order.")
 
 
 class LineItem(Commodity):
@@ -93,9 +89,7 @@ class LineItem(Commodity):
 
 
 class Order(serializers.EntitySerializer):
-    object_type = fields.CharField(
-        default="order", help_text="Specifies the object type"
-    )
+    object_type = fields.CharField(default="order", help_text="Specifies the object type")
     is_archived = fields.BooleanField(
         required=False,
         default=False,
@@ -134,9 +128,7 @@ class Order(serializers.EntitySerializer):
         allow_null=True,
         help_text="The customer' or shipping billing address.",
     )
-    line_items = LineItem(
-        many=True, allow_empty=False, help_text="The order line items."
-    )
+    line_items = LineItem(many=True, allow_empty=False, help_text="The order line items.")
     options = serializers.PlainDictField(
         required=False,
         allow_null=True,
@@ -158,12 +150,8 @@ class Order(serializers.EntitySerializer):
         </details>
         """,
     )
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="system related metadata."
-    )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the order."
-    )
+    meta = serializers.PlainDictField(required=False, allow_null=True, help_text="system related metadata.")
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="User metadata for the order.")
     shipments = Shipment(
         many=True,
         required=False,

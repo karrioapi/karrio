@@ -909,8 +909,6 @@ PICKUP_UPDATE_RESPONSE = {
     "options": {},
     "metadata": {},
     "meta": ANY,
-    "is_archived": False,
-    "archived_at": None,
 }
 
 PICKUP_CANCEL_RESPONSE = {

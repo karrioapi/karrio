@@ -1,35 +1,27 @@
-import typing
 import django.db.transaction as transaction
-from rest_framework import status as http_status
-
 import karrio.lib as lib
 import karrio.references as references
-import karrio.server.openapi as openapi
-import karrio.server.core.utils as utils
-import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 import karrio.server.core.exceptions as exceptions
+import karrio.server.core.utils as utils
+import karrio.server.openapi as openapi
 import karrio.server.providers.models as providers
+import karrio.server.serializers as serializers
 from karrio.server.core.serializers import CARRIERS, Message
+from rest_framework import status as http_status
 
 
-def generate_carrier_serializers() -> typing.Dict[str, serializers.Serializer]:
+def generate_carrier_serializers() -> dict[str, serializers.Serializer]:
 
     def _create_serializer(carrier_name: str) -> serializers.Serializer:
         fields = dataunits.REFERENCE_MODELS["connection_fields"][carrier_name]
         return type(
             carrier_name,
             (serializers.Serializer,),
-            {
-                key: serializers.field_to_serializer(field)
-                for key, field in fields.items()
-            },
+            {key: serializers.field_to_serializer(field) for key, field in fields.items()},
         )
 
-    return {
-        carrier_name: _create_serializer(carrier_name)
-        for carrier_name in dataunits.REFERENCE_MODELS["carriers"].keys()
-    }
+    return {carrier_name: _create_serializer(carrier_name) for carrier_name in dataunits.REFERENCE_MODELS["carriers"]}
 
 
 CONNECTION_SERIALIZERS = generate_carrier_serializers()
@@ -47,7 +39,6 @@ class ConnectionCredentialsField(serializers.DictField):
 
 
 class CarrierConnectionData(serializers.Serializer):
-
     carrier_name = serializers.ChoiceField(
         choices=CARRIERS,
         required=True,
@@ -84,9 +75,7 @@ class CarrierConnectionData(serializers.Serializer):
 
 
 class CarrierConnectionUpdateData(serializers.Serializer):
-    carrier_id = serializers.CharField(
-        required=False, help_text="A carrier connection friendly name."
-    )
+    carrier_id = serializers.CharField(required=False, help_text="A carrier connection friendly name.")
     credentials = serializers.PlainDictField(
         required=False,
         help_text="Carrier connection credentials.",
@@ -185,9 +174,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
         model = providers.CarrierConnection
         exclude = ["created_at", "updated_at", "created_by"]
 
-    carrier_name = serializers.ChoiceField(
-        required=True, choices=CARRIERS, help_text="Indicates a carrier (type)"
-    )
+    carrier_name = serializers.ChoiceField(required=True, choices=CARRIERS, help_text="Indicates a carrier (type)")
     capabilities = serializers.StringListField(
         required=False,
         allow_null=True,
@@ -217,13 +204,9 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
 
         validated_data.update(test_mode=context.test_mode)
         validated_data.update(carrier_code=carrier_name)
+        validated_data.update(capabilities=[_ for _ in capabilities if _ in default_capabilities])
         validated_data.update(
-            capabilities=[_ for _ in capabilities if _ in default_capabilities]
-        )
-        validated_data.update(
-            credentials=CONNECTION_SERIALIZERS[carrier_name]
-            .map(data=validated_data["credentials"])
-            .data
+            credentials=CONNECTION_SERIALIZERS[carrier_name].map(data=validated_data["credentials"]).data
         )
         # Config is stored directly on Carrier model (no longer using CarrierConfig)
         validated_data.setdefault("config", {})
@@ -243,9 +226,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
         if any(validated_data.get("capabilities") or []):
             default_capabilities = references.get_carrier_capabilities(instance.ext)
             capabilities = validated_data.get("capabilities")
-            instance.capabilities = [
-                _ for _ in capabilities if _ in default_capabilities
-            ]
+            instance.capabilities = [_ for _ in capabilities if _ in default_capabilities]
 
         if "credentials" in validated_data:
             data = serializers.process_dictionaries_mutations(
@@ -253,11 +234,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
                 validated_data,
                 instance,
             )
-            validated_data.update(
-                credentials=CONNECTION_SERIALIZERS[instance.ext]
-                .map(data=data["credentials"])
-                .data
-            )
+            validated_data.update(credentials=CONNECTION_SERIALIZERS[instance.ext].map(data=data["credentials"]).data)
 
         if "config" in validated_data:
             # Config is stored directly on Carrier model
@@ -278,9 +255,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
         model = providers.SystemConnection
         exclude = ["created_at", "updated_at", "created_by", "carrier_code"]
 
-    carrier_name = serializers.ChoiceField(
-        required=True, choices=CARRIERS, help_text="Indicates a carrier (type)"
-    )
+    carrier_name = serializers.ChoiceField(required=True, choices=CARRIERS, help_text="Indicates a carrier (type)")
     capabilities = serializers.StringListField(
         required=False,
         allow_null=True,
@@ -291,10 +266,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
         allow_null=True,
         help_text="Carrier connection custom config.",
     )
-    credentials = serializers.PlainDictField(
-        source='get_credentials',
-        help_text="Carrier API credentials"
-    )
+    credentials = serializers.PlainDictField(source="get_credentials", help_text="Carrier API credentials")
 
     @transaction.atomic
     @utils.error_wrapper
@@ -313,9 +285,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
 
         validated_data.update(test_mode=context.test_mode)
         validated_data.update(carrier_code=carrier_name)
-        validated_data.update(
-            capabilities=[_ for _ in capabilities if _ in default_capabilities]
-        )
+        validated_data.update(capabilities=[_ for _ in capabilities if _ in default_capabilities])
         # Handle credentials - source='get_credentials' puts it in validated_data as 'get_credentials'
         credentials_data = validated_data.pop("get_credentials", validated_data.pop("credentials", {}))
         validated_data.setdefault("config", {})
@@ -323,9 +293,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
         instance = super().create(validated_data)
 
         if credentials_data:
-            mapped_credentials = CONNECTION_SERIALIZERS[carrier_name].map(
-                data=credentials_data
-            ).data
+            mapped_credentials = CONNECTION_SERIALIZERS[carrier_name].map(data=credentials_data).data
             # Use encryption-aware method to set credentials
             instance.set_credentials(mapped_credentials)
 
@@ -342,9 +310,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
         if any(validated_data.get("capabilities") or []):
             default_capabilities = references.get_carrier_capabilities(instance.carrier_code)
             capabilities = validated_data.get("capabilities")
-            instance.capabilities = [
-                _ for _ in capabilities if _ in default_capabilities
-            ]
+            instance.capabilities = [_ for _ in capabilities if _ in default_capabilities]
 
         # Handle credentials - source='get_credentials' puts it in validated_data as 'get_credentials'
         if "get_credentials" in validated_data:
@@ -354,7 +320,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
             # Get decrypted credentials for merging (not the JSONField which lacks encrypted fields)
             existing_decrypted_creds = instance.get_credentials()
             new_creds = validated_data.get("credentials", {}) or {}
-            
+
             # Get sensitive fields to handle empty strings properly
             sensitive_fields = instance.get_sensitive_fields()
 
@@ -373,12 +339,10 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
 
             # Remove credentials from validated_data - we'll set it separately
             validated_data.pop("credentials")
-            
+
             # Map credentials using carrier serializer
-            mapped_credentials = CONNECTION_SERIALIZERS[instance.carrier_code].map(
-                data=merged_credentials
-            ).data
-            
+            mapped_credentials = CONNECTION_SERIALIZERS[instance.carrier_code].map(data=merged_credentials).data
+
             # Use encryption-aware method to set credentials
             instance.set_credentials(mapped_credentials)
             # Refresh instance to get updated credentials JSONField
@@ -394,7 +358,7 @@ class SystemConnectionModelSerializer(serializers.ModelSerializer):
 
         # Update other fields via super().update()
         instance = super().update(instance, validated_data, **kwargs)
-        
+
         return instance
 
 
@@ -462,9 +426,7 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
                 active=True,
             )
         except providers.SystemConnection.DoesNotExist:
-            raise serializers.ValidationError(
-                {"system_connection_id": "SystemConnection not found or not active."}
-            )
+            raise serializers.ValidationError({"system_connection_id": "SystemConnection not found or not active."})
 
         # Check if user/org already has a BrokeredConnection for this SystemConnection
         # In multi-org mode, check via link; in OSS mode, check via created_by
@@ -580,9 +542,7 @@ class WebhookRegisterSerializer(serializers.Serializer):
         import karrio.server.core.gateway as gateway
 
         webhook_url = validated_data["webhook_url"]
-        description = validated_data.get(
-            "description", f"Karrio webhook for {connection.carrier_id}"
-        )
+        description = validated_data.get("description", f"Karrio webhook for {connection.carrier_id}")
 
         webhook_details, messages = gateway.Webhooks.register(
             dict(url=webhook_url, description=description),
@@ -673,19 +633,16 @@ class OAuthCallbackSerializer(serializers.Serializer):
         carrier_name: str,
     ) -> dict:
         """Process OAuth callback and return result dict."""
-        import json
         import base64
+        import json
+
         import karrio.lib as lib
         import karrio.server.core.gateway as gateway
 
         payload = OAuthCallbackData.map(
             data=dict(
                 query=request.query_params.dict(),
-                body=(
-                    request.data.dict()
-                    if hasattr(request.data, "dict")
-                    else dict(request.data or {})
-                ),
+                body=(request.data.dict() if hasattr(request.data, "dict") else dict(request.data or {})),
                 headers=dict(request.headers),
                 url=request.build_absolute_uri(),
             )
@@ -771,9 +728,7 @@ class WebhookEventSerializer(serializers.Serializer):
             ).first()
 
             if tracker:
-                tracking_serializers.update_tracker(
-                    tracker, lib.to_dict(event.tracking)
-                )
+                tracking_serializers.update_tracker(tracker, lib.to_dict(event.tracking))
 
         return (
             dict(

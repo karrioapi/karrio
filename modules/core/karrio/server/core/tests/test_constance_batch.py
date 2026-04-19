@@ -6,10 +6,9 @@ instead of N individual lookups.
 
 import unittest
 from unittest import mock
+
 from django.test import TestCase, override_settings
-
 from karrio.server.core.signals import _batch_fetch_constance, update_settings
-
 
 MOCK_CONSTANCE_CONFIG = {
     "ALLOW_SIGNUP": (True, "Allow signup", bool),
@@ -30,9 +29,7 @@ class TestBatchFetchConstance(TestCase):
     def test_returns_defaults_when_no_db_rows(self, mock_constance_cls):
         """When DB has no rows, returns defaults from CONSTANCE_CONFIG."""
         # Simulate the import inside _batch_fetch_constance
-        with mock.patch(
-            "constance.models.Constance"
-        ) as MockConstance:
+        with mock.patch("constance.models.Constance") as MockConstance:
             MockConstance.objects.filter.return_value.values_list.return_value = []
 
             result = _batch_fetch_constance(["ALLOW_SIGNUP", "MULTI_ORGANIZATIONS"])
@@ -52,6 +49,7 @@ class TestBatchFetchConstance(TestCase):
         ):
             # Force the import inside the function to fail
             import karrio.server.core.signals as signals_module
+
             original = signals_module._batch_fetch_constance
 
             def _failing_fetch(keys):
@@ -75,17 +73,13 @@ class TestBatchFetchConstance(TestCase):
         """Verify batch fetch makes exactly 1 DB query (WHERE key IN ...)."""
         import pickle
 
-        with mock.patch(
-            "constance.models.Constance"
-        ) as MockConstance:
+        with mock.patch("constance.models.Constance") as MockConstance:
             MockConstance.objects.filter.return_value.values_list.return_value = [
                 ("constance:core:ALLOW_SIGNUP", pickle.dumps(False)),
                 ("constance:core:EMAIL_HOST", pickle.dumps("smtp.example.com")),
             ]
 
-            result = _batch_fetch_constance(
-                ["ALLOW_SIGNUP", "MULTI_ORGANIZATIONS", "EMAIL_HOST"]
-            )
+            result = _batch_fetch_constance(["ALLOW_SIGNUP", "MULTI_ORGANIZATIONS", "EMAIL_HOST"])
 
             # Single filter() call with all keys
             MockConstance.objects.filter.assert_called_once()

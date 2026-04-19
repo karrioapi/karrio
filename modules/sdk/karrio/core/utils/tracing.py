@@ -12,19 +12,20 @@ The telemetry abstraction follows the same injection pattern as Cache and System
 """
 
 import abc
-import uuid
-import attr
+import concurrent.futures as futures
+import functools
+import threading
 import time
 import typing
-import threading
-import functools
-import concurrent.futures as futures
+import uuid
+
+import attr
 
 Trace = typing.Callable[[typing.Any, str], typing.Any]
 
 # Shared thread pool executor for trace recording
 # Using a single executor avoids the overhead of creating new thread pools per trace
-_trace_executor: typing.Optional[futures.ThreadPoolExecutor] = None
+_trace_executor: futures.ThreadPoolExecutor | None = None
 _trace_executor_lock = __import__("threading").Lock()
 
 
@@ -63,7 +64,7 @@ class SpanContext:
         """Set an attribute on this span."""
         pass
 
-    def set_attributes(self, attributes: typing.Dict[str, typing.Any]) -> None:
+    def set_attributes(self, attributes: dict[str, typing.Any]) -> None:
         """Set multiple attributes on this span."""
         for k, v in (attributes or {}).items():
             self.set_attribute(k, v)
@@ -76,9 +77,7 @@ class SpanContext:
         """Record an exception on this span."""
         pass
 
-    def add_event(
-        self, name: str, attributes: typing.Dict[str, typing.Any] = None
-    ) -> None:
+    def add_event(self, name: str, attributes: dict[str, typing.Any] = None) -> None:
         """Add an event to this span."""
         pass
 
@@ -104,7 +103,7 @@ class Telemetry(abc.ABC):
     def start_span(
         self,
         name: str,
-        attributes: typing.Dict[str, typing.Any] = None,
+        attributes: dict[str, typing.Any] = None,
         kind: str = None,
     ) -> SpanContext:
         """Start a new span for an operation."""
@@ -115,7 +114,7 @@ class Telemetry(abc.ABC):
         self,
         message: str,
         category: str,
-        data: typing.Dict[str, typing.Any] = None,
+        data: dict[str, typing.Any] = None,
         level: str = "info",
     ) -> None:
         """Add a breadcrumb for debugging context."""
@@ -127,7 +126,7 @@ class Telemetry(abc.ABC):
         name: str,
         value: float,
         unit: str = None,
-        tags: typing.Dict[str, str] = None,
+        tags: dict[str, str] = None,
         metric_type: str = "counter",
     ) -> None:
         """Record a metric value."""
@@ -137,8 +136,8 @@ class Telemetry(abc.ABC):
     def capture_exception(
         self,
         exception: Exception,
-        context: typing.Dict[str, typing.Any] = None,
-        tags: typing.Dict[str, str] = None,
+        context: dict[str, typing.Any] = None,
+        tags: dict[str, str] = None,
     ) -> None:
         """Capture an exception for error tracking."""
         pass
@@ -147,7 +146,7 @@ class Telemetry(abc.ABC):
     def set_context(
         self,
         name: str,
-        data: typing.Dict[str, typing.Any],
+        data: dict[str, typing.Any],
     ) -> None:
         """Set contextual data for the current scope."""
         pass
@@ -164,7 +163,7 @@ class Telemetry(abc.ABC):
         email: str = None,
         username: str = None,
         ip_address: str = None,
-        data: typing.Dict[str, typing.Any] = None,
+        data: dict[str, typing.Any] = None,
     ) -> None:
         """Set user information for the current scope."""
         pass
@@ -173,7 +172,7 @@ class Telemetry(abc.ABC):
         self,
         name: str,
         op: str = None,
-        attributes: typing.Dict[str, typing.Any] = None,
+        attributes: dict[str, typing.Any] = None,
     ) -> SpanContext:
         """Start a new transaction (top-level span)."""
         return self.start_span(name, attributes=attributes, kind=op)
@@ -181,7 +180,7 @@ class Telemetry(abc.ABC):
     def instrument_function(
         self,
         name: str = None,
-        attributes: typing.Dict[str, typing.Any] = None,
+        attributes: dict[str, typing.Any] = None,
     ):
         """Decorator to instrument a function with a span."""
 
@@ -215,7 +214,7 @@ class NoOpTelemetry(Telemetry):
     def start_span(
         self,
         name: str,
-        attributes: typing.Dict[str, typing.Any] = None,
+        attributes: dict[str, typing.Any] = None,
         kind: str = None,
     ) -> SpanContext:
         return NoOpSpanContext()
@@ -224,7 +223,7 @@ class NoOpTelemetry(Telemetry):
         self,
         message: str,
         category: str,
-        data: typing.Dict[str, typing.Any] = None,
+        data: dict[str, typing.Any] = None,
         level: str = "info",
     ) -> None:
         pass
@@ -234,7 +233,7 @@ class NoOpTelemetry(Telemetry):
         name: str,
         value: float,
         unit: str = None,
-        tags: typing.Dict[str, str] = None,
+        tags: dict[str, str] = None,
         metric_type: str = "counter",
     ) -> None:
         pass
@@ -242,15 +241,15 @@ class NoOpTelemetry(Telemetry):
     def capture_exception(
         self,
         exception: Exception,
-        context: typing.Dict[str, typing.Any] = None,
-        tags: typing.Dict[str, str] = None,
+        context: dict[str, typing.Any] = None,
+        tags: dict[str, str] = None,
     ) -> None:
         pass
 
     def set_context(
         self,
         name: str,
-        data: typing.Dict[str, typing.Any],
+        data: dict[str, typing.Any],
     ) -> None:
         pass
 
@@ -263,7 +262,7 @@ class NoOpTelemetry(Telemetry):
         email: str = None,
         username: str = None,
         ip_address: str = None,
-        data: typing.Dict[str, typing.Any] = None,
+        data: dict[str, typing.Any] = None,
     ) -> None:
         pass
 
@@ -278,12 +277,12 @@ class TimingSpanContext(SpanContext):
     ):
         self.name = name
         self.start_time = time.time()
-        self.end_time: typing.Optional[float] = None
-        self.attributes: typing.Dict[str, typing.Any] = {}
+        self.end_time: float | None = None
+        self.attributes: dict[str, typing.Any] = {}
         self.status: str = "ok"
-        self.status_message: typing.Optional[str] = None
-        self.exception: typing.Optional[Exception] = None
-        self.events: typing.List[typing.Dict[str, typing.Any]] = []
+        self.status_message: str | None = None
+        self.exception: Exception | None = None
+        self.events: list[dict[str, typing.Any]] = []
         self._on_finish = on_finish
 
     def __enter__(self) -> "TimingSpanContext":
@@ -308,9 +307,7 @@ class TimingSpanContext(SpanContext):
     def record_exception(self, exception: Exception) -> None:
         self.exception = exception
 
-    def add_event(
-        self, name: str, attributes: typing.Dict[str, typing.Any] = None
-    ) -> None:
+    def add_event(self, name: str, attributes: dict[str, typing.Any] = None) -> None:
         self.events.append(
             {
                 "name": name,
@@ -380,8 +377,8 @@ class Tracer:
         telemetry: Telemetry = None,
     ) -> None:
         self.id = id or str(uuid.uuid4())
-        self.inner_context: typing.Dict[str, typing.Any] = {}
-        self.inner_recordings: typing.Dict[futures.Future, dict] = {}
+        self.inner_context: dict[str, typing.Any] = {}
+        self.inner_recordings: dict[futures.Future, dict] = {}
         self._recordings_lock = threading.Lock()
         self._telemetry = telemetry or get_default_telemetry()
 
@@ -394,9 +391,7 @@ class Tracer:
         """Set the telemetry instance (typically called by server layer)."""
         self._telemetry = telemetry or get_default_telemetry()
 
-    def trace(
-        self, data: typing.Any, key: str, metadata: dict = {}, format: str = None
-    ) -> typing.Any:
+    def trace(self, data: typing.Any, key: str, metadata: dict = None, format: str = None) -> typing.Any:
         """Record trace data for SDK operations.
 
         This method records request/response data that can be persisted
@@ -407,6 +402,9 @@ class Tracer:
         No redaction is needed downstream (GraphQL, serializers, etc.).
         """
         from karrio.core.utils.redaction import redact_headers
+
+        if metadata is None:
+            metadata = {}
 
         def _save():
             _data = {"format": format, **data} if isinstance(data, dict) else {"format": format, "data": data}
@@ -436,11 +434,7 @@ class Tracer:
                 "key": key,
                 "format": format,
                 "has_data": data is not None,
-                **(
-                    {"carrier": metadata.get("connection", {}).get("carrier_name")}
-                    if metadata
-                    else {}
-                ),
+                **({"carrier": metadata.get("connection", {}).get("carrier_name")} if metadata else {}),
             },
             level="debug",
         )
@@ -454,18 +448,18 @@ class Tracer:
         return _partial
 
     @property
-    def records(self) -> typing.List[Record]:
+    def records(self) -> list[Record]:
         """Get all recorded trace records."""
         with self._recordings_lock:
             pending = dict(self.inner_recordings)
         return [rec.result() for rec in futures.as_completed(pending)]
 
     @property
-    def context(self) -> typing.Dict[str, typing.Any]:
+    def context(self) -> dict[str, typing.Any]:
         """Get the tracer context dictionary."""
         return self.inner_context
 
-    def add_context(self, data: typing.Dict[str, typing.Any]):
+    def add_context(self, data: dict[str, typing.Any]):
         """Add data to the tracer context."""
         self.inner_context.update(data)
 
@@ -493,7 +487,7 @@ class Tracer:
     def start_span(
         self,
         name: str,
-        attributes: typing.Dict[str, typing.Any] = None,
+        attributes: dict[str, typing.Any] = None,
         kind: str = None,
     ) -> SpanContext:
         """Start a new telemetry span for timing and tracing operations."""
@@ -503,7 +497,7 @@ class Tracer:
         self,
         message: str,
         category: str,
-        data: typing.Dict[str, typing.Any] = None,
+        data: dict[str, typing.Any] = None,
         level: str = "info",
     ) -> None:
         """Add a breadcrumb for debugging context."""
@@ -514,7 +508,7 @@ class Tracer:
         name: str,
         value: float,
         unit: str = None,
-        tags: typing.Dict[str, str] = None,
+        tags: dict[str, str] = None,
         metric_type: str = "counter",
     ) -> None:
         """Record a metric value."""
@@ -523,8 +517,8 @@ class Tracer:
     def capture_exception(
         self,
         exception: Exception,
-        context: typing.Dict[str, typing.Any] = None,
-        tags: typing.Dict[str, str] = None,
+        context: dict[str, typing.Any] = None,
+        tags: dict[str, str] = None,
     ) -> None:
         """Capture an exception for error tracking."""
         self._telemetry.capture_exception(exception, context, tags)
@@ -539,7 +533,7 @@ class Tracer:
         email: str = None,
         username: str = None,
         ip_address: str = None,
-        data: typing.Dict[str, typing.Any] = None,
+        data: dict[str, typing.Any] = None,
     ) -> None:
         """Set user information for the current telemetry scope."""
         self._telemetry.set_user(user_id, email, username, ip_address, data)

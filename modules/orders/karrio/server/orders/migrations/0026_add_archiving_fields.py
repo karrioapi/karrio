@@ -33,9 +33,7 @@ def _existing_columns(schema_editor, model):
     with schema_editor.connection.cursor() as cursor:
         return {
             column.name
-            for column in schema_editor.connection.introspection.get_table_description(
-                cursor, model._meta.db_table
-            )
+            for column in schema_editor.connection.introspection.get_table_description(cursor, model._meta.db_table)
         }
 
 
@@ -57,7 +55,6 @@ def backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("orders", "0025_cleanup"),
     ]

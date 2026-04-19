@@ -191,11 +191,7 @@ class PickupCancel(APIView):
         try:
             pickup = qs.get(pk=pk)
         except models.Pickup.DoesNotExist:
-            pickup = (
-                qs.filter(meta__request_id=pk)
-                .order_by("-created_at")
-                .first()
-            )
+            pickup = qs.filter(meta__request_id=pk).order_by("-created_at").first()
 
         if pickup is None:
             raise models.Pickup.DoesNotExist()
