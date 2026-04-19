@@ -24,9 +24,8 @@ include =
     */modules/sdk/karrio/*
     */modules/connectors/*/karrio/*
     # Server modules
-    */modules/core/karrio/server/*
+    */modules/server/karrio/server/*
     */apps/api/karrio/server/*
-    */modules/graph/karrio/server/*
     */modules/data/karrio/server/*
     */modules/events/karrio/server/*
     */modules/manager/karrio/server/*
@@ -34,7 +33,6 @@ include =
     */modules/proxy/karrio/server/*
     */modules/pricing/karrio/server/*
     */modules/documents/karrio/server/*
-    */modules/admin/karrio/server/*
 precision = 2
 show_missing = True
 skip_covered = False
