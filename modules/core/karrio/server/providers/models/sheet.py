@@ -1,8 +1,8 @@
 import functools
-import django.db.models as models
-import django.utils.translation as translation
 
 import django.conf as conf
+import django.db.models as models
+import django.utils.translation as translation
 import karrio.server.core.models as core
 
 _ = translation.gettext_lazy
@@ -227,7 +227,9 @@ class BaseRateSheetMixin(models.Model):
         max_weight = rate.get("max_weight", 0)
         return f"{service_id}:{zone_id}:{min_weight}:{max_weight}"
 
-    def get_service_rate(self, service_id: str, zone_id: str, min_weight: float = None, max_weight: float = None) -> dict:
+    def get_service_rate(
+        self, service_id: str, zone_id: str, min_weight: float = None, max_weight: float = None
+    ) -> dict:
         """Get a service rate by service_id, zone_id, and optionally weight range."""
         for rate in self.service_rates or []:
             if rate.get("service_id") == service_id and rate.get("zone_id") == zone_id:
@@ -241,7 +243,8 @@ class BaseRateSheetMixin(models.Model):
     def get_service_rates(self, service_id: str, zone_id: str) -> list:
         """Get all service rates for a service_id and zone_id combination."""
         return [
-            rate for rate in self.service_rates or []
+            rate
+            for rate in self.service_rates or []
             if rate.get("service_id") == service_id and rate.get("zone_id") == zone_id
         ]
 
@@ -265,7 +268,8 @@ class BaseRateSheetMixin(models.Model):
 
         # Fallback: match by (service_id, zone_id) if a single entry exists
         matches = [
-            (i, r) for i, r in enumerate(service_rates)
+            (i, r)
+            for i, r in enumerate(service_rates)
             if r.get("service_id") == service_id and r.get("zone_id") == zone_id
         ]
         if len(matches) == 1:
@@ -313,16 +317,24 @@ class BaseRateSheetMixin(models.Model):
         self.service_rates = service_rates
         self.save(update_fields=["service_rates"])
 
+    def scrub_orphan_service_rates(self):
+        """Drop service_rates entries whose service_id no longer matches any
+        attached ServiceLevel. Called after removing a service from the sheet
+        so re-imports don't resurface deleted services as 'removed' rows."""
+        valid_ids = {svc.id for svc in self.services.all()}
+        before = self.service_rates or []
+        scrubbed = [sr for sr in before if sr.get("service_id") in valid_ids]
+        if len(scrubbed) != len(before):
+            self.service_rates = scrubbed
+            self.save(update_fields=["service_rates"])
+
     def remove_service_rate(self, service_id: str, zone_id: str, min_weight: float = None, max_weight: float = None):
         """Remove a service-zone rate mapping.
         If min_weight and max_weight are provided, removes only the specific weight bracket.
         Otherwise, removes all rates for the service+zone combination."""
         if min_weight is not None and max_weight is not None:
             target_key = f"{service_id}:{zone_id}:{min_weight}:{max_weight}"
-            service_rates = [
-                sr for sr in (self.service_rates or [])
-                if self._make_rate_key(sr) != target_key
-            ]
+            service_rates = [sr for sr in (self.service_rates or []) if self._make_rate_key(sr) != target_key]
         else:
             service_rates = [
                 sr
@@ -389,11 +401,9 @@ class BaseRateSheetMixin(models.Model):
     def remove_weight_range(self, min_weight: float, max_weight: float):
         """Delete all service_rate entries matching this weight range."""
         service_rates = [
-            sr for sr in (self.service_rates or [])
-            if not (
-                float(sr.get("min_weight", 0)) == min_weight
-                and float(sr.get("max_weight", 0)) == max_weight
-            )
+            sr
+            for sr in (self.service_rates or [])
+            if not (float(sr.get("min_weight", 0)) == min_weight and float(sr.get("max_weight", 0)) == max_weight)
         ]
         self.service_rates = service_rates
         self.save(update_fields=["service_rates"])
@@ -474,11 +484,7 @@ class BaseRateSheetMixin(models.Model):
         service_rates = self.service_rates or []
 
         # Build rate lookup
-        rate_map = {
-            sr.get("zone_id"): sr
-            for sr in service_rates
-            if sr.get("service_id") == service_id
-        }
+        rate_map = {sr.get("zone_id"): sr for sr in service_rates if sr.get("service_id") == service_id}
 
         # Merge zone definitions with rates
         result = []
@@ -486,22 +492,24 @@ class BaseRateSheetMixin(models.Model):
             zone_id = zone.get("id")
             rate_data = rate_map.get(zone_id, {})
 
-            result.append({
-                "id": zone_id,
-                "label": zone.get("label"),
-                "rate": rate_data.get("rate", 0),
-                "cost": rate_data.get("cost"),
-                "min_weight": rate_data.get("min_weight"),
-                "max_weight": rate_data.get("max_weight"),
-                "transit_days": rate_data.get("transit_days") or zone.get("transit_days"),
-                "transit_time": rate_data.get("transit_time") or zone.get("transit_time"),
-                "radius": zone.get("radius"),
-                "latitude": zone.get("latitude"),
-                "longitude": zone.get("longitude"),
-                "cities": zone.get("cities", []),
-                "postal_codes": zone.get("postal_codes", []),
-                "country_codes": zone.get("country_codes", []),
-            })
+            result.append(
+                {
+                    "id": zone_id,
+                    "label": zone.get("label"),
+                    "rate": rate_data.get("rate", 0),
+                    "cost": rate_data.get("cost"),
+                    "min_weight": rate_data.get("min_weight"),
+                    "max_weight": rate_data.get("max_weight"),
+                    "transit_days": rate_data.get("transit_days") or zone.get("transit_days"),
+                    "transit_time": rate_data.get("transit_time") or zone.get("transit_time"),
+                    "radius": zone.get("radius"),
+                    "latitude": zone.get("latitude"),
+                    "longitude": zone.get("longitude"),
+                    "cities": zone.get("cities", []),
+                    "postal_codes": zone.get("postal_codes", []),
+                    "country_codes": zone.get("country_codes", []),
+                }
+            )
 
         return result
 
@@ -519,14 +527,16 @@ class BaseRateSheetMixin(models.Model):
         for surcharge_id in surcharge_ids or []:
             surcharge = self.get_surcharge(surcharge_id)
             if surcharge and surcharge.get("active", True):
-                result.append({
-                    "id": surcharge.get("id"),
-                    "name": surcharge.get("name"),
-                    "amount": surcharge.get("amount", 0),
-                    "surcharge_type": surcharge.get("surcharge_type", "fixed"),
-                    "cost": surcharge.get("cost"),
-                    "active": surcharge.get("active", True),
-                })
+                result.append(
+                    {
+                        "id": surcharge.get("id"),
+                        "name": surcharge.get("name"),
+                        "amount": surcharge.get("amount", 0),
+                        "surcharge_type": surcharge.get("surcharge_type", "fixed"),
+                        "cost": surcharge.get("cost"),
+                        "active": surcharge.get("active", True),
+                    }
+                )
         return result
 
 
@@ -555,9 +565,7 @@ class RateSheet(core.OwnedEntity, BaseRateSheetMixin):
         primary_key=True,
         default=functools.partial(core.uuid, prefix="rsht_"),
     )
-    services = models.ManyToManyField(
-        "ServiceLevel", blank=True, related_name="service_sheet"
-    )
+    services = models.ManyToManyField("ServiceLevel", blank=True, related_name="service_sheet")
 
     created_by = models.ForeignKey(
         conf.settings.AUTH_USER_MODEL,
@@ -579,9 +587,7 @@ class RateSheet(core.OwnedEntity, BaseRateSheetMixin):
     def carriers(self):
         import karrio.server.providers.models as providers
 
-        return providers.CarrierConnection.objects.filter(
-            carrier_code=self.carrier_name, rate_sheet__id=self.id
-        )
+        return providers.CarrierConnection.objects.filter(carrier_code=self.carrier_name, rate_sheet__id=self.id)
 
 
 # Backward-compatible alias
@@ -614,9 +620,7 @@ class SystemRateSheet(BaseRateSheetMixin):
         primary_key=True,
         default=functools.partial(core.uuid, prefix="rsht_"),
     )
-    services = models.ManyToManyField(
-        "ServiceLevel", blank=True, related_name="system_service_sheet"
-    )
+    services = models.ManyToManyField("ServiceLevel", blank=True, related_name="system_service_sheet")
 
     created_by = models.ForeignKey(
         conf.settings.AUTH_USER_MODEL,
@@ -644,6 +648,4 @@ class SystemRateSheet(BaseRateSheetMixin):
     def carriers(self):
         import karrio.server.providers.models as providers
 
-        return providers.SystemConnection.objects.filter(
-            carrier_code=self.carrier_name, rate_sheet__id=self.id
-        )
+        return providers.SystemConnection.objects.filter(carrier_code=self.carrier_name, rate_sheet__id=self.id)

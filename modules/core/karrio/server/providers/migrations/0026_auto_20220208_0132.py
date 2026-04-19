@@ -7,7 +7,6 @@ import karrio.server.providers.models.carrier
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0025_alter_servicelevel_service_code"),
     ]
@@ -16,9 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="carrier",
             name="active",
-            field=models.BooleanField(
-                default=True, help_text="Disable/Hide carrier from clients"
-            ),
+            field=models.BooleanField(default=True, help_text="Disable/Hide carrier from clients"),
         ),
         migrations.AlterField(
             model_name="carrier",
@@ -37,9 +34,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="carrier",
             name="test",
-            field=models.BooleanField(
-                default=True, help_text="Toggle carrier connection mode"
-            ),
+            field=models.BooleanField(default=True, help_text="Toggle carrier connection mode"),
         ),
         migrations.AlterField(
             model_name="genericsettings",

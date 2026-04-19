@@ -1,11 +1,12 @@
 import json
-from unittest.mock import ANY
+
+import karrio.server.providers.models as providers
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from rest_framework.test import APIClient
 from karrio.server.admin.tests.base import AdminGraphTestCase, Result
 from karrio.server.user.models import Token
-import karrio.server.providers.models as providers
+from rest_framework.test import APIClient
+
 
 class TestAdminRateSheets(AdminGraphTestCase):
     """Tests for Admin Rate Sheet CRUD operations."""
@@ -19,7 +20,6 @@ class TestAdminRateSheets(AdminGraphTestCase):
             name="Admin Test Rate Sheet",
             carrier_name="dhl_parcel_de",
             slug="admin_test_rate_sheet",
-
             zones=[
                 {
                     "id": "zone_1",
@@ -181,6 +181,79 @@ class TestAdminRateSheets(AdminGraphTestCase):
             "Updated Admin Rate Sheet",
         )
 
+    def test_update_rate_sheet_accepts_all_service_level_feature_flags(self):
+        """Regression: the admin Service Editor dialog sends a 14-flag
+        features object (tracked, b2c, b2b, signature, insurance, express,
+        dangerous_goods, saturday_delivery, sunday_delivery, multicollo,
+        neighbor_delivery, labelless, notification, address_validation).
+        ServiceLevelFeaturesInput must accept all three of
+        labelless / notification / address_validation — otherwise any save
+        from the admin UI fails with
+        "Field 'labelless' is not defined by type 'ServiceLevelFeaturesInput'"."""
+        response = self.query(
+            """
+            mutation update_rate_sheet($data: UpdateRateSheetMutationInput!) {
+              update_rate_sheet(input: $data) {
+                errors { field messages }
+                rate_sheet {
+                  id
+                  services {
+                    id
+                    features {
+                      tracked
+                      labelless
+                      notification
+                      address_validation
+                    }
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="update_rate_sheet",
+            variables={
+                "data": {
+                    "id": self.rate_sheet.id,
+                    "services": [
+                        {
+                            "service_name": "DHL Paket",
+                            "service_code": "dhl_parcel_de_paket",
+                            "carrier_service_code": "V01PAK",
+                            "currency": "EUR",
+                            "features": {
+                                "tracked": True,
+                                "b2c": True,
+                                "b2b": True,
+                                "signature": False,
+                                "insurance": False,
+                                "express": False,
+                                "dangerous_goods": False,
+                                "saturday_delivery": False,
+                                "sunday_delivery": False,
+                                "multicollo": False,
+                                "neighbor_delivery": False,
+                                "labelless": True,
+                                "notification": True,
+                                "address_validation": False,
+                                "first_mile": "pickup_dropoff",
+                                "last_mile": "home_delivery",
+                                "form_factor": "parcel",
+                                "shipment_type": "outbound",
+                            },
+                        }
+                    ],
+                }
+            },
+        )
+
+        self.assertResponseNoErrors(response)
+        result = response.data["data"]["update_rate_sheet"]
+        self.assertIsNone(result.get("errors"))
+        service = next(s for s in result["rate_sheet"]["services"] if s["features"] is not None)
+        self.assertTrue(service["features"]["labelless"])
+        self.assertTrue(service["features"]["notification"])
+        self.assertFalse(service["features"]["address_validation"])
+
     def test_delete_rate_sheet(self):
         """Test deleting a rate sheet through admin API."""
         # Create a rate sheet to delete
@@ -188,7 +261,6 @@ class TestAdminRateSheets(AdminGraphTestCase):
             name="To Be Deleted",
             carrier_name="ups",
             slug="to_be_deleted",
-
             created_by=self.user,
         )
 
@@ -217,19 +289,17 @@ class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
         super().setUp()  # Creates self.user (admin1) + self.organization
 
         # Create a second independent admin with their own org
-        self.admin2 = get_user_model().objects.create_superuser(
-            "admin2@example.com", "test2"
-        )
+        self.admin2 = get_user_model().objects.create_superuser("admin2@example.com", "test2")
         self.admin2.is_staff = True
         self.admin2.save()
         self.token2 = Token.objects.create(user=self.admin2, test_mode=False)
 
         from django.conf import settings
+
         if settings.MULTI_ORGANIZATIONS:
             from karrio.server.orgs.models import Organization, TokenLink
-            self.org2 = Organization.objects.create(
-                name="Second Organization", slug="second-org"
-            )
+
+            self.org2 = Organization.objects.create(name="Second Organization", slug="second-org")
             owner2 = self.org2.add_user(self.admin2, is_admin=True)
             self.org2.change_owner(owner2)
             self.org2.save()
@@ -240,13 +310,11 @@ class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
             name="Cross Admin Rate Sheet",
             carrier_name="dhl_parcel_de",
             slug="cross_admin_rate_sheet",
-
             created_by=self.user,
         )
 
     def query_as_admin2(self, query, operation_name=None, variables=None):
         """Execute a GraphQL query authenticated as admin2."""
-        from rest_framework.test import APIClient
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION="Token " + self.token2.key)
         url = reverse("karrio.server.admin:admin-graph")
@@ -299,6 +367,7 @@ class TestAdminRateSheetCrossAdminAccess(AdminGraphTestCase):
     def test_system_ratesheet_has_no_org_link_after_create(self):
         """System ratesheets must not be linked to any org, regardless of who created them."""
         from django.conf import settings
+
         if not settings.MULTI_ORGANIZATIONS:
             self.skipTest("MULTI_ORGANIZATIONS is disabled")
 
@@ -352,7 +421,6 @@ class TestAdminRateSheetZones(AdminGraphTestCase):
             name="Zone Test Sheet",
             carrier_name="ups",
             slug="zone_test_sheet",
-
             zones=[
                 {
                     "id": "zone_1",
@@ -483,7 +551,6 @@ class TestAdminRateSheetSurcharges(AdminGraphTestCase):
             name="Surcharge Test Sheet",
             carrier_name="ups",
             slug="surcharge_test_sheet",
-
             surcharges=[
                 {
                     "id": "surch_1",
@@ -528,9 +595,7 @@ class TestAdminRateSheetSurcharges(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        surcharges = response.data["data"]["add_shared_surcharge"]["rate_sheet"][
-            "surcharges"
-        ]
+        surcharges = response.data["data"]["add_shared_surcharge"]["rate_sheet"]["surcharges"]
         self.assertEqual(len(surcharges), 2)
         self.assertEqual(surcharges[1]["name"], "Handling Fee")
         self.assertEqual(surcharges[1]["amount"], 5.0)
@@ -565,9 +630,7 @@ class TestAdminRateSheetSurcharges(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        surcharges = response.data["data"]["update_shared_surcharge"]["rate_sheet"][
-            "surcharges"
-        ]
+        surcharges = response.data["data"]["update_shared_surcharge"]["rate_sheet"]["surcharges"]
         self.assertEqual(surcharges[0]["name"], "Updated Fuel Surcharge")
         self.assertEqual(surcharges[0]["amount"], 15.0)
 
@@ -607,9 +670,7 @@ class TestAdminRateSheetSurcharges(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        surcharges = response.data["data"]["delete_shared_surcharge"]["rate_sheet"][
-            "surcharges"
-        ]
+        surcharges = response.data["data"]["delete_shared_surcharge"]["rate_sheet"]["surcharges"]
         self.assertEqual(len(surcharges), 1)
         self.assertEqual(surcharges[0]["id"], "surch_1")
 
@@ -652,9 +713,7 @@ class TestAdminRateSheetSurcharges(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        surcharges = response.data["data"]["batch_update_surcharges"]["rate_sheet"][
-            "surcharges"
-        ]
+        surcharges = response.data["data"]["batch_update_surcharges"]["rate_sheet"]["surcharges"]
         self.assertEqual(len(surcharges), 2)
 
 
@@ -668,7 +727,6 @@ class TestAdminServiceRates(AdminGraphTestCase):
             name="Service Rate Test Sheet",
             carrier_name="ups",
             slug="service_rate_test_sheet",
-
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -717,9 +775,7 @@ class TestAdminServiceRates(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        rates = response.data["data"]["update_service_rate"]["rate_sheet"][
-            "service_rates"
-        ]
+        rates = response.data["data"]["update_service_rate"]["rate_sheet"]["service_rates"]
         self.assertEqual(len(rates), 1)
         self.assertEqual(rates[0]["rate"], 15.99)
         self.assertEqual(rates[0]["cost"], 12.00)
@@ -764,9 +820,7 @@ class TestAdminServiceRates(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        rates = response.data["data"]["batch_update_service_rates"]["rate_sheet"][
-            "service_rates"
-        ]
+        rates = response.data["data"]["batch_update_service_rates"]["rate_sheet"]["service_rates"]
         self.assertEqual(len(rates), 2)
 
 
@@ -780,7 +834,6 @@ class TestAdminServiceAssignments(AdminGraphTestCase):
             name="Assignment Test Sheet",
             carrier_name="ups",
             slug="assignment_test_sheet",
-
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -839,9 +892,7 @@ class TestAdminServiceAssignments(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        services = response.data["data"]["update_service_zone_ids"]["rate_sheet"][
-            "services"
-        ]
+        services = response.data["data"]["update_service_zone_ids"]["rate_sheet"]["services"]
         self.assertEqual(services[0]["zone_ids"], ["zone_1", "zone_2"])
 
     def test_update_service_surcharge_ids(self):
@@ -870,9 +921,7 @@ class TestAdminServiceAssignments(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        services = response.data["data"]["update_service_surcharge_ids"]["rate_sheet"][
-            "services"
-        ]
+        services = response.data["data"]["update_service_surcharge_ids"]["rate_sheet"]["services"]
         self.assertEqual(services[0]["surcharge_ids"], ["surch_1", "surch_2"])
 
 
@@ -886,7 +935,6 @@ class TestAdminRateSheetService(AdminGraphTestCase):
             name="Service Test Sheet",
             carrier_name="ups",
             slug="service_test_sheet",
-
             created_by=self.user,
         )
 
@@ -923,13 +971,9 @@ class TestAdminRateSheetService(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        services = response.data["data"]["delete_rate_sheet_service"]["rate_sheet"][
-            "services"
-        ]
+        services = response.data["data"]["delete_rate_sheet_service"]["rate_sheet"]["services"]
         self.assertEqual(len(services), 0)
-        self.assertFalse(
-            providers.ServiceLevel.objects.filter(id=self.service.id).exists()
-        )
+        self.assertFalse(providers.ServiceLevel.objects.filter(id=self.service.id).exists())
 
 
 class TestAdminDeleteServiceRate(AdminGraphTestCase):
@@ -942,7 +986,6 @@ class TestAdminDeleteServiceRate(AdminGraphTestCase):
             name="Delete Rate Test Sheet",
             carrier_name="ups",
             slug="delete_rate_test_sheet",
-
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -963,7 +1006,14 @@ class TestAdminDeleteServiceRate(AdminGraphTestCase):
         self.rate_sheet.service_rates = [
             {"service_id": self.service.id, "zone_id": "zone_1", "rate": 10.00, "cost": 8.00},
             {"service_id": self.service.id, "zone_id": "zone_2", "rate": 15.00, "cost": 12.00},
-            {"service_id": self.service.id, "zone_id": "zone_1", "rate": 20.00, "cost": 16.00, "min_weight": 0.0, "max_weight": 5.0},
+            {
+                "service_id": self.service.id,
+                "zone_id": "zone_1",
+                "rate": 20.00,
+                "cost": 16.00,
+                "min_weight": 0.0,
+                "max_weight": 5.0,
+            },
         ]
         self.rate_sheet.save()
 
@@ -1033,8 +1083,7 @@ class TestAdminDeleteServiceRate(AdminGraphTestCase):
         self.assertResponseNoErrors(response)
         rates = response.data["data"]["delete_service_rate"]["rate_sheet"]["service_rates"]
         zone_1_weighted = [
-            r for r in rates
-            if r["zone_id"] == "zone_1" and r.get("min_weight") == 0 and r.get("max_weight") == 5
+            r for r in rates if r["zone_id"] == "zone_1" and r.get("min_weight") == 0 and r.get("max_weight") == 5
         ]
         self.assertEqual(len(zone_1_weighted), 0)
         # The base zone_1 rate without weight should remain
@@ -1095,7 +1144,6 @@ class TestAdminWeightRanges(AdminGraphTestCase):
             name="Weight Range Test Sheet",
             carrier_name="ups",
             slug="weight_range_test_sheet",
-
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"]},
@@ -1327,7 +1375,6 @@ class TestAdminRateSheetQueryVerification(AdminGraphTestCase):
             name="Query Verify Test Sheet",
             carrier_name="ups",
             slug="query_verify_test_sheet",
-
             zones=[
                 {"id": "zone_1", "label": "Zone 1", "country_codes": ["US"]},
             ],
@@ -1639,7 +1686,6 @@ class TestAdminRateSheetEdgeCases(AdminGraphTestCase):
             name="Edge Case Sheet",
             carrier_name="ups",
             slug="edge_case_sheet",
-
             zones=[],
             surcharges=[],
             service_rates=[],
@@ -1719,7 +1765,6 @@ class TestAdminRateSheetEdgeCases(AdminGraphTestCase):
             name="Cascade Test Sheet",
             carrier_name="ups",
             slug="cascade_test_sheet",
-
             created_by=self.user,
         )
         service = providers.ServiceLevel.objects.create(
@@ -1819,3 +1864,525 @@ class TestAdminRateSheetEdgeCases(AdminGraphTestCase):
         self.assertEqual(zone["postal_codes"], [])
 
 
+class TestAdminRateSheetCSVImport(AdminGraphTestCase):
+    """Integration tests for CSV import via the admin import endpoint.
+
+    Verifies:
+    - Dry run returns correct diff against an existing rate sheet
+    - Confirm import updates rates in the targeted rate sheet
+    - rate_sheet_id parameter targets the correct sheet (not CSV-derived slug)
+    """
+
+    CSV_HEADER = (
+        "carrier_name,service_code,carrier_service_code,service_name,"
+        "shipment_type,origin_country,zone_label,country_codes,"
+        "min_weight,max_weight,weight_unit,max_length,max_width,max_height,"
+        "dimension_unit,currency,base_rate,cost,transit_days,transit_time"
+    )
+
+    def setUp(self):
+        super().setUp()
+
+        # Create a rate sheet with a custom slug (different from carrier_name)
+        self.rate_sheet = providers.SystemRateSheet.objects.create(
+            name="JTL Test Import Sheet",
+            carrier_name="dhl_parcel_de",
+            slug="jtl_test_import_sheet",
+            zones=[
+                {"id": "zone_de", "label": "DE", "country_codes": ["DE"]},
+            ],
+            service_rates=[],
+            created_by=self.user,
+        )
+
+        # Create a service and attach to rate sheet
+        self.service = providers.ServiceLevel.objects.create(
+            service_name="DHL Paket",
+            service_code="dhl_parcel_de_paket",
+            carrier_service_code="V01PAK",
+            currency="EUR",
+            active=True,
+            zone_ids=["zone_de"],
+            surcharge_ids=[],
+            created_by=self.user,
+        )
+        self.rate_sheet.services.add(self.service)
+
+        # Set initial rates
+        self.rate_sheet.service_rates = [
+            {
+                "service_id": self.service.id,
+                "zone_id": "zone_de",
+                "rate": 7.50,
+                "cost": 4.80,
+                "min_weight": 0,
+                "max_weight": 2.001,
+            },
+            {
+                "service_id": self.service.id,
+                "zone_id": "zone_de",
+                "rate": 10.30,
+                "cost": 8.00,
+                "min_weight": 5.001,
+                "max_weight": 10.001,
+            },
+        ]
+        self.rate_sheet.save()
+
+        self.import_url = reverse("karrio.server.admin:admin-data-import")
+
+    def _make_csv(self, rows):
+        """Build a CSV bytes object from a list of row strings."""
+        import io
+
+        lines = [self.CSV_HEADER] + rows
+        return io.BytesIO("\n".join(lines).encode("utf-8"))
+
+    def test_dry_run_shows_correct_diff_for_existing_rates(self):
+        """Dry run with rate_sheet_id should show existing rates as updated, not added."""
+        csv_file = self._make_csv(
+            [
+                "dhl_parcel_de,dhl_parcel_de_paket,V01PAK,DHL Paket,"
+                "outbound,DE,DE,DE,"
+                "0,2.001,KG,60,30,15,CM,EUR,99.99,5.0,2,",
+            ]
+        )
+        csv_file.name = "test-update.csv"
+
+        response = self.client.post(
+            self.import_url,
+            {
+                "resource_type": "rate_sheet",
+                "dry_run": "true",
+                "data_file": csv_file,
+                "rate_sheet_id": self.rate_sheet.id,
+            },
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        print(data)
+
+        self.assertTrue(data["dry_run"])
+        self.assertIn("diff", data)
+
+        summary = data["diff"]["summary"]
+        # The existing rate (7.50 → 99.99) should show as updated, not added
+        self.assertGreater(
+            summary["updated"],
+            0,
+            "Should detect existing rate as 'updated' when rate_sheet_id is provided",
+        )
+
+        # Verify the diff row has old and new rates
+        updated_rows = [r for r in data["diff"]["rows"] if r["change"] == "updated"]
+        self.assertTrue(len(updated_rows) > 0)
+        first_updated = updated_rows[0]
+        self.assertEqual(first_updated["new_rate"], 99.99)
+        self.assertEqual(first_updated["old_rate"], 7.50)
+
+    def test_confirm_import_updates_rates_in_target_sheet(self):
+        """Confirm import should update the targeted rate sheet's rates."""
+        # Verify initial rate
+        self.rate_sheet.refresh_from_db()
+        initial_rate = next(r for r in self.rate_sheet.service_rates if r["min_weight"] == 0)
+        self.assertEqual(initial_rate["rate"], 7.50)
+
+        csv_file = self._make_csv(
+            [
+                "dhl_parcel_de,dhl_parcel_de_paket,V01PAK,DHL Paket,"
+                "outbound,DE,DE,DE,"
+                "0,2.001,KG,60,30,15,CM,EUR,25.99,5.0,2,",
+                "dhl_parcel_de,dhl_parcel_de_paket,V01PAK,DHL Paket,"
+                "outbound,DE,DE,DE,"
+                "5.001,10.001,KG,120,60,60,CM,EUR,35.50,12.0,2,",
+            ]
+        )
+        csv_file.name = "test-confirm.csv"
+
+        response = self.client.post(
+            self.import_url,
+            {
+                "resource_type": "rate_sheet",
+                "data_file": csv_file,
+                "rate_sheet_id": self.rate_sheet.id,
+            },
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        print(data)
+        self.assertFalse(data.get("dry_run", False))
+
+        # Reload the rate sheet and verify rates were updated
+        self.rate_sheet.refresh_from_db()
+        rates_by_weight = {r["min_weight"]: r["rate"] for r in self.rate_sheet.service_rates}
+        self.assertEqual(rates_by_weight[0], 25.99, "0-2kg rate should be updated to 25.99")
+        self.assertEqual(rates_by_weight[5.001], 35.50, "5-10kg rate should be updated to 35.50")
+
+    def test_import_targets_correct_sheet_not_slug_match(self):
+        """When rate_sheet_id is set, import should update that sheet even if
+        another sheet exists with a slug matching the CSV carrier_name."""
+        # Create a second sheet with slug=dhl_parcel_de (matches CSV carrier_name)
+        other_sheet = providers.SystemRateSheet.objects.create(
+            name="Other DHL Sheet",
+            carrier_name="dhl_parcel_de",
+            slug="dhl_parcel_de",
+            zones=[{"id": "zone_other", "label": "Other"}],
+            service_rates=[],
+            created_by=self.user,
+        )
+
+        csv_file = self._make_csv(
+            [
+                "dhl_parcel_de,dhl_parcel_de_paket,V01PAK,DHL Paket,"
+                "outbound,DE,DE,DE,"
+                "0,2.001,KG,60,30,15,CM,EUR,88.88,5.0,2,",
+            ]
+        )
+        csv_file.name = "test-targeting.csv"
+
+        response = self.client.post(
+            self.import_url,
+            {
+                "resource_type": "rate_sheet",
+                "data_file": csv_file,
+                "rate_sheet_id": self.rate_sheet.id,  # target the JTL sheet, not the slug-matched one
+            },
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        print(data)
+
+        # The JTL sheet should be updated, not the other one
+        self.rate_sheet.refresh_from_db()
+        other_sheet.refresh_from_db()
+
+        target_rates = {r["min_weight"]: r["rate"] for r in self.rate_sheet.service_rates}
+        self.assertEqual(
+            target_rates.get(0),
+            88.88,
+            "Target sheet (JTL) should have the imported rate",
+        )
+
+        # The other sheet should be unchanged (no service_rates added)
+        self.assertEqual(
+            len(other_sheet.service_rates or []),
+            0,
+            "Other sheet (slug=dhl_parcel_de) should NOT be modified",
+        )
+
+
+class TestAdminRateSheetPlanRateImport(AdminGraphTestCase):
+    """Integration tests for per-plan rate and surcharge import.
+
+    Uses realistic CSV fixtures from DHL-DE, DPD-DE, and Landmark Global
+    with plan_rate_*, plan_cost_*, and surcharge columns.
+    """
+
+    CSV_HEADER = (
+        "carrier_name,service_code,carrier_service_code,service_name,"
+        "shipment_type,origin_country,zone_label,country_codes,"
+        "min_weight,max_weight,weight_unit,max_length,max_width,max_height,"
+        "dimension_unit,currency,base_rate,cost,transit_days,transit_time,"
+        "plan_rate_start,plan_cost_start,plan_rate_advanced,plan_cost_advanced,"
+        "plan_rate_pro,plan_cost_pro,plan_rate_enterprise,plan_cost_enterprise,"
+        "tracked,b2c,b2b,first_mile,last_mile,form_factor,signature,age_check,"
+        "saturday,neighbor_delivery,insurance,"
+        "fuel_surcharge,seasonal_surcharge,customs_surcharge,"
+        "energy_surcharge,road_toll,security_surcharge,notes\n"
+    )
+
+    # DHL Parcel DE — 3 rows with surcharges (energy_surcharge, road_toll)
+    DHL_CSV = (
+        CSV_HEADER + "dhl_parcel_de,dhl_parcel_de_kleinpaket,V62KP,DHL KleinPaket,"
+        "outbound,DE,DE,,"
+        "0.01,1.001,KG,35,25,8,CM,EUR,3.39,3.432375,,best_effort,"
+        "4.08,4.08,3.98,3.98,3.9,3.9,3.82,3.82,"
+        "True,True,True,dropoff,home_delivery,mailbox,False,,"
+        "True,True,20,"
+        ",0,0,0.042375,,,DHL Kleinpaket 0-1kg\n"
+        "dhl_parcel_de,dhl_parcel_de_paket,V01PAK,DHL Paket,"
+        "outbound,DE,DE,,"
+        "0.01,2.001,KG,60,30,15,CM,EUR,6,6.19,,best_effort,"
+        "6.81,6.81,6.64,6.64,6.5,6.5,6.37,6.37,"
+        "True,True,True,pickup_dropoff,home_delivery,parcel,False,,"
+        "True,True,500,"
+        ",0,0,,0.19,,DHL Paket 0-2kg\n"
+        "dhl_parcel_de,dhl_parcel_de_paket,V01PAK,DHL Paket,"
+        "outbound,DE,DE,,"
+        "5.001,10.001,KG,120,60,60,CM,EUR,10.3,10.49,,best_effort,"
+        "11.59,11.59,11.31,11.31,11.07,11.07,10.84,10.84,"
+        "True,True,True,pickup_dropoff,home_delivery,parcel,False,,"
+        "True,True,500,"
+        ",0,0,,0.19,,DHL Paket 5-10kg\n"
+    )
+
+    # DPD (dpd_meta) — 2 rows, different plan rate margins
+    DPD_CSV = (
+        CSV_HEADER + "dpd_meta,dpd_parcel_letter,PL,DPD ParcelLetter,"
+        "outbound,DE,DE,DE,"
+        "0.01,1.001,KG,35,25,3,CM,EUR,1.62,1.62,,best_effort,"
+        "2.51,2.51,2.43,2.43,2.37,2.37,2.31,2.31,"
+        "True,True,True,dropoff,home_delivery,mailbox,False,,"
+        "False,False,0,"
+        ",,,,,,DPD ParcelLetter 0-1kg\n"
+        "dpd_meta,dpd_classic,CL,DPD Classic,"
+        "outbound,DE,DE,DE,"
+        "0.01,31.501,KG,175,100,120,CM,EUR,5.29,5.29,,best_effort,"
+        "6.49,6.49,6.3,6.3,6.14,6.14,5.98,5.98,"
+        "True,True,True,pickup_dropoff,home_delivery,parcel,False,,"
+        "False,True,500,"
+        ",,,,,,DPD Classic 0-31.5kg\n"
+    )
+
+    # Landmark Global — 2 rows, international zones with country_codes
+    LANDMARK_CSV = (
+        CSV_HEADER + "landmark,landmark_eu_di_home_dpd_at,,Landmark Global EU DI HOME - DPD AT,"
+        "outbound,DE,Austria,AT,"
+        "0.01,2.001,KG,120,60,60,CM,EUR,4.03,4.03,,best_effort,"
+        "4.92,4.92,4.77,4.77,4.65,4.65,4.52,4.52,"
+        "True,True,True,pickup_dropoff,home_delivery,parcel,False,,"
+        "False,False,0,"
+        ",,,,,,Landmark AT 0-2kg\n"
+        "landmark,landmark_eu_di_home_dpd_at,,Landmark Global EU DI HOME - DPD AT,"
+        "outbound,DE,Austria,AT,"
+        "2.001,5.001,KG,120,60,60,CM,EUR,5.18,5.18,,best_effort,"
+        "6.38,6.38,6.19,6.19,6.03,6.03,5.87,5.87,"
+        "True,True,True,pickup_dropoff,home_delivery,parcel,False,,"
+        "False,False,0,"
+        ",,,,,,Landmark AT 2-5kg\n"
+    )
+
+    def setUp(self):
+        super().setUp()
+        self.import_url = reverse("karrio.server.admin:admin-data-import")
+
+    def _make_csv_file(self, content, name="test.csv"):
+        import io
+
+        f = io.BytesIO(content.encode("utf-8"))
+        f.name = name
+        return f
+
+    def _import_csv(self, content, name="test.csv", **extra):
+        csv_file = self._make_csv_file(content, name)
+        payload = {"resource_type": "rate_sheet", "data_file": csv_file, **extra}
+        response = self.client.post(self.import_url, payload, format="multipart")
+        self.assertEqual(response.status_code, 200, response.json())
+        return response.json()
+
+    # ── DHL Parcel DE tests ──────────────────────────────────────────────────
+
+    def test_dhl_import_stores_plan_rates(self):
+        """DHL CSV import persists plan_rate_*/plan_cost_* on service_rates."""
+        data = self._import_csv(self.DHL_CSV, "DHL-DE.csv")
+        print(data)
+
+        from karrio.server.providers.models import SystemRateSheet
+
+        sheet = SystemRateSheet.objects.get(id=data["rate_sheet_id"])
+
+        # Verify kleinpaket plan rates
+        kr = next(r for r in sheet.service_rates if r["min_weight"] == 0.01 and r["max_weight"] == 1.001)
+        self.assertEqual(kr["rate"], 3.39)
+        self.assertEqual(kr["plan_rate_start"], 4.08)
+        self.assertEqual(kr["plan_cost_start"], 4.08)
+        self.assertEqual(kr["plan_rate_advanced"], 3.98)
+        self.assertEqual(kr["plan_rate_pro"], 3.9)
+        self.assertEqual(kr["plan_rate_enterprise"], 3.82)
+
+        # Verify paket 5-10kg plan rates
+        pr = next(r for r in sheet.service_rates if r["min_weight"] == 5.001)
+        self.assertEqual(pr["rate"], 10.3)
+        self.assertEqual(pr["plan_rate_start"], 11.59)
+        self.assertEqual(pr["plan_rate_enterprise"], 10.84)
+
+        sheet.delete()
+
+    def test_dhl_import_creates_surcharges(self):
+        """DHL CSV creates energy_surcharge and road_toll, linked to services."""
+        data = self._import_csv(self.DHL_CSV, "DHL-DE.csv")
+        print(data)
+
+        from karrio.server.providers.models import SystemRateSheet
+
+        sheet = SystemRateSheet.objects.get(id=data["rate_sheet_id"])
+
+        surcharge_ids = {s["id"] for s in sheet.surcharges}
+        self.assertIn("energy_surcharge", surcharge_ids)
+        self.assertIn("road_toll", surcharge_ids)
+
+        services = {s.service_code: s for s in sheet.services.all()}
+        self.assertIn("road_toll", services["dhl_parcel_de_paket"].surcharge_ids)
+        self.assertIn("energy_surcharge", services["dhl_parcel_de_kleinpaket"].surcharge_ids)
+
+        sheet.delete()
+
+    def test_dhl_plan_rate_change_detected_in_diff(self):
+        """Changing only plan_rate_start (base_rate unchanged) shows as 'updated'."""
+        data = self._import_csv(self.DHL_CSV, "DHL-DE.csv")
+        sheet_id = data["rate_sheet_id"]
+
+        modified = self.DHL_CSV.replace(
+            "4.08,4.08,3.98,3.98,3.9,3.9,3.82,3.82", "99.99,4.08,3.98,3.98,3.9,3.9,3.82,3.82", 1
+        )
+        diff_data = self._import_csv(modified, "DHL-DE-mod.csv", dry_run="true", rate_sheet_id=sheet_id)
+        print(diff_data)
+
+        self.assertTrue(diff_data["dry_run"])
+        updated = [r for r in diff_data["diff"]["rows"] if r["change"] == "updated"]
+        self.assertEqual(len(updated), 1, "Only kleinpaket row should be updated")
+        self.assertEqual(updated[0]["plan_rate_start"], 99.99)
+        self.assertEqual(updated[0]["old_rate"], 3.39)  # base_rate unchanged
+
+        from karrio.server.providers.models import SystemRateSheet
+
+        SystemRateSheet.objects.filter(id=sheet_id).delete()
+
+    # ── DPD (dpd_meta) tests ─────────────────────────────────────────────────
+
+    def test_dpd_import_stores_plan_rates(self):
+        """DPD CSV import stores correct plan rates for ParcelLetter and Classic."""
+        data = self._import_csv(self.DPD_CSV, "DPD-DE.csv")
+        print(data)
+
+        from karrio.server.providers.models import SystemRateSheet
+
+        sheet = SystemRateSheet.objects.get(id=data["rate_sheet_id"])
+
+        self.assertEqual(sheet.carrier_name, "dpd_meta")
+        self.assertEqual(len(sheet.service_rates), 2)
+
+        # ParcelLetter: base=1.62, start=2.51, enterprise=2.31
+        pl = next(r for r in sheet.service_rates if r["rate"] == 1.62)
+        self.assertEqual(pl["plan_rate_start"], 2.51)
+        self.assertEqual(pl["plan_rate_enterprise"], 2.31)
+
+        # Classic: base=5.29, start=6.49, enterprise=5.98
+        cl = next(r for r in sheet.service_rates if r["rate"] == 5.29)
+        self.assertEqual(cl["plan_rate_start"], 6.49)
+        self.assertEqual(cl["plan_rate_enterprise"], 5.98)
+
+        # Verify services created
+        service_codes = {s.service_code for s in sheet.services.all()}
+        self.assertEqual(service_codes, {"dpd_parcel_letter", "dpd_classic"})
+
+        sheet.delete()
+
+    def test_dpd_reimport_shows_unchanged(self):
+        """Importing the same DPD CSV twice shows all rows as unchanged."""
+        data = self._import_csv(self.DPD_CSV, "DPD-DE.csv")
+        sheet_id = data["rate_sheet_id"]
+
+        diff_data = self._import_csv(self.DPD_CSV, "DPD-DE.csv", dry_run="true", rate_sheet_id=sheet_id)
+        print(diff_data)
+
+        self.assertEqual(diff_data["diff"]["summary"]["unchanged"], 2)
+        self.assertEqual(diff_data["diff"]["summary"]["added"], 0)
+        self.assertEqual(diff_data["diff"]["summary"]["updated"], 0)
+
+        from karrio.server.providers.models import SystemRateSheet
+
+        SystemRateSheet.objects.filter(id=sheet_id).delete()
+
+    # ── Landmark Global tests ────────────────────────────────────────────────
+
+    def test_landmark_import_with_international_zones(self):
+        """Landmark CSV creates zones with country_codes and correct plan rates."""
+        data = self._import_csv(self.LANDMARK_CSV, "Landmark.csv")
+        print(data)
+
+        from karrio.server.providers.models import SystemRateSheet
+
+        sheet = SystemRateSheet.objects.get(id=data["rate_sheet_id"])
+
+        self.assertEqual(sheet.carrier_name, "landmark")
+        self.assertEqual(len(sheet.service_rates), 2)
+
+        # Verify zone has country_codes
+        austria_zone = next((z for z in sheet.zones if z["label"] == "Austria"), None)
+        self.assertIsNotNone(austria_zone)
+        self.assertIn("AT", austria_zone["country_codes"])
+
+        # Verify plan rates on 0-2kg
+        r1 = next(r for r in sheet.service_rates if r["min_weight"] == 0.01)
+        self.assertEqual(r1["rate"], 4.03)
+        self.assertEqual(r1["plan_rate_start"], 4.92)
+        self.assertEqual(r1["plan_rate_enterprise"], 4.52)
+
+        # Verify plan rates on 2-5kg
+        r2 = next(r for r in sheet.service_rates if r["min_weight"] == 2.001)
+        self.assertEqual(r2["rate"], 5.18)
+        self.assertEqual(r2["plan_rate_start"], 6.38)
+        self.assertEqual(r2["plan_rate_enterprise"], 5.87)
+
+        sheet.delete()
+
+    def test_landmark_plan_rate_update_detected(self):
+        """Landmark: changing enterprise plan rate is detected in diff."""
+        data = self._import_csv(self.LANDMARK_CSV, "Landmark.csv")
+        sheet_id = data["rate_sheet_id"]
+
+        # Change enterprise rate for 0-2kg: 4.52 -> 10.00
+        modified = self.LANDMARK_CSV.replace(
+            "4.92,4.92,4.77,4.77,4.65,4.65,4.52,4.52", "4.92,4.92,4.77,4.77,4.65,4.65,10.00,10.00"
+        )
+        diff_data = self._import_csv(modified, "Landmark-mod.csv", dry_run="true", rate_sheet_id=sheet_id)
+        print(diff_data)
+
+        updated = [r for r in diff_data["diff"]["rows"] if r["change"] == "updated"]
+        self.assertEqual(len(updated), 1)
+        self.assertEqual(updated[0]["plan_rate_enterprise"], 10.00)
+        self.assertEqual(updated[0]["old_rate"], 4.03)  # base unchanged
+
+        from karrio.server.providers.models import SystemRateSheet
+
+        SystemRateSheet.objects.filter(id=sheet_id).delete()
+
+    # ── Cross-carrier roundtrip test ─────────────────────────────────────────
+
+    def test_full_roundtrip_all_carriers(self):
+        """Import DHL, DPD, and Landmark — verify all preserve plan rates."""
+        from karrio.server.providers.models import SystemRateSheet
+
+        sheets = []
+        for csv, name, carrier, expected_rates in [
+            (self.DHL_CSV, "DHL-DE.csv", "dhl_parcel_de", 3),
+            (self.DPD_CSV, "DPD-DE.csv", "dpd_meta", 2),
+            (self.LANDMARK_CSV, "Landmark.csv", "landmark", 2),
+        ]:
+            data = self._import_csv(csv, name)
+            sheet = SystemRateSheet.objects.get(id=data["rate_sheet_id"])
+            sheets.append(sheet)
+
+            self.assertEqual(sheet.carrier_name, carrier)
+            self.assertEqual(len(sheet.service_rates), expected_rates)
+
+            # Every rate should have plan fields
+            for sr in sheet.service_rates:
+                self.assertIn("plan_rate_start", sr, f"{carrier}: missing plan_rate_start")
+                self.assertIn("plan_rate_enterprise", sr, f"{carrier}: missing plan_rate_enterprise")
+                self.assertIsNotNone(sr["plan_rate_start"], f"{carrier}: plan_rate_start is None")
+                self.assertGreater(sr["plan_rate_start"], 0, f"{carrier}: plan_rate_start should be > 0")
+
+            # Every service should have features populated from CSV
+            for svc in sheet.services.all():
+                features = svc.features or {}
+                self.assertIn(
+                    "shipment_type",
+                    features,
+                    f"{carrier}/{svc.service_code}: missing features.shipment_type",
+                )
+                self.assertIn(
+                    features["shipment_type"],
+                    ("outbound", "returns", "both"),
+                    f"{carrier}/{svc.service_code}: invalid shipment_type={features['shipment_type']}",
+                )
+
+        for sheet in sheets:
+            sheet.delete()

@@ -1,27 +1,23 @@
-import karrio.schemas.canadapost.rating as canadapost
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.errors as errors
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.canadapost.error as provider_error
 import karrio.providers.canadapost.units as provider_units
 import karrio.providers.canadapost.utils as provider_utils
+import karrio.schemas.canadapost.rating as canadapost
 
 
 def parse_rate_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]] = [
+    package_rates: list[tuple[str, list[models.RateDetails]]] = [
         (
             f"{_}",
-            [
-                _extract_details(node, settings)
-                for node in lib.find_element("price-quote", response)
-            ],
+            [_extract_details(node, settings) for node in lib.find_element("price-quote", response)],
         )
         for _, response in enumerate(responses, start=1)
     ]
@@ -32,9 +28,7 @@ def parse_rate_response(
     return rates, messages
 
 
-def _extract_details(
-    node: lib.Element, settings: provider_utils.Settings
-) -> models.RateDetails:
+def _extract_details(node: lib.Element, settings: provider_utils.Settings) -> models.RateDetails:
     quote = lib.to_object(canadapost.price_quoteType, node)
     service = provider_units.ServiceType.map(quote.service_code)
 
@@ -80,10 +74,7 @@ def rate_request(
     :return: a domestic or international Canada post compatible request
     :raises: an OriginNotServicedError when origin country is not serviced by the carrier
     """
-    if (
-        payload.shipper.country_code
-        and payload.shipper.country_code != units.Country.CA.name
-    ):
+    if payload.shipper.country_code and payload.shipper.country_code != units.Country.CA.name:
         raise errors.OriginNotServicedError(payload.shipper.country_code)
 
     services = lib.to_services(payload.services, provider_units.ServiceType)
@@ -118,13 +109,7 @@ def rate_request(
                         if option.state is not False
                     ]
                 )
-                if any(
-                    [
-                        option
-                        for _, option in package.options.items()
-                        if option.state is not False
-                    ]
-                )
+                if any([option for _, option in package.options.items() if option.state is not False])
                 else None
             ),
             parcel_characteristics=canadapost.parcel_characteristicsType(
@@ -138,29 +123,19 @@ def rate_request(
                 mailing_tube=None,
                 oversized=None,
             ),
-            services=(
-                canadapost.servicesType(service_code=[svc.value for svc in services])
-                if any(services)
-                else None
-            ),
-            origin_postal_code=provider_utils.format_ca_postal_code(
-                payload.shipper.postal_code
-            ),
+            services=(canadapost.servicesType(service_code=[svc.value for svc in services]) if any(services) else None),
+            origin_postal_code=provider_utils.format_ca_postal_code(payload.shipper.postal_code),
             destination=canadapost.destinationType(
                 domestic=(
                     canadapost.domesticType(
-                        postal_code=provider_utils.format_ca_postal_code(
-                            payload.recipient.postal_code
-                        )
+                        postal_code=provider_utils.format_ca_postal_code(payload.recipient.postal_code)
                     )
                     if (payload.recipient.country_code == units.Country.CA.name)
                     else None
                 ),
                 united_states=(
                     canadapost.united_statesType(
-                        zip_code=provider_utils.format_ca_postal_code(
-                            payload.recipient.postal_code
-                        )
+                        zip_code=provider_utils.format_ca_postal_code(payload.recipient.postal_code)
                     )
                     if (payload.recipient.country_code == units.Country.US.name)
                     else None
@@ -168,14 +143,9 @@ def rate_request(
                 international=(
                     canadapost.internationalType(
                         # format_ca_postal_code only normalizes text (strip spaces + uppercase).
-                        country_code=provider_utils.format_ca_postal_code(
-                            payload.recipient.country_code
-                        )
+                        country_code=provider_utils.format_ca_postal_code(payload.recipient.country_code)
                     )
-                    if (
-                        payload.recipient.country_code
-                        not in [units.Country.US.name, units.Country.CA.name]
-                    )
+                    if (payload.recipient.country_code not in [units.Country.US.name, units.Country.CA.name])
                     else None
                 ),
             ),

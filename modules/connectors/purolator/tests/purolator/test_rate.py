@@ -1,8 +1,10 @@
 import unittest
 from unittest.mock import patch
-from karrio.core.utils import DP
+
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.sdk import Rating
+
 from .fixture import gateway
 
 
@@ -17,9 +19,7 @@ class TestPurolatorQuote(unittest.TestCase):
         self.assertEqual(request.serialize(), RATE_REQUEST_XML)
 
     def test_create_rate_request_with_package_preset(self):
-        request = gateway.mapper.create_rate_request(
-            RateRequest(**RATE_REQUEST_WITH_PRESET_PAYLOAD)
-        )
+        request = gateway.mapper.create_rate_request(RateRequest(**RATE_REQUEST_WITH_PRESET_PAYLOAD))
 
         self.assertEqual(request.serialize(), RATE_REQUEST_WITH_PRESET_XML)
 

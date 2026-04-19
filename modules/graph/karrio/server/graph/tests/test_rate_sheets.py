@@ -1,7 +1,8 @@
-import karrio.lib as lib
 from unittest.mock import ANY
-from karrio.server.graph.tests.base import GraphTestCase
+
+import karrio.lib as lib
 import karrio.server.providers.models as providers
+from karrio.server.graph.tests.base import GraphTestCase
 
 
 class TestRateSheets(GraphTestCase):
@@ -340,10 +341,7 @@ class TestRateSheets(GraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        self.assertEqual(
-            response.data["data"]["update_rate_sheet"]["rate_sheet"]["name"],
-            "New Name Only"
-        )
+        self.assertEqual(response.data["data"]["update_rate_sheet"]["rate_sheet"]["name"], "New Name Only")
 
     # =========================================================================
     # RATE SHEET DELETE TESTS
@@ -773,11 +771,13 @@ class TestRateSheetZones(GraphTestCase):
     def test_delete_shared_zone(self):
         """Test deleting a shared zone."""
         # First add a second zone
-        self.rate_sheet.zones.append({
-            "id": "zone_2",
-            "label": "Zone 2",
-            "country_codes": ["CA"],
-        })
+        self.rate_sheet.zones.append(
+            {
+                "id": "zone_2",
+                "label": "Zone 2",
+                "country_codes": ["CA"],
+            }
+        )
         self.rate_sheet.save()
 
         response = self.query(
@@ -850,9 +850,7 @@ class TestRateSheetZones(GraphTestCase):
     def test_delete_zone_removes_service_rates(self):
         """Test that deleting a zone removes associated service_rates."""
         # Add service rate for the zone
-        self.rate_sheet.service_rates = [
-            {"service_id": self.service.id, "zone_id": "zone_1", "rate": 10.0}
-        ]
+        self.rate_sheet.service_rates = [{"service_id": self.service.id, "zone_id": "zone_1", "rate": 10.0}]
         self.rate_sheet.save()
 
         response = self.query(
@@ -1140,7 +1138,9 @@ class TestRateSheetSurcharges(GraphTestCase):
         )
 
         # Should have an error
-        self.assertIsNotNone(response.data.get("errors") or response.data["data"]["update_shared_surcharge"].get("errors"))
+        self.assertIsNotNone(
+            response.data.get("errors") or response.data["data"]["update_shared_surcharge"].get("errors")
+        )
 
     # =========================================================================
     # DELETE SURCHARGE TESTS
@@ -1149,13 +1149,15 @@ class TestRateSheetSurcharges(GraphTestCase):
     def test_delete_shared_surcharge(self):
         """Test deleting a shared surcharge."""
         # Add a second surcharge
-        self.rate_sheet.surcharges.append({
-            "id": "surch_energy",
-            "name": "Energy",
-            "amount": 5.0,
-            "surcharge_type": "fixed",
-            "active": True,
-        })
+        self.rate_sheet.surcharges.append(
+            {
+                "id": "surch_energy",
+                "name": "Energy",
+                "amount": 5.0,
+                "surcharge_type": "fixed",
+                "active": True,
+            }
+        )
         self.rate_sheet.save()
 
         response = self.query(
@@ -1653,6 +1655,7 @@ class TestRateSheetServices(GraphTestCase):
         self.assertEqual(len(services), 1)
         self.assertEqual(services[0]["service_name"], "Service 1")
 
+
 class TestRateSheetModelMethods(GraphTestCase):
     """Tests for RateSheet model methods (rate calculation, etc.)."""
 
@@ -1668,9 +1671,29 @@ class TestRateSheetModelMethods(GraphTestCase):
                 {"id": "zone_2", "label": "Zone 2", "country_codes": ["CA"], "transit_days": 5},
             ],
             surcharges=[
-                {"id": "surch_fuel", "name": "Fuel", "amount": 10.0, "surcharge_type": "percentage", "active": True, "cost": 8.0},
-                {"id": "surch_handling", "name": "Handling", "amount": 5.0, "surcharge_type": "fixed", "active": True, "cost": 3.0},
-                {"id": "surch_inactive", "name": "Inactive", "amount": 100.0, "surcharge_type": "fixed", "active": False},
+                {
+                    "id": "surch_fuel",
+                    "name": "Fuel",
+                    "amount": 10.0,
+                    "surcharge_type": "percentage",
+                    "active": True,
+                    "cost": 8.0,
+                },
+                {
+                    "id": "surch_handling",
+                    "name": "Handling",
+                    "amount": 5.0,
+                    "surcharge_type": "fixed",
+                    "active": True,
+                    "cost": 3.0,
+                },
+                {
+                    "id": "surch_inactive",
+                    "name": "Inactive",
+                    "amount": 100.0,
+                    "surcharge_type": "fixed",
+                    "active": False,
+                },
             ],
             service_rates=[],
             created_by=self.user,
@@ -2199,6 +2222,7 @@ UPDATE_SERVICE_ZONE_IDS_RESPONSE = {
     }
 }
 
+
 class TestPerServiceWeightRangeScenarios(GraphTestCase):
     """Tests for per-service weight range interactions.
 
@@ -2262,8 +2286,20 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
             {"service_id": self.svc_paket.id, "zone_id": "zone_de", "rate": 5.49, "min_weight": 1, "max_weight": 5},
             {"service_id": self.svc_paket.id, "zone_id": "zone_de", "rate": 8.99, "min_weight": 5, "max_weight": 10},
             # DHL Kleinpaket: 0-0.5, 0.5-1
-            {"service_id": self.svc_kleinpaket.id, "zone_id": "zone_de", "rate": 2.49, "min_weight": 0, "max_weight": 0.5},
-            {"service_id": self.svc_kleinpaket.id, "zone_id": "zone_de", "rate": 3.39, "min_weight": 0.5, "max_weight": 1},
+            {
+                "service_id": self.svc_kleinpaket.id,
+                "zone_id": "zone_de",
+                "rate": 2.49,
+                "min_weight": 0,
+                "max_weight": 0.5,
+            },
+            {
+                "service_id": self.svc_kleinpaket.id,
+                "zone_id": "zone_de",
+                "rate": 3.39,
+                "min_weight": 0.5,
+                "max_weight": 1,
+            },
         ]
         self.rate_sheet.save()
 
@@ -2280,11 +2316,11 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
 
         # Both services should get new entries
         paket_new = [
-            r for r in self.rate_sheet.service_rates
-            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 10
+            r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_paket.id and r["min_weight"] == 10
         ]
         klein_new = [
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_kleinpaket.id and r["min_weight"] == 10
         ]
         self.assertEqual(len(paket_new), 1, "Paket should get the new weight range")
@@ -2301,8 +2337,6 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
         # Add a shared weight range first
         self.rate_sheet.add_weight_range(min_weight=10, max_weight=20)
         self.rate_sheet.refresh_from_db()
-        total_before = len(self.rate_sheet.service_rates)
-
         # Remove it globally
         self.rate_sheet.remove_weight_range(min_weight=10, max_weight=20)
         self.rate_sheet.refresh_from_db()
@@ -2310,8 +2344,7 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
         print(self.rate_sheet.service_rates)
 
         remaining = [
-            r for r in self.rate_sheet.service_rates
-            if r.get("min_weight") == 10 and r.get("max_weight") == 20
+            r for r in self.rate_sheet.service_rates if r.get("min_weight") == 10 and r.get("max_weight") == 20
         ]
         self.assertEqual(len(remaining), 0, "All entries with 10-20 should be gone")
         # Original entries still intact
@@ -2340,11 +2373,13 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
 
         # Paket should still have it
         paket_remaining = [
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_paket.id and r.get("min_weight") == 10
         ]
         klein_remaining = [
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_kleinpaket.id and r.get("min_weight") == 10
         ]
         self.assertEqual(len(paket_remaining), 1, "Paket still has 10-20")
@@ -2361,7 +2396,8 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
 
         # Edit Paket's 5-10 range to 5-15 (per-service, NOT global)
         old_rate = next(
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_paket.id and r["min_weight"] == 5 and r["max_weight"] == 10
         )
 
@@ -2479,8 +2515,7 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
 
         # Paket should NOT have 10-20
         paket_has_10_20 = any(
-            r for r in self.rate_sheet.service_rates
-            if r["service_id"] == self.svc_paket.id and r["min_weight"] == 10
+            r for r in self.rate_sheet.service_rates if r["service_id"] == self.svc_paket.id and r["min_weight"] == 10
         )
         self.assertFalse(paket_has_10_20, "Paket should NOT get the 10-20 range")
 
@@ -2545,19 +2580,23 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
         # Now simulate per-service edit: change 5-10 → 5-15 for Paket
         # Delete old entries for Paket 5-10 (both zones)
         paket_old = [
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_paket.id and r["min_weight"] == 5 and r["max_weight"] == 10
         ]
         for r in paket_old:
             self.rate_sheet.remove_service_rate(
-                service_id=r["service_id"], zone_id=r["zone_id"],
-                min_weight=5, max_weight=10,
+                service_id=r["service_id"],
+                zone_id=r["zone_id"],
+                min_weight=5,
+                max_weight=10,
             )
 
         # Add new entries with 5-15
         for r in paket_old:
             self.rate_sheet.update_service_rate(
-                service_id=r["service_id"], zone_id=r["zone_id"],
+                service_id=r["service_id"],
+                zone_id=r["zone_id"],
                 rate_data={"rate": r["rate"], "min_weight": 5, "max_weight": 15},
             )
         self.rate_sheet.refresh_from_db()
@@ -2566,11 +2605,13 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
 
         # Paket should have 5-15 in both zones
         paket_de = next(
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_paket.id and r["zone_id"] == "zone_de" and r["min_weight"] == 5
         )
         paket_eu = next(
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_paket.id and r["zone_id"] == "zone_eu" and r["min_weight"] == 5
         )
         self.assertEqual(paket_de["max_weight"], 15)
@@ -2594,22 +2635,26 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
         self.svc_paket.zone_ids = ["zone_de", "zone_eu"]
         self.svc_paket.save()
         self.rate_sheet.update_service_rate(
-            service_id=self.svc_paket.id, zone_id="zone_eu",
+            service_id=self.svc_paket.id,
+            zone_id="zone_eu",
             rate_data={"rate": 7.99, "min_weight": 1, "max_weight": 5},
         )
         self.rate_sheet.refresh_from_db()
 
         # Delete Paket's 1-5 range from ALL zones (per-service)
         paket_1_5 = [
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_paket.id and r["min_weight"] == 1 and r["max_weight"] == 5
         ]
         self.assertEqual(len(paket_1_5), 2, "Paket has 1-5 in 2 zones")
 
         for r in paket_1_5:
             self.rate_sheet.remove_service_rate(
-                service_id=r["service_id"], zone_id=r["zone_id"],
-                min_weight=1, max_weight=5,
+                service_id=r["service_id"],
+                zone_id=r["zone_id"],
+                min_weight=1,
+                max_weight=5,
             )
         self.rate_sheet.refresh_from_db()
 
@@ -2617,7 +2662,8 @@ class TestPerServiceWeightRangeScenarios(GraphTestCase):
 
         # Paket should have no 1-5 entries
         paket_1_5_after = [
-            r for r in self.rate_sheet.service_rates
+            r
+            for r in self.rate_sheet.service_rates
             if r["service_id"] == self.svc_paket.id and r["min_weight"] == 1 and r["max_weight"] == 5
         ]
         self.assertEqual(len(paket_1_5_after), 0)
@@ -2674,8 +2720,22 @@ class TestDeleteServiceRateGraphQL(GraphTestCase):
         self.rate_sheet.service_rates = [
             {"service_id": self.service.id, "zone_id": "zone_1", "rate": 10.00, "cost": 8.00},
             {"service_id": self.service.id, "zone_id": "zone_2", "rate": 15.00, "cost": 12.00},
-            {"service_id": self.service.id, "zone_id": "zone_1", "rate": 20.00, "cost": 16.00, "min_weight": 0.0, "max_weight": 5.0},
-            {"service_id": self.service.id, "zone_id": "zone_1", "rate": 30.00, "cost": 24.00, "min_weight": 5.0, "max_weight": 10.0},
+            {
+                "service_id": self.service.id,
+                "zone_id": "zone_1",
+                "rate": 20.00,
+                "cost": 16.00,
+                "min_weight": 0.0,
+                "max_weight": 5.0,
+            },
+            {
+                "service_id": self.service.id,
+                "zone_id": "zone_1",
+                "rate": 30.00,
+                "cost": 24.00,
+                "min_weight": 5.0,
+                "max_weight": 10.0,
+            },
         ]
         self.rate_sheet.save()
 
@@ -2751,7 +2811,8 @@ class TestDeleteServiceRateGraphQL(GraphTestCase):
         service_rates = response.data["data"]["delete_service_rate"]["rate_sheet"]["service_rates"]
         # The 0-5 rate for zone_1 should be removed
         zone_1_0_5 = [
-            r for r in service_rates
+            r
+            for r in service_rates
             if r["zone_id"] == "zone_1" and r.get("min_weight") == 0 and r.get("max_weight") == 5
         ]
         self.assertEqual(len(zone_1_0_5), 0)
@@ -2800,7 +2861,10 @@ class TestDeleteServiceRateGraphQL(GraphTestCase):
         self.assertResponseNoErrors(response)
         service_rates = response.data["data"]["rate_sheet"]["service_rates"]
         zone_ids = [r["zone_id"] for r in service_rates]
-        self.assertNotIn("zone_2", [z for z, r in zip(zone_ids, service_rates) if r.get("rate") == 15.0])
+        self.assertNotIn(
+            "zone_2",
+            [z for z, r in zip(zone_ids, service_rates, strict=False) if r.get("rate") == 15.0],
+        )
 
 
 class TestBatchUpdateSurchargesGraphQL(GraphTestCase):
@@ -3029,8 +3093,6 @@ class TestWeightRangeGraphQLMutations(GraphTestCase):
         self.rate_sheet.add_weight_range(min_weight=0, max_weight=5)
         self.rate_sheet.add_weight_range(min_weight=5, max_weight=10)
         self.rate_sheet.refresh_from_db()
-        total_before = len(self.rate_sheet.service_rates)
-
         response = self.query(
             """
             mutation remove_wr($data: RemoveWeightRangeMutationInput!) {

@@ -1,24 +1,19 @@
 """Karrio USPS error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps_international.utils as provider_utils
 
 
 def parse_error_response(
-    response: typing.Union[dict, typing.List[dict]],
+    response: dict | list[dict],
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     responses = response if isinstance(response, list) else [response]
     errors: list = sum(
         [
-            (
-                response["error"]["errors"]
-                if response["error"].get("errors")
-                else [response["error"]]
-            )
+            (response["error"]["errors"] if response["error"].get("errors") else [response["error"]])
             for response in responses
             if "error" in response
         ],

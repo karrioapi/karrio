@@ -23,11 +23,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.base.uuid,
-                            *(),
-                            **{"prefix": "rsht_"}
-                        ),
+                        default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "rsht_"}),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -48,9 +44,7 @@ class Migration(migrations.Migration):
                     "metadata",
                     models.JSONField(
                         blank=True,
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                         null=True,
                     ),
                 ),

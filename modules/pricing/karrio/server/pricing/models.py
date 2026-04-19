@@ -1,16 +1,13 @@
-import typing
 import functools
-import django.db.models as models
+
 import django.core.validators as validators
-from django.contrib.contenttypes.fields import GenericRelation
-
-import karrio.lib as lib
+import django.db.models as models
 import karrio.core.models as karrio
-import karrio.server.core.models as core
+import karrio.lib as lib
 import karrio.server.core.datatypes as datatypes
-import karrio.server.providers.models as providers
+import karrio.server.core.models as core
+from django.contrib.contenttypes.fields import GenericRelation
 from karrio.server.core.logging import logger
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MARKUP TYPE ENUM
@@ -189,11 +186,7 @@ class Markup(core.Entity):
         # Check carrier code filter
         if self.carrier_codes:
             # For custom carriers (ext="generic"), check if "generic" is in the carrier list
-            if (
-                rate.meta
-                and rate.meta.get("ext") == "generic"
-                and "generic" in self.carrier_codes
-            ):
+            if rate.meta and rate.meta.get("ext") == "generic" and "generic" in self.carrier_codes:
                 applicable.append(True)
             else:
                 applicable.append(rate.carrier_name in self.carrier_codes)
@@ -225,34 +218,103 @@ class Markup(core.Entity):
                 markup_name=self.name,
             )
 
+            # Per-rate custom margin override lookup via typed PlanOverride
+            # helper. `rate.meta` is the storage dict; PlanOverride.from_dict
+            # handles partial/missing shapes.
+            from karrio.server.providers.rate_sheet_datatypes import PlanOverride
+
+            rate_meta = getattr(rate, "meta", None) if hasattr(rate, "meta") else None
+            if not isinstance(rate_meta, dict):
+                rate_meta = None
+
+            # Honor per-rate excluded markups: if this markup is in the
+            # rate's meta.excluded_markup_ids list, skip it entirely so the
+            # merchant pays only base + surcharges for this specific rate.
+            excluded = (rate_meta or {}).get("excluded_markup_ids") or []
+            if self.id in excluded:
+                return rate
+
+            override = PlanOverride.from_dict(rate_meta)
+            override_amount, override_type = override.override_for(self.id)
+
+            # Fallback: CSV imports only know the plan slug (not the markup
+            # id at write time) so the flat plan_cost_<slug> / plan_rate_<slug>
+            # keys on meta are the authoritative source. Resolve them via
+            # this markup's plan slug when the markup-id lookup misses.
+            if override_amount is None:
+                markup_plan = (self.meta or {}).get("plan") if isinstance(self.meta, dict) else None
+                if markup_plan and isinstance(rate_meta, dict):
+                    amount_by_slug = rate_meta.get(f"plan_cost_{markup_plan}")
+                    percent_by_slug = rate_meta.get(f"plan_rate_{markup_plan}")
+                    if amount_by_slug is not None:
+                        override_amount, override_type = amount_by_slug, "AMOUNT"
+                    elif percent_by_slug is not None:
+                        override_amount, override_type = percent_by_slug, "PERCENTAGE"
+
+            effective_type = override_type or self.markup_type
+            effective_value = override_amount if override_amount is not None else self.amount
+
+            # PERCENTAGE applies to the CARRIER base rate (pre-markup, pre-
+            # surcharge) so the margin is deterministic and doesn't compound
+            # with surcharges or prior markups. AMOUNT adds as-is.
+            base_rate = float(getattr(rate, "base_charge", None) or rate.total_charge)
             amount = lib.to_decimal(
-                self.amount
-                if self.markup_type == "AMOUNT"
-                else (rate.total_charge * (typing.cast(float, self.amount) / 100))
+                effective_value if effective_type == "AMOUNT" else (base_rate * (float(effective_value) / 100))
             )
             total_charge = lib.to_decimal(rate.total_charge + amount)
 
-            # Only add to extra_charges if the markup is visible.
-            # Non-visible markups (e.g., plan-based platform fees) are
-            # included in total_charge but hidden from the breakdown.
-            extra_charges = (
-                rate.extra_charges + [
+            # Extra-charges composition:
+            #   - Visible markups → appended as their own named line item.
+            #   - Invisible markups (plan platform fees) → merged INTO the
+            #     existing "Base Charge" entry so the customer sees
+            #     base_rate + margin as a single base line. Keeps the
+            #     breakdown total consistent with total_charge without
+            #     exposing a "Margin" row to the customer.
+            if self.is_visible:
+                extra_charges = list(rate.extra_charges) + [
                     karrio.ChargeDetails(
-                        name=typing.cast(str, self.name),
+                        name=str(self.name),
                         amount=amount,
                         currency=rate.currency,
                         id=self.id,
                     )
                 ]
-                if self.is_visible
-                else rate.extra_charges
-            )
+            else:
+                extra_charges = []
+                base_seen = False
+                for c in rate.extra_charges:
+                    c_name = (getattr(c, "name", "") or "").strip().lower()
+                    if not base_seen and c_name == "base charge":
+                        extra_charges.append(
+                            karrio.ChargeDetails(
+                                name=c.name,
+                                amount=lib.to_decimal((c.amount or 0) + amount),
+                                currency=c.currency,
+                                id=getattr(c, "id", None),
+                            )
+                        )
+                        base_seen = True
+                    else:
+                        extra_charges.append(c)
+                if not base_seen:
+                    # No Base Charge line to merge into — skip append so the
+                    # invisible markup stays invisible. total_charge already
+                    # reflects the added amount above.
+                    extra_charges = list(rate.extra_charges)
+
+            # For invisible markups, also update rate.base_charge so callers
+            # that read it directly (like the shipping-app price card) see
+            # the embedded amount.
+            new_base_charge = getattr(rate, "base_charge", None)
+            if not self.is_visible and new_base_charge is not None:
+                new_base_charge = lib.to_decimal(float(new_base_charge) + float(amount))
 
             return datatypes.Rate(
                 **{
                     **lib.to_dict(rate),
                     "total_charge": total_charge,
                     "extra_charges": extra_charges,
+                    **({"base_charge": new_base_charge} if new_base_charge is not None else {}),
                 }
             )
 
@@ -294,7 +356,7 @@ class Fee(models.Model):
             models.Index(fields=["markup_id", "created_at"]),
         ]
 
-    id = models.CharField(
+    id = models.CharField(  # noqa: DJ012
         max_length=50,
         primary_key=True,
         default=functools.partial(core.uuid, prefix="fee_"),
@@ -325,7 +387,7 @@ class Fee(models.Model):
     )
 
     # Markup reference (snapshot, no FK)
-    markup_id = models.CharField(
+    markup_id = models.CharField(  # noqa: DJ001
         max_length=50,
         null=True,
         blank=True,
@@ -341,7 +403,7 @@ class Fee(models.Model):
     )
 
     # Organization/Account reference (snapshot, no FK)
-    account_id = models.CharField(
+    account_id = models.CharField(  # noqa: DJ001
         max_length=50,
         null=True,
         blank=True,
@@ -359,7 +421,7 @@ class Fee(models.Model):
         max_length=50,
         help_text="Carrier code at time of shipment creation",
     )
-    service_code = models.CharField(
+    service_code = models.CharField(  # noqa: DJ001
         max_length=100,
         null=True,
         blank=True,
@@ -376,5 +438,3 @@ class Fee(models.Model):
     @property
     def object_type(self):
         return "fee"
-
-

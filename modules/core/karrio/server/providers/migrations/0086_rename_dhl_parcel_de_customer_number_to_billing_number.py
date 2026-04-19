@@ -14,9 +14,7 @@ def rename_customer_number_to_billing_number(apps, schema_editor):
     db_alias = schema_editor.connection.alias
 
     # Find all dhl_parcel_de carriers
-    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(
-        carrier_code="dhl_parcel_de"
-    )
+    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(carrier_code="dhl_parcel_de")
 
     for carrier in dhl_parcel_de_carriers:
         credentials = carrier.credentials or {}
@@ -39,9 +37,7 @@ def rename_billing_number_to_customer_number(apps, schema_editor):
     Carrier = apps.get_model("providers", "Carrier")
     db_alias = schema_editor.connection.alias
 
-    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(
-        carrier_code="dhl_parcel_de"
-    )
+    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(carrier_code="dhl_parcel_de")
 
     for carrier in dhl_parcel_de_carriers:
         credentials = carrier.credentials or {}
@@ -58,7 +54,6 @@ def rename_billing_number_to_customer_number(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0085_populate_dhl_parcel_de_oauth_credentials"),
     ]

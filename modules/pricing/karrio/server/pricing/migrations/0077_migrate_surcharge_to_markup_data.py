@@ -19,9 +19,7 @@ def migrate_surcharges_to_markups(apps, schema_editor):
 
     for surcharge in Surcharge.objects.all():
         # Get carrier account IDs from M2M relation
-        connection_ids = list(
-            surcharge.carrier_accounts.values_list("id", flat=True)
-        )
+        connection_ids = list(surcharge.carrier_accounts.values_list("id", flat=True))
 
         # Create Markup record with mapped data
         # Preserve original ID to maintain fee tracking

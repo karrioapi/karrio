@@ -1,22 +1,20 @@
 """Karrio MyDHL shipment API implementation."""
 
+import datetime
+
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.mydhl.error as error
+import karrio.providers.mydhl.units as provider_units
+import karrio.providers.mydhl.utils as provider_utils
 import karrio.schemas.mydhl.shipment_request as mydhl_req
 import karrio.schemas.mydhl.shipment_response as mydhl_res
-
-import datetime
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.mydhl.error as error
-import karrio.providers.mydhl.utils as provider_utils
-import karrio.providers.mydhl.units as provider_units
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
     paperless_response = _response.ctx.get("paperless_response") or {}
 
@@ -31,8 +29,7 @@ def parse_shipment_response(
             settings,
             ctx=_response.ctx,
         )
-        if response.get("status") is None
-        and response.get("shipmentTrackingNumber") is not None
+        if response.get("status") is None and response.get("shipmentTrackingNumber") is not None
         else None
     )
 
@@ -47,10 +44,7 @@ def _extract_details(
     tracking_number = str(shipment.shipmentTrackingNumber or "")
 
     # Collect labels from top-level documents and per-package documents
-    top_level_labels = [
-        doc.content for doc in (shipment.documents or [])
-        if doc and doc.content
-    ]
+    top_level_labels = [doc.content for doc in (shipment.documents or []) if doc and doc.content]
     package_labels = [
         doc.content
         for pkg in (shipment.packages or [])
@@ -65,15 +59,9 @@ def _extract_details(
     )
     label_format = label_doc.imageFormat if label_doc else "PDF"
     label = lib.identity(
-        labels[0] if len(labels) == 1
-        else lib.bundle_base64(labels, label_format) if len(labels) > 1
-        else ""
+        labels[0] if len(labels) == 1 else lib.bundle_base64(labels, label_format) if len(labels) > 1 else ""
     )
-    package_tracking_numbers = [
-        pkg.trackingNumber
-        for pkg in (shipment.packages or [])
-        if pkg and pkg.trackingNumber
-    ]
+    package_tracking_numbers = [pkg.trackingNumber for pkg in (shipment.packages or []) if pkg and pkg.trackingNumber]
     shipment_charge = next(iter(shipment.shipmentCharges or []), None)
 
     return models.ShipmentDetails(
@@ -87,9 +75,7 @@ def _extract_details(
             models.RateDetails(
                 carrier_id=settings.carrier_id,
                 carrier_name=settings.carrier_name,
-                service=provider_units.ShippingService.map(
-                    (ctx or {}).get("service")
-                ).name_or_key,
+                service=provider_units.ShippingService.map((ctx or {}).get("service")).name_or_key,
                 total_charge=lib.to_money(shipment_charge.price),
                 currency=shipment_charge.priceCurrency,
                 extra_charges=[
@@ -157,9 +143,7 @@ def shipment_request(
     # === Pre-computation phase ===
     service_code = provider_units.ShippingService.map(payload.service).value_or_key
     weight_unit = "metric" if packages.weight_unit == "KG" else "imperial"
-    label_format = provider_units.LabelFormat.map(
-        payload.label_type or "PDF"
-    ).value_or_key.lower()
+    label_format = provider_units.LabelFormat.map(payload.label_type or "PDF").value_or_key.lower()
     currency = options.currency.state or customs.duty.currency or "USD"
     declared_value = (
         lib.identity(
@@ -180,11 +164,7 @@ def shipment_request(
         else (
             "temporary"
             if customs.content_type == "sample"
-            else (
-                "return"
-                if customs.content_type in ["return_merchandise", "return_for_repair"]
-                else "permanent"
-            )
+            else ("return" if customs.content_type in ["return_merchandise", "return_for_repair"] else "permanent")
         )
     )
 
@@ -198,17 +178,14 @@ def shipment_request(
         current_format="%Y-%m-%d",
         output_format="%Y-%m-%dT%H:%M:%S GMT+00:00",
     )
-    planned_ship_date = lib.fdate(
-        options.shipment_date.state or datetime.datetime.now()
-    )
+    planned_ship_date = lib.fdate(options.shipment_date.state or datetime.datetime.now())
 
     # Paperless trade documents - extract commercial invoice from doc_files
     doc_files = options.doc_files.state or []
     paperless_documents = [
         doc
         for doc in doc_files
-        if doc.get("doc_type")
-        in ["commercial_invoice", "invoice", "proforma", "certificate_of_origin"]
+        if doc.get("doc_type") in ["commercial_invoice", "invoice", "proforma", "certificate_of_origin"]
         and doc.get("doc_file")
     ]
     is_paperless = is_international and any(paperless_documents)
@@ -220,9 +197,7 @@ def shipment_request(
         productCode=service_code,
         localProductCode=service_code,
         getRateEstimates=True,
-        accounts=[
-            mydhl_req.AccountType(typeCode="shipper", number=settings.account_number)
-        ],
+        accounts=[mydhl_req.AccountType(typeCode="shipper", number=settings.account_number)],
         outputImageProperties=mydhl_req.OutputImagePropertiesType(
             printerDPI=300,
             encodingFormat=label_format,
@@ -274,9 +249,7 @@ def shipment_request(
                     email=recipient.email,
                     phone=recipient.phone_number or "0000000000",
                     mobilePhone=recipient.phone_number,
-                    companyName=recipient.company_name
-                    or recipient.person_name
-                    or "N/A",
+                    companyName=recipient.company_name or recipient.person_name or "N/A",
                     fullName=recipient.person_name,
                 ),
                 typeCode="business" if recipient.company_name else "private",
@@ -297,9 +270,7 @@ def shipment_request(
                             width=int(package.width.value),
                             height=int(package.height.value),
                         )
-                        if package.length.value
-                        and package.width.value
-                        and package.height.value
+                        if package.length.value and package.width.value and package.height.value
                         else None
                     ),
                 )
@@ -309,43 +280,30 @@ def shipment_request(
             declaredValue=declared_value,
             declaredValueCurrency=currency if is_international else None,
             description=packages.description or "Shipment",
-            incoterm=lib.identity(
-                customs.incoterm or "DDU" if is_international else None
-            ),
+            incoterm=lib.identity(customs.incoterm or "DDU" if is_international else None),
             exportDeclaration=lib.identity(
                 mydhl_req.ExportDeclarationType(
                     lineItems=[
                         mydhl_req.LineItemType(
                             number=index,
-                            description=lib.text(
-                                item.description or item.title or "Commodity", max=75
-                            ),
+                            description=lib.text(item.description or item.title or "Commodity", max=75),
                             price=int(item.value_amount or 0),
                             quantity=mydhl_req.QuantityType(
                                 value=item.quantity,
                                 unitOfMeasurement="PCS",
                             ),
                             commodityCodes=(
-                                [
-                                    mydhl_req.SpecialInstructionType(
-                                        typeCode="outbound", value=item.hs_code
-                                    )
-                                ]
+                                [mydhl_req.SpecialInstructionType(typeCode="outbound", value=item.hs_code)]
                                 if item.hs_code
                                 else []
                             ),
                             exportReasonType=export_reason,
-                            manufacturerCountry=item.origin_country
-                            or shipper.country_code,
-                            weight=mydhl_req.WeightType(
-                                netValue=item.weight, grossValue=item.weight
-                            ),
+                            manufacturerCountry=item.origin_country or shipper.country_code,
+                            weight=mydhl_req.WeightType(netValue=item.weight, grossValue=item.weight),
                         )
                         for index, item in enumerate(customs.commodities, start=1)
                     ],
-                    invoice=mydhl_req.InvoiceType(
-                        number=invoice_number, date=invoice_date
-                    ),
+                    invoice=mydhl_req.InvoiceType(number=invoice_number, date=invoice_date),
                 )
                 if is_international
                 else None
@@ -371,11 +329,7 @@ def shipment_request(
                             else (
                                 "PNV"
                                 if doc.get("doc_type") == "proforma"
-                                else (
-                                    "COO"
-                                    if doc.get("doc_type") == "certificate_of_origin"
-                                    else "CIN"
-                                )
+                                else ("COO" if doc.get("doc_type") == "certificate_of_origin" else "CIN")
                             )
                         )
                     ),

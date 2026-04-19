@@ -7,7 +7,6 @@ import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0005_auto_20210204_1725"),
     ]
@@ -21,9 +20,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.uuid, *(), **{"prefix": "chrg_"}
-                        ),
+                        default=functools.partial(karrio.server.core.models.uuid, *(), **{"prefix": "chrg_"}),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -40,9 +37,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "amount",
-                    models.FloatField(
-                        help_text="The surcharge amount to add to the quote"
-                    ),
+                    models.FloatField(help_text="The surcharge amount to add to the quote"),
                 ),
                 (
                     "carriers",

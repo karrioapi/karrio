@@ -1,4 +1,5 @@
 from unittest.mock import ANY
+
 from karrio.server.graph.tests.base import GraphTestCase
 
 
@@ -42,16 +43,12 @@ class TestTokenMutation(GraphTestCase):
             }
             """,
             operation_name="mutate_token",
-            variables={
-                "data": {"refresh": True, "password": "test", "key": current_token}
-            },
+            variables={"data": {"refresh": True, "password": "test", "key": current_token}},
         )
         response_data = response.data
 
         self.assertResponseNoErrors(response)
-        self.assertFalse(
-            response_data["data"]["mutate_token"]["token"]["key"] == current_token
-        )
+        self.assertFalse(response_data["data"]["mutate_token"]["token"]["key"] == current_token)
 
 
 USER_UPDATE_DATA = {"data": {"full_name": "Marco"}}

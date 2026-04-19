@@ -1,21 +1,20 @@
-from typing import List, Tuple
-from karrio.core.utils.serializable import Serializable, Deserializable
 from karrio.api.mapper import Mapper as BaseMapper
 from karrio.core.models import (
+    Message,
     RateDetails,
     RateRequest,
-    Message,
     ShipmentDetails,
+)
+from karrio.core.utils.serializable import Deserializable, Serializable
+from karrio.mappers.generic.settings import Settings
+from karrio.universal.providers.rating import (
+    parse_rate_response,
+    rate_request,
 )
 from karrio.universal.providers.shipping import (
     parse_shipment_response,
     shipment_request,
 )
-from karrio.universal.providers.rating import (
-    parse_rate_response,
-    rate_request,
-)
-from karrio.mappers.generic.settings import Settings
 
 
 class Mapper(BaseMapper):
@@ -27,12 +26,8 @@ class Mapper(BaseMapper):
     def create_shipment_request(self, payload: Serializable) -> Serializable:
         return shipment_request(payload, self.settings)
 
-    def parse_rate_response(
-        self, response: Deserializable
-    ) -> Tuple[List[RateDetails], List[Message]]:
+    def parse_rate_response(self, response: Deserializable) -> tuple[list[RateDetails], list[Message]]:
         return parse_rate_response(response, self.settings)
 
-    def parse_shipment_response(
-        self, response: Deserializable
-    ) -> Tuple[ShipmentDetails, List[Message]]:
+    def parse_shipment_response(self, response: Deserializable) -> tuple[ShipmentDetails, list[Message]]:
         return parse_shipment_response(response, self.settings)

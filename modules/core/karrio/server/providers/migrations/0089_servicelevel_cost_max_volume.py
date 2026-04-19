@@ -4,28 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0088_servicelevel_surcharges'),
+        ("providers", "0088_servicelevel_surcharges"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='servicelevel',
-            name='cost',
+            model_name="servicelevel",
+            name="cost",
             field=models.FloatField(
                 blank=True,
                 null=True,
-                help_text='Base COGS (Cost of Goods Sold) - internal cost tracking',
+                help_text="Base COGS (Cost of Goods Sold) - internal cost tracking",
             ),
         ),
         migrations.AddField(
-            model_name='servicelevel',
-            name='max_volume',
+            model_name="servicelevel",
+            name="max_volume",
             field=models.FloatField(
                 blank=True,
                 null=True,
-                help_text='Maximum volume in liters for volumetric weight calculation',
+                help_text="Maximum volume in liters for volumetric weight calculation",
             ),
         ),
     ]

@@ -1,9 +1,7 @@
-from django.db import connection
 from django.conf import settings as base_settings
+from django.db import connection
 
-FEATURE_FLAGS = {
-    k: getattr(base_settings, k, True) for k, _ in base_settings.FEATURE_FLAGS
-}
+FEATURE_FLAGS = {k: getattr(base_settings, k, True) for k, _ in base_settings.FEATURE_FLAGS}
 DEFAULT_ALLOWED_CONFIG = [
     "APP_NAME",
     "APP_WEBSITE",

@@ -1,29 +1,24 @@
-import typer
-import karrio_cli.common.utils as utils
-import typing
 import datetime
+
+import typer
+
+import karrio_cli.common.utils as utils
 
 app = typer.Typer()
 
 
 @app.command("list")
 def list_orders(
-    created_after: typing.Optional[datetime.datetime] = None,
-    created_before: typing.Optional[datetime.datetime] = None,
-    status: typing.Optional[str] = None,
-    reference: typing.Optional[str] = None,
-    metadata_key: typing.Optional[str] = None,
-    metadata_value: typing.Optional[str] = None,
+    created_after: datetime.datetime | None = None,
+    created_before: datetime.datetime | None = None,
+    status: str | None = None,
+    reference: str | None = None,
+    metadata_key: str | None = None,
+    metadata_value: str | None = None,
     limit: int = typer.Option(20, help="Number of results to return per page"),
-    offset: int = typer.Option(
-        0, help="The initial index from which to return the results"
-    ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    offset: int = typer.Option(0, help="The initial index from which to return the results"),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     List all orders with optional filters and pagination.
@@ -75,20 +70,14 @@ def list_orders(
     # Remove None values from params
     params = {k: v for k, v in params.items() if v is not None}
 
-    utils.make_get_request(
-        "v1/orders", params=params, pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request("v1/orders", params=params, pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("retrieve")
 def retrieve_order(
     order_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Retrieve an order by ID.
@@ -98,26 +87,20 @@ def retrieve_order(
     kcli orders retrieve ord_987654321 | jq "{id, status, created: .created_at, total: .total_charge.amount, items: .line_items | length}"
     ```
     """
-    utils.make_get_request(
-        f"v1/orders/{order_id}", pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request(f"v1/orders/{order_id}", pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("cancel")
 def cancel_order(
     order_id: str,
-    property: typing.List[str] = typer.Option(
+    property: list[str] = typer.Option(
         [],
         "--property",
         "-d",
         help="Set nested properties (e.g. -d reason=customer_request)",
     ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Cancel an order.

@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.sendle as mappers
 import karrio.providers.sendle.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="sendle",

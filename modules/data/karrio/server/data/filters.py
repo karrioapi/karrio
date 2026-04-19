@@ -1,6 +1,6 @@
-import karrio.server.filters as filters
 import karrio.server.data.models as models
 import karrio.server.data.serializers as serializers
+import karrio.server.filters as filters
 
 
 class DataTemplateFilter(filters.FilterSet):
@@ -11,7 +11,7 @@ class DataTemplateFilter(filters.FilterSet):
         choices=[(c.value, c.value) for c in list(serializers.ResourceType)],
         help_text=f"""
         the data template resource type
-        Values: {', '.join([f"`{s.name}`" for s in list(serializers.ResourceType)])}
+        Values: {", ".join([f"`{s.name}`" for s in list(serializers.ResourceType)])}
         """,
     )
 
@@ -26,7 +26,7 @@ class BatchOperationFilter(filters.FilterSet):
         choices=[(c.value, c.value) for c in list(serializers.ResourceType)],
         help_text=f"""
         the batch resource type
-        Values: {', '.join([f"`{s.name}`" for s in list(serializers.ResourceType)])}
+        Values: {", ".join([f"`{s.name}`" for s in list(serializers.ResourceType)])}
         """,
     )
     status = filters.MultipleChoiceFilter(
@@ -34,7 +34,7 @@ class BatchOperationFilter(filters.FilterSet):
         choices=[(c.value, c.value) for c in list(serializers.BatchOperationStatus)],
         help_text=f"""
         the batch operation status
-        Values: {', '.join([f"`{s.name}`" for s in list(serializers.BatchOperationStatus)])}
+        Values: {", ".join([f"`{s.name}`" for s in list(serializers.BatchOperationStatus)])}
         """,
     )
 

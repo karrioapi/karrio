@@ -1,12 +1,11 @@
-import rest_framework.status as status
-
 import karrio.lib as lib
-import karrio.server.serializers as serialiazers
 import karrio.server.core.exceptions as exceptions
-import karrio.server.core.serializers as core
 import karrio.server.core.gateway as gateway
-from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
+import karrio.server.core.serializers as core
 import karrio.server.manager.models as models
+import karrio.server.serializers as serialiazers
+import rest_framework.status as status
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 
 
 @serialiazers.owned_model_serializer
@@ -106,7 +105,7 @@ def can_upload_shipment_document(shipment: models.Shipment, context=None):
 
     if shipment is None:
         raise exceptions.APIException(
-            detail=f"No purchased shipment found for trade document upload.",
+            detail="No purchased shipment found for trade document upload.",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 

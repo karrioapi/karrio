@@ -1,22 +1,21 @@
 """Karrio ParcelOne tracking implementation."""
 
-import typing
-import karrio.schemas.parcelone as parcelone
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.parcelone.error as error
-import karrio.providers.parcelone.utils as provider_utils
 import karrio.providers.parcelone.units as provider_units
+import karrio.providers.parcelone.utils as provider_utils
+import karrio.schemas.parcelone as parcelone
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     """Parse tracking response from ParcelOne TrackLMC REST API."""
     responses = _response.deserialize()
-    messages: typing.List[models.Message] = []
-    tracking_details: typing.List[models.TrackingDetails] = []
+    messages: list[models.Message] = []
+    tracking_details: list[models.TrackingDetails] = []
 
     for tracking_number, response in responses:
         # Parse errors for this response
@@ -44,16 +43,13 @@ def _extract_tracking_details(
     result: dict,
     tracking_number: str,
     settings: provider_utils.Settings,
-) -> typing.Optional[models.TrackingDetails]:
+) -> models.TrackingDetails | None:
     """Extract tracking details from API response."""
     tracking_result = lib.to_object(parcelone.TrackingResultType, result)
 
     # Parse events
     events = sorted(
-        [
-            _parse_tracking_event(event)
-            for event in (tracking_result.Events or [])
-        ],
+        [_parse_tracking_event(event) for event in (tracking_result.Events or [])],
         key=lambda e: e.timestamp or e.date or "",
         reverse=True,
     )
@@ -63,9 +59,7 @@ def _extract_tracking_details(
 
     latest_event = events[0] if events else None
     status = lib.identity(
-        provider_units.TrackingStatus.find(
-            tracking_result.StatusCode or (latest_event.code if latest_event else None)
-        )
+        provider_units.TrackingStatus.find(tracking_result.StatusCode or (latest_event.code if latest_event else None))
     )
 
     return models.TrackingDetails(

@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0038_alter_genericsettings_label_template'),
+        ("providers", "0038_alter_genericsettings_label_template"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='uspsinternationalsettings',
-            name='mailer_id',
+            model_name="uspsinternationalsettings",
+            name="mailer_id",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AlterField(
-            model_name='uspssettings',
-            name='mailer_id',
+            model_name="uspssettings",
+            name="mailer_id",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
     ]

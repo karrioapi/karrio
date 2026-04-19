@@ -7,7 +7,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0086_rename_dhl_parcel_de_customer_number_to_billing_number"),
     ]
@@ -29,9 +28,7 @@ class Migration(migrations.Migration):
                     ("webhook", "webhook"),
                     ("oauth", "oauth"),
                 ],
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": []}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": []}),
                 help_text="Select the capabilities of the carrier that you want to enable",
             ),
         ),

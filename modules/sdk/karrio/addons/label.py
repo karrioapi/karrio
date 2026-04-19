@@ -1,8 +1,9 @@
 from jinja2 import Template
-from karrio.core.utils import DP
-from karrio.core.units import Package, CountryISO
-from karrio.core.models import ShipmentRequest
+
 from karrio.addons.renderer import render_label
+from karrio.core.models import ShipmentRequest
+from karrio.core.units import CountryISO, Package
+from karrio.core.utils import DP
 from karrio.universal.providers.shipping import (
     ShippingMixinSettings,
 )

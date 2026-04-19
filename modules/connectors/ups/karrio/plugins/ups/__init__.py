@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.ups as mappers
 import karrio.providers.ups.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="ups",

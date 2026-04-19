@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestAustraliaPostRating(unittest.TestCase):
@@ -30,9 +31,7 @@ class TestAustraliaPostRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.australiapost.proxy.lib.request") as mock:
             mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
@@ -112,16 +111,14 @@ ParsedRateResponse = [
             "carrier_name": "australiapost",
             "code": "43003",
             "details": {},
-            "message": "The service T28V1N0 is not available based upon the submitted "
-            "weight of 5 kg.",
+            "message": "The service T28V1N0 is not available based upon the submitted weight of 5 kg.",
         },
         {
             "carrier_id": "australiapost",
             "carrier_name": "australiapost",
             "code": "42002",
             "details": {},
-            "message": "The service T28V1N0 is not available based upon the information "
-            "submitted.",
+            "message": "The service T28V1N0 is not available based upon the information submitted.",
         },
     ],
 ]

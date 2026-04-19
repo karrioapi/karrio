@@ -1,28 +1,24 @@
 import typing
 
-from rest_framework import status as http_status
-
+import karrio.server.core.exceptions as exceptions
+import karrio.server.manager.models as models
 from karrio.server import serializers
+from karrio.server.core.datatypes import Confirmation
+from karrio.server.core.gateway import Connections, Pickups
+from karrio.server.core.serializers import (
+    AddressData,
+    Pickup,
+    PickupCancelRequest,
+    PickupRequest,
+    PickupStatus,
+)
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 from karrio.server.serializers import (
-    owned_model_serializer,
-    save_one_to_one_data,
     Context,
     PlainDictField,
+    owned_model_serializer,
 )
-from karrio.server.core.gateway import Pickups, Connections
-from karrio.server.core.datatypes import Confirmation
-from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
-from karrio.server.core.serializers import (
-    Pickup,
-    PickupStatus,
-    AddressData,
-    PickupRequest,
-    PickupUpdateRequest,
-    PickupCancelRequest,
-)
-import karrio.server.core.exceptions as exceptions
-from karrio.server.manager.serializers import AddressSerializer
-import karrio.server.manager.models as models
+from rest_framework import status as http_status
 
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="pickup")
 
@@ -63,28 +59,19 @@ def can_mutate_pickup(
 
 
 def shipment_exists(value):
-    validation = {
-        key: models.Shipment.objects.filter(tracking_number=key) for key in value
-    }
+    validation = {key: models.Shipment.objects.filter(tracking_number=key) for key in value}
 
     if not all(val.exists() for val in validation.values()):
         invalids = [key for key, val in validation.items() if val.exists() is False]
-        raise serializers.ValidationError(
-            f"Shipment with the tracking numbers: {invalids} not found", code="invalid"
-        )
+        raise serializers.ValidationError(f"Shipment with the tracking numbers: {invalids} not found", code="invalid")
 
     if any(
-        val.first().shipment_pickup.exclude(
-            status__in=["cancelled", "closed"]
-        ).exists()
-        for val in validation.values()
+        val.first().shipment_pickup.exclude(status__in=["cancelled", "closed"]).exists() for val in validation.values()
     ):
         scheduled = [
             key
             for key, val in validation.items()
-            if val.first().shipment_pickup.exclude(
-                status__in=["cancelled", "closed"]
-            ).exists()
+            if val.first().shipment_pickup.exclude(status__in=["cancelled", "closed"]).exists()
         ]
         raise serializers.ValidationError(
             f"The following shipments {scheduled} are already scheduled for pickups",
@@ -93,29 +80,21 @@ def shipment_exists(value):
 
 
 def pickup_exists(value):
-    validation = {
-        key: models.Pickup.objects.filter(tracking_number=key).exists() for key in value
-    }
+    validation = {key: models.Pickup.objects.filter(tracking_number=key).exists() for key in value}
 
     if not all(validation.values()):
         invalids = [key for key, val in validation.items() if val is False]
-        raise serializers.ValidationError(
-            f"Shipment with the tracking numbers: {invalids} not found", code="invalid"
-        )
+        raise serializers.ValidationError(f"Shipment with the tracking numbers: {invalids} not found", code="invalid")
 
 
 def address_exists(value):
     if value is str and not models.Address.objects.filter(pk=value).exists():
-        raise serializers.ValidationError(
-            {"address": f"Address with id {value} not found: {value}"}, code="invalid"
-        )
+        raise serializers.ValidationError({"address": f"Address with id {value} not found: {value}"}, code="invalid")
 
 
 class PickupSerializer(PickupRequest):
     parcels = None
-    address = AddressData(
-        required=False, validators=[address_exists], help_text="The pickup address"
-    )
+    address = AddressData(required=False, validators=[address_exists], help_text="The pickup address")
     tracking_numbers = serializers.StringListField(
         required=False,
         validators=[shipment_exists],
@@ -127,12 +106,10 @@ class PickupSerializer(PickupRequest):
         min_value=1,
         help_text="The number of parcels to be picked up (alternative to linking shipments)",
     )
-    metadata = PlainDictField(
-        required=False, default={}, help_text="User metadata for the pickup"
-    )
+    metadata = PlainDictField(required=False, default={}, help_text="User metadata for the pickup")
 
     def __init__(self, instance: models.Pickup = None, **kwargs):
-        self._shipments: typing.List[models.Shipment] = []
+        self._shipments: list[models.Shipment] = []
 
         if "data" in kwargs:
             data = kwargs.get("data").copy()
@@ -140,18 +117,12 @@ class PickupSerializer(PickupRequest):
 
             # Only fetch shipments if tracking_numbers provided
             if tracking_numbers:
-                self._shipments = list(
-                    models.Shipment.objects.filter(
-                        tracking_number__in=tracking_numbers
-                    )
-                )
+                self._shipments = list(models.Shipment.objects.filter(tracking_number__in=tracking_numbers))
 
             # Address resolution logic
             if data.get("address") is None and instance is None:
                 # Try to get address from linked shipments
-                address = next(
-                    (s.shipper for s in self._shipments if s.shipper), None
-                )
+                address = next((s.shipper for s in self._shipments if s.shipper), None)
             elif data.get("address") is None and instance is not None:
                 # Use existing instance address
                 address = instance.address
@@ -178,23 +149,16 @@ class PickupSerializer(PickupRequest):
         # Must have at least one source of parcel info
         if not tracking_numbers and not parcels_count:
             raise serializers.ValidationError(
-                "At least one of tracking_numbers or parcels_count must be provided",
-                code="required"
+                "At least one of tracking_numbers or parcels_count must be provided", code="required"
             )
 
         # Address required for standalone pickups (no tracking_numbers)
         if not tracking_numbers and not address:
-            raise serializers.ValidationError(
-                "address is required when not linking to shipments",
-                code="required"
-            )
+            raise serializers.ValidationError("address is required when not linking to shipments", code="required")
 
         # Existing validation for multi-shipment pickups
         if len(tracking_numbers) > 1 and address is None:
-            raise serializers.ValidationError(
-                "address must be specified for multi-shipments pickup",
-                code="required"
-            )
+            raise serializers.ValidationError("address must be specified for multi-shipments pickup", code="required")
 
         return validated_data
 
@@ -249,13 +213,20 @@ class PickupData(PickupSerializer):
             parcels_list = sum([(s.parcels or []) for s in self._shipments], [])
         elif parcels_count:
             # Mode 2: Generate placeholder parcels from count
-            parcels_list = [{"id": f"parcel_{i+1}"} for i in range(parcels_count)]
+            parcels_list = [{"id": f"parcel_{i + 1}"} for i in range(parcels_count)]
         else:
             parcels_list = []
 
         # Build request data directly (address is now a JSON dict)
         # Exclude non-serializable fields from request data
-        excluded_keys = {"created_by", "carrier_filter", "carrier_code", "tracking_numbers", "parcels_count", "recurrence"}
+        excluded_keys = {
+            "created_by",
+            "carrier_filter",
+            "carrier_code",
+            "tracking_numbers",
+            "parcels_count",
+            "recurrence",
+        }
         filtered_data = {k: v for k, v in validated_data.items() if k not in excluded_keys}
 
         request_data = {
@@ -270,9 +241,7 @@ class PickupData(PickupSerializer):
 
         response = Pickups.schedule(payload=request_data, carrier=carrier, context=context)
         payload = {
-            key: value
-            for key, value in Pickup(response.pickup).data.items()
-            if key in models.Pickup.DIRECT_PROPS
+            key: value for key, value in Pickup(response.pickup).data.items() if key in models.Pickup.DIRECT_PROPS
         }
 
         # Use the address from validated_data directly (JSON field)
@@ -280,6 +249,7 @@ class PickupData(PickupSerializer):
 
         # Build meta with pickup_type, recurrence, and request_id
         from karrio.server.core.middleware import get_request_id
+
         _request_id = get_request_id()
         meta_data = {
             **(payload.get("meta") or {}),
@@ -306,9 +276,7 @@ class PickupData(PickupSerializer):
 
 @owned_model_serializer
 class PickupUpdateData(PickupSerializer):
-    confirmation_number = serializers.CharField(
-        required=True, help_text="pickup identification number"
-    )
+    confirmation_number = serializers.CharField(required=True, help_text="pickup identification number")
     pickup_date = serializers.CharField(
         required=False,
         help_text="""The expected pickup date.<br/>
@@ -358,16 +326,11 @@ class PickupUpdateData(PickupSerializer):
         # Only validate multi-shipment address requirement if tracking_numbers provided
         tracking_numbers = validated_data.get("tracking_numbers", [])
         if len(tracking_numbers) > 1 and validated_data.get("address") is None:
-            raise serializers.ValidationError(
-                "address must be specified for multi-shipments pickup",
-                code="required"
-            )
+            raise serializers.ValidationError("address must be specified for multi-shipments pickup", code="required")
 
         return validated_data
 
-    def update(
-        self, instance: models.Pickup, validated_data: dict, context: dict, **kwargs
-    ) -> models.Tracking:
+    def update(self, instance: models.Pickup, validated_data: dict, context: dict, **kwargs) -> models.Tracking:
         shipment_identifiers = [
             _
             for shipment in self._shipments
@@ -390,9 +353,7 @@ class PickupUpdateData(PickupSerializer):
 
         # Build base data from instance fields directly (not via serializer)
         # Convert date to string for serializer validation
-        pickup_date = (
-            str(instance.pickup_date) if instance.pickup_date else None
-        )
+        pickup_date = str(instance.pickup_date) if instance.pickup_date else None
         base_data = {
             "pickup_date": pickup_date,
             "address": existing_address,
@@ -453,16 +414,10 @@ class PickupUpdateData(PickupSerializer):
 
 
 class PickupCancelData(serializers.Serializer):
-    reason = serializers.CharField(
-        required=False, help_text="The reason of the pickup cancellation"
-    )
+    reason = serializers.CharField(required=False, help_text="The reason of the pickup cancellation")
 
-    def update(
-        self, instance: models.Pickup, validated_data: dict, context: Context = None, **kwargs
-    ) -> Confirmation:
-        request = PickupCancelRequest(
-            {**PickupCancelRequest(instance).data, **validated_data}
-        )
+    def update(self, instance: models.Pickup, validated_data: dict, context: Context = None, **kwargs) -> Confirmation:
+        request = PickupCancelRequest({**PickupCancelRequest(instance).data, **validated_data})
         # Resolve carrier from snapshot for API call
         carrier = resolve_carrier(instance.carrier, context)
         Pickups.cancel(payload=request.data, carrier=carrier, context=context)

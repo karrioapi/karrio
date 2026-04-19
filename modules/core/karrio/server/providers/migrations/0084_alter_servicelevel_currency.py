@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0083_add_optimized_rate_sheet_structure"),
     ]

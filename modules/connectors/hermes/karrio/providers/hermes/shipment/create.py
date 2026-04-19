@@ -1,16 +1,15 @@
 """Karrio Hermes shipment API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.hermes.error as error
-import karrio.providers.hermes.utils as provider_utils
 import karrio.providers.hermes.units as provider_units
+import karrio.providers.hermes.utils as provider_utils
 import karrio.schemas.hermes.shipment_request as hermes_req
 import karrio.schemas.hermes.shipment_response as hermes_res
 
 
-def _split_name(name: typing.Optional[str]) -> typing.Tuple[str, str]:
+def _split_name(name: str | None) -> tuple[str, str]:
     """Split full name into firstname and lastname for Hermes API."""
     if not name:
         return (None, None)
@@ -21,14 +20,14 @@ def _split_name(name: typing.Optional[str]) -> typing.Tuple[str, str]:
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails | None, list[models.Message]]:
     """Parse Hermes shipment response for single or multi-piece shipments."""
     responses = _response.deserialize()
 
     # Collect all messages from all responses
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response in responses],
         start=[],
     )
@@ -40,8 +39,7 @@ def parse_shipment_response(
             _extract_details(response, settings),
         )
         for idx, response in enumerate(responses, start=1)
-        if isinstance(response, dict)
-        and (response.get("shipmentID") or response.get("shipmentOrderID"))
+        if isinstance(response, dict) and (response.get("shipmentID") or response.get("shipmentOrderID"))
     ]
 
     # Use lib.to_multi_piece_shipment() to aggregate multi-piece shipments
@@ -188,9 +186,7 @@ def shipment_request(
                 parcelDepth=lib.to_int(package.length.MM),
                 parcelWeight=lib.to_int(package.weight.G),
                 parcelVolume=None,
-                productType=provider_units.PackagingType.map(
-                    package.packaging_type or "your_packaging"
-                ).value,
+                productType=provider_units.PackagingType.map(package.packaging_type or "your_packaging").value,
             ),
             # Services - single tree instantiation with all options inline
             service=lib.identity(
@@ -283,27 +279,29 @@ def shipment_request(
                     excludeParcelShopAuthorization=options.hermes_exclude_parcel_shop_auth.state,
                     lateInjectionService=options.hermes_late_injection.state,
                 )
-                if any([
-                    options.hermes_tan_service.state,
-                    is_multi_piece,
-                    options.hermes_number_of_parts.state,
-                    options.hermes_limited_quantities.state,
-                    options.hermes_cod_amount.state,
-                    options.hermes_bulk_goods.state,
-                    options.hermes_time_slot.state,
-                    options.hermes_household_signature.state,
-                    options.hermes_notification_email.state,
-                    options.hermes_parcel_shop_id.state,
-                    options.hermes_compact_parcel.state,
-                    options.hermes_ident_fsk.state,
-                    options.hermes_ident_id.state,
-                    options.hermes_stated_day.state,
-                    options.hermes_next_day.state,
-                    options.hermes_signature.state,
-                    options.hermes_redirection_prohibited.state,
-                    options.hermes_exclude_parcel_shop_auth.state,
-                    options.hermes_late_injection.state,
-                ])
+                if any(
+                    [
+                        options.hermes_tan_service.state,
+                        is_multi_piece,
+                        options.hermes_number_of_parts.state,
+                        options.hermes_limited_quantities.state,
+                        options.hermes_cod_amount.state,
+                        options.hermes_bulk_goods.state,
+                        options.hermes_time_slot.state,
+                        options.hermes_household_signature.state,
+                        options.hermes_notification_email.state,
+                        options.hermes_parcel_shop_id.state,
+                        options.hermes_compact_parcel.state,
+                        options.hermes_ident_fsk.state,
+                        options.hermes_ident_id.state,
+                        options.hermes_stated_day.state,
+                        options.hermes_next_day.state,
+                        options.hermes_signature.state,
+                        options.hermes_redirection_prohibited.state,
+                        options.hermes_exclude_parcel_shop_auth.state,
+                        options.hermes_late_injection.state,
+                    ]
+                )
                 else None
             ),
             # Customs for international shipments - inline
@@ -326,7 +324,8 @@ def shipment_request(
                             url=None,
                         )
                         for item in (customs.commodities or [])
-                    ] or None,
+                    ]
+                    or None,
                     invoiceReferences=None,
                     value=None,
                     exportCustomsClearance=None,

@@ -1,9 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
-import karrio.sdk as karrio
-import karrio.lib as lib
+from unittest.mock import patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestDHLParcelDEPickup(unittest.TestCase):
@@ -49,30 +51,20 @@ class TestDHLParcelDEPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_cancel_pickup_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = PickupCancelResponse
-            parsed_response = (
-                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelPickupResponse
-            )
+            parsed_response = karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelPickupResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = PickupErrorResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedPickupErrorResponse
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupErrorResponse)
 
 
 if __name__ == "__main__":

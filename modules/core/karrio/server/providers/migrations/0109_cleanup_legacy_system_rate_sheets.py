@@ -17,14 +17,10 @@ def cleanup_legacy_system_rate_sheets(apps, schema_editor):
 
     deleted, _ = RateSheet.objects.filter(id__in=system_ids).delete()
     if deleted:
-        print(
-            f"\n  Cleanup: deleted {deleted} legacy RateSheet row(s) "
-            f"migrated to SystemRateSheet"
-        )
+        print(f"\n  Cleanup: deleted {deleted} legacy RateSheet row(s) migrated to SystemRateSheet")
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0108_clear_dhl_parcel_de_username_password"),
     ]

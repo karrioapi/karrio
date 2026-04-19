@@ -1,10 +1,10 @@
 import csv
-import typing
 import pathlib
+import typing
 
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class PackagingType(lib.StrEnum):
@@ -152,7 +152,7 @@ class ShippingService(lib.StrEnum):
         return f"USPS {product_name}"
 
     @classmethod
-    def to_mail_class(cls, product_code: str) -> typing.Optional['ShippingService']:
+    def to_mail_class(cls, product_code: str) -> typing.Optional["ShippingService"]:
         """Convert product code to mail class
 
         to_mail_class("usps_priority_mail_padded_flat_rate_envelope") -> "PRIORITY_MAIL"
@@ -163,11 +163,7 @@ class ShippingService(lib.StrEnum):
         Returns:
             str: ShippingService
         """
-        return ShippingService.map(
-            next((
-                service for service in list(cls) if service.name in product_code
-            ), None)
-        )
+        return ShippingService.map(next((service for service in list(cls) if service.name in product_code), None))
 
 
 INCOMPATIBLE_SERVICES = [
@@ -315,6 +311,7 @@ class TrackingIncidentReason(lib.Enum):
 
     Based on USPS API exception/status codes.
     """
+
     # Carrier-caused issues
     carrier_damaged_parcel = ["DAMAGED", "DMG"]
     carrier_sorting_error = ["MISROUTED", "MSR"]
@@ -355,7 +352,7 @@ def load_services_from_csv() -> list:
     if not csv_path.exists():
         return []
     services_dict: dict[str, dict] = {}
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -382,7 +379,9 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                transit_days=int(row["transit_days"].split("-")[0])
+                if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit()
+                else None,
                 country_codes=country_codes if country_codes else None,
             )
             services_dict[karrio_service_code]["zones"].append(zone)

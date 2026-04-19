@@ -1,13 +1,14 @@
-import json
 import dataclasses
-from django.urls import reverse
-from rest_framework import status
-from django.contrib.auth import get_user_model
-from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
+import json
 
+import karrio.server.providers.models as providers
+from django.contrib.auth import get_user_model
+from django.urls import reverse
 from karrio.server.core.logging import logger
 from karrio.server.user.models import Token
-import karrio.server.providers.models as providers
+from rest_framework import status
+from rest_framework.test import APIClient
+from rest_framework.test import APITestCase as BaseAPITestCase
 
 
 @dataclasses.dataclass
@@ -29,18 +30,19 @@ class GraphTestCase(BaseAPITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         # Setup user and API Token (once per class).
-        cls.user = get_user_model().objects.create_superuser(
-            "admin@example.com", "test"
-        )
+        cls.user = get_user_model().objects.create_superuser("admin@example.com", "test")
         cls.token = Token.objects.create(user=cls.user, test_mode=False)
 
         # Create organization for multi-org support (if enabled).
         from django.conf import settings
+
         if settings.MULTI_ORGANIZATIONS:
             from karrio.server.orgs.models import Organization, TokenLink
+
             cls.organization = Organization.objects.create(
                 name="Test Organization",
                 slug="test-org",
+                metadata={"tenantId": "test-tenant-id"},
             )
             owner = cls.organization.add_user(cls.user, is_admin=True)
             cls.organization.change_owner(owner)
@@ -146,9 +148,7 @@ class GraphTestCase(BaseAPITestCase):
             operation_name=operation_name,
         )
 
-        response = self.client.post(
-            url, data, **({"x-org-id": org_id} if org_id else {})
-        )
+        response = self.client.post(url, data, **({"x-org-id": org_id} if org_id else {}))
 
         return Result(
             status_code=response.status_code,

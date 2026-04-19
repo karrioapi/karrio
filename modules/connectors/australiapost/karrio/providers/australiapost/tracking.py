@@ -1,18 +1,16 @@
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.australiapost.error as error
+import karrio.providers.australiapost.units as provider_units
+import karrio.providers.australiapost.utils as provider_utils
 import karrio.schemas.australiapost.tracking_request as australiapost
 import karrio.schemas.australiapost.tracking_response as tracking
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.australiapost.error as error
-import karrio.providers.australiapost.utils as provider_utils
-import karrio.providers.australiapost.units as provider_units
 
 
 def parse_tracking_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     response = _response.deserialize()
     tracking_results = response.get("tracking_results") or []
     messages = sum(
@@ -28,9 +26,7 @@ def parse_tracking_response(
         start=error.parse_error_response(response, settings),
     )
     tracking_details = [
-        _extract_details(details, settings)
-        for details in tracking_results
-        if "trackable_items" in details
+        _extract_details(details, settings) for details in tracking_results if "trackable_items" in details
     ]
 
     return tracking_details, messages
@@ -43,11 +39,7 @@ def _extract_details(
     detail = lib.to_object(tracking.TrackingResultType, data)
     item = detail.trackable_items[0]
     status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if item.status in status.value
-        ),
+        (status.name for status in list(provider_units.TrackingStatus) if item.status in status.value),
         provider_units.TrackingStatus.in_transit.name,
     )
 
@@ -63,19 +55,11 @@ def _extract_details(
                 time=lib.flocaltime(event.date, "%Y-%m-%dT%H:%M:%S%z"),
                 timestamp=lib.fiso_timestamp(event.date, current_format="%Y-%m-%dT%H:%M:%S%z"),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if item.status in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if item.status in s.value),
                     None,
                 ),
                 reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if item.status in r.value
-                    ),
+                    (r.name for r in list(provider_units.TrackingIncidentReason) if item.status in r.value),
                     None,
                 ),
             )

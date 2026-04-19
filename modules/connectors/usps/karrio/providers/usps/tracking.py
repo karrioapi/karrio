@@ -1,33 +1,24 @@
 """Karrio USPS tracking API implementation."""
 
-import karrio.schemas.usps.tracking_response as tracking
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps.error as error
-import karrio.providers.usps.utils as provider_utils
 import karrio.providers.usps.units as provider_units
+import karrio.providers.usps.utils as provider_utils
+import karrio.schemas.usps.tracking_response as tracking
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
-        [
-            error.parse_error_response(response, settings, tracking_number=_)
-            for _, response in responses
-        ],
+    messages: list[models.Message] = sum(
+        [error.parse_error_response(response, settings, tracking_number=_) for _, response in responses],
         start=[],
     )
-    tracking_details = [
-        _extract_details(details, settings)
-        for _, details in responses
-        if "error" not in details
-    ]
+    tracking_details = [_extract_details(details, settings) for _, details in responses if "error" not in details]
 
     return tracking_details, messages
 
@@ -41,14 +32,8 @@ def _extract_details(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if any(
-                _.lower() in getattr(details, "status", "").lower()
-                for _ in status.value
-            )
-            or any(
-                _.lower() in getattr(details, "statusCategory", "").lower()
-                for _ in status.value
-            )
+            if any(_.lower() in getattr(details, "status", "").lower() for _ in status.value)
+            or any(_.lower() in getattr(details, "statusCategory", "").lower() for _ in status.value)
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
@@ -84,19 +69,12 @@ def _extract_details(
                     (
                         s.name
                         for s in list(provider_units.TrackingStatus)
-                        if any(
-                            _.lower() in (event.eventType or "").lower()
-                            for _ in s.value
-                        )
+                        if any(_.lower() in (event.eventType or "").lower() for _ in s.value)
                     ),
                     None,
                 ),
                 reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.eventCode in r.value
-                    ),
+                    (r.name for r in list(provider_units.TrackingIncidentReason) if event.eventCode in r.value),
                     None,
                 ),
             )

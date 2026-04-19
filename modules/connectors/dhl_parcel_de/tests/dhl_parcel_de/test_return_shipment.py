@@ -1,31 +1,26 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestDPDHLGermanyReturnShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ReturnShipmentRequest = models.ShipmentRequest(**ReturnShipmentPayload)
-        self.ReturnShipmentWithCustomsRequest = models.ShipmentRequest(
-            **ReturnShipmentWithCustomsPayload
-        )
+        self.ReturnShipmentWithCustomsRequest = models.ShipmentRequest(**ReturnShipmentWithCustomsPayload)
 
     def test_create_return_shipment_request(self):
-        request = gateway.mapper.create_return_shipment_request(
-            self.ReturnShipmentRequest
-        )
+        request = gateway.mapper.create_return_shipment_request(self.ReturnShipmentRequest)
 
         self.assertEqual(request.serialize(), ReturnShipmentRequest)
 
     def test_create_return_shipment_with_customs_request(self):
-        request = gateway.mapper.create_return_shipment_request(
-            self.ReturnShipmentWithCustomsRequest
-        )
+        request = gateway.mapper.create_return_shipment_request(self.ReturnShipmentWithCustomsRequest)
 
         self.assertEqual(request.serialize(), ReturnShipmentWithCustomsRequest)
 
@@ -42,28 +37,16 @@ class TestDPDHLGermanyReturnShipment(unittest.TestCase):
     def test_parse_return_shipment_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ReturnShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ReturnShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ReturnShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedReturnShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedReturnShipmentResponse)
 
     def test_parse_return_shipment_error_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ReturnShipmentErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ReturnShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ReturnShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedReturnShipmentErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedReturnShipmentErrorResponse)
 
 
 if __name__ == "__main__":

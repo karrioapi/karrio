@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0079_alter_carrier_options_alter_ratesheet_created_by"),
     ]

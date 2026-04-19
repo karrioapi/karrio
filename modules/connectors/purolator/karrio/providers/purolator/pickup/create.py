@@ -1,47 +1,44 @@
-from typing import Tuple, List, Union
 from functools import partial
-from karrio.schemas.purolator.pickup_service_1_2_1 import (
-    SchedulePickUpResponse,
-    SchedulePickUpRequest,
-    RequestContext,
-    Address,
-    PhoneNumber,
-    PickupInstruction,
-    Weight,
-    WeightUnit,
-    NotificationEmails,
-)
+
 import karrio.lib as lib
-from karrio.core.units import Phone, Packages
 from karrio.core.models import (
-    PickupUpdateRequest,
-    PickupRequest,
-    PickupDetails,
     Message,
+    PickupDetails,
+    PickupRequest,
+    PickupUpdateRequest,
 )
+from karrio.core.units import Packages, Phone
 from karrio.core.utils import (
+    XP,
+    Element,
+    Job,
+    Pipeline,
     Serializable,
     create_envelope,
-    Element,
-    Pipeline,
-    Job,
-    XP,
 )
-from karrio.providers.purolator.pickup.validate import validate_pickup_request
 from karrio.providers.purolator.error import parse_error_response
-from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.providers.purolator.pickup.validate import validate_pickup_request
 from karrio.providers.purolator.units import PackagePresets
-import karrio.lib as lib
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.schemas.purolator.pickup_service_1_2_1 import (
+    Address,
+    NotificationEmails,
+    PhoneNumber,
+    PickupInstruction,
+    RequestContext,
+    SchedulePickUpRequest,
+    SchedulePickUpResponse,
+    Weight,
+    WeightUnit,
+)
 
 
 def parse_pickup_response(
     _response: lib.Deserializable[Element],
     settings: Settings,
-) -> Tuple[PickupDetails, List[Message]]:
+) -> tuple[PickupDetails, list[Message]]:
     response = _response.deserialize()
-    reply = XP.find(
-        "SchedulePickUpResponse", response, SchedulePickUpResponse, first=True
-    )
+    reply = XP.find("SchedulePickUpResponse", response, SchedulePickUpResponse, first=True)
     pickup = (
         _extract_pickup_details(reply, settings)
         if reply is not None and reply.PickUpConfirmationNumber is not None
@@ -51,9 +48,7 @@ def parse_pickup_response(
     return pickup, parse_error_response(response, settings)
 
 
-def _extract_pickup_details(
-    reply: SchedulePickUpResponse, settings: Settings
-) -> PickupDetails:
+def _extract_pickup_details(reply: SchedulePickUpResponse, settings: Settings) -> PickupDetails:
     return PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -75,10 +70,13 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
     if pickup_type not in ("one_time", None):
         import karrio.lib as lib
-        raise lib.exceptions.FieldError({
-            "pickup_type": f"Purolator only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
-            "For daily/recurring pickups, please contact Purolator to set up a regular pickup schedule."
-        })
+
+        raise lib.exceptions.FieldError(
+            {
+                "pickup_type": f"Purolator only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+                "For daily/recurring pickups, please contact Purolator to set up a regular pickup schedule."
+            }
+        )
 
     request: Pipeline = Pipeline(
         validate=lambda *_: _validate_pickup(payload=payload, settings=settings),
@@ -88,9 +86,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     return Serializable(request)
 
 
-def _schedule_pickup_request(
-    payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
-) -> Serializable:
+def _schedule_pickup_request(payload: PickupRequest | PickupUpdateRequest, settings: Settings) -> Serializable:
     """
     Create a serializable typed Envelope containing a SchedulePickUpRequest
 
@@ -120,9 +116,7 @@ def _schedule_pickup_request(
                 Date=payload.pickup_date,
                 AnyTimeAfter="".join(payload.ready_time.split(":")),
                 UntilTime="".join(payload.closing_time.split(":")),
-                TotalWeight=Weight(
-                    Value=packages.weight.LB, WeightUnit=WeightUnit.LB.value
-                ),
+                TotalWeight=Weight(Value=packages.weight.LB, WeightUnit=WeightUnit.LB.value),
                 TotalPieces=len(packages) or 1,
                 BoxesIndicator=None,
                 PickUpLocation=payload.package_location,
@@ -166,17 +160,13 @@ def _schedule_pickup_request(
     return Serializable(request, partial(standard_request_serializer, version="v1"))
 
 
-def _validate_pickup(
-    payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
-):
+def _validate_pickup(payload: PickupRequest | PickupUpdateRequest, settings: Settings):
     data = validate_pickup_request(payload, settings)
 
     return Job(id="validate", data=data)
 
 
-def _schedule_pickup(
-    validation_response: str, payload: PickupRequest, settings: Settings
-):
+def _schedule_pickup(validation_response: str, payload: PickupRequest, settings: Settings):
     errors = parse_error_response(XP.to_xml(validation_response), settings)
     data = _schedule_pickup_request(payload, settings) if len(errors) == 0 else None
 

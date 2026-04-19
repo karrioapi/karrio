@@ -1,8 +1,8 @@
 """Karrio DHL Parcel Poland client settings."""
 
-from karrio.schemas.dhl_poland.services import AuthData
 from karrio.core.settings import Settings as BaseSettings
-from karrio.core.utils import Envelope, apply_namespaceprefix, XP
+from karrio.core.utils import XP, Envelope, apply_namespaceprefix
+from karrio.schemas.dhl_poland.services import AuthData
 
 
 class Settings(BaseSettings):
@@ -41,10 +41,7 @@ class Settings(BaseSettings):
 
     @staticmethod
     def serialize(envelope: Envelope, request_name: str, namesapce: str) -> str:
-        namespacedef_ = (
-            'xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"'
-            f' xmlns="{namesapce}"'
-        )
+        namespacedef_ = f'xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns="{namesapce}"'
         envelope.ns_prefix_ = "soap-env"
         envelope.Body.ns_prefix_ = envelope.ns_prefix_
 
@@ -52,11 +49,11 @@ class Settings(BaseSettings):
         return (
             XP.export(envelope, namespacedef_=namespacedef_)
             .replace(
-                "<%s:%s" % (envelope.ns_prefix_, request_name),
-                "<%s%s" % ("", request_name),
+                f"<{envelope.ns_prefix_}:{request_name}",
+                f"<{request_name}",
             )
             .replace(
-                "</%s:%s" % (envelope.ns_prefix_, request_name),
-                "</%s%s" % ("", request_name),
+                f"</{envelope.ns_prefix_}:{request_name}",
+                f"</{request_name}",
             )
         )

@@ -14,12 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from contextlib import suppress
+
+from constance.admin import Config
 from django.conf import settings
-from django.urls import include, path
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from constance.admin import Config
-
+from django.urls import include, path
 
 BASE_PATH = getattr(settings, "BASE_PATH", "")
 
@@ -27,13 +28,11 @@ admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
 
-try:
+with suppress(Exception):
     if getattr(settings, "MULTI_TENANTS", False):
         admin.site.unregister([Config])
 
     admin.autodiscover()
-except:
-    pass
 
 urlpatterns = [
     path(

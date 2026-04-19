@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0065_servicelevel_carrier_service_code_and_more"),
     ]

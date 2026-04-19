@@ -1,12 +1,13 @@
 """MyDHL carrier shipment tests."""
 
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestMyDHLShipment(unittest.TestCase):
@@ -22,25 +23,18 @@ class TestMyDHLShipment(unittest.TestCase):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipments"
-            )
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/shipments")
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -58,7 +52,7 @@ ShipmentPayload = {
         "person_name": "John Doe",
         "company_name": "Test Company",
         "phone_number": "1234567890",
-        "email": "shipper@example.com"
+        "email": "shipper@example.com",
     },
     "recipient": {
         "address_line1": "456 Broadway",
@@ -69,17 +63,19 @@ ShipmentPayload = {
         "person_name": "Jane Smith",
         "company_name": "Recipient Corp",
         "phone_number": "0987654321",
-        "email": "recipient@example.com"
+        "email": "recipient@example.com",
     },
-    "parcels": [{
-        "weight": 5.0,
-        "width": 20.0,
-        "height": 15.0,
-        "length": 25.0,
-        "weight_unit": "KG",
-        "dimension_unit": "CM",
-    }],
-    "service": "mydhl_express_worldwide"
+    "parcels": [
+        {
+            "weight": 5.0,
+            "width": 20.0,
+            "height": 15.0,
+            "length": 25.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        }
+    ],
+    "service": "mydhl_express_worldwide",
 }
 
 ShipmentRequest = {
@@ -92,9 +88,7 @@ ShipmentRequest = {
     "outputImageProperties": {
         "printerDPI": 300,
         "encodingFormat": "pdf",
-        "imageOptions": [
-            {"typeCode": "label", "templateName": "ECOM26_84_001", "isRequested": True}
-        ]
+        "imageOptions": [{"typeCode": "label", "templateName": "ECOM26_84_001", "isRequested": True}],
     },
     "customerDetails": {
         "shipperDetails": {
@@ -104,16 +98,16 @@ ShipmentRequest = {
                 "countryCode": "US",
                 "provinceCode": "CA",
                 "addressLine1": "123 Main Street",
-                "countryName": "United States"
+                "countryName": "United States",
             },
             "contactInformation": {
                 "email": "shipper@example.com",
                 "phone": "1234567890",
                 "mobilePhone": "1234567890",
                 "companyName": "Test Company",
-                "fullName": "John Doe"
+                "fullName": "John Doe",
             },
-            "typeCode": "business"
+            "typeCode": "business",
         },
         "receiverDetails": {
             "postalAddress": {
@@ -122,29 +116,24 @@ ShipmentRequest = {
                 "countryCode": "US",
                 "provinceCode": "NY",
                 "addressLine1": "456 Broadway",
-                "countryName": "United States"
+                "countryName": "United States",
             },
             "contactInformation": {
                 "email": "recipient@example.com",
                 "phone": "0987654321",
                 "mobilePhone": "0987654321",
                 "companyName": "Recipient Corp",
-                "fullName": "Jane Smith"
+                "fullName": "Jane Smith",
             },
-            "typeCode": "business"
-        }
+            "typeCode": "business",
+        },
     },
     "content": {
-        "packages": [
-            {
-                "weight": 5.0,
-                "dimensions": {"length": 25, "width": 20, "height": 15}
-            }
-        ],
+        "packages": [{"weight": 5.0, "dimensions": {"length": 25, "width": 20, "height": 15}}],
         "isCustomsDeclarable": False,
         "description": "Shipment",
-        "unitOfMeasurement": "metric"
-    }
+        "unitOfMeasurement": "metric",
+    },
 }
 
 ShipmentResponse = """{
@@ -184,10 +173,10 @@ ParsedShipmentResponse = [
         },
         "meta": {
             "tracking_url": "https://www.dhl.com/tracking?trackingNumber=9356579890",
-            "package_tracking_numbers": ["9356579890"]
-        }
+            "package_tracking_numbers": ["9356579890"],
+        },
     },
-    []
+    [],
 ]
 
 ParsedErrorResponse = [
@@ -198,10 +187,7 @@ ParsedErrorResponse = [
             "carrier_name": "mydhl",
             "code": "400",
             "message": "Invalid shipment request - missing required field",
-            "details": {
-                "instance": "/shipments",
-                "title": "Bad Request"
-            }
+            "details": {"instance": "/shipments", "title": "Bad Request"},
         }
-    ]
+    ],
 ]

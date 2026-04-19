@@ -1,23 +1,21 @@
-from karrio.schemas.ups.document_upload_response import FormsHistoryDocumentIDType
-import karrio.schemas.ups.document_upload_request as ups
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.ups.error as error
 import karrio.providers.ups.units as provider_units
 import karrio.providers.ups.utils as provider_utils
+import karrio.schemas.ups.document_upload_request as ups
+from karrio.schemas.ups.document_upload_response import FormsHistoryDocumentIDType
 
 
 def parse_document_upload_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+) -> tuple[models.DocumentUploadDetails, list[models.Message]]:
     response = _response.deserialize()
     raw_documents = response.get("UploadResponse", {}).get("FormsHistoryDocumentID")
     details = _extract_details(raw_documents, settings) if raw_documents else None
-    messages: typing.List[models.Message] = error.parse_error_response(
+    messages: list[models.Message] = error.parse_error_response(
         response,
         settings=settings,
     )
@@ -26,14 +24,12 @@ def parse_document_upload_response(
 
 
 def _extract_details(
-    raw_documents: typing.Union[typing.List[dict], dict],
+    raw_documents: list[dict] | dict,
     settings: provider_utils.Settings,
 ) -> models.DocumentUploadDetails:
-    documents: typing.List[FormsHistoryDocumentIDType] = [
+    documents: list[FormsHistoryDocumentIDType] = [
         lib.to_object(FormsHistoryDocumentIDType, doc)
-        for doc in (
-            raw_documents if isinstance(raw_documents, list) else [raw_documents]
-        )
+        for doc in (raw_documents if isinstance(raw_documents, list) else [raw_documents])
     ]
 
     return models.DocumentUploadDetails(

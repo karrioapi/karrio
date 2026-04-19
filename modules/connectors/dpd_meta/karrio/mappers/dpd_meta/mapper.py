@@ -1,11 +1,10 @@
 """Karrio DPD Group client mapper."""
 
-import typing
-import karrio.lib as lib
 import karrio.api.mapper as mapper
 import karrio.core.models as models
-import karrio.providers.dpd_meta as provider
+import karrio.lib as lib
 import karrio.mappers.dpd_meta.settings as provider_settings
+import karrio.providers.dpd_meta as provider
 import karrio.universal.providers.rating as universal_provider
 
 
@@ -17,35 +16,29 @@ class Mapper(mapper.Mapper):
 
     def parse_rate_response(
         self, response: lib.Deserializable[str]
-    ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    ) -> tuple[list[models.RateDetails], list[models.Message]]:
         return universal_provider.parse_rate_response(response, self.settings)
 
-    def create_shipment_request(
-        self, payload: models.ShipmentRequest
-    ) -> lib.Serializable:
+    def create_shipment_request(self, payload: models.ShipmentRequest) -> lib.Serializable:
         return provider.shipment_request(payload, self.settings)
-    
-    def create_pickup_request(
-        self, payload: models.PickupRequest
-    ) -> lib.Serializable:
+
+    def create_pickup_request(self, payload: models.PickupRequest) -> lib.Serializable:
         return provider.pickup_request(payload, self.settings)
 
     def parse_pickup_response(
         self, response: lib.Deserializable[str]
-    ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+    ) -> tuple[models.PickupDetails, list[models.Message]]:
         return provider.parse_pickup_response(response, self.settings)
-    
+
     def parse_shipment_response(
         self, response: lib.Deserializable[str]
-    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ShipmentDetails, list[models.Message]]:
         return provider.parse_shipment_response(response, self.settings)
 
-    def create_return_shipment_request(
-        self, payload: models.ShipmentRequest
-    ) -> lib.Serializable:
+    def create_return_shipment_request(self, payload: models.ShipmentRequest) -> lib.Serializable:
         return provider.return_shipment_request(payload, self.settings)
 
     def parse_return_shipment_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ShipmentDetails, list[models.Message]]:
         return provider.parse_return_shipment_response(response, self.settings)

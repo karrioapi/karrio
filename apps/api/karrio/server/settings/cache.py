@@ -1,11 +1,11 @@
 # type: ignore
-import sys
+# ruff: noqa: F403, F405
 import socket
-from decouple import config
-from karrio.server.settings.base import *
-from karrio.server.settings.apm import HEALTH_CHECK_APPS, HEALTH_CHECK_CHECKS
-from karrio.server.core.logging import logger
+import sys
 
+from decouple import config
+from karrio.server.settings.apm import HEALTH_CHECK_CHECKS
+from karrio.server.settings.base import *
 
 CACHE_TTL = 60 * 15
 
@@ -30,8 +30,7 @@ REDIS_SSL = config("REDIS_SSL", default=False, cast=bool)
 
 # Parse REDIS_URL or construct from individual parameters
 if REDIS_URL is not None:
-    from urllib.parse import urlparse, urlunparse
-    import re
+    from urllib.parse import urlparse
 
     parsed = urlparse(REDIS_URL)
 
@@ -61,18 +60,14 @@ else:
         REDIS_DB = config("REDIS_CACHE_DB", default="0")
         REDIS_AUTH = f"{REDIS_USERNAME}:{REDIS_PASSWORD}@" if REDIS_PASSWORD else ""
         REDIS_SCHEME = "rediss" if REDIS_SSL else "redis"
-        REDIS_CONNECTION_URL = (
-            f'{REDIS_SCHEME}://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT or "6379"}/{REDIS_DB}'
-        )
+        REDIS_CONNECTION_URL = f"{REDIS_SCHEME}://{REDIS_AUTH}{REDIS_HOST}:{REDIS_PORT or '6379'}/{REDIS_DB}"
 
 # Configure Django cache if Redis is available and not in worker mode
 if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
     # Configure connection pool with max_connections to prevent exhaustion
     # Default: 50 connections per process (2 Gunicorn workers = 100 total)
     # Azure Redis Basic: 256 max connections total
-    REDIS_CACHE_MAX_CONNECTIONS = config(
-        "REDIS_CACHE_MAX_CONNECTIONS", default=50, cast=int
-    )
+    REDIS_CACHE_MAX_CONNECTIONS = config("REDIS_CACHE_MAX_CONNECTIONS", default=50, cast=int)
 
     pool_kwargs = {"max_connections": REDIS_CACHE_MAX_CONNECTIONS}
     if REDIS_SSL:
@@ -84,11 +79,7 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
             "LOCATION": REDIS_CONNECTION_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                **(
-                    {"CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": None}}
-                    if REDIS_SSL
-                    else {}
-                ),
+                **({"CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": None}} if REDIS_SSL else {}),
             },
             "KEY_PREFIX": REDIS_PREFIX,
         }
@@ -103,14 +94,12 @@ if REDIS_HOST is not None and not SKIP_DEFAULT_CACHE:
         import redis.asyncio as aioredis
 
         _redis_check_client = aioredis.Redis.from_url(REDIS_CONNECTION_URL)
-        HEALTH_CHECK_CHECKS.append(
-            ("health_check.contrib.redis.Redis", {"client": _redis_check_client})
-        )
+        HEALTH_CHECK_CHECKS.append(("health_check.contrib.redis.Redis", {"client": _redis_check_client}))
 
-    print(f"Redis cache connection initialized")
+    print("Redis cache connection initialized")  # noqa: T201
 
 elif SKIP_DEFAULT_CACHE:
-    print(
+    print(  # noqa: T201
         "Skipping default Redis cache configuration (worker mode - only HUEY Redis needed)"
     )
 else:

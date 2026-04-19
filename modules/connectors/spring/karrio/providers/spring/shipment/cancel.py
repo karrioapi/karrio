@@ -1,18 +1,16 @@
 """Karrio Spring shipment cancellation API implementation."""
 
-import karrio.schemas.spring.shipment_cancel_request as spring_req
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.spring.error as error
 import karrio.providers.spring.utils as provider_utils
+import karrio.schemas.spring.shipment_cancel_request as spring_req
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     """Parse VoidShipment response from Spring API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
@@ -51,4 +49,3 @@ def shipment_cancel_request(
     )
 
     return lib.Serializable(request, lib.to_dict)
-    

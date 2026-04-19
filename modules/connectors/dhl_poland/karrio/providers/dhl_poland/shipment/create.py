@@ -1,17 +1,17 @@
-import karrio.schemas.dhl_poland.services as dhl
 import time
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.dhl_poland.error as provider_error
 import karrio.providers.dhl_poland.units as provider_units
 import karrio.providers.dhl_poland.utils as provider_utils
+import karrio.schemas.dhl_poland.services as dhl
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[lib.Element], settings: provider_utils.Settings
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     shipment = (
@@ -41,9 +41,7 @@ def _extract_details(
             invoice=shipment.label.fvProformaContent,
         ),
         meta=dict(
-            carrier_tracking_link=settings.tracking_url.format(
-                shipment.shipmentNotificationNumber
-            ),
+            carrier_tracking_link=settings.tracking_url.format(shipment.shipmentNotificationNumber),
         ),
     )
 
@@ -85,12 +83,8 @@ def shipment_request(
                     dropOffType="REGULAR_PICKUP",
                     serviceType=service_type,
                     billing=dhl.Billing(
-                        shippingPaymentType=provider_units.PaymentType[
-                            payment.paid_by
-                        ].value,
-                        billingAccountNumber=(
-                            payment.account_number or settings.account_number
-                        ),
+                        shippingPaymentType=provider_units.PaymentType[payment.paid_by].value,
+                        billingAccountNumber=(payment.account_number or settings.account_number),
                         paymentType="BANK_TRANSFER",
                         costsCenter=None,
                     ),
@@ -111,9 +105,7 @@ def shipment_request(
                     ),
                     shipmentTime=(
                         dhl.ShipmentTime(
-                            shipmentDate=(
-                                options.shipment_date.state or time.strftime("%Y-%m-%d")
-                            ),
+                            shipmentDate=(options.shipment_date.state or time.strftime("%Y-%m-%d")),
                             shipmentStartHour="10:00",
                             shipmentEndHour="10:00",
                         )
@@ -214,9 +206,7 @@ def shipment_request(
                 pieceList=dhl.ArrayOfPackage(
                     item=[
                         dhl.Package(
-                            type_=provider_units.PackagingType[
-                                package.packaging_type or "your_packaging"
-                            ].value,
+                            type_=provider_units.PackagingType[package.packaging_type or "your_packaging"].value,
                             euroReturn=None,
                             weight=package.weight.KG,
                             width=package.width.CM,
@@ -242,20 +232,12 @@ def shipment_request(
                             "person_name",
                             "N/A",
                         ),
-                        costsOfShipment=(
-                            getattr(customs.duty, "declared_value", None)
-                            or options.declard_value.state
-                        ),
-                        currency=(
-                            getattr(customs.duty, "currency", None)
-                            or options.currency.state
-                        ),
+                        costsOfShipment=(getattr(customs.duty, "declared_value", None) or options.declard_value.state),
+                        currency=(getattr(customs.duty, "currency", None) or options.currency.state),
                         nipNr=customs.options.nip_number.state,
                         eoriNr=customs.options.eori_number.state,
                         vatRegistrationNumber=customs.options.vat_registration_number.state,
-                        categoryOfItem=provider_units.CustomsContentType[
-                            customs.content_type or "other"
-                        ].value,
+                        categoryOfItem=provider_units.CustomsContentType[customs.content_type or "other"].value,
                         invoiceNr=customs.invoice,
                         invoice=None,
                         invoiceDate=customs.invoice_date,

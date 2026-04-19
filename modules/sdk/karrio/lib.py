@@ -1,15 +1,16 @@
-import typing
 import base64
-import PyPDF2
 import datetime
 import functools
-import urllib.parse
+import typing
 import urllib.error
-import karrio.core.utils as utils
-import karrio.core.units as units
+import urllib.parse
+
+import PyPDF2
+
 import karrio.core.models as models
-import karrio.core.errors as exceptions
-from karrio.core.utils.logger import logger
+import karrio.core.units as units
+import karrio.core.utils as utils
+
 T = typing.TypeVar("T")
 S = typing.TypeVar("S")
 mutate_xml_object_type = utils.mutate_xml_object_type
@@ -48,10 +49,10 @@ sort_events = utils.sort_events_chronologically
 
 
 def join(
-    *values: typing.Union[str, None],
+    *values: str | None,
     join: bool = None,
     separator: str = None,
-) -> typing.Optional[typing.Union[str, typing.List[str]]]:
+) -> str | list[str] | None:
     """Concatenate a set of string values into a list of string or a single joined text.
 
     Example:
@@ -69,17 +70,15 @@ def join(
     :param separator: the text separator if joined into a single string.
     :return: a string, list of string or None.
     """
-    return utils.SF.concat_str(
-        *values, join=(join or False), separator=(separator or " ")
-    )
+    return utils.SF.concat_str(*values, join=(join or False), separator=(separator or " "))
 
 
 def text(
-    *values: typing.Union[str, None],
+    *values: str | None,
     max: int = None,
     separator: str = None,
     trim: bool = False,
-) -> typing.Optional[str]:
+) -> str | None:
     """Returns a joined text
 
     Example:
@@ -114,7 +113,7 @@ def text(
     return typing.cast(str, _text[0:max] if max else _text)
 
 
-def to_snake_case(input_string: typing.Optional[str]) -> typing.Optional[str]:
+def to_snake_case(input_string: str | None) -> str | None:
     """Convert any string format to snake case."""
     return utils.SF.to_snake_case(input_string)
 
@@ -122,15 +121,15 @@ def to_snake_case(input_string: typing.Optional[str]) -> typing.Optional[str]:
 def to_slug(
     *values,
     separator: str = "_",
-) -> typing.Optional[str]:
+) -> str | None:
     """Convert a set of string values into a slug string, changing camel case to snake_case."""
     return utils.SF.to_slug(*values, separator=separator)
 
 
 def to_int(
-    value: typing.Union[str, int, bytes] = None,
+    value: str | int | bytes = None,
     base: int = None,
-) -> typing.Optional[int]:
+) -> int | None:
     """Parse a value into a valid integer number.
 
     Example:
@@ -151,9 +150,9 @@ def to_int(
 
 
 def to_decimal(
-    value: typing.Union[str, float, bytes] = None,
-    quant: typing.Optional[float] = None,
-) -> typing.Optional[float]:
+    value: str | float | bytes = None,
+    quant: float | None = None,
+) -> float | None:
     """Parse a value into a valid decimal number with 2 decimal places by default.
 
     Example:
@@ -180,7 +179,7 @@ def to_decimal(
 
 
 def to_numeric_decimal(
-    value: typing.Union[str, float, bytes] = None,
+    value: str | float | bytes = None,
     total_digits: int = 6,
     decimal_digits: int = 3,
 ) -> str:
@@ -208,8 +207,8 @@ def to_numeric_decimal(
 
 
 def to_money(
-    value: typing.Union[str, float, bytes] = None,
-) -> typing.Optional[float]:
+    value: str | float | bytes = None,
+) -> float | None:
     """Parse a value into a valid monetary decimal number.
 
     :param value: a value that can be parsed to float.
@@ -220,14 +219,14 @@ def to_money(
 
     try:
         return to_decimal(value)
-    except:
+    except Exception:
         return None
 
 
 def format_decimal(
-    value: typing.Union[str, float, bytes] = None,
+    value: str | float | bytes = None,
     decimal_places: int = 2,
-) -> typing.Optional[float]:
+) -> float | None:
     """Format a decimal number to a specific number of decimal places.
 
     Example:
@@ -251,15 +250,15 @@ def format_decimal(
         # Convert to float first
         float_value = float(value)
         # Round to specified decimal places
-        quant = 1.0 / (10 ** decimal_places)
+        quant = 1.0 / (10**decimal_places)
         return utils.NF.decimal(float_value, quant)
     except (ValueError, TypeError):
         return None
 
 
-def to_list(
-    value: typing.Union[T, typing.List[T]] = None,
-) -> typing.List[T]:
+def to_list[T](
+    value: T | list[T] | None = None,
+) -> list[T]:
     """Ensures the input value is a list.
 
     Example:
@@ -291,8 +290,8 @@ def ftime(
     time_str: str,
     current_format: str = "%H:%M:%S",
     output_format: str = "%H:%M",
-    try_formats: typing.List[str] = None,
-) -> typing.Optional[str]:
+    try_formats: list[str] = None,
+) -> str | None:
     return utils.DF.ftime(
         time_str,
         current_format=current_format,
@@ -305,8 +304,8 @@ def flocaltime(
     time_str: str,
     current_format: str = "%H:%M:%S",
     output_format: str = "%H:%M %p",
-    try_formats: typing.List[str] = None,
-) -> typing.Optional[str]:
+    try_formats: list[str] = None,
+) -> str | None:
     return utils.DF.ftime(
         time_str,
         current_format=current_format,
@@ -318,8 +317,8 @@ def flocaltime(
 def fdate(
     date_str: str = None,
     current_format: str = "%Y-%m-%d",
-    try_formats: typing.List[str] = None,
-) -> typing.Optional[str]:
+    try_formats: list[str] = None,
+) -> str | None:
     return utils.DF.fdate(
         date_str,
         current_format=current_format,
@@ -331,8 +330,8 @@ def fdatetime(
     date_str: str = None,
     current_format: str = "%Y-%m-%d %H:%M:%S",
     output_format: str = "%Y-%m-%d %H:%M:%S",
-    try_formats: typing.List[str] = None,
-) -> typing.Optional[str]:
+    try_formats: list[str] = None,
+) -> str | None:
     return utils.DF.fdatetime(
         date_str,
         current_format=current_format,
@@ -343,7 +342,7 @@ def fdatetime(
 
 def ftimestamp(
     timestamp: str = None,
-) -> typing.Optional[str]:
+) -> str | None:
     return utils.DF.ftimestamp(timestamp)
 
 
@@ -351,8 +350,8 @@ def fiso_timestamp(
     date_str: str = None,
     time_str: str = None,
     current_format: str = None,
-    try_formats: typing.List[str] = None,
-) -> typing.Optional[str]:
+    try_formats: list[str] = None,
+) -> str | None:
     """Convert date and time strings to ISO 8601 timestamp.
 
     Args:
@@ -420,9 +419,9 @@ def fiso_timestamp(
 
 
 def to_date(
-    date_value: typing.Union[str, datetime.datetime] = None,
+    date_value: str | datetime.datetime = None,
     current_format: str = "%Y-%m-%d",
-    try_formats: typing.List[str] = None,
+    try_formats: list[str] = None,
 ) -> datetime.datetime:
     return utils.DF.date(
         date_value,
@@ -432,9 +431,9 @@ def to_date(
 
 
 def to_next_business_datetime(
-    date_value: typing.Union[str, datetime.datetime] = None,
+    date_value: str | datetime.datetime = None,
     current_format: str = "%Y-%m-%d %H:%M:%S",
-    try_formats: typing.List[str] = None,
+    try_formats: list[str] = None,
 ) -> datetime.datetime:
     return utils.DF.next_business_datetime(
         date_value,
@@ -451,10 +450,10 @@ def to_next_business_datetime(
 # region
 
 
-def to_object(
-    object_type: typing.Type[T],
+def to_object[T](
+    object_type: type[T],
     data: typing.Any = None,
-) -> typing.Optional[T]:
+) -> T | None:
     """Create an instance of "object_type" from the "data".
 
     :param object_type: an object class.
@@ -470,7 +469,7 @@ def to_object(
 def to_dict(
     value: typing.Any,
     clear_empty: bool = None,
-) -> typing.Union[dict, list, typing.Any]:
+) -> dict | list | typing.Any:
     """Parse value into a Python dictionay.
 
     :param value: a value that can converted in dictionary.
@@ -479,7 +478,7 @@ def to_dict(
     return utils.DP.to_dict(value, clear_empty=clear_empty)
 
 
-def to_dict_safe(response: typing.Union[str, bytes, None]) -> dict:
+def to_dict_safe(response: str | bytes | None) -> dict:
     """
     Safely parses a string or bytes into a dictionary.
     - Handles None, empty, or whitespace-only input by returning {}.
@@ -516,7 +515,7 @@ def to_json(
 
 
 def to_xml(
-    value: typing.Union[utils.Element, typing.Any],
+    value: utils.Element | typing.Any,
     encoding: str = "utf-8",
     prefixes: dict = None,
     **kwargs,
@@ -547,17 +546,13 @@ def to_element(
     :param xml_str:
     :return: Node Element
     """
-    xml_strings: typing.List[str] = functools.reduce(
+    xml_strings: list[str] = functools.reduce(
         lambda acc, s: [*acc, *s] if isinstance(s, list) else [*acc, s],
         list(xml_texts),
         [],
     )
 
-    xml_text = (
-        utils.XP.bundle_xml(xml_strings)
-        if len(xml_strings) > 1
-        else next(iter(xml_strings), None)
-    )
+    xml_text = utils.XP.bundle_xml(xml_strings) if len(xml_strings) > 1 else next(iter(xml_strings), None)
 
     if xml_text is None:
         raise Exception("Cannot parse empty XML text")
@@ -569,11 +564,7 @@ def to_query_string(data: dict) -> str:
     param_list: list = functools.reduce(
         lambda acc, item: [
             *acc,
-            *(
-                [(item[0], _) for _ in item[1]]
-                if isinstance(item[1], list)
-                else [(item[0], item[1])]
-            ),
+            *([(item[0], _) for _ in item[1]] if isinstance(item[1], list) else [(item[0], item[1])]),
         ],
         data.items(),
         [],
@@ -586,11 +577,11 @@ def to_query_unquote(query_string: str) -> str:
     return urllib.parse.unquote(query_string)
 
 
-def find_element(
+def find_element[T](
     tag: str,
     in_element: utils.Element,
-    element_type: typing.Type[typing.Union[T, utils.Element]] = None,
-    first: bool = None,
+    element_type: type[T | utils.Element] | None = None,
+    first: bool | None = None,
 ):
     return utils.XP.find(tag, in_element, element_type, first=first)
 
@@ -628,9 +619,7 @@ def envelope_serializer(
     if envelope.Header is not None:
         envelope.Header.ns_prefix_ = envelope.ns_prefix_
 
-    for node in envelope.Body.anytypeobjs_ + getattr(
-        envelope.Header, "anytypeobjs_", []
-    ):
+    for node in envelope.Body.anytypeobjs_ + getattr(envelope.Header, "anytypeobjs_", []):
         _prefix = ns_prefixes.get(node.__class__.__name__) or ""
         apply_namespaceprefix(node, _prefix, ns_prefixes)
 
@@ -668,12 +657,12 @@ def load_file_content(path: str) -> str:
         IOError: If there's an error reading the file.
     """
     try:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, encoding="utf-8") as file:
             return file.read()
     except FileNotFoundError:
-        raise FileNotFoundError(f"File not found: {path}")
-    except IOError as e:
-        raise IOError(f"Error reading file {path}: {str(e)}")
+        raise FileNotFoundError(f"File not found: {path}") from None
+    except OSError as e:
+        raise OSError(f"Error reading file {path}: {str(e)}") from e
 
 
 # endregion
@@ -686,7 +675,7 @@ def load_file_content(path: str) -> str:
 
 def to_shipping_options(
     options: dict,
-    initializer: typing.Optional[typing.Callable[[dict], units.ShippingOptions]] = None,
+    initializer: typing.Callable[[dict], units.ShippingOptions] | None = None,
     **kwargs,
 ) -> units.ShippingOptions:
     if initializer is not None:
@@ -700,11 +689,9 @@ def to_shipping_options(
 
 
 def to_services(
-    services: typing.List[str],
-    service_type: typing.Type[utils.Enum] = None,
-    initializer: typing.Optional[
-        typing.Callable[[typing.List[str]], units.Services]
-    ] = None,
+    services: list[str],
+    service_type: type[utils.Enum] = None,
+    initializer: typing.Callable[[list[str]], units.Services] | None = None,
     **kwargs,
 ) -> units.Services:
     if initializer is not None:
@@ -715,11 +702,11 @@ def to_services(
 
 def to_customs_info(
     customs: models.Customs,
-    option_type: typing.Type[utils.Enum] = None,
+    option_type: type[utils.Enum] = None,
     weight_unit: str = None,
-    default_to: typing.Optional[models.Customs] = None,
-    shipper: typing.Optional[models.Address] = None,
-    recipient: typing.Optional[models.Address] = None,
+    default_to: models.Customs | None = None,
+    shipper: models.Address | None = None,
+    recipient: models.Address | None = None,
 ):
     return units.CustomsInfo(
         customs,
@@ -732,7 +719,7 @@ def to_customs_info(
 
 
 def to_commodities(
-    commodities: typing.List[models.Commodity],
+    commodities: list[models.Commodity],
     weight_unit: str = None,
 ) -> units.Products:
     """Convert a list of Commodity models to a Products helper for processing.
@@ -748,16 +735,14 @@ def to_commodities(
 
 
 def to_document_files(
-    document_files: typing.List[models.DocumentFile],
-) -> typing.List[units.ComputedDocumentFile]:
-    return [
-        units.ComputedDocumentFile(document_file) for document_file in document_files
-    ]
+    document_files: list[models.DocumentFile],
+) -> list[units.ComputedDocumentFile]:
+    return [units.ComputedDocumentFile(document_file) for document_file in document_files]
 
 
 def to_upload_options(
     options: dict,
-    option_type: typing.Optional[typing.Type[utils.Enum]] = None,
+    option_type: type[utils.Enum] | None = None,
 ):
     return units.Options(
         options,
@@ -768,7 +753,7 @@ def to_upload_options(
 
 def to_connection_config(
     options: dict,
-    option_type: typing.Optional[typing.Type[utils.Enum]] = None,
+    option_type: type[utils.Enum] | None = None,
 ) -> units.ConnectionConfigOptions:
     return units.ConnectionConfigOptions(
         options,
@@ -785,36 +770,36 @@ def to_connection_config(
 
 
 def to_zip4(
-    value: typing.Optional[str],
+    value: str | None,
     **kwargs,
-) -> typing.Optional[str]:
+) -> str | None:
     return utils.Location(value, **kwargs).as_zip4
 
 
 def to_zip5(
-    value: typing.Optional[str],
+    value: str | None,
     **kwargs,
-) -> typing.Optional[str]:
+) -> str | None:
     return utils.Location(value, **kwargs).as_zip5
 
 
 def to_country_name(
-    value: typing.Optional[str],
+    value: str | None,
     **kwargs,
-) -> typing.Optional[str]:
+) -> str | None:
     return utils.Location(value, **kwargs).as_country_name
 
 
 def to_state_name(
-    value: typing.Optional[str],
+    value: str | None,
     country: str,
     **kwargs,
-) -> typing.Optional[str]:
+) -> str | None:
     return utils.Location(value, **{**kwargs, "country": country}).as_state_name
 
 
 def to_address(
-    address: typing.Optional[models.Address],
+    address: models.Address | None,
 ) -> units.ComputedAddress:
     """Decorate address data with sensible default and None handling."""
 
@@ -830,8 +815,8 @@ def to_address(
 
 
 def to_multi_piece_rates(
-    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]],
-) -> typing.List[models.RateDetails]:
+    package_rates: list[tuple[str, list[models.RateDetails]]],
+) -> list[models.RateDetails]:
     """Combine rates received separately per package into a single rate list.
 
     Example:
@@ -851,7 +836,7 @@ def to_multi_piece_rates(
 
 
 def to_multi_piece_shipment(
-    package_shipments: typing.List[typing.Tuple[str, models.ShipmentDetails]],
+    package_shipments: list[tuple[str, models.ShipmentDetails]],
 ) -> models.ShipmentDetails:
     """Combine shipment received separately per package into a single master shipment.
 
@@ -878,12 +863,12 @@ def to_multi_piece_shipment(
 
 
 def to_packages(
-    parcels: typing.List[models.Parcel],
-    presets: typing.Type[utils.Enum] = None,
-    required: typing.List[str] = None,
+    parcels: list[models.Parcel],
+    presets: type[utils.Enum] = None,
+    required: list[str] = None,
     max_weight: units.Weight = None,
     options: dict = None,
-    package_option_type: typing.Type[utils.Enum] = utils.Enum,
+    package_option_type: type[utils.Enum] = utils.Enum,
     shipping_options_initializer: typing.Callable = None,
 ) -> units.Packages:
     return units.Packages(
@@ -909,18 +894,18 @@ def to_packages(
 # region
 
 
-def run_concurently(
-    predicate: typing.Callable,
-    sequence: typing.List[S],
+def run_concurently[T, S](
+    predicate: typing.Callable[[S], T],
+    sequence: list[S],
     max_workers: int = 2,
-) -> typing.List[T]:
+) -> list[T]:
     return utils.exec_parrallel(predicate, sequence, max_workers=max_workers)
 
 
-def run_asynchronously(
-    predicate: typing.Callable,
-    sequence: typing.List[S],
-) -> typing.List[T]:
+def run_asynchronously[T, S](
+    predicate: typing.Callable[[S], T],
+    sequence: list[S],
+) -> list[T]:
     return utils.exec_async(predicate, sequence)
 
 
@@ -942,7 +927,7 @@ def request(
     on_error: typing.Callable = None,
     trace: typing.Callable[[typing.Any, str], typing.Any] = None,
     proxy: str = None,
-    timeout: typing.Optional[int] = None,
+    timeout: int | None = None,
     **kwargs,
 ) -> str:
     return utils.request(
@@ -962,7 +947,7 @@ def request_with_response(
     on_error: typing.Callable = None,
     trace: typing.Callable[[typing.Any, str], typing.Any] = None,
     proxy: str = None,
-    timeout: typing.Optional[int] = None,
+    timeout: int | None = None,
     **kwargs,
 ) -> HttpResponse:
     """Make an HTTP request and return response with headers.
@@ -1005,19 +990,19 @@ def image_to_pdf(
 
 
 def bundle_pdfs(
-    base64_strings: typing.List[str],
+    base64_strings: list[str],
 ) -> PyPDF2.PdfMerger:
     return utils.bundle_pdfs(base64_strings)
 
 
 def bundle_imgs(
-    base64_strings: typing.List[str],
+    base64_strings: list[str],
 ):
     return utils.bundle_imgs(base64_strings)
 
 
 def bundle_zpls(
-    base64_strings: typing.List[str],
+    base64_strings: list[str],
 ) -> str:
     return utils.bundle_zpls(base64_strings)
 
@@ -1033,7 +1018,7 @@ def zpl_to_pdf(
 
 
 def bundle_base64(
-    base64_strings: typing.List[str],
+    base64_strings: list[str],
     format: str = "PDF",
 ) -> str:
     return utils.bundle_base64(base64_strings, format=format)
@@ -1047,11 +1032,7 @@ def to_buffer(
 
 
 def decode(byte: bytes):
-    return (
-        failsafe(lambda: byte.decode("utf-8"))
-        or failsafe(lambda: byte.decode("ISO-8859-1"))
-        or byte.decode("utf-8")
-    )
+    return failsafe(lambda: byte.decode("utf-8")) or failsafe(lambda: byte.decode("ISO-8859-1")) or byte.decode("utf-8")
 
 
 def encode_base64(byte: bytes):
@@ -1074,7 +1055,7 @@ def binary_to_base64(binary_string: str):
 # region
 
 
-def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
+def failsafe[T](callable: typing.Callable[[], T], warning: str | None = None) -> T:
     """This higher order function wraps a callable in a try..except
     scope to capture any exception raised.
     Only use it when you are running something unstable that you

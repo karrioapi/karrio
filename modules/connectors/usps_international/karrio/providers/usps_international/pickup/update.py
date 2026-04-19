@@ -1,29 +1,21 @@
 """Karrio USPS update pickup implementation."""
 
-import karrio.schemas.usps_international.pickup_update_request as usps
-import karrio.schemas.usps_international.pickup_update_response as pickup
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps_international.error as error
 import karrio.providers.usps_international.utils as provider_utils
-import karrio.providers.usps_international.units as provider_units
+import karrio.schemas.usps_international.pickup_update_request as usps
+import karrio.schemas.usps_international.pickup_update_response as pickup
 
 
 def parse_pickup_update_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.PickupDetails], typing.List[models.Message]]:
+) -> tuple[list[models.PickupDetails], list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    pickup = (
-        _extract_details(response, settings)
-        if "confirmationNumber" in response
-        else None
-    )
+    pickup = _extract_details(response, settings) if "confirmationNumber" in response else None
 
     return pickup, messages
 
@@ -78,11 +70,7 @@ def pickup_update_request(
                     ZIPPlus4=lib.to_zip4(address.postal_code) or "",
                     urbanization=None,
                 ),
-                contact=[
-                    usps.ContactType(email=address.email)
-                    for _ in [address.email]
-                    if _ is not None
-                ],
+                contact=[usps.ContactType(email=address.email) for _ in [address.email] if _ is not None],
             ),
             packages=[
                 usps.PackageType(

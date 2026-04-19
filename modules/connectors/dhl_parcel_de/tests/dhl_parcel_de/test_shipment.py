@@ -1,10 +1,64 @@
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
 from .fixture import gateway
 
-import karrio.sdk as karrio
-import karrio.lib as lib
-import karrio.core.models as models
+
+class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
+    """Test that shipping options override connection_config values."""
+
+    def setUp(self):
+        self.maxDiff = None
+        self.ShipmentWithOptionsRequest = models.ShipmentRequest(**ShipmentPayloadWithOptions)
+
+    def test_create_shipment_request_with_option_overrides(self):
+        """Shipping options should override connection_config in the request payload."""
+        request = gateway.mapper.create_shipment_request(self.ShipmentWithOptionsRequest)
+        serialized = request.serialize()
+
+        # Profile should be overridden by shipping option
+        self.assertEqual(serialized["profile"], "MY_CUSTOM_PROFILE")
+        # Cost center should be set from shipping option
+        self.assertEqual(serialized["shipments"][0]["costCenter"], "CC-12345")
+
+    def test_create_shipment_with_label_type_option(self):
+        """Shipping option label_type should override connection_config label_type in the URL."""
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Shipment.create(self.ShipmentWithOptionsRequest).from_(gateway)
+
+            url = mock.call_args[1]["url"]
+            # Option sets PDF_910_300_600, overriding connection config ZPL2_910_300_700_oz
+            self.assertIn("docFormat=PDF", url)
+            self.assertIn("printFormat=910-300-600", url)
+
+    def test_create_shipment_request_with_reference_option(self):
+        """dhl_parcel_de_reference option should override payload.reference for refNo."""
+        request_data = {
+            **ShipmentPayloadWithOptions,
+            "reference": "Original Ref",
+            "options": {
+                **ShipmentPayloadWithOptions["options"],
+                "dhl_parcel_de_reference": "Option Ref Override",
+            },
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**request_data))
+        serialized = request.serialize()
+
+        # refNo should use the option value, not payload.reference
+        self.assertEqual(serialized["shipments"][0]["refNo"], "Option Ref Override")
+
+    def test_create_shipment_request_reference_fallback(self):
+        """When dhl_parcel_de_reference is not set, refNo should fall back to payload.reference."""
+        request = gateway.mapper.create_shipment_request(self.ShipmentWithOptionsRequest)
+        serialized = request.serialize()
+
+        # refNo should fall back to payload.reference
+        self.assertEqual(serialized["shipments"][0]["refNo"], "Order No. 5678")
 
 
 class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
@@ -49,9 +103,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
         self.IntlShipmentRequest = models.ShipmentRequest(**IntlShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -64,9 +116,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
         self.assertEqual(request.serialize(), IntlShipmentRequest)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
@@ -93,51 +143,35 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelShipmentResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
     def test_parse_validation_messages_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ValidationMessagesErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedValidationMessagesErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedValidationMessagesErrorResponse)
 
     def test_parse_multiple_validation_messages_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = MultipleValidationMessagesErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(
                 lib.to_dict(parsed_response),
@@ -147,20 +181,14 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
     def test_parse_shipment_response_with_customs_doc(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseWithCustomsDoc
-            parsed_response = (
-                karrio.Shipment.create(self.IntlShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.IntlShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedShipmentResponseWithCustomsDoc
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponseWithCustomsDoc)
 
     def test_parse_shipment_response_with_return_label(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentWeithReturnLabelResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(
                 lib.to_dict(parsed_response),

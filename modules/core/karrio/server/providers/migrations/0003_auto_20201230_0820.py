@@ -5,20 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('providers', '0002_carrier_active'),
+        ("providers", "0002_carrier_active"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='carrier',
-            name='carrier_id',
-            field=models.CharField(help_text='eg. canadapost, dhl_express, fedex, purolator_courrier, ups...', max_length=200),
+            model_name="carrier",
+            name="carrier_id",
+            field=models.CharField(
+                help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...", max_length=200
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='carrier',
-            unique_together={('carrier_id', 'user')},
+            name="carrier",
+            unique_together={("carrier_id", "user")},
         ),
     ]

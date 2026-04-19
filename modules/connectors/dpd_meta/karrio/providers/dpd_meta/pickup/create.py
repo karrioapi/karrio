@@ -1,9 +1,7 @@
 """Karrio DPD Global pickup scheduling implementation."""
 
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dpd_meta.error as error
 import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.schemas.dpd_meta.pickup_create_request as dpd_req
@@ -13,20 +11,14 @@ import karrio.schemas.dpd_meta.pickup_create_response as dpd_res
 def parse_pickup_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+) -> tuple[models.PickupDetails, list[models.Message]]:
     """Parse DPD META-API pickup scheduling response."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
     pickup_data = response[0] if isinstance(response, list) else response
-    scheduled = (
-        (pickup_data or {}).get("scheduledPickupResponse")
-        if isinstance(pickup_data, dict)
-        else None
-    )
-    pickup_item = next(
-        (p for p in (scheduled or []) if p.get("pickupreference")), None
-    )
+    scheduled = (pickup_data or {}).get("scheduledPickupResponse") if isinstance(pickup_data, dict) else None
+    pickup_item = next((p for p in (scheduled or []) if p.get("pickupreference")), None)
 
     # Parse inline errors from items without pickupreference
     messages += [
@@ -40,11 +32,7 @@ def parse_pickup_response(
         if not item.get("pickupreference") and item.get("statusDescription")
     ]
 
-    pickup = lib.identity(
-        _extract_details(pickup_item, settings)
-        if pickup_item and not any(messages)
-        else None
-    )
+    pickup = lib.identity(_extract_details(pickup_item, settings) if pickup_item and not any(messages) else None)
 
     return pickup, messages
 
@@ -77,15 +65,11 @@ def pickup_request(
 
     request = dpd_req.PickupCreateRequestType(
         customerInfos=dpd_req.CustomerInfosType(
-            customerAccountNumber=(
-                settings.customer_account_number or settings.customer_id
-            ),
+            customerAccountNumber=(settings.customer_account_number or settings.customer_id),
             customerID=settings.customer_id,
         ),
         shipmentNumbers=payload.shipment_identifiers or None,
-        parcelNumbers=(
-            [payload.package_location] if payload.package_location else None
-        ),
+        parcelNumbers=([payload.package_location] if payload.package_location else None),
         pickup=dpd_req.PickupType(
             date=lib.fdate(payload.pickup_date, "%Y-%m-%d"),
             fromTime=lib.ftime(payload.ready_time, current_format="%H:%M", output_format="%H%M") or "0900",

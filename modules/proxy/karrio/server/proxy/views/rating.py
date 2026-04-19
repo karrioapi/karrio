@@ -1,19 +1,18 @@
+import karrio.server.openapi as openapi
 from django.urls import path
+from karrio.server.core.gateway import Rates
+from karrio.server.core.serializers import (
+    ErrorMessages,
+    ErrorResponse,
+    RateRequest,
+    RateResponse,
+)
+from karrio.server.core.views.api import APIView
+from karrio.server.proxy.router import router
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from karrio.server.core.logging import logger
-from karrio.server.core.views.api import APIView
-from karrio.server.core.serializers import (
-    RateRequest,
-    RateResponse,
-    ErrorResponse,
-    ErrorMessages,
-)
-from karrio.server.core.gateway import Rates
-from karrio.server.proxy.router import router
-import karrio.server.openapi as openapi
 ENDPOINT_ID = "@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 DESCRIPTIONS = """
@@ -43,11 +42,7 @@ class RateViewAPI(APIView):
         payload = RateRequest.map(data=request.data).data
 
         response = Rates.fetch(payload, context=request)
-        status_code = (
-            status.HTTP_207_MULTI_STATUS
-            if len(response.messages) > 0
-            else status.HTTP_200_OK
-        )
+        status_code = status.HTTP_207_MULTI_STATUS if len(response.messages) > 0 else status.HTTP_200_OK
 
         return Response(RateResponse(response).data, status=status_code)
 

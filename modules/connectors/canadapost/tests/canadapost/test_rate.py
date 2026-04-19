@@ -1,9 +1,11 @@
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
+
+import karrio.core.models as models
 import karrio.lib as lib
 import karrio.sdk as karrio
-import karrio.core.models as models
+
+from .fixture import gateway
 
 
 class TestCanadaPostRating(unittest.TestCase):
@@ -17,9 +19,7 @@ class TestCanadaPostRating(unittest.TestCase):
         self.assertEqual(requests.serialize()[0], RateRequestXML)
 
     def test_create_rate_request_with_package_preset(self):
-        requests = gateway.mapper.create_rate_request(
-            models.RateRequest(**RateWithPresetPayload)
-        )
+        requests = gateway.mapper.create_rate_request(models.RateRequest(**RateWithPresetPayload))
 
         self.assertEqual(requests.serialize()[0], RateRequestUsingPackagePresetXML)
         self.assertEqual(requests.serialize()[1], SecondParcelRateRequestXML)
@@ -27,11 +27,7 @@ class TestCanadaPostRating(unittest.TestCase):
     @patch("karrio.mappers.canadapost.proxy.lib.request", return_value="<a></a>")
     def test_create_rate_request_with_package_preset_missing_weight(self, _):
         processing_error = (
-            karrio.Rating.fetch(
-                models.RateRequest(**RateWithPresetMissingWeightPayload)
-            )
-            .from_(gateway)
-            .parse()
+            karrio.Rating.fetch(models.RateRequest(**RateWithPresetMissingWeightPayload)).from_(gateway).parse()
         )
 
         self.assertListEqual(lib.to_dict(processing_error), ParsedProcessingError)
@@ -47,18 +43,14 @@ class TestCanadaPostRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = RateResponseXML
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRatingResponse)
 
     def test_parse_rate_parsing_error(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = RatingParsingErrorXML
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(lib.to_dict(parsed_response), ParsedRatingParsingError)
 
@@ -88,9 +80,7 @@ class TestCanadaPostRating(unittest.TestCase):
     def test_parse_rate_missing_args_error(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = RatingMissingArgsErrorXML
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertEqual(lib.to_dict(parsed_response), ParsedRatingMissingArgsError)
 
@@ -272,7 +262,7 @@ RatingMissingArgsErrorXML = """<messages xmlns="http://www.canadapost.ca/ws/mess
 </messages>
 """
 
-RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
+RateRequestXML = """<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
     <contract-id>42708517</contract-id>
     <expected-mailing-date>2020-12-18</expected-mailing-date>
@@ -305,7 +295,7 @@ RateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/r
 </mailing-scenario>
 """
 
-RateRequestUsingPackagePresetXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
+RateRequestUsingPackagePresetXML = """<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
     <contract-id>42708517</contract-id>
     <parcel-characteristics>
@@ -328,7 +318,7 @@ RateRequestUsingPackagePresetXML = f"""<mailing-scenario xmlns="http://www.canad
 </mailing-scenario>
 """
 
-SecondParcelRateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
+SecondParcelRateRequestXML = """<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
     <customer-number>2004381</customer-number>
     <contract-id>42708517</contract-id>
     <options>

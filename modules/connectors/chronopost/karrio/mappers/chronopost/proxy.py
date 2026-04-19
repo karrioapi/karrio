@@ -1,6 +1,5 @@
-import typing
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.chronopost.settings as provider_settings
 
 
@@ -42,8 +41,6 @@ class Proxy(proxy.Proxy):
                 request=lib.Serializable(track_request),
             )
 
-        response: typing.List[str] = lib.run_concurently(
-            get_tracking, request.serialize()
-        )
+        response: list[str] = lib.run_concurently(get_tracking, request.serialize())
 
         return lib.Deserializable(response, lib.to_element)

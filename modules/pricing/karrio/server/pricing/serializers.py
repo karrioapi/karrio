@@ -11,6 +11,7 @@ import enum
 
 class MarkupType(enum.Enum):
     """Type of markup to apply."""
+
     AMOUNT = "AMOUNT"
     PERCENTAGE = "PERCENTAGE"
 

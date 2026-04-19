@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestFedExTracking(unittest.TestCase):
@@ -36,16 +37,12 @@ class TestFedExTracking(unittest.TestCase):
                 mock2.return_value = ProofOfDeliveryResponse
                 parsed_response = response.parse()
 
-                self.assertListEqual(
-                    lib.to_dict(parsed_response), ParsedTrackingResponse
-                )
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
@@ -58,9 +55,7 @@ class TestFedExTracking(unittest.TestCase):
                 mock2.return_value = ProofOfDeliveryResponse
                 parsed_response = response.parse()
 
-                self.assertListEqual(
-                    lib.to_dict(parsed_response), ParsedDuplicateTrackingResponse
-                )
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedDuplicateTrackingResponse)
 
     def test_parse_inconsistent_datetime_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock1:
@@ -71,9 +66,7 @@ class TestFedExTracking(unittest.TestCase):
                 mock2.return_value = ProofOfDeliveryResponse
                 parsed_response = response.parse()
 
-                self.assertListEqual(
-                    lib.to_dict(parsed_response), ParsedInconsistentDateTimeResponse
-                )
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedInconsistentDateTimeResponse)
 
 
 if __name__ == "__main__":
@@ -130,8 +123,7 @@ ParsedTrackingResponse = [
             "code": "TRACKING.TRACKINGNUMBER.NOTFOUND",
             "details": {"tracking_number": "39936862321"},
             "level": "error",
-            "message": "Tracking number cannot be found. Please correct the tracking "
-            "number and try again.",
+            "message": "Tracking number cannot be found. Please correct the tracking number and try again.",
         },
     ],
 ]

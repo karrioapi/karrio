@@ -1,7 +1,7 @@
 """SmartKargo carrier units and mappings."""
 
-import karrio.lib as lib
 import karrio.core.units as units
+import karrio.lib as lib
 
 
 class PackagingType(lib.StrEnum):

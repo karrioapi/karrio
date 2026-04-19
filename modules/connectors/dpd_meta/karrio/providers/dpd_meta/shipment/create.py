@@ -1,35 +1,35 @@
 """Karrio DPD META shipment API implementation."""
 
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
+import math
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.dpd_meta.error as error
-import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.providers.dpd_meta.units as provider_units
+import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.schemas.dpd_meta.shipment_request as dpd_req
 import karrio.schemas.dpd_meta.shipment_response as dpd_res
+
+
+def _round_grams(g: float) -> int:
+    # DPD META divides weight by 10 before passing to SOAP BU-API (10 g units)
+    return math.ceil(g / 10) * 10
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
     ctx = _response.ctx
     messages = error.parse_error_response(response, settings)
 
     shipment_data = response[0] if isinstance(response, list) else response
 
-    has_shipment = (
-        isinstance(shipment_data, dict) and "shipmentId" in shipment_data
-    )
+    has_shipment = isinstance(shipment_data, dict) and "shipmentId" in shipment_data
 
-    shipment = (
-        _extract_details(shipment_data, settings, ctx)
-        if has_shipment and not any(messages)
-        else None
-    )
+    shipment = _extract_details(shipment_data, settings, ctx) if has_shipment and not any(messages) else None
 
     return shipment, messages
 
@@ -117,42 +117,24 @@ def shipment_request(
         else (customs.commodities.value_amount if has_customs else 0)
     )
 
-    label_format = lib.identity(
-        settings.connection_config.label_format.state
-        or payload.label_type
-        or "PDF"
-    )
+    label_format = lib.identity(settings.connection_config.label_format.state or payload.label_type or "PDF")
     label_paper_format = lib.identity(
-        settings.connection_config.label_paper_format.state
-        or options.label_paper_format.state
+        settings.connection_config.label_paper_format.state or options.label_paper_format.state
     )
     label_printer_position = lib.identity(
-        settings.connection_config.label_printer_position.state
-        or options.label_printer_position.state
+        settings.connection_config.label_printer_position.state or options.label_printer_position.state
     )
-    dropoff_type = lib.identity(
-        settings.connection_config.dropoff_type.state
-        or options.dropoff_type.state
-    )
-    simulate = lib.identity(
-        settings.connection_config.simulate.state
-        or options.simulate.state
-    )
-    extra_barcode = lib.identity(
-        settings.connection_config.extra_barcode.state
-        or options.extra_barcode.state
-    )
-    with_document = lib.identity(
-        settings.connection_config.with_document.state
-        or options.with_document.state
-    )
+    dropoff_type = lib.identity(settings.connection_config.dropoff_type.state or options.dropoff_type.state)
+    simulate = lib.identity(settings.connection_config.simulate.state or options.simulate.state)
+    extra_barcode = lib.identity(settings.connection_config.extra_barcode.state or options.extra_barcode.state)
+    with_document = lib.identity(settings.connection_config.with_document.state or options.with_document.state)
 
     request = dpd_req.ShipmentRequestElementType(
         numberOfParcels=str(len(packages)),
         shipmentInfos=dpd_req.ShipmentInfosType(
             productCode=service,
             shipmentId=payload.reference,
-            weight=str(int(packages.weight.G)),
+            weight=str(sum(_round_grams(pkg.weight.G) for pkg in packages)),
             cifcost=lib.identity(
                 dpd_req.CustomsAmountType(
                     amount=lib.to_money(customs.duty.declared_value),
@@ -174,9 +156,7 @@ def shipment_request(
         sender=dpd_req.SenderType(
             customerInfos=dpd_req.CustomerInfosType(
                 customerID=settings.customer_id,
-                customerAccountNumber=(
-                    settings.customer_account_number or settings.customer_id
-                ),
+                customerAccountNumber=(settings.customer_account_number or settings.customer_id),
             ),
             address=dpd_req.ReceiverAddressType(
                 companyName=shipper.company_name or "",
@@ -245,15 +225,14 @@ def shipment_request(
                         else None
                     ),
                 )
-                if recipient.tax_id
-                or (has_customs and "recipient_eori" in customs.options)
+                if recipient.tax_id or (has_customs and "recipient_eori" in customs.options)
                 else None
             ),
         ),
         parcel=[
             dpd_req.ParcelType(
                 parcelInfos=dpd_req.ParcelInfosType(
-                    weight=str(int(pkg.weight.G)),
+                    weight=str(_round_grams(pkg.weight.G)),
                     dimensions=lib.identity(
                         dpd_req.DimensionsType(
                             length=int(pkg.length.CM),
@@ -265,11 +244,7 @@ def shipment_request(
                     ),
                 ),
                 parcelContent=pkg.description,
-                senderParcelRefs=(
-                    [pkg.reference_number]
-                    if pkg.reference_number
-                    else None
-                ),
+                senderParcelRefs=([pkg.reference_number] if pkg.reference_number else None),
                 cod=lib.identity(
                     dpd_req.CodType(
                         amount=dpd_req.CustomsAmountType(
@@ -277,8 +252,7 @@ def shipment_request(
                             currency=currency,
                         ),
                         collectType=lib.identity(
-                            options.dpd_meta_cod_collect_type.state
-                            or provider_units.CodCollectType.CASH.value
+                            options.dpd_meta_cod_collect_type.state or provider_units.CodCollectType.CASH.value
                         ),
                         purpose=options.dpd_meta_cod_purpose.state,
                         bankCode=options.dpd_meta_cod_bank_code.state,
@@ -302,33 +276,30 @@ def shipment_request(
                     if options.insurance.state
                     else None
                 ),
-                messages=lib.identity(
-                    dpd_req.MessagesType(
-                        email1=lib.identity(
-                            dpd_req.Email1Type(
-                                notificationType="DELIVERY",
-                                notificationEmail=options.dpd_meta_notification_email.state,
-                                notificationLanguage="EN",
+                messages=[
+                    *(
+                        [
+                            dpd_req.MessageType(
+                                messageType="EMAIL",
+                                messageDestination=options.dpd_meta_notification_email.state,
+                                messageLanguage="EN",
                             )
-                            if options.dpd_meta_notification_email.state
-                            else None
-                        ),
-                        sms1=lib.identity(
-                            dpd_req.Sms1Type(
-                                notificationType="DELIVERY",
-                                notificationPhone=options.dpd_meta_notification_sms.state,
-                                notificationLanguage="EN",
+                        ]
+                        if options.dpd_meta_notification_email.state
+                        else []
+                    ),
+                    *(
+                        [
+                            dpd_req.MessageType(
+                                messageType="SMS",
+                                messageDestination=options.dpd_meta_notification_sms.state,
+                                messageLanguage="EN",
                             )
-                            if options.dpd_meta_notification_sms.state
-                            else None
-                        ),
-                    )
-                    if (
-                        options.dpd_meta_notification_email.state
-                        or options.dpd_meta_notification_sms.state
-                    )
-                    else None
-                ),
+                        ]
+                        if options.dpd_meta_notification_sms.state
+                        else []
+                    ),
+                ],
             )
             for pkg in packages
         ],
@@ -362,10 +333,8 @@ def shipment_request(
                         else provider_units.CustomsValueLevel.LOW.value
                     )
                 ),
-                customsInvoice=customs.invoice,
-                customsInvoiceDates=lib.identity(
-                    [customs.invoice_date] if customs.invoice_date else None
-                ),
+                customsInvoice=customs.invoice or payload.reference or "N/A",
+                customsInvoiceDates=lib.identity([customs.invoice_date] if customs.invoice_date else None),
                 numberOfArticles=str(len(customs.commodities)),
                 exportReason=lib.identity(
                     provider_units.CustomsContentType.map(customs.content_type).value
@@ -384,15 +353,12 @@ def shipment_request(
                         country=recipient.country_code,
                     ),
                     contact=dpd_req.ExporterContactType(
+                        contactPerson=recipient.person_name,
                         phone1=recipient.phone_number,
                         email=recipient.email,
                     ),
                     vatNumber=recipient.tax_id,
-                    eori=(
-                        customs.options.recipient_eori.state
-                        if "recipient_eori" in customs.options
-                        else None
-                    ),
+                    eori=(customs.options.recipient_eori.state if "recipient_eori" in customs.options else None),
                 ),
                 exporter=dpd_req.ExporterType(
                     address=dpd_req.ExporterAddressType(
@@ -405,6 +371,7 @@ def shipment_request(
                         country=exporter.country_code,
                     ),
                     contact=dpd_req.ExporterContactType(
+                        contactPerson=exporter.person_name,
                         phone1=exporter.phone_number,
                         email=exporter.email,
                     ),
@@ -417,8 +384,8 @@ def shipment_request(
                         content=lib.text(item.description, max=35),
                         amountOfPosition=item.value_amount,
                         manufacturedCountry=item.origin_country or shipper.country_code,
-                        netWeight=lib.text(item.weight.G),
-                        grossWeight=lib.text(item.weight.G),
+                        netWeight=str(lib.to_int(units.Weight(item.weight, item.weight_unit or "KG").G)),
+                        grossWeight=str(lib.to_int(units.Weight(item.weight, item.weight_unit or "KG").G)),
                         customerProductCode=item.sku,
                         productDescription=lib.text(item.description, max=100),
                         importTarifCode=item.hs_code,
@@ -438,12 +405,14 @@ def shipment_request(
                 timeFrom=options.dpd_meta_delivery_time_from.state,
                 timeTo=options.dpd_meta_delivery_time_to.state,
             )
-            if any([
-                options.dpd_meta_delivery_date_from.state, 
-                options.dpd_meta_delivery_date_to.state,
-                options.dpd_meta_delivery_time_from.state,
-                options.dpd_meta_delivery_time_to.state,
-            ])
+            if any(
+                [
+                    options.dpd_meta_delivery_date_from.state,
+                    options.dpd_meta_delivery_date_to.state,
+                    options.dpd_meta_delivery_time_from.state,
+                    options.dpd_meta_delivery_time_to.state,
+                ]
+            )
             else None
         ),
     )

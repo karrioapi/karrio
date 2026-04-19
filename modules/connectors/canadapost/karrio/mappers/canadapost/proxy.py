@@ -1,9 +1,9 @@
 import time
-import typing
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
-import karrio.providers.canadapost.utils as provider_utils
+import karrio.lib as lib
 import karrio.mappers.canadapost.settings as provider_settings
+import karrio.providers.canadapost.utils as provider_utils
 
 
 class Proxy(proxy.Proxy):
@@ -51,7 +51,7 @@ class Proxy(proxy.Proxy):
                 },
             )
 
-        responses: typing.List[str] = lib.run_asynchronously(
+        responses: list[str] = lib.run_asynchronously(
             _track,
             request.serialize(),
         )
@@ -74,7 +74,7 @@ class Proxy(proxy.Proxy):
             ),
             requests.serialize(),
         )
-        responses: typing.List[dict] = lib.run_asynchronously(
+        responses: list[dict] = lib.run_asynchronously(
             lambda data: dict(
                 shipment=data["shipment"],
                 label=(
@@ -91,10 +91,7 @@ class Proxy(proxy.Proxy):
                     else None
                 ),
             ),
-            [
-                {**provider_utils.parse_label_references(_), "shipment": _}
-                for _ in shipment_responses
-            ],
+            [{**provider_utils.parse_label_references(_), "shipment": _} for _ in shipment_responses],
         )
 
         return lib.Deserializable(
@@ -140,7 +137,7 @@ class Proxy(proxy.Proxy):
 
     def cancel_shipment(self, requests: lib.Serializable) -> lib.Deserializable:
         # retrieve shipment infos to check if refund is necessary
-        infos: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
+        infos: list[tuple[str, str]] = lib.run_asynchronously(
             lambda shipment_id: (
                 shipment_id,
                 lib.request(
@@ -159,7 +156,7 @@ class Proxy(proxy.Proxy):
         )
 
         # make refund requests for submitted shipments
-        refunds: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
+        refunds: list[tuple[str, str]] = lib.run_asynchronously(
             lambda payload: (
                 payload["id"],
                 (
@@ -190,7 +187,7 @@ class Proxy(proxy.Proxy):
         )
 
         # make cancel requests for non-submitted shipments
-        responses: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
+        responses: list[tuple[str, str]] = lib.run_asynchronously(
             lambda payload: (
                 payload["id"],
                 (
@@ -204,11 +201,7 @@ class Proxy(proxy.Proxy):
                             "Authorization": f"Basic {self.settings.authorization}",
                             "Accept-language": f"{self.settings.language}-CA",
                         },
-                        decoder=lambda _: (
-                            _
-                            if lib.text(_)
-                            else '<message>Shipment cancelled</message>'
-                        ),
+                        decoder=lambda _: _ if lib.text(_) else "<message>Shipment cancelled</message>",
                     )
                     if payload["refunded"]
                     else payload["response"]
@@ -218,10 +211,7 @@ class Proxy(proxy.Proxy):
                 dict(
                     id=_,
                     response=response,
-                    refunded=(
-                        getattr(lib.to_element(response), "tag", None)
-                        != "shipment-refund-request-info"
-                    ),
+                    refunded=(getattr(lib.to_element(response), "tag", None) != "shipment-refund-request-info"),
                 )
                 for _, response in refunds
             ],
@@ -356,9 +346,7 @@ class Proxy(proxy.Proxy):
                 ctx["shipment_identifiers"],
             )
 
-            group_ids = [
-                _.text for _ in lib.find_element("group-id", lib.to_element(shipments))
-            ]
+            group_ids = [_.text for _ in lib.find_element("group-id", lib.to_element(shipments))]
             ctx.update(group_ids=[*set([*ctx["group_ids"], *group_ids])])
 
         response = lib.request(
@@ -383,10 +371,7 @@ class Proxy(proxy.Proxy):
                 trace=self.trace_as("xml"),
                 headers={
                     "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept": (
-                        lib.text(link.get("media-type"))
-                        or "application/vnd.cpc.manifest-v8+xml"
-                    ),
+                    "Accept": (lib.text(link.get("media-type")) or "application/vnd.cpc.manifest-v8+xml"),
                 },
             ),
             lib.find_element("link", lib.to_element(response)),
@@ -403,11 +388,7 @@ class Proxy(proxy.Proxy):
                             "Accept": link.get("media-type"),
                         },
                     ),
-                    [
-                        _
-                        for _ in lib.find_element("link", lib.to_element(manifests))
-                        if _.get("rel") == "artifact"
-                    ],
+                    [_ for _ in lib.find_element("link", lib.to_element(manifests)) if _.get("rel") == "artifact"],
                 )
             )
 

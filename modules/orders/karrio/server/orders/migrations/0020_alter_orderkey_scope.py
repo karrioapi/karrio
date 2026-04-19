@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("orders", "0019_orderkey"),
     ]
@@ -13,8 +12,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="orderkey",
             name="scope",
-            field=models.CharField(
-                help_text="Organization or user scope id", max_length=50
-            ),
+            field=models.CharField(help_text="Organization or user scope id", max_length=50),
         ),
     ]

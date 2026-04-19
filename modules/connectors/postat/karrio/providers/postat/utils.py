@@ -1,18 +1,15 @@
 """Karrio PostAT provider utilities."""
 
 import attr
-import karrio.lib as lib
 import karrio.core as core
 import karrio.core.utils as utils
+import karrio.lib as lib
 from karrio.core.utils.soap import apply_namespaceprefix
 
 
 def standard_request_serializer(envelope: lib.Envelope) -> str:
     """Serialize envelope to PostAT SOAP format with proper namespaces."""
-    namespace_def = (
-        'xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" '
-        'xmlns:post="http://post.ondot.at"'
-    )
+    namespace_def = 'xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:post="http://post.ondot.at"'
 
     envelope.ns_prefix_ = "soapenv"
     envelope.Body.ns_prefix_ = "soapenv"
@@ -52,8 +49,7 @@ class Settings(core.Settings):
         This should be configured via connection settings.
         """
         return (
-            self.connection_config.server_url.state
-            or "https://plc.post.at/Post.Webservice/ShippingService.svc/secure"
+            self.connection_config.server_url.state or "https://plc.post.at/Post.Webservice/ShippingService.svc/secure"
         )
 
     @property

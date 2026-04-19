@@ -5,7 +5,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0069_alter_surcharge_carriers_alter_surcharge_services"),
     ]

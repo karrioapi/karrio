@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.canadapost as mappers
 import karrio.providers.canadapost.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="canadapost",

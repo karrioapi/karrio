@@ -1,8 +1,8 @@
 import datetime
-from django.utils import timezone
 
-from karrio.server.core.logging import logger
 import karrio.server.manager.models as models
+from django.utils import timezone
+from karrio.server.core.logging import logger
 
 
 def close_past_pickups():

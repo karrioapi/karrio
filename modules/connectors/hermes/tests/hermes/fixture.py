@@ -2,7 +2,6 @@
 
 import karrio.sdk as karrio
 
-
 gateway = karrio.gateway["hermes"].create(
     dict(
         id="hermes_test",

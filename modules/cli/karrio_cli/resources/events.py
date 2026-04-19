@@ -1,14 +1,15 @@
-import typer
-import karrio_cli.common.utils as utils
-import typing
 import datetime
+
+import typer
+
+import karrio_cli.common.utils as utils
 
 app = typer.Typer()
 
 
 @app.command("list")
 def list_events(
-    type: typing.Optional[str] = typer.Option(
+    type: str | None = typer.Option(
         None,
         help="Event type (e.g. shipment_created, order_created, tracker_created)",
         autocompletion=lambda: [
@@ -30,20 +31,14 @@ def list_events(
             "shipment_purchased",
             "tracker_created",
             "tracker_updated",
-        ]
+        ],
     ),
-    created_after: typing.Optional[datetime.datetime] = None,
-    created_before: typing.Optional[datetime.datetime] = None,
+    created_after: datetime.datetime | None = None,
+    created_before: datetime.datetime | None = None,
     limit: int = typer.Option(20, help="Number of results to return per page"),
-    offset: int = typer.Option(
-        0, help="The initial index from which to return the results"
-    ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    offset: int = typer.Option(0, help="The initial index from which to return the results"),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     List all events with optional filters and pagination.
@@ -100,23 +95,14 @@ def list_events(
     # Remove None values from params
     params = {k: v for k, v in params.items() if v is not None}
 
-    utils.make_graphql_request(
-        "get_events",
-        {"filter": params},
-        pretty_print=pretty,
-        line_numbers=line_numbers
-    )
+    utils.make_graphql_request("get_events", {"filter": params}, pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("retrieve")
 def retrieve_event(
     event_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Retrieve an event by ID.
@@ -143,9 +129,4 @@ def retrieve_event(
     }
     ```
     """
-    utils.make_graphql_request(
-        "get_event",
-        {"id": event_id},
-        pretty_print=pretty,
-        line_numbers=line_numbers
-    )
+    utils.make_graphql_request("get_event", {"id": event_id}, pretty_print=pretty, line_numbers=line_numbers)

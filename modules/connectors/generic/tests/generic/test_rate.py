@@ -1,8 +1,10 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.providers.generic import units
+
 from .fixture import gateway
 
 
@@ -36,9 +38,7 @@ class TestGenericServiceConfiguration(unittest.TestCase):
 
     def test_standard_service_configuration(self):
         """Test that standard service has correct configuration."""
-        standard_service = next(
-            (s for s in self.services if s.service_code == "standard_service"), None
-        )
+        standard_service = next((s for s in self.services if s.service_code == "standard_service"), None)
 
         self.assertIsNotNone(standard_service)
         self.assertEqual(standard_service.service_name, "Standard Service")
@@ -48,9 +48,7 @@ class TestGenericServiceConfiguration(unittest.TestCase):
 
     def test_services_without_domicile_international_flags(self):
         """Test that services without domicile/international flags match all destinations."""
-        standard_service = next(
-            (s for s in self.services if s.service_code == "standard_service"), None
-        )
+        standard_service = next((s for s in self.services if s.service_code == "standard_service"), None)
 
         # Generic services don't specify domicile/international flags
         # They should default to None and match all destinations
@@ -106,9 +104,7 @@ class TestGenericServiceConfiguration(unittest.TestCase):
             }
         )
 
-        parsed_response = (
-            karrio.Rating.fetch(international_request).from_(gateway).parse()
-        )
+        parsed_response = karrio.Rating.fetch(international_request).from_(gateway).parse()
         rates = parsed_response[0]
 
         # Generic services should be returned (no filtering by default)

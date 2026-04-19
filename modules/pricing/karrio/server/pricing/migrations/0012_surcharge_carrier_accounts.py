@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0016_alter_purolatorsettings_user_token"),
         ("pricing", "0011_auto_20210615_1601"),

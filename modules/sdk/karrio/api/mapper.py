@@ -1,12 +1,13 @@
 """Karrio Mapper abstract class definition module."""
 
 import abc
+
 import attr
-import typing
-import karrio.lib as lib
-import karrio.core.models as models
+
 import karrio.core.errors as errors
+import karrio.core.models as models
 import karrio.core.settings as settings
+import karrio.lib as lib
 
 
 @attr.s(auto_attribs=True)
@@ -15,9 +16,7 @@ class Mapper(abc.ABC):
 
     settings: settings.Settings
 
-    def create_address_validation_request(
-        self, payload: models.AddressValidationRequest
-    ) -> lib.Serializable:
+    def create_address_validation_request(self, payload: models.AddressValidationRequest) -> lib.Serializable:
         """Create a carrier specific address validation request data from the payload
 
         Args:
@@ -46,13 +45,9 @@ class Mapper(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.create_rate_request.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.create_rate_request.__name__, self.settings.carrier_name)
 
-    def create_tracking_request(
-        self, payload: models.TrackingRequest
-    ) -> lib.Serializable:
+    def create_tracking_request(self, payload: models.TrackingRequest) -> lib.Serializable:
         """Create a carrier specific tracking request data from payload
 
         Args:
@@ -68,9 +63,7 @@ class Mapper(abc.ABC):
             self.__class__.create_tracking_request.__name__, self.settings.carrier_name
         )
 
-    def create_return_shipment_request(
-        self, payload: models.ShipmentRequest
-    ) -> lib.Serializable:
+    def create_return_shipment_request(self, payload: models.ShipmentRequest) -> lib.Serializable:
         """Create a carrier specific return shipment request data from the payload
 
         Args:
@@ -89,9 +82,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_shipment_request(
-        self, payload: models.ShipmentRequest
-    ) -> lib.Serializable:
+    def create_shipment_request(self, payload: models.ShipmentRequest) -> lib.Serializable:
         """Create a carrier specific shipment creation request data from payload
 
         Args:
@@ -107,9 +98,7 @@ class Mapper(abc.ABC):
             self.__class__.create_shipment_request.__name__, self.settings.carrier_name
         )
 
-    def create_cancel_shipment_request(
-        self, payload: models.ShipmentCancelRequest
-    ) -> lib.Serializable:
+    def create_cancel_shipment_request(self, payload: models.ShipmentCancelRequest) -> lib.Serializable:
         """Create a carrier specific void shipment request data from payload
 
         Args:
@@ -138,13 +127,9 @@ class Mapper(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.create_pickup_request.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.create_pickup_request.__name__, self.settings.carrier_name)
 
-    def create_pickup_update_request(
-        self, payload: models.PickupUpdateRequest
-    ) -> lib.Serializable:
+    def create_pickup_update_request(self, payload: models.PickupUpdateRequest) -> lib.Serializable:
         """Create a carrier specific pickup modification request data from payload
 
         Args:
@@ -161,9 +146,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_cancel_pickup_request(
-        self, payload: models.PickupCancelRequest
-    ) -> lib.Serializable:
+    def create_cancel_pickup_request(self, payload: models.PickupCancelRequest) -> lib.Serializable:
         """Create a carrier specific pickup cancellation request data from payload
 
         Args:
@@ -180,9 +163,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_document_upload_request(
-        self, payload: models.DocumentUploadRequest
-    ) -> lib.Serializable:
+    def create_document_upload_request(self, payload: models.DocumentUploadRequest) -> lib.Serializable:
         """Create a carrier specific document upload request data from payload
 
         Args:
@@ -199,9 +180,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_manifest_request(
-        self, payload: models.ManifestRequest
-    ) -> lib.Serializable:
+    def create_manifest_request(self, payload: models.ManifestRequest) -> lib.Serializable:
         """Create a carrier specific manifest request data from payload
 
         Args:
@@ -218,9 +197,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_duties_calculation_request(
-        self, payload: models.DutiesCalculationRequest
-    ) -> lib.Serializable:
+    def create_duties_calculation_request(self, payload: models.DutiesCalculationRequest) -> lib.Serializable:
         """Create a carrier specific duties calculation request data from payload
 
         Args:
@@ -231,9 +208,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_insurance_request(
-        self, payload: models.InsuranceRequest
-    ) -> lib.Serializable:
+    def create_insurance_request(self, payload: models.InsuranceRequest) -> lib.Serializable:
         """Create a carrier specific insurance request data from payload
 
         Args:
@@ -244,9 +219,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_webhook_registration_request(
-        self, payload: models.WebhookRegistrationRequest
-    ) -> lib.Serializable:
+    def create_webhook_registration_request(self, payload: models.WebhookRegistrationRequest) -> lib.Serializable:
         """Create a carrier specific webhook registration request data from payload
 
         Args:
@@ -263,9 +236,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def create_webhook_deregistration_request(
-        self, payload: models.WebhookDeregistrationRequest
-    ) -> lib.Serializable:
+    def create_webhook_deregistration_request(self, payload: models.WebhookDeregistrationRequest) -> lib.Serializable:
         """Create a carrier specific webhook deregistration request data from payload
 
         Args:
@@ -280,7 +251,7 @@ class Mapper(abc.ABC):
 
     def parse_address_validation_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
+    ) -> tuple[models.AddressValidationDetails, list[models.Message]]:
         """Create a unified API address validation details from the carrier response
 
         Args:
@@ -300,7 +271,7 @@ class Mapper(abc.ABC):
 
     def parse_shipment_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ShipmentDetails, list[models.Message]]:
         """Create a unified API shipment creation result from carrier response
 
         Args:
@@ -319,7 +290,7 @@ class Mapper(abc.ABC):
 
     def parse_return_shipment_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ShipmentDetails, list[models.Message]]:
         """Create a unified API return shipment result from carrier response
 
         Args:
@@ -339,7 +310,7 @@ class Mapper(abc.ABC):
 
     def parse_cancel_shipment_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ConfirmationDetails, list[models.Message]]:
         """Create a unified API operation confirmation detail from the carrier response
 
         Args:
@@ -357,9 +328,7 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def parse_pickup_response(
-        self, response: lib.Deserializable
-    ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+    def parse_pickup_response(self, response: lib.Deserializable) -> tuple[models.PickupDetails, list[models.Message]]:
         """Create a unified API pickup result from carrier response
 
         Args:
@@ -372,13 +341,11 @@ class Mapper(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.parse_pickup_response.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.parse_pickup_response.__name__, self.settings.carrier_name)
 
     def parse_pickup_update_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+    ) -> tuple[models.PickupDetails, list[models.Message]]:
         """Create a unified API pickup result from carrier response
 
         Args:
@@ -398,7 +365,7 @@ class Mapper(abc.ABC):
 
     def parse_cancel_pickup_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ConfirmationDetails, list[models.Message]]:
         """Create a united API pickup cancellation result from carrier response
 
         Args:
@@ -417,7 +384,7 @@ class Mapper(abc.ABC):
 
     def parse_tracking_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    ) -> tuple[list[models.TrackingDetails], list[models.Message]]:
         """Create a unified API tracking result list from carrier response
 
         Args:
@@ -436,7 +403,7 @@ class Mapper(abc.ABC):
 
     def parse_rate_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    ) -> tuple[list[models.RateDetails], list[models.Message]]:
         """Create a unified API quote result list from carrier response
 
         Args:
@@ -449,13 +416,11 @@ class Mapper(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.parse_rate_response.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.parse_rate_response.__name__, self.settings.carrier_name)
 
     def parse_document_upload_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+    ) -> tuple[models.DocumentUploadDetails, list[models.Message]]:
         """Create a unified API quote result list from carrier response
 
         Args:
@@ -475,7 +440,7 @@ class Mapper(abc.ABC):
 
     def parse_manifest_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ManifestDetails, list[models.Message]]:
         """Create a unified API manifest result from carrier response
 
         Args:
@@ -495,7 +460,7 @@ class Mapper(abc.ABC):
 
     def parse_duties_calculation_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.DutiesCalculationDetails, typing.List[models.Message]]:
+    ) -> tuple[models.DutiesCalculationDetails, list[models.Message]]:
         """Create a unified API duties calculation result from carrier response
 
         Args:
@@ -508,7 +473,7 @@ class Mapper(abc.ABC):
 
     def parse_insurance_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.InsuranceDetails, typing.List[models.Message]]:
+    ) -> tuple[models.InsuranceDetails, list[models.Message]]:
         """Create a unified API insurance result from carrier response
 
         Args:
@@ -521,7 +486,7 @@ class Mapper(abc.ABC):
 
     def parse_webhook_registration_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.WebhookRegistrationDetails, typing.List[models.Message]]:
+    ) -> tuple[models.WebhookRegistrationDetails, list[models.Message]]:
         """Create a unified API webhook registration result from carrier response
 
         Args:
@@ -541,7 +506,7 @@ class Mapper(abc.ABC):
 
     def parse_webhook_deregistration_response(
         self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    ) -> tuple[models.ConfirmationDetails, list[models.Message]]:
         """Create a unified API webhook deregistration result from carrier response
 
         Args:

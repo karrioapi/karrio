@@ -1,10 +1,11 @@
 import unittest
-import logging
-from unittest.mock import patch, ANY
-from karrio.core.utils import DP
-from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from .fixture import gateway
+from unittest.mock import ANY, patch
+
 import karrio.sdk as karrio
+from karrio.core.models import ShipmentCancelRequest, ShipmentRequest
+from karrio.core.utils import DP
+
+from .fixture import gateway
 
 
 class TestUPSShipment(unittest.TestCase):
@@ -18,9 +19,7 @@ class TestUPSShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestJSON)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertEqual(
             request.serialize(),
@@ -28,22 +27,16 @@ class TestUPSShipment(unittest.TestCase):
         )
 
     def test_create_package_shipment_with_package_preset_request(self):
-        request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**PackageShipmentWithPackagePresetData)
-        )
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**PackageShipmentWithPackagePresetData))
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetJSON)
 
     def test_create_return_shipment_request(self):
-        request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**ReturnShipmentData)
-        )
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**ReturnShipmentData))
         print(request.serialize())
         self.assertEqual(request.serialize(), ReturnShipmentRequestJSON)
 
     def test_create_international_shipment_request(self):
-        request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**InternationalShipmentData)
-        )
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**InternationalShipmentData))
         self.assertEqual(request.serialize(), InternationalShipmentRequestJSON)
 
     @patch("karrio.mappers.ups.proxy.lib.request", return_value="{}")
@@ -56,33 +49,21 @@ class TestUPSShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseJSON
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_response_with_invoice(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseWithInvoice
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedShipmentResponseWithInvoice
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponseWithInvoice)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponseJSON
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedShipmentCancelResponse
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
 
 if __name__ == "__main__":

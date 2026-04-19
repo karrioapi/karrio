@@ -1,8 +1,8 @@
-import karrio.schemas.fedex.tracking_document_request as fedex
 import gzip
-import typing
-import karrio.lib as lib
+
 import karrio.core as core
+import karrio.lib as lib
+import karrio.schemas.fedex.tracking_document_request as fedex
 
 
 class Settings(core.Settings):
@@ -25,18 +25,14 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://apis-sandbox.fedex.com"
-            if self.test_mode
-            else "https://apis.fedex.com"
-        )
+        return "https://apis-sandbox.fedex.com" if self.test_mode else "https://apis.fedex.com"
 
     @property
     def tracking_url(self):
         return "https://www.fedex.com/fedextrack/?trknbr={}"
 
     @property
-    def default_currency(self) -> typing.Optional[str]:
+    def default_currency(self) -> str | None:
         return lib.units.CountryCurrency.map(self.account_country_code).value
 
     @property
@@ -55,9 +51,7 @@ def get_proof_of_delivery(tracking_number: str, settings: Settings):
     request = fedex.TrackingDocumentRequestType(
         trackDocumentSpecification=[
             fedex.TrackDocumentSpecificationType(
-                trackingNumberInfo=fedex.TrackingNumberInfoType(
-                    trackingNumber=tracking_number
-                )
+                trackingNumberInfo=fedex.TrackingNumberInfoType(trackingNumber=tracking_number)
             )
         ],
         trackDocumentDetail=fedex.TrackDocumentDetailType(
@@ -81,9 +75,7 @@ def get_proof_of_delivery(tracking_number: str, settings: Settings):
     if any(messages):
         return None
 
-    return lib.failsafe(
-        lambda: lib.bundle_base64(response["output"]["documents"], format="PNG")
-    )
+    return lib.failsafe(lambda: lib.bundle_base64(response["output"]["documents"], format="PNG"))
 
 
 def parse_response(binary_string):
@@ -95,8 +87,4 @@ def state_code(address: lib.units.ComputedAddress) -> str:
     if address.state_code is None:
         return None
 
-    return (
-        "PQ"
-        if address.state_code.lower() == "qc" and address.country_code == "CA"
-        else address.state_code
-    )
+    return "PQ" if address.state_code.lower() == "qc" and address.country_code == "CA" else address.state_code

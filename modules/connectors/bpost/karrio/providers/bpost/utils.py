@@ -1,6 +1,7 @@
 import base64
-import karrio.lib as lib
+
 import karrio.core as core
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -27,7 +28,7 @@ class Settings(core.Settings):
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.account_id, self.passphrase)
+        pair = f"{self.account_id}:{self.passphrase}"
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
     @property

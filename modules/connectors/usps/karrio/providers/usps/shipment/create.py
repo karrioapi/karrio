@@ -1,23 +1,22 @@
 """Karrio USPS create label implementation."""
 
+import time
+
+import karrio.core.errors as errors
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.usps.error as error
+import karrio.providers.usps.units as provider_units
+import karrio.providers.usps.utils as provider_utils
 import karrio.schemas.usps.label_request as usps
 import karrio.schemas.usps.label_response as shipping
 
-import time
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.core.errors as errors
-import karrio.providers.usps.error as error
-import karrio.providers.usps.utils as provider_utils
-import karrio.providers.usps.units as provider_units
-
 
 def parse_shipment_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     responses = _response.deserialize()
     shipment = lib.to_multi_piece_shipment(
         [
@@ -26,11 +25,10 @@ def parse_shipment_response(
                 _extract_details(response, settings, _response.ctx),
             )
             for _, response in enumerate(responses, start=1)
-            if response.get("error") is None
-            and response.get("labelMetadata") is not None
+            if response.get("error") is None and response.get("labelMetadata") is not None
         ]
     )
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response in responses],
         start=[],
     )
@@ -75,7 +73,8 @@ def _extract_details(
                 commitment=lib.failsafe(lambda: details.labelMetadata.commitment.name),
             ),
         )
-        if details.labelMetadata.postage is not None else None
+        if details.labelMetadata.postage is not None
+        else None
     )
 
     return models.ShipmentDetails(
@@ -93,7 +92,9 @@ def _extract_details(
                     format=label_type,
                     base64=return_label,
                 )
-            ] if return_label else [],
+            ]
+            if return_label
+            else [],
         ),
         selected_rate=selected_rate,
         return_shipment=lib.identity(
@@ -102,9 +103,7 @@ def _extract_details(
                 shipment_identifier=return_tracking_number,
                 tracking_url=settings.tracking_url.format(return_tracking_number),
                 meta=dict(
-                    returnLabelBrokerID=lib.failsafe(
-                        lambda: details.returnLabelMetadata.labelBrokerID
-                    ),
+                    returnLabelBrokerID=lib.failsafe(lambda: details.returnLabelMetadata.labelBrokerID),
                 ),
             )
             if return_tracking_number
@@ -126,23 +125,14 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
 
-    if (
-        shipper.country_code is not None
-        and shipper.country_code != units.Country.US.name
-    ):
+    if shipper.country_code is not None and shipper.country_code != units.Country.US.name:
         raise errors.OriginNotServicedError(shipper.country_code)
 
-    if (
-        recipient.country_code is not None
-        and recipient.country_code != units.Country.US.name
-    ):
+    if recipient.country_code is not None and recipient.country_code != units.Country.US.name:
         raise errors.DestinationNotServicedError(recipient.country_code)
 
     return_address = lib.to_address(payload.return_address)
-    mail_class = lib.identity(
-        provider_units.ShippingService.to_mail_class(payload.service).value
-        or payload.service
-    )
+    mail_class = lib.identity(provider_units.ShippingService.to_mail_class(payload.service).value or payload.service)
     options = lib.to_shipping_options(
         payload.options,
         initializer=provider_units.shipping_options_initializer,
@@ -156,11 +146,8 @@ def shipment_request(
     pickup_location = lib.to_address(options.hold_for_pickup_address.state)
     label_type = provider_units.LabelType.map(payload.label_type).value or "PDF"
 
-    package_options = lambda package: lib.identity(
-        package.options
-        if mail_class not in provider_units.INCOMPATIBLE_SERVICES
-        else {}
-    )
+    def package_options(package):
+        return lib.identity(package.options if mail_class not in provider_units.INCOMPATIBLE_SERVICES else {})
 
     # map data to convert karrio model to usps specific type
     request = [
@@ -172,9 +159,7 @@ def shipment_request(
                 receiptOption="NONE",
                 suppressPostage=None,
                 suppressMailDate=None,
-                returnLabel=lib.identity(
-                    True if options.usps_return_receipt.state else None
-                ),
+                returnLabel=lib.identity(True if options.usps_return_receipt.state else None),
             ),
             toAddress=usps.AddressType(
                 streetAddress=recipient.address_line1,
@@ -266,9 +251,7 @@ def shipment_request(
                 girth=package.girth.value,
                 mailClass=mail_class,
                 rateIndicator=package.options.usps_rate_indicator.state or "DR",
-                processingCategory=lib.identity(
-                    package.options.usps_processing_category.state or "NON_MACHINABLE"
-                ),
+                processingCategory=lib.identity(package.options.usps_processing_category.state or "NON_MACHINABLE"),
                 destinationEntryFacilityType=lib.identity(
                     package.options.usps_destination_facility_type.state or "NONE"
                 ),
@@ -287,11 +270,7 @@ def shipment_request(
                 ),
                 packageOptions=lib.identity(
                     usps.PackageOptionsType(
-                        packageValue=lib.identity(
-                            package.total_value
-                            or package.options.declared_value.state
-                            or 1.0
-                        ),
+                        packageValue=lib.identity(package.total_value or package.options.declared_value.state or 1.0),
                         nonDeliveryOption=None,
                         redirectAddress=None,
                         contentType=None,
@@ -319,14 +298,10 @@ def shipment_request(
                         if __ not in provider_units.CUSTOM_OPTIONS
                     ]
                 ),
-                mailingDate=lib.fdate(
-                    package.options.shipment_date.state or time.strftime("%Y-%m-%d")
-                ),
+                mailingDate=lib.fdate(package.options.shipment_date.state or time.strftime("%Y-%m-%d")),
                 carrierRelease=package.options.usps_carrier_release.state,
                 physicalSignatureRequired=package.options.usps_physical_signature_required.state,
-                inductionZIPCode=lib.identity(
-                    return_address.postal_code or shipper.postal_code
-                ),
+                inductionZIPCode=lib.identity(return_address.postal_code or shipper.postal_code),
             ),
             customsForm=None,
         )

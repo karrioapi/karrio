@@ -1,5 +1,5 @@
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 
 
 class ConnectionConfig(lib.Enum):

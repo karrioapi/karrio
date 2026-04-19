@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0017_auto_20210629_1650'),
+        ("manager", "0017_auto_20210629_1650"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='shipment',
-            name='reference',
+            model_name="shipment",
+            name="reference",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='label_type',
+            model_name="shipment",
+            name="label_type",
             field=models.CharField(blank=True, max_length=25, null=True),
         ),
     ]

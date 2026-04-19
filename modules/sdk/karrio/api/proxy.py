@@ -1,10 +1,12 @@
 """Karrio Proxy abstract class definition module."""
 
 import abc
+
 import attr
-import karrio.lib as lib
+
 import karrio.core.errors as errors
 import karrio.core.settings as settings
+import karrio.lib as lib
 
 
 @attr.s(auto_attribs=True)
@@ -25,9 +27,7 @@ class Proxy(abc.ABC):
         Returns:
             Deserializable: a Deserializable authentication response (xml, json, text...)
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.authenticate.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.authenticate.__name__, self.settings.carrier_name)
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to get shipment rates from a carrier webservice
@@ -41,9 +41,7 @@ class Proxy(abc.ABC):
         Raises:
            Deserializable: a Deserializable rate response (xml, json, text...)
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.get_rates.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.get_rates.__name__, self.settings.carrier_name)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to get tracking details from a carrier webservice
@@ -57,9 +55,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.get_tracking.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.get_tracking.__name__, self.settings.carrier_name)
 
     def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         """Send request(s) to create a return shipment label from a carrier webservice
@@ -73,9 +69,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.create_return_shipment.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.create_return_shipment.__name__, self.settings.carrier_name)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to create a shipment from a carrier webservice
@@ -89,9 +83,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.create_shipment.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.create_shipment.__name__, self.settings.carrier_name)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) cancel a shipment from a carrier webservice
@@ -105,9 +97,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.cancel_shipment.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.cancel_shipment.__name__, self.settings.carrier_name)
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to schedule pickup from a carrier webservice
@@ -121,9 +111,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.schedule_pickup.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.schedule_pickup.__name__, self.settings.carrier_name)
 
     def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to update a pickup from a carrier webservice
@@ -137,9 +125,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.modify_pickup.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.modify_pickup.__name__, self.settings.carrier_name)
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to cancel a pickup from a carrier webservice
@@ -153,9 +139,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.cancel_pickup.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.cancel_pickup.__name__, self.settings.carrier_name)
 
     def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to validated an address from a carrier webservice
@@ -169,9 +153,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.validate_address.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.validate_address.__name__, self.settings.carrier_name)
 
     def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to upload a document from a carrier webservice
@@ -185,9 +167,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.upload_document.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.upload_document.__name__, self.settings.carrier_name)
 
     def create_manifest(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to create a manifest from a carrier webservice
@@ -201,9 +181,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the carrier integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.create_manifest.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.create_manifest.__name__, self.settings.carrier_name)
 
     def calculate_duties(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to calculate duties from a provider API.
@@ -217,9 +195,7 @@ class Proxy(abc.ABC):
         Raises:
             MethodNotSupportedError: Is raised when the provider integration does not implement this method
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.calculate_duties.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.calculate_duties.__name__, self.settings.carrier_name)
 
     def apply_insurance_coverage(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to apply insurance coverage to a package.
@@ -247,9 +223,7 @@ class Proxy(abc.ABC):
         Returns:
             Deserializable: a carrier specific deserializable response data type
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.register_webhook.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.register_webhook.__name__, self.settings.carrier_name)
 
     def deregister_webhook(self, request: lib.Serializable) -> lib.Deserializable:
         """Send one or many request(s) to deregister a webhook from a carrier webservice
@@ -260,6 +234,4 @@ class Proxy(abc.ABC):
         Returns:
             Deserializable: a carrier specific deserializable response data type
         """
-        raise errors.MethodNotSupportedError(
-            self.__class__.deregister_webhook.__name__, self.settings.carrier_name
-        )
+        raise errors.MethodNotSupportedError(self.__class__.deregister_webhook.__name__, self.settings.carrier_name)

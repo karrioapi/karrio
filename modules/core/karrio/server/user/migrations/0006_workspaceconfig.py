@@ -9,7 +9,6 @@ import karrio.server.core.models.base
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user", "0005_token_label"),
     ]
@@ -23,11 +22,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.base.uuid,
-                            *(),
-                            **{"prefix": "wcfg_"}
-                        ),
+                        default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "wcfg_"}),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -37,9 +32,7 @@ class Migration(migrations.Migration):
                 (
                     "config",
                     models.JSONField(
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        )
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}})
                     ),
                 ),
                 (

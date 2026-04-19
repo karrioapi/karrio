@@ -3,7 +3,6 @@ from django.db.models.fields import json
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tracing", "0007_tracingrecord_tracing_created_at_idx"),
     ]

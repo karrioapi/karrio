@@ -1,18 +1,17 @@
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.australiapost.error as error
+import karrio.providers.australiapost.units as provider_units
+import karrio.providers.australiapost.utils as provider_utils
 import karrio.schemas.australiapost.rate_request as australiapost
 import karrio.schemas.australiapost.rate_response as rating
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.australiapost.error as error
-import karrio.providers.australiapost.utils as provider_utils
-import karrio.providers.australiapost.units as provider_units
 
 
 def parse_rate_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
     items = response.get("items") or []
 
@@ -31,10 +30,7 @@ def parse_rate_response(
         [
             (
                 f"{_}",
-                [
-                    _extract_details(price, settings)
-                    for price in item.get("prices") or []
-                ],
+                [_extract_details(price, settings) for price in item.get("prices") or []],
             )
             for _, item in enumerate(items, start=1)
         ]
@@ -50,14 +46,16 @@ def _extract_details(
     rate = lib.to_object(rating.PriceElementType, data)
     service = provider_units.ShippingService.map(rate.product_id)
     features = data.get("features") or {}
+    feature_charges = []
+    for feature in features.values():
+        feature_price = lib.failsafe(lambda feature=feature: feature.attributes.price.calculated_price)
+        if feature_price is not None:
+            feature_charges.append((feature.type, feature_price))
+
     charges = [
         ("base charge", rate.calculated_price_ex_gst),
         ("GST", rate.calculated_gst),
-        *[
-            (_.type, _.attributes.price.calculated_price)
-            for _ in features.values()
-            if lib.failsafe(lambda: _.attributes.price.calculated_price) is not None
-        ],
+        *feature_charges,
     ]
 
     return models.RateDetails(
@@ -113,9 +111,7 @@ def rate_request(
                 width=package.width.CM,
                 height=package.height.CM,
                 weight=package.weight.KG,
-                packaging_type=provider_units.PackagingType.map(
-                    package.packaging_type
-                ).value,
+                packaging_type=provider_units.PackagingType.map(package.packaging_type).value,
                 product_ids=[_.value for _ in services],
                 features=lib.identity(
                     dict(

@@ -1,10 +1,12 @@
 """DPD Global carrier pickup tests."""
 
 import unittest
-import karrio.sdk as karrio
-import karrio.lib as lib
-import karrio.core.models as models
 from unittest.mock import patch
+
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
 from .fixture import gateway
 
 
@@ -29,17 +31,13 @@ class TestPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.dpd_meta.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.dpd_meta.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 

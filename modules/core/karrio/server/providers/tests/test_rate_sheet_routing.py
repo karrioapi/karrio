@@ -1,7 +1,6 @@
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-
 import karrio.server.providers.models as providers
+from django.contrib.auth import get_user_model
+from django.test import TestCase
 
 
 class TestRateSheetRouting(TestCase):

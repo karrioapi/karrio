@@ -1,8 +1,7 @@
 """Karrio ParcelOne error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.parcelone.utils as provider_utils
 
 
@@ -10,13 +9,13 @@ def parse_error_response(
     response: dict,
     settings: provider_utils.Settings,
     **details,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse error response from ParcelOne REST API."""
     results = response.get("results") or {}
     action_result = results.get("ActionResult") or results
 
     # Collect all errors using list comprehensions
-    errors: typing.List[dict] = sum(
+    errors: list[dict] = sum(
         [
             # Top-level API errors
             [
@@ -39,10 +38,7 @@ def parse_error_response(
                             "uniq_id": response.get("UniqId"),
                         }
                     ]
-                    if (
-                        response.get("success") == -1
-                        or response.get("type") == "error"
-                    )
+                    if (response.get("success") == -1 or response.get("type") == "error")
                     and not response.get("errors")
                     and response.get("message")
                     else []

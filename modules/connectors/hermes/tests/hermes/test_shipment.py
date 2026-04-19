@@ -1,12 +1,14 @@
 """Hermes carrier shipment tests."""
 
-import unittest
-from unittest.mock import patch, PropertyMock
-from .fixture import gateway
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import PropertyMock, patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +17,7 @@ class TestHermesShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.MultiPieceShipmentRequest = models.ShipmentRequest(
-            **MultiPieceShipmentPayload
-        )
+        self.MultiPieceShipmentRequest = models.ShipmentRequest(**MultiPieceShipmentPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -33,23 +33,15 @@ class TestHermesShipment(unittest.TestCase):
         self.assertEqual(len(serialized), 3)
         # First package should have partNumber=1, no parentShipmentOrderID (omitted when None)
         self.assertEqual(serialized[0]["service"]["multipartService"]["partNumber"], 1)
-        self.assertEqual(
-            serialized[0]["service"]["multipartService"]["numberOfParts"], 3
-        )
+        self.assertEqual(serialized[0]["service"]["multipartService"]["numberOfParts"], 3)
         # parentShipmentOrderID is not present (lib.to_dict removes None values)
-        self.assertNotIn(
-            "parentShipmentOrderID", serialized[0]["service"]["multipartService"]
-        )
+        self.assertNotIn("parentShipmentOrderID", serialized[0]["service"]["multipartService"])
         # Second package should have partNumber=2
         self.assertEqual(serialized[1]["service"]["multipartService"]["partNumber"], 2)
-        self.assertEqual(
-            serialized[1]["service"]["multipartService"]["numberOfParts"], 3
-        )
+        self.assertEqual(serialized[1]["service"]["multipartService"]["numberOfParts"], 3)
         # Third package should have partNumber=3
         self.assertEqual(serialized[2]["service"]["multipartService"]["partNumber"], 3)
-        self.assertEqual(
-            serialized[2]["service"]["multipartService"]["numberOfParts"], 3
-        )
+        self.assertEqual(serialized[2]["service"]["multipartService"]["numberOfParts"], 3)
 
     def test_create_shipment(self):
         with patch(
@@ -73,12 +65,8 @@ class TestHermesShipment(unittest.TestCase):
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = ShipmentResponse
-                parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-                )
-                self.assertListEqual(
-                    lib.to_dict(parsed_response), ParsedShipmentResponse
-                )
+                parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_error_response(self):
         with patch(
@@ -88,9 +76,7 @@ class TestHermesShipment(unittest.TestCase):
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = ErrorResponse
-                parsed_response = (
-                    karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-                )
+                parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
                 self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
     def test_create_multi_piece_shipment(self):
@@ -107,26 +93,18 @@ class TestHermesShipment(unittest.TestCase):
                     MultiPieceShipmentResponse2,
                     MultiPieceShipmentResponse3,
                 ]
-                parsed_response = (
-                    karrio.Shipment.create(self.MultiPieceShipmentRequest)
-                    .from_(gateway)
-                    .parse()
-                )
+                parsed_response = karrio.Shipment.create(self.MultiPieceShipmentRequest).from_(gateway).parse()
                 # Should have 3 API calls
                 self.assertEqual(mock.call_count, 3)
                 # Second and third calls should have parentShipmentOrderID injected
                 second_call_data = lib.to_dict(mock.call_args_list[1][1]["data"])
                 self.assertEqual(
-                    second_call_data["service"]["multipartService"][
-                        "parentShipmentOrderID"
-                    ],
+                    second_call_data["service"]["multipartService"]["parentShipmentOrderID"],
                     "11111111111",
                 )
                 third_call_data = lib.to_dict(mock.call_args_list[2][1]["data"])
                 self.assertEqual(
-                    third_call_data["service"]["multipartService"][
-                        "parentShipmentOrderID"
-                    ],
+                    third_call_data["service"]["multipartService"]["parentShipmentOrderID"],
                     "11111111111",
                 )
                 # Check the response structure (not exact label value due to bundling)

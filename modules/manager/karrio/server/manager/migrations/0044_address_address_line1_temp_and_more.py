@@ -10,25 +10,15 @@ def forwards_func(apps, schema_editor):
     Shipment = apps.get_model("manager", "Shipment")
     Commodity = apps.get_model("manager", "Commodity")
 
-    shipments = (
-        Shipment.objects.using(db_alias).filter(models.Q(reference__gt=25)).iterator()
-    )
+    shipments = Shipment.objects.using(db_alias).filter(models.Q(reference__gt=25)).iterator()
     commodities = (
         Commodity.objects.using(db_alias)
-        .filter(
-            models.Q(description__gt=25)
-            | models.Q(sku__gt=25)
-            | models.Q(hs_code__gt=25)
-        )
+        .filter(models.Q(description__gt=25) | models.Q(sku__gt=25) | models.Q(hs_code__gt=25))
         .iterator()
     )
     parcels = (
         Parcel.objects.using(db_alias)
-        .filter(
-            models.Q(description__gt=35)
-            | models.Q(content__gt=35)
-            | models.Q(reference_number__gt=50)
-        )
+        .filter(models.Q(description__gt=35) | models.Q(content__gt=35) | models.Q(reference_number__gt=50))
         .iterator()
     )
     addresses = (
@@ -108,16 +98,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="address",
             name="address_line1_temp",
-            field=models.CharField(
-                blank=True, db_index=True, max_length=100, null=True
-            ),
+            field=models.CharField(blank=True, db_index=True, max_length=100, null=True),
         ),
         migrations.AddField(
             model_name="address",
             name="address_line2_temp",
-            field=models.CharField(
-                blank=True, db_index=True, max_length=100, null=True
-            ),
+            field=models.CharField(blank=True, db_index=True, max_length=100, null=True),
         ),
         migrations.AddField(
             model_name="address",

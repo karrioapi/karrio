@@ -23,12 +23,7 @@ def forwards_func(apps, schema_editor):
         # replace shipment' meta.custom_invoice by meta.invoice
         if shipment.meta is not None:
             meta = shipment.meta
-            shipment.meta = {
-                **{
-                    (key if key != "custom_invoice" else "invoice"): val
-                    for key, val in meta.items()
-                }
-            }
+            shipment.meta = {**{(key if key != "custom_invoice" else "invoice"): val for key, val in meta.items()}}
 
         shipment.save()
 

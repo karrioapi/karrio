@@ -25,9 +25,7 @@ class TestShipmentDocumentsAccessor(unittest.TestCase):
                 return {"id": "test"}
 
         if include_base64:
-            return self.shipment_documents_accessor(include_base64=True)(
-                FakeSerializer
-            )
+            return self.shipment_documents_accessor(include_base64=True)(FakeSerializer)
         else:
             return self.shipment_documents_accessor(FakeSerializer)
 

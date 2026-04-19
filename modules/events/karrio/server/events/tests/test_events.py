@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest.mock import ANY
 
 from karrio.server.events import serializers
-from karrio.server.graph.tests.base import GraphTestCase
 from karrio.server.events.task_definitions.base import webhook
+from karrio.server.graph.tests.base import GraphTestCase
 
 
 class TestEventCreation(GraphTestCase):

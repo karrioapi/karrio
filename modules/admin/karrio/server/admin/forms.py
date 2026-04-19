@@ -1,5 +1,5 @@
-import django.forms as forms
 import django.db.transaction as transaction
+import django.forms as forms
 import karrio.server.user.forms as user_forms
 
 
@@ -22,7 +22,7 @@ class CreateUserForm(user_forms.SignUpForm):
         for k, v in statuses.items():
             setattr(user, k, v)
 
-        if any(statuses.keys()):
+        if any(statuses):
             user.save()
 
         user.save()

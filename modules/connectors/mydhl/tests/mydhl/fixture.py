@@ -2,7 +2,6 @@
 
 import karrio.sdk as karrio
 
-
 gateway = karrio.gateway["mydhl"].create(
     dict(
         id="123456789",

@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestSendleShipping(unittest.TestCase):
@@ -12,9 +13,7 @@ class TestSendleShipping(unittest.TestCase):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
         self.IntlShipmentRequest = models.ShipmentRequest(**IntlShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -27,9 +26,7 @@ class TestSendleShipping(unittest.TestCase):
         self.assertEqual(request.serialize(), IntlShipmentRequest)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
@@ -44,7 +41,7 @@ class TestSendleShipping(unittest.TestCase):
             )
             self.assertEqual(
                 mock.call_args_list[1][1]["url"],
-                f"https://api.sendle.com/api/orders/f5233746-71d4-4b05-bf63-56f4abaed5f6/labels/a4.pdf",
+                "https://api.sendle.com/api/orders/f5233746-71d4-4b05-bf63-56f4abaed5f6/labels/a4.pdf",
             )
 
     def test_cancel_shipment(self):
@@ -60,31 +57,21 @@ class TestSendleShipping(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.side_effect = [ShipmentResponse, LabelResponse]
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelShipmentResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 

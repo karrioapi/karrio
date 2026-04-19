@@ -1,34 +1,29 @@
-import karrio.schemas.dhl_express.dct_requestdatatypes_global as dhl_global
-import karrio.schemas.dhl_express.dct_response_global_3_0 as dhl_response
-import karrio.schemas.dhl_express.dct_req_global_3_0 as dhl
 import time
 import typing
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
-import karrio.core.errors as errors
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.dhl_express.error as provider_error
 import karrio.providers.dhl_express.units as provider_units
 import karrio.providers.dhl_express.utils as provider_utils
+import karrio.schemas.dhl_express.dct_req_global_3_0 as dhl
+import karrio.schemas.dhl_express.dct_requestdatatypes_global as dhl_global
+import karrio.schemas.dhl_express.dct_response_global_3_0 as dhl_response
 
 
 def parse_rate_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
 
     messages = provider_error.parse_error_response(response, settings)
-    quotes: typing.List[dhl_response.QtdShpType] = lib.find_element(
-        "QtdShp", response, dhl_response.QtdShpType
-    )
-    rates: typing.List[models.RateDetails] = [
+    quotes: list[dhl_response.QtdShpType] = lib.find_element("QtdShp", response, dhl_response.QtdShpType)
+    rates: list[models.RateDetails] = [
         _extract_quote(quote, settings, _response.ctx)
         for quote in quotes
-        if (
-            quote.ShippingCharge is not None
-            and lib.to_decimal(quote.ShippingCharge) > 0
-        )
+        if (quote.ShippingCharge is not None and lib.to_decimal(quote.ShippingCharge) > 0)
     ]
 
     return [_ for _ in rates if _ is not None], messages
@@ -37,14 +32,15 @@ def parse_rate_response(
 def _extract_quote(
     quote: dhl_response.QtdShpType,
     settings: provider_utils.Settings,
-    ctx: typing.Dict[str, typing.Any] = {},
+    ctx: dict[str, typing.Any] | None = None,
 ) -> models.RateDetails:
+    ctx = ctx or {}
     is_document = ctx.get("is_document", False)
     service = provider_units.ShippingService.map(quote.GlobalProductCode)
 
     # Filter out services that are not specific to package content
-    if settings.connection_config.skip_service_filter.state != True and (
-        is_document is False and " DOC" in quote.LocalProductCode
+    if not settings.connection_config.skip_service_filter.state and (
+        not is_document and " DOC" in quote.LocalProductCode
     ):
         return None
 
@@ -55,11 +51,7 @@ def _extract_quote(
 
     delivery_date = lib.to_date(quote.DeliveryDate[0].DlvyDateTime, "%Y-%m-%d %H:%M:%S")
     pricing_date = lib.to_date(quote.PricingDate)
-    transit = (
-        (delivery_date.date() - pricing_date.date()).days
-        if all([delivery_date, pricing_date])
-        else None
-    )
+    transit = (delivery_date.date() - pricing_date.date()).days if all([delivery_date, pricing_date]) else None
 
     return models.RateDetails(
         carrier_name=settings.carrier_name,
@@ -81,9 +73,7 @@ def _extract_quote(
     )
 
 
-def rate_request(
-    payload: models.RateRequest, settings: provider_utils.Settings
-) -> lib.Serializable:
+def rate_request(payload: models.RateRequest, settings: provider_utils.Settings) -> lib.Serializable:
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
@@ -111,17 +101,11 @@ def rate_request(
         origin_country=payload.shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
-    option_items = [
-        option for _, option in options.items() if option.state is not False
-    ]
+    option_items = [option for _, option in options.items() if option.state is not False]
     weight_unit, dim_unit = (
-        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
-        or packages.compatible_units
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code) or packages.compatible_units
     )
-    currency = (
-        options.currency.state
-        or units.CountryCurrency[payload.shipper.country_code].value
-    )
+    currency = options.currency.state or units.CountryCurrency[payload.shipper.country_code].value
     customs = lib.to_customs_info(
         payload.customs,
         shipper=payload.shipper,
@@ -129,9 +113,7 @@ def rate_request(
         weight_unit=weight_unit.value,
     )
     declared_value = (
-        lib.to_money(customs.duty.declared_value if customs.duty else None)
-        or options.declared_value.state
-        or 1.0
+        lib.to_money(customs.duty.declared_value if customs.duty else None) or options.declared_value.state or 1.0
     )
 
     request = dhl.DCTRequest(
@@ -164,15 +146,9 @@ def rate_request(
                             PackageTypeCode=provider_units.DCTPackageType.map(
                                 package.packaging_type or "your_packaging"
                             ).value,
-                            Depth=package.length.map(provider_units.MeasurementOptions)[
-                                dim_unit.name
-                            ],
-                            Width=package.width.map(provider_units.MeasurementOptions)[
-                                dim_unit.name
-                            ],
-                            Height=package.height.map(
-                                provider_units.MeasurementOptions
-                            )[dim_unit.name],
+                            Depth=package.length.map(provider_units.MeasurementOptions)[dim_unit.name],
+                            Width=package.width.map(provider_units.MeasurementOptions)[dim_unit.name],
+                            Height=package.height.map(provider_units.MeasurementOptions)[dim_unit.name],
                             Weight=package.weight[weight_unit.name],
                         )
                         for index, package in enumerate(packages, 1)
@@ -182,9 +158,7 @@ def rate_request(
                 ShipmentWeight=packages.weight[weight_unit.name],
                 Volume=None,
                 PaymentAccountNumber=lib.text(settings.account_number),
-                InsuredCurrency=(
-                    currency if options.dhl_shipment_insurance.state else None
-                ),
+                InsuredCurrency=(currency if options.dhl_shipment_insurance.state else None),
                 InsuredValue=options.dhl_shipment_insurance.state,
                 PaymentType=None,
                 AcctPickupCloseTime=None,
@@ -194,10 +168,7 @@ def rate_request(
                             GlobalProductCode=svc.value,
                             LocalProductCode=None,
                             QtdShpExChrg=(
-                                [
-                                    dhl.QtdShpExChrgType(SpecialServiceType=option.code)
-                                    for option in option_items
-                                ]
+                                [dhl.QtdShpExChrgType(SpecialServiceType=option.code) for option in option_items]
                                 if any(option_items)
                                 else None
                             ),

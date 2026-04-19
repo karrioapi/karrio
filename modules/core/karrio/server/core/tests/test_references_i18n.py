@@ -4,11 +4,10 @@ Verifies that the references and carriers endpoints return translated strings
 when a language is specified via query param or Accept-Language header.
 """
 
-from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
 from django.contrib.auth import get_user_model
-
 from karrio.server.user.models import Token
+from rest_framework import status
+from rest_framework.test import APIClient, APITestCase
 
 
 class TestReferencesTranslation(APITestCase):
@@ -16,9 +15,7 @@ class TestReferencesTranslation(APITestCase):
 
     def setUp(self):
         self.maxDiff = None
-        self.user = get_user_model().objects.create_superuser(
-            "admin@example.com", "test"
-        )
+        self.user = get_user_model().objects.create_superuser("admin@example.com", "test")
         self.token = Token.objects.create(user=self.user, test_mode=False)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
@@ -37,6 +34,103 @@ class TestReferencesTranslation(APITestCase):
         self.assertIn("connection_fields", data)
         self.assertIn("carrier_capabilities", data)
         self.assertIn("integration_status", data)
+        self.assertIn("shipment_statuses", data)
+        self.assertIn("pickup_statuses", data)
+        self.assertIn("tracking_statuses", data)
+        self.assertIn("tracking_reasons", data)
+        self.assertIn("rate_charge_labels", data)
+        self.assertIn("rate_first_mile", data)
+        self.assertIn("rate_last_mile", data)
+        self.assertIn("rate_form_factor", data)
+
+    def test_references_status_and_reason_labels_default_english(self):
+        """Test that status and reason references expose human-readable English labels."""
+        response = self.client.get("/v1/references?reduced=false")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        self.assertEqual(data.get("shipment_statuses", {}).get("needs_attention"), "Needs Attention")
+        self.assertEqual(data.get("pickup_statuses", {}).get("picked_up"), "Picked Up")
+        self.assertEqual(data.get("tracking_statuses", {}).get("return_to_sender"), "Return To Sender")
+        self.assertEqual(
+            data.get("tracking_reasons", {}).get("carrier_address_not_found"),
+            "Carrier Address Not Found",
+        )
+
+    def test_references_default_rate_labels(self):
+        """Test that rate-related reference labels are exposed in English by default."""
+        response = self.client.get("/v1/references?reduced=false")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        self.assertEqual(data.get("rate_charge_labels", {}).get("base_charge"), "Base Charge")
+        self.assertEqual(data.get("rate_first_mile", {}).get("pick_up"), "Pick Up")
+        self.assertEqual(data.get("rate_last_mile", {}).get("service_point"), "Service Point")
+        self.assertEqual(data.get("rate_form_factor", {}).get("envelope"), "Envelope")
+
+    def test_references_status_and_reason_labels_with_lang(self):
+        """Test that translated references endpoint includes status and reason dictionaries."""
+        response = self.client.get("/v1/references?reduced=false&lang=de")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        for key in (
+            "shipment_statuses",
+            "pickup_statuses",
+            "tracking_statuses",
+            "tracking_reasons",
+        ):
+            self.assertIn(key, data)
+            self.assertIsInstance(data[key], dict)
+            self.assertGreater(len(data[key]), 0, f"{key} should not be empty")
+
+    def test_references_status_and_reason_labels_german_values(self):
+        """Test that German references return translated status and reason labels."""
+        response = self.client.get("/v1/references?reduced=false&lang=de")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        self.assertEqual(data.get("shipment_statuses", {}).get("created"), "Erstellt")
+        self.assertEqual(
+            data.get("shipment_statuses", {}).get("needs_attention"),
+            "Aufmerksamkeit erforderlich",
+        )
+        self.assertEqual(data.get("pickup_statuses", {}).get("scheduled"), "Geplant")
+        self.assertEqual(
+            data.get("tracking_statuses", {}).get("return_to_sender"),
+            "Rücksendung an Absender",
+        )
+        self.assertEqual(
+            data.get("tracking_reasons", {}).get("carrier_address_not_found"),
+            "Adresse durch Zusteller nicht gefunden",
+        )
+        self.assertEqual(
+            data.get("tracking_reasons", {}).get("customs_delay"),
+            "Verzögerung beim Zoll",
+        )
+
+    def test_references_german_rate_labels(self):
+        """Test that rate-related reference labels are translated for German locale."""
+        response = self.client.get("/v1/references?reduced=false&lang=de")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        self.assertEqual(data.get("rate_charge_labels", {}).get("base_charge"), "Grundpreis")
+        self.assertEqual(data.get("rate_charge_labels", {}).get("fuel_surcharge"), "Kraftstoffzuschlag")
+        self.assertEqual(data.get("rate_first_mile", {}).get("pick_up"), "Abholung")
+        self.assertEqual(
+            data.get("rate_first_mile", {}).get("pick_up_and_drop_off"),
+            "Abholung und Abgabe",
+        )
+        self.assertEqual(data.get("rate_last_mile", {}).get("service_point"), "Servicestelle")
+        self.assertEqual(data.get("rate_last_mile", {}).get("po_box"), "Postfach")
+        self.assertEqual(data.get("rate_form_factor", {}).get("envelope"), "Umschlag")
+        self.assertEqual(data.get("rate_form_factor", {}).get("pallet"), "Palette")
 
     def test_references_german_service_names(self):
         """Test that DHL Express service names are translated to German."""
@@ -174,7 +268,8 @@ class TestReferencesTranslation(APITestCase):
         en_service = en_data.get("service_names", {}).get("dhl_express", {}).get("dhl_express_worldwide", "")
         de_service = de_data.get("service_names", {}).get("dhl_express", {}).get("dhl_express_worldwide", "")
         self.assertNotEqual(
-            en_service, de_service,
+            en_service,
+            de_service,
             "Expected different translations when ?lang=en overrides Accept-Language: de",
         )
 
@@ -184,9 +279,7 @@ class TestCarriersTranslation(APITestCase):
 
     def setUp(self):
         self.maxDiff = None
-        self.user = get_user_model().objects.create_superuser(
-            "admin@example.com", "test"
-        )
+        self.user = get_user_model().objects.create_superuser("admin@example.com", "test")
         self.token = Token.objects.create(user=self.user, test_mode=False)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
@@ -305,10 +398,10 @@ class TestCarriersTranslation(APITestCase):
         data = response.json()
         self.assertEqual(data["carrier_name"], carrier_name)
 
-        for field_name, field_data in data.get("connection_fields", {}).items():
+        for _field_name, field_data in data.get("connection_fields", {}).items():
             self.assertIn("label", field_data)
 
-        for option_code, option_data in data.get("shipping_options", {}).items():
+        for _option_code, option_data in data.get("shipping_options", {}).items():
             self.assertIn("label", option_data)
 
     def test_carriers_unknown_returns_404(self):
@@ -348,5 +441,5 @@ class TestCarriersTranslation(APITestCase):
         data = response.json()
         self.assertEqual(data["carrier_name"], carrier_name)
 
-        for field_name, field_data in data.get("connection_fields", {}).items():
+        for _field_name, field_data in data.get("connection_fields", {}).items():
             self.assertIn("label", field_data)

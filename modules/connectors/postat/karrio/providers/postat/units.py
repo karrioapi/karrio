@@ -2,9 +2,10 @@
 
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class LabelFormat(lib.StrEnum):
@@ -171,7 +172,7 @@ def load_services_from_csv() -> list:
     # Group zones by service
     services_dict: dict[str, dict] = {}
 
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -186,34 +187,20 @@ def load_services_from_csv() -> list:
                     "service_name": service_name,
                     "service_code": karrio_service_code,
                     "currency": row.get("currency", "EUR"),
-                    "min_weight": (
-                        float(row["min_weight"]) if row.get("min_weight") else None
-                    ),
-                    "max_weight": (
-                        float(row["max_weight"]) if row.get("max_weight") else None
-                    ),
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "min_weight": (float(row["min_weight"]) if row.get("min_weight") else None),
+                    "max_weight": (float(row["max_weight"]) if row.get("max_weight") else None),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": row.get("domicile", "").lower() == "true",
-                    "international": (
-                        True if row.get("international", "").lower() == "true" else None
-                    ),
+                    "international": (True if row.get("international", "").lower() == "true" else None),
                     "zones": [],
                 }
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Parse transit days (handle "1-3" format)
             transit_days = None
@@ -235,9 +222,7 @@ def load_services_from_csv() -> list:
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

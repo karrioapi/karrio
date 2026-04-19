@@ -1,14 +1,16 @@
 """Karrio universal data types and units definitions"""
 
-import attr
-import typing
+import functools
 import numbers
 import pathlib
-import functools
+import typing
+
+import attr
 import phonenumbers
-import karrio.core.utils as utils
-import karrio.core.models as models
+
 import karrio.core.errors as errors
+import karrio.core.models as models
+import karrio.core.utils as utils
 
 
 @attr.s(auto_attribs=True)
@@ -180,23 +182,23 @@ class ShippingDocumentCategory(utils.StrEnum):
 
 
 class MeasurementOptionsType(typing.NamedTuple):
-    quant: typing.Optional[float] = None
+    quant: float | None = None
 
-    min_in: typing.Optional[float] = None
-    min_cm: typing.Optional[float] = None
-    min_lb: typing.Optional[float] = None
-    min_kg: typing.Optional[float] = None
-    min_oz: typing.Optional[float] = None
-    min_g: typing.Optional[float] = None
-    max_in: typing.Optional[float] = None
-    max_cm: typing.Optional[float] = None
-    max_lb: typing.Optional[float] = None
-    max_kg: typing.Optional[float] = None
-    max_oz: typing.Optional[float] = None
-    max_g: typing.Optional[float] = None
+    min_in: float | None = None
+    min_cm: float | None = None
+    min_lb: float | None = None
+    min_kg: float | None = None
+    min_oz: float | None = None
+    min_g: float | None = None
+    max_in: float | None = None
+    max_cm: float | None = None
+    max_lb: float | None = None
+    max_kg: float | None = None
+    max_oz: float | None = None
+    max_g: float | None = None
 
-    min_volume: typing.Optional[float] = None
-    max_volume: typing.Optional[float] = None
+    min_volume: float | None = None
+    max_volume: float | None = None
 
 
 class CarrierCapabilities(utils.Enum):
@@ -249,7 +251,7 @@ class Dimension:
     def __init__(
         self,
         value: float,
-        unit: typing.Union[DimensionUnit, str] = DimensionUnit.CM,
+        unit: DimensionUnit | str = DimensionUnit.CM,
         options: MeasurementOptionsType = MeasurementOptionsType(),
     ):
         self._value = value
@@ -265,9 +267,7 @@ class Dimension:
 
     def _compute(self, value: float, min_value: float = None):
         below_min = min_value is not None and value < min_value
-        return utils.NF.decimal(
-            value=(min_value if below_min else value), quant=self._quant
-        )
+        return utils.NF.decimal(value=(min_value if below_min else value), quant=self._quant)
 
     @property
     def unit(self) -> str:
@@ -328,7 +328,7 @@ class Volume:
         side2: Dimension = None,
         side3: Dimension = None,
         value: float = None,
-        unit: typing.Union[VolumeUnit, str] = VolumeUnit.cm3,
+        unit: VolumeUnit | str = VolumeUnit.cm3,
         options: MeasurementOptionsType = MeasurementOptionsType(),
     ):
         self._side1 = side1
@@ -470,9 +470,7 @@ class Volume:
 class Girth:
     """The girth common processing helper"""
 
-    def __init__(
-        self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
-    ):
+    def __init__(self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None):
         self._side1 = side1
         self._side2 = side2
         self._side3 = side3
@@ -498,7 +496,7 @@ class Weight:
     def __init__(
         self,
         value: float,
-        unit: typing.Union[WeightUnit, str] = WeightUnit.KG,
+        unit: WeightUnit | str = WeightUnit.KG,
         options: MeasurementOptionsType = MeasurementOptionsType(),
     ):
         self._value = value
@@ -514,11 +512,9 @@ class Weight:
     def __getitem__(self, item):
         return getattr(self, item)
 
-    def _compute(self, value: float, min_value: float = None) -> typing.Optional[float]:
+    def _compute(self, value: float, min_value: float = None) -> float | None:
         below_min = min_value is not None and value < min_value
-        return utils.NF.decimal(
-            value=(min_value if below_min else value), quant=self._quant
-        )
+        return utils.NF.decimal(value=(min_value if below_min else value), quant=self._quant)
 
     @property
     def unit(self) -> str:
@@ -528,14 +524,14 @@ class Weight:
         return self._unit.value
 
     @property
-    def value(self) -> typing.Optional[float]:
+    def value(self) -> float | None:
         if self._unit is None or self._value is None:
             return None
 
         return self.__getattribute__(str(self._unit.name))
 
     @property
-    def KG(self) -> typing.Optional[float]:
+    def KG(self) -> float | None:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.KG:
@@ -550,7 +546,7 @@ class Weight:
         return None
 
     @property
-    def LB(self) -> typing.Optional[float]:
+    def LB(self) -> float | None:
         if self._unit is None or self._value is None:
             return None
         if self._unit == WeightUnit.LB:
@@ -565,7 +561,7 @@ class Weight:
         return None
 
     @property
-    def OZ(self) -> typing.Optional[float]:
+    def OZ(self) -> float | None:
         if self._unit is None or self._value is None:
             return None
         elif self._unit == WeightUnit.OZ:
@@ -580,7 +576,7 @@ class Weight:
         return None
 
     @property
-    def G(self) -> typing.Optional[float]:
+    def G(self) -> float | None:
         if self._unit is None or self._value is None:
             return None
         elif self._unit == WeightUnit.G:
@@ -648,13 +644,11 @@ class Products(typing.Iterable[Product]):
 
     def __init__(
         self,
-        items: typing.List[models.Commodity],
+        items: list[models.Commodity],
         weight_unit: str = None,
     ):
         self._items = [Product(item, weight_unit=weight_unit) for item in items]
-        self._weight_unit = (
-            weight_unit or self._items[0].weight_unit if any(self._items) else None
-        )
+        self._weight_unit = weight_unit or self._items[0].weight_unit if any(self._items) else None
 
     def __len__(self) -> int:
         return len(self._items)
@@ -688,11 +682,9 @@ class Products(typing.Iterable[Product]):
         )
 
     @property
-    def description(self) -> typing.Optional[str]:
+    def description(self) -> str | None:
         descriptions = set([item.description for item in self._items])
-        description: typing.Optional[str] = utils.SF.concat_str(
-            *list(descriptions), join=True
-        )  # type:ignore
+        description: str | None = utils.SF.concat_str(*list(descriptions), join=True)  # type:ignore
 
         return description
 
@@ -705,7 +697,7 @@ class Package:
         parcel: models.Parcel,
         template: PackagePreset = None,
         options: "ShippingOptions" = None,
-        package_option_type: typing.Type[utils.Enum] = utils.Enum,
+        package_option_type: type[utils.Enum] = utils.Enum,
         weight_unit: str = None,
         dimension_unit: str = None,
         shipping_options_initializer: typing.Callable = None,
@@ -723,12 +715,8 @@ class Package:
             if shipping_options_initializer is not None
             else ShippingOptions(_options, package_option_type)
         )
-        self._dimension_unit = (
-            dimension_unit or self.parcel.dimension_unit or self.preset.dimension_unit
-        )
-        self._weight_unit = (
-            weight_unit or self.parcel.weight_unit or self.preset.weight_unit
-        )
+        self._dimension_unit = dimension_unit or self.parcel.dimension_unit or self.preset.dimension_unit
+        self._weight_unit = weight_unit or self.parcel.weight_unit or self.preset.weight_unit
 
     def _compute_dimension(self, value):
         _dimension_unit = (
@@ -781,21 +769,15 @@ class Package:
 
     @property
     def width(self) -> Dimension:
-        return self._compute_dimension(
-            getattr(self.preset, "width", None) or getattr(self.parcel, "width", None)
-        )
+        return self._compute_dimension(getattr(self.preset, "width", None) or getattr(self.parcel, "width", None))
 
     @property
     def height(self) -> Dimension:
-        return self._compute_dimension(
-            getattr(self.preset, "height", None) or getattr(self.parcel, "height", None)
-        )
+        return self._compute_dimension(getattr(self.preset, "height", None) or getattr(self.parcel, "height", None))
 
     @property
     def length(self) -> Dimension:
-        return self._compute_dimension(
-            getattr(self.preset, "length", None) or getattr(self.parcel, "length", None)
-        )
+        return self._compute_dimension(getattr(self.preset, "length", None) or getattr(self.parcel, "length", None))
 
     @property
     def girth(self) -> Girth:
@@ -803,23 +785,19 @@ class Package:
 
     @property
     def volume(self) -> Volume:
-        return Volume(
-            self.width, self.length, self.height, unit=self.dimension_unit.value
-        )
+        return Volume(self.width, self.length, self.height, unit=self.dimension_unit.value)
 
     @property
     def thickness(self) -> Dimension:
         return self._compute_dimension(self.preset.thickness)
 
     @property
-    def description(self) -> typing.Optional[str]:
+    def description(self) -> str | None:
         if any(self.parcel.description or ""):
             return self.parcel.description
 
         descriptions = [item.title or item.description for item in self.items]
-        description: typing.Optional[str] = utils.SF.concat_str(
-            *descriptions, join=True
-        )  # type:ignore
+        description: str | None = utils.SF.concat_str(*descriptions, join=True)  # type:ignore
 
         return description
 
@@ -844,14 +822,14 @@ class Package:
         return Products(_items, self.weight_unit.value)
 
     @property
-    def total_value(self) -> typing.Optional[float]:
+    def total_value(self) -> float | None:
         if not any(self.parcel.items or []):
             return None
 
         return self.items.value_amount
 
     @property
-    def reference_number(self) -> typing.Optional[str]:
+    def reference_number(self) -> str | None:
         return self.parcel.reference_number
 
 
@@ -860,12 +838,12 @@ class Packages(typing.Iterable[Package]):
 
     def __init__(
         self,
-        parcels: typing.List[models.Parcel],
-        presets: typing.Type[utils.Enum] = None,
-        required: typing.List[str] = None,
+        parcels: list[models.Parcel],
+        presets: type[utils.Enum] = None,
+        required: list[str] = None,
         max_weight: Weight = None,
         options: "ShippingOptions" = None,
-        package_option_type: typing.Type[utils.Enum] = utils.Enum,
+        package_option_type: type[utils.Enum] = utils.Enum,
         shipping_options_initializer: typing.Callable = None,
     ):
         self._compatible_units = self._compute_compatible_units(parcels, presets)
@@ -906,15 +884,11 @@ class Packages(typing.Iterable[Package]):
 
     def _compute_compatible_units(
         self,
-        parcels: typing.List[models.Parcel],
-        presets: typing.Type[utils.Enum],
+        parcels: list[models.Parcel],
+        presets: type[utils.Enum],
     ):
         master_weight_unit = next(
-            (
-                p.weight_unit
-                or getattr(self._compute_preset(p, presets), "weight_unit", None)
-                for p in parcels
-            ),
+            (p.weight_unit or getattr(self._compute_preset(p, presets), "weight_unit", None) for p in parcels),
             None,
         )
 
@@ -923,10 +897,8 @@ class Packages(typing.Iterable[Package]):
 
         return (WeightUnit.LB, DimensionUnit.IN)
 
-    def _compute_preset(self, parcel: models.Parcel, presets: typing.Type[utils.Enum]):
-        if (presets is None) | (
-            presets is not None and parcel.package_preset not in presets
-        ):
+    def _compute_preset(self, parcel: models.Parcel, presets: type[utils.Enum]):
+        if (presets is None) | (presets is not None and parcel.package_preset not in presets):
             return None
 
         return presets[parcel.package_preset].value
@@ -934,11 +906,7 @@ class Packages(typing.Iterable[Package]):
     @property
     def weight(self) -> Weight:
         unit, _ = self.compatible_units
-        value = sum(
-            pkg.weight[unit.name]
-            for pkg in self._items
-            if pkg.weight[unit.name] is not None
-        )
+        value = sum(pkg.weight[unit.name] for pkg in self._items if pkg.weight[unit.name] is not None)
 
         if value is None or not any(self._items):
             return Weight(None, None)
@@ -953,11 +921,7 @@ class Packages(typing.Iterable[Package]):
         _, _dimension_unit = self._compatible_units
         _volume_unit = VolumeUnit[_dimension_unit.name]
         _total_volume = sum(
-            [
-                pkg.volume[_volume_unit.name]
-                for pkg in self._items
-                if pkg.volume is not None
-            ],
+            [pkg.volume[_volume_unit.name] for pkg in self._items if pkg.volume is not None],
             0.0,
         )
 
@@ -965,31 +929,23 @@ class Packages(typing.Iterable[Package]):
 
     @property
     def package_type(self) -> str:
-        return (
-            (self._items[0].packaging_type or "your_packaging")
-            if len(self._items) == 1
-            else None
-        )
+        return (self._items[0].packaging_type or "your_packaging") if len(self._items) == 1 else None
 
     @property
     def is_document(self) -> bool:
         return all([pkg.parcel.is_document for pkg in self._items])
 
     @property
-    def description(self) -> typing.Optional[str]:
+    def description(self) -> str | None:
         descriptions = set([item.description for item in self._items])
-        description: typing.Optional[str] = utils.SF.concat_str(
-            *list(descriptions), join=True
-        )  # type:ignore
+        description: str | None = utils.SF.concat_str(*list(descriptions), join=True)  # type:ignore
 
         return description
 
     @property
-    def content(self) -> typing.Optional[str]:
+    def content(self) -> str | None:
         contents = set([item.parcel.content for item in self._items])
-        content: typing.Optional[str] = utils.SF.concat_str(
-            *list(contents), join=True
-        )  # type:ignore
+        content: str | None = utils.SF.concat_str(*list(contents), join=True)  # type:ignore
 
         return content
 
@@ -1005,11 +961,7 @@ class Packages(typing.Iterable[Package]):
                 **{
                     key: (
                         (val + acc[key])
-                        if (
-                            key in acc
-                            and isinstance(val, numbers.Number)
-                            and not isinstance(val, bool)
-                        )
+                        if (key in acc and isinstance(val, numbers.Number) and not isinstance(val, bool))
                         else val
                     )
                     for key, val in pkg.options.content.items()
@@ -1028,7 +980,7 @@ class Packages(typing.Iterable[Package]):
         return ShippingOptions(options, self._package_option_type)
 
     @property
-    def compatible_units(self) -> typing.Tuple[WeightUnit, DimensionUnit]:
+    def compatible_units(self) -> tuple[WeightUnit, DimensionUnit]:
         return self._compatible_units
 
     @property
@@ -1039,7 +991,7 @@ class Packages(typing.Iterable[Package]):
     @property
     def items(self) -> Products:
         _weight_unit, _ = self.compatible_units
-        _items: typing.List[models.Commodity] = functools.reduce(
+        _items: list[models.Commodity] = functools.reduce(
             lambda acc, pkg: [*acc, *[p.item for p in pkg.items]],
             self._items,
             [],
@@ -1048,57 +1000,44 @@ class Packages(typing.Iterable[Package]):
         return Products(_items, _weight_unit.value)
 
     @property
-    def total_value(self) -> typing.Optional[float]:
+    def total_value(self) -> float | None:
         if not any([_.total_value for _ in self._items]):
             return None
 
-        return sum(
-            [pkg.total_value for pkg in self._items if pkg.total_value is not None], 0.0
-        )
+        return sum([pkg.total_value for pkg in self._items if pkg.total_value is not None], 0.0)
 
-    def validate(self, required: typing.List[str] = None, max_weight: Weight = None):
+    def validate(self, required: list[str] = None, max_weight: Weight = None):
         required = required or self._required
         max_weight = max_weight or self._max_weight
 
         if any(check is not None for check in [required, max_weight]):
-            validation_errors: typing.Dict[str, typing.Union[errors.FieldErrorCode, str, dict]] = {}
+            validation_errors: dict[str, errors.FieldErrorCode | str | dict] = {}
             for index, package in enumerate(self._items):
                 if required is not None:
                     for field in required:
                         prop = getattr(package, field)
 
-                        if prop is None or (
-                            hasattr(prop, "value") and prop.value is None
-                        ):
-                            validation_errors.update(
-                                {
-                                    f"parcel[{index}].{field}": errors.FieldErrorCode.required
-                                }
-                            )
+                        if prop is None or (hasattr(prop, "value") and prop.value is None):
+                            validation_errors.update({f"parcel[{index}].{field}": errors.FieldErrorCode.required})
 
-                if (
-                    max_weight is not None
-                    and (package.weight.LB or 0.0) > max_weight.LB
-                ):
-                    validation_errors.update(
-                        {f"parcel[{index}].weight": errors.FieldErrorCode.exceeds}
-                    )
+                if max_weight is not None and (package.weight.LB or 0.0) > max_weight.LB:
+                    validation_errors.update({f"parcel[{index}].weight": errors.FieldErrorCode.exceeds})
 
             if any(validation_errors.items()):
                 raise errors.FieldError(validation_errors)
 
     @staticmethod
     def map(
-        parcels: typing.List[models.Parcel],
-        presets: typing.Type[utils.Enum] = None,
-        required: typing.List[str] = None,
+        parcels: list[models.Parcel],
+        presets: type[utils.Enum] = None,
+        required: list[str] = None,
         max_weight: Weight = None,
         options: "ShippingOptions" = None,
-        package_option_type: typing.Type[utils.Enum] = utils.Enum,
+        package_option_type: type[utils.Enum] = utils.Enum,
         shipping_options_initializer: typing.Callable = None,
-    ) -> typing.Union[typing.List[Package], "Packages"]:
+    ) -> typing.Union[list[Package], "Packages"]:
         return typing.cast(
-            typing.Union[typing.List[Package], Packages],
+            list[Package] | Packages,
             Packages(
                 parcels,
                 presets,
@@ -1117,11 +1056,11 @@ class Options:
     def __init__(
         self,
         options: dict,
-        option_type: typing.Type[utils.Enum] = utils.Enum,
+        option_type: type[utils.Enum] = utils.Enum,
         items_filter: typing.Callable[[str], bool] = None,
-        base_option_type: typing.Type[utils.Enum] = utils.Enum,
+        base_option_type: type[utils.Enum] = utils.Enum,
     ):
-        option_values: typing.Dict[str, utils.OptionEnum] = {}
+        option_values: dict[str, utils.OptionEnum] = {}
 
         for key, val in options.items():
             if option_type is not None and key in option_type:
@@ -1137,9 +1076,7 @@ class Options:
         self._options = option_values
         self._option_type = option_type
         self._base_option_type = base_option_type
-        self._option_list = self._filter(
-            option_values, (items_filter or utils.identity)
-        )
+        self._option_list = self._filter(option_values, (items_filter or utils.identity))
 
     def __getitem__(self, item):
         if item in self._options:
@@ -1168,15 +1105,13 @@ class Options:
     def __len__(self) -> int:
         return len(self._options.items())
 
-    def __iter__(self) -> typing.Iterator[typing.Tuple[str, typing.Any]]:
+    def __iter__(self) -> typing.Iterator[tuple[str, typing.Any]]:
         return iter(self._options.items())
 
     def _filter(self, option_values, items_filter):
-        return [
-            (key, option) for key, option in option_values.items() if items_filter(key)
-        ]
+        return [(key, option) for key, option in option_values.items() if items_filter(key)]
 
-    def items(self) -> typing.List[typing.Tuple[str, typing.Optional[str], typing.Any]]:
+    def items(self) -> list[tuple[str, str | None, typing.Any]]:
         return self._option_list
 
     @property
@@ -1220,10 +1155,10 @@ class ShippingOption(utils.Enum):
     doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict, meta=dict(category="PAPERLESS"))
 
     cash_on_delivery = utils.OptionEnum("COD", float, meta=dict(category="COD"))
-    
+
     locker_id = utils.OptionEnum("locker_id", str, meta=dict(category="LOCKER"))
     is_return = utils.OptionEnum("is_return", bool, meta=dict(category="RETURN"))
-    
+
     dangerous_good = utils.OptionEnum("dangerous_good", bool, meta=dict(category="DANGEROUS_GOOD"))
 
     hold_at_location = utils.OptionEnum("hold_at_location", bool, meta=dict(category="PUDO"))
@@ -1285,9 +1220,7 @@ class ShippingOptions(Options):
             return utils.OptionEnum(
                 "shipment_date",
                 str,
-                utils.DF.fdate(
-                    self._raw_options.get("shipping_date"), "%Y-%m-%dT%H:%M"
-                ),
+                utils.DF.fdate(self._raw_options.get("shipping_date"), "%Y-%m-%dT%H:%M"),
             )
 
         return self[ShippingOption.shipment_date.name]
@@ -1391,11 +1324,11 @@ class CustomsInfo(models.Customs):
     def __init__(
         self,
         customs: models.Customs = None,
-        option_type: typing.Type[utils.Enum] = utils.Enum,
+        option_type: type[utils.Enum] = utils.Enum,
         weight_unit: str = None,
-        default_to: typing.Optional[models.Customs] = None,
-        shipper: typing.Optional[models.Address] = None,
-        recipient: typing.Optional[models.Address] = None,
+        default_to: models.Customs | None = None,
+        shipper: models.Address | None = None,
+        recipient: models.Address | None = None,
     ):
         _customs = customs or default_to
         options = CustomsOptions(
@@ -1502,9 +1435,7 @@ class ConnectionConfigOptions(Options):
 class Services:
     """The services common processing helper"""
 
-    def __init__(
-        self, services: typing.Iterable, service_type: typing.Type[utils.Enum]
-    ):
+    def __init__(self, services: typing.Iterable, service_type: type[utils.Enum]):
         self._services = [service_type[s] for s in services if s in service_type]
 
     def __len__(self) -> int:
@@ -1551,7 +1482,7 @@ class Phone:
 
 
 class ComputedAddress(models.Address):
-    def __init__(self, address: typing.Optional[models.Address]):
+    def __init__(self, address: models.Address | None):
         self.address = address
 
     def __getattr__(self, item):
@@ -1576,7 +1507,7 @@ class ComputedAddress(models.Address):
         return self._compute_address_line(join=False)
 
     @property
-    def street(self) -> typing.Optional[str]:
+    def street(self) -> str | None:
         return typing.cast(
             str,
             utils.SF.concat_str(
@@ -1587,29 +1518,23 @@ class ComputedAddress(models.Address):
         )
 
     @property
-    def street_name(self) -> typing.Optional[str]:
+    def street_name(self) -> str | None:
         """The address line 1 without the street number"""
         return typing.cast(
             str,
             utils.SF.concat_str(
-                *[
-                    _
-                    for _ in self.address.address_line1.split(" ")
-                    if _ != self.street_number
-                ],
+                *[_ for _ in self.address.address_line1.split(" ") if _ != self.street_number],
                 join=True,
             ),
         )
 
     @property
-    def tax_id(self) -> typing.Optional[str]:
+    def tax_id(self) -> str | None:
         return self.address.federal_tax_id or self.address.state_tax_id
 
     @property
-    def taxes(self) -> typing.List[str]:
-        return utils.SF.concat_str(
-            self.address.federal_tax_id, self.address.state_tax_id
-        )  # type:ignore
+    def taxes(self) -> list[str]:
+        return utils.SF.concat_str(self.address.federal_tax_id, self.address.state_tax_id)  # type:ignore
 
     @property
     def has_contact_info(self) -> bool:
@@ -1627,26 +1552,24 @@ class ComputedAddress(models.Address):
         return any([self.address.federal_tax_id, self.address.state_tax_id])
 
     @property
-    def contact(self) -> typing.Optional[str]:
-        return getattr(self.address, "person_name", None) or getattr(
-            self.address, "company_name", None
-        )
+    def contact(self) -> str | None:
+        return getattr(self.address, "person_name", None) or getattr(self.address, "company_name", None)
 
     @property
-    def first_name(self) -> typing.Optional[str]:
+    def first_name(self) -> str | None:
         if self.address.person_name is None:
             return None
 
         return self.address.person_name.split(" ")[0]
 
     @property
-    def last_name(self) -> typing.Optional[str]:
+    def last_name(self) -> str | None:
         if self.address.person_name is None:
             return None
 
         return self.address.person_name.split(" ")[-1]
 
-    def _compute_address_line(self, join: bool = True) -> typing.Optional[str]:
+    def _compute_address_line(self, join: bool = True) -> str | None:
         if any(
             [
                 self.street,
@@ -1677,7 +1600,7 @@ class ComputedAddress(models.Address):
 
 
 class ComputedDocumentFile(models.DocumentFile):
-    def __init__(self, document: typing.Optional[models.DocumentFile]):
+    def __init__(self, document: models.DocumentFile | None):
         self.document = document
 
     def __getattr__(self, item):
@@ -1688,7 +1611,7 @@ class ComputedDocumentFile(models.DocumentFile):
         return getattr(self.document, "doc_format", self.doc_file_extension)
 
     @property
-    def doc_file_extension(self) -> typing.Optional[str]:
+    def doc_file_extension(self) -> str | None:
         return pathlib.Path(self.doc_name or "").suffix
 
 
