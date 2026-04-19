@@ -82,6 +82,18 @@ worker:
   podDisruptionBudget:
     enabled: true
     minAvailable: 1
+  ## Worker autoscaling (requires a custom queue-depth metric — see
+  ## templates/worker/hpa.yaml). Leave disabled until the metric source
+  ## is registered with the Kubernetes metrics API.
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 10
+    # Optional CPU fallback for installs without the custom metric
+    targetCPUUtilizationPercentage: null
+    # Custom metric (e.g. karrio_queue_depth exposed via Prometheus Adapter)
+    targetMetricName: ""
+    targetValue: ""
 
 ## ──────────────────────────────────────────────
 ## Dashboard (Next.js)
@@ -103,6 +115,12 @@ dashboard:
 
 ## ──────────────────────────────────────────────
 ## Ingress
+##
+## `className` examples:
+##   - `alb`     (AWS Load Balancer Controller — see values-examples/eks-alb.yaml)
+##   - `gce`     (GKE GCE Ingress             — see values-examples/gke.yaml)
+##   - `nginx`   (ingress-nginx, default)
+##   - `traefik` (Traefik Kubernetes Provider)
 ## ──────────────────────────────────────────────
 ingress:
   enabled: true
@@ -130,21 +148,53 @@ config:
   enableAllPlugins: "True"
 
 ## ──────────────────────────────────────────────
-## External PostgreSQL
+## External PostgreSQL (managed RDS / CloudSQL / self-hosted)
+##
+## Leave `postgresql.enabled` at `false` (default) and fill `database.*`
+## below to point the chart at an existing Postgres instance. Set
+## `postgresql.enabled: true` to pull in the Bitnami postgresql subchart
+## instead (dev / smoke clusters only — subchart is not production-tuned).
 ## ──────────────────────────────────────────────
 database:
   host: ""
   port: 5432
   name: karrio
   username: karrio
-  password: ""            # required
+  password: ""            # required — provide via --set or existingSecret
 
 ## ──────────────────────────────────────────────
-## External Redis
+## External Redis (managed ElastiCache / MemoryStore / self-hosted)
+##
+## Same pattern as postgresql above: default is external. Set
+## `redis.enabled: true` to pull in the Bitnami redis subchart. When the
+## subchart is enabled the chart-level `redis.host` / `redis.port` values
+## are still consumed by the ConfigMap — override them to match the
+## subchart's service DNS (e.g. `<release>-redis-master`) or leave blank
+## and set via `--set redis.host=...` at install time.
 ## ──────────────────────────────────────────────
 redis:
+  enabled: false
   host: ""
   port: 6379
+  ## Bitnami redis subchart values (only consumed when redis.enabled=true).
+  ## See https://github.com/bitnami/charts/tree/main/bitnami/redis for the
+  ## full schema.
+  auth:
+    enabled: false
+  architecture: standalone
+
+## ──────────────────────────────────────────────
+## Bitnami postgresql subchart toggle (dev clusters only).
+## See https://github.com/bitnami/charts/tree/main/bitnami/postgresql.
+## ──────────────────────────────────────────────
+postgresql:
+  enabled: false
+  auth:
+    username: karrio
+    database: karrio
+    # password must be supplied via --set or existingSecret; never commit
+    postgresPassword: ""
+    password: ""
 
 ## ──────────────────────────────────────────────
 ## Use an existing Secret instead of creating one

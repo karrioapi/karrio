@@ -15,3 +15,19 @@ sources:
 maintainers:
   - name: Karrio Team
     url: https://karrio.io
+# ──────────────────────────────────────────────────────────────────────────
+# Optional subcharts — default OFF so installs against managed RDS /
+# ElastiCache / CloudSQL / MemoryStore work out of the box. Flip
+# `postgresql.enabled` / `redis.enabled` in values.yaml to pull them in.
+# Versions pinned; bump via Renovate. Both are fetched from the Bitnami
+# Helm repo: https://charts.bitnami.com/bitnami
+# ──────────────────────────────────────────────────────────────────────────
+dependencies:
+  - name: postgresql
+    version: "15.5.38"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: "20.1.7"
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
