@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_server_admin"
-version = "2026.1.11"
-description = "Multi-carrier shipping API admin module"
+version = "2026.1.29"
+description = "Multi-carrier shipping API admin module (shim — code lives in karrio_server_modules)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "LGPL-3.0"
@@ -16,8 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "karrio_server_core",
-    "karrio_server_graph",
+    "karrio_server_modules",
 ]
 
 [project.urls]

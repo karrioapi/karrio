@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "karrio_server_core"
 version = "2026.1.29"
-description = "Multi-carrier shipping API Core module"
+description = "Multi-carrier shipping API Core module (shim — code lives in karrio_server_modules)"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "LGPL-3.0"
@@ -16,13 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "karrio",
-    "psycopg2-binary",
-    "django-health-check",
-    "dnspython",
-    "psutil",
-    "pyyaml",
-    "Jinja2",
+    "karrio_server_modules",
 ]
 
 [project.urls]
@@ -38,7 +32,3 @@ include-package-data = true
 [tool.setuptools.packages.find]
 exclude = ["tests.*", "tests"]
 namespaces = true
-
-[tool.setuptools.package-data]
-"karrio.server.user" = ["templates/**/*"]
-"*" = ["*.html", "*.txt", "*.css", "*.js", "*.png", "*.jpg", "*.gif", "*.ico"]
