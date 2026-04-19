@@ -42,6 +42,7 @@
 -e ./modules/graph
 -e ./modules/data
 -e ./modules/events
+-e ./modules/huey
 -e ./modules/manager
 -e ./modules/orders
 -e ./modules/proxy
