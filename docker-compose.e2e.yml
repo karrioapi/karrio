@@ -1,0 +1,96 @@
+# Minimised compose for the Playwright smoke suite.
+#
+# Goals:
+#   - Fastest possible cold-start: Postgres + API + dashboard + carrier stub.
+#   - No Redis: API runs the worker in-process (DETACHED_WORKER=false).
+#   - Carrier stub: WireMock serving canned rate/label/tracking JSON so
+#     specs never touch real carrier endpoints.
+#   - Healthchecks drive `docker compose up --wait` in CI.
+#
+# Image tags default to the `latest` published build on Scarf; override with
+# `KARRIO_TAG=<tag>` to pin a commit-specific image.
+#
+# Usage:
+#   docker compose -f docker-compose.e2e.yml up -d --wait
+#   docker compose -f docker-compose.e2e.yml down -v
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: karrio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d karrio"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  carrier-stub:
+    # WireMock stands in for real carrier endpoints.  Mappings live in
+    # packages/e2e/fixtures/wiremock and are mounted read-only.
+    image: wiremock/wiremock:3.9.1
+    command: ["--port", "8080", "--disable-banner"]
+    volumes:
+      - ./packages/e2e/fixtures/wiremock:/home/wiremock/mappings:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/__admin/health || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  api:
+    image: karrio.docker.scarf.sh/karrio/server:${KARRIO_TAG:-latest}
+    depends_on:
+      db:
+        condition: service_healthy
+      carrier-stub:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: "e2e-smoke-test-secret-key-not-for-production"
+      DEBUG_MODE: "True"
+      DETACHED_WORKER: "False"
+      DATABASE_ENGINE: "postgresql_psycopg2"
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: karrio
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      KARRIO_HTTP_PORT: "5002"
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: demo
+      ENABLE_ALL_PLUGINS_BY_DEFAULT: "True"
+      LOG_LEVEL: "30"
+      KARRIO_E2E_CARRIER_STUB_URL: "http://carrier-stub:8080"
+    ports:
+      - "5002:5002"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5002/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 30s
+
+  dashboard:
+    image: karrio.docker.scarf.sh/karrio/dashboard:${KARRIO_TAG:-latest}
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      AUTH_TRUST_HOST: "true"
+      NEXTAUTH_SECRET: "e2e-smoke-test-nextauth-secret"
+      DASHBOARD_PORT: "3002"
+      NEXT_PUBLIC_DASHBOARD_URL: "http://localhost:3002"
+      NEXT_PUBLIC_KARRIO_PUBLIC_URL: "http://localhost:5002"
+      KARRIO_URL: "http://api:5002"
+    ports:
+      - "3002:3002"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3002/signin || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 30s

@@ -268,3 +268,76 @@ jobs:
       - name: Build
         working-directory: packages/mcp
         run: npm run build
+
+  e2e:
+    # Required gate on any `refs/tags/2026.*` push.  PRs and branch pushes
+    # also run the suite so regressions surface before tag cuts.
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Checkout submodules (shallow)
+        run: git submodule update --init --depth=1 community
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install workspace dependencies
+        run: npm ci
+
+      - name: Start stack (api + dashboard + stubbed carrier + db)
+        run: docker compose -f docker-compose.e2e.yml up -d --wait
+        env:
+          KARRIO_TAG: ${{ github.ref_name == 'main' && 'latest' || 'latest' }}
+
+      - name: Install Playwright browsers
+        working-directory: packages/e2e
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Seed test tenant
+        working-directory: packages/e2e
+        run: npx tsx scripts/seed.ts
+        env:
+          KARRIO_API_URL: http://localhost:5002
+          KARRIO_DASHBOARD_URL: http://localhost:3002
+
+      - name: Run Playwright smoke suite
+        working-directory: packages/e2e
+        run: npx playwright test specs/
+        env:
+          CI: "true"
+          KARRIO_API_URL: http://localhost:5002
+          KARRIO_DASHBOARD_URL: http://localhost:3002
+
+      - name: Collect docker logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.e2e.yml logs --no-color > docker-logs.txt || true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_attempt }}
+          path: packages/e2e/playwright-report
+          retention-days: 14
+
+      - name: Upload traces + videos on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts-${{ github.run_attempt }}
+          path: |
+            packages/e2e/test-results
+            docker-logs.txt
+          retention-days: 14
+
+      - name: Tear down stack
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v

@@ -5,10 +5,14 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "test:smoke": "playwright test --project=chromium specs/",
+    "install:browsers": "playwright install --with-deps chromium firefox",
+    "report": "playwright show-report"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",
+    "@types/node": "^22.0.0",
     "typescript": "^5.0.0"
   }
 }
