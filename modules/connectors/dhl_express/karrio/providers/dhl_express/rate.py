@@ -119,7 +119,9 @@ def rate_request(payload: models.RateRequest, settings: provider_utils.Settings)
     request = dhl.DCTRequest(
         GetQuote=dhl.GetQuoteType(
             Request=settings.Request(
-                MetaData=dhl.MetaData(SoftwareName=settings.connection_config.software_name.state or "3PV", SoftwareVersion=1.0)
+                MetaData=dhl.MetaData(
+                    SoftwareName=settings.connection_config.software_name.state or "3PV", SoftwareVersion=1.0
+                )
             ),
             From=dhl.DCTFrom(
                 CountryCode=payload.shipper.country_code,

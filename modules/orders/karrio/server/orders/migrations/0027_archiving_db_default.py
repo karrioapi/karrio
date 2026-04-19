@@ -5,26 +5,35 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('orders', '0026_add_archiving_fields'),
+        ("orders", "0026_add_archiving_fields"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='order',
-            options={'base_manager_name': 'all_objects', 'ordering': ['-created_at'], 'verbose_name': 'Order', 'verbose_name_plural': 'Orders'},
+            name="order",
+            options={
+                "base_manager_name": "all_objects",
+                "ordering": ["-created_at"],
+                "verbose_name": "Order",
+                "verbose_name_plural": "Orders",
+            },
         ),
         migrations.AlterModelManagers(
-            name='order',
+            name="order",
             managers=[
-                ('objects', django.db.models.manager.Manager()),
-                ('all_objects', django.db.models.manager.Manager()),
+                ("objects", django.db.models.manager.Manager()),
+                ("all_objects", django.db.models.manager.Manager()),
             ],
         ),
         migrations.AlterField(
-            model_name='order',
-            name='is_archived',
-            field=models.BooleanField(db_default=False, db_index=True, default=False, help_text='Archived records are excluded from default queries.'),
+            model_name="order",
+            name="is_archived",
+            field=models.BooleanField(
+                db_default=False,
+                db_index=True,
+                default=False,
+                help_text="Archived records are excluded from default queries.",
+            ),
         ),
     ]

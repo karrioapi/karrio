@@ -38,6 +38,7 @@ def _merge_root_features(services: list) -> list:
         result.append(svc)
     return result
 
+
 # Feature fields that clients may send at service root level instead of nested
 # in features{}. Pop them from each service dict and merge into features.
 _ROOT_FEATURE_KEYS = ("age_check", "neighbor_delivery", "saturday_delivery")
@@ -48,11 +49,7 @@ def _merge_root_features(services: list) -> list:
     result = []
     for svc in services:
         svc = svc.copy() if isinstance(svc, dict) else dict(svc)
-        root_features = {
-            k: svc.pop(k)
-            for k in _ROOT_FEATURE_KEYS
-            if k in svc and svc[k] is not None
-        }
+        root_features = {k: svc.pop(k) for k in _ROOT_FEATURE_KEYS if k in svc and svc[k] is not None}
         if root_features:
             features = svc.get("features") or {}
             svc["features"] = {**features, **root_features}

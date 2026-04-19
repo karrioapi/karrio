@@ -70,9 +70,7 @@ def _is_hazard(field):
         return False
     if field.default is NOT_PROVIDED:
         return False
-    if getattr(field, "db_default", NOT_PROVIDED) is not NOT_PROVIDED:
-        return False
-    return True
+    return getattr(field, "db_default", NOT_PROVIDED) is NOT_PROVIDED
 
 
 @register(Tags.database)
@@ -85,13 +83,9 @@ def check_rolling_deploy_safe_fields(app_configs, **kwargs):
     for migration in loader.disk_migrations.values():
         for operation in migration.operations:
             if isinstance(operation, AddField):
-                added_fields.add(
-                    (migration.app_label, operation.model_name.lower(), operation.name)
-                )
+                added_fields.add((migration.app_label, operation.model_name.lower(), operation.name))
 
-    selected_app_labels = (
-        {app_config.label for app_config in app_configs} if app_configs else None
-    )
+    selected_app_labels = {app_config.label for app_config in app_configs} if app_configs else None
 
     hazards = set()
     resolved_safe = set()  # fields we evaluated and found safe (not hazards)

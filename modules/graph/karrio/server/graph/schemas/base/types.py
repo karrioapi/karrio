@@ -1,31 +1,28 @@
-import typing
 import datetime
-import strawberry
-from django.utils import timezone
+import typing
 from itertools import groupby
 from operator import itemgetter
+
 import django.db.models as models
 import django.db.models.functions as functions
-from django.conf import settings
-from strawberry.types import Info
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-
 import karrio.lib as lib
 import karrio.server.conf as conf
-import karrio.server.user.models as auth
-import karrio.server.core.models as core
-import karrio.server.graph.utils as utils
-import karrio.server.graph.models as graph
 import karrio.server.core.filters as filters
-import karrio.server.orders.models as orders
-import karrio.server.manager.models as manager
-import karrio.server.tracing.models as tracing
-import karrio.server.providers.models as providers
-import karrio.server.orders.filters as order_filters
-import karrio.server.user.serializers as user_serializers
+import karrio.server.core.models as core
 import karrio.server.graph.schemas.base.inputs as inputs
-from karrio.server.core.logging import logger
+import karrio.server.graph.utils as utils
+import karrio.server.manager.models as manager
+import karrio.server.orders.filters as order_filters
+import karrio.server.orders.models as orders
+import karrio.server.providers.models as providers
+import karrio.server.tracing.models as tracing
+import karrio.server.user.models as auth
+import karrio.server.user.serializers as user_serializers
+import strawberry
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from strawberry.types import Info
 
 User = get_user_model()
 
@@ -37,11 +34,11 @@ class UserType:
     is_staff: bool
     is_active: bool
     date_joined: datetime.datetime
-    is_superuser: typing.Optional[bool] = strawberry.UNSET
-    last_login: typing.Optional[datetime.datetime] = strawberry.UNSET
+    is_superuser: bool | None = strawberry.UNSET
+    last_login: datetime.datetime | None = strawberry.UNSET
 
     @strawberry.field
-    def permissions(self: User, info: Info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: User, info: Info) -> list[str] | None:
         # Return permissions from token if exists
         if hasattr(getattr(info.context.request, "token", None), "permissions"):
             return info.context.request.token.permissions
@@ -72,39 +69,39 @@ class WorkspaceConfigType:
     @strawberry.field
     def default_currency(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.CurrencyCodeEnum]:
+    ) -> utils.CurrencyCodeEnum | None:
         return self.config.get("default_currency")
 
     @strawberry.field
     def default_country_code(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.CountryCodeEnum]:
+    ) -> utils.CountryCodeEnum | None:
         return self.config.get("default_country_code")
 
     @strawberry.field
     def default_weight_unit(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.WeightUnitEnum]:
+    ) -> utils.WeightUnitEnum | None:
         return self.config.get("default_weight_unit")
 
     @strawberry.field
     def default_dimension_unit(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.DimensionUnitEnum]:
+    ) -> utils.DimensionUnitEnum | None:
         return self.config.get("default_dimension_unit")
 
     @strawberry.field
-    def state_tax_id(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def state_tax_id(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("state_tax_id")
 
     @strawberry.field
-    def federal_tax_id(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def federal_tax_id(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("federal_tax_id")
 
     @strawberry.field
     def default_label_type(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.LabelTypeEnum]:
+    ) -> utils.LabelTypeEnum | None:
         return self.config.get("default_label_type")
 
     # endregion
@@ -115,7 +112,7 @@ class WorkspaceConfigType:
     @strawberry.field
     def insured_by_default(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("insured_by_default")
 
     # endregion
@@ -124,33 +121,33 @@ class WorkspaceConfigType:
     # region
 
     @strawberry.field
-    def customs_aes(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def customs_aes(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("customs_aes")
 
     @strawberry.field
-    def customs_eel_pfc(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def customs_eel_pfc(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("customs_eel_pfc")
 
     @strawberry.field
-    def customs_license_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def customs_license_number(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("customs_license_number")
 
     @strawberry.field
-    def customs_certificate_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def customs_certificate_number(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("customs_certificate_number")
 
     @strawberry.field
-    def customs_nip_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def customs_nip_number(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("customs_nip_number")
 
     @strawberry.field
-    def customs_eori_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def customs_eori_number(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("customs_eori_number")
 
     @strawberry.field
     def customs_vat_registration_number(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[str]:
+    ) -> str | None:
         return self.config.get("customs_vat_registration_number")
 
     # endregion
@@ -159,19 +156,19 @@ class WorkspaceConfigType:
     # region
 
     @strawberry.field
-    def label_message_1(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def label_message_1(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("label_message_1")
 
     @strawberry.field
-    def label_message_2(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def label_message_2(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("label_message_2")
 
     @strawberry.field
-    def label_message_3(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def label_message_3(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("label_message_3")
 
     @strawberry.field
-    def label_logo(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+    def label_logo(self: auth.WorkspaceConfig) -> str | None:
         return self.config.get("label_logo")
 
     # endregion
@@ -184,13 +181,13 @@ class WorkspaceConfigType:
     @strawberry.field
     def print_label_size(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.LabelSizeEnum]:
+    ) -> utils.LabelSizeEnum | None:
         return self.config.get("print_label_size")
 
     @strawberry.field
     def print_label_show_options(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("print_label_show_options")
 
     # endregion
@@ -203,13 +200,13 @@ class WorkspaceConfigType:
     @strawberry.field
     def print_return_label_size(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.LabelSizeEnum]:
+    ) -> utils.LabelSizeEnum | None:
         return self.config.get("print_return_label_size")
 
     @strawberry.field
     def print_return_label_show_options(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("print_return_label_show_options")
 
     # endregion
@@ -222,25 +219,25 @@ class WorkspaceConfigType:
     @strawberry.field
     def print_customs_size(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.LabelSizeEnum]:
+    ) -> utils.LabelSizeEnum | None:
         return self.config.get("print_customs_size")
 
     @strawberry.field
     def print_customs_show_options(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("print_customs_show_options")
 
     @strawberry.field
     def print_customs_with_label(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("print_customs_with_label")
 
     @strawberry.field
     def print_customs_copies(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[int]:
+    ) -> int | None:
         return self.config.get("print_customs_copies")
 
     # endregion
@@ -253,31 +250,31 @@ class WorkspaceConfigType:
     @strawberry.field
     def default_parcel_weight(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[float]:
+    ) -> float | None:
         return self.config.get("default_parcel_weight")
 
     @strawberry.field
     def default_shipping_service(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[str]:
+    ) -> str | None:
         return self.config.get("default_shipping_service")
 
     @strawberry.field
     def default_shipping_carrier(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[str]:
+    ) -> str | None:
         return self.config.get("default_shipping_carrier")
 
     @strawberry.field
     def default_export_reason(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.ExportReasonEnum]:
+    ) -> utils.ExportReasonEnum | None:
         return self.config.get("default_export_reason")
 
     @strawberry.field
     def default_delivery_instructions(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[str]:
+    ) -> str | None:
         return self.config.get("default_delivery_instructions")
 
     # endregion
@@ -290,19 +287,19 @@ class WorkspaceConfigType:
     @strawberry.field
     def label_show_postage_paid_logo(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("label_show_postage_paid_logo")
 
     @strawberry.field
     def label_show_qr_code(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("label_show_qr_code")
 
     @strawberry.field
     def customs_use_order_as_invoice(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("customs_use_order_as_invoice")
 
     # endregion
@@ -315,37 +312,37 @@ class WorkspaceConfigType:
     @strawberry.field
     def pref_first_mile(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[typing.List[utils.FirstMileEnum]]:
+    ) -> list[utils.FirstMileEnum] | None:
         return self.config.get("pref_first_mile")
 
     @strawberry.field
     def pref_last_mile(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[typing.List[utils.LastMileEnum]]:
+    ) -> list[utils.LastMileEnum] | None:
         return self.config.get("pref_last_mile")
 
     @strawberry.field
     def pref_form_factor(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[typing.List[utils.FormFactorEnum]]:
+    ) -> list[utils.FormFactorEnum] | None:
         return self.config.get("pref_form_factor")
 
     @strawberry.field
     def pref_age_check(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[utils.AgeCheckEnum]:
+    ) -> utils.AgeCheckEnum | None:
         return self.config.get("pref_age_check")
 
     @strawberry.field
     def pref_signature_required(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("pref_signature_required")
 
     @strawberry.field
     def pref_max_lead_time_days(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[int]:
+    ) -> int | None:
         return self.config.get("pref_max_lead_time_days")
 
     # endregion
@@ -358,7 +355,7 @@ class WorkspaceConfigType:
     @strawberry.field
     def shipping_app_test_mode(
         self: auth.WorkspaceConfig,
-    ) -> typing.Optional[bool]:
+    ) -> bool | None:
         return self.config.get("shipping_app_test_mode")
 
     # endregion
@@ -370,35 +367,33 @@ class WorkspaceConfigType:
 
         # Create a default workspace config if none exists
         if workspace_config is None:
-            workspace_config = auth.WorkspaceConfig.objects.create(
-                created_by=info.context.request.user, config={}
-            )
+            workspace_config = auth.WorkspaceConfig.objects.create(created_by=info.context.request.user, config={})
 
         return workspace_config
 
 
 @strawberry.type
 class SystemUsageType:
-    total_errors: typing.Optional[int] = None
-    order_volume: typing.Optional[float] = None
-    total_requests: typing.Optional[int] = None
-    total_trackers: typing.Optional[int] = None
-    total_shipments: typing.Optional[int] = None
-    organization_count: typing.Optional[int] = None
-    user_count: typing.Optional[int] = None
-    total_shipping_spend: typing.Optional[float] = None
-    api_errors: typing.Optional[typing.List[utils.UsageStatType]] = None
-    api_requests: typing.Optional[typing.List[utils.UsageStatType]] = None
-    order_volumes: typing.Optional[typing.List[utils.UsageStatType]] = None
-    shipment_count: typing.Optional[typing.List[utils.UsageStatType]] = None
-    shipping_spend: typing.Optional[typing.List[utils.UsageStatType]] = None
-    tracker_count: typing.Optional[typing.List[utils.UsageStatType]] = None
+    total_errors: int | None = None
+    order_volume: float | None = None
+    total_requests: int | None = None
+    total_trackers: int | None = None
+    total_shipments: int | None = None
+    organization_count: int | None = None
+    user_count: int | None = None
+    total_shipping_spend: float | None = None
+    api_errors: list[utils.UsageStatType] | None = None
+    api_requests: list[utils.UsageStatType] | None = None
+    order_volumes: list[utils.UsageStatType] | None = None
+    shipment_count: list[utils.UsageStatType] | None = None
+    shipping_spend: list[utils.UsageStatType] | None = None
+    tracker_count: list[utils.UsageStatType] | None = None
 
     @staticmethod
     @utils.authentication_required
     def resolve(
         info: Info,
-        filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
+        filter: utils.UsageFilter | None = strawberry.UNSET,
     ) -> "SystemUsageType":
         _test_mode = info.context.request.test_mode
         _test_filter = dict(test_mode=_test_mode)
@@ -428,11 +423,11 @@ class SystemUsageType:
             .annotate(count=models.Count("id"))
             .order_by("-date")
         )
+
         # Calculate order volumes from JSONField (line_items is embedded JSON)
-        _compute_total = lambda items: sum(
-            float(i.get("value_amount") or 0) * float(i.get("quantity") or 1)
-            for i in (items or [])
-        )
+        def _compute_total(items):
+            return sum(float(i.get("value_amount") or 0) * float(i.get("quantity") or 1) for i in (items or []))
+
         orders_with_totals = [
             (o["date"], _compute_total(o.get("line_items")))
             for o in order_filters.OrderFilters(
@@ -440,9 +435,7 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                orders.Order.objects.filter(**_test_filter).exclude(
-                    status__in=["cancelled", "unfulfilled"]
-                ),
+                orders.Order.objects.filter(**_test_filter).exclude(status__in=["cancelled", "unfulfilled"]),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date", "line_items")
@@ -471,17 +464,13 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                manager.Shipment.objects.filter(**_test_filter).exclude(
-                    status__in=["cancelled", "draft"]
-                ),
+                manager.Shipment.objects.filter(**_test_filter).exclude(status__in=["cancelled", "draft"]),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
             .annotate(
                 count=models.Count("id"),
-                amount=models.Sum(
-                    functions.Cast("selected_rate__total_charge", models.FloatField())
-                ),
+                amount=models.Sum(functions.Cast("selected_rate__total_charge", models.FloatField())),
             )
             .order_by("-date")
         )
@@ -511,11 +500,7 @@ class SystemUsageType:
         )
         total_shipping_spend = lib.to_decimal(
             sum(
-                [
-                    item["amount"]
-                    for item in shipping_spend
-                    if item["amount"] is not None
-                ],
+                [item["amount"] for item in shipping_spend if item["amount"] is not None],
                 0.0,
             )
         )
@@ -536,30 +521,12 @@ class SystemUsageType:
             total_shipments=total_shipments,
             organization_count=organization_count,
             total_shipping_spend=total_shipping_spend,
-            api_errors=[
-                utils.UsageStatType.parse(item, label="api_errors")
-                for item in api_errors
-            ],
-            api_requests=[
-                utils.UsageStatType.parse(item, label="api_requests")
-                for item in api_requests
-            ],
-            order_volumes=[
-                utils.UsageStatType.parse(item, label="order_volumes")
-                for item in order_volumes
-            ],
-            shipment_count=[
-                utils.UsageStatType.parse(item, label="shipment_count")
-                for item in shipment_count
-            ],
-            shipping_spend=[
-                utils.UsageStatType.parse(item, label="shipping_spend")
-                for item in shipping_spend
-            ],
-            tracker_count=[
-                utils.UsageStatType.parse(item, label="tracker_count")
-                for item in tracker_count
-            ],
+            api_errors=[utils.UsageStatType.parse(item, label="api_errors") for item in api_errors],
+            api_requests=[utils.UsageStatType.parse(item, label="api_requests") for item in api_requests],
+            order_volumes=[utils.UsageStatType.parse(item, label="order_volumes") for item in order_volumes],
+            shipment_count=[utils.UsageStatType.parse(item, label="shipment_count") for item in shipment_count],
+            shipping_spend=[utils.UsageStatType.parse(item, label="shipping_spend") for item in shipping_spend],
+            tracker_count=[utils.UsageStatType.parse(item, label="tracker_count") for item in tracker_count],
         )
 
 
@@ -569,8 +536,8 @@ class MetafieldType:
     key: str
     is_required: bool
     type: utils.MetafieldTypeEnum
-    value: typing.Optional[utils.JSON] = None
-    object_id: typing.Optional[str] = None
+    value: utils.JSON | None = None
+    object_id: str | None = None
 
     @strawberry.field
     def object_type(self: core.Metafield) -> str:
@@ -580,7 +547,7 @@ class MetafieldType:
         return "metafield"
 
     @strawberry.field
-    def parsed_value(self: core.Metafield) -> typing.Optional[utils.JSON]:
+    def parsed_value(self: core.Metafield) -> utils.JSON | None:
         """Return the value parsed according to its type."""
         return self.get_parsed_value()
 
@@ -593,7 +560,7 @@ class MetafieldType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.MetafieldFilter] = strawberry.UNSET,
+        filter: inputs.MetafieldFilter | None = strawberry.UNSET,
     ) -> utils.Connection["MetafieldType"]:
         from django.contrib.contenttypes.models import ContentType
 
@@ -609,10 +576,7 @@ class MetafieldType:
             queryset = queryset.filter(is_required=_filter.is_required)
         if not utils.is_unset(_filter.object_type):
             ct = ContentType.objects.filter(model=_filter.object_type).first()
-            if ct:
-                queryset = queryset.filter(content_type=ct)
-            else:
-                queryset = queryset.none()
+            queryset = queryset.filter(content_type=ct) if ct else queryset.none()
         if not utils.is_unset(_filter.object_id):
             queryset = queryset.filter(object_id=_filter.object_id)
 
@@ -623,51 +587,45 @@ class MetafieldType:
 class LogType:
     object_type: str
     id: int
-    user: typing.Optional[UserType]
-    requested_at: typing.Optional[datetime.datetime]
-    response_ms: typing.Optional[int]
-    path: typing.Optional[str]
-    remote_addr: typing.Optional[str]
-    host: typing.Optional[str]
-    method: typing.Optional[str]
-    status_code: typing.Optional[int]
-    test_mode: typing.Optional[bool]
-    request_id: typing.Optional[str]
+    user: UserType | None
+    requested_at: datetime.datetime | None
+    response_ms: int | None
+    path: str | None
+    remote_addr: str | None
+    host: str | None
+    method: str | None
+    status_code: int | None
+    test_mode: bool | None
+    request_id: str | None
 
     @strawberry.field
-    def data(self: core.APILog) -> typing.Optional[utils.JSON]:
+    def data(self: core.APILog) -> utils.JSON | None:
         try:
             return lib.to_dict(self.data)
         except:
             return self.data
 
     @strawberry.field
-    def response(self: core.APILog) -> typing.Optional[utils.JSON]:
+    def response(self: core.APILog) -> utils.JSON | None:
         try:
             return lib.to_dict(self.response)
         except:
             return self.response
 
     @strawberry.field
-    def query_params(self: core.APILog) -> typing.Optional[utils.JSON]:
+    def query_params(self: core.APILog) -> utils.JSON | None:
         try:
             return lib.to_dict(self.query_params)
         except:
             return self.query_params
 
     @strawberry.field
-    def records(
-        self: tracing.TracingRecord, info: Info
-    ) -> typing.List["TracingRecordType"]:
+    def records(self: tracing.TracingRecord, info: Info) -> list["TracingRecordType"]:
         queryset = tracing.TracingRecord.objects.filter(meta__request_log_id=self.id)
 
-        if User.objects.filter(
-            id=info.context.request.user.id, is_staff=False
-        ).exists():
+        if User.objects.filter(id=info.context.request.user.id, is_staff=False).exists():
             # exclude system connection records if user is not staff
-            system_connection_ids = list(
-                providers.SystemConnection.objects.values_list("id", flat=True)
-            )
+            system_connection_ids = list(providers.SystemConnection.objects.values_list("id", flat=True))
             queryset = queryset.exclude(meta__carrier_account_id__in=system_connection_ids)
 
         return queryset
@@ -681,58 +639,52 @@ class LogType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.LogFilter] = strawberry.UNSET,
+        filter: inputs.LogFilter | None = strawberry.UNSET,
     ) -> utils.Connection["LogType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.LogFilter()
-        queryset = filters.LogFilter(
-            _filter.to_dict(), core.APILogIndex.access_by(info.context.request)
-        ).qs
+        queryset = filters.LogFilter(_filter.to_dict(), core.APILogIndex.access_by(info.context.request)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type
 class TracingRecordType:
     object_type: str
-    id: typing.Optional[str]
-    key: typing.Optional[str]
-    timestamp: typing.Optional[float]
-    test_mode: typing.Optional[bool]
-    created_by: typing.Optional[UserType]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
+    id: str | None
+    key: str | None
+    timestamp: float | None
+    test_mode: bool | None
+    created_by: UserType | None
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
 
     @strawberry.field
-    def request_id(self: tracing.TracingRecord) -> typing.Optional[str]:
+    def request_id(self: tracing.TracingRecord) -> str | None:
         return (self.meta or {}).get("request_id")
 
     @strawberry.field
-    def record(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
+    def record(self: tracing.TracingRecord) -> utils.JSON | None:
         try:
             return lib.to_dict(self.record)
         except:
             return self.record
 
     @strawberry.field
-    def meta(self: tracing.TracingRecord) -> typing.Optional[utils.JSON]:
+    def meta(self: tracing.TracingRecord) -> utils.JSON | None:
         try:
             return lib.to_dict(self.meta)
         except:
             return self.meta
 
-
-
     @staticmethod
     @utils.authentication_required
     def resolve(info: Info, id: str) -> typing.Optional["TracingRecordType"]:
-        return (
-            tracing.TracingRecord.access_by(info.context.request).filter(id=id).first()
-        )
+        return tracing.TracingRecord.access_by(info.context.request).filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.TracingRecordFilter] = strawberry.UNSET,
+        filter: inputs.TracingRecordFilter | None = strawberry.UNSET,
     ) -> utils.Connection["TracingRecordType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TracingRecordFilter()
         queryset = filters.TracingRecordFilter(
@@ -750,13 +702,13 @@ class TokenType:
     created: datetime.datetime
 
     @strawberry.field
-    def permissions(self: auth.Token, info: Info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: auth.Token, info: Info) -> list[str] | None:
         # self is a Token model instance, permissions is a @property on the model
         return self.permissions
 
     @staticmethod
     @utils.authentication_required
-    def resolve(info: Info, org_id: typing.Optional[str] = strawberry.UNSET) -> "TokenType":
+    def resolve(info: Info, org_id: str | None = strawberry.UNSET) -> "TokenType":
         return user_serializers.TokenSerializer.retrieve_token(
             info.context.request,
             **({"org_id": org_id} if org_id is not strawberry.UNSET else {}),
@@ -772,7 +724,7 @@ class APIKeyType:
     created: datetime.datetime
 
     @strawberry.field
-    def permissions(self: auth.Token, info: Info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: auth.Token, info: Info) -> list[str] | None:
         # self is a Token model instance, permissions is a @property on the model
         return self.permissions
 
@@ -780,14 +732,13 @@ class APIKeyType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-    ) -> typing.List["APIKeyType"]:
+    ) -> list["APIKeyType"]:
         _filters = {
             "user__id": info.context.request.user.id,
             "test_mode": info.context.request.test_mode,
             **(
                 {"org__id": info.context.request.org.id}
-                if getattr(info.context.request, "org", None) is not None
-                and settings.MULTI_ORGANIZATIONS
+                if getattr(info.context.request, "org", None) is not None and settings.MULTI_ORGANIZATIONS
                 else {}
             ),
         }
@@ -796,40 +747,34 @@ class APIKeyType:
         if keys.exists():
             return keys
 
-        user_serializers.TokenSerializer.map(
-            data={}, context=info.context.request
-        ).save()
+        user_serializers.TokenSerializer.map(data={}, context=info.context.request).save()
 
         return auth.Token.objects.filter(**_filters)
 
 
 @strawberry.type
 class MessageType:
-    carrier_name: typing.Optional[str]
-    carrier_id: typing.Optional[str]
-    message: typing.Optional[str]
-    code: typing.Optional[str]
-    details: typing.Optional[utils.JSON] = None
+    carrier_name: str | None
+    carrier_id: str | None
+    message: str | None
+    code: str | None
+    details: utils.JSON | None = None
 
     @staticmethod
     def parse(charge: dict):
-        return MessageType(
-            **{k: v for k, v in charge.items() if k in MessageType.__annotations__}
-        )
+        return MessageType(**{k: v for k, v in charge.items() if k in MessageType.__annotations__})
 
 
 @strawberry.type
 class ChargeType:
-    name: typing.Optional[str] = None
-    amount: typing.Optional[float] = None
+    name: str | None = None
+    amount: float | None = None
     currency: utils.CurrencyCodeEnum = None
-    id: typing.Optional[str] = None
+    id: str | None = None
 
     @staticmethod
     def parse(charge: dict):
-        return ChargeType(
-            **{k: v for k, v in charge.items() if k in ChargeType.__annotations__}
-        )
+        return ChargeType(**{k: v for k, v in charge.items() if k in ChargeType.__annotations__})
 
 
 @strawberry.type
@@ -842,9 +787,9 @@ class RateType:
     test_mode: bool
     total_charge: float
     currency: utils.CurrencyCodeEnum
-    extra_charges: typing.List[ChargeType]
-    meta: typing.Optional[utils.JSON] = None
-    transit_days: typing.Optional[int] = None
+    extra_charges: list[ChargeType]
+    meta: utils.JSON | None = None
+    transit_days: int | None = None
 
     @staticmethod
     def parse(rate: dict):
@@ -852,35 +797,32 @@ class RateType:
             **{
                 "object_type": "rate",
                 **{k: v for k, v in rate.items() if k in RateType.__annotations__},
-                "extra_charges": [
-                    ChargeType.parse(charge)
-                    for charge in (rate.get("extra_charges") or [])
-                ],
+                "extra_charges": [ChargeType.parse(charge) for charge in (rate.get("extra_charges") or [])],
             }
         )
 
 
 @strawberry.type
 class CommodityType:
-    id: typing.Optional[str] = None
-    object_type: typing.Optional[str] = None
-    weight: typing.Optional[float] = None
-    quantity: typing.Optional[int] = None
-    metadata: typing.Optional[utils.JSON] = None
-    sku: typing.Optional[str] = None
-    title: typing.Optional[str] = None
-    hs_code: typing.Optional[str] = None
-    description: typing.Optional[str] = None
-    value_amount: typing.Optional[float] = None
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = None
-    origin_country: typing.Optional[utils.CountryCodeEnum] = None
-    value_currency: typing.Optional[utils.CurrencyCodeEnum] = None
-    created_at: typing.Optional[datetime.datetime] = None
-    updated_at: typing.Optional[datetime.datetime] = None
-    created_by: typing.Optional[UserType] = None
-    parent_id: typing.Optional[str] = None
+    id: str | None = None
+    object_type: str | None = None
+    weight: float | None = None
+    quantity: int | None = None
+    metadata: utils.JSON | None = None
+    sku: str | None = None
+    title: str | None = None
+    hs_code: str | None = None
+    description: str | None = None
+    value_amount: float | None = None
+    weight_unit: utils.WeightUnitEnum | None = None
+    origin_country: utils.CountryCodeEnum | None = None
+    value_currency: utils.CurrencyCodeEnum | None = None
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
+    created_by: UserType | None = None
+    parent_id: str | None = None
     parent: typing.Optional["CommodityType"] = None
-    unfulfilled_quantity: typing.Optional[int] = None
+    unfulfilled_quantity: int | None = None
 
     @staticmethod
     def parse(item: dict) -> typing.Optional["CommodityType"]:
@@ -899,27 +841,27 @@ class CommodityType:
 
 @strawberry.type
 class AddressType:
-    id: typing.Optional[str] = None
-    object_type: typing.Optional[str] = None
-    postal_code: typing.Optional[str] = None
-    city: typing.Optional[str] = None
-    federal_tax_id: typing.Optional[str] = None
-    state_tax_id: typing.Optional[str] = None
-    person_name: typing.Optional[str] = None
-    company_name: typing.Optional[str] = None
-    country_code: typing.Optional[utils.CountryCodeEnum] = None
-    email: typing.Optional[str] = None
-    phone_number: typing.Optional[str] = None
-    state_code: typing.Optional[str] = None
-    residential: typing.Optional[bool] = None
-    street_number: typing.Optional[str] = None
-    address_line1: typing.Optional[str] = None
-    address_line2: typing.Optional[str] = None
-    created_at: typing.Optional[datetime.datetime] = None
-    updated_at: typing.Optional[datetime.datetime] = None
-    created_by: typing.Optional[UserType] = None
-    validate_location: typing.Optional[bool] = None
-    validation: typing.Optional[utils.JSON] = None
+    id: str | None = None
+    object_type: str | None = None
+    postal_code: str | None = None
+    city: str | None = None
+    federal_tax_id: str | None = None
+    state_tax_id: str | None = None
+    person_name: str | None = None
+    company_name: str | None = None
+    country_code: utils.CountryCodeEnum | None = None
+    email: str | None = None
+    phone_number: str | None = None
+    state_code: str | None = None
+    residential: bool | None = None
+    street_number: str | None = None
+    address_line1: str | None = None
+    address_line2: str | None = None
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
+    created_by: UserType | None = None
+    validate_location: bool | None = None
+    validation: utils.JSON | None = None
 
     @staticmethod
     def parse(address: dict) -> typing.Optional["AddressType"]:
@@ -935,25 +877,25 @@ class AddressType:
 
 @strawberry.type
 class ParcelType:
-    id: typing.Optional[str] = None
-    object_type: typing.Optional[str] = None
-    weight: typing.Optional[float] = None
-    width: typing.Optional[float] = None
-    height: typing.Optional[float] = None
-    length: typing.Optional[float] = None
-    packaging_type: typing.Optional[str] = None
-    package_preset: typing.Optional[str] = None
-    description: typing.Optional[str] = None
-    content: typing.Optional[str] = None
-    is_document: typing.Optional[bool] = None
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = None
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum] = None
-    freight_class: typing.Optional[str] = None
-    reference_number: typing.Optional[str] = None
-    created_at: typing.Optional[datetime.datetime] = None
-    updated_at: typing.Optional[datetime.datetime] = None
-    created_by: typing.Optional[UserType] = None
-    items: typing.Optional[typing.List[CommodityType]] = None
+    id: str | None = None
+    object_type: str | None = None
+    weight: float | None = None
+    width: float | None = None
+    height: float | None = None
+    length: float | None = None
+    packaging_type: str | None = None
+    package_preset: str | None = None
+    description: str | None = None
+    content: str | None = None
+    is_document: bool | None = None
+    weight_unit: utils.WeightUnitEnum | None = None
+    dimension_unit: utils.DimensionUnitEnum | None = None
+    freight_class: str | None = None
+    reference_number: str | None = None
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
+    created_by: UserType | None = None
+    items: list[CommodityType] | None = None
 
     @staticmethod
     def parse(parcel: dict) -> typing.Optional["ParcelType"]:
@@ -970,11 +912,11 @@ class ParcelType:
 
 @strawberry.type
 class DutyType:
-    paid_by: typing.Optional[utils.PaidByEnum] = None
-    currency: typing.Optional[utils.CurrencyCodeEnum] = None
-    account_number: typing.Optional[str] = None
-    declared_value: typing.Optional[float] = None
-    bill_to: typing.Optional[AddressType] = None
+    paid_by: utils.PaidByEnum | None = None
+    currency: utils.CurrencyCodeEnum | None = None
+    account_number: str | None = None
+    declared_value: float | None = None
+    bill_to: AddressType | None = None
 
     @staticmethod
     def parse(duty: dict) -> typing.Optional["DutyType"]:
@@ -995,30 +937,31 @@ class CustomsType:
 
     This is a pure data type that parses customs JSON data, not tied to a database model.
     """
-    certify: typing.Optional[bool] = None
-    commercial_invoice: typing.Optional[bool] = None
-    content_type: typing.Optional[utils.CustomsContentTypeEnum] = None
-    content_description: typing.Optional[str] = None
-    incoterm: typing.Optional[utils.IncotermCodeEnum] = None
-    invoice: typing.Optional[str] = None
-    invoice_date: typing.Optional[str] = None
-    signer: typing.Optional[str] = None
-    options: typing.Optional[utils.JSON] = None
+
+    certify: bool | None = None
+    commercial_invoice: bool | None = None
+    content_type: utils.CustomsContentTypeEnum | None = None
+    content_description: str | None = None
+    incoterm: utils.IncotermCodeEnum | None = None
+    invoice: str | None = None
+    invoice_date: str | None = None
+    signer: str | None = None
+    options: utils.JSON | None = None
     # Private fields for parsed nested objects
-    _duty: strawberry.Private[typing.Optional[DutyType]] = None
-    _duty_billing_address: strawberry.Private[typing.Optional[AddressType]] = None
-    _commodities: strawberry.Private[typing.Optional[typing.List[CommodityType]]] = None
+    _duty: strawberry.Private[DutyType | None] = None
+    _duty_billing_address: strawberry.Private[AddressType | None] = None
+    _commodities: strawberry.Private[list[CommodityType] | None] = None
 
     @strawberry.field
-    def duty(self) -> typing.Optional[DutyType]:
+    def duty(self) -> DutyType | None:
         return self._duty
 
     @strawberry.field
-    def duty_billing_address(self) -> typing.Optional[AddressType]:
+    def duty_billing_address(self) -> AddressType | None:
         return self._duty_billing_address
 
     @strawberry.field
-    def commodities(self) -> typing.Optional[typing.List[CommodityType]]:
+    def commodities(self) -> list[CommodityType] | None:
         return self._commodities
 
     @staticmethod
@@ -1052,33 +995,33 @@ class AddressTemplateType:
 
     id: str
     object_type: str
-    postal_code: typing.Optional[str]
-    city: typing.Optional[str]
-    federal_tax_id: typing.Optional[str]
-    state_tax_id: typing.Optional[str]
-    person_name: typing.Optional[str]
-    company_name: typing.Optional[str]
-    country_code: typing.Optional[utils.CountryCodeEnum]
-    email: typing.Optional[str]
-    phone_number: typing.Optional[str]
-    state_code: typing.Optional[str]
-    residential: typing.Optional[bool]
-    street_number: typing.Optional[str]
-    address_line1: typing.Optional[str]
-    address_line2: typing.Optional[str]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
-    validate_location: typing.Optional[bool]
-    validation: typing.Optional[utils.JSON]
-    meta: typing.Optional[utils.JSON] = None
+    postal_code: str | None
+    city: str | None
+    federal_tax_id: str | None
+    state_tax_id: str | None
+    person_name: str | None
+    company_name: str | None
+    country_code: utils.CountryCodeEnum | None
+    email: str | None
+    phone_number: str | None
+    state_code: str | None
+    residential: bool | None
+    street_number: str | None
+    address_line1: str | None
+    address_line2: str | None
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
+    created_by: UserType | None
+    validate_location: bool | None
+    validation: utils.JSON | None
+    meta: utils.JSON | None = None
 
 
 # Standalone resolver functions for saved addresses (AddressTemplateType)
 @utils.authentication_required
 def resolve_addresses(
     info: Info,
-    filter: typing.Optional[inputs.AddressFilter] = strawberry.UNSET,
+    filter: inputs.AddressFilter | None = strawberry.UNSET,
 ) -> utils.Connection[AddressTemplateType]:
     """Resolver for listing saved addresses."""
     _filter = inputs.AddressFilter() if utils.is_unset(filter) else filter
@@ -1128,12 +1071,16 @@ def resolve_addresses(
 
 
 @utils.authentication_required
-def resolve_address(info: Info, id: str) -> typing.Optional[AddressTemplateType]:
+def resolve_address(info: Info, id: str) -> AddressTemplateType | None:
     """Resolver for getting a single saved address by ID."""
-    return manager.Address.access_by(info.context.request).filter(
-        id=id,
-        meta__label__isnull=False,
-    ).first()
+    return (
+        manager.Address.access_by(info.context.request)
+        .filter(
+            id=id,
+            meta__label__isnull=False,
+        )
+        .first()
+    )
 
 
 @strawberry.type
@@ -1147,26 +1094,26 @@ class ParcelTemplateType:
 
     id: str
     object_type: str
-    weight: typing.Optional[float]
-    width: typing.Optional[float]
-    height: typing.Optional[float]
-    length: typing.Optional[float]
-    packaging_type: typing.Optional[str]
-    package_preset: typing.Optional[str]
-    description: typing.Optional[str]
-    content: typing.Optional[str]
-    is_document: typing.Optional[bool]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum]
-    freight_class: typing.Optional[str]
-    reference_number: typing.Optional[str]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
-    meta: typing.Optional[utils.JSON] = None
+    weight: float | None
+    width: float | None
+    height: float | None
+    length: float | None
+    packaging_type: str | None
+    package_preset: str | None
+    description: str | None
+    content: str | None
+    is_document: bool | None
+    weight_unit: utils.WeightUnitEnum | None
+    dimension_unit: utils.DimensionUnitEnum | None
+    freight_class: str | None
+    reference_number: str | None
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
+    created_by: UserType | None
+    meta: utils.JSON | None = None
 
     @strawberry.field
-    def items(self: manager.Parcel) -> typing.Optional[typing.List[CommodityType]]:
+    def items(self: manager.Parcel) -> list[CommodityType] | None:
         """Items in the parcel."""
         items_rel = getattr(self, "items", None)
         if items_rel is None:
@@ -1180,7 +1127,7 @@ class ParcelTemplateType:
 @utils.authentication_required
 def resolve_parcels(
     info: Info,
-    filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
+    filter: inputs.TemplateFilter | None = strawberry.UNSET,
 ) -> utils.Connection[ParcelTemplateType]:
     """Resolver for listing saved parcels."""
     _filter = inputs.TemplateFilter() if filter == strawberry.UNSET else filter
@@ -1205,12 +1152,16 @@ def resolve_parcels(
 
 
 @utils.authentication_required
-def resolve_parcel(info: Info, id: str) -> typing.Optional[ParcelTemplateType]:
+def resolve_parcel(info: Info, id: str) -> ParcelTemplateType | None:
     """Resolver for getting a single saved parcel by ID."""
-    return manager.Parcel.access_by(info.context.request).filter(
-        id=id,
-        meta__label__isnull=False,
-    ).first()
+    return (
+        manager.Parcel.access_by(info.context.request)
+        .filter(
+            id=id,
+            meta__label__isnull=False,
+        )
+        .first()
+    )
 
 
 @strawberry.type
@@ -1226,26 +1177,26 @@ class ProductTemplateType:
     object_type: str
     weight: float
     quantity: int
-    sku: typing.Optional[str]
-    title: typing.Optional[str]
-    hs_code: typing.Optional[str]
-    description: typing.Optional[str]
-    value_amount: typing.Optional[float]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
-    origin_country: typing.Optional[utils.CountryCodeEnum]
-    value_currency: typing.Optional[utils.CurrencyCodeEnum]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[UserType]
-    metadata: typing.Optional[utils.JSON] = None
-    meta: typing.Optional[utils.JSON] = None
+    sku: str | None
+    title: str | None
+    hs_code: str | None
+    description: str | None
+    value_amount: float | None
+    weight_unit: utils.WeightUnitEnum | None
+    origin_country: utils.CountryCodeEnum | None
+    value_currency: utils.CurrencyCodeEnum | None
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
+    created_by: UserType | None
+    metadata: utils.JSON | None = None
+    meta: utils.JSON | None = None
 
 
 # Standalone resolver functions for saved products (ProductTemplateType)
 @utils.authentication_required
 def resolve_products(
     info: Info,
-    filter: typing.Optional[inputs.ProductFilter] = strawberry.UNSET,
+    filter: inputs.ProductFilter | None = strawberry.UNSET,
 ) -> utils.Connection[ProductTemplateType]:
     """Resolver for listing saved products."""
     _filter = filter if not utils.is_unset(filter) else inputs.ProductFilter()
@@ -1283,12 +1234,16 @@ def resolve_products(
 
 
 @utils.authentication_required
-def resolve_product(info: Info, id: str) -> typing.Optional[ProductTemplateType]:
+def resolve_product(info: Info, id: str) -> ProductTemplateType | None:
     """Resolver for getting a single saved product by ID."""
-    return manager.Commodity.access_by(info.context.request).filter(
-        id=id,
-        meta__label__isnull=False,
-    ).first()
+    return (
+        manager.Commodity.access_by(info.context.request)
+        .filter(
+            id=id,
+            meta__label__isnull=False,
+        )
+        .first()
+    )
 
 
 @strawberry.type
@@ -1299,22 +1254,22 @@ class DefaultTemplatesType:
     methods to return them as the correct strawberry types, ensuring proper field resolution.
     """
 
-    _default_address: strawberry.Private[typing.Optional[manager.Address]] = None
-    _default_parcel: strawberry.Private[typing.Optional[manager.Parcel]] = None
-    _default_product: strawberry.Private[typing.Optional[manager.Commodity]] = None
+    _default_address: strawberry.Private[manager.Address | None] = None
+    _default_parcel: strawberry.Private[manager.Parcel | None] = None
+    _default_product: strawberry.Private[manager.Commodity | None] = None
 
     @strawberry.field
-    def default_address(self) -> typing.Optional[AddressTemplateType]:
+    def default_address(self) -> AddressTemplateType | None:
         """Returns the default address template."""
         return self._default_address  # type: ignore
 
     @strawberry.field
-    def default_parcel(self) -> typing.Optional[ParcelTemplateType]:
+    def default_parcel(self) -> ParcelTemplateType | None:
         """Returns the default parcel template."""
         return self._default_parcel  # type: ignore
 
     @strawberry.field
-    def default_product(self) -> typing.Optional[ProductTemplateType]:
+    def default_product(self) -> ProductTemplateType | None:
         """Returns the default product template."""
         return self._default_product  # type: ignore
 
@@ -1323,18 +1278,30 @@ class DefaultTemplatesType:
 @utils.authentication_required
 def resolve_default_templates(info: Info) -> DefaultTemplatesType:
     """Resolver for getting default templates."""
-    default_address = manager.Address.access_by(info.context.request).filter(
-        meta__is_default=True,
-        meta__label__isnull=False,
-    ).first()
-    default_parcel = manager.Parcel.access_by(info.context.request).filter(
-        meta__is_default=True,
-        meta__label__isnull=False,
-    ).first()
-    default_product = manager.Commodity.access_by(info.context.request).filter(
-        meta__is_default=True,
-        meta__label__isnull=False,
-    ).first()
+    default_address = (
+        manager.Address.access_by(info.context.request)
+        .filter(
+            meta__is_default=True,
+            meta__label__isnull=False,
+        )
+        .first()
+    )
+    default_parcel = (
+        manager.Parcel.access_by(info.context.request)
+        .filter(
+            meta__is_default=True,
+            meta__label__isnull=False,
+        )
+        .first()
+    )
+    default_product = (
+        manager.Commodity.access_by(info.context.request)
+        .filter(
+            meta__is_default=True,
+            meta__label__isnull=False,
+        )
+        .first()
+    )
 
     return DefaultTemplatesType(
         _default_address=default_address,
@@ -1345,68 +1312,60 @@ def resolve_default_templates(info: Info) -> DefaultTemplatesType:
 
 @strawberry.type
 class TrackingEventType:
-    description: typing.Optional[str] = None
-    location: typing.Optional[str] = None
-    code: typing.Optional[str] = None
-    date: typing.Optional[str] = None
-    time: typing.Optional[str] = None
-    latitude: typing.Optional[float] = None
-    longitude: typing.Optional[float] = None
+    description: str | None = None
+    location: str | None = None
+    code: str | None = None
+    date: str | None = None
+    time: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
 
     @staticmethod
     def parse(charge: dict):
-        return TrackingEventType(
-            **{
-                k: v
-                for k, v in charge.items()
-                if k in TrackingEventType.__annotations__
-            }
-        )
+        return TrackingEventType(**{k: v for k, v in charge.items() if k in TrackingEventType.__annotations__})
 
 
 @strawberry.type
 class TrackingInfoType:
-    carrier_tracking_link: typing.Optional[str] = None
-    customer_name: typing.Optional[str] = None
-    expected_delivery: typing.Optional[str] = None
-    note: typing.Optional[str] = None
-    order_date: typing.Optional[str] = None
-    order_id: typing.Optional[str] = None
-    package_weight: typing.Optional[str] = None
-    package_weight_unit: typing.Optional[str] = None
-    shipment_package_count: typing.Optional[str] = None
-    shipment_pickup_date: typing.Optional[str] = None
-    shipment_delivery_date: typing.Optional[str] = None
-    shipment_service: typing.Optional[str] = None
-    shipment_origin_country: typing.Optional[str] = None
-    shipment_origin_postal_code: typing.Optional[str] = None
-    shipment_destination_country: typing.Optional[str] = None
-    shipment_destination_postal_code: typing.Optional[str] = None
-    shipping_date: typing.Optional[str] = None
-    signed_by: typing.Optional[str] = None
-    source: typing.Optional[str] = None
+    carrier_tracking_link: str | None = None
+    customer_name: str | None = None
+    expected_delivery: str | None = None
+    note: str | None = None
+    order_date: str | None = None
+    order_id: str | None = None
+    package_weight: str | None = None
+    package_weight_unit: str | None = None
+    shipment_package_count: str | None = None
+    shipment_pickup_date: str | None = None
+    shipment_delivery_date: str | None = None
+    shipment_service: str | None = None
+    shipment_origin_country: str | None = None
+    shipment_origin_postal_code: str | None = None
+    shipment_destination_country: str | None = None
+    shipment_destination_postal_code: str | None = None
+    shipping_date: str | None = None
+    signed_by: str | None = None
+    source: str | None = None
 
     @staticmethod
     def parse(charge: dict):
-        return TrackingInfoType(
-            **{k: v for k, v in charge.items() if k in TrackingInfoType.__annotations__}
-        )
+        return TrackingInfoType(**{k: v for k, v in charge.items() if k in TrackingInfoType.__annotations__})
 
 
 @strawberry.type
 class CarrierSnapshotType:
     """Represents a carrier snapshot stored at the time of operation."""
 
-    connection_id: typing.Optional[str] = None
-    connection_type: typing.Optional[str] = None
-    carrier_code: typing.Optional[str] = None
-    carrier_id: typing.Optional[str] = None
-    carrier_name: typing.Optional[str] = None
-    test_mode: typing.Optional[bool] = None
+    connection_id: str | None = None
+    connection_type: str | None = None
+    carrier_code: str | None = None
+    carrier_id: str | None = None
+    carrier_name: str | None = None
+    test_mode: bool | None = None
 
     @staticmethod
     def parse(
-        snapshot: typing.Optional[dict],
+        snapshot: dict | None,
     ) -> typing.Optional["CarrierSnapshotType"]:
         if not snapshot:
             return None
@@ -1428,47 +1387,47 @@ class TrackerType:
     test_mode: bool
     metadata: utils.JSON
     status: utils.TrackerStatusEnum
-    delivered: typing.Optional[bool]
-    estimated_delivery: typing.Optional[datetime.date]
-    document_image_url: typing.Optional[str]
-    signature_image_url: typing.Optional[str]
-    options: typing.Optional[utils.JSON]
-    meta: typing.Optional[utils.JSON]
+    delivered: bool | None
+    estimated_delivery: datetime.date | None
+    document_image_url: str | None
+    signature_image_url: str | None
+    options: utils.JSON | None
+    meta: utils.JSON | None
     shipment: typing.Optional["ShipmentType"]
     is_archived: bool
-    archived_at: typing.Optional[datetime.datetime]
+    archived_at: datetime.datetime | None
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
 
     @strawberry.field
-    def request_id(self: manager.Tracking) -> typing.Optional[str]:
+    def request_id(self: manager.Tracking) -> str | None:
         return (self.meta or {}).get("request_id")
 
     @strawberry.field
-    def carrier_id(self: manager.Tracking) -> typing.Optional[str]:
+    def carrier_id(self: manager.Tracking) -> str | None:
         return (self.carrier or {}).get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Tracking) -> typing.Optional[str]:
+    def carrier_name(self: manager.Tracking) -> str | None:
         return (self.carrier or {}).get("carrier_name")
 
     @strawberry.field
-    def info(self: manager.Tracking) -> typing.Optional[TrackingInfoType]:
+    def info(self: manager.Tracking) -> TrackingInfoType | None:
         return TrackingInfoType.parse(self.info) if self.info else None
 
     @strawberry.field
-    def events(self: manager.Tracking) -> typing.List[TrackingEventType]:
+    def events(self: manager.Tracking) -> list[TrackingEventType]:
         return [TrackingEventType.parse(msg) for msg in self.events or []]
 
     @strawberry.field
-    def messages(self: manager.Tracking) -> typing.List[MessageType]:
+    def messages(self: manager.Tracking) -> list[MessageType]:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
     @strawberry.field
     def tracking_carrier(
         self: manager.Tracking,
-    ) -> typing.Optional[CarrierSnapshotType]:
+    ) -> CarrierSnapshotType | None:
         return CarrierSnapshotType.parse(self.carrier)
 
     @staticmethod
@@ -1480,14 +1439,12 @@ class TrackerType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.TrackerFilter] = strawberry.UNSET,
+        filter: inputs.TrackerFilter | None = strawberry.UNSET,
     ) -> utils.Connection["TrackerType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.TrackerFilter()
         filter_dict = _filter.to_dict()
         mgr = "all_objects" if filter_dict.get("is_archived") is True else "objects"
-        queryset = filters.TrackerFilters(
-            filter_dict, manager.Tracking.access_by(info.context.request, manager=mgr)
-        ).qs
+        queryset = filters.TrackerFilters(filter_dict, manager.Tracking.access_by(info.context.request, manager=mgr)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
@@ -1500,32 +1457,32 @@ class ManifestType:
     meta: utils.JSON
     options: utils.JSON
     address: AddressType
-    shipment_identifiers: typing.List[str]
-    manifest_url: typing.Optional[str]
-    reference: typing.Optional[str]
+    shipment_identifiers: list[str]
+    manifest_url: str | None
+    reference: str | None
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
     @strawberry.field
-    def request_id(self: manager.Manifest) -> typing.Optional[str]:
+    def request_id(self: manager.Manifest) -> str | None:
         return (self.meta or {}).get("request_id")
 
     @strawberry.field
-    def carrier_id(self: manager.Manifest) -> typing.Optional[str]:
+    def carrier_id(self: manager.Manifest) -> str | None:
         return (self.carrier or {}).get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Manifest) -> typing.Optional[str]:
+    def carrier_name(self: manager.Manifest) -> str | None:
         return (self.carrier or {}).get("carrier_name")
 
     @strawberry.field
-    def messages(self: manager.Manifest) -> typing.List[MessageType]:
+    def messages(self: manager.Manifest) -> list[MessageType]:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
     @strawberry.field
     def manifest_carrier(
         self: manager.Manifest,
-    ) -> typing.Optional[CarrierSnapshotType]:
+    ) -> CarrierSnapshotType | None:
         return CarrierSnapshotType.parse(self.carrier)
 
     @staticmethod
@@ -1537,12 +1494,10 @@ class ManifestType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.ManifestFilter] = strawberry.UNSET,
+        filter: inputs.ManifestFilter | None = strawberry.UNSET,
     ) -> utils.Connection["ManifestType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ManifestFilter()
-        queryset = filters.ManifestFilters(
-            _filter.to_dict(), manager.Manifest.access_by(info.context.request)
-        ).qs
+        queryset = filters.ManifestFilters(_filter.to_dict(), manager.Manifest.access_by(info.context.request)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
@@ -1552,25 +1507,25 @@ class PickupType:
 
     id: str
     object_type: str
-    confirmation_number: typing.Optional[str]
+    confirmation_number: str | None
     status: str
-    pickup_date: typing.Optional[str]
-    ready_time: typing.Optional[str]
-    closing_time: typing.Optional[str]
-    instruction: typing.Optional[str]
-    package_location: typing.Optional[str]
+    pickup_date: str | None
+    ready_time: str | None
+    closing_time: str | None
+    instruction: str | None
+    package_location: str | None
     test_mode: bool
     options: utils.JSON
     metadata: utils.JSON
-    meta: typing.Optional[utils.JSON]
+    meta: utils.JSON | None
     is_archived: bool
-    archived_at: typing.Optional[datetime.datetime]
+    archived_at: datetime.datetime | None
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
 
     @strawberry.field
-    def request_id(self: manager.Pickup) -> typing.Optional[str]:
+    def request_id(self: manager.Pickup) -> str | None:
         return (self.meta or {}).get("request_id")
 
     @strawberry.field
@@ -1579,53 +1534,45 @@ class PickupType:
         return self.pickup_type or "one_time"
 
     @strawberry.field
-    def recurrence(self: manager.Pickup) -> typing.Optional[utils.JSON]:
+    def recurrence(self: manager.Pickup) -> utils.JSON | None:
         """Recurrence config for recurring pickups."""
         return self.recurrence
 
     @strawberry.field
-    def carrier_id(self: manager.Pickup) -> typing.Optional[str]:
+    def carrier_id(self: manager.Pickup) -> str | None:
         return (self.carrier or {}).get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Pickup) -> typing.Optional[str]:
+    def carrier_name(self: manager.Pickup) -> str | None:
         return (self.carrier or {}).get("carrier_name")
 
     @strawberry.field
-    def address(self: manager.Pickup) -> typing.Optional[AddressType]:
+    def address(self: manager.Pickup) -> AddressType | None:
         return AddressType.parse(self.address) if self.address else None
 
     @strawberry.field
-    def pickup_charge(self: manager.Pickup) -> typing.Optional[ChargeType]:
+    def pickup_charge(self: manager.Pickup) -> ChargeType | None:
         return ChargeType.parse(self.pickup_charge) if self.pickup_charge else None
 
     @strawberry.field
-    def parcels(self: manager.Pickup) -> typing.List[ParcelType]:
+    def parcels(self: manager.Pickup) -> list[ParcelType]:
         """Parcels from related shipments."""
-        return [
-            ParcelType.parse(p)
-            for shipment in self.shipments.all()
-            for p in (shipment.parcels or [])
-        ]
+        return [ParcelType.parse(p) for shipment in self.shipments.all() for p in (shipment.parcels or [])]
 
     @strawberry.field
-    def tracking_numbers(self: manager.Pickup) -> typing.List[str]:
+    def tracking_numbers(self: manager.Pickup) -> list[str]:
         """Tracking numbers from related shipments."""
-        return [
-            s.tracking_number
-            for s in self.shipments.all()
-            if s.tracking_number
-        ]
+        return [s.tracking_number for s in self.shipments.all() if s.tracking_number]
 
     @strawberry.field
-    def shipments(self: manager.Pickup) -> typing.List["ShipmentType"]:
+    def shipments(self: manager.Pickup) -> list["ShipmentType"]:
         """Related shipments for this pickup."""
         return list(self.shipments.all())
 
     @strawberry.field
     def pickup_carrier(
         self: manager.Pickup,
-    ) -> typing.Optional[CarrierSnapshotType]:
+    ) -> CarrierSnapshotType | None:
         """Carrier snapshot with credentials protected."""
         return CarrierSnapshotType.parse(self.carrier)
 
@@ -1638,40 +1585,37 @@ class PickupType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.PickupFilter] = strawberry.UNSET,
+        filter: inputs.PickupFilter | None = strawberry.UNSET,
     ) -> utils.Connection["PickupType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.PickupFilter()
         filter_dict = _filter.to_dict()
         mgr = "all_objects" if filter_dict.get("is_archived") is True else "objects"
-        queryset = filters.PickupFilters(
-            filter_dict, manager.Pickup.access_by(info.context.request, manager=mgr)
-        ).qs
+        queryset = filters.PickupFilters(filter_dict, manager.Pickup.access_by(info.context.request, manager=mgr)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type
 class ReturnShipmentType:
-    tracking_number: typing.Optional[str] = None
-    shipment_identifier: typing.Optional[str] = None
-    tracking_url: typing.Optional[str] = None
-    service: typing.Optional[str] = None
-    reference: typing.Optional[str] = None
-    meta: typing.Optional[utils.JSON] = None
+    tracking_number: str | None = None
+    shipment_identifier: str | None = None
+    tracking_url: str | None = None
+    service: str | None = None
+    reference: str | None = None
+    meta: utils.JSON | None = None
 
     @staticmethod
     def parse(data: dict) -> typing.Optional["ReturnShipmentType"]:
         if data is None:
             return None
-        return ReturnShipmentType(
-            **{k: v for k, v in data.items() if k in ReturnShipmentType.__annotations__}
-        )
+        return ReturnShipmentType(**{k: v for k, v in data.items() if k in ReturnShipmentType.__annotations__})
 
 
 @strawberry.type
 class PaymentType:
-    account_number: typing.Optional[str] = None
-    paid_by: typing.Optional[utils.PaidByEnum] = None
-    currency: typing.Optional[utils.CurrencyCodeEnum] = None
+    account_number: str | None = None
+    paid_by: utils.PaidByEnum | None = None
+    currency: utils.CurrencyCodeEnum | None = None
+
 
 @strawberry.type
 class ShipmentType:
@@ -1681,29 +1625,29 @@ class ShipmentType:
     options: utils.JSON
     metadata: utils.JSON
     status: utils.ShipmentStatusEnum
-    meta: typing.Optional[utils.JSON]
-    label_type: typing.Optional[utils.LabelTypeEnum]
-    tracking_number: typing.Optional[str]
-    shipment_identifier: typing.Optional[str]
-    tracking_url: typing.Optional[str]
-    reference: typing.Optional[str]
-    order_id: typing.Optional[str]
-    services: typing.Optional[typing.List[str]]
-    service: typing.Optional[str]
-    selected_rate_id: typing.Optional[str]
-    tracker_id: typing.Optional[str]
-    label_url: typing.Optional[str]
-    invoice_url: typing.Optional[str]
-    tracker: typing.Optional[TrackerType]
-    is_return: typing.Optional[bool]
+    meta: utils.JSON | None
+    label_type: utils.LabelTypeEnum | None
+    tracking_number: str | None
+    shipment_identifier: str | None
+    tracking_url: str | None
+    reference: str | None
+    order_id: str | None
+    services: list[str] | None
+    service: str | None
+    selected_rate_id: str | None
+    tracker_id: str | None
+    label_url: str | None
+    invoice_url: str | None
+    tracker: TrackerType | None
+    is_return: bool | None
     is_archived: bool
-    archived_at: typing.Optional[datetime.datetime]
+    archived_at: datetime.datetime | None
     created_at: datetime.datetime
     updated_at: datetime.datetime
     created_by: UserType
 
     @strawberry.field
-    def request_id(self: manager.Shipment) -> typing.Optional[str]:
+    def request_id(self: manager.Shipment) -> str | None:
         return (self.meta or {}).get("request_id")
 
     @strawberry.field
@@ -1715,66 +1659,66 @@ class ShipmentType:
         return AddressType.parse(self.recipient)
 
     @strawberry.field
-    def return_address(self: manager.Shipment) -> typing.Optional[AddressType]:
+    def return_address(self: manager.Shipment) -> AddressType | None:
         return AddressType.parse(self.return_address)
 
     @strawberry.field
-    def billing_address(self: manager.Shipment) -> typing.Optional[AddressType]:
+    def billing_address(self: manager.Shipment) -> AddressType | None:
         return AddressType.parse(self.billing_address)
 
     @strawberry.field
-    def customs(self: manager.Shipment) -> typing.Optional[CustomsType]:
+    def customs(self: manager.Shipment) -> CustomsType | None:
         return CustomsType.parse(self.customs)
 
     @strawberry.field
-    def carrier_id(self: manager.Shipment) -> typing.Optional[str]:
+    def carrier_id(self: manager.Shipment) -> str | None:
         if self.selected_rate is None:
             return None
         return self.selected_rate.get("carrier_id")
 
     @strawberry.field
-    def carrier_name(self: manager.Shipment) -> typing.Optional[str]:
+    def carrier_name(self: manager.Shipment) -> str | None:
         if self.selected_rate is None:
             return None
         return self.selected_rate.get("carrier_name")
 
     @strawberry.field
-    def carrier_ids(self: manager.Shipment) -> typing.List[str]:
+    def carrier_ids(self: manager.Shipment) -> list[str]:
         return self.carrier_ids or []
 
     @strawberry.field
-    def parcels(self: manager.Shipment) -> typing.List[ParcelType]:
+    def parcels(self: manager.Shipment) -> list[ParcelType]:
         # parcels is now a JSON field, return parsed ParcelType objects
         return [ParcelType.parse(p) for p in (self.parcels or [])]
 
     @strawberry.field
-    def rates(self: manager.Shipment) -> typing.List[RateType]:
+    def rates(self: manager.Shipment) -> list[RateType]:
         return [RateType.parse(rate) for rate in self.rates or []]
 
     @strawberry.field
-    def selected_rate(self: manager.Shipment) -> typing.Optional[RateType]:
+    def selected_rate(self: manager.Shipment) -> RateType | None:
         return RateType.parse(self.selected_rate) if self.selected_rate else None
 
     @strawberry.field
     def selected_rate_carrier(
         self: manager.Shipment,
-    ) -> typing.Optional[CarrierSnapshotType]:
+    ) -> CarrierSnapshotType | None:
         if self.carrier is None:
             return None
         return CarrierSnapshotType.parse(self.carrier)
 
     @strawberry.field
-    def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
+    def payment(self: manager.Shipment) -> PaymentType | None:
         return PaymentType(**self.payment) if self.payment else None
 
     @strawberry.field
     def return_shipment(
         self: manager.Shipment,
-    ) -> typing.Optional[ReturnShipmentType]:
+    ) -> ReturnShipmentType | None:
         return ReturnShipmentType.parse(self.return_shipment) if self.return_shipment else None
 
     @strawberry.field
-    def messages(self: manager.Shipment) -> typing.List[MessageType]:
+    def messages(self: manager.Shipment) -> list[MessageType]:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
     @staticmethod
@@ -1786,7 +1730,7 @@ class ShipmentType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.ShipmentFilter] = strawberry.UNSET,
+        filter: inputs.ShipmentFilter | None = strawberry.UNSET,
     ) -> utils.Connection["ShipmentType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ShipmentFilter()
         filter_dict = _filter.to_dict()
@@ -1809,23 +1753,23 @@ class SharedZoneType:
 
     object_type: str
     id: str
-    label: typing.Optional[str] = None
+    label: str | None = None
 
-    transit_days: typing.Optional[int] = None
-    transit_time: typing.Optional[float] = None
+    transit_days: int | None = None
+    transit_time: float | None = None
 
-    radius: typing.Optional[float] = None
-    latitude: typing.Optional[float] = None
-    longitude: typing.Optional[float] = None
+    radius: float | None = None
+    latitude: float | None = None
+    longitude: float | None = None
 
-    cities: typing.Optional[typing.List[str]] = None
-    postal_codes: typing.Optional[typing.List[str]] = None
-    country_codes: typing.Optional[typing.List[str]] = None
+    cities: list[str] | None = None
+    postal_codes: list[str] | None = None
+    country_codes: list[str] | None = None
 
     # Weight constraints for this zone
-    min_weight: typing.Optional[float] = None
-    max_weight: typing.Optional[float] = None
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = None
+    min_weight: float | None = None
+    max_weight: float | None = None
+    weight_unit: utils.WeightUnitEnum | None = None
 
     @staticmethod
     def parse(zone: dict):
@@ -1861,7 +1805,7 @@ class SharedSurchargeType:
     name: str
     amount: float
     surcharge_type: str
-    cost: typing.Optional[float] = None
+    cost: float | None = None
     active: bool = True
 
     @staticmethod
@@ -1890,12 +1834,12 @@ class ServiceRateType:
     service_id: str
     zone_id: str
     rate: float
-    cost: typing.Optional[float] = None
-    min_weight: typing.Optional[float] = None
-    max_weight: typing.Optional[float] = None
-    transit_days: typing.Optional[int] = None
-    transit_time: typing.Optional[float] = None
-    meta: typing.Optional[utils.JSON] = None
+    cost: float | None = None
+    min_weight: float | None = None
+    max_weight: float | None = None
+    transit_days: int | None = None
+    transit_time: float | None = None
+    meta: utils.JSON | None = None
 
     @staticmethod
     def parse(rate: dict):
@@ -1923,62 +1867,61 @@ class ServiceLevelFeaturesType:
 
     # First Mile: How parcels get to the carrier
     # "pick_up" | "drop_off" | "pick_up_and_drop_off"
-    first_mile: typing.Optional[str] = None
+    first_mile: str | None = None
 
     # Last Mile: How parcels are delivered to recipient
     # "home_delivery" | "service_point" | "mailbox"
-    last_mile: typing.Optional[str] = None
+    last_mile: str | None = None
 
     # Form Factor: Type of package the service supports
     # "letter" | "parcel" | "mailbox" | "pallet"
-    form_factor: typing.Optional[str] = None
+    form_factor: str | None = None
 
     # Type of Shipments: Business model support
-    b2c: typing.Optional[bool] = None  # Business to Consumer
-    b2b: typing.Optional[bool] = None  # Business to Business
+    b2c: bool | None = None  # Business to Consumer
+    b2b: bool | None = None  # Business to Business
 
     # Shipment Direction: "outbound" | "returns" | "both"
-    shipment_type: typing.Optional[str] = None
+    shipment_type: str | None = None
 
     # Age Verification: null | "16" | "18"
-    age_check: typing.Optional[str] = None
+    age_check: str | None = None
 
     # Default signature requirement
-    signature: typing.Optional[bool] = None
+    signature: bool | None = None
 
     # Tracking availability
-    tracked: typing.Optional[bool] = None
+    tracked: bool | None = None
 
     # Insurance availability
-    insurance: typing.Optional[bool] = None
+    insurance: bool | None = None
 
     # Express/Priority service
-    express: typing.Optional[bool] = None
+    express: bool | None = None
 
     # Dangerous goods support
-    dangerous_goods: typing.Optional[bool] = None
+    dangerous_goods: bool | None = None
 
     # Weekend delivery options
-    saturday_delivery: typing.Optional[bool] = None
-    sunday_delivery: typing.Optional[bool] = None
+    saturday_delivery: bool | None = None
+    sunday_delivery: bool | None = None
 
     # Multi-package shipment support
-    multicollo: typing.Optional[bool] = None
+    multicollo: bool | None = None
 
     # Neighbor delivery allowed
-    neighbor_delivery: typing.Optional[bool] = None
+    neighbor_delivery: bool | None = None
 
     @staticmethod
-    def parse(features: typing.Optional[dict]) -> "ServiceLevelFeaturesType":
+    def parse(features: dict | None) -> "ServiceLevelFeaturesType":
         """Parse a features dict into ServiceLevelFeaturesType."""
         if not features or not isinstance(features, dict):
             return ServiceLevelFeaturesType()
 
         import dataclasses
+
         field_names = {f.name for f in dataclasses.fields(ServiceLevelFeaturesType)}
-        return ServiceLevelFeaturesType(**{
-            k: v for k, v in features.items() if k in field_names
-        })
+        return ServiceLevelFeaturesType(**{k: v for k, v in features.items() if k in field_names})
 
 
 @strawberry.type
@@ -1992,34 +1935,34 @@ class ServiceLevelType:
 
     id: str
     object_type: str
-    service_name: typing.Optional[str]
-    service_code: typing.Optional[str]
-    carrier_service_code: typing.Optional[str]
-    description: typing.Optional[str]
-    active: typing.Optional[bool]
+    service_name: str | None
+    service_code: str | None
+    carrier_service_code: str | None
+    description: str | None
+    active: bool | None
 
-    currency: typing.Optional[utils.CurrencyCodeEnum]
-    transit_days: typing.Optional[int]
-    transit_time: typing.Optional[float]
+    currency: utils.CurrencyCodeEnum | None
+    transit_days: int | None
+    transit_time: float | None
 
-    max_width: typing.Optional[float]
-    max_height: typing.Optional[float]
-    max_length: typing.Optional[float]
-    dimension_unit: typing.Optional[utils.DimensionUnitEnum]
+    max_width: float | None
+    max_height: float | None
+    max_length: float | None
+    dimension_unit: utils.DimensionUnitEnum | None
 
-    min_weight: typing.Optional[float]
-    max_weight: typing.Optional[float]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
+    min_weight: float | None
+    max_weight: float | None
+    weight_unit: utils.WeightUnitEnum | None
 
-    max_volume: typing.Optional[float]
-    cost: typing.Optional[float]
+    max_volume: float | None
+    cost: float | None
 
     # Volumetric weight fields
-    dim_factor: typing.Optional[float]
-    use_volumetric: typing.Optional[bool]
+    dim_factor: float | None
+    use_volumetric: bool | None
 
-    domicile: typing.Optional[bool]
-    international: typing.Optional[bool]
+    domicile: bool | None
+    international: bool | None
 
     @strawberry.field
     def features(self: providers.ServiceLevel) -> ServiceLevelFeaturesType:
@@ -2027,14 +1970,14 @@ class ServiceLevelType:
         return ServiceLevelFeaturesType.parse(self.features)
 
     @strawberry.field
-    def metadata(self: providers.ServiceLevel) -> typing.Optional[utils.JSON]:
+    def metadata(self: providers.ServiceLevel) -> utils.JSON | None:
         try:
             return lib.to_dict(self.metadata)
         except:
             return self.metadata
 
     @strawberry.field
-    def pricing_config(self: providers.ServiceLevel) -> typing.Optional[utils.JSON]:
+    def pricing_config(self: providers.ServiceLevel) -> utils.JSON | None:
         """Pricing config: excluded_markup_ids, sort_order, etc."""
         try:
             return lib.to_dict(self.pricing_config)
@@ -2042,12 +1985,12 @@ class ServiceLevelType:
             return self.pricing_config
 
     @strawberry.field
-    def zone_ids(self: providers.ServiceLevel) -> typing.List[str]:
+    def zone_ids(self: providers.ServiceLevel) -> list[str]:
         """List of zone IDs this service applies to (references RateSheet.zones)."""
         return self.zone_ids or []
 
     @strawberry.field
-    def surcharge_ids(self: providers.ServiceLevel) -> typing.List[str]:
+    def surcharge_ids(self: providers.ServiceLevel) -> list[str]:
         """List of surcharge IDs to apply (references RateSheet.surcharges)."""
         return self.surcharge_ids or []
 
@@ -2056,12 +1999,12 @@ class ServiceLevelType:
 class LabelTemplateType:
     id: str
     object_type: str
-    slug: typing.Optional[str]
-    template: typing.Optional[str]
-    width: typing.Optional[int]
-    height: typing.Optional[int]
-    shipment_sample: typing.Optional[utils.JSON]
-    template_type: typing.Optional[utils.LabelTemplateTypeEnum]
+    slug: str | None
+    template: str | None
+    width: int | None
+    height: int | None
+    shipment_sample: utils.JSON | None
+    template_type: utils.LabelTemplateTypeEnum | None
 
 
 @strawberry.type
@@ -2073,18 +2016,18 @@ class RateSheetType:
     carrier_name: utils.CarrierNameEnum
 
     @strawberry.field
-    def origin_countries(self: providers.RateSheet) -> typing.Optional[typing.List[str]]:
+    def origin_countries(self: providers.RateSheet) -> list[str] | None:
         return self.origin_countries or []
 
     @strawberry.field
-    def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+    def metadata(self: providers.RateSheet) -> utils.JSON | None:
         try:
             return lib.to_dict(self.metadata)
         except:
             return self.metadata
 
     @strawberry.field
-    def pricing_config(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+    def pricing_config(self: providers.RateSheet) -> utils.JSON | None:
         """Pricing config: excluded_markup_ids, etc."""
         try:
             return lib.to_dict(self.pricing_config)
@@ -2092,18 +2035,18 @@ class RateSheetType:
             return self.pricing_config
 
     @strawberry.field
-    def carriers(self: providers.RateSheet) -> typing.List["CarrierConnectionType"]:
+    def carriers(self: providers.RateSheet) -> list["CarrierConnectionType"]:
         return self.carriers
 
     @strawberry.field
-    def services(self: providers.RateSheet) -> typing.List[ServiceLevelType]:
+    def services(self: providers.RateSheet) -> list[ServiceLevelType]:
         return self.services.all()
 
     # ─────────────────────────────────────────────────────────────────
     # NEW: Shared zones at RateSheet level
     # ─────────────────────────────────────────────────────────────────
     @strawberry.field
-    def zones(self: providers.RateSheet) -> typing.Optional[typing.List[SharedZoneType]]:
+    def zones(self: providers.RateSheet) -> list[SharedZoneType] | None:
         """Shared zone definitions for this rate sheet."""
         zones_data = self.zones or []
         return [SharedZoneType.parse(zone) for zone in zones_data]
@@ -2114,7 +2057,7 @@ class RateSheetType:
     @strawberry.field
     def surcharges(
         self: providers.RateSheet,
-    ) -> typing.Optional[typing.List[SharedSurchargeType]]:
+    ) -> list[SharedSurchargeType] | None:
         """Shared surcharge definitions for this rate sheet."""
         surcharges_data = self.surcharges or []
         return [SharedSurchargeType.parse(surcharge) for surcharge in surcharges_data]
@@ -2125,7 +2068,7 @@ class RateSheetType:
     @strawberry.field
     def service_rates(
         self: providers.RateSheet,
-    ) -> typing.Optional[typing.List[ServiceRateType]]:
+    ) -> list[ServiceRateType] | None:
         """Service-zone rate mappings for this rate sheet."""
         rates_data = self.service_rates or []
         return [ServiceRateType.parse(rate) for rate in rates_data]
@@ -2139,12 +2082,10 @@ class RateSheetType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.RateSheetFilter] = strawberry.UNSET,
+        filter: inputs.RateSheetFilter | None = strawberry.UNSET,
     ) -> utils.Connection["RateSheetType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.RateSheetFilter()
-        queryset = filters.RateSheetFilter(
-            _filter.to_dict(), providers.RateSheet.access_by(info.context.request)
-        ).qs
+        queryset = filters.RateSheetFilter(_filter.to_dict(), providers.RateSheet.access_by(info.context.request)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
@@ -2164,9 +2105,9 @@ class SystemConnectionType:
     carrier_code: str
     display_name: str
     test_mode: bool
-    capabilities: typing.List[str]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
+    capabilities: list[str]
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
 
     active: bool
 
@@ -2177,7 +2118,7 @@ class SystemConnectionType:
     @strawberry.field
     def rate_sheet_info(
         self: providers.SystemConnection,
-    ) -> typing.Optional[SystemConnectionRateSheetInfo]:
+    ) -> SystemConnectionRateSheetInfo | None:
         """Rate sheet info for carrier overview (central rates indicator)."""
         rate_sheet = getattr(self, "rate_sheet", None)
         if rate_sheet is None:
@@ -2187,13 +2128,13 @@ class SystemConnectionType:
         )
 
     @strawberry.field
-    def account_country_code(self: providers.SystemConnection) -> typing.Optional[str]:
+    def account_country_code(self: providers.SystemConnection) -> str | None:
         """Country code from credentials (e.g., 'DE', 'AT') — safe to expose."""
         credentials = getattr(self, "credentials", None) or {}
         return credentials.get("account_country_code") or None
 
     @strawberry.field
-    def terms_and_conditions(self: providers.SystemConnection) -> typing.Optional[str]:
+    def terms_and_conditions(self: providers.SystemConnection) -> str | None:
         """Carrier-specific terms and conditions text set by admin."""
         metadata = getattr(self, "metadata", None) or {}
         return metadata.get("terms_and_conditions") or None
@@ -2232,7 +2173,7 @@ class SystemConnectionType:
             ).exists()
 
     @strawberry.field
-    def config(self: providers.SystemConnection, info: Info) -> typing.Optional[utils.JSON]:
+    def config(self: providers.SystemConnection, info: Info) -> utils.JSON | None:
         """Get the user's config for this SystemConnection from their BrokeredConnection."""
         if hasattr(self, "_org_brokered"):
             brokered = next(iter(self._org_brokered), None)
@@ -2258,7 +2199,7 @@ class SystemConnectionType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
+        filter: inputs.CarrierFilter | None = strawberry.UNSET,
     ) -> utils.Connection["SystemConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
         queryset = providers.SystemConnection.objects.filter(
@@ -2294,26 +2235,21 @@ class SystemConnectionType:
         # Annotate user_contracts_count and user_active_contracts_count:
         # count of user's own CarrierConnections matching the same carrier_code
         # (scoped to current org/user).
-        user_connections_qs = providers.CarrierConnection.access_by(
-            info.context.request
-        ).filter(
+        user_connections_qs = providers.CarrierConnection.access_by(info.context.request).filter(
             carrier_code=models.OuterRef("carrier_code"),
-            credentials__account_country_code=models.OuterRef(
-                "credentials__account_country_code"
-            ),
+            credentials__account_country_code=models.OuterRef("credentials__account_country_code"),
         )
         queryset = queryset.annotate(
             _user_contracts_count=functions.Coalesce(
                 models.Subquery(
-                    user_connections_qs.values("carrier_code")
-                    .annotate(_cnt=models.Count("id"))
-                    .values("_cnt")
+                    user_connections_qs.values("carrier_code").annotate(_cnt=models.Count("id")).values("_cnt")
                 ),
                 models.Value(0),
             ),
             _user_active_contracts_count=functions.Coalesce(
                 models.Subquery(
-                    user_connections_qs.filter(active=True).values("carrier_code")
+                    user_connections_qs.filter(active=True)
+                    .values("carrier_code")
                     .annotate(_cnt=models.Count("id"))
                     .values("_cnt")
                 ),
@@ -2343,30 +2279,28 @@ class CarrierConnectionType:
     display_name: str
     active: bool
     test_mode: bool
-    capabilities: typing.List[str]
+    capabilities: list[str]
 
     @strawberry.field
     def credentials(self: providers.CarrierConnection, info: Info) -> utils.JSON:
         return self.credentials
 
     @strawberry.field
-    def account_country_code(self: providers.CarrierConnection) -> typing.Optional[str]:
+    def account_country_code(self: providers.CarrierConnection) -> str | None:
         """Country code from credentials (e.g., 'DE', 'AT') — safe to expose."""
         credentials = getattr(self, "credentials", None) or {}
         return credentials.get("account_country_code") or None
 
     @strawberry.field
-    def metadata(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
+    def metadata(self: providers.CarrierConnection, info: Info) -> utils.JSON | None:
         return getattr(self, "metadata", None)
 
     @strawberry.field
-    def config(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
+    def config(self: providers.CarrierConnection, info: Info) -> utils.JSON | None:
         return getattr(self, "config", None)
 
     @strawberry.field
-    def rate_sheet(
-        self: providers.CarrierConnection, info: Info
-    ) -> typing.Optional[RateSheetType]:
+    def rate_sheet(self: providers.CarrierConnection, info: Info) -> RateSheetType | None:
         # Access rate_sheet FK from the Django model
         return getattr(self, "rate_sheet", None)
 
@@ -2375,8 +2309,8 @@ class CarrierConnectionType:
     @utils.authentication_required
     def resolve_list_legacy(
         info: Info,
-        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
-    ) -> typing.List["CarrierConnectionType"]:
+        filter: inputs.CarrierFilter | None = strawberry.UNSET,
+    ) -> list["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
         # Carrier model now only contains user/org-owned connections (no is_system filter needed)
         connections = filters.CarrierFilters(
@@ -2392,9 +2326,7 @@ class CarrierConnectionType:
         info: Info,
         id: str,
     ) -> typing.Optional["CarrierConnectionType"]:
-        connection = (
-            providers.CarrierConnection.access_by(info.context.request).filter(id=id).first()
-        )
+        connection = providers.CarrierConnection.access_by(info.context.request).filter(id=id).first()
         return connection
 
     @staticmethod
@@ -2402,7 +2334,7 @@ class CarrierConnectionType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
+        filter: inputs.CarrierFilter | None = strawberry.UNSET,
     ) -> utils.Connection["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
         # Carrier model now only contains user/org-owned connections (no is_system filter needed)

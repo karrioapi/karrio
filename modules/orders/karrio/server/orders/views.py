@@ -1,39 +1,36 @@
+import karrio.server.core.views.api as api
+import karrio.server.openapi as openapi
+import karrio.server.orders.models as models
 from django.urls import path
-from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
-
-from karrio.server.serializers import (
-    process_dictionaries_mutations,
-    PaginatedResult,
-)
+from karrio.server.orders.filters import OrderFilters
 from karrio.server.orders.router import router
 from karrio.server.orders.serializers import (
     ErrorResponse,
-    OrderStatus,
-    OrderData,
     Order,
+    OrderData,
+    OrderStatus,
 )
 from karrio.server.orders.serializers.order import (
     OrderSerializer,
     OrderUpdateData,
     can_mutate_order,
 )
-from karrio.server.orders.filters import OrderFilters
-from karrio.server.core.logging import logger
-import karrio.server.orders.models as models
-import karrio.server.core.views.api as api
-import karrio.server.openapi as openapi
+from karrio.server.serializers import (
+    PaginatedResult,
+    process_dictionaries_mutations,
+)
+from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 ENDPOINT_ID = "&&&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Orders = PaginatedResult("OrderList", Order)
 
 
 class OrderList(api.GenericAPIView):
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (DjangoFilterBackend,)
     filterset_class = OrderFilters
     serializer_class = Orders
@@ -80,7 +77,6 @@ class OrderList(api.GenericAPIView):
 
 
 class OrderDetail(api.APIView):
-
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -128,9 +124,7 @@ class OrderDetail(api.APIView):
             OrderSerializer.map(
                 order,
                 context=request,
-                data=process_dictionaries_mutations(
-                    ["metadata", "options"], payload, order
-                ),
+                data=process_dictionaries_mutations(["metadata", "options"], payload, order),
             )
             .save()
             .instance
@@ -163,7 +157,6 @@ class OrderDetail(api.APIView):
 
 
 class OrderCancel(api.APIView):
-
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}cancel",
@@ -187,11 +180,7 @@ class OrderCancel(api.APIView):
         try:
             order = qs.get(pk=pk)
         except models.Order.DoesNotExist:
-            order = (
-                qs.filter(meta__request_id=pk)
-                .order_by("-created_at")
-                .first()
-            )
+            order = qs.filter(meta__request_id=pk).order_by("-created_at").first()
 
         if order is None:
             raise models.Order.DoesNotExist()
@@ -206,7 +195,4 @@ class OrderCancel(api.APIView):
 
 router.urls.append(path("orders", OrderList.as_view(), name="order-list"))
 router.urls.append(path("orders/<str:pk>", OrderDetail.as_view(), name="order-detail"))
-router.urls.append(
-    path("orders/<str:pk>/cancel", OrderCancel.as_view(), name="order-cancel")
-)
-
+router.urls.append(path("orders/<str:pk>/cancel", OrderCancel.as_view(), name="order-cancel"))

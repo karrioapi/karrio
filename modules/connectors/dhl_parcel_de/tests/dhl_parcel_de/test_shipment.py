@@ -66,31 +66,23 @@ class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
-        self.ShipmentWithOptionsRequest = models.ShipmentRequest(
-            **ShipmentPayloadWithOptions
-        )
+        self.ShipmentWithOptionsRequest = models.ShipmentRequest(**ShipmentPayloadWithOptions)
 
     def test_create_shipment_request_with_option_overrides(self):
         """Shipping options should override connection_config in the request payload."""
-        request = gateway.mapper.create_shipment_request(
-            self.ShipmentWithOptionsRequest
-        )
+        request = gateway.mapper.create_shipment_request(self.ShipmentWithOptionsRequest)
         serialized = request.serialize()
 
         # Profile should be overridden by shipping option
         self.assertEqual(serialized["profile"], "MY_CUSTOM_PROFILE")
         # Cost center should be set from shipping option
-        self.assertEqual(
-            serialized["shipments"][0]["costCenter"], "CC-12345"
-        )
+        self.assertEqual(serialized["shipments"][0]["costCenter"], "CC-12345")
 
     def test_create_shipment_with_label_type_option(self):
         """Shipping option label_type should override connection_config label_type in the URL."""
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = "{}"
-            karrio.Shipment.create(self.ShipmentWithOptionsRequest).from_(
-                gateway
-            )
+            karrio.Shipment.create(self.ShipmentWithOptionsRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             # Option sets PDF_910_300_600, overriding connection config ZPL2_910_300_700_oz

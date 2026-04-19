@@ -10,23 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
-import decouple
 import importlib
-import dj_database_url
-
-from pathlib import Path
+import os
 from datetime import timedelta
-from django.urls import reverse_lazy
+from pathlib import Path
+
+import decouple
+import dj_database_url
 from corsheaders.defaults import default_headers
 from django.core.management.utils import get_random_secret_key
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-with open(BASE_DIR / "server" / "VERSION", "r") as v:
+with open(BASE_DIR / "server" / "VERSION") as v:
     VERSION = v.read().strip()
 
 
@@ -35,11 +34,10 @@ config = decouple.AutoConfig(search_path=Path().resolve())
 if not config("SECRET_KEY", default=None):
     try:
         # Note: Using print here intentionally as logging isn't configured yet
-        print("> fallback .env.sample...")
         config = decouple.Config(decouple.RepositoryEnv(".env.sample"))
-    except Exception as e:
+    except Exception:
         # Note: Using print here intentionally as logging isn't configured yet
-        print(f"> error: {e}")
+        pass
 
 
 # Quick-start development settings - unsuitable for production
@@ -88,16 +86,14 @@ if USE_HTTPS is True:
 
     SECURE_SSL_REDIRECT = True
     # Exempt health check endpoint from HTTPS redirect for Kubernetes probes
-    SECURE_REDIRECT_EXEMPT = [r'^status/$']
+    SECURE_REDIRECT_EXEMPT = [r"^status/$"]
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 1
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_PRELOAD = True
-    CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://*").split(
-        ","
-    )
+    CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://*").split(",")
 
 
 # karrio packages settings
@@ -171,18 +167,12 @@ KARRIO_CONF = [
 KARRIO_APPS = [cfg["app"] for cfg in KARRIO_CONF]
 KARRIO_URLS = [cfg["urls"] for cfg in KARRIO_CONF if "urls" in cfg]
 
-ALLOW_ADMIN_APPROVED_SIGNUP = config(
-    "ALLOW_ADMIN_APPROVED_SIGNUP", default=False, cast=bool
-)
-ALLOW_SIGNUP = (
-    config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
-)
+ALLOW_ADMIN_APPROVED_SIGNUP = config("ALLOW_ADMIN_APPROVED_SIGNUP", default=False, cast=bool)
+ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
 MULTI_ORGANIZATIONS = (
     importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )
-ALLOW_MULTI_ACCOUNT = config(
-    "ALLOW_MULTI_ACCOUNT", default=MULTI_ORGANIZATIONS, cast=bool
-)
+ALLOW_MULTI_ACCOUNT = config("ALLOW_MULTI_ACCOUNT", default=MULTI_ORGANIZATIONS, cast=bool)
 ADMIN_DASHBOARD = importlib.util.find_spec(  # type:ignore
     "karrio.server.admin"
 ) is not None and config("ADMIN_DASHBOARD", default=True, cast=bool)
@@ -191,7 +181,7 @@ ORDERS_MANAGEMENT = (
 )
 APPS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.apps") is not None  # type:ignore
-) and config("APPS_MANAGEMENT", default=(True if DEBUG else False), cast=bool)
+) and config("APPS_MANAGEMENT", default=(bool(DEBUG)), cast=bool)
 DOCUMENTS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.documents") is not None  # type:ignore
 )
@@ -210,7 +200,7 @@ AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
 PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
 WORKFLOW_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
-) and config("WORKFLOW_MANAGEMENT", default=(True if DEBUG else False), cast=bool)
+) and config("WORKFLOW_MANAGEMENT", default=(bool(DEBUG)), cast=bool)
 SHIPPING_RULES = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
 )
@@ -219,7 +209,7 @@ SHIPPING_METHODS = (
 )
 ADVANCED_ANALYTICS = (
     importlib.util.find_spec("karrio.server.analytics") is not None  # type:ignore
-) and config("ADVANCED_ANALYTICS", default=(True if DEBUG else False), cast=bool)
+) and config("ADVANCED_ANALYTICS", default=(bool(DEBUG)), cast=bool)
 
 
 # Feature flags
@@ -349,9 +339,7 @@ _DB_NAME = config("DATABASE_NAME", default="db")
 _DB_ENGINE = "sqlite3" if "sqlite3" in _DB_NAME else "postgresql"
 
 CONN_MAX_AGE = config("DATABASE_CONN_MAX_AGE", default=0, cast=int)
-DB_ENGINE = "django.db.backends.{}".format(
-    config("DATABASE_ENGINE", default=_DB_ENGINE)
-)
+DB_ENGINE = "django.db.backends.{}".format(config("DATABASE_ENGINE", default=_DB_ENGINE))
 DB_NAME = (
     os.path.join(WORK_DIR, f"{_DB_NAME}{'' if '.sqlite3' in _DB_NAME else '.sqlite3'}")
     if "sqlite3" in DB_ENGINE
@@ -377,15 +365,14 @@ DATABASES = {
 # Speed up test suite: use fast MD5 hasher instead of bcrypt/PBKDF2
 # This only applies when running `manage.py test` — production is unaffected
 import sys as _sys
+
 if "test" in _sys.argv or "karrio" in _sys.argv[0]:
     PASSWORD_HASHERS = [
         "django.contrib.auth.hashers.MD5PasswordHasher",
     ]
 
 if config("DATABASE_URL", default=None):
-    db_from_env = dj_database_url.config(
-        conn_max_age=config("DATABASE_CONN_MAX_AGE", default=0, cast=int)
-    )
+    db_from_env = dj_database_url.config(conn_max_age=config("DATABASE_CONN_MAX_AGE", default=0, cast=int))
     DATABASES["default"].update(db_from_env)
 
 # Configure workers database for SQLite storage when Redis is not available
@@ -454,9 +441,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_HOST = config("CDN_STATIC_HOST", default="") if not DEBUG else ""
-STATIC_URL = STATIC_HOST + config(
-    "STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/")
-)
+STATIC_URL = STATIC_HOST + config("STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/"))
 STATIC_ROOT = config("STATIC_ROOT_DIR", default=(BASE_DIR / "server" / "staticfiles"))
 
 STATICFILES_DIRS = [
@@ -518,12 +503,8 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        config("JWT_ACCESS_EXPIRY", default="30", cast=int)
-    ),
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        config("JWT_REFRESH_EXPIRY", default="3", cast=int)
-    ),
+    "ACCESS_TOKEN_LIFETIME": timedelta(config("JWT_ACCESS_EXPIRY", default="30", cast=int)),
+    "REFRESH_TOKEN_LIFETIME": timedelta(config("JWT_REFRESH_EXPIRY", default="3", cast=int)),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
@@ -547,9 +528,7 @@ SIMPLE_JWT = {
 # JWT Cookie settings for HTTP-only cookie authentication
 JWT_AUTH_COOKIE = config("JWT_AUTH_COOKIE", default="karrio_access_token")
 JWT_REFRESH_COOKIE = config("JWT_REFRESH_COOKIE", default="karrio_refresh_token")
-JWT_AUTH_COOKIE_SECURE = config(
-    "JWT_AUTH_COOKIE_SECURE", default=USE_HTTPS, cast=bool
-)
+JWT_AUTH_COOKIE_SECURE = config("JWT_AUTH_COOKIE_SECURE", default=USE_HTTPS, cast=bool)
 JWT_AUTH_COOKIE_SAMESITE = config("JWT_AUTH_COOKIE_SAMESITE", default="Lax")
 JWT_AUTH_COOKIE_PATH = config("JWT_AUTH_COOKIE_PATH", default="/")
 
@@ -588,9 +567,7 @@ SPECTACULAR_SETTINGS = {
     "OAUTH2_TOKEN_URL": "/oauth/token/",
     "OAUTH2_REFRESH_URL": None,
     "OAUTH2_SCOPES": OAUTH2_PROVIDER["SCOPES"],
-    "AUTHENTICATION_WHITELIST": [
-        _ for _ in AUTHENTICATION_CLASSES if "Session" not in _
-    ],
+    "AUTHENTICATION_WHITELIST": [_ for _ in AUTHENTICATION_CLASSES if "Session" not in _],
     "POSTPROCESSING_HOOKS": [
         "karrio.server.openapi.custom_postprocessing_hook",
     ],
@@ -721,7 +698,7 @@ else:
 # Initialize Loguru if enabled
 if USE_LOGURU:
     try:
-        from karrio.server.core.logging import setup_django_loguru, logger
+        from karrio.server.core.logging import logger, setup_django_loguru
 
         setup_django_loguru(
             level=LOG_LEVEL,
@@ -729,8 +706,6 @@ if USE_LOGURU:
             intercept_django=True,
             enqueue=True,  # Thread-safe async logging
         )
-    except ImportError as e:
+    except ImportError:
         # Note: Using print here as Loguru failed to load
-        print(f"Warning: Failed to initialize Loguru: {e}")
-        print("Falling back to standard Django logging")
         USE_LOGURU = False

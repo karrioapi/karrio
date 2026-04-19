@@ -1,23 +1,22 @@
-import uuid
-import typing
 import datetime
-
-from django.db.models import Q
-from django.conf import settings
-from rest_framework import status
-from rest_framework.exceptions import NotFound
-from karrio.server.core.logging import logger
+import typing
+import uuid
 
 import karrio.lib as lib
 import karrio.sdk as karrio
-import karrio.server.core.utils as utils
-import karrio.server.core.models as core
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.dataunits as dataunits
 import karrio.server.core.exceptions as exceptions
+import karrio.server.core.models as core
+import karrio.server.core.serializers as serializers
+import karrio.server.core.utils as utils
 import karrio.server.providers.models as providers
 import karrio.server.serializers as base_serializers
-import karrio.server.core.serializers as serializers
+from django.conf import settings
+from django.db.models import Q
+from karrio.server.core.logging import logger
+from rest_framework import status
+from rest_framework.exceptions import NotFound
 
 
 class Connections:
@@ -30,7 +29,7 @@ class Connections:
     """
 
     @staticmethod
-    def list(context=None, **kwargs) -> typing.List[typing.Any]:
+    def list(context=None, **kwargs) -> list[typing.Any]:
         """
         List all accessible connections (Carrier + BrokeredConnection).
 
@@ -90,24 +89,18 @@ class Connections:
         # Test mode filter
         if test_mode is not None:
             carrier_queryset = carrier_queryset.filter(test_mode=test_mode)
-            brokered_queryset = brokered_queryset.filter(
-                system_connection__test_mode=test_mode
-            )
+            brokered_queryset = brokered_queryset.filter(system_connection__test_mode=test_mode)
 
         # Active filter
         if list_filter.get("active") is not None:
-            active = False if list_filter["active"] is False else True
+            active = list_filter["active"] is not False
             carrier_queryset = carrier_queryset.filter(active=active)
-            brokered_queryset = brokered_queryset.filter(
-                is_enabled=active, system_connection__active=active
-            )
+            brokered_queryset = brokered_queryset.filter(is_enabled=active, system_connection__active=active)
 
         # Carrier ID filter - matches by id (primary key) OR carrier_id (friendly name)
         if "carrier_id" in list_filter:
             filter_value = list_filter["carrier_id"]
-            carrier_queryset = carrier_queryset.filter(
-                Q(id=filter_value) | Q(carrier_id=filter_value)
-            )
+            carrier_queryset = carrier_queryset.filter(Q(id=filter_value) | Q(carrier_id=filter_value))
             # Brokered: check id, user override carrier_id, or system carrier_id
             brokered_queryset = brokered_queryset.filter(
                 Q(id=filter_value)
@@ -139,19 +132,13 @@ class Connections:
 
         # Metadata key filter
         if "metadata_key" in list_filter:
-            carrier_queryset = carrier_queryset.filter(
-                metadata__has_key=list_filter["metadata_key"]
-            )
-            brokered_queryset = brokered_queryset.filter(
-                metadata__has_key=list_filter["metadata_key"]
-            )
+            carrier_queryset = carrier_queryset.filter(metadata__has_key=list_filter["metadata_key"])
+            brokered_queryset = brokered_queryset.filter(metadata__has_key=list_filter["metadata_key"])
 
         # Carrier IDs filter (list) - matches by id (primary key) OR carrier_id (friendly name)
         if any(list_filter.get("carrier_ids", [])):
             ids_list = list_filter["carrier_ids"]
-            carrier_queryset = carrier_queryset.filter(
-                Q(id__in=ids_list) | Q(carrier_id__in=ids_list)
-            )
+            carrier_queryset = carrier_queryset.filter(Q(id__in=ids_list) | Q(carrier_id__in=ids_list))
             # Brokered: check id, user override carrier_id, or system carrier_id
             brokered_queryset = brokered_queryset.filter(
                 Q(id__in=ids_list)
@@ -166,26 +153,18 @@ class Connections:
         if any(list_filter.get("services", [])):
             carrier_names = [
                 name
-                for name, services in dataunits.contextual_reference(context)[
-                    "services"
-                ].items()
-                if any(
-                    service in list_filter["services"] for service in services.keys()
-                )
+                for name, services in dataunits.contextual_reference(context)["services"].items()
+                if any(service in list_filter["services"] for service in services)
             ]
             if len(carrier_names) > 0:
                 carrier_queryset = carrier_queryset.filter(carrier_code__in=carrier_names)
-                brokered_queryset = brokered_queryset.filter(
-                    system_connection__carrier_code__in=carrier_names
-                )
+                brokered_queryset = brokered_queryset.filter(system_connection__carrier_code__in=carrier_names)
 
         # Carrier name (carrier_code) filter
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
             carrier_queryset = carrier_queryset.filter(carrier_code=carrier_name)
-            brokered_queryset = brokered_queryset.filter(
-                system_connection__carrier_code=carrier_name
-            )
+            brokered_queryset = brokered_queryset.filter(system_connection__carrier_code=carrier_name)
 
         # ─────────────────────────────────────────────────────────────────
         # COMBINE RESULTS
@@ -256,9 +235,7 @@ class Address:
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
-        request = karrio.Address.validate(
-            lib.to_object(datatypes.AddressValidationRequest, payload)
-        )
+        request = karrio.Address.validate(lib.to_object(datatypes.AddressValidationRequest, payload))
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
         return utils.identity(lambda: request.from_(provider.gateway).parse())
@@ -271,7 +248,7 @@ class Shipments:
     def create(
         payload: dict,
         carrier: providers.CarrierConnection = None,
-        selected_rate: typing.Union[datatypes.Rate, dict] = None,
+        selected_rate: datatypes.Rate | dict = None,
         resolve_tracking_url: typing.Callable[[str, str], str] = None,
         context: base_serializers.Context = None,
         **kwargs,
@@ -306,9 +283,7 @@ class Shipments:
         )
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
-        shipment, messages = utils.identity(
-            lambda: karrio.Shipment.create(request).from_(carrier.gateway).parse()
-        )
+        shipment, messages = utils.identity(lambda: karrio.Shipment.create(request).from_(carrier.gateway).parse())
 
         if shipment is None:
             raise exceptions.APIException(
@@ -317,12 +292,8 @@ class Shipments:
             )
 
         def process_meta(parent) -> dict:
-            service_name = utils.upper(
-                (parent.meta or {}).get("service_name") or selected_rate.service
-            )
-            rate_provider = (
-                (parent.meta or {}).get("rate_provider") or carrier.carrier_name
-            ).lower()
+            service_name = utils.upper((parent.meta or {}).get("service_name") or selected_rate.service)
+            rate_provider = ((parent.meta or {}).get("rate_provider") or carrier.carrier_name).lower()
             # BrokeredConnection.credentials returns None (security feature)
             custom_carrier_name = (carrier.credentials or {}).get("custom_carrier_name")
 
@@ -332,11 +303,7 @@ class Shipments:
                 "carrier": rate_provider,
                 "service_name": service_name,
                 "rate_provider": rate_provider,  # TODO: deprecate 'rate_provider' in favor of 'carrier'
-                **(
-                    {"custom_carrier_name": custom_carrier_name}
-                    if custom_carrier_name
-                    else {}
-                ),
+                **({"custom_carrier_name": custom_carrier_name} if custom_carrier_name else {}),
             }
 
         def process_selected_rate() -> dict:
@@ -378,25 +345,19 @@ class Shipments:
                 return shipment.meta["tracking_url"]
 
             if resolve_tracking_url is not None:
-                url = resolve_tracking_url(
-                    shipment.tracking_number, rate_provider or rate.carrier_name
-                )
+                url = resolve_tracking_url(shipment.tracking_number, rate_provider or rate.carrier_name)
                 return utils.app_tracking_query_params(url, carrier)
 
             return ""
 
-        def process_parcel_refs(parcels: typing.List[dict]) -> list:
-            references = (shipment.meta or {}).get("tracking_numbers") or [
-                shipment.tracking_number
-            ]
+        def process_parcel_refs(parcels: list[dict]) -> list:
+            references = (shipment.meta or {}).get("tracking_numbers") or [shipment.tracking_number]
 
             return [
                 {
                     **lib.to_dict(parcel),
                     "reference_number": (
-                        references[index]
-                        if len(references) > index
-                        else parcel.get("reference_number")
+                        references[index] if len(references) > index else parcel.get("reference_number")
                     ),
                 }
                 for index, parcel in enumerate(parcels)
@@ -417,9 +378,7 @@ class Shipments:
                 "parcels": process_parcel_refs(payload["parcels"]),
                 "tracking_url": process_tracking_url(shipment_rate),
                 "status": serializers.ShipmentStatus.created.value,
-                "created_at": datetime.datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S.%f%z"
-                ),
+                "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
                 "meta": process_meta(shipment),
                 "messages": messages,
             },
@@ -442,9 +401,7 @@ class Shipments:
         payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
     ) -> datatypes.ConfirmationResponse:
         carrier_id = lib.identity(
-            dict(carrier_id=payload.pop("carrier_id"))
-            if any(payload.get("carrier_id") or "")
-            else {}
+            dict(carrier_id=payload.pop("carrier_id")) if any(payload.get("carrier_id") or "") else {}
         )
         carrier = carrier or Carriers.first(
             **{
@@ -457,9 +414,7 @@ class Shipments:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Shipment.cancel(
-            lib.to_object(datatypes.ShipmentCancelRequest, payload)
-        )
+        request = karrio.Shipment.cancel(lib.to_object(datatypes.ShipmentCancelRequest, payload))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
         confirmation, messages = lib.identity(
@@ -505,18 +460,12 @@ class Shipments:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Tracking.fetch(
-            lib.to_object(datatypes.TrackingRequest, payload)
-        )
+        request = karrio.Tracking.fetch(lib.to_object(datatypes.TrackingRequest, payload))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        results, messages = utils.identity(
-            lambda: request.from_(carrier.gateway).parse()
-        )
+        results, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
 
-        if not any(results or []) and (
-            raise_on_error or utils.is_sdk_message(messages)
-        ):
+        if not any(results or []) and (raise_on_error or utils.is_sdk_message(messages)):
             raise exceptions.APIException(
                 detail=messages,
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -551,9 +500,7 @@ class Shipments:
             **(details.meta or {}),
         }
         info = {
-            "carrier_tracking_link": utils.get_carrier_tracking_link(
-                carrier, tracking_number
-            ),
+            "carrier_tracking_link": utils.get_carrier_tracking_link(carrier, tracking_number),
             "source": "api",
             **(lib.to_dict(details.info or {})),
             **(lib.to_dict(payload.get("info") or {})),
@@ -592,14 +539,10 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Pickup.schedule(
-            datatypes.PickupRequest(**lib.to_dict(payload))
-        )
+        request = karrio.Pickup.schedule(datatypes.PickupRequest(**lib.to_dict(payload)))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        pickup, messages = utils.identity(
-            lambda: request.from_(carrier.gateway).parse()
-        )
+        pickup, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
             raise exceptions.APIException(
@@ -642,14 +585,10 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Pickup.update(
-            datatypes.PickupUpdateRequest(**lib.to_dict(payload))
-        )
+        request = karrio.Pickup.update(datatypes.PickupUpdateRequest(**lib.to_dict(payload)))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        pickup, messages = utils.identity(
-            lambda: request.from_(carrier.gateway).parse()
-        )
+        pickup, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
 
         if pickup is None:
             raise exceptions.APIException(
@@ -683,9 +622,7 @@ class Pickups:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Pickup.cancel(
-            datatypes.PickupCancelRequest(**lib.to_dict(payload))
-        )
+        request = karrio.Pickup.cancel(datatypes.PickupCancelRequest(**lib.to_dict(payload)))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
         confirmation, messages = lib.identity(
@@ -708,19 +645,16 @@ class Pickups:
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
-        return datatypes.ConfirmationResponse(
-            confirmation=confirmation, messages=messages
-        )
+        return datatypes.ConfirmationResponse(confirmation=confirmation, messages=messages)
 
 
 @utils.hookable
 class Rates:
-
     @staticmethod
     @utils.with_telemetry("rates_fetch")
     def fetch(
         payload: dict,
-        carriers: typing.List[providers.CarrierConnection] = None,
+        carriers: list[providers.CarrierConnection] = None,
         raise_on_error: bool = True,
         **carrier_filters,
     ) -> datatypes.RateResponse:
@@ -737,9 +671,7 @@ class Rates:
             }
         )
 
-        gateways = utils.filter_rate_carrier_compatible_gateways(
-            carriers, carrier_ids, shipper_country_code
-        )
+        gateways = utils.filter_rate_carrier_compatible_gateways(carriers, carrier_ids, shipper_country_code)
 
         if raise_on_error and len(gateways) == 0:
             raise NotFound("No active carrier connection found to process the request")
@@ -757,17 +689,13 @@ class Rates:
 
         def process_rate(rate: datatypes.Rate) -> datatypes.Rate:
             # Use effective_carrier_id for BrokeredConnection, fall back to carrier_id for Carrier
-            carrier = next(
-                (c for c in carriers if getattr(c, "effective_carrier_id", c.carrier_id) == rate.carrier_id)
-            )
+            carrier = next(c for c in carriers if getattr(c, "effective_carrier_id", c.carrier_id) == rate.carrier_id)
             rate_provider = (
                 (rate.meta or {}).get("rate_provider")
                 or getattr(carrier, "custom_carrier_name", None)
                 or rate.carrier_name
             ).lower()
-            service_name = utils.upper(
-                (rate.meta or {}).get("service_name") or rate.service
-            )
+            service_name = utils.upper((rate.meta or {}).get("service_name") or rate.service)
 
             meta = {
                 **(rate.meta or {}),
@@ -788,19 +716,15 @@ class Rates:
                 },
             )
 
-        formated_rates: typing.List[datatypes.Rate] = sorted(
-            map(process_rate, rates), key=lambda rate: rate.total_charge
-        )
+        formated_rates: list[datatypes.Rate] = sorted(map(process_rate, rates), key=lambda rate: rate.total_charge)
 
-        return lib.to_object(
-            datatypes.RateResponse, dict(rates=formated_rates, messages=messages)
-        )
+        return lib.to_object(datatypes.RateResponse, dict(rates=formated_rates, messages=messages))
 
     @staticmethod
     @utils.with_telemetry("rates_resolve")
     def resolve(
         payload: dict,
-        carriers: typing.List[providers.CarrierConnection] = None,
+        carriers: list[providers.CarrierConnection] = None,
         raise_on_error: bool = True,
         **carrier_filters,
     ) -> datatypes.RateResponse:
@@ -855,9 +779,7 @@ class Rates:
         request = karrio.Rating.resolve(lib.to_object(datatypes.RateRequest, payload))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        rates, messages = utils.identity(
-            lambda: request.from_(*carrier_settings).parse()
-        )
+        rates, messages = utils.identity(lambda: request.from_(*carrier_settings).parse())
 
         if raise_on_error and not any(rates) and any(messages):
             raise exceptions.APIException(
@@ -878,9 +800,7 @@ class Rates:
                 or getattr(carrier, "custom_carrier_name", None)
                 or rate.carrier_name
             ).lower()
-            service_name = utils.upper(
-                (rate.meta or {}).get("service_name") or rate.service
-            )
+            service_name = utils.upper((rate.meta or {}).get("service_name") or rate.service)
 
             meta = {
                 **(rate.meta or {}),
@@ -902,13 +822,9 @@ class Rates:
                 },
             )
 
-        formated_rates: typing.List[datatypes.Rate] = sorted(
-            map(process_rate, rates), key=lambda rate: rate.total_charge
-        )
+        formated_rates: list[datatypes.Rate] = sorted(map(process_rate, rates), key=lambda rate: rate.total_charge)
 
-        return lib.to_object(
-            datatypes.RateResponse, dict(rates=formated_rates, messages=messages)
-        )
+        return lib.to_object(datatypes.RateResponse, dict(rates=formated_rates, messages=messages))
 
 
 class Documents:
@@ -932,14 +848,10 @@ class Documents:
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
-        request = karrio.Document.upload(
-            lib.to_object(datatypes.DocumentUploadRequest, payload)
-        )
+        request = karrio.Document.upload(lib.to_object(datatypes.DocumentUploadRequest, payload))
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
-        upload, messages = utils.identity(
-            lambda: request.from_(carrier.gateway).parse()
-        )
+        upload, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
 
         if upload is None:
             raise exceptions.APIException(
@@ -975,14 +887,10 @@ class Manifests:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Manifest.create(
-            lib.to_object(datatypes.ManifestRequest, lib.to_dict(payload))
-        )
+        request = karrio.Manifest.create(lib.to_object(datatypes.ManifestRequest, lib.to_dict(payload)))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        manifest, messages = utils.identity(
-            lambda: request.from_(carrier.gateway).parse()
-        )
+        manifest, messages = utils.identity(lambda: request.from_(carrier.gateway).parse())
 
         if manifest is None:
             raise exceptions.APIException(
@@ -1030,14 +938,10 @@ class Insurance:
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
-        request = karrio.Insurance.apply(
-            lib.to_object(datatypes.InsuranceRequest, payload)
-        )
+        request = karrio.Insurance.apply(lib.to_object(datatypes.InsuranceRequest, payload))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        insurance, messages = utils.identity(
-            lambda: request.from_(provider.gateway).parse()
-        )
+        insurance, messages = utils.identity(lambda: request.from_(provider.gateway).parse())
 
         if insurance is None:
             raise exceptions.APIException(
@@ -1087,14 +991,10 @@ class Duties:
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
-        request = karrio.Duty.calculate(
-            lib.to_object(datatypes.DutiesCalculationRequest, payload)
-        )
+        request = karrio.Duty.calculate(lib.to_object(datatypes.DutiesCalculationRequest, payload))
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
-        duties, messages = utils.identity(
-            lambda: request.from_(provider.gateway).parse()
-        )
+        duties, messages = utils.identity(lambda: request.from_(provider.gateway).parse())
 
         if duties is None:
             raise exceptions.APIException(
@@ -1126,9 +1026,7 @@ class Webhooks:
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
-        request = karrio.Webhook.register(
-            lib.to_object(datatypes.WebhookRegistrationRequest, payload)
-        )
+        request = karrio.Webhook.register(lib.to_object(datatypes.WebhookRegistrationRequest, payload))
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
         return utils.identity(lambda: request.from_(carrier.gateway).parse())
@@ -1153,23 +1051,18 @@ class Webhooks:
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
-        request = karrio.Webhook.deregister(
-            lib.to_object(datatypes.WebhookDeregistrationRequest, payload)
-        )
+        request = karrio.Webhook.deregister(lib.to_object(datatypes.WebhookDeregistrationRequest, payload))
 
         # The request is wrapped in utils.identity to simplify mocking in tests.
         return utils.identity(lambda: request.from_(carrier.gateway).parse())
 
 
 class Hooks:
-
     @staticmethod
-    def create_stub_gateway(
-        carrier_name: str, test_mode: bool = False
-    ) -> karrio.Gateway:
-        import karrio.server.core.middleware as middleware
-        import karrio.server.core.config as system_config
+    def create_stub_gateway(carrier_name: str, test_mode: bool = False) -> karrio.Gateway:
         import django.core.cache as caching
+        import karrio.server.core.config as system_config
+        import karrio.server.core.middleware as middleware
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", lib.Tracer())
@@ -1191,7 +1084,7 @@ class Hooks:
     @utils.with_telemetry("hook_webhook_event")
     def on_webhook_event(
         payload: dict, carrier: providers.CarrierConnection = None, **carrier_filters
-    ) -> typing.Tuple[datatypes.WebhookEventDetails, typing.List[datatypes.Message]]:
+    ) -> tuple[datatypes.WebhookEventDetails, list[datatypes.Message]]:
         carrier = carrier or Carriers.first(
             **{
                 **dict(active=True, raise_not_found=True),
@@ -1202,9 +1095,7 @@ class Hooks:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Hooks.on_webhook_event(
-            lib.to_object(datatypes.RequestPayload, lib.to_dict(payload))
-        )
+        request = karrio.Hooks.on_webhook_event(lib.to_object(datatypes.RequestPayload, lib.to_dict(payload)))
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
         return utils.identity(lambda: request.from_(carrier.gateway).parse())
@@ -1217,15 +1108,10 @@ class Hooks:
         carrier_name: str = None,
         test_mode: bool = False,
         **kwargs,
-    ) -> typing.Tuple[datatypes.OAuthAuthorizeRequest, typing.List[datatypes.Message]]:
-        gateway = lib.identity(
-            getattr(carrier, "gateway", None)
-            or Hooks.create_stub_gateway(carrier_name, test_mode)
-        )
+    ) -> tuple[datatypes.OAuthAuthorizeRequest, list[datatypes.Message]]:
+        gateway = lib.identity(getattr(carrier, "gateway", None) or Hooks.create_stub_gateway(carrier_name, test_mode))
 
-        return utils.identity(
-            lambda: karrio.Hooks.on_oauth_authorize(payload).from_(gateway).parse()
-        )
+        return utils.identity(lambda: karrio.Hooks.on_oauth_authorize(payload).from_(gateway).parse())
 
     @staticmethod
     @utils.with_telemetry("hook_oauth_callback")
@@ -1235,12 +1121,7 @@ class Hooks:
         test_mode: bool = False,
         carrier: providers.CarrierConnection = None,
         **kwargs,
-    ) -> typing.Tuple[typing.List[typing.Dict], typing.List[datatypes.Message]]:
-        gateway = lib.identity(
-            getattr(carrier, "gateway", None)
-            or Hooks.create_stub_gateway(carrier_name, test_mode)
-        )
+    ) -> tuple[list[dict], list[datatypes.Message]]:
+        gateway = lib.identity(getattr(carrier, "gateway", None) or Hooks.create_stub_gateway(carrier_name, test_mode))
 
-        return utils.identity(
-            lambda: karrio.Hooks.on_oauth_callback(payload).from_(gateway).parse()
-        )
+        return utils.identity(lambda: karrio.Hooks.on_oauth_callback(payload).from_(gateway).parse())

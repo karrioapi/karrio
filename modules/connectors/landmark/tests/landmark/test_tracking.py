@@ -55,12 +55,8 @@ class TestLandmarkGlobalTracking(unittest.TestCase):
         """
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = EARLY_STAGE_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_EARLY_STAGE_PENDING_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_EARLY_STAGE_PENDING_RESPONSE)
 
     def test_parse_out_for_delivery_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
@@ -319,9 +315,7 @@ PARSED_EARLY_STAGE_PENDING_RESPONSE = [
                     "timestamp": "2025-10-01T08:00:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570299N1"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570299N1"},
             "meta": {
                 "last_mile_tracking_number": "1Z999AA10123456784",
                 "last_mile_carrier": "Canada Post",

@@ -1,44 +1,42 @@
-import strawberry
-import typing
 import datetime
-from strawberry.types import Info
-from rest_framework import exceptions
-from django.utils.http import urlsafe_base64_decode
-from django.contrib.contenttypes.models import ContentType
-from django_email_verification import confirm as email_verification
-from django_otp.plugins.otp_email import models as otp
-from django.utils.translation import gettext_lazy as _
-from django.db import transaction, models
+import typing
 
-from karrio.server.core.utils import ConfirmationToken, send_email
-from karrio.server.user.serializers import TokenSerializer
-from karrio.server.conf import settings
-from karrio.server.serializers import (
-    save_many_to_many_data,
-    process_dictionaries_mutations,
-)
-from karrio.server.core.logging import logger
-import karrio.server.providers.serializers as providers_serializers
-import karrio.server.manager.serializers as manager_serializers
+import karrio.lib as lib
+import karrio.server.core.models as core
+import karrio.server.graph.forms as forms
 import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.serializers as serializers
-import karrio.server.providers.models as providers
-import karrio.server.manager.models as manager
-import karrio.server.user.forms as user_forms
-import karrio.server.core.gateway as gateway
-import karrio.server.graph.models as graph
-import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
-import karrio.server.user.models as auth
 import karrio.server.iam.models as iam
-import karrio.server.core.models as core
-import karrio.lib as lib
+import karrio.server.manager.models as manager
+import karrio.server.manager.serializers as manager_serializers
+import karrio.server.providers.models as providers
+import karrio.server.providers.serializers as providers_serializers
+import karrio.server.user.forms as user_forms
+import karrio.server.user.models as auth
+import strawberry
+from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
+from django.utils.http import urlsafe_base64_decode
+from django.utils.translation import gettext_lazy as _
+from django_email_verification import confirm as email_verification
+from django_otp.plugins.otp_email import models as otp
+from karrio.server.conf import settings
+from karrio.server.core.logging import logger
+from karrio.server.core.utils import ConfirmationToken, send_email
+from karrio.server.serializers import (
+    process_dictionaries_mutations,
+    save_many_to_many_data,
+)
+from karrio.server.user.serializers import TokenSerializer
+from rest_framework import exceptions
+from strawberry.types import Info
 
 
 @strawberry.type
 class UserUpdateMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -59,13 +57,11 @@ class UserUpdateMutation(utils.BaseMutation):
 
 @strawberry.type
 class WorkspaceConfigMutation(utils.BaseMutation):
-    workspace_config: typing.Optional[types.WorkspaceConfigType] = None
+    workspace_config: types.WorkspaceConfigType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.WorkspaceConfigMutationInput
-    ) -> "WorkspaceConfigMutation":
+    def mutate(info: Info, **input: inputs.WorkspaceConfigMutationInput) -> "WorkspaceConfigMutation":
         data = dict(config=input.copy())
         workspace = auth.WorkspaceConfig.access_by(info.context.request).first()
 
@@ -78,14 +74,12 @@ class WorkspaceConfigMutation(utils.BaseMutation):
 
         serializer.is_valid(raise_exception=True)
 
-        return WorkspaceConfigMutation(
-            workspace_config=serializer.save()
-        )  # type:ignore
+        return WorkspaceConfigMutation(workspace_config=serializer.save())  # type:ignore
 
 
 @strawberry.type
 class TokenMutation(utils.BaseMutation):
-    token: typing.Optional[types.TokenType] = None
+    token: types.TokenType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -99,9 +93,7 @@ class TokenMutation(utils.BaseMutation):
 
         if refresh:
             if len(password or "") == 0:
-                raise exceptions.ValidationError(
-                    {"password": "Password is required to refresh token"}
-                )
+                raise exceptions.ValidationError({"password": "Password is required to refresh token"})
 
             if not info.context.request.user.check_password(password):
                 raise exceptions.ValidationError({"password": "Invalid password"})
@@ -112,24 +104,20 @@ class TokenMutation(utils.BaseMutation):
         else:
             return TokenMutation(token=tokens.first())  # type:ignore
 
-        token = (
-            TokenSerializer.map(data={}, context=info.context.request).save().instance
-        )
+        token = TokenSerializer.map(data={}, context=info.context.request).save().instance
 
         return TokenMutation(token=token)  # type:ignore
 
 
 @strawberry.type
 class CreateAPIKeyMutation(utils.BaseMutation):
-    api_key: typing.Optional[types.APIKeyType] = None
+    api_key: types.APIKeyType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.password_required
-    def mutate(
-        info: Info, password: str, **input: inputs.CreateAPIKeyMutationInput
-    ) -> "CreateAPIKeyMutation":
+    def mutate(info: Info, password: str, **input: inputs.CreateAPIKeyMutationInput) -> "CreateAPIKeyMutation":
         context = info.context.request
         data = input.copy()
         permissions = data.pop("permissions", [])
@@ -137,9 +125,7 @@ class CreateAPIKeyMutation(utils.BaseMutation):
 
         if any(permissions):
             _auth_ctx = (
-                context.token
-                if hasattr(getattr(info.context.request, "token", None), "permissions")
-                else context.user
+                context.token if hasattr(getattr(info.context.request, "token", None), "permissions") else context.user
             )
             _ctx_permissions = getattr(_auth_ctx, "permissions", [])
             _invalid_permissions = [_ for _ in permissions if _ not in _ctx_permissions]
@@ -154,21 +140,17 @@ class CreateAPIKeyMutation(utils.BaseMutation):
             )
             _ctx.groups.set(auth.Group.objects.filter(name__in=permissions))
 
-        return CreateAPIKeyMutation(
-            api_key=auth.Token.access_by(context).get(key=api_key.key)
-        )  # type:ignore
+        return CreateAPIKeyMutation(api_key=auth.Token.access_by(context).get(key=api_key.key))  # type:ignore
 
 
 @strawberry.type
 class DeleteAPIKeyMutation(utils.BaseMutation):
-    label: typing.Optional[str] = None
+    label: str | None = None
 
     @staticmethod
     @utils.authentication_required
     @utils.password_required
-    def mutate(
-        info: Info, password: str, **input: inputs.DeleteAPIKeyMutationInput
-    ) -> "DeleteAPIKeyMutation":
+    def mutate(info: Info, password: str, **input: inputs.DeleteAPIKeyMutationInput) -> "DeleteAPIKeyMutation":
         api_key = auth.Token.access_by(info.context.request).get(**input)
         label = api_key.label
         api_key.delete()
@@ -178,14 +160,12 @@ class DeleteAPIKeyMutation(utils.BaseMutation):
 
 @strawberry.type
 class RequestEmailChangeMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     @utils.authentication_required
     @utils.password_required
-    def mutate(
-        info: Info, email: str, password: str, redirect_url: str
-    ) -> "RequestEmailChangeMutation":
+    def mutate(info: Info, email: str, password: str, redirect_url: str) -> "RequestEmailChangeMutation":
         try:
             token = ConfirmationToken.for_data(
                 user=info.context.request.user,
@@ -216,7 +196,7 @@ class RequestEmailChangeMutation(utils.BaseMutation):
 
 @strawberry.type
 class ConfirmEmailChangeMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -225,9 +205,7 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
         user = info.context.request.user
 
         if str(user.id) != validated_token["user_id"]:
-            raise exceptions.ValidationError(
-                {"token": "auth.Token is invalid or expired"}
-            )
+            raise exceptions.ValidationError({"token": "auth.Token is invalid or expired"})
 
         if user.email == validated_token["new_email"]:
             raise exceptions.APIException("Email is already confirmed")
@@ -235,24 +213,17 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
         user.email = validated_token["new_email"]
         user.save()
 
-        return ConfirmEmailChangeMutation(
-            user=types.User.objects.get(id=validated_token["user_id"])
-        )  # type:ignore
+        return ConfirmEmailChangeMutation(user=types.User.objects.get(id=validated_token["user_id"]))  # type:ignore
 
 
 @strawberry.type
 class RegisterUserMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
-    def mutate(
-        info: Info, **input: inputs.RegisterUserMutationInput
-    ) -> "RegisterUserMutation":
-        if settings.ALLOW_SIGNUP == False:
-            raise Exception(
-                "Signup is not allowed. "
-                "Please contact your administrator to create an account."
-            )
+    def mutate(info: Info, **input: inputs.RegisterUserMutationInput) -> "RegisterUserMutation":
+        if not settings.ALLOW_SIGNUP:
+            raise Exception("Signup is not allowed. Please contact your administrator to create an account.")
 
         try:
             form = user_forms.SignUpForm(data=input)
@@ -267,9 +238,7 @@ class RegisterUserMutation(utils.BaseMutation):
 
             return RegisterUserMutation(user=user)  # type:ignore
         except Exception as e:
-            logger.exception(
-                "User registration failed", email=input.get("email"), error=str(e)
-            )
+            logger.exception("User registration failed", email=input.get("email"), error=str(e))
             raise e
 
 
@@ -290,13 +259,11 @@ class ConfirmEmailMutation(utils.BaseMutation):
 
 @strawberry.type
 class ChangePasswordMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.ChangePasswordMutationInput
-    ) -> "ChangePasswordMutation":
+    def mutate(info: Info, **input: inputs.ChangePasswordMutationInput) -> "ChangePasswordMutation":
         form = forms.PasswordChangeForm(info.context.request.user, data=input)
         if form.is_valid():
             user = form.save()
@@ -311,9 +278,7 @@ class RequestPasswordResetMutation(utils.BaseMutation):
     redirect_url: str = strawberry.UNSET
 
     @staticmethod
-    def mutate(
-        info: Info, **input: inputs.RequestPasswordResetMutationInput
-    ) -> "RequestPasswordResetMutation":
+    def mutate(info: Info, **input: inputs.RequestPasswordResetMutationInput) -> "RequestPasswordResetMutation":
         form = forms.ResetPasswordRequestForm(data=input)
 
         if form.is_valid():
@@ -325,7 +290,7 @@ class RequestPasswordResetMutation(utils.BaseMutation):
 
 @strawberry.type
 class ConfirmPasswordResetMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     def get_user(uidb64):
@@ -343,9 +308,7 @@ class ConfirmPasswordResetMutation(utils.BaseMutation):
         return user
 
     @staticmethod
-    def mutate(
-        info: Info, **input: inputs.ConfirmPasswordResetMutationInput
-    ) -> "ConfirmPasswordResetMutation":
+    def mutate(info: Info, **input: inputs.ConfirmPasswordResetMutationInput) -> "ConfirmPasswordResetMutation":
         uuid = input.get("uid")
         user = ConfirmPasswordResetMutation.get_user(uuid)  # type:ignore
         form = forms.ConfirmPasswordResetForm(user, data=input)
@@ -358,17 +321,13 @@ class ConfirmPasswordResetMutation(utils.BaseMutation):
 
 @strawberry.type
 class EnableMultiFactorMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.EnableMultiFactorMutationInput
-    ) -> "EnableMultiFactorMutation":
+    def mutate(info: Info, **input: inputs.EnableMultiFactorMutationInput) -> "EnableMultiFactorMutation":
         # Retrieve a default device or create a new one.
-        device = otp.EmailDevice.objects.filter(
-            user__id=info.context.request.user.id
-        ).first()
+        device = otp.EmailDevice.objects.filter(user__id=info.context.request.user.id).first()
         if device is None:
             device = otp.EmailDevice.objects.create(
                 name="default",
@@ -377,7 +336,7 @@ class EnableMultiFactorMutation(utils.BaseMutation):
             )
 
         # Send and email challenge if the device isn't confirmed yet.
-        if device.confirmed == False:
+        if not device.confirmed:
             device.generate_challenge()
 
         return EnableMultiFactorMutation(  # type:ignore
@@ -387,29 +346,21 @@ class EnableMultiFactorMutation(utils.BaseMutation):
 
 @strawberry.type
 class ConfirmMultiFactorMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.ConfirmMultiFactorMutationInput
-    ) -> "ConfirmMultiFactorMutation":
+    def mutate(info: Info, **input: inputs.ConfirmMultiFactorMutationInput) -> "ConfirmMultiFactorMutation":
         token = input.get("token")
         # Retrieve a default device or create a new one.
-        device = otp.EmailDevice.objects.filter(
-            user__id=info.context.request.user.id
-        ).first()
+        device = otp.EmailDevice.objects.filter(user__id=info.context.request.user.id).first()
 
         if device is None:
-            raise exceptions.APIException(
-                _("You need to enable Two factor auth first."), code="2fa_disabled"
-            )
+            raise exceptions.APIException(_("You need to enable Two factor auth first."), code="2fa_disabled")
 
         # check if token is valid
         if device.verify_token(token) is False:
-            raise exceptions.ValidationError(
-                {"otp_token": _("Invalid or Expired OTP token")}, code="otp_invalid"
-            )
+            raise exceptions.ValidationError({"otp_token": _("Invalid or Expired OTP token")}, code="otp_invalid")
 
         device.confirmed = True
         device.save()
@@ -421,17 +372,13 @@ class ConfirmMultiFactorMutation(utils.BaseMutation):
 
 @strawberry.type
 class DisableMultiFactorMutation(utils.BaseMutation):
-    user: typing.Optional[types.UserType] = None
+    user: types.UserType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.DisableMultiFactorMutationInput
-    ) -> "DisableMultiFactorMutation":
+    def mutate(info: Info, **input: inputs.DisableMultiFactorMutationInput) -> "DisableMultiFactorMutation":
         # Retrieve a default device or create a new one.
-        device = otp.EmailDevice.objects.filter(
-            user__id=info.context.request.user.id
-        ).first()
+        device = otp.EmailDevice.objects.filter(user__id=info.context.request.user.id).first()
         if device is not None:
             device.delete()
 
@@ -451,15 +398,17 @@ class MetadataMutation(utils.BaseMutation):
         info: Info,
         id: str,
         object_type: utils.MetadataObjectTypeEnum,
-        added_values: dict = {},
-        discarded_keys: list = [],
+        added_values: dict = None,
+        discarded_keys: list = None,
     ) -> "MetadataMutation":
+        if discarded_keys is None:
+            discarded_keys = []
+        if added_values is None:
+            added_values = {}
         object_model = utils.MetadataObjectType[object_type].value
         instance = object_model.access_by(info.context.request).get(id=id)
         instance.metadata = {
-            key: value
-            for key, value in (instance.metadata or {}).items()
-            if key not in discarded_keys
+            key: value for key, value in (instance.metadata or {}).items() if key not in discarded_keys
         }
         instance.metadata.update(added_values)
         instance.save(update_fields=["metadata"])
@@ -480,11 +429,7 @@ class DeleteMutation(utils.BaseMutation):
         **input: inputs.DeleteMutationInput,
     ) -> "DeleteMutation":
         id = input.get("id")
-        queryset = (
-            model.access_by(info.context.request)
-            if hasattr(model, "access_by")
-            else model.objects
-        )
+        queryset = model.access_by(info.context.request) if hasattr(model, "access_by") else model.objects
         instance = queryset.get(id=id)
 
         if validator:
@@ -506,24 +451,19 @@ class DeleteMutation(utils.BaseMutation):
 
 @strawberry.type
 class CreateRateSheetMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.CreateRateSheetMutationInput
-    ) -> "CreateRateSheetMutation":
+    def mutate(info: Info, **input: inputs.CreateRateSheetMutationInput) -> "CreateRateSheetMutation":
         data = input.copy()
         carriers = data.pop("carriers", [])
         zones_data = data.pop("zones", [])
         surcharges_data = data.pop("surcharges", [])
         service_rates_data = data.pop("service_rates", [])
         # Note: origin_countries stays in data - saved via serializer
-        services_data = [
-            (svc.copy() if isinstance(svc, dict) else dict(svc))
-            for svc in data.get("services", [])
-        ]
+        services_data = [(svc.copy() if isinstance(svc, dict) else dict(svc)) for svc in data.get("services", [])]
 
         slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
         serializer = serializers.RateSheetModelSerializer(
@@ -566,17 +506,13 @@ class CreateRateSheetMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateRateSheetMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateRateSheetMutationInput
-    ) -> "UpdateRateSheetMutation":
-        instance = providers.RateSheet.access_by(info.context.request).get(
-            id=input["id"]
-        )
+    def mutate(info: Info, **input: inputs.UpdateRateSheetMutationInput) -> "UpdateRateSheetMutation":
+        instance = providers.RateSheet.access_by(info.context.request).get(id=input["id"])
         data = input.copy()
         carriers = data.pop("carriers", [])
         # Pop service_rates BEFORE serializer so they're processed after
@@ -585,10 +521,11 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         # Note: origin_countries stays in data - saved via serializer
 
         # Preserve services input for building temp-to-real service ID map
-        services_input = [
-            (svc.copy() if isinstance(svc, dict) else dict(svc))
-            for svc in data.get("services", [])
-        ] if "services" in data else []
+        services_input = (
+            [(svc.copy() if isinstance(svc, dict) else dict(svc)) for svc in data.get("services", [])]
+            if "services" in data
+            else []
+        )
 
         serializer = serializers.RateSheetModelSerializer(
             instance,
@@ -612,9 +549,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
 
         # Process service_rates AFTER services exist so temp IDs can be resolved
         if service_rates_data is not None:
-            temp_to_real_id = serializer.build_temp_to_real_service_map(
-                services_input
-            )
+            temp_to_real_id = serializer.build_temp_to_real_service_map(services_input)
             # Full replacement: frontend sends all rates
             rate_sheet.service_rates = []
             rate_sheet.save(update_fields=["service_rates"])
@@ -626,28 +561,20 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 carrier_code=rate_sheet.carrier_name
             )
             carrier_qs.filter(id__in=carriers).update(rate_sheet=rate_sheet)
-            carrier_qs.filter(rate_sheet=rate_sheet).exclude(id__in=carriers).update(
-                rate_sheet=None
-            )
+            carrier_qs.filter(rate_sheet=rate_sheet).exclude(id__in=carriers).update(rate_sheet=None)
 
-        return UpdateRateSheetMutation(
-            rate_sheet=providers.RateSheet.objects.get(id=input["id"])
-        )
+        return UpdateRateSheetMutation(rate_sheet=providers.RateSheet.objects.get(id=input["id"]))
 
 
 @strawberry.type
 class DeleteRateSheetServiceMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.DeleteRateSheetServiceMutationInput
-    ) -> "DeleteRateSheetServiceMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.DeleteRateSheetServiceMutationInput) -> "DeleteRateSheetServiceMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
         service = rate_sheet.services.get(id=input["service_id"])
 
         # Remove service from rate sheet and delete it
@@ -664,17 +591,13 @@ class DeleteRateSheetServiceMutation(utils.BaseMutation):
 
 @strawberry.type
 class AddSharedZoneMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.AddSharedZoneMutationInput
-    ) -> "AddSharedZoneMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.AddSharedZoneMutationInput) -> "AddSharedZoneMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
         zone_data = input["zone"]
         zone_dict = {k: v for k, v in zone_data.items() if not utils.is_unset(v)}
 
@@ -688,17 +611,13 @@ class AddSharedZoneMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateSharedZoneMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateSharedZoneMutationInput
-    ) -> "UpdateSharedZoneMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.UpdateSharedZoneMutationInput) -> "UpdateSharedZoneMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
         zone_data = input["zone"]
         zone_dict = {k: v for k, v in zone_data.items() if not utils.is_unset(v)}
 
@@ -712,17 +631,13 @@ class UpdateSharedZoneMutation(utils.BaseMutation):
 
 @strawberry.type
 class DeleteSharedZoneMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.DeleteSharedZoneMutationInput
-    ) -> "DeleteSharedZoneMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.DeleteSharedZoneMutationInput) -> "DeleteSharedZoneMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
 
         try:
             rate_sheet.remove_zone(input["zone_id"])
@@ -739,17 +654,13 @@ class DeleteSharedZoneMutation(utils.BaseMutation):
 
 @strawberry.type
 class AddSharedSurchargeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.AddSharedSurchargeMutationInput
-    ) -> "AddSharedSurchargeMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.AddSharedSurchargeMutationInput) -> "AddSharedSurchargeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
         surcharge_data = input["surcharge"]
         surcharge_dict = {k: v for k, v in surcharge_data.items() if not utils.is_unset(v)}
 
@@ -763,17 +674,13 @@ class AddSharedSurchargeMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateSharedSurchargeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateSharedSurchargeMutationInput
-    ) -> "UpdateSharedSurchargeMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.UpdateSharedSurchargeMutationInput) -> "UpdateSharedSurchargeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
         surcharge_data = input["surcharge"]
         surcharge_dict = {k: v for k, v in surcharge_data.items() if not utils.is_unset(v)}
 
@@ -787,17 +694,13 @@ class UpdateSharedSurchargeMutation(utils.BaseMutation):
 
 @strawberry.type
 class DeleteSharedSurchargeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.DeleteSharedSurchargeMutationInput
-    ) -> "DeleteSharedSurchargeMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.DeleteSharedSurchargeMutationInput) -> "DeleteSharedSurchargeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
 
         try:
             rate_sheet.remove_surcharge(input["surcharge_id"])
@@ -809,21 +712,14 @@ class DeleteSharedSurchargeMutation(utils.BaseMutation):
 
 @strawberry.type
 class BatchUpdateSurchargesMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.BatchUpdateSurchargesMutationInput
-    ) -> "BatchUpdateSurchargesMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
-        surcharges = [
-            {k: v for k, v in s.items() if not utils.is_unset(v)}
-            for s in input["surcharges"]
-        ]
+    def mutate(info: Info, **input: inputs.BatchUpdateSurchargesMutationInput) -> "BatchUpdateSurchargesMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
+        surcharges = [{k: v for k, v in s.items() if not utils.is_unset(v)} for s in input["surcharges"]]
 
         try:
             rate_sheet.batch_update_surcharges(surcharges)
@@ -840,17 +736,13 @@ class BatchUpdateSurchargesMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateServiceRateMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateServiceRateMutationInput
-    ) -> "UpdateServiceRateMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.UpdateServiceRateMutationInput) -> "UpdateServiceRateMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
 
         # Build the rate update dict from input fields
         rate_data = {}
@@ -862,9 +754,7 @@ class UpdateServiceRateMutation(utils.BaseMutation):
         # Update or create the service-zone rate mapping
         try:
             rate_sheet.update_service_rate(
-                service_id=input["service_id"],
-                zone_id=input["zone_id"],
-                rate_data=rate_data
+                service_id=input["service_id"], zone_id=input["zone_id"], rate_data=rate_data
             )
         except ValueError as e:
             raise exceptions.ValidationError({"rate": str(e)})
@@ -874,17 +764,13 @@ class UpdateServiceRateMutation(utils.BaseMutation):
 
 @strawberry.type
 class BatchUpdateServiceRatesMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.BatchUpdateServiceRatesMutationInput
-    ) -> "BatchUpdateServiceRatesMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.BatchUpdateServiceRatesMutationInput) -> "BatchUpdateServiceRatesMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
 
         # Convert rates to the format expected by batch_update_service_rates
         # Format: [{'service_id': str, 'zone_id': str, 'rate': float, 'cost': float, ...}]
@@ -909,17 +795,13 @@ class BatchUpdateServiceRatesMutation(utils.BaseMutation):
 
 @strawberry.type
 class AddWeightRangeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.AddWeightRangeMutationInput
-    ) -> "AddWeightRangeMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.AddWeightRangeMutationInput) -> "AddWeightRangeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
 
         rate_sheet.add_weight_range(
             min_weight=input["min_weight"],
@@ -931,17 +813,13 @@ class AddWeightRangeMutation(utils.BaseMutation):
 
 @strawberry.type
 class RemoveWeightRangeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.RemoveWeightRangeMutationInput
-    ) -> "RemoveWeightRangeMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.RemoveWeightRangeMutationInput) -> "RemoveWeightRangeMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
 
         rate_sheet.remove_weight_range(
             min_weight=input["min_weight"],
@@ -953,17 +831,13 @@ class RemoveWeightRangeMutation(utils.BaseMutation):
 
 @strawberry.type
 class DeleteServiceRateMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.DeleteServiceRateMutationInput
-    ) -> "DeleteServiceRateMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.DeleteServiceRateMutationInput) -> "DeleteServiceRateMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
 
         min_weight = input.get("min_weight")
         max_weight = input.get("max_weight")
@@ -989,17 +863,13 @@ class DeleteServiceRateMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateServiceZoneIdsMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateServiceZoneIdsMutationInput
-    ) -> "UpdateServiceZoneIdsMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+    def mutate(info: Info, **input: inputs.UpdateServiceZoneIdsMutationInput) -> "UpdateServiceZoneIdsMutation":
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
         service = rate_sheet.services.get(id=input["service_id"])
 
         service.zone_ids = input["zone_ids"]
@@ -1010,7 +880,7 @@ class UpdateServiceZoneIdsMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateServiceSurchargeIdsMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: types.RateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -1018,9 +888,7 @@ class UpdateServiceSurchargeIdsMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.UpdateServiceSurchargeIdsMutationInput
     ) -> "UpdateServiceSurchargeIdsMutation":
-        rate_sheet = providers.RateSheet.access_by(info.context.request).get(
-            id=input["rate_sheet_id"]
-        )
+        rate_sheet = providers.RateSheet.access_by(info.context.request).get(id=input["rate_sheet_id"])
         service = rate_sheet.services.get(id=input["service_id"])
 
         service.surcharge_ids = input["surcharge_ids"]
@@ -1031,19 +899,15 @@ class UpdateServiceSurchargeIdsMutation(utils.BaseMutation):
 
 @strawberry.type
 class PartialShipmentMutation(utils.BaseMutation):
-    shipment: typing.Optional[types.ShipmentType] = None
+    shipment: types.ShipmentType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.PartialShipmentMutationInput
-    ) -> "PartialShipmentMutation":
+    def mutate(info: Info, **input: inputs.PartialShipmentMutationInput) -> "PartialShipmentMutation":
         try:
             id = input["id"]
             shipment = manager.Shipment.access_by(info.context.request).get(id=id)
-            manager_serializers.can_mutate_shipment(
-                shipment, update=True, payload=input
-            )
+            manager_serializers.can_mutate_shipment(shipment, update=True, payload=input)
 
             manager_serializers.ShipmentSerializer.map(
                 shipment,
@@ -1056,21 +920,17 @@ class PartialShipmentMutation(utils.BaseMutation):
 
             return PartialShipmentMutation(errors=None, shipment=update)  # type:ignore
         except Exception as e:
-            logger.exception(
-                "Shipment mutation failed", shipment_id=input.get("id"), error=str(e)
-            )
+            logger.exception("Shipment mutation failed", shipment_id=input.get("id"), error=str(e))
             raise e
 
 
 @strawberry.type
 class ChangeShipmentStatusMutation(utils.BaseMutation):
-    shipment: typing.Optional[types.ShipmentType] = None
+    shipment: types.ShipmentType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.ChangeShipmentStatusMutationInput
-    ) -> "ChangeShipmentStatusMutation":
+    def mutate(info: Info, **input: inputs.ChangeShipmentStatusMutationInput) -> "ChangeShipmentStatusMutation":
         shipment = manager.Shipment.access_by(info.context.request).get(id=input["id"])
 
         if shipment.status in [
@@ -1084,7 +944,7 @@ class ChangeShipmentStatusMutation(utils.BaseMutation):
 
         if getattr(shipment, "tracker", None) is not None:
             raise exceptions.ValidationError(
-                _(f"this shipment is tracked automatically by API"),
+                _("this shipment is tracked automatically by API"),
                 code="invalid_operation",
             )
 
@@ -1126,7 +986,7 @@ def _clear_default_parcel_templates(info, exclude_id=None):
 class CreateAddressMutation(utils.BaseMutation):
     """Create a saved address using Address model with meta.label."""
 
-    address: typing.Optional[types.AddressTemplateType] = None
+    address: types.AddressTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -1136,11 +996,7 @@ class CreateAddressMutation(utils.BaseMutation):
 
         # Extract meta from input (flat structure)
         meta_input = data.pop("meta", {})
-        meta = {
-            k: v
-            for k, v in meta_input.items()
-            if not utils.is_unset(v)
-        }
+        meta = {k: v for k, v in meta_input.items() if not utils.is_unset(v)}
 
         # If setting as default, clear existing default
         if meta.get("is_default"):
@@ -1164,7 +1020,7 @@ class CreateAddressMutation(utils.BaseMutation):
 class UpdateAddressMutation(utils.BaseMutation):
     """Update a saved address."""
 
-    address: typing.Optional[types.AddressTemplateType] = None
+    address: types.AddressTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -1175,19 +1031,13 @@ class UpdateAddressMutation(utils.BaseMutation):
 
         # Extract meta from input (flat structure)
         meta_input = data.pop("meta", {})
-        meta_updates = {
-            k: v
-            for k, v in meta_input.items()
-            if not utils.is_unset(v)
-        }
+        meta_updates = {k: v for k, v in meta_input.items() if not utils.is_unset(v)}
 
         instance = manager.Address.access_by(info.context.request).get(id=id)
 
         # Verify this is a template (has meta.label)
         if not (instance.meta or {}).get("label"):
-            raise utils.ValidationError(
-                "This address is not a template. Only templates can be updated here."
-            )
+            raise utils.ValidationError("This address is not a template. Only templates can be updated here.")
 
         # Update meta field
         meta = {**(instance.meta or {}), **meta_updates}
@@ -1212,7 +1062,7 @@ class UpdateAddressMutation(utils.BaseMutation):
 class CreateParcelMutation(utils.BaseMutation):
     """Create a saved parcel using Parcel model with meta.label."""
 
-    parcel: typing.Optional[types.ParcelTemplateType] = None
+    parcel: types.ParcelTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -1222,11 +1072,7 @@ class CreateParcelMutation(utils.BaseMutation):
 
         # Extract meta from input (flat structure)
         meta_input = data.pop("meta", {})
-        meta = {
-            k: v
-            for k, v in meta_input.items()
-            if not utils.is_unset(v)
-        }
+        meta = {k: v for k, v in meta_input.items() if not utils.is_unset(v)}
 
         # If setting as default, clear existing default
         if meta.get("is_default"):
@@ -1250,7 +1096,7 @@ class CreateParcelMutation(utils.BaseMutation):
 class UpdateParcelMutation(utils.BaseMutation):
     """Update a saved parcel."""
 
-    parcel: typing.Optional[types.ParcelTemplateType] = None
+    parcel: types.ParcelTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -1261,19 +1107,13 @@ class UpdateParcelMutation(utils.BaseMutation):
 
         # Extract meta from input (flat structure)
         meta_input = data.pop("meta", {})
-        meta_updates = {
-            k: v
-            for k, v in meta_input.items()
-            if not utils.is_unset(v)
-        }
+        meta_updates = {k: v for k, v in meta_input.items() if not utils.is_unset(v)}
 
         instance = manager.Parcel.access_by(info.context.request).get(id=id)
 
         # Verify this is a template (has meta.label)
         if not (instance.meta or {}).get("label"):
-            raise utils.ValidationError(
-                "This parcel is not a template. Only templates can be updated here."
-            )
+            raise utils.ValidationError("This parcel is not a template. Only templates can be updated here.")
 
         # Update meta field
         meta = {**(instance.meta or {}), **meta_updates}
@@ -1330,9 +1170,7 @@ class DeleteParcelMutation(utils.BaseMutation):
 
         # Verify this is a saved parcel (has meta.label)
         if not (instance.meta or {}).get("label"):
-            raise utils.ValidationError(
-                "This parcel is not a saved parcel. Only saved parcels can be deleted here."
-            )
+            raise utils.ValidationError("This parcel is not a saved parcel. Only saved parcels can be deleted here.")
 
         instance.delete(keep_parents=True)
         return DeleteParcelMutation(id=id)  # type:ignore
@@ -1356,7 +1194,7 @@ def _clear_default_product_templates(info, exclude_id=None):
 class CreateProductMutation(utils.BaseMutation):
     """Create a saved product using Commodity model with meta.label."""
 
-    product: typing.Optional[types.ProductTemplateType] = None
+    product: types.ProductTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -1366,11 +1204,7 @@ class CreateProductMutation(utils.BaseMutation):
 
         # Extract meta from input (flat structure)
         meta_input = data.pop("meta", {})
-        meta = {
-            k: v
-            for k, v in meta_input.items()
-            if not utils.is_unset(v)
-        }
+        meta = {k: v for k, v in meta_input.items() if not utils.is_unset(v)}
 
         # If setting as default, clear existing default
         if meta.get("is_default"):
@@ -1394,7 +1228,7 @@ class CreateProductMutation(utils.BaseMutation):
 class UpdateProductMutation(utils.BaseMutation):
     """Update a saved product."""
 
-    product: typing.Optional[types.ProductTemplateType] = None
+    product: types.ProductTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -1405,19 +1239,13 @@ class UpdateProductMutation(utils.BaseMutation):
 
         # Extract meta from input (flat structure)
         meta_input = data.pop("meta", {})
-        meta_updates = {
-            k: v
-            for k, v in meta_input.items()
-            if not utils.is_unset(v)
-        }
+        meta_updates = {k: v for k, v in meta_input.items() if not utils.is_unset(v)}
 
         instance = manager.Commodity.access_by(info.context.request).get(id=id)
 
         # Verify this is a template (has meta.label)
         if not instance.is_template:
-            raise utils.ValidationError(
-                "This commodity is not a template. Only templates can be updated here."
-            )
+            raise utils.ValidationError("This commodity is not a template. Only templates can be updated here.")
 
         # Update meta field
         meta = {**(instance.meta or {}), **meta_updates}
@@ -1490,15 +1318,14 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
 
 @strawberry.type
 class SystemCarrierMutation(utils.BaseMutation):
-    carrier: typing.Optional[types.SystemConnectionType] = None
+    carrier: types.SystemConnectionType | None = None
 
     @staticmethod
     @utils.error_wrapper
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.SystemCarrierMutationInput
-    ) -> "SystemCarrierMutation":
+    def mutate(info: Info, **input: inputs.SystemCarrierMutationInput) -> "SystemCarrierMutation":
         import datetime
+
         from karrio.server.providers.serializers import BrokeredConnectionModelSerializer
 
         pk = input.get("id")
@@ -1510,9 +1337,7 @@ class SystemCarrierMutation(utils.BaseMutation):
         is_enabling = input.get("enable") is True
         tc_text = (system_connection.metadata or {}).get("terms_and_conditions", "")
         rate_sheet = getattr(system_connection, "rate_sheet", None)
-        has_central_rates = bool(
-            rate_sheet and getattr(rate_sheet, "service_rates", None)
-        )
+        has_central_rates = bool(rate_sheet and getattr(rate_sheet, "service_rates", None))
 
         if is_enabling and has_central_rates and tc_text.strip() and not tc_accepted:
             raise exceptions.ValidationError(
@@ -1543,32 +1368,26 @@ class SystemCarrierMutation(utils.BaseMutation):
         # Log T&C acceptance in BrokeredConnection metadata
         if tc_accepted and tc_text.strip():
             brokered_metadata = brokered.metadata or {}
-            brokered_metadata.update({
-                "tc_accepted": True,
-                "tc_accepted_at": datetime.datetime.now(
-                    datetime.timezone.utc
-                ).isoformat(),
-                "tc_accepted_by": getattr(
-                    context.user, "email", str(context.user)
-                ),
-            })
+            brokered_metadata.update(
+                {
+                    "tc_accepted": True,
+                    "tc_accepted_at": datetime.datetime.now(datetime.UTC).isoformat(),
+                    "tc_accepted_by": getattr(context.user, "email", str(context.user)),
+                }
+            )
             brokered.metadata = brokered_metadata
             brokered.save(update_fields=["metadata"])
 
-        return SystemCarrierMutation(
-            carrier=system_connection
-        )  # type: ignore
+        return SystemCarrierMutation(carrier=system_connection)  # type: ignore
 
 
 @strawberry.type
 class CreateMetafieldMutation(utils.BaseMutation):
-    metafield: typing.Optional[types.MetafieldType] = None
+    metafield: types.MetafieldType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.CreateMetafieldInput
-    ) -> "CreateMetafieldMutation":
+    def mutate(info: Info, **input: inputs.CreateMetafieldInput) -> "CreateMetafieldMutation":
         data = input.copy()
 
         metafield = (
@@ -1585,13 +1404,11 @@ class CreateMetafieldMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateMetafieldMutation(utils.BaseMutation):
-    metafield: typing.Optional[types.MetafieldType] = None
+    metafield: types.MetafieldType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateMetafieldInput
-    ) -> "UpdateMetafieldMutation":
+    def mutate(info: Info, **input: inputs.UpdateMetafieldInput) -> "UpdateMetafieldMutation":
         data = input.copy()
         instance = core.Metafield.access_by(info.context.request).get(id=data.get("id"))
 
@@ -1637,104 +1454,93 @@ def _unarchive(instance) -> typing.Any:
 
 # ── Shipment ──────────────────────────────────────────────────────────────────
 
+
 @strawberry.type
 class ArchiveShipmentMutation(utils.BaseMutation):
-    shipment: typing.Optional[types.ShipmentType] = None
+    shipment: types.ShipmentType | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "ArchiveShipmentMutation":
         # access_by with all_objects gives tenant-scoped access including archived
-        instance = manager.Shipment.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = manager.Shipment.access_by(info.context.request, manager="all_objects").get(pk=id)
         return ArchiveShipmentMutation(errors=None, shipment=_archive(instance))  # type: ignore
 
 
 @strawberry.type
 class UnarchiveShipmentMutation(utils.BaseMutation):
-    shipment: typing.Optional[types.ShipmentType] = None
+    shipment: types.ShipmentType | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "UnarchiveShipmentMutation":
-        instance = manager.Shipment.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = manager.Shipment.access_by(info.context.request, manager="all_objects").get(pk=id)
         return UnarchiveShipmentMutation(errors=None, shipment=_unarchive(instance))  # type: ignore
 
 
 # ── Tracker ───────────────────────────────────────────────────────────────────
 
+
 @strawberry.type
 class ArchiveTrackerMutation(utils.BaseMutation):
-    tracker: typing.Optional[types.TrackerType] = None
+    tracker: types.TrackerType | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "ArchiveTrackerMutation":
-        instance = manager.Tracking.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = manager.Tracking.access_by(info.context.request, manager="all_objects").get(pk=id)
         return ArchiveTrackerMutation(errors=None, tracker=_archive(instance))  # type: ignore
 
 
 @strawberry.type
 class UnarchiveTrackerMutation(utils.BaseMutation):
-    tracker: typing.Optional[types.TrackerType] = None
+    tracker: types.TrackerType | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "UnarchiveTrackerMutation":
-        instance = manager.Tracking.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = manager.Tracking.access_by(info.context.request, manager="all_objects").get(pk=id)
         return UnarchiveTrackerMutation(errors=None, tracker=_unarchive(instance))  # type: ignore
 
 
 # ── Pickup ────────────────────────────────────────────────────────────────────
 
+
 @strawberry.type
 class ArchivePickupMutation(utils.BaseMutation):
-    pickup: typing.Optional[types.PickupType] = None
+    pickup: types.PickupType | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "ArchivePickupMutation":
-        instance = manager.Pickup.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = manager.Pickup.access_by(info.context.request, manager="all_objects").get(pk=id)
         return ArchivePickupMutation(errors=None, pickup=_archive(instance))  # type: ignore
 
 
 @strawberry.type
 class UnarchivePickupMutation(utils.BaseMutation):
-    pickup: typing.Optional[types.PickupType] = None
+    pickup: types.PickupType | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "UnarchivePickupMutation":
-        instance = manager.Pickup.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = manager.Pickup.access_by(info.context.request, manager="all_objects").get(pk=id)
         return UnarchivePickupMutation(errors=None, pickup=_unarchive(instance))  # type: ignore
-
 
 
 # ── Order ─────────────────────────────────────────────────────────────────────
 
+
 @strawberry.type
 class ArchiveOrderMutation(utils.BaseMutation):
-    id: typing.Optional[str] = None
-    is_archived: typing.Optional[bool] = None
-    archived_at: typing.Optional[datetime.datetime] = None
+    id: str | None = None
+    is_archived: bool | None = None
+    archived_at: datetime.datetime | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "ArchiveOrderMutation":
-        instance = orders_models.Order.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = orders_models.Order.access_by(info.context.request, manager="all_objects").get(pk=id)
         archived = _archive(instance)
         return ArchiveOrderMutation(  # type: ignore
             errors=None,
@@ -1746,16 +1552,14 @@ class ArchiveOrderMutation(utils.BaseMutation):
 
 @strawberry.type
 class UnarchiveOrderMutation(utils.BaseMutation):
-    id: typing.Optional[str] = None
-    is_archived: typing.Optional[bool] = None
-    archived_at: typing.Optional[datetime.datetime] = None
+    id: str | None = None
+    is_archived: bool | None = None
+    archived_at: datetime.datetime | None = None
 
     @staticmethod
     @utils.authentication_required
     def mutate(info: Info, id: str) -> "UnarchiveOrderMutation":
-        instance = orders_models.Order.access_by(
-            info.context.request, manager="all_objects"
-        ).get(pk=id)
+        instance = orders_models.Order.access_by(info.context.request, manager="all_objects").get(pk=id)
         unarchived = _unarchive(instance)
         return UnarchiveOrderMutation(  # type: ignore
             errors=None,

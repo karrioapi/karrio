@@ -28,18 +28,14 @@ def _get_translation_catalogs() -> dict:
 
         providers = collect_providers_data()
 
-        for carrier_id, metadata_obj in providers.items():
+        for carrier_id, _metadata_obj in providers.items():
             i18n_module = _load_carrier_i18n(carrier_id)
             if i18n_module is None:
                 continue
 
             catalogs[carrier_id] = {
-                "service_names": getattr(
-                    i18n_module, "SERVICE_NAME_TRANSLATIONS", {}
-                ),
-                "option_names": getattr(
-                    i18n_module, "OPTION_NAME_TRANSLATIONS", {}
-                ),
+                "service_names": getattr(i18n_module, "SERVICE_NAME_TRANSLATIONS", {}),
+                "option_names": getattr(i18n_module, "OPTION_NAME_TRANSLATIONS", {}),
             }
     except (ImportError, ModuleNotFoundError, AttributeError):
         logger.warning("Could not load carrier translation catalogs", exc_info=True)
@@ -50,9 +46,7 @@ def _get_translation_catalogs() -> dict:
 def _load_carrier_i18n(carrier_id: str):
     """Attempt to import a carrier's i18n module."""
     try:
-        return importlib.import_module(
-            f"karrio.providers.{carrier_id}.i18n"
-        )
+        return importlib.import_module(f"karrio.providers.{carrier_id}.i18n")
     except (ImportError, ModuleNotFoundError):
         return None
 
@@ -137,15 +131,13 @@ def _gettext(text: str) -> str:
         return text
 
 
-def _translate_service_names(
-    service_names: dict, catalogs: dict
-) -> dict:
+def _translate_service_names(service_names: dict, catalogs: dict) -> dict:
     """Apply carrier-specific translations to service names with fallback."""
     result: dict = {}
     for carrier_id, services in service_names.items():
         carrier_catalog = catalogs.get(carrier_id, {}).get("service_names", {})
         result[carrier_id] = {}
-        for key, display_name in services.items():
+        for key, _display_name in services.items():
             catalog_label = carrier_catalog.get(key)
             if catalog_label is not None:
                 result[carrier_id][key] = _gettext(str(catalog_label))
@@ -155,15 +147,13 @@ def _translate_service_names(
     return result
 
 
-def _translate_option_names(
-    option_names: dict, catalogs: dict
-) -> dict:
+def _translate_option_names(option_names: dict, catalogs: dict) -> dict:
     """Apply carrier-specific translations to option names with fallback."""
     result: dict = {}
     for carrier_id, options in option_names.items():
         carrier_catalog = catalogs.get(carrier_id, {}).get("option_names", {})
         result[carrier_id] = {}
-        for key, display_name in options.items():
+        for key, _display_name in options.items():
             catalog_label = carrier_catalog.get(key)
             if catalog_label is not None:
                 result[carrier_id][key] = _gettext(str(catalog_label))
@@ -190,13 +180,11 @@ def _strip_carrier_prefix(name: str, carrier_id: str) -> str:
     """Strip carrier_id prefix from an option/field name."""
     prefix = f"{carrier_id}_"
     if name.lower().startswith(prefix.lower()):
-        return name[len(prefix):]
+        return name[len(prefix) :]
     return name
 
 
-def _translate_options(
-    options: dict, option_names: dict, catalogs: dict
-) -> dict:
+def _translate_options(options: dict, option_names: dict, catalogs: dict) -> dict:
     """Add translated label field to shipping option entries."""
     result: dict = {}
     for carrier_id, entries in options.items():
@@ -216,37 +204,26 @@ def _translate_options(
 
 def _translate_carrier_names(carriers: dict) -> dict:
     """Apply translations to carrier display names with fallback."""
-    return {
-        carrier_id: _gettext(display_name)
-        for carrier_id, display_name in carriers.items()
-    }
+    return {carrier_id: _gettext(display_name) for carrier_id, display_name in carriers.items()}
 
 
 def _translate_capabilities(capabilities: dict) -> dict:
     """Translate carrier capability names."""
     result: dict = {}
     for carrier_id, caps in capabilities.items():
-        result[carrier_id] = [
-            _gettext(CAPABILITY_LABELS.get(cap, format_label(cap)))
-            for cap in caps
-        ]
+        result[carrier_id] = [_gettext(CAPABILITY_LABELS.get(cap, format_label(cap))) for cap in caps]
     return result
 
 
 def _translate_enum_values(enum_dict: dict) -> dict:
     """Translate enum display values (countries, incoterms, customs types, etc.)."""
-    return {
-        key: _gettext(value) if isinstance(value, str) else value
-        for key, value in enum_dict.items()
-    }
+    return {key: _gettext(value) if isinstance(value, str) else value for key, value in enum_dict.items()}
 
 
 def _translate_integration_status(statuses: dict) -> dict:
     """Translate integration status values."""
     return {
-        carrier_id: _gettext(
-            INTEGRATION_STATUS_LABELS.get(status, format_label(status))
-        )
+        carrier_id: _gettext(INTEGRATION_STATUS_LABELS.get(status, format_label(status)))
         for carrier_id, status in statuses.items()
     }
 
@@ -265,14 +242,10 @@ def translate_references(references: dict) -> dict:
     translated = dict(references)
 
     if "service_names" in translated:
-        translated["service_names"] = _translate_service_names(
-            translated["service_names"], catalogs
-        )
+        translated["service_names"] = _translate_service_names(translated["service_names"], catalogs)
 
     if "option_names" in translated:
-        translated["option_names"] = _translate_option_names(
-            translated["option_names"], catalogs
-        )
+        translated["option_names"] = _translate_option_names(translated["option_names"], catalogs)
 
     if "connection_fields" in translated:
         translated["connection_fields"] = _translate_field_entries(
@@ -292,19 +265,13 @@ def translate_references(references: dict) -> dict:
         )
 
     if "carriers" in translated:
-        translated["carriers"] = _translate_carrier_names(
-            translated["carriers"]
-        )
+        translated["carriers"] = _translate_carrier_names(translated["carriers"])
 
     if "carrier_capabilities" in translated:
-        translated["carrier_capabilities"] = _translate_capabilities(
-            translated["carrier_capabilities"]
-        )
+        translated["carrier_capabilities"] = _translate_capabilities(translated["carrier_capabilities"])
 
     if "integration_status" in translated:
-        translated["integration_status"] = _translate_integration_status(
-            translated["integration_status"]
-        )
+        translated["integration_status"] = _translate_integration_status(translated["integration_status"])
 
     for key in ("countries", "customs_content_type", "incoterms", "payment_types"):
         if key in translated:
