@@ -1,111 +1,121 @@
 # Skill: Django GraphQL Development
 
-Add queries, mutations, types, and inputs to the Strawberry GraphQL schema.
+Add queries, mutations, types, and inputs to karrio's Strawberry GraphQL schema.
 
 ## When to Use
 
 - Adding new GraphQL queries or mutations
-- Creating new types for existing models
-- Extending base (tenant) or admin (system) graph
-- Adding GraphQL to an extension module
+- Creating new Strawberry types for existing Django models
+- Extending the base (tenant) or admin (system) graph
+- Adding GraphQL endpoints from an extension module (e.g. `orders`, `pricing`, `documents`)
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    GraphQL Request                       │
-│                                                         │
-│  ┌──────────┐    ┌──────────┐    ┌──────────────────┐   │
-│  │  Client   │──>│ Strawberry│──>│ Schema Discovery  │   │
-│  │  Query/   │   │  Router   │   │ pkgutil.iter_     │   │
-│  │  Mutation │   │          │   │ modules(schemas/) │   │
-│  └──────────┘    └──────────┘    └────────┬─────────┘   │
-│                                           │              │
-│                  ┌────────────────────────┐│              │
-│                  │  Multiple Inheritance  ││              │
-│                  │  Query(*QUERIES)       ││              │
-│                  │  Mutation(*MUTATIONS)  │◄              │
-│                  └────────┬───────────────┘               │
-│                           │                              │
-│           ┌───────────────┼───────────────┐              │
-│           ▼               ▼               ▼              │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐     │
-│  │schemas/base/ │ │schemas/docs/ │ │schemas/<ext>/│     │
-│  │ __init__.py  │ │ __init__.py  │ │ __init__.py  │     │
-│  │ types.py     │ │ types.py     │ │ types.py     │     │
-│  │ mutations.py │ │ mutations.py │ │ mutations.py │     │
-│  │ inputs.py    │ │ inputs.py    │ │ inputs.py    │     │
-│  └──────┬───────┘ └──────────────┘ └──────────────┘     │
-│         │                                                │
-│         ▼                                                │
-│  ┌──────────────┐    ┌──────────────┐                    │
-│  │  Serializer  │──>│  Django Model │                    │
-│  │  (DRF)       │   │  (ORM)       │                    │
-│  └──────────────┘    └──────────────┘                    │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                    GraphQL Request                           │
+│                                                              │
+│  Client ──POST /graphql──> schema.py ──> Query/Mutation      │
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │  schema.py:                                            │  │
+│  │    pkgutil.iter_modules(schemas.__path__)              │  │
+│  │    → collects Query, Mutation, extra_types per module  │  │
+│  │    → class Query(*QUERIES):  pass                      │  │
+│  │    → class Mutation(*MUTATIONS):  pass                 │  │
+│  └────────────────────────┬───────────────────────────────┘  │
+│                           │                                   │
+│       ┌───────────────────┼───────────────────┐              │
+│       ▼                   ▼                   ▼               │
+│  ┌──────────┐     ┌──────────┐     ┌──────────────────┐      │
+│  │schemas/  │     │<ext>/    │     │admin/schemas/    │      │
+│  │base/     │     │schemas/  │     │base/             │      │
+│  │  __init__│     │  <ext>/  │     │  __init__        │      │
+│  │  types   │     │          │     │  types           │      │
+│  │  inputs  │     │          │     │  inputs          │      │
+│  │  mutations│     │          │     │  mutations       │      │
+│  └────┬─────┘     └──────────┘     └──────────────────┘      │
+│       │                                                       │
+│       ▼                                                       │
+│  Model.access_by(request)  ──>  DRF Serializer  ──>  save()  │
+└──────────────────────────────────────────────────────────────┘
 ```
+
+Relevant files:
+
+- `modules/graph/karrio/server/graph/schema.py` — auto-discovery via `pkgutil.iter_modules`
+- `modules/graph/karrio/server/graph/schemas/base/` — canonical tenant schema (users, shipments, trackers, carriers, rate sheets, metafields, …)
+- `modules/admin/karrio/server/admin/schemas/base/` — canonical system-admin schema
+- `modules/graph/karrio/server/graph/utils.py` — `BaseInput`, `BaseMutation`, `Paginated`, `Connection[T]`, `paginated_connection`, `is_unset`, `authentication_required`, `password_required`, `error_wrapper`
+- `modules/admin/karrio/server/admin/utils.py` — `staff_required`, `superuser_required`
 
 ## Two Schema Domains
 
-| Aspect | Base Graph | Admin Graph |
-|--------|-----------|-------------|
-| URL | `/graphql` | `/admin/graphql` |
-| Scope | Tenant (per-org) | System-wide (staff only) |
-| Auth decorator | `@utils.authentication_required` | `@admin.staff_required` |
-| Model queries | `Model.access_by(request)` | `Model.objects.all()` |
-| Schemas location | `karrio/server/graph/schemas/` | `karrio/server/admin/schemas/` |
+| Aspect           | Base graph (tenant)                 | Admin graph (system)                |
+| ---------------- | ----------------------------------- | ----------------------------------- |
+| URL              | `/graphql`                          | `/admin/graphql`                    |
+| Scope            | Tenant (per-org)                    | System-wide (staff / superuser)     |
+| Auth decorator   | `@utils.authentication_required`    | + `@admin.staff_required` on top    |
+| Model queries    | `Model.access_by(info.context.request)` | `Model.objects.all()`            |
+| Schema location  | `modules/graph/karrio/server/graph/schemas/`       | `modules/admin/karrio/server/admin/schemas/` |
+| Extension location | `modules/<name>/karrio/server/graph/schemas/<name>/` | `modules/<name>/karrio/server/admin/schemas/<name>/` |
 
-## File Structure (4-file pattern)
+## File Layout (4-file pattern)
 
-Every schema module follows the same structure:
+Every schema module (base, admin, or extension) follows the same thin-interface layout. See `.claude/rules/extension-patterns.md` for the dependency rules between these files — circular imports cause silent schema registration failures.
 
 ```
 schemas/<name>/
-├── __init__.py    # Query & Mutation classes (required)
-├── types.py       # @strawberry.type definitions
-├── mutations.py   # Mutation implementations
-└── inputs.py      # Filter & mutation inputs
+├── __init__.py    # Query + Mutation classes + extra_types (thin interface, REQUIRED)
+├── types.py       # @strawberry.type definitions with resolve/resolve_list
+├── inputs.py      # @strawberry.input Filter + Mutation inputs
+└── mutations.py   # @strawberry.type mutation classes with mutate()
 ```
 
 ## Step-by-Step: Add a New Feature
 
-### Step 1: Define the Input (`inputs.py`)
+### Step 1 — Define inputs (`inputs.py`)
 
 ```python
-import strawberry
 import typing
-from strawberry.types import Info
+import strawberry
 
 import karrio.server.graph.utils as utils
 
-# Filter input (for queries) — extends Paginated for offset/limit
-@strawberry.input
-class MyItemFilter(utils.Paginated):
-    keyword: typing.Optional[str] = strawberry.UNSET
-    status: typing.Optional[str] = strawberry.UNSET
-    metadata_key: typing.Optional[str] = strawberry.UNSET
 
-# Mutation input — extends BaseInput
+# Filter input — extends Paginated (gives offset + first)
 @strawberry.input
-class CreateMyItemInput(utils.BaseInput):
+class WidgetFilter(utils.Paginated):
+    keyword: typing.Optional[str] = strawberry.UNSET
+    status: typing.Optional[typing.List[str]] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[utils.JSON] = strawberry.UNSET
+
+
+# Mutation input — extends BaseInput (gives to_dict() + pagination())
+@strawberry.input
+class CreateWidgetMutationInput(utils.BaseInput):
     name: str
     description: typing.Optional[str] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
+
 @strawberry.input
-class UpdateMyItemInput(utils.BaseInput):
+class UpdateWidgetMutationInput(utils.BaseInput):
     id: str
     name: typing.Optional[str] = strawberry.UNSET
     description: typing.Optional[str] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 ```
 
-**Key patterns:**
-- Optional fields default to `strawberry.UNSET` (not `None`)
-- Filters extend `utils.Paginated` (gives `offset`, `first`, `after`, `before`)
-- Mutation inputs extend `utils.BaseInput` (gives `to_dict()`, `pagination()`)
+Karrio conventions:
 
-### Step 2: Define the Type (`types.py`)
+- Optional fields default to `strawberry.UNSET`, never `None`.
+- Filters extend `utils.Paginated` (see `modules/graph/karrio/server/graph/utils.py`).
+- Mutation inputs extend `utils.BaseInput`; the `.to_dict()` method strips `UNSET` values.
+- Use typed enums from `karrio.server.graph.utils` (e.g. `utils.ShipmentStatusEnum`, `utils.CarrierNameEnum`) over raw strings whenever the value is enumerable.
+
+### Step 2 — Define types (`types.py`)
 
 ```python
 import typing
@@ -114,30 +124,29 @@ from strawberry.types import Info
 
 import karrio.server.graph.utils as utils
 import karrio.server.core.filters as filters
-import karrio.server.mymodule.models as models
-import karrio.server.graph.schemas.<name>.inputs as inputs
+import karrio.server.graph.schemas.base.inputs as inputs
+import karrio.server.manager.models as manager  # or your extension module's models
+
 
 @strawberry.type
-class MyItemType:
+class WidgetType:
     id: str
     name: str
     description: typing.Optional[str] = None
     metadata: typing.Optional[utils.JSON] = None
     created_at: typing.Optional[str] = None
 
-    # Computed field (resolved per-instance)
+    # Computed field — resolved per instance, `self` is the model
     @strawberry.field
-    def display_name(self: models.MyItem) -> str:
+    def display_name(self: manager.Widget) -> str:
         return f"{self.name} ({self.id})"
 
     # Single-item resolver
     @staticmethod
     @utils.authentication_required
-    def resolve(
-        info: Info, id: str
-    ) -> typing.Optional["MyItemType"]:
+    def resolve(info: Info, id: str) -> typing.Optional["WidgetType"]:
         return (
-            models.MyItem.access_by(info.context.request)
+            manager.Widget.access_by(info.context.request)
             .filter(id=id)
             .first()
         )
@@ -147,23 +156,24 @@ class MyItemType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.MyItemFilter] = strawberry.UNSET,
-    ) -> utils.Connection["MyItemType"]:
-        _filter = filter if not utils.is_unset(filter) else inputs.MyItemFilter()
-        queryset = filters.MyItemFilter(
+        filter: typing.Optional[inputs.WidgetFilter] = strawberry.UNSET,
+    ) -> utils.Connection["WidgetType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.WidgetFilter()
+        queryset = filters.WidgetFilter(
             _filter.to_dict(),
-            models.MyItem.access_by(info.context.request),
+            manager.Widget.access_by(info.context.request),
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 ```
 
-**Key patterns:**
-- `resolve()` returns `Optional[Type]` — single item or None
-- `resolve_list()` returns `utils.Connection[Type]` — paginated list
-- Always use `Model.access_by(request)` for tenant scoping
-- Use `utils.is_unset(filter)` to check for strawberry.UNSET
+Karrio conventions:
 
-### Step 3: Define Mutations (`mutations.py`)
+- Single-item resolver returns `Optional[Type]`; list resolver returns `utils.Connection[Type]` (karrio's paginated wrapper, not Relay's).
+- Always use `Model.access_by(info.context.request)` in the base graph — this enforces tenant isolation. Never use `Model.objects.all()` here.
+- Use `utils.is_unset(filter)` to check the sentinel — `None`/truthiness checks do not work.
+- Factory methods that construct the type from a dict/record belong on the type itself as `@staticmethod parse(...)` — never in `utils.py` (that would create a circular import; see `.claude/rules/extension-patterns.md`).
+
+### Step 3 — Define mutations (`mutations.py`)
 
 ```python
 import typing
@@ -171,111 +181,120 @@ import strawberry
 from strawberry.types import Info
 
 import karrio.server.graph.utils as utils
-import karrio.server.graph.schemas.<name>.types as types
-import karrio.server.graph.schemas.<name>.inputs as inputs
 import karrio.server.graph.serializers as serializers
+import karrio.server.graph.schemas.base.types as types
+import karrio.server.graph.schemas.base.inputs as inputs
+import karrio.server.manager.models as manager
+from karrio.server.serializers import process_dictionaries_mutations
+
 
 @strawberry.type
-class CreateMyItemMutation(utils.BaseMutation):
-    my_item: typing.Optional[types.MyItemType] = None
+class CreateWidgetMutation(utils.BaseMutation):
+    widget: typing.Optional[types.WidgetType] = None
 
     @staticmethod
     @utils.authentication_required
-    @utils.error_wrapper
     def mutate(
-        info: Info, **input: inputs.CreateMyItemInput
-    ) -> "CreateMyItemMutation":
-        serializer = serializers.MyItemModelSerializer(
+        info: Info, **input: inputs.CreateWidgetMutationInput
+    ) -> "CreateWidgetMutation":
+        serializer = serializers.WidgetModelSerializer(
             data=input,
             context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
-        return CreateMyItemMutation(my_item=serializer.save())
+        return CreateWidgetMutation(widget=serializer.save())  # type: ignore
+
 
 @strawberry.type
-class UpdateMyItemMutation(utils.BaseMutation):
-    my_item: typing.Optional[types.MyItemType] = None
+class UpdateWidgetMutation(utils.BaseMutation):
+    widget: typing.Optional[types.WidgetType] = None
 
     @staticmethod
     @utils.authentication_required
-    @utils.error_wrapper
     def mutate(
-        info: Info, **input: inputs.UpdateMyItemInput
-    ) -> "UpdateMyItemMutation":
-        id = input.get("id")
-        instance = models.MyItem.access_by(info.context.request).get(id=id)
-        serializer = serializers.MyItemModelSerializer(
+        info: Info, **input: inputs.UpdateWidgetMutationInput
+    ) -> "UpdateWidgetMutation":
+        instance = manager.Widget.access_by(info.context.request).get(id=input["id"])
+        serializer = serializers.WidgetModelSerializer(
             instance,
-            data=input,
             partial=True,
+            data=process_dictionaries_mutations(["metadata"], input, instance),
             context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
-        return UpdateMyItemMutation(my_item=serializer.save())
+        return UpdateWidgetMutation(widget=serializer.save())  # type: ignore
 ```
 
-**Key patterns:**
-- Inherit from `utils.BaseMutation` (gives `errors` field)
-- `@utils.error_wrapper` catches exceptions and returns them as errors
-- Use `**input` to accept keyword args from the input class
-- Use serializer for validation and saving
+Karrio conventions:
 
-### Step 4: Wire Up Schema (`__init__.py`)
+- Inherit from `utils.BaseMutation` to get the `errors` field for free.
+- Mutations that require a password use `@utils.password_required` in addition to `@utils.authentication_required` (see `CreateAPIKeyMutation` in `mutations.py` for a reference).
+- For JSON fields (`metadata`, `options`, `config`), route the payload through `process_dictionaries_mutations([...], input, instance)` — this merges partial dict updates instead of replacing them.
+- Delegate validation + save to DRF serializers in `karrio.server.graph.serializers` (or a `karrio.server.<module>.serializers` for extension modules). Mutation bodies stay short.
+- For generic delete mutations, reuse `mutations.DeleteMutation.mutate(info, model=..., validator=...)` as in the base graph's `delete_parcel` / `delete_metafield`.
+
+### Step 4 — Wire up schema (`__init__.py`)
+
+Keep `__init__.py` as a **thin interface** — Query fields use `strawberry.field(resolver=...)`, Mutation methods are one-liners that delegate to `mutations.X.mutate(info, **input.to_dict())`. No business logic here.
 
 ```python
 import typing
 import strawberry
 from strawberry.types import Info
 
-import karrio.server.graph.schemas.<name>.types as types
-import karrio.server.graph.schemas.<name>.inputs as inputs
-import karrio.server.graph.schemas.<name>.mutations as mutations
+import karrio.server.graph.utils as utils
+import karrio.server.graph.schemas.base.types as types
+import karrio.server.graph.schemas.base.inputs as inputs
+import karrio.server.graph.schemas.base.mutations as mutations
 
 extra_types: list = []  # REQUIRED even if empty
 
+
 @strawberry.type
 class Query:
-    my_item: typing.Optional[types.MyItemType] = strawberry.field(
-        resolver=types.MyItemType.resolve
+    widget: typing.Optional[types.WidgetType] = strawberry.field(
+        resolver=types.WidgetType.resolve
     )
-    my_items: utils.Connection[types.MyItemType] = strawberry.field(
-        resolver=types.MyItemType.resolve_list
+    widgets: utils.Connection[types.WidgetType] = strawberry.field(
+        resolver=types.WidgetType.resolve_list
     )
+
 
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    def create_my_item(
-        self, info: Info, input: inputs.CreateMyItemInput
-    ) -> mutations.CreateMyItemMutation:
-        return mutations.CreateMyItemMutation.mutate(info, **input.to_dict())
+    def create_widget(
+        self, info: Info, input: inputs.CreateWidgetMutationInput
+    ) -> mutations.CreateWidgetMutation:
+        return mutations.CreateWidgetMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_my_item(
-        self, info: Info, input: inputs.UpdateMyItemInput
-    ) -> mutations.UpdateMyItemMutation:
-        return mutations.UpdateMyItemMutation.mutate(info, **input.to_dict())
+    def update_widget(
+        self, info: Info, input: inputs.UpdateWidgetMutationInput
+    ) -> mutations.UpdateWidgetMutation:
+        return mutations.UpdateWidgetMutation.mutate(info, **input.to_dict())
 ```
 
-**Auto-discovery**: This module is automatically found by `pkgutil.iter_modules()` in `schema.py` — no manual registration needed.
+Auto-discovery: `modules/graph/karrio/server/graph/schema.py` iterates `schemas/` via `pkgutil.iter_modules()` and collects `Query`, `Mutation`, and `extra_types` from every sub-package. No manual registration — but the module must be installed (`-e ./modules/<name>` in `requirements.build.txt`) and opt in via `modules/<name>/karrio/server/settings/<name>.py`.
 
-### Step 5: Add Django Filter
+### Step 5 — Add the Django filter
 
 ```python
-# core/filters.py
-import django_filters as filters
-import karrio.server.mymodule.models as models
+# modules/<module>/karrio/server/<module>/filters.py
+import karrio.server.filters as filters  # NOT django_filters directly
+import karrio.server.manager.models as manager
 
-class MyItemFilter(filters.FilterSet):
+
+class WidgetFilter(filters.FilterSet):
     keyword = filters.CharFilter(method="keyword_filter")
-    status = filters.CharFilter(field_name="status")
-    metadata_key = filters.CharFilter(
+    status = filters.CharInFilter(field_name="status", lookup_expr="in")
+    metadata_key = filters.CharInFilter(
         field_name="metadata", method="metadata_key_filter"
     )
     order_by = filters.OrderingFilter(fields={"created_at": "created_at"})
 
     class Meta:
-        model = models.MyItem
+        model = manager.Widget
         fields: list = []
 
     def keyword_filter(self, queryset, name, value):
@@ -285,20 +304,31 @@ class MyItemFilter(filters.FilterSet):
         return queryset.filter(metadata__has_key=value)
 ```
 
-### Step 6: Add Serializer
+`karrio.server.filters` re-exports `django_filters` plus karrio-specific filters (`CharInFilter`, …) — see `modules/core/karrio/server/filters/abstract.py`.
+
+### Step 6 — Add the serializer
+
+Serializers live in `modules/<module>/karrio/server/<module>/serializers/` (or a single `serializers.py`). For tenant-scoped models, wrap with `@owned_model_serializer` — it links the instance to `request.user.org` automatically.
 
 ```python
-# For tenant-scoped models (with org linking):
-@owned_model_serializer
-class MyItemModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.MyItem
-        exclude = ["created_at", "updated_at", "created_by"]
+from rest_framework import serializers
+from karrio.server.serializers import owned_model_serializer
+import karrio.server.manager.models as manager
 
-# For system-scoped models (admin only):
-class SystemMyItemModelSerializer(serializers.ModelSerializer):
+
+@owned_model_serializer
+class WidgetModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.SystemMyItem
+        model = manager.Widget
+        exclude = ["created_at", "updated_at", "created_by"]
+```
+
+For system-scoped (admin) serializers, don't wrap; set `created_by` manually in `.create()`:
+
+```python
+class SystemWidgetModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = manager.SystemWidget
         exclude = ["created_at", "updated_at", "created_by"]
 
     def create(self, validated_data, **kwargs):
@@ -306,102 +336,129 @@ class SystemMyItemModelSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 ```
 
-### Step 7: Add Tests
+### Step 7 — Add tests
+
+Tests use `karrio.server.graph.tests.GraphTestCase` (see `modules/graph/karrio/server/graph/tests/base.py`) — it creates class-level user, token, and carrier fixtures via `setUpTestData`.
 
 ```python
+from unittest import mock
 from karrio.server.graph.tests import GraphTestCase
-import karrio.server.mymodule.models as models
 
-class TestMyItem(GraphTestCase):
-    fixtures = ["fixtures"]
 
-    def test_create_my_item(self):
+class TestWidgetSchema(GraphTestCase):
+
+    def test_create_widget(self):
         response = self.query(
             """
-            mutation create_my_item($data: CreateMyItemInput!) {
-              create_my_item(input: $data) {
-                my_item { id name }
+            mutation create_widget($data: CreateWidgetMutationInput!) {
+              create_widget(input: $data) {
+                widget { id name }
                 errors { field messages }
               }
             }
             """,
-            operation_name="create_my_item",
+            operation_name="create_widget",
             variables=CREATE_DATA,
         )
-        response_data = response.data
         self.assertResponseNoErrors(response)
-        self.assertDictEqual(response_data, CREATE_RESPONSE)
+        self.assertDictEqual(response.data, CREATE_RESPONSE)
 
-    def test_list_my_items(self):
+    def test_list_widgets(self):
         response = self.query(
             """
-            query my_items {
-              my_items { edges { node { id name } } }
-            }
+            query widgets { widgets { edges { node { id name } } } }
             """,
-            operation_name="my_items",
+            operation_name="widgets",
         )
         self.assertResponseNoErrors(response)
 
-CREATE_DATA = {"data": {"name": "Test Item"}}
+
+CREATE_DATA = {"data": {"name": "Test widget"}}
 CREATE_RESPONSE = {
     "data": {
-        "create_my_item": {
-            "my_item": {"id": mock.ANY, "name": "Test Item"},
+        "create_widget": {
+            "widget": {"id": mock.ANY, "name": "Test widget"},
             "errors": None,
         }
     }
 }
 ```
 
+Run tests:
+
+```bash
+karrio test --failfast karrio.server.<module>.tests
+```
+
+Debug tip: add `print(response.data)` before `self.assertDictEqual(...)` when diagnosing failures, then remove it. `lib.to_dict()` strips `None` and empty strings — expected fixtures should not include them.
+
 ## Admin Graph Differences
 
-For admin (system-scoped) schemas:
+Admin schemas live under `modules/admin/karrio/server/admin/schemas/` and in extension modules under `modules/<name>/karrio/server/admin/schemas/<name>/`.
 
 ```python
-# types.py — no access_by(), use staff_required
+# types.py in an admin schema — no access_by(), add staff_required
+import karrio.server.admin.utils as admin
+import karrio.server.graph.utils as utils
+
+
 @strawberry.type
-class SystemMyItemType:
+class SystemWidgetType:
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve(info: Info, id: str) -> typing.Optional["SystemMyItemType"]:
-        return models.SystemMyItem.objects.filter(id=id).first()
+    def resolve(info: Info, id: str) -> typing.Optional["SystemWidgetType"]:
+        return manager.SystemWidget.objects.filter(id=id).first()
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve_list(info: Info, ...) -> utils.Connection["SystemMyItemType"]:
-        queryset = filters.SystemMyItemFilter(
+    def resolve_list(
+        info: Info,
+        filter: typing.Optional[inputs.SystemWidgetFilter] = strawberry.UNSET,
+    ) -> utils.Connection["SystemWidgetType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.SystemWidgetFilter()
+        queryset = filters.SystemWidgetFilter(
             _filter.to_dict(),
-            models.SystemMyItem.objects.all(),  # No access_by()
+            manager.SystemWidget.objects.all(),  # no access_by
         ).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 ```
 
-## N+1 Prevention in GraphQL
+Use `admin.superuser_required` for mutations that must be restricted to superusers only.
 
-Always add `select_related`/`prefetch_related` in custom managers or querysets:
+## N+1 Prevention
+
+Always push `select_related` / `prefetch_related` into the model manager so that both REST and GraphQL benefit automatically.
 
 ```python
-# models.py
-class MyItemManager(models.Manager):
+class WidgetManager(models.Manager):
     def get_queryset(self):
         return (
             super().get_queryset()
-            .select_related("created_by", "category")  # FK joins
-            .prefetch_related("tags", "services")       # M2M / reverse FK
+            .select_related("created_by")
+            .prefetch_related("tags", "services")
         )
 ```
 
-See `.claude/rules/n1-prevention.md` for comprehensive patterns.
+Inside a resolver that touches the same related field twice (e.g. returning computed fields that reuse `self.created_by`), call `.select_related` explicitly on the queryset produced by `access_by`.
 
 ## Extension Module GraphQL
 
-To add GraphQL from a `modules/` extension:
+To contribute GraphQL from `modules/<name>/`:
 
-1. Create `modules/<name>/karrio/server/graph/schemas/<name>/` (same 4-file pattern)
-2. Add namespace `__init__.py`: `__path__ = __import__("pkgutil").extend_path(__path__, __name__)`
-3. Auto-discovered — no registration needed
+1. Create `modules/<name>/karrio/server/graph/schemas/<name>/` with the 4-file layout above.
+2. **Do not** create `__init__.py` anywhere above the leaf `<name>/` directory — shared paths (`karrio/server/graph/`, `karrio/server/graph/schemas/`) must remain implicit namespace packages, otherwise they shadow the core modules. See `.claude/rules/extension-patterns.md`.
+3. Add `-e ./modules/<name>` to `requirements.build.txt` (Docker / prod) **and** `requirements.server.dev.txt` (dev). Without both, schema discovery silently skips your module.
+4. Add `karrio.server.<name>.tests` to `bin/run-server-tests` so CI picks it up.
+5. Create `modules/<name>/karrio/server/settings/<name>.py` with `INSTALLED_APPS += ["karrio.server.<name>"]` so settings auto-discovery picks up the module (see `apps/api/karrio/server/settings/__init__.py`).
 
-For admin graph: use `karrio/server/admin/schemas/<name>/` instead.
+For admin-scoped extensions, use `modules/<name>/karrio/server/admin/schemas/<name>/` instead of `graph/schemas/<name>/`.
+
+## Karrio Conventions Recap
+
+- `import karrio.lib as lib` — never legacy `DP`/`SF`/`NF`/`DF`/`XP`.
+- User-facing strings wrap in `gettext_lazy` as `_("...")`.
+- `self.maxDiff = None` in `setUp()` (already done in `GraphTestCase`).
+- Use `unittest` / `karrio test`, never `pytest`.
+- Don't hand-build the final `schema.Schema(...)` — `modules/graph/karrio/server/graph/schema.py` owns that; just export `Query`, `Mutation`, and `extra_types` from your module.
