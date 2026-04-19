@@ -1912,6 +1912,18 @@ class ServiceLevelFeaturesType:
     # Neighbor delivery allowed
     neighbor_delivery: bool | None = None
 
+    # Labelless / return-flow (QR code only, no printed label)
+    labelless: bool | None = None
+
+    # Delivery notification support (SMS/email)
+    notification: bool | None = None
+
+    # Recipient address validation at time of booking
+    address_validation: bool | None = None
+
+    # Customer-facing transit label ("best_effort", "next_day", etc.)
+    transit_label: str | None = None
+
     @staticmethod
     def parse(features: dict | None) -> "ServiceLevelFeaturesType":
         """Parse a features dict into ServiceLevelFeaturesType."""

@@ -621,6 +621,21 @@ class ServiceLevelFeaturesInput(utils.BaseInput):
     # Neighbor delivery allowed
     neighbor_delivery: bool | None = strawberry.UNSET
 
+    # Labelless / return-flow (QR code only, no printed label)
+    labelless: bool | None = strawberry.UNSET
+
+    # Delivery notification support (SMS/email)
+    notification: bool | None = strawberry.UNSET
+
+    # Recipient address validation at time of booking
+    address_validation: bool | None = strawberry.UNSET
+
+    # Transit label preference — informational string the carrier uses to
+    # annotate delivery speed ("best_effort", "priority"…). Stored on the
+    # service_level's features JSON; not an enum here so carriers that
+    # introduce new labels don't require a schema migration.
+    transit_label: str | None = strawberry.UNSET
+
 
 @strawberry.input
 class CreateServiceLevelInput(utils.BaseInput):
