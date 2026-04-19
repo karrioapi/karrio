@@ -60,7 +60,7 @@ class WorkspaceConfigType:
     def config(self: auth.WorkspaceConfig) -> dict:
         try:
             return lib.to_dict(self.config)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.config
 
     # general preferences
@@ -602,21 +602,21 @@ class LogType:
     def data(self: core.APILog) -> utils.JSON | None:
         try:
             return lib.to_dict(self.data)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.data
 
     @strawberry.field
     def response(self: core.APILog) -> utils.JSON | None:
         try:
             return lib.to_dict(self.response)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.response
 
     @strawberry.field
     def query_params(self: core.APILog) -> utils.JSON | None:
         try:
             return lib.to_dict(self.query_params)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.query_params
 
     @strawberry.field
@@ -665,14 +665,14 @@ class TracingRecordType:
     def record(self: tracing.TracingRecord) -> utils.JSON | None:
         try:
             return lib.to_dict(self.record)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.record
 
     @strawberry.field
     def meta(self: tracing.TracingRecord) -> utils.JSON | None:
         try:
             return lib.to_dict(self.meta)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.meta
 
     @staticmethod
@@ -1973,7 +1973,7 @@ class ServiceLevelType:
     def metadata(self: providers.ServiceLevel) -> utils.JSON | None:
         try:
             return lib.to_dict(self.metadata)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.metadata
 
     @strawberry.field
@@ -1981,7 +1981,7 @@ class ServiceLevelType:
         """Pricing config: excluded_markup_ids, sort_order, etc."""
         try:
             return lib.to_dict(self.pricing_config)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.pricing_config
 
     @strawberry.field
@@ -2023,7 +2023,7 @@ class RateSheetType:
     def metadata(self: providers.RateSheet) -> utils.JSON | None:
         try:
             return lib.to_dict(self.metadata)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.metadata
 
     @strawberry.field
@@ -2031,7 +2031,7 @@ class RateSheetType:
         """Pricing config: excluded_markup_ids, etc."""
         try:
             return lib.to_dict(self.pricing_config)
-        except:
+        except Exception:  # noqa: BLE001 — graceful GraphQL field fallback
             return self.pricing_config
 
     @strawberry.field

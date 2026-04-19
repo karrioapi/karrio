@@ -54,7 +54,7 @@ def _batch_fetch_constance(keys: list) -> dict:
         for key in keys:
             if key in raw_map and raw_map[key] is not None:
                 try:
-                    result[key] = pickle.loads(raw_map[key])  # nosec B301 — constance stores values as pickle, same pattern as constance internals
+                    result[key] = pickle.loads(raw_map[key])  # noqa: S301 — constance stores values as pickle, same pattern as constance internals
                 except Exception:
                     result[key] = settings.CONSTANCE_CONFIG[key][0]
             else:

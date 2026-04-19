@@ -37,7 +37,7 @@ class Context(typing.NamedTuple):
         return getattr(self, item)
 
 
-RequestContext = typing.Union[Context, dict, request.Request]
+RequestContext = Context | dict | request.Request
 
 
 class DecoratedSerializer:

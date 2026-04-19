@@ -425,8 +425,10 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
                 pk=system_connection_id,
                 active=True,
             )
-        except providers.SystemConnection.DoesNotExist:
-            raise serializers.ValidationError({"system_connection_id": "SystemConnection not found or not active."})
+        except providers.SystemConnection.DoesNotExist as e:
+            raise serializers.ValidationError(
+                {"system_connection_id": "SystemConnection not found or not active."}
+            ) from e
 
         # Check if user/org already has a BrokeredConnection for this SystemConnection
         # In multi-org mode, check via link; in OSS mode, check via created_by
@@ -670,7 +672,7 @@ class OAuthCallbackSerializer(serializers.Serializer):
             try:
                 state_data = json.loads(base64.b64decode(state).decode("utf-8"))
                 frontend_url = state_data.get("frontend_url")
-            except Exception:
+            except Exception:  # noqa: S110 — untrusted state blob, any decode error → skip
                 pass
 
         return result, frontend_url

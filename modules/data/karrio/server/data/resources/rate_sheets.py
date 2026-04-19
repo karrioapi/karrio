@@ -274,7 +274,7 @@ def detect_format(data: bytes, filename: str) -> str:
         text = data[:512].decode("utf-8-sig")
         csv.Sniffer().sniff(text)
         return "csv"
-    except Exception:
+    except Exception:  # noqa: S110 — probe step, fall through to extension-based detection
         pass
     if name.endswith(".xlsx"):
         return "xlsx"

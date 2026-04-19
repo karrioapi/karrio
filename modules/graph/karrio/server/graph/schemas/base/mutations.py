@@ -604,7 +604,7 @@ class AddSharedZoneMutation(utils.BaseMutation):
         try:
             rate_sheet.add_zone(zone_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"zone": str(e)})
+            raise exceptions.ValidationError({"zone": str(e)}) from e
 
         return AddSharedZoneMutation(rate_sheet=rate_sheet)
 
@@ -624,7 +624,7 @@ class UpdateSharedZoneMutation(utils.BaseMutation):
         try:
             rate_sheet.update_zone(input["zone_id"], zone_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"zone_id": str(e)})
+            raise exceptions.ValidationError({"zone_id": str(e)}) from e
 
         return UpdateSharedZoneMutation(rate_sheet=rate_sheet)
 
@@ -642,7 +642,7 @@ class DeleteSharedZoneMutation(utils.BaseMutation):
         try:
             rate_sheet.remove_zone(input["zone_id"])
         except ValueError as e:
-            raise exceptions.ValidationError({"zone_id": str(e)})
+            raise exceptions.ValidationError({"zone_id": str(e)}) from e
 
         return DeleteSharedZoneMutation(rate_sheet=rate_sheet)
 
@@ -667,7 +667,7 @@ class AddSharedSurchargeMutation(utils.BaseMutation):
         try:
             rate_sheet.add_surcharge(surcharge_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharge": str(e)})
+            raise exceptions.ValidationError({"surcharge": str(e)}) from e
 
         return AddSharedSurchargeMutation(rate_sheet=rate_sheet)
 
@@ -687,7 +687,7 @@ class UpdateSharedSurchargeMutation(utils.BaseMutation):
         try:
             rate_sheet.update_surcharge(input["surcharge_id"], surcharge_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharge_id": str(e)})
+            raise exceptions.ValidationError({"surcharge_id": str(e)}) from e
 
         return UpdateSharedSurchargeMutation(rate_sheet=rate_sheet)
 
@@ -705,7 +705,7 @@ class DeleteSharedSurchargeMutation(utils.BaseMutation):
         try:
             rate_sheet.remove_surcharge(input["surcharge_id"])
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharge_id": str(e)})
+            raise exceptions.ValidationError({"surcharge_id": str(e)}) from e
 
         return DeleteSharedSurchargeMutation(rate_sheet=rate_sheet)
 
@@ -724,7 +724,7 @@ class BatchUpdateSurchargesMutation(utils.BaseMutation):
         try:
             rate_sheet.batch_update_surcharges(surcharges)
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharges": str(e)})
+            raise exceptions.ValidationError({"surcharges": str(e)}) from e
 
         return BatchUpdateSurchargesMutation(rate_sheet=rate_sheet)
 
@@ -757,7 +757,7 @@ class UpdateServiceRateMutation(utils.BaseMutation):
                 service_id=input["service_id"], zone_id=input["zone_id"], rate_data=rate_data
             )
         except ValueError as e:
-            raise exceptions.ValidationError({"rate": str(e)})
+            raise exceptions.ValidationError({"rate": str(e)}) from e
 
         return UpdateServiceRateMutation(rate_sheet=rate_sheet)
 
@@ -783,7 +783,7 @@ class BatchUpdateServiceRatesMutation(utils.BaseMutation):
         try:
             rate_sheet.batch_update_service_rates(updates)
         except ValueError as e:
-            raise exceptions.ValidationError({"rates": str(e)})
+            raise exceptions.ValidationError({"rates": str(e)}) from e
 
         return BatchUpdateServiceRatesMutation(rate_sheet=rate_sheet)
 
@@ -1429,7 +1429,7 @@ class UpdateMetafieldMutation(utils.BaseMutation):
 # Archive / Unarchive Mutations
 # ─────────────────────────────────────────────────────────────────────────────
 
-import karrio.server.orders.models as orders_models
+import karrio.server.orders.models as orders_models  # noqa: E402 — deferred to avoid circular import at module load
 
 
 def _archive(instance) -> typing.Any:

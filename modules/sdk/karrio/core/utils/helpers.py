@@ -287,7 +287,7 @@ def error_decoder(error: HTTPError) -> dict | list:
             return result
         if isinstance(result, list):
             return result
-    except Exception:
+    except Exception:  # noqa: S110 — JSON parse probe; fall through to non-JSON path
         pass
 
     # Non-JSON response — raise with contextual HTTP details
@@ -374,7 +374,7 @@ def _urlopen_with_span(req: Request, timeout=None):
                 headers = {k: ("***" if k.lower() in _redacted else v) for k, v in req.headers.items()}
                 span.set_data("http.request.headers", headers)
                 span.set_data("request.headers", headers)
-            except Exception:
+            except Exception:  # noqa: S110 — sentry header capture is best-effort
                 pass
 
             # Make the request and buffer the response body
@@ -389,7 +389,7 @@ def _urlopen_with_span(req: Request, timeout=None):
                 resp_body = buffered._raw.decode("utf-8", errors="replace")[:4096]
                 span.set_data("http.response.body", resp_body)
                 span.set_data("response.body", resp_body)
-            except Exception:
+            except Exception:  # noqa: S110 — sentry body capture is best-effort
                 pass
 
             return buffered
@@ -706,7 +706,7 @@ def exec_async(action: Callable, sequence: list[S]) -> list[T]:
         import sentry_sdk  # noqa: PLC0415
 
         _parent_scope = sentry_sdk.get_isolation_scope()
-    except Exception:
+    except Exception:  # noqa: S110 — sentry unavailable; fall through without scope propagation
         pass
 
     _original_action = action

@@ -140,5 +140,5 @@ def _propagate_to_sentry(context: dict):
                     }
                 ),
             )
-    except Exception:
+    except Exception:  # noqa: S110 — tracing context is best-effort; failures must not surface
         pass
