@@ -1,0 +1,4 @@
+# Subchart tarballs fetched by `helm dependency update`.
+# Chart.lock pins versions and IS committed; the tarballs can be re-fetched
+# at install time with `helm dependency build charts/karrio`.
+charts/*.tgz

@@ -1,0 +1,88 @@
+## Karrio — values for EKS + AWS Load Balancer Controller (ALB) Ingress
+## -----------------------------------------------------------------------------
+## Prereqs on the cluster:
+##   * AWS Load Balancer Controller installed (IngressClass `alb`)
+##   * cert-manager or an ACM certificate referenced via annotation
+##   * External Postgres (RDS) and Redis (ElastiCache) reachable from the VPC
+##
+## Install:
+##   helm install karrio ./charts/karrio -f charts/karrio/values-examples/eks-alb.yaml \
+##     --set database.host=<rds-endpoint> \
+##     --set database.password=$DB_PASSWORD \
+##     --set redis.host=<elasticache-endpoint> \
+##     --set config.secretKey=$SECRET_KEY \
+##     --set config.jwtSecret=$JWT_SECRET \
+##     --set dashboardUrl=https://app.example.com \
+##     --set karrioPublicUrl=https://api.example.com
+
+image:
+  server:
+    pullPolicy: IfNotPresent
+  dashboard:
+    pullPolicy: IfNotPresent
+
+api:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 70
+
+worker:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+
+dashboard:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/healthcheck-path: /v1/references
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "15"
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "10"
+    alb.ingress.kubernetes.io/success-codes: "200"
+    # Replace with your ACM cert ARN:
+    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:...
+  api:
+    host: api.example.com
+  dashboard:
+    host: app.example.com
+
+## External services — override at install time or via a sealed secret.
+postgresql:
+  enabled: false
+redis:
+  enabled: false
+
+config:
+  debugMode: "False"
+  useHttps: "True"
+  detachedWorker: "True"
+  enableAllPlugins: "True"

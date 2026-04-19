@@ -1,0 +1,115 @@
+## Karrio — values for local kind / minikube clusters
+## -----------------------------------------------------------------------------
+## Uses the Bitnami postgresql + redis subcharts so a fresh kind / minikube
+## cluster can `helm install` without provisioning external DB / cache.
+## NOT suitable for production (subchart auth + persistence defaults are dev
+## grade). Expose via `kubectl port-forward` instead of an Ingress.
+##
+## Quick install:
+##   kind create cluster
+##   helm dependency build charts/karrio
+##   helm install karrio ./charts/karrio -f charts/karrio/values-examples/local.yaml \
+##     --set config.secretKey=local-secret-change-me \
+##     --set config.jwtSecret=local-jwt-change-me \
+##     --set database.password=karrio \
+##     --set postgresql.auth.password=karrio \
+##     --set postgresql.auth.postgresPassword=karrio
+##
+## Port-forward:
+##   kubectl port-forward svc/karrio-api 5002:5002
+##   kubectl port-forward svc/karrio-dashboard 3002:3002
+##
+## Smoke test:
+##   helm test karrio
+
+image:
+  server:
+    pullPolicy: IfNotPresent
+  dashboard:
+    pullPolicy: IfNotPresent
+
+api:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  podDisruptionBudget:
+    enabled: false
+  autoscaling:
+    enabled: false
+
+worker:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  podDisruptionBudget:
+    enabled: false
+
+dashboard:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+## No ingress, no TLS — use kubectl port-forward
+ingress:
+  enabled: false
+  className: ""
+  api:
+    host: karrio.local
+  dashboard:
+    host: app.karrio.local
+
+## In-cluster Bitnami subcharts for smoke installs
+postgresql:
+  enabled: true
+  auth:
+    username: karrio
+    database: karrio
+    # DO NOT commit real passwords; override at install time
+    postgresPassword: karrio
+    password: karrio
+  primary:
+    persistence:
+      enabled: false
+
+## Wire karrio to the in-cluster services.
+## Bitnami subchart service names follow `<release>-<chartName>` — override
+## via --set database.host=... if your release name differs from "karrio".
+database:
+  host: karrio-postgresql
+  port: 5432
+  name: karrio
+  username: karrio
+
+redis:
+  enabled: true
+  host: karrio-redis-master
+  port: 6379
+  auth:
+    enabled: false
+  architecture: standalone
+  master:
+    persistence:
+      enabled: false
+  replica:
+    replicaCount: 0
+
+config:
+  debugMode: "True"
+  useHttps: "False"
+  detachedWorker: "True"
+  enableAllPlugins: "True"

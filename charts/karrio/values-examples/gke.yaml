@@ -1,0 +1,66 @@
+## Karrio — values for GKE + GCE Ingress
+## -----------------------------------------------------------------------------
+## NOTE: This example has NOT been validated end-to-end against a live GKE
+## cluster. The annotations below are the canonical set for GCE Ingress +
+## Google-managed certificates; verify against your cluster's GKE version
+## and adjust `class: gce` / `class: gce-internal` to taste before use.
+##
+## Prereqs:
+##   * GKE Standard or Autopilot with the default GCE IngressClass
+##   * Google-managed certificate (ManagedCertificate CRD) or pre-provisioned
+##     TLS secret
+##   * External Postgres (CloudSQL) and Redis (MemoryStore) with VPC access
+##
+## Install:
+##   helm install karrio ./charts/karrio -f charts/karrio/values-examples/gke.yaml \
+##     --set database.host=<cloudsql-proxy> \
+##     --set database.password=$DB_PASSWORD \
+##     --set redis.host=<memorystore-ip> \
+##     --set config.secretKey=$SECRET_KEY \
+##     --set config.jwtSecret=$JWT_SECRET
+
+api:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 15
+    targetCPUUtilizationPercentage: 70
+
+worker:
+  replicaCount: 1
+
+dashboard:
+  replicaCount: 2
+
+ingress:
+  enabled: true
+  className: gce
+  annotations:
+    kubernetes.io/ingress.class: gce
+    # Optional: reserve a global static IP and reference it by name
+    # kubernetes.io/ingress.global-static-ip-name: karrio-ip
+    # Managed certificate — replace with your ManagedCertificate name
+    # networking.gke.io/managed-certificates: karrio-cert
+  api:
+    host: api.example.com
+  dashboard:
+    host: app.example.com
+
+postgresql:
+  enabled: false
+redis:
+  enabled: false
+
+config:
+  debugMode: "False"
+  useHttps: "True"
+  detachedWorker: "True"
+  enableAllPlugins: "True"
