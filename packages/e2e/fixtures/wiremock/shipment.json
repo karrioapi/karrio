@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/(ship|shipment|labels).*"
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "tracking_number": "E2ESMOKE123456",
+      "shipment_identification_number": "E2ESMOKE123456",
+      "label": "JVBERi0xLjQKJcOkw7zDtsOfCjI=",
+      "label_type": "PDF",
+      "service": "e2e_standard",
+      "total_charge": { "amount": 12.5, "currency": "USD" }
+    }
+  }
+}

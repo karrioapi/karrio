@@ -1,64 +1,71 @@
 # @karrio/e2e — Playwright E2E Tests
 
-End-to-end tests for the Karrio dashboard at `localhost:3002`.
+End-to-end tests for the Karrio dashboard (default: `localhost:3002`) and
+API (default: `localhost:5002`).
 
-> **Note:** `node_modules` are not committed. Run `npm install` before executing
-> tests, and `npx playwright install chromium` on first run.
+> **Note:** `node_modules` are not committed. Run `npm install` at the repo
+> root before executing tests, and `npx playwright install chromium firefox`
+> on first run.
+
+## Layout
+
+| Path | Purpose |
+|------|---------|
+| `playwright.config.ts` | Chromium + Firefox, retries on CI, trace/video capture |
+| `fixtures/auth.ts` | Extended Playwright test with a REST `api` fixture |
+| `fixtures/wiremock/` | Canned carrier JSON served by WireMock in CI |
+| `helpers/env.ts` | Centralised env-var resolution |
+| `helpers/api.ts` | Thin REST client (JWT bearer auth) |
+| `helpers/selectors.ts` | Shared role-based locators |
+| `helpers/wait-for-stack.ts` | Polls API + dashboard until healthy |
+| `tests/auth.setup.ts` | Persists NextAuth session to storageState |
+| `tests/rate-sheet-editor.spec.ts` | Legacy rate-sheet editor suite |
+| `specs/*.spec.ts` | Golden-path smoke suite (auth, shipment, tracking, order, settings) |
+| `scripts/seed.ts` | CI-only data seeding via REST |
 
 ## Setup
 
 ```bash
-cd karrio/packages/e2e
+cd karrio
 npm install
-npx playwright install chromium   # first time only
+cd packages/e2e
+npx playwright install chromium firefox   # first time only
 ```
 
-## Run (requires dev server on localhost:3002)
+## Run against a running dev stack
 
 ```bash
-npm test                  # headless
-npm run test:headed       # headed (see browser)
-npm run test:ui           # Playwright UI / trace viewer
+npm test                   # full suite (chromium + firefox)
+npm run test:smoke         # specs/ only (chromium)
+npm run test:headed        # see the browser
+npm run test:ui            # Playwright UI / trace viewer
 ```
 
-## Auth
+## Run against the CI compose stack
 
-Tests log in once via `helpers/auth.ts` and reuse the session via
-`playwright/.auth/user.json` (auto-created, git-ignored).
+```bash
+docker compose -f docker-compose.e2e.yml up -d --wait
+npx tsx packages/e2e/scripts/seed.ts
+npm --prefix packages/e2e test
+docker compose -f docker-compose.e2e.yml down -v
+```
 
-Set credentials via env vars or use the defaults:
+## Env overrides
 
-| Env var           | Default                |
-|-------------------|------------------------|
-| `KARRIO_EMAIL`    | `admin@example.com`    |
-| `KARRIO_PASSWORD` | `demo`                 |
+| Env var | Default |
+|---------|---------|
+| `KARRIO_EMAIL` | `admin@example.com` |
+| `KARRIO_PASSWORD` | `demo` |
 | `KARRIO_DASHBOARD_URL` | `http://localhost:3002` |
+| `KARRIO_API_URL` | `http://localhost:5002` |
 
-## Test Targets
+## Carrier stubbing
 
-| Test # | Description | URL |
-|--------|-------------|-----|
-| 1  | Carrier Network page loads | `/admin/carriers` |
-| 2  | Rate Sheets tab switch | `/admin/carriers` |
-| 3  | Create Rate Sheet editor opens | `/admin/carriers` |
-| 4  | Mode buttons (edit/import/export) visible | editor panel |
-| 5  | Switch to import mode → file input | editor panel |
-| 6  | Upload valid xlsx → diff preview | editor import panel |
-| 7  | Upload error xlsx → validation errors | editor import panel |
-| 8  | Cancel import → returns to edit mode | editor import panel |
-| 9  | Export button triggers download | editor panel |
-| 10 | Connections rate-sheets page loads | `/connections/rate-sheets` |
-| 11 | Escape key closes editor | editor panel |
-| 12 | Close button dismisses editor | editor panel |
-
-## Fixtures
-
-| File | Description |
-|------|-------------|
-| `fixtures/rate-sheet-valid.xlsx` | Valid rate sheet — dry-run succeeds, diff preview shown |
-| `fixtures/rate-sheet-errors.xlsx` | Invalid data — validation errors shown |
-| `fixtures/rate-sheet-updated.xlsx` | Updated rates — for confirm-import flow |
+The smoke suite never touches real carrier APIs.  In CI the compose stack
+launches a `wiremock/wiremock` container with mappings from
+`fixtures/wiremock/` returning canned rate/shipment/tracking JSON.
 
 ## CI
 
-Set `CI=true` to enable GitHub reporter and 2 retries per test.
+Runs on every push + PR in `.github/workflows/tests.yml` under the `e2e` job.
+Reports, traces, and videos are uploaded as artifacts on failure.

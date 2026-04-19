@@ -1,0 +1,30 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/(track|tracking|status).*"
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "tracking_number": "E2ESMOKE123456",
+      "status": "in_transit",
+      "events": [
+        {
+          "date": "2026-04-18",
+          "time": "10:00",
+          "code": "IN_TRANSIT",
+          "description": "Package scanned at origin facility",
+          "location": "Los Angeles, CA"
+        },
+        {
+          "date": "2026-04-19",
+          "time": "08:00",
+          "code": "OUT_FOR_DELIVERY",
+          "description": "Out for delivery",
+          "location": "New York, NY"
+        }
+      ]
+    }
+  }
+}
