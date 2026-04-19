@@ -1,3 +1,29 @@
+# Karrio 2026.1.29
+
+> Hotfix release. Any deployment that hit the `DuplicateColumn: column
+> "archived_at" of relation "pickups" already exists` error during `migrate`
+> on 2026.1.28 can now upgrade cleanly — the archiving migrations are made
+> idempotent and will reconcile partial database state.
+
+## Changes
+
+### Fix
+
+- fix(manager,orders): make archiving field migrations idempotent so rolling
+  deploys that partially applied DDL without recording the `django_migrations`
+  row can run `migrate` to completion. Safe upgrade path from any prior version
+  (2026.1.26+), including instances that are currently stuck on the duplicate
+  column error.
+
+### Chores
+
+- chore(documents): stop persisting `POST /v1/documents/generate` responses
+  in `api_logs`. Generated PDFs are returned as base64 in the response body
+  and were bloating the table on every call. Template CRUD endpoints
+  (`/v1/documents/templates*`) remain logged for audit.
+
+---
+
 # Karrio 2026.1.28
 
 ## Changes
