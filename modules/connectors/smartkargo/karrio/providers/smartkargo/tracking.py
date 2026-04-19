@@ -70,8 +70,8 @@ def _extract_details(
                 timestamp=lib.fiso_timestamp(e.eventDate, current_format="%Y-%m-%dT%H:%M:%S"),
                 status=provider_units.TrackingStatus.find(e.eventType).name,
                 reason=provider_units.TrackingIncidentReason.find(e.eventType).name,
-                latitude=lib.failsafe(lambda: float(e.location.latitude)),
-                longitude=lib.failsafe(lambda: float(e.location.longitude)),
+                latitude=lib.failsafe(lambda e=e: float(e.location.latitude)),
+                longitude=lib.failsafe(lambda e=e: float(e.location.longitude)),
             )
             for e in events
         ],

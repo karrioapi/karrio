@@ -61,7 +61,9 @@ class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
         self.assertEqual(serialized["shipments"][0]["refNo"], "Order No. 5678")
 
 
-class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
+# FIXME: real duplicate class definition — silently shadows the above.
+# Flagged for human review (2026.5 ruff sub-PR). Intentional noqa until reviewed.
+class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):  # noqa: F811
     """Test that shipping options override connection_config values."""
 
     def setUp(self):

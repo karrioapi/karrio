@@ -1247,7 +1247,9 @@ class ShippingDocument(serializers.Serializer):
     )
 
 
-class ShippingDocument(serializers.Serializer):
+# FIXME: real duplicate class definition — second copy below shadows the first.
+# Flagged for human review (2026.5 ruff sub-PR). Intentional noqa until reviewed.
+class ShippingDocument(serializers.Serializer):  # noqa: F811
     """Serializer for shipping document download response."""
 
     category = serializers.CharField(

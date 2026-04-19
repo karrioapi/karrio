@@ -390,7 +390,7 @@ class Shipments:
             sentry_sdk.set_tag("shipment_id", result.id)
             if getattr(result, "tracking_number", None):
                 sentry_sdk.set_tag("tracking_number", result.tracking_number)
-        except Exception:
+        except Exception:  # noqa: S110 — sentry tagging is best-effort; failures must not surface
             pass
 
         return result

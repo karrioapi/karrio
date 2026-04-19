@@ -1,7 +1,4 @@
-import typing
-
 import karrio.server.core.models as core
-import karrio.server.graph.models as graph
 import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.mutations as mutations
 import karrio.server.graph.schemas.base.types as types

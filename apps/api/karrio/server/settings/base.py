@@ -32,10 +32,10 @@ with open(BASE_DIR / "server" / "VERSION") as v:
 config = decouple.AutoConfig(search_path=Path().resolve())
 
 if not config("SECRET_KEY", default=None):
-    try:
+    try:  # noqa: SIM105 — logging isn't configured yet; keep explicit try/except
         # Note: Using print here intentionally as logging isn't configured yet
         config = decouple.Config(decouple.RepositoryEnv(".env.sample"))
-    except Exception:
+    except Exception:  # noqa: S110 — best-effort env bootstrap, logging not yet configured
         # Note: Using print here intentionally as logging isn't configured yet
         pass
 
@@ -364,7 +364,7 @@ DATABASES = {
 
 # Speed up test suite: use fast MD5 hasher instead of bcrypt/PBKDF2
 # This only applies when running `manage.py test` — production is unaffected
-import sys as _sys
+import sys as _sys  # noqa: E402 — deliberately conditional, after DATABASES resolution
 
 if "test" in _sys.argv or "karrio" in _sys.argv[0]:
     PASSWORD_HASHERS = [
@@ -698,7 +698,7 @@ else:
 # Initialize Loguru if enabled
 if USE_LOGURU:
     try:
-        from karrio.server.core.logging import logger, setup_django_loguru
+        from karrio.server.core.logging import logger, setup_django_loguru  # noqa: F401 — availability check
 
         setup_django_loguru(
             level=LOG_LEVEL,
